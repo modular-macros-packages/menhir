@@ -678,8 +678,12 @@ let token2value =
         match Terminal.ocamltype tok with
         | None ->
             EUnit
-        | Some _ ->
+        | Some (Stretch.Inferred _) ->
             EVar semv
+        | Some (Stretch.Declared typ) ->
+            let {Stretch.stretch_content; _} = typ in
+            let stretch_content = "(" ^ semv ^ " : " ^ stretch_content ^ ")" in
+            ETextual {typ with Stretch.stretch_content}
       )
     )
 
