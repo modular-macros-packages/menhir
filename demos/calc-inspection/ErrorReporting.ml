@@ -150,7 +150,7 @@ module Make
       ) []
     )
 
-  (* We drive the parser in the usual way, but records the last [InputNeeded]
+  (* We drive the parser in the usual way, but record the last [InputNeeded]
      checkpoint. If a syntax error is detected, we go back to this checkpoint
      and analyze it in order to produce a meaningful diagnostic. *)
 
