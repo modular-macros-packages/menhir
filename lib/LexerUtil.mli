@@ -22,7 +22,8 @@ val read: string -> string * lexbuf
 
 (**[newline lexbuf] increments the line counter stored within [lexbuf]. It
    should be invoked by the lexer itself every time a newline character is
-   consumed. This allows maintaining a current the line number in [lexbuf]. *)
+   consumed. This allows maintaining a current the line number in [lexbuf].
+   It is synonymous with [Lexing.new_line lexbuf]. *)
 val newline: lexbuf -> unit
 
 (**[range (startpos, endpos)] prints a textual description of the range

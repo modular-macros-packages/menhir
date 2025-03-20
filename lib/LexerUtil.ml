@@ -27,12 +27,8 @@ let read filename =
   let lexbuf = Lexing.from_string text in
   text, init filename lexbuf
 
-let newline lexbuf =
-  let pos = lexbuf.lex_curr_p in
-  lexbuf.lex_curr_p <- { pos with
-    pos_lnum = pos.pos_lnum + 1;
-    pos_bol = pos.pos_cnum;
-  }
+let newline =
+  Lexing.new_line
 
 let is_dummy (pos1, pos2) =
   pos1 == dummy_pos || pos2 == dummy_pos
