@@ -562,9 +562,12 @@ module Make (T : TABLE) = struct
       (lexbuf : Lexing.lexbuf)
   : supplier =
     fun () ->
+      (* Read one token from the lexer. *)
       let token = lexer lexbuf in
+      (* Read this token's start and end positions. *)
       let startp = lexbuf.Lexing.lex_start_p
       and endp = lexbuf.Lexing.lex_curr_p in
+      (* Construct and return a triple. *)
       token, startp, endp
 
   (* ------------------------------------------------------------------------ *)
