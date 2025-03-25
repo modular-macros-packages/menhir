@@ -9,32 +9,31 @@ MENHIRFLAGS       := --coq --coq-no-version-check
 
 .PHONY: all
 all: Parser.v ParserMessages.ml extraction/Parser.ml
-	dune build .
+	@ dune build . --no-print-directory
 
 # [make test] tests just this demo.
 
 .PHONY: test
 test: all
-	dune build --force --display short @essai
+	@ dune build --force --display short @essai --no-print-directory
 
 # [make clean] cleans up just this demo.
 
 .PHONY: clean
 clean::
-	@ rm -rf `cat .gitignore`
-	@ $(MAKE) -f ../Makefile.demo $@
+	@ git clean -fdX
 
 # Auxiliary targets.
 
 Parser.v: Parser.vy
-	$(MENHIR) $(MENHIRFLAGS) $<
+	@ $(MENHIR) $(MENHIRFLAGS) $<
 
 ParserMessages.ml: parserMessages.messages Parser.vy
-	$(MENHIR) $(MENHIRFLAGS) Parser.vy --compile-errors parserMessages.messages > ParserMessages.ml
+	@ $(MENHIR) $(MENHIRFLAGS) Parser.vy --compile-errors parserMessages.messages > ParserMessages.ml
 
 extraction/Parser.ml: Parser.v
-	coqc -Q . MiniCalc Parser.v
-	coqtop -Q . MiniCalc -batch -load-vernac-source Extraction.v
+	@ coqc -Q . MiniCalc Parser.v
+	@ coqtop -Q . MiniCalc -batch -load-vernac-source Extraction.v
 
 # Rules for maintaining the .messages file.
 
