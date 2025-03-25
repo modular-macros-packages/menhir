@@ -35,3 +35,14 @@ show: test
 .PHONY: api
 api: test
 	more $(IMAGE)/parser.mli
+
+# [make view] shows a .pdf image of the LR(1) automaton.
+
+VIEW = $(shell \
+  if command -v open >/dev/null ; then echo open ; else echo evince ; fi)
+
+.PHONY: view
+view: all
+	dune exec ../../src/stage2/main.exe -- --infer --automaton-graph parser.mly && rm -f parser.{ml,mli}
+	dot -Tpdf parser.dot > parser.pdf && rm -f parser.dot
+	$(VIEW) parser.pdf

@@ -15,22 +15,6 @@
 )
 
 ;; ------------------------------------------------------------------------------
-;; Visualizing the LR(1) automaton.
-
-(rule
-  (target parser.dot)
-  (action
-    (run menhir --infer
-       %{dep:parser.mly}
-       --automaton-graph
-)))
-
-(rule
-  (with-stdout-to parser.pdf
-    (system "dot -Tpdf %{dep:parser.dot}")
-))
-
-;; ------------------------------------------------------------------------------
 ;; The following declarations are used to test this demo.
 
 (rule
