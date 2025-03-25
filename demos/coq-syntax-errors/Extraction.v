@@ -14,7 +14,7 @@ Extract Constant Parser.Ast.loc => "Lexing.position * Lexing.position".
 Set Extraction AccessOpaque.
 Set Warnings "-extraction-opaque-accessed".
 
-Cd "extraction".
+Set Extraction Output Directory "extraction".
 
 Separate Extraction nat_of_int int_of_n.
 Recursive Extraction Library Parser.
