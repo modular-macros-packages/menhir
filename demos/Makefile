@@ -11,10 +11,23 @@ DEMOS := \
   calc-param \
   calc-syntax-errors \
   calc-two \
-  coq-minicalc \
-  coq-syntax-errors \
   generate-printers \
 
+COQDEMOS := \
+  coq-minicalc \
+  coq-syntax-errors \
 
-all clean test:
-	@ for d in $(DEMOS) ; do make -C $$d $@ ; done
+all test:
+	@ for d in $(DEMOS) ; do echo "Building $$d..." && make -C $$d --no-print-directory $@ ; done
+	@ if command -v coqc >/dev/null ; then \
+	    if opam list --installed --check coq-menhirlib ; then \
+	      for d in $(COQDEMOS) ; do echo "Building $$d..." && make -C $$d --no-print-directory $@ ; done ; \
+	    else \
+	      echo "Skipping the Coq demos, because coq-menhirlib is not installed." ; \
+	    fi \
+	  else \
+	    echo "Skipping the Coq demos, because Coq is not installed." ; \
+	  fi
+
+clean:
+	git clean -fdX
