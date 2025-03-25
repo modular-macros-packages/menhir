@@ -43,6 +43,6 @@ VIEW = $(shell \
 
 .PHONY: view
 view: all
-	dune exec ../../src/stage2/main.exe -- --infer --automaton-graph parser.mly && rm -f parser.{ml,mli}
+	dune exec menhir -- --infer --automaton-graph parser.mly && rm -f parser.{ml,mli}
 	dot -Tpdf parser.dot > parser.pdf && rm -f parser.dot
 	$(VIEW) parser.pdf
