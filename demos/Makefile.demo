@@ -4,7 +4,7 @@
 
 .PHONY: all
 all:
-	dune build @all
+	@ dune build @all --no-print-directory
 
 # [make test] tests just this demo.
 
