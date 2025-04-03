@@ -264,7 +264,11 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
     end)
     let reductions i =
       List.map (fun (s, p) -> (s, [p]))
-	table.(i).lr1_reductions
+        table.(i).lr1_reductions
+    type silent = bool
+    let conflicting_transitions i = table.(i).lr1_conflicting_transitions
+    let conflicting_reductions i = table.(i).lr1_conflicting_reductions
+    let extra_reductions i = table.(i).lr1_extra_reductions
   end
 
   module Print = struct
