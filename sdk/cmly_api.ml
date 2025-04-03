@@ -46,12 +46,15 @@ module type GRAMMAR = sig
   type item        = production * int
   type ocamltype   = string
   type ocamlexpr   = string
+  type identifier  = string
 
   module Range : sig
     type t
     val startp: t -> Lexing.position
     val endp: t -> Lexing.position
   end
+
+  type 'a located = 'a * Range.t
 
   module Attribute : sig
     type t
@@ -60,6 +63,96 @@ module type GRAMMAR = sig
     val payload      : t -> string
     val position     : t -> Range.t
   end
+
+  module Action : sig
+    type t
+    val expr         : t -> ocamlexpr
+    val keywords     : t -> Keyword.keyword list
+  end
+
+  module Surface : sig
+
+    type filename = string
+    type name = string
+
+    module Priority_level : sig
+      type t
+      val input_file : t -> filename
+      val level : t -> int
+    end
+
+    module Producer : sig
+      type 'sym t
+      val symbol : 'sym t -> 'sym
+      val identifier : _ t -> identifier
+      val attributes : _ t -> Attribute.t list
+    end
+
+    module Branch : sig
+      type 'sym t
+      val position         : _ t -> Range.t
+      val producers        : 'sym t -> 'sym Producer.t list
+      val action           : _ t -> Action.t
+      val prec_annotation  : _ t -> name located option
+      val production_level : _ t -> Priority_level.t
+      val attributes       : _ t -> Attribute.t list
+    end
+
+    module Parameter : sig
+      type t
+      type desc =
+        | Var of name
+        | App of name * t list
+        | Anonymous of t Branch.t list
+
+      val desc : t -> desc
+      val located : t -> Range.t
+    end
+
+    module Rule : sig
+      type ('param, 'sym) t
+      val parameters : ('param, _) t -> 'param
+      val branches   : (_, 'sym) t -> 'sym Branch.t list
+      val inline     : _ t -> bool
+      val positions  : _ t -> Range.t list
+      val public     : _ t -> bool
+      val attributes : _ t -> Attribute.t list
+    end
+
+    module Token : sig
+      type t
+
+      type associativity =
+        | LeftAssoc
+        | RightAssoc
+        | NonAssoc
+        | UndefinedAssoc
+
+      val filename      : t -> filename
+      val ocamltype     : t -> ocamltype option
+      val position      : t -> Range.t
+      val alias         : t -> string option
+      val attributes    : t -> Attribute.t list
+      val associativity : t -> associativity
+      val precedence    : t -> Priority_level.t located option
+      val is_declared   : t -> bool
+    end
+
+    module Syntax : sig
+      type ('param, 'sym) t
+      val types  : (_, 'sym) t -> ('sym * ocamltype) list
+      val tokens : _ t -> (name * Token.t) list
+      val rules  : ('param, 'sym) t -> (name * ('param, 'sym) Rule.t) list
+      type ground = (unit, name) t
+      type higher = (name list, Parameter.t) t
+    end
+
+    val start_symbols : name list
+    val on_error_reduce : (name * Priority_level.t) list
+    val before_expansion : Syntax.higher
+    val before_inlining : Syntax.ground
+
+  end (* Surface *)
 
   module Grammar : sig
     val basename     : string
@@ -112,14 +205,6 @@ module type GRAMMAR = sig
 
   (**[symbol_name] is a synonym for [Symbol.name]. *)
   val symbol_name : ?mangled:bool -> symbol -> string
-
-  type identifier = string
-
-  module Action : sig
-    type t
-    val expr         : t -> ocamlexpr
-    val keywords     : t -> Keyword.keyword list
-  end
 
   module Production : sig
     include INDEXED with type t = production
@@ -182,4 +267,4 @@ module type GRAMMAR = sig
     val annot_itemset       : string list list -> formatter -> item list -> unit
   end
 
-end
+end (* GRAMMAR *)

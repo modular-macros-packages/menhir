@@ -125,6 +125,8 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
   type item        = production * int
   type ocamltype   = string
   type ocamlexpr   = string
+  type identifier = string
+
 
   module Range = struct
 
@@ -138,6 +140,8 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
       range.r_end
 
   end
+
+  type 'a located = 'a * Range.t
 
   module Attribute = struct
 
@@ -156,6 +160,101 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
     let position attr =
       attr.a_position
 
+  end
+
+  module Action = struct
+    type t = action
+    let expr      t = t.a_expr
+    let keywords  t = t.a_keywords
+  end
+
+  module Surface = struct
+    type filename = string
+    type name = string
+
+    module Priority_level = struct
+      type t = priority_level
+      let input_file t = t.pl_input_file
+      let level      t = t.pl_level
+    end
+
+    module Producer = struct
+      type 'sym t = 'sym producer_def
+      let symbol     (x,_,_) = x
+      let identifier (_,x,_) = x
+      let attributes (_,_,x) = x
+    end
+
+    module Branch = struct
+      type 'sym t = 'sym surface_branch
+      let position         t = t.br_position
+      let producers        t = t.br_producers
+      let action           t = t.br_action
+      let prec_annotation  t = t.br_prec_annotation
+      let production_level t = t.br_production_level
+      let attributes       t = t.br_attributes
+    end
+
+    module Parameter = struct
+      type t = parameter
+      type desc =
+        | Var of name
+        | App of name * t list
+        | Anonymous of t Branch.t list
+
+      let desc = function
+        | ParameterVar (x, _) -> Var x
+        | ParameterApp ((x, _), xs) -> App (x, xs)
+        | ParameterAnonymous (x, _) -> Anonymous x
+
+      let located ( ParameterVar (_, pos)
+                  | ParameterApp ((_, pos), _)
+                  | ParameterAnonymous (_, pos)) =
+        pos
+    end
+
+    module Rule = struct
+      type ('param, 'sym) t = ('param, 'sym) surface_rule
+      let parameters t = t.r_parameters
+      let branches   t = t.r_branches
+      let inline     t = t.r_inline
+      let positions  t = t.r_positions
+      let public     t = t.r_public
+      let attributes t = t.r_attributes
+    end
+
+    module Token = struct
+      type t = surface_token
+
+      type associativity = Cmly_format.token_associativity =
+        | LeftAssoc
+        | RightAssoc
+        | NonAssoc
+        | UndefinedAssoc
+
+      let filename      t = t.tk_filename
+      let ocamltype     t = t.tk_ocamltype
+      let position      t = t.tk_position
+      let alias         t = t.tk_alias
+      let attributes    t = t.tk_attributes
+      let associativity t = t.tk_associativity
+      let precedence    t = t.tk_precedence
+      let is_declared   t = t.tk_is_declared
+    end
+
+    module Syntax = struct
+      type ('param, 'sym) t = ('param, 'sym) surface_syntax
+      let types  t = t.s_types
+      let tokens t = t.s_tokens
+      let rules  t = t.s_rules
+      type ground = (unit, name) t
+      type higher = (name list, Parameter.t) t
+    end
+
+    let start_symbols    = grammar.g_start_symbols
+    let on_error_reduce  = grammar.g_on_error_reduce
+    let before_expansion = grammar.g_before_expansion
+    let before_inlining  = grammar.g_before_inlining
   end
 
   module Grammar = struct
@@ -218,14 +317,6 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
 
     let name = symbol_name
 
-  end
-
-  type identifier = string
-
-  module Action = struct
-    type t = action
-    let expr      t = t.a_expr
-    let keywords  t = t.a_keywords
   end
 
   module Production = struct
