@@ -26,7 +26,7 @@ let ocamltype (typ : Stretch.ocamltype) : ocamltype =
   | Stretch.Inferred typ ->
       typ
 
-let ocamltype (typo : Stretch.ocamltype option) : ocamltype option =
+let ocamltype_option (typo : Stretch.ocamltype option) : ocamltype option =
   match typo with
   | None ->
       None
@@ -38,6 +38,8 @@ let range (pos : Positions.t) : range =
     r_start = Positions.start_of_position pos;
     r_end   = Positions.end_of_position pos;
   }
+
+let located l = (Positions.value l, range (Positions.position l))
 
 let ranges =
   List.map range
@@ -68,7 +70,7 @@ let terminal (t : Terminal.t) : terminal_def =
         `REGULAR
     );
     t_name = Terminal.print t;
-    t_type = ocamltype (Terminal.ocamltype t);
+    t_type = ocamltype_option (Terminal.ocamltype t);
     t_attributes = attributes (Terminal.attributes t);
   }
 
@@ -78,7 +80,7 @@ let nonterminal (nt : Nonterminal.t) : nonterminal_def =
     n_kind = if is_start then `START else `REGULAR;
     n_name = Nonterminal.print false nt;
     n_mangled_name = Nonterminal.print true nt;
-    n_type = if is_start then None else ocamltype (Nonterminal.ocamltype nt);
+    n_type = if is_start then None else ocamltype_option (Nonterminal.ocamltype nt);
     n_positions = if is_start then [] else ranges (Nonterminal.positions nt);
     n_nullable = Analysis.nullable nt;
     n_first = List.map t2i (TerminalSet.elements (Analysis.first nt));
@@ -96,7 +98,7 @@ let action (a : Action.t) : action =
     a_keywords = Keyword.KeywordSet.elements (Action.keywords a);
   }
 
-let rhs (prod : Production.index) : producer_def array =
+let rhs (prod : Production.index) : symbol producer_def array =
   match Production.classify prod with
   | Some n ->
       [| (N (n2i n), "", []) |]
@@ -162,6 +164,107 @@ let lr1_state (node : Lr1.node) : lr1_state_def =
 let entry_point prod node nt _typ accu : (nonterminal * production * lr1) list =
   (n2i nt, p2i prod, Lr1.number node) :: accu
 
+let priority_level input level = {
+  pl_input_file = InputFile.get_file_name input;
+  pl_level = level;
+}
+
+let precedence_level = function
+  | Syntax.UndefinedPrecedence -> None
+  | Syntax.PrecedenceLevel (input, level, r_start, r_end) ->
+    Some (priority_level input level, {r_start; r_end})
+
+let production_level (Syntax.ProductionLevel (input, level)) =
+  priority_level input level
+
+
+let token_associativity = function
+  | Syntax.LeftAssoc      -> LeftAssoc
+  | Syntax.RightAssoc     -> RightAssoc
+  | Syntax.NonAssoc       -> NonAssoc
+  | Syntax.UndefinedAssoc -> UndefinedAssoc
+
+let import_bindings f map =
+  List.map (fun (k, v) -> (k, f v)) (StringMap.bindings map)
+
+let token (tk : Syntax.token_properties) = {
+  tk_filename = tk.Syntax.tk_filename;
+  tk_ocamltype = ocamltype_option tk.Syntax.tk_ocamltype;
+  tk_position = range tk.Syntax.tk_position;
+  tk_alias = tk.Syntax.tk_alias;
+  tk_attributes = attributes tk.Syntax.tk_attributes;
+  tk_associativity = token_associativity tk.Syntax.tk_associativity;
+  tk_precedence = precedence_level tk.Syntax.tk_precedence;
+  tk_is_declared = tk.Syntax.tk_is_declared;
+}
+
+let basic_producer (pr : BasicSyntax.producer) =
+  (pr.BasicSyntax.producer_symbol,
+   Positions.value pr.BasicSyntax.producer_identifier,
+   attributes pr.BasicSyntax.producer_attributes)
+
+let basic_branch (br : BasicSyntax.branch) = {
+  br_position         = range br.BasicSyntax.branch_position;
+  br_producers        = List.map basic_producer br.BasicSyntax.producers;
+  br_action           = action br.BasicSyntax.action;
+  br_prec_annotation  = Option.map located br.prec_annotation;
+  br_production_level = production_level br.BasicSyntax.production_level;
+  br_attributes       = attributes br.BasicSyntax.br_attributes;
+}
+
+let basic_rule (rule : BasicSyntax.rule) = {
+  r_parameters = ();
+  r_branches   = List.map basic_branch rule.BasicSyntax.branches;
+  r_inline     = rule.BasicSyntax.inline_flag;
+  r_positions  = List.map range rule.BasicSyntax.positions;
+  r_public     = false;
+  r_attributes = attributes rule.BasicSyntax.attributes;
+}
+
+let basic_syntax (g : BasicSyntax.grammar) : ground_syntax = {
+  s_types  = import_bindings ocamltype g.types;
+  s_tokens = import_bindings token g.tokens;
+  s_rules  = import_bindings basic_rule g.rules;
+}
+
+let rec higher_branch (br : Syntax.parameterized_branch) = {
+  br_position         = range br.Syntax.pb_position;
+  br_producers        = List.map higher_producer br.Syntax.pb_producers;
+  br_action           = action br.Syntax.pb_action;
+  br_prec_annotation  = Option.map located br.Syntax.pb_prec_annotation;
+  br_production_level = production_level br.Syntax.pb_production_level;
+  br_attributes       = attributes br.Syntax.pb_attributes;
+}
+
+and parameter = function
+  | Syntax.ParameterVar sym ->
+    ParameterVar (located sym)
+  | Syntax.ParameterApp (sym, args) ->
+    ParameterApp (located sym, List.map parameter args)
+  | Syntax.ParameterAnonymous brs ->
+    ParameterAnonymous (located (Positions.map (List.map higher_branch) brs))
+
+and higher_producer (id, param, attr) =
+  (parameter param, Positions.value id, attributes attr)
+
+let higher_rule (r : Syntax.parameterized_rule) = {
+  r_parameters = r.Syntax.pr_parameters;
+  r_branches   = List.map higher_branch r.Syntax.pr_branches;
+  r_inline     = r.Syntax.pr_inline_flag;
+  r_positions  = List.map range r.Syntax.pr_positions;
+  r_public     = r.Syntax.pr_public_flag;
+  r_attributes = attributes r.Syntax.pr_attributes;
+}
+
+let higher_syntax (g : Syntax.grammar) : higher_syntax = {
+  s_types  = (
+    let import_type (p,t) = (parameter p, ocamltype (Positions.value t)) in
+    List.map import_type g.Syntax.p_types;
+  );
+  s_tokens = import_bindings token g.Syntax.p_tokens;
+  s_rules  = import_bindings higher_rule g.Syntax.p_rules;
+}
+
 let encode () : grammar =
   {
     g_basename     = Settings.base;
@@ -175,6 +278,12 @@ let encode () : grammar =
     g_entry_points = Lr1.fold_entry entry_point [];
     g_attributes   = attributes Analysis.attributes;
     g_parameters   = List.map raw_content Front.grammar.parameters;
+    g_start_symbols = StringSet.elements Front.grammar.start_symbols;
+    g_on_error_reduce =
+      List.map (fun (sym, lvl) -> (sym, production_level lvl))
+        (StringMap.bindings Front.grammar.on_error_reduce);
+    g_before_expansion = higher_syntax Front.grammar_before_expansion;
+    g_before_inlining = basic_syntax Front.grammar_before_inlining;
   }
 
 let write oc t =

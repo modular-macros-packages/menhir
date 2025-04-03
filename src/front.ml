@@ -99,6 +99,9 @@ let sorts =
 let () =
   CheckPreExpansion.check grammar
 
+let grammar_before_expansion =
+  grammar
+
 (* ------------------------------------------------------------------------- *)
 
 (* Expand away all applications of parameterized nonterminal symbols, so as
@@ -206,6 +209,9 @@ let grammar =
 
 (* If [--no-inline] was specified on the command line, skip the
    inlining of non terminal definitions marked with %inline. *)
+
+let grammar_before_inlining =
+  grammar
 
 let grammar =
   if Settings.inline then begin

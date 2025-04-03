@@ -23,11 +23,12 @@ type input_file
 
 val new_input_file: string -> unit
 
-(* [get_input_file()] indicates which input file is currently being read.
-   [get_input_file_name()] is the name of this file. *)
+(* [get_input_file()] indicates which input file is currently being read. *)
 
 val get_input_file: unit -> input_file
-val get_input_file_name: unit -> string
+
+(**[get_file_name] extracts a file name out of an input file. *)
+val get_file_name : input_file -> string
 
 (* This fictitious "built-in" input file is used as the origin of the start
    productions. This technical detail is probably irrelevant entirely. *)

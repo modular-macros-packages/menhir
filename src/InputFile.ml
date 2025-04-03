@@ -66,8 +66,9 @@ let get_input_file () : input_file =
   assert (!current_input_file != dummy_input_file);
   !current_input_file
 
-let get_input_file_name () : string =
-  (get_input_file()).input_file_name
+let get_file_name input =
+  assert (input != dummy_input_file);
+  input.input_file_name
 
 (* ---------------------------------------------------------------------------- *)
 
