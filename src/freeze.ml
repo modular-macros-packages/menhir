@@ -57,3 +57,10 @@ let () =
 let () =
   if Settings.cmly then
     Cmly_write.write (Settings.base ^ ".cmly")
+
+(* If no code generation was requested (i.e., no back-end was selected)
+   then exit at this point. *)
+
+let () =
+  if Settings.backend = `NoBackend then
+    exit 0

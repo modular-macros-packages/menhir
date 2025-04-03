@@ -16,6 +16,7 @@ val backend: [
   | `CoqBackend
   | `CodeBackend
   | `TableBackend
+  | `NoBackend
 ]
 
 (** The file name extension that is expected for sources files. *)
@@ -252,6 +253,10 @@ val echo_errors_concrete: string option
 (** This flag causes Menhir to produce a [.cmly] file, which contains a
    binary-format description of the grammar and automaton. *)
 val cmly: bool
+
+(** If [cmly_with_errors] is set, generate a [.cmly] file when fatal grammatical
+    errors were found. *)
+val cmly_on_error : bool
 
 (** This name is used in --coq mode. It appears in the generated Coq file,
    and indicates under what name (or path) the Coq library MenhirLib is

@@ -337,6 +337,9 @@ let set_echo_errors_concrete filename =
 let cmly =
   ref false
 
+let cmly_on_error =
+  ref false
+
 let coq_lib_path =
   ref (Some "MenhirLib")
 
@@ -405,6 +408,7 @@ let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
+  "--cmly-on-error", Arg.Set cmly_on_error, " Write a .cmly file when a grammar error is found";
   "--code", Arg.Unit (set_backend `CodeBackend), " Use the code back-end (default)";
   "--code-ancient", Arg.Unit use_ancient_code_backend, " (no longer supported)";
   "--comment", Arg.Set comment, " Include comments in the generated code";
@@ -442,6 +446,7 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
+  "--no-code-generation", Arg.Unit (set_backend `NoBackend), " Do not produce any code";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
@@ -545,6 +550,7 @@ let backend =
       | `CoqBackend
       | `CodeBackend
       | `TableBackend
+      | `NoBackend
         as backend ->
           backend
 
@@ -554,7 +560,8 @@ let extension =
       ".vy"
   | `ReferenceInterpreter
   | `CodeBackend
-  | `TableBackend ->
+  | `TableBackend
+  | `NoBackend ->
       ".mly"
 
 let print_backend backend =
@@ -567,6 +574,8 @@ let print_backend backend =
       "Coq back-end"
   | `TableBackend ->
       "table back-end"
+  | `NoBackend ->
+      "no back-end"
 
 let print_strategy strategy =
   match strategy with
@@ -587,12 +596,12 @@ let strategy =
       `Simplified
   | (`Unspecified | `Legacy), (`ReferenceInterpreter | `TableBackend) ->
       (* The reference interpreter and the table back-end support both
-         strategies; legacy is the default, for backward
-         compatibility. *)
+         strategies; legacy is the default, for backward compatibility. *)
       `Legacy
-  | _, `CoqBackend ->
+  | _, `CoqBackend
+  | _, `NoBackend ->
       (* The Coq back-end does not care. *)
-      `Legacy
+      `Simplified
   | (`Legacy as strategy), `CodeBackend ->
       error "Error: the %s does not allow --strategy %s.\n"
         (print_backend backend)
@@ -841,6 +850,9 @@ let echo_errors_concrete =
 let cmly =
   !cmly
 
+let cmly_on_error =
+  !cmly_on_error
+
 let coq_lib_path =
   !coq_lib_path
 
@@ -893,7 +905,8 @@ let () =
   match backend with
   | `ReferenceInterpreter
   | `TableBackend
-  | `CoqBackend ->
+  | `CoqBackend
+  | `NoBackend ->
       represent_everything()
   | `CodeBackend ->
       ()

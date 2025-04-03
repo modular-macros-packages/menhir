@@ -50,6 +50,9 @@ let () =
       let module B = CodeBackend.Run () in
       write B.program;
       Interface.write Front.grammar ()
+  | `NoBackend ->
+      (* If no back-end was selected then we must have exited earlier. *)
+      assert false
 
 let () =
   Time.tick "Printing"
