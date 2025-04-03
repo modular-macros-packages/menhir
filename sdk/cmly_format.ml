@@ -17,8 +17,8 @@
    They should not be used anywhere else. *)
 
 (**All entities (terminal symbols, nonterminal symbols, and so on) are
-   represented as integers. These integers serve as indices into arrays. This
-   enables simple and efficient hashing, comparison, indexing, etc. *)
+   represented as integers. These integers serve as indices into arrays.
+   This enables simple and efficient hashing, comparison, indexing, etc. *)
 
 type terminal    = int
 type nonterminal = int
@@ -92,11 +92,51 @@ type lr0_state_def = {
   lr0_items: (production * int) list;
 }
 
+(**Detailed information on a state of the LR(1) automaton. *)
 type lr1_state_def = {
+
   lr1_lr0: lr0;
+  (**The LR(0) state that underlies this state. *)
+
   lr1_transitions: (symbol * lr1) list;
+  (**The outgoing transitions of this state. Each outgoing transition
+     isrepresented as a pair of a label (a symbol) and a target state.
+
+     The fields [lr1_transitions] and [lr1_reductions] describe the
+     deterministic automaton that is obtained after conflict resolution.
+     Therefore, for each terminal symbol [t], there is at most one
+     transition or reduction action. *)
+
   lr1_reductions: (terminal * production) list;
+  (**The reduction actions at this state. Each reduction action is
+     represented as a pair of a terminal symbol and a production.
+
+     The fields [lr1_transitions] and [lr1_reductions] describe the
+     deterministic automaton that is obtained after conflict resolution.
+     Therefore, for each terminal symbol [t], there is at most one
+     transition or reduction action. *)
+
+  lr1_conflicting_transitions: (terminal * lr1 * bool) list;
+  (**The outgoing transitions that have been removed by conflict resolution.
+     The Boolean component is true if the conflict was silently resolved by
+     obeying the precedence declarations; it is false if the conflict was
+     accidental and gave rise to a warning. *)
+
+  lr1_conflicting_reductions: (terminal * production list * bool) list;
+  (**The reduction actions that have been removed by conflict resolution.
+     The Boolean component is true if the conflict was silently resolved by
+     obeying the precedence declarations; it is false if the conflict was
+     accidental and gave rise to a warning. *)
+
+  lr1_extra_reductions: (terminal * production) list;
+  (**The reduction actions that have been added to obey [%on_error_reduce]
+     directives. These reduction actions already appear in [lr1_reductions]. *)
+
   lr1_default_reduction: production option;
+  (**This field is set to [Some prod] if this state reduces production [prod]
+     as a default reduction. Regardless of the value of this field, the above
+     fields are populated normally. *)
+
 }
 
 type grammar = {

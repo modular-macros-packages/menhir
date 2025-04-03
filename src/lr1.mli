@@ -257,7 +257,7 @@ val default_conflict_resolution: unit -> unit
    this state may have outgoing shift transitions: thus, we are forcing
    one interpretation of the past, among several possible interpretations. *)
 
-val extra_reductions: unit -> unit
+val insert_extra_reductions: unit -> unit
 
 (* ------------------------------------------------------------------------- *)
 (* Information about which productions are reduced and where. *)
@@ -267,3 +267,33 @@ val extra_reductions: unit -> unit
    default conflict resolution has taken place. *)
 
 val production_where: Production.index -> NodeSet.t
+
+(* ------------------------------------------------------------------------- *)
+
+(**The following functions expose the changes imposed on the LR(1) automaton
+   by {!default_conflict_resolution} and {!insert_extra_reductions}. This
+   information is written (upon request) to the [.cmly] file. *)
+
+(**[get_conflicting_transitions s] returns the transitions that have been
+   removed by conflict resolution and whose source state is [s]. Each such
+   transition is represented as a triple [t, target, silent], where [t] is the
+   label of this transition (a terminal symbol) and [target] is its target
+   state. The Boolean flag [silent] is true if the conflict was silently
+   resolved by obeying precedence declarations; it is false if the conflict
+   was accidental and gave rise to a warning. *)
+val get_conflicting_transitions: node -> (Terminal.t * node * bool) list
+
+(**[get_conflicting_reductions s] returns the reduction actions, at state [s],
+   that have been removed by conflict resolution. A group of such actions is
+   represented as a triple [t, prods, silent], where [t] is a terminal symbol
+   and [prods] is a list of distinct productions. The Boolean flag [silent] is
+   true if the conflict was silently resolved by obeying precedence
+   declarations; it is false if the conflict was accidental and gave rise to a
+   warning. *)
+val get_conflicting_reductions: node -> (Terminal.t * Production.index list * bool) list
+
+(**[get_extra_reductions s] returns the reduction actions, at state [s], that
+   have been inserted as a result of [%on_error_reduce] declarations. A group
+   of such actions is represented as a pair [t, prods] where [t] is a terminal
+   symbol and [prods] is a list of distinct productions. *)
+val get_extra_reductions: node -> (Terminal.t * Production.index) list

@@ -11,6 +11,9 @@
 open Attribute
 open BasicSyntax
 open Grammar
+let n2i = Nonterminal.n2i
+let t2i = Terminal.t2i
+let p2i = Production.p2i
 open Cmly_format
 
 let raw_content stretch =
@@ -78,14 +81,14 @@ let nonterminal (nt : Nonterminal.t) : nonterminal_def =
     n_type = if is_start then None else ocamltype (Nonterminal.ocamltype nt);
     n_positions = if is_start then [] else ranges (Nonterminal.positions nt);
     n_nullable = Analysis.nullable nt;
-    n_first = List.map Terminal.t2i (TerminalSet.elements (Analysis.first nt));
+    n_first = List.map t2i (TerminalSet.elements (Analysis.first nt));
     n_attributes = if is_start then [] else attributes (Nonterminal.attributes nt);
   }
 
 let symbol (sym : Symbol.t) : symbol =
   match sym with
-  | Symbol.N n -> N (Nonterminal.n2i n)
-  | Symbol.T t -> T (Terminal.t2i t)
+  | Symbol.N n -> N (n2i n)
+  | Symbol.T t -> T (t2i t)
 
 let action (a : Action.t) : action =
   {
@@ -96,7 +99,7 @@ let action (a : Action.t) : action =
 let rhs (prod : Production.index) : producer_def array =
   match Production.classify prod with
   | Some n ->
-      [| (N (Nonterminal.n2i n), "", []) |]
+      [| (N (n2i n), "", []) |]
   | None ->
       Array.mapi (fun i sym ->
         let id = (Production.identifiers prod).(i) in
@@ -107,7 +110,7 @@ let rhs (prod : Production.index) : producer_def array =
 let production (prod : Production.index) : production_def =
   {
     p_kind = if Production.is_start prod then `START else `REGULAR;
-    p_lhs = Nonterminal.n2i (Production.nt prod);
+    p_lhs = n2i (Production.nt prod);
     p_rhs = rhs prod;
     p_positions = ranges (Production.positions prod);
     p_action = if Production.is_start prod then None
@@ -117,7 +120,7 @@ let production (prod : Production.index) : production_def =
 
 let item (i : Item.t) : production * int =
   let p, i = Item.export i in
-  (Production.p2i p, i)
+  (p2i p, i)
 
 let itemset (is : Item.Set.t) : (production * int) list =
   List.map item (Item.Set.elements is)
@@ -137,17 +140,27 @@ let lr1_state (node : Lr1.node) : lr1_state_def =
     lr1_transitions =
       List.map transition (SymbolMap.bindings (Lr1.transitions node));
     lr1_reductions = (
-      let add t ps rs = (Terminal.t2i t, Production.p2i (List.hd ps)) :: rs in
+      let add t ps rs = (t2i t, p2i (List.hd ps)) :: rs in
       TerminalMap.fold_rev add (Lr1.reductions node) []
     );
     lr1_default_reduction =
-      Option.map
-        (fun (p, _ts) -> Production.p2i p)
-        (Default.has_default_reduction node);
+      Option.map (fun (p, _ts) -> p2i p) (Default.has_default_reduction node);
+    lr1_conflicting_transitions = (
+      let prepare (t, node, silent) = (t2i t, Lr1.number node, silent) in
+      List.map prepare (Lr1.get_conflicting_transitions node);
+    );
+    lr1_conflicting_reductions = (
+      let prepare (t, prods, silent) = (t2i t, List.map p2i prods, silent) in
+      List.map prepare (Lr1.get_conflicting_reductions node);
+    );
+    lr1_extra_reductions = (
+      let prepare (t, prod) = (t2i t, p2i prod) in
+      List.map prepare (Lr1.get_extra_reductions node);
+    );
   }
 
 let entry_point prod node nt _typ accu : (nonterminal * production * lr1) list =
-  (Nonterminal.n2i nt, Production.p2i prod, Lr1.number node) :: accu
+  (n2i nt, p2i prod, Lr1.number node) :: accu
 
 let encode () : grammar =
   {

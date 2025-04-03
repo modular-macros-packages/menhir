@@ -559,7 +559,7 @@ let () =
    user. This must be done after conflicts have been resolved. *)
 
 let () =
-  Lr1.extra_reductions();
+  Lr1.insert_extra_reductions();
   Time.tick "Adding extra reductions"
 
 (* ------------------------------------------------------------------------ *)

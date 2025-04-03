@@ -125,6 +125,20 @@ let predecessors : node list array =
 let reductions : Lr0.reductions array =
   Array.make Raw.n TerminalMap.empty (* dummy *)
 
+(* Record which actions are removed or added to the LR(1) automaton. *)
+
+(* Transitions removed during conflict resolution. *)
+let conflicting_transitions : (Terminal.t * Raw.node * bool) list array =
+  Array.make Raw.n []
+
+(* Reduction actions removed during conflict resolution. *)
+let conflicting_reductions : (Terminal.t * Production.index list * bool) list array =
+  Array.make Raw.n []
+
+(* Reduction actions added because of [%on_error_reduce] directives. *)
+let extra_reductions : (Terminal.t * Production.index) list array =
+  Array.make Raw.n []
+
 (* Tokens for which there are several possible actions in the raw LR(1)
    automaton are known as conflict tokens. This array is populated during the
    traversal. *)
@@ -235,6 +249,8 @@ let discover (raw_node : Raw.node) =
             (* Suppress the reduce action. *)
 
             incr silently_solved;
+            conflicting_reductions.(i) <-
+              (tok, prods, true) :: conflicting_reductions.(i);
             reductions
 
         | Precedence.ChooseReduce ->
@@ -245,7 +261,11 @@ let discover (raw_node : Raw.node) =
                nodes are then ignored (as they should be). *)
 
             incr silently_solved;
-            transitions.(i) <- SymbolMap.remove (Symbol.T tok) transitions.(i);
+            let key = Symbol.T tok in
+            let target = SymbolMap.find key transitions.(i) in
+            transitions.(i) <- SymbolMap.remove key transitions.(i);
+            conflicting_transitions.(i) <-
+              (tok, target, true) :: conflicting_transitions.(i);
             TerminalMap.add tok prods reductions
 
         | Precedence.ChooseNeither ->
@@ -253,7 +273,13 @@ let discover (raw_node : Raw.node) =
             (* Suppress both the reduce action and the shift transition. *)
 
             incr silently_solved;
-            transitions.(i) <- SymbolMap.remove (Symbol.T tok) transitions.(i);
+            let key = Symbol.T tok in
+            let target = SymbolMap.find key transitions.(i) in
+            conflicting_transitions.(i) <-
+              (tok, target, true) :: conflicting_transitions.(i);
+            conflicting_reductions.(i) <-
+              (tok, prods, true) :: conflicting_reductions.(i);
+            transitions.(i) <- SymbolMap.remove key transitions.(i);
             forbid_default_reduction.(i) <- true;
             reductions
 
@@ -878,6 +904,8 @@ let default_conflict_resolution () =
              Resolve in favor of shifting by suppressing all
              reductions. *)
           shift_reduce := List.length prods + !shift_reduce;
+          conflicting_reductions.(node) <-
+            (tok, prods, false) :: conflicting_reductions.(node);
           reductions
         with Not_found ->
           (* There is no transition at this symbol. Check
@@ -890,10 +918,14 @@ let default_conflict_resolution () =
           | prod :: ((_ :: _) as prods) ->
               (* We have a reduce/reduce conflict. Resolve, if
                  possible, in favor of a single reduction.
-                 This reduction must be preferrable to each
+                 This reduction must be preferable to each
                  of the others. *)
               reduce_reduce := List.length prods + !reduce_reduce;
-              TerminalMap.add tok [ best prod prods ] reductions
+              let best = best prod prods in
+              let others = List.filter ((<>) best) (prod :: prods) in
+              conflicting_reductions.(node) <-
+                (tok, others, false) :: conflicting_reductions.(node);
+              TerminalMap.add tok [ best ] reductions
 
       ) (reductions node) TerminalMap.empty
     )
@@ -927,9 +959,11 @@ let default_conflict_resolution () =
     if Lr0.has_eos_conflict transitions reductions then begin
 
       (* Suppress the reduce action at [#]. *)
-      let _, reductions =
+      let prods, reductions =
         TerminalMap.lookup_and_remove Terminal.sharp reductions in
       set_reductions node reductions;
+      conflicting_reductions.(node) <-
+        (Terminal.sharp, prods, false) :: conflicting_reductions.(node);
 
       (* Mark this end-of-stream conflict as resolved. *)
       _has_eos_conflict.(raw node) <- None;
@@ -1023,11 +1057,12 @@ let extra_reductions_in_node node =
       Terminal.iter_real (fun tok ->
         if not (TerminalSet.mem tok acceptable) then begin
           set_reductions node (TerminalMap.add tok [ prod ] (reductions node));
+          extra_reductions.(node) <- (tok, prod) :: extra_reductions.(node);
           Lazy.force triggered
         end
       )
 
-let extra_reductions () =
+let insert_extra_reductions () =
   (* Examine every node. *)
   iter (fun node ->
     (* Just like a default reduction, an extra reduction should be forbidden
@@ -1100,3 +1135,17 @@ let nt_of_entry s =
     assert false
   with Found nt ->
     nt
+
+(* Expose the changes made to the LR(1) automaton. *)
+
+let transport_transition (t, target, silent) =
+  (t, transport target, silent)
+
+let get_conflicting_transitions node =
+  List.map transport_transition conflicting_transitions.(node)
+
+let get_conflicting_reductions node =
+  conflicting_reductions.(node)
+
+let get_extra_reductions node =
+  extra_reductions.(node)
