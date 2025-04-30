@@ -85,7 +85,7 @@ let rec remove_nonempty q =
   end
   else begin
     q.cardinal <- q.cardinal - 1;
-    Some (MyStack.pop xs)
+    MyStack.pop xs
     (* Note: [MyStack.pop] does not shrink the physical array underlying the
        stack. This is good, because we are likely to push new elements into
        this stack. *)
@@ -95,12 +95,10 @@ let remove q =
   if q.cardinal = 0 then
     None
   else
-    remove_nonempty q
+    Some (remove_nonempty q)
 
 let rec repeat q f =
-  match remove q with
-  | None ->
-      ()
-  | Some x ->
-      f x;
-      repeat q f
+  if q.cardinal > 0 then
+    let x = remove_nonempty q in
+    f x;
+    repeat q f
