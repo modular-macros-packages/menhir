@@ -97,8 +97,8 @@ let remove q =
   else
     Some (remove_nonempty q)
 
-let rec repeat q f =
-  if q.cardinal > 0 then
+let repeat q f =
+  while q.cardinal > 0 do
     let x = remove_nonempty q in
-    f x;
-    repeat q f
+    f x
+  done
