@@ -20,10 +20,10 @@
 
 ## Build System
 
-* Some flags (`--explain`, `--dump`, `--dump-resolved`, etc.) cause Menhir
-  to produce extra files, but it is not clear whether `dune` is aware of
-  this. In my experience, these extra files cannot (or not reliably?)
-  be found in `_build`.
+* Some flags (`--explain`, `--dump`, `--dump-resolved`, `--cmly`, etc.) cause
+  Menhir to produce extra files, but it is not clear whether `dune` is aware
+  of this. In my experience, these extra files cannot (or not reliably?) be
+  found in `_build`.
 
 ## New Code Back-End
 
@@ -253,6 +253,10 @@
   of type inference.)
 
 ## Documentation
+
+* HTML rendering bugs: the `~` character does not show.
+  Some figures are wrong, etc.
+  See email by Antonin Décimo (22/04/2025).
 
 * Document the `.messages` workflow by publishing a tutorial (perhaps a blog
   post). Add build system support (examples of `dune` rules). Try to make
