@@ -25,6 +25,11 @@
   of this. In my experience, these extra files cannot (or not reliably?) be
   found in `_build`.
 
+* When Menir processes `.messages` files, it logs debug information to
+  `stderr`, e.g. "Read 9 sample input sentences and 9 error messages."
+  Make this optional by introducing a new flag, `--log-messages`.
+  (Suggested by John Jackson.)
+
 ## New Code Back-End
 
 * Document the various optimisation levels.
