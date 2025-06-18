@@ -104,6 +104,8 @@
       (Issue #6.)
     * Can the type `terminal` in the inspection API
       be related with the type `terminal` in the `.cmly` API?
+      More generally, the inspection API and the `.cmly` API
+      are not really meant to be used together; should they be?
 
 * The inspection API does not allow determining the current state in the
   special case where the stack is empty (which implies that we are in an
