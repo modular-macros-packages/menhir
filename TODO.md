@@ -99,6 +99,11 @@
       defined as `exists 'a. ('a terminal * 'a)`.
       The functions `T.token2terminal` and `T.token2value` offer one direction,
       from `token` to `xtoken`. The other direction would have to be generated.
+    * Or expose just `T.token2terminal` at type `token -> int`.
+    * Expose the function `print_token` that is generated in `--trace` mode?
+      (Issue #6.)
+    * Can the type `terminal` in the inspection API
+      be related with the type `terminal` in the `.cmly` API?
 
 * The inspection API does not allow determining the current state in the
   special case where the stack is empty (which implies that we are in an
@@ -176,9 +181,7 @@
 
 * Allow `--trace` mode to use some printing function other than `fprintf
   stderr`. That would allow the programmer to decide at runtime whether
-  a trace should be printed, for instance. Also, give users access to
-  the function `print_token` that is generated in `--trace` mode?
-  (Issue #6.)
+  a trace should be printed, for instance.
 
 * Preserve the directory name in the `#` directives that we emit.
   (Not sure if this is necessary.)
