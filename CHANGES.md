@@ -232,9 +232,9 @@
   `Error` to carry an integer parameter: `exception Error of int`. When the
   parser detects a syntax error, the number of the current state is reported
   in this way. This allows the caller to select a suitable syntax error
-  message, along the lines described in
-  [Section 11](http://cambium.inria.fr/~fpottier/menhir/manual.html#sec68)
-  of the manual. This command line switch is currently supported by the code
+  message, along the lines described in the manual
+  (see *Error handling: the new way*)
+  This command line switch is currently supported by the code
   back-end only.
 
 * The `$syntaxerror` keyword is no longer supported.
