@@ -10,8 +10,6 @@
 
 open MenhirLib
 
-module BitSet = SparseBitSet
-
 type cell = int * int
 
 type sparse_row = cell list
@@ -62,26 +60,26 @@ struct
       (cols : int)
     :
       (* Maps a cell to all rows having this cell *)
-      (cell -> BitSet.t) *
+      (cell -> SparseBitSet.t) *
       (* Maps a column to all rows defined in this column *)
-      BitSet.t array
+      SparseBitSet.t array
     =
     let compatibility = Hashtbl.create 7 in
-    let defined = Array.make cols BitSet.empty in
+    let defined = Array.make cols SparseBitSet.empty in
 
     (* Register cells for each row *)
     for row_index = Array.length rows - 1 downto 0 do
       let register_cell (col_index, _ as cell) =
         (* Remember the row is defined on column [col_index] *)
         defined.(col_index) <-
-          BitSet.add row_index defined.(col_index);
+          SparseBitSet.add row_index defined.(col_index);
         (* Remember the row has a specific cell *)
         match Hashtbl.find_opt compatibility cell with
         | Some compatible_rows ->
-          compatible_rows := BitSet.add row_index !compatible_rows
+          compatible_rows := SparseBitSet.add row_index !compatible_rows
         | None ->
           Hashtbl.add compatibility cell
-            (ref (BitSet.singleton row_index))
+            (ref (SparseBitSet.singleton row_index))
       in
       List.iter register_cell rows.(row_index).cells
     done;
@@ -207,7 +205,7 @@ end = struct
   type row =
     (* Offset of first element, and a sparse set of all elements where the first
        is at index [0]. *)
-    int * BitSet.t
+    int * SparseBitSet.t
 
   let import = function
     | [] -> (0, SparseBitSet.empty)
@@ -225,9 +223,9 @@ end = struct
   type table = AtomicBitSet.t array ref
 
   let rec fit_cells table oaddr oshift cells =
-    match BitSet.View.view cells with
-    | BitSet.View.N -> oshift
-    | BitSet.View.C (base, mask, cells') ->
+    match SparseBitSet.View.view cells with
+    | SparseBitSet.View.N -> oshift
+    | SparseBitSet.View.C (base, mask, cells') ->
       let addr = oaddr + base / AtomicBitSet.bound in
       let len = Array.length table in
       if addr >= len then
@@ -263,9 +261,9 @@ end = struct
       table'
 
   let rec write_cells table oaddr oshift cells =
-    match BitSet.View.view cells with
-    | BitSet.View.N -> table
-    | BitSet.View.C (base, mask, cells') ->
+    match SparseBitSet.View.view cells with
+    | SparseBitSet.View.N -> table
+    | SparseBitSet.View.C (base, mask, cells') ->
       let addr = oaddr + base / AtomicBitSet.bound in
       let table = grow_table table (addr + 1) in
       let mask0, mask1 = AtomicBitSet.shift mask oshift in
