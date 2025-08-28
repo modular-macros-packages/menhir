@@ -470,13 +470,7 @@ let marshal2 name m n (matrix : int list list) =
         n
         matrix
     else
-      MenhirLib.RowDisplacement.compress
-        (=)
-        (fun x -> x = hole)
-        hole
-        m
-        n
-        matrix
+      FastDisplacement.compress ~hole matrix
   in
   Error.logC 1 (fun f ->
     fprintf f
