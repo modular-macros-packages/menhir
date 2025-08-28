@@ -34,8 +34,10 @@ val compress:
   'a array array ->
   'a table
 
-(* In order to avoid storing negative displacements, the least significant bit
-   as the sign bit. This is implemented by [encode_displacement]. *)
+(* To make the displacement table compressible by [PackedIntArray], only
+   positive integers are stored and the least significant bit is used as
+   a sign bit.
+   This encoding is implemented by [encode_displacement]. *)
 val encode_displacement : int -> displacement
 
 (* [get ct i j] returns the value found at indices [i] and [j] in the
