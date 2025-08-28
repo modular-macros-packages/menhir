@@ -14,9 +14,10 @@
 (* A compressed table is represented as a pair of arrays. The
    displacement array is an array of offsets into the data array. *)
 
-type 'a table =
-    int array * (* displacement *)
-     'a array   (* data *)
+type displacement = int
+
+type 'a table = displacement array * (* displacement *)
+                          'a array   (* data *)
 
 (* [compress equal insignificant dummy m n t] turns the two-dimensional table
    [t] into a compressed table. The parameter [equal] is equality of data
@@ -32,6 +33,10 @@ val compress:
   int -> int ->
   'a array array ->
   'a table
+
+(* In order to avoid storing negative displacements, the least significant bit
+   as the sign bit. This is implemented by [encode_displacement]. *)
+val encode_displacement : int -> displacement
 
 (* [get ct i j] returns the value found at indices [i] and [j] in the
    compressed table [ct]. This function call is permitted only if the

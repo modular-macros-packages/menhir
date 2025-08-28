@@ -19,9 +19,10 @@
 (* A compressed table is represented as a pair of arrays. The
    displacement array is an array of offsets into the data array. *)
 
-type 'a table =
-    int array * (* displacement *)
-     'a array   (* data *)
+type displacement = int
+
+type 'a table = displacement array * (* displacement *)
+                          'a array   (* data *)
 
 (* In a natural version of this algorithm, displacements would be greater
    than (or equal to) [-n]. However, in the particular setting of Menhir,
@@ -30,14 +31,14 @@ type 'a table =
    careful not to produce negative displacements. *)
 
 (* In order to avoid producing negative displacements, we simply use the
-   least significant bit as the sign bit. This is implemented by [encode]
-   and [decode] below. *)
+   least significant bit as the sign bit.
+   This is implemented by [encode_displacement] and [decode] below. *)
 
 (* One could also think, say, of adding [n] to every displacement, so as
    to ensure that all displacements are nonnegative. This would work, but
    would require [n] to be published, for use by the decoder. *)
 
-let encode (displacement : int) : int =
+let encode_displacement (displacement : int) : int =
   if displacement >= 0 then
     displacement lsl 1
   else
@@ -222,7 +223,7 @@ let compress
   Array.iter (fun (i, _, row) ->
     let k = fit row in (* if [row] has leading insignificant elements, then [k] can be negative *)
     write k row;
-    displacement.(i) <- encode k
+    displacement.(i) <- encode_displacement k
   ) rows;
 
   (* Return the compressed tables. *)
