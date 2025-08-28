@@ -388,6 +388,9 @@ let stacklang_test =
 let specialize_token =
   ref false
 
+let pack_classic =
+  ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -453,6 +456,7 @@ let options = Arg.align [
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
+  "--pack-classic", Arg.Set pack_classic, " (undocumented)";
   "--unparsing", Arg.Set unparsing, " Generate the unparsing API";
   "--random-seed", Arg.Int Random.init, "<seed> Set the random seed";
   "--random-self-init", Arg.Unit Random.self_init, " Pick a random seed in a system-dependent way";
@@ -920,3 +924,6 @@ let stacklang_test =
 
 let specialize_token =
   !specialize_token
+
+let pack_classic =
+  !pack_classic

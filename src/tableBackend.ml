@@ -461,13 +461,22 @@ let marshal2 name m n (matrix : int list list) =
     Array.of_list (List.map Array.of_list matrix)
   in
   let (displacement : int array), (data : int array) =
-    MenhirLib.RowDisplacement.compress
-      (=)
-      (fun x -> x = hole)
-      hole
-      m
-      n
-      matrix
+    if Settings.pack_classic then
+      MenhirLib.RowDisplacement.compress
+        (=)
+        (fun x -> x = hole)
+        hole
+        m
+        n
+        matrix
+    else
+      MenhirLib.RowDisplacement.compress
+        (=)
+        (fun x -> x = hole)
+        hole
+        m
+        n
+        matrix
   in
   Error.logC 1 (fun f ->
     fprintf f

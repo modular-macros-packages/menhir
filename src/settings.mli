@@ -304,3 +304,8 @@ val stacklang_test: bool
    every token is case-analyzed exactly once, immediately after it has been
    read from the lexer. *)
 val specialize_token: bool
+
+(**The undocumented flag [--pack-classic] causes the TableBacked to use the
+   RowDisplacement implementation of table packing which is significantly
+   slower but can sometimes compress the tables better. *)
+val pack_classic : bool
