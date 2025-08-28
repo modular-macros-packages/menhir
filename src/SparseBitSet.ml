@@ -321,3 +321,73 @@ let rec extract_shared_prefix = function
   | (l, r) -> N, (l, r)
 
 let extract_shared_prefix l r = extract_shared_prefix (l, r)
+
+let rec diff s1 s2 =
+  match s1, s2 with
+  | N, _ | _, N -> s1
+  | C (addr1, ss1, qs1), C (addr2, ss2, qs2) ->
+    if addr1 < addr2 then (
+      let qs1' = diff qs1 s2 in
+      if qs1' == qs1 then
+        s1
+      else
+        C (addr1, ss1, qs1')
+    )
+    else if addr1 > addr2 then
+      diff s1 qs2
+    else
+      let ss = AtomicBitSet.diff ss1 ss2 in
+      if AtomicBitSet.is_empty ss then
+        diff qs1 qs2
+      else
+        let qs1' = diff qs1 qs2 in
+        if AtomicBitSet.equal ss ss1 && qs1' == qs1 then
+          s1
+        else
+          C (addr1, ss, qs1')
+
+let take_after elt s =
+  let offset = elt mod A.bound in
+  let base = elt - offset in
+  let rec loop = function
+    | N -> N
+    | C (base', ss, qs) as s ->
+      if base < base' then
+        (* Stop now. *)
+        s
+      else if base = base' then
+        (* Found appropriate cell, split bit field. *)
+        let ss' = AtomicBitSet.take_after offset ss in
+        if AtomicBitSet.is_empty ss' then
+          qs
+        else if AtomicBitSet.equal ss ss' then
+          s
+        else
+          C (base', ss', qs)
+      else
+        (* Not there yet, continue. *)
+        loop qs
+  in
+  loop s
+
+exception Found of element
+
+let find_first_opt f qs =
+  try
+    let rec loop = function
+    | N -> None
+    | C (base, set, qs) ->
+      AtomicBitSet.iter_delta base
+        (fun elt -> if f elt then raise (Found elt))
+        set;
+      loop qs
+    in
+    loop qs
+  with Found elt -> Some elt
+
+module View = struct
+  type view = t =
+    | N
+    | C of int * AtomicBitSet.t * t
+  let view x = x
+end

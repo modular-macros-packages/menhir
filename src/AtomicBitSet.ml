@@ -198,6 +198,17 @@ let minimum s =
 let choose =
   minimum
 
+let maximum s =
+  if s = 0 then
+    raise Not_found
+  else
+    let result = ref 0 in
+    for i = 0 to bound - 1 do
+      if s land (1 lsl i) <> 0 then
+        result := i;
+    done;
+    !result
+
 let compare : t -> t -> int =
   compare (* this is [Generic.compare] *)
 
@@ -259,3 +270,23 @@ let extract_shared_prefix ss1 ss2 =
     let r1 = ss1 land rest_mask in
     let r2 = ss2 land rest_mask in
     (common, (r1, r2))
+
+let diff s1 s2 = s1 land lnot s2
+
+(* [take_after x set] is the subset { y ∈ s | x < y } *)
+let take_after elt s =
+  (* A mask with only [elt] set *)
+  let bit = bit elt in
+  (* A mask with elements less than [elt] set *)
+  let mask = bit lor (bit - 1) in
+  diff s mask
+
+(* [shift set delta] shifts the elements of s by [delta < bound].
+   The result is returned as pair of sets [(l, r)]:
+     [l = { x + delta | x ∈ set, x + delta < bound }]
+   and
+     [r = { x + delta - bound | x ∈ set, x + delta >= bound }]
+*)
+let shift s x =
+  assert (x < bound);
+  (s lsl x, s lsr (bound - x))
