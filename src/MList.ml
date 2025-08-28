@@ -156,3 +156,37 @@ let extract (p : 'a -> bool) (xs : 'a list) : 'a option * 'a list =
       None, xs
   | Some (x, xs) ->
       Some x, xs
+
+(* [merge_uniq cmp l1 l2] merge two lists of increasing elements into a single
+   list without duplicates. *)
+let rec merge_uniq cmp l1 l2 =
+  match l1, l2 with
+  | [], l2 -> l2
+  | l1, [] -> l1
+  | h1 :: t1, h2 :: t2 ->
+    let c = cmp h1 h2 in
+    if c = 0 then
+      merge_uniq cmp l1 t2
+    else if c < 0 then
+      h1 :: merge_uniq cmp t1 l2
+    else
+      h2 :: merge_uniq cmp l1 t2
+
+(** [reduce_list f l] fold [f], a binary operation, over [l], until it is
+    reduced to a single element.
+
+    The reduction is in a balanced fashion to avoid degenerate cases:
+    [reduce_list f [a; b; c; d]] is [Some (f (f a b) (f c d))].
+
+    Returns [None] if an empty list is provided.*)
+
+let rec reduce_round f = function
+  | x :: y :: rest ->
+    f x y :: reduce_round f rest
+  | xys -> xys
+
+let rec reduce_list f xs =
+  match reduce_round f xs with
+  | [] -> None
+  | [x] -> Some x
+  | xs' -> reduce_list f xs'

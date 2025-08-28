@@ -74,3 +74,16 @@ val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
    true. It returns a pair of this element (if it exists) and a list of the
    remaining elements. *)
 val extract: ('a -> bool) -> 'a list -> 'a option * 'a list
+
+(** [merge_uniq cmp l1 l2] merge two lists of increasing elements into a single
+    list without duplicates. *)
+val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
+
+(** [reduce_list f l] fold [f], a binary operation, over [l], until it is
+    reduced to a single element.
+
+    The reduction is in a balanced fashion to avoid degenerate cases:
+    [reduce_list f [a; b; c; d]] is [Some (f (f a b) (f c d))].
+
+    Returns [None] if an empty list is provided.*)
+val reduce_list : ('a -> 'a -> 'a) -> 'a list -> 'a option
