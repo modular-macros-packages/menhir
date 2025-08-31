@@ -198,16 +198,33 @@ let minimum s =
 let choose =
   minimum
 
+(* [fill_down s] fills a bit set with 1's, starting at the most significant
+   set bit. In other words, it replaces all 0's with 1's, except for the
+   leading zeros. *)
+let[@inline] fill_down s =
+  let s = s lor (s lsr 1) in
+  let s = s lor (s lsr 2) in
+  let s = s lor (s lsr 4) in
+  let s = s lor (s lsr 8) in
+  let s = s lor (s lsr 16) in
+  let s = s lor (s lsr 32) in (* needed only on 64-bit machines *)
+  s
+
 let maximum s =
   if s = 0 then
     raise Not_found
+  else if mem (bound - 1) s then
+    bound - 1
   else
-    let result = ref 0 in
-    for i = 0 to bound - 1 do
-      if s land (1 lsl i) <> 0 then
-        result := i;
-    done;
-    !result
+    (* We compute the maximum element of the set [s] as follows. First, we
+       compute [fill_down s], whose bit pattern is a nonempty sequence of 0's
+       followed with a nonempty sequence of 1's. Then, we negate this pattern:
+       we obtain a nonempty sequence of 1's followed with a nonempty sequence
+       of 0's. We use [minimum] to obtain the minimum element of this set, and
+       subtract 1. *)
+    (* This approach may seem complex, but allows us to rely on [minimum],
+       which (hopefully) we have implemented in an efficient way. *)
+    minimum (lnot (fill_down s)) - 1
 
 let compare : t -> t -> int =
   compare (* this is [Generic.compare] *)
