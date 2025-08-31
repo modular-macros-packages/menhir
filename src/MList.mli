@@ -79,11 +79,9 @@ val extract : ('a -> bool) -> 'a list -> 'a option * 'a list
     elements) and produces a sorted list (without duplicate elements). *)
 val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
 
-(** [reduce_list f l] fold [f], a binary operation, over [l], until it is
-    reduced to a single element.
+(** [reduce f l] folds an associative binary operation [f] over the list
+    [xs] until the list is reduced to at most one element.
 
-    The reduction is in a balanced fashion to avoid degenerate cases:
-    [reduce_list f [a; b; c; d]] is [Some (f (f a b) (f c d))].
-
-    Returns [None] if an empty list is provided.*)
-val reduce_list : ('a -> 'a -> 'a) -> 'a list -> 'a option
+    The reduction is performed in a balanced fashion.
+    For example, [reduce f [a; b; c; d]] is [Some (f (f a b) (f c d))]. *)
+val reduce : ('a -> 'a -> 'a) -> 'a list -> 'a option

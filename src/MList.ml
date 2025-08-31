@@ -172,21 +172,23 @@ let[@tail_mod_cons] rec merge_uniq cmp l1 l2 =
       else
         h2 :: merge_uniq cmp l1 t2
 
-(** [reduce_list f l] fold [f], a binary operation, over [l], until it is
-    reduced to a single element.
+(* [reduce_round] divides the length of the list by two. *)
 
-    The reduction is in a balanced fashion to avoid degenerate cases:
-    [reduce_list f [a; b; c; d]] is [Some (f (f a b) (f c d))].
+let[@tail_mod_cons] rec reduce_round f xys =
+  match xys with
+  | x :: y :: xys ->
+      f x y :: reduce_round f xys
+  | xys ->
+      xys
 
-    Returns [None] if an empty list is provided.*)
+(* [reduce] iterates [reduce_round] until the size of the list
+   becomes zero or one. The number of iterations is logarithmic. *)
 
-let rec reduce_round f = function
-  | x :: y :: rest ->
-    f x y :: reduce_round f rest
-  | xys -> xys
-
-let rec reduce_list f xs =
+let rec reduce f xs =
   match reduce_round f xs with
-  | [] -> None
-  | [x] -> Some x
-  | xs' -> reduce_list f xs'
+  | [] ->
+      None
+  | [x] ->
+      Some x
+  | xs ->
+      reduce f xs

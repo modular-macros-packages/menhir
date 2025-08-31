@@ -365,7 +365,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
       in
 
       let cells, rank =
-        match MList.reduce_list (MList.merge_uniq compare_cell) cells with
+        match MList.reduce (MList.merge_uniq compare_cell) cells with
         | None -> ([], 0)
         | Some cells -> (cells, List.length cells)
       in
