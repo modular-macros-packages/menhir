@@ -37,7 +37,8 @@ val above: element -> t -> t
     than [x]. *)
 
 val shift : t -> int -> t * t
-(** [shift set delta] shifts the elements of [set] by [delta < bound].
+(**[shift s delta] shifts the elements of the set [s] up by [delta],
+   where [0 <= delta <= bound] must hold.
    The result is returned as pair of sets [(l, r)]:
      [l = { x + delta | x ∈ set, x + delta < bound }]
    and

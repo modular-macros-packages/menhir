@@ -293,7 +293,7 @@ let[@inline] diff s1 s2 =
 
 (* [above x s] is the subset { y ∈ s | x < y }. *)
 
-let above x s =
+let[@inline] above x s =
   (* A mask with only [x] set. *)
   let mask = bit x in
   (* A mask with all elements less than or equal to [x] set. *)
@@ -301,12 +301,6 @@ let above x s =
   (* Remove these elements. *)
   diff s mask
 
-(* [shift set delta] shifts the elements of s by [delta < bound].
-   The result is returned as pair of sets [(l, r)]:
-     [l = { x + delta | x ∈ set, x + delta < bound }]
-   and
-     [r = { x + delta - bound | x ∈ set, x + delta >= bound }]
-*)
-let shift s x =
-  assert (x < bound);
-  (s lsl x, s lsr (bound - x))
+let[@inline] shift s delta =
+  assert (0 <= delta && delta <= bound);
+  (s lsl delta, s lsr (bound - delta))
