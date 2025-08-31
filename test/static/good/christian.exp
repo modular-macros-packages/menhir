@@ -1492,8 +1492,8 @@ File "christian.mly", line 1306, characters 2-15:
 Warning: production unrestrictedCharacterStringValue -> sequenceValue is never reduced.
 Warning: in total, 28 productions are never reduced.
 444 out of 857 states have a default reduction.
-The action table is 97698 entries; 4271 non-zero; 3487 compressed.
-The action table occupies roughly 7072 bytes.
+The action table is 97698 entries; 4271 non-zero; 3494 compressed.
+The action table occupies roughly 7088 bytes.
 The goto table is 245102 entries; 5249 non-zero; 14435 compressed.
 The goto table occupies roughly 28968 bytes.
 The error table occupies roughly 12248 bytes.

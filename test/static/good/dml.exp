@@ -432,8 +432,8 @@ Warning: this %prec declaration is never useful.
 Warning: 15 states have shift/reduce conflicts.
 Warning: 24 shift/reduce conflicts were arbitrarily resolved.
 152 out of 336 states have a default reduction.
-The action table is 24864 entries; 1632 non-zero; 1829 compressed.
-The action table occupies roughly 3752 bytes.
+The action table is 24864 entries; 1632 non-zero; 1825 compressed.
+The action table occupies roughly 3744 bytes.
 The goto table is 22848 entries; 563 non-zero; 853 compressed.
 The goto table occupies roughly 1800 bytes.
 The error table occupies roughly 3144 bytes.

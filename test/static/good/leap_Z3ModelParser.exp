@@ -136,8 +136,8 @@ File "leap_Z3ModelParser.mly", line 203, characters 3-3:
 Warning: production generic_model -> is never reduced.
 Warning: in total, 1 production is never reduced.
 47 out of 114 states have a default reduction.
-The action table is 3306 entries; 171 non-zero; 196 compressed.
-The action table occupies roughly 376 bytes.
+The action table is 3306 entries; 171 non-zero; 192 compressed.
+The action table occupies roughly 368 bytes.
 The goto table is 2850 entries; 101 non-zero; 224 compressed.
 The goto table occupies roughly 320 bytes.
 The error table occupies roughly 448 bytes.

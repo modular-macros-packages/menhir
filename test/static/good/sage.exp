@@ -192,9 +192,9 @@ File "sage.mly", line 417, characters 0-4:
 Warning: symbol term is never accepted.
 Warning: in total, 1 production is never reduced.
 31 out of 183 states have a default reduction.
-The action table is 14640 entries; 2342 non-zero; 2513 compressed.
-The action table occupies roughly 5120 bytes.
-The goto table is 4026 entries; 342 non-zero; 421 compressed.
+The action table is 14640 entries; 2342 non-zero; 2519 compressed.
+The action table occupies roughly 5128 bytes.
+The goto table is 4026 entries; 342 non-zero; 419 compressed.
 The goto table occupies roughly 696 bytes.
 The error table occupies roughly 1864 bytes.
 The default_reduction table occupies roughly 216 bytes.

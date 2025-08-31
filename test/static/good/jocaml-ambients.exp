@@ -34,8 +34,8 @@ Built an LR(1) automaton with 49 states.
 File "jocaml-ambients.mly", line 22, characters 0-9:
 Warning: the precedence level assigned to DOLLAR is never useful.
 18 out of 49 states have a default reduction.
-The action table is 931 entries; 141 non-zero; 98 compressed.
-The action table occupies roughly 200 bytes.
+The action table is 931 entries; 141 non-zero; 96 compressed.
+The action table occupies roughly 192 bytes.
 The goto table is 294 entries; 38 non-zero; 90 compressed.
 The goto table occupies roughly 192 bytes.
 The error table occupies roughly 152 bytes.

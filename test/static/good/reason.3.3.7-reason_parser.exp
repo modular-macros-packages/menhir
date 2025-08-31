@@ -1487,10 +1487,10 @@ Built an LR(1) automaton with 4272 states.
 Extra reductions on error were added in 180 states.
 Priority played a role in 0 of these states.
 1614 out of 4272 states have a default reduction.
-The action table is 538272 entries; 47262 non-zero; 47703 compressed.
-The action table occupies roughly 104040 bytes.
-The goto table is 1285872 entries; 12991 non-zero; 24485 compressed.
-The goto table occupies roughly 49064 bytes.
+The action table is 538272 entries; 47262 non-zero; 49108 compressed.
+The action table occupies roughly 106848 bytes.
+The goto table is 1285872 entries; 12991 non-zero; 23975 compressed.
+The goto table occupies roughly 48040 bytes.
 The error table occupies roughly 67320 bytes.
 The default_reduction table occupies roughly 8576 bytes.
 The lhs table occupies roughly 2480 bytes.

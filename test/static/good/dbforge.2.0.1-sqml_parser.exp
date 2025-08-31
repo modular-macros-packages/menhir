@@ -537,8 +537,8 @@ File "dbforge.2.0.1-sqml_parser.mly", line 75, characters 0-5:
 Warning: the precedence level assigned to COMPARISON is never useful.
 Warning: 134 end-of-stream conflicts were arbitrarily resolved.
 217 out of 498 states have a default reduction.
-The action table is 54780 entries; 1618 non-zero; 2071 compressed.
-The action table occupies roughly 4240 bytes.
+The action table is 54780 entries; 1618 non-zero; 2110 compressed.
+The action table occupies roughly 4312 bytes.
 The goto table is 54780 entries; 638 non-zero; 1249 compressed.
 The goto table occupies roughly 2592 bytes.
 The error table occupies roughly 6880 bytes.

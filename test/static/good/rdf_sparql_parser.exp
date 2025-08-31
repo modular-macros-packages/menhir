@@ -806,10 +806,10 @@ Warning: 11 states have reduce/reduce conflicts.
 Warning: 65 shift/reduce conflicts were arbitrarily resolved.
 Warning: 356 reduce/reduce conflicts were arbitrarily resolved.
 305 out of 720 states have a default reduction.
-The action table is 101520 entries; 12866 non-zero; 6554 compressed.
-The action table occupies roughly 13200 bytes.
-The goto table is 115200 entries; 3244 non-zero; 8964 compressed.
-The goto table occupies roughly 18016 bytes.
+The action table is 101520 entries; 12866 non-zero; 6734 compressed.
+The action table occupies roughly 13560 bytes.
+The goto table is 115200 entries; 3244 non-zero; 8740 compressed.
+The goto table occupies roughly 17568 bytes.
 The error table occupies roughly 12728 bytes.
 The default_reduction table occupies roughly 1472 bytes.
 The lhs table occupies roughly 408 bytes.

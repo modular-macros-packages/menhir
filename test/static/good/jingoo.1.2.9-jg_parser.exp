@@ -84,9 +84,9 @@ File "jingoo.1.2.9-jg_parser.mly", line 159, characters 2-12:
 Warning: production else_part -> ELSE error is never reduced.
 Warning: in total, 1 production is never reduced.
 88 out of 293 states have a default reduction.
-The action table is 19045 entries; 4252 non-zero; 4812 compressed.
-The action table occupies roughly 9720 bytes.
-The goto table is 4395 entries; 246 non-zero; 535 compressed.
+The action table is 19045 entries; 4252 non-zero; 4820 compressed.
+The action table occupies roughly 9736 bytes.
+The goto table is 4395 entries; 246 non-zero; 534 compressed.
 The goto table occupies roughly 1168 bytes.
 The error table occupies roughly 2416 bytes.
 The default_reduction table occupies roughly 328 bytes.

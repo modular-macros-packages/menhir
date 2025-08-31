@@ -416,8 +416,8 @@ Warning: the precedence level assigned to DOUBLE_DOT is never useful.
 File "simnml.mly", line 133, characters 0-6:
 Warning: the precedence level assigned to EQ is never useful.
 144 out of 508 states have a default reduction.
-The action table is 46736 entries; 5076 non-zero; 5459 compressed.
-The action table occupies roughly 11008 bytes.
+The action table is 46736 entries; 5076 non-zero; 5485 compressed.
+The action table occupies roughly 11064 bytes.
 The goto table is 39624 entries; 417 non-zero; 919 compressed.
 The goto table occupies roughly 1928 bytes.
 The error table occupies roughly 5880 bytes.

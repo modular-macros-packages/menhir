@@ -249,8 +249,8 @@ Built an LR(1) automaton with 253 states.
 File "cubicle.1.1.2-parser.mly", line 107, characters 0-9:
 Warning: the precedence level assigned to IN is never useful.
 87 out of 253 states have a default reduction.
-The action table is 14674 entries; 995 non-zero; 940 compressed.
-The action table occupies roughly 1976 bytes.
+The action table is 14674 entries; 995 non-zero; 995 compressed.
+The action table occupies roughly 2088 bytes.
 The goto table is 12397 entries; 603 non-zero; 1186 compressed.
 The goto table occupies roughly 1536 bytes.
 The error table occupies roughly 1872 bytes.

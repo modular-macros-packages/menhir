@@ -150,8 +150,8 @@ Built an LR(1) automaton with 315 states.
 File "zenon.mly", line 97, characters 0-9:
 Warning: the precedence level assigned to EQUAL is never useful.
 92 out of 315 states have a default reduction.
-The action table is 17955 entries; 1003 non-zero; 997 compressed.
-The action table occupies roughly 2088 bytes.
+The action table is 17955 entries; 1003 non-zero; 1005 compressed.
+The action table occupies roughly 2104 bytes.
 The goto table is 9765 entries; 196 non-zero; 511 compressed.
 The goto table occupies roughly 1112 bytes.
 The error table occupies roughly 2280 bytes.

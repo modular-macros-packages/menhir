@@ -802,10 +802,10 @@ File "jparser.mly", line 273, characters 0-5:
 Warning: the precedence level assigned to XOR is never useful.
 Warning: 2 end-of-stream conflicts were arbitrarily resolved.
 326 out of 873 states have a default reduction.
-The action table is 134442 entries; 4915 non-zero; 3946 compressed.
-The action table occupies roughly 7992 bytes.
-The goto table is 132696 entries; 1295 non-zero; 2244 compressed.
-The goto table occupies roughly 4584 bytes.
+The action table is 134442 entries; 4915 non-zero; 3964 compressed.
+The action table occupies roughly 8024 bytes.
+The goto table is 132696 entries; 1295 non-zero; 2278 compressed.
+The goto table occupies roughly 4656 bytes.
 The error table occupies roughly 16840 bytes.
 The default_reduction table occupies roughly 1784 bytes.
 The lhs table occupies roughly 448 bytes.

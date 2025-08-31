@@ -528,10 +528,10 @@ File "albatross.mly", line 216, characters 14-14:
 Warning: production use_block_opt -> is never reduced.
 Warning: in total, 3 productions are never reduced.
 166 out of 428 states have a default reduction.
-The action table is 40232 entries; 4261 non-zero; 4932 compressed.
-The action table occupies roughly 9952 bytes.
-The goto table is 39804 entries; 782 non-zero; 1461 compressed.
-The goto table occupies roughly 3016 bytes.
+The action table is 40232 entries; 4261 non-zero; 4967 compressed.
+The action table occupies roughly 10024 bytes.
+The goto table is 39804 entries; 782 non-zero; 1429 compressed.
+The goto table occupies roughly 2952 bytes.
 The error table occupies roughly 5064 bytes.
 The default_reduction table occupies roughly 464 bytes.
 The lhs table occupies roughly 288 bytes.

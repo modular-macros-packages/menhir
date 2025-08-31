@@ -298,8 +298,8 @@ Warning: the precedence level assigned to W is never useful.
 File "confluence-psl.mly", line 175, characters 0-5:
 Warning: the precedence level assigned to Within is never useful.
 65 out of 296 states have a default reduction.
-The action table is 35816 entries; 3555 non-zero; 2661 compressed.
-The action table occupies roughly 5416 bytes.
+The action table is 35816 entries; 3555 non-zero; 2613 compressed.
+The action table occupies roughly 5320 bytes.
 The goto table is 6512 entries; 204 non-zero; 494 compressed.
 The goto table occupies roughly 1080 bytes.
 The error table occupies roughly 4512 bytes.

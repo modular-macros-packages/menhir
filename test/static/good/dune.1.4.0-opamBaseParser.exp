@@ -53,7 +53,7 @@ Warning: in total, 1 production is never reduced.
 16 out of 46 states have a default reduction.
 The action table is 828 entries; 182 non-zero; 142 compressed.
 The action table occupies roughly 232 bytes.
-The goto table is 368 entries; 34 non-zero; 84 compressed.
+The goto table is 368 entries; 34 non-zero; 81 compressed.
 The goto table occupies roughly 176 bytes.
 The error table occupies roughly 136 bytes.
 The default_reduction table occupies roughly 80 bytes.

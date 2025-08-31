@@ -115,10 +115,10 @@ Warning: the precedence level assigned to PROMELA_TRUE is never useful.
 Warning: 4 states have shift/reduce conflicts.
 Warning: 4 shift/reduce conflicts were arbitrarily resolved.
 43 out of 98 states have a default reduction.
-The action table is 3920 entries; 306 non-zero; 379 compressed.
-The action table occupies roughly 856 bytes.
-The goto table is 1666 entries; 138 non-zero; 238 compressed.
-The goto table occupies roughly 432 bytes.
+The action table is 3920 entries; 306 non-zero; 378 compressed.
+The action table occupies roughly 848 bytes.
+The goto table is 1666 entries; 138 non-zero; 233 compressed.
+The goto table occupies roughly 328 bytes.
 The error table occupies roughly 528 bytes.
 The default_reduction table occupies roughly 136 bytes.
 The lhs table occupies roughly 88 bytes.

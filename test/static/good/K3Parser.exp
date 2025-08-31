@@ -326,8 +326,8 @@ File "K3Parser.mly", line 763, characters 6-31:
 Warning: production named_expr_list -> anno_expr GETS check_expr is never reduced.
 Warning: in total, 5 productions are never reduced.
 445 out of 1441 states have a default reduction.
-The action table is 174361 entries; 24347 non-zero; 26445 compressed.
-The action table occupies roughly 52984 bytes.
+The action table is 174361 entries; 24347 non-zero; 28291 compressed.
+The action table occupies roughly 56680 bytes.
 The goto table is 82137 entries; 5099 non-zero; 12821 compressed.
 The goto table occupies roughly 25736 bytes.
 The error table occupies roughly 21832 bytes.

@@ -172,10 +172,10 @@ File "octavius.1.2.0-octParser.mly", line 210, characters 2-11:
 Warning: production main -> text tags is never reduced.
 Warning: in total, 3 productions are never reduced.
 204 out of 355 states have a default reduction.
-The action table is 18460 entries; 2777 non-zero; 2127 compressed.
-The action table occupies roughly 4344 bytes.
-The goto table is 11360 entries; 570 non-zero; 1080 compressed.
-The goto table occupies roughly 2256 bytes.
+The action table is 18460 entries; 2777 non-zero; 2174 compressed.
+The action table occupies roughly 4440 bytes.
+The goto table is 11360 entries; 570 non-zero; 1062 compressed.
+The goto table occupies roughly 2216 bytes.
 The error table occupies roughly 2344 bytes.
 The default_reduction table occupies roughly 392 bytes.
 The lhs table occupies roughly 176 bytes.

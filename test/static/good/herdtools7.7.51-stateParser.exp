@@ -157,9 +157,9 @@ File "herdtools7.7.51-stateParser.mly", line 151, characters 1-1:
 Warning: production locs -> is never reduced.
 Warning: in total, 1 production is never reduced.
 73 out of 192 states have a default reduction.
-The action table is 7296 entries; 583 non-zero; 505 compressed.
+The action table is 7296 entries; 583 non-zero; 508 compressed.
 The action table occupies roughly 1104 bytes.
-The goto table is 6912 entries; 225 non-zero; 437 compressed.
+The goto table is 6912 entries; 225 non-zero; 438 compressed.
 The goto table occupies roughly 720 bytes.
 The error table occupies roughly 944 bytes.
 The default_reduction table occupies roughly 224 bytes.

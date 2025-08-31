@@ -441,10 +441,10 @@ Warning: this %prec declaration is never useful.
 File "mcc-naml.mly", line 646, characters 52-65:
 Warning: this %prec declaration is never useful.
 141 out of 507 states have a default reduction.
-The action table is 40053 entries; 4898 non-zero; 4948 compressed.
-The action table occupies roughly 9992 bytes.
-The goto table is 31941 entries; 959 non-zero; 1677 compressed.
-The goto table occupies roughly 3448 bytes.
+The action table is 40053 entries; 4898 non-zero; 4977 compressed.
+The action table occupies roughly 10048 bytes.
+The goto table is 31941 entries; 959 non-zero; 1697 compressed.
+The goto table occupies roughly 3488 bytes.
 The error table occupies roughly 5040 bytes.
 The default_reduction table occupies roughly 544 bytes.
 The lhs table occupies roughly 264 bytes.

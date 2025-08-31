@@ -115,8 +115,8 @@ Built an LR(1) automaton with 147 states.
 File "zyvaall.mly", line 19, characters 0-5:
 Warning: the precedence level assigned to EQUALEQUAL is never useful.
 36 out of 147 states have a default reduction.
-The action table is 6762 entries; 682 non-zero; 738 compressed.
-The action table occupies roughly 1568 bytes.
+The action table is 6762 entries; 682 non-zero; 712 compressed.
+The action table occupies roughly 1520 bytes.
 The goto table is 3087 entries; 134 non-zero; 281 compressed.
 The goto table occupies roughly 520 bytes.
 The error table occupies roughly 880 bytes.

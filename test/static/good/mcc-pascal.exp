@@ -488,10 +488,10 @@ Warning: the precedence level assigned to TokStart is never useful.
 Warning: 2 states have shift/reduce conflicts.
 Warning: 2 shift/reduce conflicts were arbitrarily resolved.
 188 out of 420 states have a default reduction.
-The action table is 33180 entries; 1548 non-zero; 1322 compressed.
-The action table occupies roughly 2736 bytes.
-The goto table is 37380 entries; 1058 non-zero; 2148 compressed.
-The goto table occupies roughly 4384 bytes.
+The action table is 33180 entries; 1548 non-zero; 1354 compressed.
+The action table occupies roughly 2800 bytes.
+The goto table is 37380 entries; 1058 non-zero; 2183 compressed.
+The goto table occupies roughly 4456 bytes.
 The error table occupies roughly 4184 bytes.
 The default_reduction table occupies roughly 456 bytes.
 The lhs table occupies roughly 232 bytes.

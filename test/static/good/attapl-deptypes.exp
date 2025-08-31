@@ -135,10 +135,10 @@ Built an LR(1) automaton with 111 states.
 File "attapl-deptypes.mly", line 84, characters 0-6:
 Warning: the precedence level assigned to COMMA is never useful.
 38 out of 111 states have a default reduction.
-The action table is 5661 entries; 255 non-zero; 226 compressed.
-The action table occupies roughly 432 bytes.
-The goto table is 1776 entries; 136 non-zero; 280 compressed.
-The goto table occupies roughly 488 bytes.
+The action table is 5661 entries; 255 non-zero; 217 compressed.
+The action table occupies roughly 416 bytes.
+The goto table is 1776 entries; 136 non-zero; 278 compressed.
+The goto table occupies roughly 480 bytes.
 The error table occupies roughly 744 bytes.
 The default_reduction table occupies roughly 144 bytes.
 The lhs table occupies roughly 56 bytes.

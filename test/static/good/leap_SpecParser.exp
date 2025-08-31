@@ -79,8 +79,8 @@ File "leap_SpecParser.mly", line 89, characters 0-8:
 Warning: production specification -> one_spec is never reduced.
 Warning: in total, 2 productions are never reduced.
 22 out of 67 states have a default reduction.
-The action table is 1608 entries; 259 non-zero; 263 compressed.
-The action table occupies roughly 424 bytes.
+The action table is 1608 entries; 259 non-zero; 259 compressed.
+The action table occupies roughly 416 bytes.
 The goto table is 804 entries; 59 non-zero; 126 compressed.
 The goto table occupies roughly 224 bytes.
 The error table occupies roughly 240 bytes.

@@ -772,10 +772,10 @@ File "mcc-pasqual.mly", line 1213, characters 83-98:
 Warning: this %prec declaration is never useful.
 Warning: 106 end-of-stream conflicts were arbitrarily resolved.
 331 out of 624 states have a default reduction.
-The action table is 69888 entries; 3240 non-zero; 2376 compressed.
-The action table occupies roughly 4840 bytes.
-The goto table is 87360 entries; 1933 non-zero; 4334 compressed.
-The goto table occupies roughly 8760 bytes.
+The action table is 69888 entries; 3240 non-zero; 2352 compressed.
+The action table occupies roughly 4792 bytes.
+The goto table is 87360 entries; 1933 non-zero; 4358 compressed.
+The goto table occupies roughly 8808 bytes.
 The error table occupies roughly 8768 bytes.
 The default_reduction table occupies roughly 1280 bytes.
 The lhs table occupies roughly 400 bytes.

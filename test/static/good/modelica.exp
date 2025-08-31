@@ -629,10 +629,10 @@ Warning: this %prec declaration is never useful.
 File "modelica.mly", line 326, characters 122-130:
 Warning: this %prec declaration is never useful.
 229 out of 612 states have a default reduction.
-The action table is 61200 entries; 5235 non-zero; 4373 compressed.
-The action table occupies roughly 8840 bytes.
-The goto table is 75276 entries; 956 non-zero; 1565 compressed.
-The goto table occupies roughly 3224 bytes.
+The action table is 61200 entries; 5235 non-zero; 4404 compressed.
+The action table occupies roughly 8896 bytes.
+The goto table is 75276 entries; 956 non-zero; 1562 compressed.
+The goto table occupies roughly 3216 bytes.
 The error table occupies roughly 7688 bytes.
 The default_reduction table occupies roughly 1256 bytes.
 The lhs table occupies roughly 344 bytes.

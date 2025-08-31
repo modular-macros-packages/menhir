@@ -76,8 +76,8 @@ Warning: the precedence level assigned to LTL_STAR is never useful.
 Warning: 5 states have shift/reduce conflicts.
 Warning: 7 shift/reduce conflicts were arbitrarily resolved.
 30 out of 93 states have a default reduction.
-The action table is 3441 entries; 538 non-zero; 509 compressed.
-The action table occupies roughly 1112 bytes.
+The action table is 3441 entries; 538 non-zero; 524 compressed.
+The action table occupies roughly 1144 bytes.
 The goto table is 930 entries; 176 non-zero; 269 compressed.
 The goto table occupies roughly 456 bytes.
 The error table occupies roughly 464 bytes.

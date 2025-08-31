@@ -266,8 +266,8 @@ File "<standard.mly>", line 214, characters 16-16:
 Warning: production list(term) -> is never reduced.
 Warning: in total, 1 production is never reduced.
 155 out of 375 states have a default reduction.
-The action table is 34875 entries; 719 non-zero; 659 compressed.
-The action table occupies roughly 1408 bytes.
+The action table is 34875 entries; 719 non-zero; 654 compressed.
+The action table occupies roughly 1400 bytes.
 The goto table is 20250 entries; 317 non-zero; 687 compressed.
 The goto table occupies roughly 1464 bytes.
 The error table occupies roughly 4392 bytes.

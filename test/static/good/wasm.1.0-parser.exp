@@ -391,7 +391,7 @@ Warning: this %prec declaration is never useful.
 File "wasm.1.0-parser.mly", line 265, characters 22-25:
 Warning: this %prec declaration is never useful.
 209 out of 533 states have a default reduction.
-The action table is 41041 entries; 1951 non-zero; 1480 compressed.
+The action table is 41041 entries; 1951 non-zero; 1481 compressed.
 The action table occupies roughly 3056 bytes.
 The goto table is 41574 entries; 616 non-zero; 1121 compressed.
 The goto table occupies roughly 2336 bytes.

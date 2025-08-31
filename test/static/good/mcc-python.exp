@@ -461,8 +461,8 @@ File "mcc-python.mly", line 1164, characters 3-18:
 Warning: production file_input -> file_input_list is never reduced.
 Warning: in total, 1 production is never reduced.
 164 out of 369 states have a default reduction.
-The action table is 29889 entries; 2428 non-zero; 2298 compressed.
-The action table occupies roughly 4696 bytes.
+The action table is 29889 entries; 2428 non-zero; 2341 compressed.
+The action table occupies roughly 4776 bytes.
 The goto table is 32472 entries; 2319 non-zero; 5140 compressed.
 The goto table occupies roughly 10376 bytes.
 The error table occupies roughly 3776 bytes.

@@ -225,10 +225,10 @@ File "leap_IGraphParser.mly", line 263, characters 4-8:
 Warning: production rule_list -> rule is never reduced.
 Warning: in total, 5 productions are never reduced.
 61 out of 160 states have a default reduction.
-The action table is 4640 entries; 213 non-zero; 309 compressed.
-The action table occupies roughly 712 bytes.
-The goto table is 7040 entries; 120 non-zero; 293 compressed.
-The goto table occupies roughly 384 bytes.
+The action table is 4640 entries; 213 non-zero; 305 compressed.
+The action table occupies roughly 704 bytes.
+The goto table is 7040 entries; 120 non-zero; 280 compressed.
+The goto table occupies roughly 368 bytes.
 The error table occupies roughly 616 bytes.
 The default_reduction table occupies roughly 192 bytes.
 The lhs table occupies roughly 120 bytes.

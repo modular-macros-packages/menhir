@@ -53,8 +53,8 @@ Warning: the precedence level assigned to FUN is never useful.
 File "cime-toplevel.mly", line 79, characters 25-30:
 Warning: this %prec declaration is never useful.
 21 out of 91 states have a default reduction.
-The action table is 3003 entries; 902 non-zero; 815 compressed.
-The action table occupies roughly 1720 bytes.
+The action table is 3003 entries; 902 non-zero; 796 compressed.
+The action table occupies roughly 1688 bytes.
 The goto table is 819 entries; 89 non-zero; 156 compressed.
 The goto table occupies roughly 256 bytes.
 The error table occupies roughly 408 bytes.

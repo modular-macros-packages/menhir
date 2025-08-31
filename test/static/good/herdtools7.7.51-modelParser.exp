@@ -241,8 +241,8 @@ Warning: this %prec declaration is never useful.
 103 out of 293 states have a default reduction.
 The action table is 20510 entries; 1857 non-zero; 1444 compressed.
 The action table occupies roughly 2984 bytes.
-The goto table is 13185 entries; 300 non-zero; 630 compressed.
-The goto table occupies roughly 1360 bytes.
+The goto table is 13185 entries; 300 non-zero; 615 compressed.
+The goto table occupies roughly 1328 bytes.
 The error table occupies roughly 2600 bytes.
 The default_reduction table occupies roughly 328 bytes.
 The lhs table occupies roughly 168 bytes.

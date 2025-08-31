@@ -83,8 +83,8 @@ Warning: the precedence level assigned to DOT is never useful.
 File "camltemplate.1.0.2-ctParser.mly", line 107, characters 0-5:
 Warning: the precedence level assigned to EQUALS is never useful.
 58 out of 153 states have a default reduction.
-The action table is 6732 entries; 1085 non-zero; 1207 compressed.
-The action table occupies roughly 2512 bytes.
+The action table is 6732 entries; 1085 non-zero; 1185 compressed.
+The action table occupies roughly 2464 bytes.
 The goto table is 2295 entries; 181 non-zero; 400 compressed.
 The goto table occupies roughly 648 bytes.
 The error table occupies roughly 880 bytes.

@@ -72,9 +72,9 @@ File "cime-terms-signature.mly", line 44, characters 2-13:
 Warning: production sorted_signature -> sorted_decl is never reduced.
 Warning: in total, 2 productions are never reduced.
 24 out of 45 states have a default reduction.
-The action table is 765 entries; 61 non-zero; 82 compressed.
+The action table is 765 entries; 61 non-zero; 81 compressed.
 The action table occupies roughly 176 bytes.
-The goto table is 630 entries; 33 non-zero; 78 compressed.
+The goto table is 630 entries; 33 non-zero; 82 compressed.
 The goto table occupies roughly 176 bytes.
 The error table occupies roughly 128 bytes.
 The default_reduction table occupies roughly 80 bytes.

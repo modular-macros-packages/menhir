@@ -577,10 +577,10 @@ File "htparser.mly", line 665, characters 4-37:
 Warning: production unary_connective -> quantifier_comb thf_logic_formula is never reduced.
 Warning: in total, 3 productions are never reduced.
 187 out of 385 states have a default reduction.
-The action table is 23870 entries; 1368 non-zero; 1017 compressed.
-The action table occupies roughly 2128 bytes.
-The goto table is 38500 entries; 926 non-zero; 1694 compressed.
-The goto table occupies roughly 3488 bytes.
+The action table is 23870 entries; 1368 non-zero; 983 compressed.
+The action table occupies roughly 2064 bytes.
+The goto table is 38500 entries; 926 non-zero; 1772 compressed.
+The goto table occupies roughly 3640 bytes.
 The error table occupies roughly 3016 bytes.
 The default_reduction table occupies roughly 424 bytes.
 The lhs table occupies roughly 264 bytes.

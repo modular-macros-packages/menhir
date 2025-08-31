@@ -418,8 +418,8 @@ File "leap_StmParser.mly", line 1331, characters 2-11:
 Warning: production procedure_list -> procedure is never reduced.
 Warning: in total, 1 production is never reduced.
 212 out of 788 states have a default reduction.
-The action table is 118988 entries; 17309 non-zero; 4874 compressed.
-The action table occupies roughly 9840 bytes.
+The action table is 118988 entries; 17309 non-zero; 4784 compressed.
+The action table occupies roughly 9656 bytes.
 The goto table is 53584 entries; 4487 non-zero; 13733 compressed.
 The goto table occupies roughly 27560 bytes.
 The error table occupies roughly 14912 bytes.

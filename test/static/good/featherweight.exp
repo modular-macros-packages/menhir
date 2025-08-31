@@ -184,7 +184,7 @@ File "featherweight.mly", line 101, characters 1-24:
 Warning: production toplevel -> classDecs COLON termDef is never reduced.
 Warning: in total, 1 production is never reduced.
 35 out of 105 states have a default reduction.
-The action table is 5145 entries; 128 non-zero; 195 compressed.
+The action table is 5145 entries; 128 non-zero; 194 compressed.
 The action table occupies roughly 384 bytes.
 The goto table is 2415 entries; 83 non-zero; 194 compressed.
 The goto table occupies roughly 296 bytes.

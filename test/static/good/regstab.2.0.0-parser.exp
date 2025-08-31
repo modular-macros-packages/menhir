@@ -108,8 +108,8 @@ Warning: this %prec declaration is never useful.
 File "regstab.2.0.0-parser.mly", line 290, characters 32-36:
 Warning: this %prec declaration is never useful.
 47 out of 130 states have a default reduction.
-The action table is 4030 entries; 359 non-zero; 475 compressed.
-The action table occupies roughly 1048 bytes.
+The action table is 4030 entries; 359 non-zero; 472 compressed.
+The action table occupies roughly 1040 bytes.
 The goto table is 1950 entries; 71 non-zero; 197 compressed.
 The goto table occupies roughly 296 bytes.
 The error table occupies roughly 536 bytes.

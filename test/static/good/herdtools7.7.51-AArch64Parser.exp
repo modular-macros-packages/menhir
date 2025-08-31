@@ -107,8 +107,8 @@ File "herdtools7.7.51-AArch64Parser.mly", line 79, characters 4-16:
 Warning: production instr_option_seq -> instr_option is never reduced.
 Warning: in total, 1 production is never reduced.
 86 out of 294 states have a default reduction.
-The action table is 18816 entries; 602 non-zero; 476 compressed.
-The action table occupies roughly 1048 bytes.
+The action table is 18816 entries; 602 non-zero; 468 compressed.
+The action table occupies roughly 1032 bytes.
 The goto table is 6174 entries; 156 non-zero; 450 compressed.
 The goto table occupies roughly 992 bytes.
 The error table occupies roughly 2384 bytes.
