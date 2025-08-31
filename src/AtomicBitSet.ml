@@ -119,16 +119,16 @@ let pop x =
 let empty =
   0
 
-let is_empty s =
+let[@inline] is_empty s =
   s = 0
 
 let singleton =
   bit
 
-let add i s =
+let[@inline] add i s =
   (bit i) lor s
 
-let remove i s =
+let[@inline] remove i s =
   (lnot (bit i)) land s
 
 let rec fold_delta delta f s accu =
@@ -163,7 +163,7 @@ let rec iter f s =
     f (tib x);
     iter f s
 
-let is_singleton s =
+let[@inline] is_singleton s =
   (* Test whether only one bit is set in [ss]. We do this by turning
      off the rightmost bit, then comparing to zero. *)
   s land (s - 1) = 0
@@ -176,16 +176,16 @@ let elements s =
   (* Note: the list is produced in decreasing order. *)
   fold (fun tl hd -> tl :: hd) s []
 
-let subset s1 s2 =
+let[@inline] subset s1 s2 =
   s1 land s2 = s1
 
-let mem i s =
+let[@inline] mem i s =
   subset (singleton i) s
 
-let union s1 s2 =
+let[@inline] union s1 s2 =
   s1 lor s2
 
-let inter s1 s2 =
+let[@inline] inter s1 s2 =
   s1 land s2
 
 let minimum s =
@@ -215,10 +215,10 @@ let compare : t -> t -> int =
 let equal : t -> t -> bool =
   (=)
 
-let disjoint s1 s2 =
+let[@inline] disjoint s1 s2 =
   is_empty (inter s1 s2)
 
-let quick_subset s1 s2 =
+let[@inline] quick_subset s1 s2 =
   inter s1 s2 <> 0
 
 (* [lsb x] keeps only the smallest set bit of [x]. E.g 0110 maps to 0010.
@@ -271,7 +271,7 @@ let extract_shared_prefix ss1 ss2 =
     let r2 = ss2 land rest_mask in
     (common, (r1, r2))
 
-let diff s1 s2 = s1 land lnot s2
+let[@inline] diff s1 s2 = s1 land lnot s2
 
 (* [take_after x set] is the subset { y ∈ s | x < y } *)
 let take_after elt s =
