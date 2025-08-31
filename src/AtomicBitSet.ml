@@ -288,14 +288,17 @@ let extract_shared_prefix ss1 ss2 =
     let r2 = ss2 land rest_mask in
     (common, (r1, r2))
 
-let[@inline] diff s1 s2 = s1 land lnot s2
+let[@inline] diff s1 s2 =
+  s1 land lnot s2
 
-(* [take_after x set] is the subset { y ∈ s | x < y } *)
-let take_after elt s =
-  (* A mask with only [elt] set *)
-  let bit = bit elt in
-  (* A mask with elements less than [elt] set *)
-  let mask = bit lor (bit - 1) in
+(* [above x s] is the subset { y ∈ s | x < y }. *)
+
+let above x s =
+  (* A mask with only [x] set. *)
+  let mask = bit x in
+  (* A mask with all elements less than or equal to [x] set. *)
+  let mask = mask lor (mask - 1) in
+  (* Remove these elements. *)
   diff s mask
 
 (* [shift set delta] shifts the elements of s by [delta < bound].

@@ -109,9 +109,9 @@ struct
          we are only interested about what happens to rows
          with greater indices *)
       let compatible_at_col =
-        SparseBitSet.take_after row_index (compatible cell)
+        SparseBitSet.above row_index (compatible cell)
       and defined_at_col =
-        SparseBitSet.take_after row_index defined.(col_index)
+        SparseBitSet.above row_index defined.(col_index)
       in
       let incompatible_at_col =
         SparseBitSet.diff defined_at_col compatible_at_col
@@ -136,8 +136,8 @@ struct
       | None -> group
       | Some next_row ->
         (* Prune irrelevant rows *)
-        incompatible := SparseBitSet.take_after next_row !incompatible;
-        let candidates = SparseBitSet.take_after next_row candidates in
+        incompatible := SparseBitSet.above next_row !incompatible;
+        let candidates = SparseBitSet.above next_row candidates in
         add_row group next_row candidates
     in
 

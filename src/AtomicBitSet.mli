@@ -24,16 +24,17 @@ val iter_delta: int -> (element -> unit) -> t -> unit
 val fold_delta: int -> (element -> 'b -> 'b) -> t -> 'b -> 'b
 
 val maximum: t -> element
-(** Return the largest element of the given set.
-    Raises [Not_found] if the set is empty. *)
+(** [maximum s] returns the largest element of the set [s].
+    If the set [s] is empty, the exception [Not_found] is raised. *)
 
 val diff: t -> t -> t
-(** Set difference: [diff s1 s2] contains the elements of [s1]
-    that are not in [s2]. *)
+(** [diff s1 s2] is the set difference of [s1] and [s2].
+    In other words, this set contains the elements of [s1]
+    that are not elements of [s2]. *)
 
-val take_after: element -> t -> t
-(** [take_after x s] contains the elements of [s] that are strictly
-    greater than [x]. *)
+val above: element -> t -> t
+(** [above x s] is the set of the elements of [s] that are greater
+    than [x]. *)
 
 val shift : t -> int -> t * t
 (** [shift set delta] shifts the elements of [set] by [delta < bound].

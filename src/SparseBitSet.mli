@@ -11,12 +11,13 @@
 include GSet.S with type element = int
 
 val diff: t -> t -> t
-(** Set difference: [diff s1 s2] contains the elements of [s1]
-    that are not in [s2]. *)
+(** [diff s1 s2] is the set difference of [s1] and [s2].
+    In other words, this set contains the elements of [s1]
+    that are not elements of [s2]. *)
 
-val take_after: element -> t -> t
-(** [take_after x s] contains the elements of [s] that are strictly
-    greater than [x]. *)
+val above: element -> t -> t
+(** [above x s] is the set of the elements of [s] that are greater
+    than [x]. *)
 
 val find_first_opt: (element -> bool) -> t -> element option
 (** [find_first f s] returns the lowest element [e] of [s] such that [f e],

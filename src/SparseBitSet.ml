@@ -346,7 +346,7 @@ let rec diff s1 s2 =
         else
           C (addr1, ss, qs1')
 
-let take_after elt s =
+let above elt s =
   let offset = elt mod A.bound in
   let base = elt - offset in
   let rec loop = function
@@ -357,7 +357,7 @@ let take_after elt s =
         s
       else if base = base' then
         (* Found appropriate cell, split bit field. *)
-        let ss' = AtomicBitSet.take_after offset ss in
+        let ss' = AtomicBitSet.above offset ss in
         if AtomicBitSet.is_empty ss' then
           qs
         else if AtomicBitSet.equal ss ss' then
