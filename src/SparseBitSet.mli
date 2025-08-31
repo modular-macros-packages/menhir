@@ -20,8 +20,8 @@ val above: element -> t -> t
     than [x]. *)
 
 val find_first_opt: (element -> bool) -> t -> element option
-(** [find_first f s] returns the lowest element [e] of [s] such that [f e],
-    or [None] if no such element exists. *)
+(** [find_first_opt f s] returns the least element [x] of [s] such that
+    [f x] is true. It returns [None] if no such element exists. *)
 
 module View : sig
   type view =

@@ -240,154 +240,158 @@ let rec disjoint s1 s2 =
         disjoint s1 qs2
 
 let rec quick_subset a1 ss1 = function
-  | N -> false
+  | N ->
+      false
   | C (a2, ss2, qs2) ->
-    if a1 = a2 then
-      AtomicBitSet.quick_subset ss1 ss2
-    else
-      (a1 > a2 && quick_subset a1 ss1 qs2)
+      if a1 = a2 then
+        A.quick_subset ss1 ss2
+      else
+        (a1 > a2 && quick_subset a1 ss1 qs2)
 
 let quick_subset s1 s2 =
   match s1 with
-  | N -> true
+  | N ->
+      true
   | C (a1, ss1, _) ->
-    (* We know that, by construction, ss1 is not empty.
-       It suffices to test s2 also has elements in common with ss1 at address
-       a1 to determine the quick_subset relation. *)
-    quick_subset a1 ss1 s2
+      (* We know that, by construction, [ss1] is not empty. It suffices to
+         test whether [s2] has elements in common with [ss1] at address [a1]. *)
+      quick_subset a1 ss1 s2
 
 let compare_minimum s1 s2 =
   match s1, s2 with
-  | N, N -> 0
-  | N, _ -> -1
-  | _, N -> 1
+  | N, N ->
+      0
+  | N, _ ->
+      -1
+  | _, N ->
+      1
   | C (addr1, ss1, _), C (addr2, ss2, _) ->
-    match Int.compare addr1 addr2 with
-    | 0 -> AtomicBitSet.compare_minimum ss1 ss2
-    | n -> n
+      match Int.compare addr1 addr2 with
+      | 0 -> A.compare_minimum ss1 ss2
+      | n -> n
 
 let sorted_union xs =
-  (* It is important to start folding from the right end of the list.
-     Since elements are sorted, by starting from the right end we only prepend
-     elements, that makes the algorithm linear in the number of items.
-     Starting from the left end would make it quadratic, revisiting the prefix
-     of a list that get longer and longer as elements are added. *)
+  (* It is important to start folding from the right end of the list. Since
+     elements are sorted, by starting from the right end, we only prepend
+     elements. This makes the algorithm linear in the number of items.
+     Starting from the left end would make it quadratic, revisiting the
+     prefix of a list that gets longer and longer as elements are added. *)
   List.fold_right union xs empty
 
 let rec extract_unique_prefix addr2 ss2 = function
-  | N -> N, N
+  | N ->
+      N, N
   | C (addr1, ss1, qs1) as self ->
     if addr1 < addr2 then
       let prefix, suffix = extract_unique_prefix addr2 ss2 qs1 in
       C (addr1, ss1, prefix), suffix
-    else if addr1 > addr2
-         || AtomicBitSet.equal ss1 ss2 then
+    else if addr1 > addr2 || A.equal ss1 ss2 then
       N, self
     else
       (* l and r have the same address, and
          l has some prefix that is not part of r (lsb l < lsb r)*)
-      let ss0, ss1 = AtomicBitSet.extract_unique_prefix ss1 ss2 in
-      if AtomicBitSet.is_empty ss0 then
+      let ss0, ss1 = A.extract_unique_prefix ss1 ss2 in
+      if A.is_empty ss0 then
         N, self
-      else if AtomicBitSet.is_empty ss1 then
+      else if A.is_empty ss1 then
         (C (addr1, ss0, N), qs1)
       else
         (C (addr1, ss0, N), C (addr1, ss1, qs1))
 
 let extract_unique_prefix l r =
   match l, r with
-  | N, _ -> N, N
-  | _, N -> invalid_arg "extract_unique_prefix: r < l"
-  | l, C (addr2, ss2, _) -> extract_unique_prefix addr2 ss2 l
+  | N, _ ->
+      N, N
+  | _, N ->
+      invalid_arg "extract_unique_prefix"
+  | l, C (addr2, ss2, _) ->
+      extract_unique_prefix addr2 ss2 l
 
-let rec extract_shared_prefix = function
+let rec extract_shared_prefix s1 s2 =
+  match s1, s2 with
   | C (addr1, ss1, qs1), C (addr2, ss2, qs2)
     when addr1 = addr2 ->
-    if AtomicBitSet.equal ss1 ss2 then
-      let common, rest = extract_shared_prefix (qs1, qs2) in
-      (C (addr1, ss1, common), rest)
-    else
-      let common, (ss1, ss2) = AtomicBitSet.extract_shared_prefix ss1 ss2 in
-      let common =
-        if AtomicBitSet.is_empty common then N else C (addr1, common, N)
-      in
-      let qs1 =
-        if AtomicBitSet.is_empty ss1 then qs1 else C (addr1, ss1, qs1)
-      in
-      let qs2 =
-        if AtomicBitSet.is_empty ss2 then qs2 else C (addr2, ss2, qs2)
-      in
-      common, (qs1, qs2)
-  | (l, r) -> N, (l, r)
-
-let extract_shared_prefix l r = extract_shared_prefix (l, r)
+      if A.equal ss1 ss2 then
+        let common, rest = extract_shared_prefix qs1 qs2 in
+        (C (addr1, ss1, common), rest)
+      else
+        let common, (ss1, ss2) = A.extract_shared_prefix ss1 ss2 in
+        let common = if A.is_empty common then N else C (addr1, common, N) in
+        let qs1 = if A.is_empty ss1 then qs1 else C (addr1, ss1, qs1) in
+        let qs2 = if A.is_empty ss2 then qs2 else C (addr2, ss2, qs2) in
+        common, (qs1, qs2)
+  | (l, r) ->
+      N, (l, r)
 
 let rec diff s1 s2 =
   match s1, s2 with
-  | N, _ | _, N -> s1
+  | N, _ | _, N ->
+      s1
   | C (addr1, ss1, qs1), C (addr2, ss2, qs2) ->
-    if addr1 < addr2 then (
-      let qs1' = diff qs1 s2 in
-      if qs1' == qs1 then
-        s1
-      else
-        C (addr1, ss1, qs1')
-    )
-    else if addr1 > addr2 then
-      diff s1 qs2
-    else
-      let ss = AtomicBitSet.diff ss1 ss2 in
-      if AtomicBitSet.is_empty ss then
-        diff qs1 qs2
-      else
-        let qs1' = diff qs1 qs2 in
-        if AtomicBitSet.equal ss ss1 && qs1' == qs1 then
+      if addr1 < addr2 then (
+        let qs1' = diff qs1 s2 in
+        if qs1' == qs1 then
           s1
         else
-          C (addr1, ss, qs1')
+          C (addr1, ss1, qs1')
+      )
+      else if addr1 > addr2 then
+        diff s1 qs2
+      else
+        let ss = A.diff ss1 ss2 in
+        if A.is_empty ss then
+          diff qs1 qs2
+        else
+          let qs1' = diff qs1 qs2 in
+          if A.equal ss ss1 && qs1' == qs1 then
+            s1
+          else
+            C (addr1, ss, qs1')
 
 let above elt s =
   let offset = elt mod A.bound in
   let base = elt - offset in
   let rec loop = function
-    | N -> N
+    | N ->
+        N
     | C (base', ss, qs) as s ->
-      if base < base' then
-        (* Stop now. *)
-        s
-      else if base = base' then
-        (* Found appropriate cell, split bit field. *)
-        let ss' = AtomicBitSet.above offset ss in
-        if AtomicBitSet.is_empty ss' then
-          qs
-        else if AtomicBitSet.equal ss ss' then
+        if base < base' then
+          (* Stop now. *)
           s
+        else if base = base' then
+          (* Found appropriate cell, split bit field. *)
+          let ss' = A.above offset ss in
+          if A.is_empty ss' then
+            qs
+          else if A.equal ss ss' then
+            s
+          else
+            C (base', ss', qs)
         else
-          C (base', ss', qs)
-      else
-        (* Not there yet, continue. *)
-        loop qs
+          (* Not there yet, continue. *)
+          loop qs
   in
   loop s
 
 exception Found of element
 
+let rec find_first f s =
+  match s with
+  | N ->
+      None
+  | C (base, ss, qs) ->
+      A.iter_delta base (fun elt -> if f elt then raise (Found elt)) ss;
+      find_first f qs
+
 let find_first_opt f qs =
   try
-    let rec loop = function
-    | N -> None
-    | C (base, set, qs) ->
-      AtomicBitSet.iter_delta base
-        (fun elt -> if f elt then raise (Found elt))
-        set;
-      loop qs
-    in
-    loop qs
-  with Found elt -> Some elt
+    find_first f qs
+  with Found elt ->
+    Some elt
 
 module View = struct
   type view = t =
     | N
-    | C of int * AtomicBitSet.t * t
+    | C of int * A.t * t
   let view x = x
 end
