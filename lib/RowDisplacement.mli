@@ -21,10 +21,10 @@ type 'a table = displacement array * (* displacement *)
 
 (* [compress equal insignificant dummy m n t] turns the two-dimensional table
    [t] into a compressed table. The parameter [equal] is equality of data
-   values. The parameter [wildcard] tells which data values are insignificant,
-   and can thus be overwritten with other values. The parameter [dummy] is
-   used to fill holes in the data array. [m] and [n] are the integer
-   dimensions of the table [t]. *)
+   values. The parameter [insignificant] determines which data values are
+   insignificant, and can thus be overwritten with other values. The parameter
+   [dummy] is used to fill holes in the data array. [m] and [n] are the
+   integer dimensions of the table [t]. *)
 
 val compress:
   ('a -> 'a -> bool) ->
