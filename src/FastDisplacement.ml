@@ -401,7 +401,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
     let store_rows offset (_rank, rows, cells) =
 
       (* Store encoded displacements *)
-      let code = RowDisplacement.encode_displacement offset in
+      let code = RowDisplacement.encode offset in
       List.iter (fun row -> displacement.(row) <- code) rows;
 
       (* Store cells *)
