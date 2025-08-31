@@ -73,10 +73,10 @@ val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
 (**[extract p xs] searches the list [xs] for an element [x] such that [p x] is
    true. It returns a pair of this element (if it exists) and a list of the
    remaining elements. *)
-val extract: ('a -> bool) -> 'a list -> 'a option * 'a list
+val extract : ('a -> bool) -> 'a list -> 'a option * 'a list
 
-(** [merge_uniq cmp l1 l2] merge two lists of increasing elements into a single
-    list without duplicates. *)
+(** [merge_uniq cmp l1 l2] merges two sorted lists (without duplicate
+    elements) and produces a sorted list (without duplicate elements). *)
 val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
 
 (** [reduce_list f l] fold [f], a binary operation, over [l], until it is
