@@ -46,7 +46,7 @@ let encode (displacement : int) : displacement =
   else
     (-displacement) lsl 1 + 1
 
-let decode (displacement : displacement) : int =
+let[@inline] decode (displacement : displacement) : int =
   if displacement land 1 = 0 then
     displacement lsr 1
   else
@@ -253,6 +253,6 @@ let get (displacement, data) i j =
 (* [getget] is a variant of [get] which only requires read access,
    via accessors, to the two components of the table. *)
 
-let getget get_displacement get_data (displacement, data) i j =
+let[@inline] getget get_displacement get_data (displacement, data) i j =
   let k = decode (get_displacement displacement i) in
   get_data data (k + j)
