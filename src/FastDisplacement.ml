@@ -149,13 +149,16 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
     let compatible cell = !(Hashtbl.find compatibility cell) in
     compatible, defined
 
+  (* During the construction of a merge plan, a row is available until it
+     becomes part of a group; then, it is no longer available. The mutable
+     array [available] keeps track of which rows are still available. *)
+
+  let available =
+    Array.map (fun _ -> true) rows
+
   (* Helper function to greedily pick a group of rows to merge. *)
 
-      (* A row can be merged only once.
-         Use [available] to pick only availabled rows and mark selected rows as
-         unavailable. *)
-
-  let build_merge_group available (current_row : int): group =
+  let build_merge_group (current_row : int): group =
     (* Accumulate rows incompatible with the current group *)
     let incompatible = ref SparseBitSet.empty in
 
@@ -206,19 +209,14 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
 
   let merge_plan : group list =
 
-    let count = Array.length rows in
-
-    (* A row is available until it becomes part of a group. *)
-    let available = Array.make count true in
-
     (* Process each row in turn. For each available row, greedily build a new
        group, which contains at least this row. Because the arrays [rows] has
        been sorted by decreasing rank, we begin with the rows that have higher
        ranks. *)
     let merge_plan = ref [] in
-    for row = 0 to count - 1 do
+    for row = 0 to Array.length rows - 1 do
       if available.(row) then
-        let group = build_merge_group available row in
+        let group = build_merge_group row in
         merge_plan := group :: !merge_plan
     done;
     !merge_plan
