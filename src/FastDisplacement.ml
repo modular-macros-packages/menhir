@@ -344,11 +344,8 @@ module Pack : sig
   type row
   val import : 'a sparse_row -> row
 
-  type table
-  val new_table : unit -> table
-  val add_row : table -> row -> int
+  val add_row : BitVector.vector -> row -> int
 
-  val length : table -> int
 end = struct
 
   (* A row is represented internally as a pair of
@@ -375,23 +372,20 @@ end = struct
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
 
-  type table =
-    A.t array ref
-
   let rec fit_cells table oaddr oshift cells =
     match S.View.view cells with
     | S.View.N -> oshift
     | S.View.C (base, mask, cells') ->
       let addr = oaddr + base / A.bound in
-      let len = Array.length table in
+      let len = BitVector.length table in
       if addr >= len then
         oshift
       else
-        let cells0 = table.(addr) in
+        let cells0 = BitVector.get table addr in
         let cells1 =
           if addr + 1 = len
           then A.empty
-          else table.(addr + 1)
+          else BitVector.get table (addr + 1)
         in
         if compatible cells0 cells1 mask oshift then
           fit_cells table oaddr oshift cells'
@@ -403,62 +397,34 @@ end = struct
           !oshift
         )
 
-  let grow_table table target =
-    let len = Array.length table in
-    if len > target then
-      table
-    else
-      let rlen = ref len in
-      while !rlen <= target do
-        rlen := !rlen * 2
-      done;
-      let table' = Array.make !rlen A.empty in
-      Array.blit table 0 table' 0 len;
-      table'
-
   let rec write_cells table oaddr oshift cells =
     match S.View.view cells with
-    | S.View.N -> table
+    | S.View.N -> ()
     | S.View.C (base, mask, cells') ->
       let addr = oaddr + base / A.bound in
-      let table = grow_table table (addr + 1) in
+      BitVector.grow table (addr + 1);
       let mask0, mask1 = A.shift mask oshift in
-      let cells0 = table.(addr) in
-      let cells1 = table.(addr + 1) in
+      let cells0 = BitVector.get table (addr + 0) in
+      let cells1 = BitVector.get table (addr + 1) in
       assert (A.disjoint cells0 mask0);
       assert (A.disjoint cells1 mask1);
-      table.(addr + 0) <- A.union cells0 mask0;
-      table.(addr + 1) <- A.union cells1 mask1;
+      BitVector.set table (addr + 0) (A.union cells0 mask0);
+      BitVector.set table (addr + 1) (A.union cells1 mask1);
       write_cells table oaddr oshift cells'
 
   let rec add_cells table oaddr oshift cells =
     let oshift' = fit_cells table oaddr oshift cells in
     if oshift' = oshift then
-      let table = write_cells table oaddr oshift cells in
-      (table, oaddr * A.bound + oshift)
+      let () = write_cells table oaddr oshift cells in
+      oaddr * A.bound + oshift
     else if oshift' < A.bound then
       add_cells table oaddr oshift' cells
     else
       add_cells table (oaddr + 1) 0 cells
 
-  let add_row rtable (index, cells) =
-    let table, offset = add_cells !rtable 0 0 cells in
-    rtable := table;
+  let add_row table (index, cells) =
+    let offset = add_cells table 0 0 cells in
     offset - index
-
-  let new_table () = ref [|A.empty|]
-
-  let length rtable =
-    let table = !rtable in
-    let last = ref (Array.length table - 1) in
-    while !last >= 0 && A.is_empty table.(!last) do
-      decr last
-    done;
-    if !last < 0 then
-      0
-    else
-      let msb = A.maximum table.(!last) in
-      !last * A.bound + msb + 1
 
 end (* Pack *)
 
@@ -543,7 +509,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
 
     (* Compute an offset for each group of source rows *)
 
-    let table = Pack.new_table () in
+    let table = BitVector.create () in
 
     let fit_merged_row (_rank, _rows, cells) =
 
@@ -556,7 +522,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
     (* Allocate and populate the final arrays *)
 
     let displacement = Array.make (Array.length t) 0 in
-    let data = Array.make (Pack.length table) dummy in
+    let data = Array.make (BitVector.width table) dummy in
 
     let store_rows offset (_rank, rows, cells) =
 
