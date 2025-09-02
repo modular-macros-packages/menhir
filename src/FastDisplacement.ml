@@ -339,7 +339,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
 
     let sparse (line : int array) : sparse_row (* index, rank, row *) =
 
-      let rec loop (j : int) (row : sparse_row) =
+      let[@tail_mod_cons] rec loop (j : int) (row : sparse_row) =
         if j < 0 then
           row
         else
@@ -401,11 +401,11 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
 
     (* Compute an offset for each group of source rows *)
 
-    let table = Packer.new_table () in
+    let table = Pack.new_table () in
 
     let fit_merged_row (_rank, _rows, cells) =
 
-      Packer.add_row table (Packer.import cells)
+      Pack.add_row table (Pack.import cells)
 
     in
 
@@ -414,7 +414,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
     (* Allocate and populate the final arrays *)
 
     let displacement = Array.make (Array.length t) 0 in
-    let data = Array.make (Packer.length table) hole in
+    let data = Array.make (Pack.length table) hole in
 
     let store_rows offset (_rank, rows, cells) =
 
