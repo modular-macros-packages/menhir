@@ -10,23 +10,35 @@
 
 open MenhirLib
 
-type cell = int * int
+(* A cell is a pair of an index and a piece of data. *)
+type cell =
+  int * int
 
-type sparse_row = cell list
+(* A sparse row is a list of cells, whose indices must be pairwise distinct.
+   A sparse row may have holes: that is, it may be that, for some index [i],
+   there is no cell of the form [(i, v)]. *)
+type sparse_row =
+  cell list
 
-(* The fast packing algorithm proceeds in two steps:
-   1. Finding mergeable rows.
-   2. Packing merged rows without allowing any new merge.
+(* This fast packing algorithm proceeds in two steps:
 
-   Two sparse rows are mergeable if the values of the cells on which they
-   overlap are equal. We say they have compatible cells.
+   1. Determine which rows can be merged;
+   2. Pack the merged rows into a one-dimensional array,
+      without allowing any new merges.
 
-   The classic [RowDisplacement] implementation does both in a single pass, but
-   this implies checking for compatibility while fitting a row in the sparse
-   table which prevents using shortcuts to speed-up the fitting tests.
+   Two sparse rows are compatible (mergeable) if the values of the cells on
+   which they overlap are equal. That is, if one row has a cell [(i, v1)]
+   and the other row has a cell [(i, v2)] then the values [v1] and [v2] must
+   be equal.
 
-   By separating both operations, [FastDisplacement] can use bitsets to
-   tests whether cells fit by group of 63 or 31. *)
+   The classic implementation in [RowDisplacement] performs both steps in a
+   single pass. This implies checking for compatibility while fitting a row
+   in the sparse table; this forbids the use of vectorised operations (i.e.,
+   operations on bit sets) to speed things up.
+
+   By separating the two steps, this algorithm enables the use of bit sets. *)
+
+(* -------------------------------------------------------------------------- *)
 
 (* The first step is to compute a merge plan, a partition of rows grouped by
    compatibility.
@@ -177,7 +189,10 @@ struct
 
     (* Step 3: Build merge plan by greedily grouping compatible vectors *)
     build_merge_plan rows compatible defined
-end
+
+end (* Merge *)
+
+(* -------------------------------------------------------------------------- *)
 
 (* The second step is a variant of the fitting loop of [RowDisplacement]
    specialized to work on bitsets:
@@ -192,7 +207,7 @@ end
    The core loop is still $O(n^2)$ ($n$ being the number of non-empty cells),
    but the merging and the packing make the $n$ smaller and the constant-factors
    much faster. *)
-module Packer : sig
+module Pack : sig
   type row
   val import : sparse_row -> row
 
@@ -303,7 +318,10 @@ end = struct
     else
       let msb = AtomicBitSet.maximum table.(!last) in
       !last * AtomicBitSet.bound + msb + 1
-end
+
+end (* Pack *)
+
+(* -------------------------------------------------------------------------- *)
 
 (* Connect the dots:
    - Take a matrix with empty cells,
