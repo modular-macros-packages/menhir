@@ -40,8 +40,8 @@ type 'a sparse_row =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The first step is to compute a merge plan, a partition of rows grouped by
-   compatibility.
+(* The first step is to compute a merge plan, that is, a partition of the
+   rows, grouped by compatibility.
 
    This is done in two passes over the rows and their cells:
    1. For each column, a set of rows defined in this column.
@@ -52,55 +52,88 @@ type 'a sparse_row =
       row (the step 1. allows compatibility to be quickly determined).
 *)
 
-module Merge :
-sig
+module Merge : sig
 
-   type group = int list (* A group is a list of row represented by their index *)
-  val merge_rows : 'a sparse_row array -> cols:int -> group list
+  (**A row is represented by its index in the array of rows that is passed
+     to [merge_rows]. *)
+  type index =
+    int
 
-end =
-struct
-  type 'a indexed_row = {
-    source_index: int; (* Position of the row in the original matrix *)
-    rank: int; (* Number of non-empty cells *)
+  (**A group is a list of row indices. *)
+   type group =
+     index list
+
+  (**[merge_rows rows cols] determines which rows in the array [rows] are
+     compatible and therefore can be merged. [cols] is the common logical
+     width of all rows. *)
+  val merge_rows : 'a sparse_row array -> int -> group list
+
+end = struct
+
+  type index =
+    int
+
+  (**A rich row, or ranked row, is a row that has been decorated with:
+
+     - the index of this row in the original array of rows;
+     - its rank, that is, the number of its nonempty cells.
+
+     We sort the array [rows] in place, which is why a row must be
+     explicitly decorated with its original index. Outside of this
+     specific field, when we use row indices, these are indices
+     into the *sorted* array [rows]. *)
+  type 'a rrow = {
+    index: int;
+    rank: int;
     cells: 'a sparse_row;
   }
 
-  (* Index compatible and defined cells *)
-  let build_mergeability_maps
-      (rows : 'a indexed_row array)
-      (cols : int)
-    :
-      (* Maps a cell to all rows having this cell *)
-      ('a cell -> SparseBitSet.t) *
-      (* Maps a column to all rows defined in this column *)
-      SparseBitSet.t array
-    =
+  (* We begin by computing two mappings, [compatible] and [defined].
+
+     The function [compatible] maps a cell to a set of all rows that
+     have this cell. (This cell must exist in some row.)
+
+     The array [defined] maps a column to the set of all rows that
+     have a cell in this column. *)
+
+  let precompute (type a) (rows : a rrow array) (cols : int)
+  :
+    (* compatible: *) (a cell -> SparseBitSet.t) *
+    (* defined:    *) SparseBitSet.t array
+  =
+
+    (* We use a hash table whose keys are cells. Therefore the type [a]
+       must support OCaml's polymorphic equality and hash functions. *)
     let compatibility = Hashtbl.create 7 in
     let defined = Array.make cols SparseBitSet.empty in
 
-    (* Register cells for each row *)
-    for row_index = Array.length rows - 1 downto 0 do
-      let register_cell (col_index, _ as cell) =
-        (* Remember the row is defined on column [col_index] *)
-        defined.(col_index) <-
-          SparseBitSet.add row_index defined.(col_index);
-        (* Remember the row has a specific cell *)
-        match Hashtbl.find_opt compatibility cell with
-        | Some compatible_rows ->
-          compatible_rows := SparseBitSet.add row_index !compatible_rows
-        | None ->
-          Hashtbl.add compatibility cell
-            (ref (SparseBitSet.singleton row_index))
-      in
-      List.iter register_cell rows.(row_index).cells
-    done;
-    let compatible cell = !(Hashtbl.find compatibility cell) in
-    (compatible, defined)
+    (* [register i cell] registers the existence of cell [cell] in row [i]. *)
+    let register i cell =
+      (* Extract the column index [j]. *)
+      let j, _ = cell in
+      (* Record that this row is defined on column [j]. *)
+      defined.(j) <- SparseBitSet.add i defined.(j);
+      (* Record that the cell [cell] appears in row [i]. *)
+      match Hashtbl.find_opt compatibility cell with
+      | Some rows ->
+          rows := SparseBitSet.add i !rows
+      | None ->
+          let rows = ref (SparseBitSet.singleton i) in
+          Hashtbl.add compatibility cell rows
+    in
 
-  (* A group is set of compatible rows (represented as a list of source
-     indices) *)
-  type group = int list
+    (* Treat each row in turn. [i] is the row's index. The array [rows]
+       has been sorted; we handle rows with smaller ranks first. Within
+       each row, treat each cell in turn. *)
+    for i = Array.length rows - 1 downto 0 do
+      List.iter (register i) rows.(i).cells
+    done;
+
+    let compatible cell = !(Hashtbl.find compatibility cell) in
+    compatible, defined
+
+  type group =
+    index list
 
   (* Helper function to greedily pick a group of rows to merge. *)
   let build_merge_group
@@ -140,7 +173,7 @@ struct
       (* Fetch row contents, update group, candidates and incompatible
          rows *)
       let row = rows.(row_index) in
-      let group = row.source_index :: group in
+      let group = row.index :: group in
       let candidates = List.fold_left (select_cell row_index) candidates row.cells in
       let candidates = SparseBitSet.diff candidates !incompatible in
       (* Find the first candidate that has not been merged yet *)
@@ -175,17 +208,23 @@ struct
 
     !merge_plan
 
-  (* Find sparse vectors that can be merged *)
-  let merge_rows vectors ~cols =
-    (* Step 1: Sort rows by size (largest first), remember original indices *)
-    let index_row source_index cells =
-      {source_index; rank = List.length cells; cells}
+  (* The main function, [merge_rows], determines which rows can be merged. *)
+
+  let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
+
+    (* Enrich each row with its index and rank. *)
+    let enrich index cells =
+      let rank = List.length cells in
+      { index; rank; cells }
     in
-    let rows = Array.mapi index_row vectors in
-    Array.sort (fun r1 r2 -> Int.compare r2.rank r1.rank) rows;
+    let rows = Array.mapi enrich rows in
+
+    (* Sort the rows by decreasing rank. *)
+    let decreasing_rank r1 r2 = Int.compare r2.rank r1.rank in
+    Array.sort decreasing_rank rows;
 
     (* Step 2: Index compatible and defined cells *)
-    let compatible, defined = build_mergeability_maps rows cols in
+    let compatible, defined = precompute rows cols in
 
     (* Step 3: Build merge plan by greedily grouping compatible vectors *)
     build_merge_plan rows compatible defined
@@ -360,7 +399,8 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
 
     (* Group mergeable rows. *)
 
-    let merge_plan = Merge.merge_rows ~cols:(Array.length t.(0)) rows in
+    let cols = Array.length t.(0) in
+    let merge_plan = Merge.merge_rows rows cols in
 
     (* Merge rows, rank them (count the number of non-empty cells), and remember
        their indices. *)
