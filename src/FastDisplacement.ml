@@ -172,28 +172,26 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
       (* [row_index] monotonically increases in a group,
          we are only interested about what happens to rows
          with greater indices *)
-      let compatible_at_col =
-        S.above row_index (compatible cell)
-      and defined_at_col =
-        S.above row_index defined.(col_index)
-      in
-      let incompatible_at_col =
-        S.diff defined_at_col compatible_at_col
-      in
+      let compatible_at_col = S.above row_index (compatible cell)
+      and defined_at_col =    S.above row_index defined.(col_index) in
+      let incompatible_at_col = S.diff defined_at_col compatible_at_col in
       incompatible := S.union incompatible_at_col !incompatible;
       S.union compatible_at_col candidates
     in
 
-    (* Add a row to the group *)
-    let rec add_row group row_index candidates =
-      (* Mark the row as unavailable *)
-      assert available.(row_index);
-      available.(row_index) <- false;
-      (* Fetch row contents, update group, candidates and incompatible
-         rows *)
-      let row = rows.(row_index) in
+    (* [add_row group i candidates] adds the row [i] to the group [group],
+       then continues extending this group with rows whose indices lie above
+       [i]. The sets [incompatible] and [available] are updated. *)
+    let rec add_row group i candidates : group =
+      (* Mark the row [i] as unavailable. *)
+      assert available.(i);
+      available.(i) <- false;
+      (* Fetch the row whose index is [i]. Extend the group with its index.
+         (A group is a list of *original* indices.) *)
+      let row = rows.(i) in
       let group = row.index :: group in
-      let candidates = List.fold_left (select_cell row_index) candidates row.cells in
+      (* Update the sets [incompatible] and [candidates]. *)
+      let candidates = List.fold_left (select_cell i) candidates row.cells in
       let candidates = S.diff candidates !incompatible in
       (* Find the first candidate that has not been merged yet *)
       match S.find_first_opt (Array.get available) candidates with
