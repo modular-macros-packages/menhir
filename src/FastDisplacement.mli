@@ -16,7 +16,13 @@
 
 open MenhirLib
 
-(**[compress ~hole t] turns the two-dimensional table [t] into a compressed
-   table. The parameter [hole] is the value of empty cells in the table and is
-   used to fill holes in the data array. *)
-val compress : hole:'a -> 'a array array -> 'a RowDisplacement.table
+(**[compress insignificant dummy t] turns the two-dimensional table [t] into
+   a compressed table. The parameter [insignificant] determines which data
+   values are insignificant, and can thus be overwritten with other values.
+   The parameter [dummy] is used to fill holes in the data array. The type
+   ['a] must support OCaml's polymorphic equality and hash functions. *)
+val compress :
+  ('a -> bool) ->
+  'a ->
+  'a array array ->
+  'a RowDisplacement.table

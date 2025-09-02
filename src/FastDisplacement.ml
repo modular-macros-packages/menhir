@@ -329,7 +329,7 @@ end (* Pack *)
    - Pack them
    - Construct the final tables *)
 
-let compress (type a) ~hole (t : a array array) : a RowDisplacement.table =
+let compress (type a) insignificant dummy (t : a array array) : a RowDisplacement.table =
 
   if Array.length t = 0 then
     ([||], [||])
@@ -344,7 +344,7 @@ let compress (type a) ~hole (t : a array array) : a RowDisplacement.table =
           row
         else
           let x = line.(j) in
-          if x = hole then
+          if insignificant x then
             loop (j - 1) row
           else
             loop (j - 1) ((j, x) :: row)
@@ -377,7 +377,7 @@ let compress (type a) ~hole (t : a array array) : a RowDisplacement.table =
         match Int.compare i1 i2 with
         | 0 ->
           (* Safety check: only merge equal values *)
-          assert (a1 = a2); (* TODO avoid polymorphic equality *)
+          assert (a1 = a2);
           0
         | n -> n
       in
@@ -414,7 +414,7 @@ let compress (type a) ~hole (t : a array array) : a RowDisplacement.table =
     (* Allocate and populate the final arrays *)
 
     let displacement = Array.make (Array.length t) 0 in
-    let data = Array.make (Pack.length table) hole in
+    let data = Array.make (Pack.length table) dummy in
 
     let store_rows offset (_rank, rows, cells) =
 
