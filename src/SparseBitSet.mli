@@ -23,9 +23,8 @@ val find_first_opt: (element -> bool) -> t -> element option
 (** [find_first_opt f s] returns the least element [x] of [s] such that
     [f x] is true. It returns [None] if no such element exists. *)
 
-module View : sig
-  type view =
-    | N
-    | C of int * AtomicBitSet.t * t
-  val view : t -> view
-end
+type view =
+  | N
+  | C of int * AtomicBitSet.t * t
+
+val view : t -> view

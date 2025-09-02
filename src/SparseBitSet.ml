@@ -389,9 +389,8 @@ let find_first_opt f qs =
   with Found elt ->
     Some elt
 
-module View = struct
-  type view = t =
-    | N
-    | C of int * A.t * t
-  let view x = x
-end
+type view = t =
+  | N
+  | C of int * A.t * t
+
+let view x = x

@@ -292,40 +292,41 @@ end = struct
     A.disjoint cells1 mask1
 
   let rec fit_cells table oaddr oshift cells =
-    match S.View.view cells with
-    | S.View.N -> oshift
-    | S.View.C (base, mask, cells') ->
-      let addr = oaddr + base / A.bound in
-      let len = V.length table in
-      if addr >= len then
+    match S.view cells with
+    | S.N ->
         oshift
-      else
-        let cells0 = V.get table addr in
-        let cells1 =
-          if addr + 1 = len
-          then A.empty
-          else V.get table (addr + 1)
-        in
-        if compatible cells0 cells1 mask oshift then
-          fit_cells table oaddr oshift cells'
-        else (
-          let oshift = ref (oshift + 1) in
-          while !oshift < A.bound &&
-                not (compatible cells0 cells1 mask !oshift)
-          do incr oshift; done;
-          !oshift
-        )
+    | S.C (base, mask, cells') ->
+        let addr = oaddr + base / A.bound in
+        let len = V.length table in
+        if addr >= len then
+          oshift
+        else
+          let cells0 = V.get table addr in
+          let cells1 =
+            if addr + 1 = len
+            then A.empty
+            else V.get table (addr + 1)
+          in
+          if compatible cells0 cells1 mask oshift then
+            fit_cells table oaddr oshift cells'
+          else
+            let oshift = ref (oshift + 1) in
+            while !oshift < A.bound &&
+                  not (compatible cells0 cells1 mask !oshift)
+            do incr oshift; done;
+            !oshift
 
   let rec write_cells table oaddr oshift cells =
-    match S.View.view cells with
-    | S.View.N -> ()
-    | S.View.C (base, mask, cells') ->
-      let addr = oaddr + base / A.bound in
-      V.grow table (addr + 1);
-      let mask0, mask1 = A.shift mask oshift in
-      set_mask table (addr + 0) mask0;
-      set_mask table (addr + 1) mask1;
-      write_cells table oaddr oshift cells'
+    match S.view cells with
+    | S.N ->
+        ()
+    | S.C (base, mask, cells') ->
+        let addr = oaddr + base / A.bound in
+        V.grow table (addr + 1);
+        let mask0, mask1 = A.shift mask oshift in
+        set_mask table (addr + 0) mask0;
+        set_mask table (addr + 1) mask1;
+        write_cells table oaddr oshift cells'
 
   let rec add_cells table oaddr oshift cells =
     let oshift' = fit_cells table oaddr oshift cells in
