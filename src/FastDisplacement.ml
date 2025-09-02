@@ -163,12 +163,14 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
      are marked as no longer available. *)
 
   let build_merge_group (i : index) : group =
-
-    (* We accumulate the rows that are incompatible with the current group. *)
+    (* Keep track of the rows that are candidates for inclusion in the
+       current group. *)
+    let candidates = ref S.empty in
+    (* Accumulate the rows that are incompatible with the current group. *)
     let incompatible = ref S.empty in
 
     (* Update incompatible candidates *)
-    let select_cell row_index candidates (col_index, _ as cell) =
+    let select_cell row_index (col_index, _ as cell) =
       (* [row_index] monotonically increases in a group,
          we are only interested about what happens to rows
          with greater indices *)
@@ -176,13 +178,12 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
       and defined_at_col =    S.above row_index defined.(col_index) in
       let incompatible_at_col = S.diff defined_at_col compatible_at_col in
       incompatible := S.union incompatible_at_col !incompatible;
-      S.union compatible_at_col candidates
+      candidates := S.union compatible_at_col !candidates
     in
 
-    (* [add_row group i candidates] adds the row [i] to the group [group],
-       then continues extending this group with rows whose indices lie above
-       [i]. The sets [incompatible] and [available] are updated. *)
-    let rec add_row group i candidates : group =
+    (* [add_row group i] adds the row [i] to the group [group], then
+       continues extending this group with rows whose indices lie above [i]. *)
+    let rec add_row group i : group =
       (* Mark the row [i] as unavailable. *)
       assert available.(i);
       available.(i) <- false;
@@ -191,20 +192,20 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
       let row = rows.(i) in
       let group = row.index :: group in
       (* Update the sets [incompatible] and [candidates]. *)
-      let candidates = List.fold_left (select_cell i) candidates row.cells in
-      let candidates = S.diff candidates !incompatible in
+      List.iter (select_cell i) row.cells;
+      candidates := S.diff !candidates !incompatible;
       (* Find the first candidate that has not been merged yet *)
-      match S.find_first_opt (Array.get available) candidates with
+      match S.find_first_opt (Array.get available) !candidates with
       | None -> group
       | Some next_row ->
-        (* Prune irrelevant rows *)
-        incompatible := S.above next_row !incompatible;
-        let candidates = S.above next_row candidates in
-        add_row group next_row candidates
+          (* Prune irrelevant rows *)
+          incompatible := S.above next_row !incompatible;
+          candidates := S.above next_row !candidates;
+          add_row group next_row
     in
 
     (* Start with the row [i] and build a group for it. *)
-    add_row [] i S.empty
+    add_row [] i
 
   (* Build a merge plan. A merge plan is a partition of the rows; it is
      represented as a list of groups. The rows within a group are compatible
