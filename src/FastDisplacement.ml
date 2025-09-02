@@ -122,9 +122,8 @@ end = struct
           Hashtbl.add compatibility cell rows
     in
 
-    (* Treat each row in turn. [i] is the row's index. The array [rows]
-       has been sorted; we handle rows with smaller ranks first. Within
-       each row, treat each cell in turn. *)
+    (* Treat each row in turn. [i] is the row's index. Within each row, treat
+       each cell in turn. *)
     for i = Array.length rows - 1 downto 0 do
       List.iter (register i) rows.(i).cells
     done;
@@ -189,23 +188,26 @@ end = struct
     (* Start with the current row and build its group *)
     add_row [] current_row SparseBitSet.empty
 
-  (* Helper function to build a merge plan.
-     A merge plan is a partition of rows represented as a list of list of rows.
-     All rows in the same class are compatible. *)
-  let build_merge_plan rows compatible defined =
-    let count = Array.length rows in
-    let merge_plan = ref [] in
+  (* [build_merge_plan] builds a merge plan. A merge plan is a partition of
+     the rows; it is represented as a list of groups. The rows within a group
+     are compatible with each other. *)
 
-    (* A row is available until it is part of a merge group. *)
+  let build_merge_plan rows compatible defined : group list =
+    let count = Array.length rows in
+
+    (* A row is available until it becomes part of a group. *)
     let available = Array.make count true in
 
-    (* Process each row to find compatible groups *)
+    (* Process each row in turn. For each available row, greedily build a new
+       group, which contains at least this row. Because the arrays [rows] has
+       been sorted by decreasing rank, we begin with the rows that have higher
+       ranks. *)
+    let merge_plan = ref [] in
     for row = 0 to count - 1 do
       if available.(row) then
         let group = build_merge_group rows compatible defined available row in
-        merge_plan := group :: !merge_plan;
+        merge_plan := group :: !merge_plan
     done;
-
     !merge_plan
 
   (* The main function, [merge_rows], determines which rows can be merged. *)
@@ -223,10 +225,10 @@ end = struct
     let decreasing_rank r1 r2 = Int.compare r2.rank r1.rank in
     Array.sort decreasing_rank rows;
 
-    (* Step 2: Index compatible and defined cells *)
+    (* Compute [compatible] and [defined]. *)
     let compatible, defined = precompute rows cols in
 
-    (* Step 3: Build merge plan by greedily grouping compatible vectors *)
+    (* Build a merge plan. *)
     build_merge_plan rows compatible defined
 
 end (* Merge *)
