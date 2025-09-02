@@ -236,8 +236,8 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
 
 (* The second step is a variant of the fitting loop of [RowDisplacement]
    specialized to work on bitsets:
-   - a row is now a [S].
-   - table is now an array of [A].
+   - a row is now a sparse bit set.
+   - table is now an array of atomic bit sets.
 
    (The values are thus ignored, only the occupancy matters.)
 
@@ -257,25 +257,33 @@ module Pack : sig
 
   val length : table -> int
 end = struct
+
+  (* A row is represented internally as a pair of
+     - an offset [delta] that must be added to all elements, and
+     - a sparse bit set of elements, [cells].
+     If [cells] is empty then the value of [delta] is irrelevant. *)
   type row =
-    (* Offset of first element, and a sparse set of all elements where the first
-       is at index [0]. *)
     int * S.t
 
-  let import = function
-    | [] -> (0, S.empty)
-    | (index0, _) :: rest ->
-      let add set (index, _) = S.add (index - index0) set in
-      (* Reverse the list to avoid quadratic insertion *)
-      let set = List.fold_left add S.empty (List.rev rest) in
-      (index0, S.add 0 set)
+  let import (type a) (row : a sparse_row) : row =
+    match row with
+    | [] ->
+        (0, S.empty)
+    | (delta, _) :: row ->
+        let add cells (i, _) = S.add (i - delta) cells in
+        (* We iterate on the list [row] from back to front, so each
+           invocation of [S.add] inserts at or near the front of the
+           sparse bit set. This avoids a quadratic blowup. *)
+        let cells = List.fold_left add S.empty (List.rev row) in
+        (delta, S.add 0 cells)
 
   let compatible cells0 cells1 mask shift =
     let mask0, mask1 = A.shift mask shift in
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
 
-  type table = A.t array ref
+  type table =
+    A.t array ref
 
   let rec fit_cells table oaddr oshift cells =
     match S.View.view cells with
