@@ -11,6 +11,7 @@
 module RowDisplacement = MenhirLib.RowDisplacement
 module A = AtomicBitSet
 module S = SparseBitSet
+module V = DenseBitVector
 
 (* A cell is a pair of an index and a piece of data. *)
 type 'a cell =
@@ -234,99 +235,6 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
 
 (* -------------------------------------------------------------------------- *)
 
-(* A simple implementation of bit vectors,
-   that is, dynamic arrays of bits. *)
-
-(* Although the length of the vector is measured in bits, several of the
-   functions access the vector using addresses that are measured in words.
-   A word is a group of [w] bits, where the constant [w] is [A.bound],
-   that is, typically 63. *)
-
-module BitVector : sig
-
-  type vector
-  type word = A.t
-
-  (**[create()] returns a fresh empty vector. *)
-  val create : unit -> vector
-
-  (**[length v] returns the current length of the vector [v] in words. *)
-  val length : vector -> int
-
-  (**[grow v a] grows the vector [v], if necessary, so that the address [a]
-     is a valid address in this vector. When the vector is grown, the new
-     space is initialized with 0 bits. *)
-  val grow : vector -> int -> unit
-
-  (**[get v a] returns the word found in the vector [v] at address [a].
-     The address [a] must be a valid address in the vector [v]. *)
-  val get : vector -> int -> word
-
-  (**[set v a w] writes the word [w] in the vector [v] at address [a].
-     The address [a] must be a valid address in the vector [v]. *)
-  val set : vector -> int -> word -> unit
-
-  (**[width v] returns the width of the vector [v]. If no bit is set in
-     the vector [v] then its width is zero. If the most significant bit
-     that is set in the vector [v] lies at bit index [i] then the width
-     of the vector [v] is [i+1]. *)
-  val width : vector -> int
-
-end = struct
-
-  type data =
-    A.t array
-
-  type vector =
-    data ref
-
-  type word =
-    A.t
-
-  let create () =
-    ref [|A.empty|]
-
-  let[@inline] length v =
-    let data = !v in
-    Array.length data
-
-  let grow v a =
-    let data = !v in
-    let len = Array.length data in
-    if a < len then
-      ()
-    else
-      let rlen = ref len in
-      while !rlen <= a do rlen := !rlen * 2 done;
-      let data' = Array.make !rlen A.empty in
-      Array.blit data 0 data' 0 len;
-      v := data'
-
-  let[@inline] get v a =
-    let data = !v in
-    data.(a)
-
-  let[@inline] set v a w =
-    let data = !v in
-    data.(a) <- w
-
-  let width v =
-    let data = !v in
-    (* Starting from the end, search for the last nonzero word. *)
-    let last = ref (Array.length data - 1) in
-    while !last >= 0 && A.is_empty data.(!last) do decr last done;
-    if !last < 0 then
-      (* All words are zero. The vector has zero width. *)
-      0
-    else
-      (* Return the index of the most significant bit that is set, plus one. *)
-      let i = !last * A.bound + A.maximum data.(!last) in
-      i + 1
-
-end
-
-(* -------------------------------------------------------------------------- *)
-
 (* The second step is a variant of the fitting loop of [RowDisplacement]
    specialized to work on bitsets:
    - a row is now a sparse bit set.
@@ -344,7 +252,7 @@ module Pack : sig
   type row
   val import : 'a sparse_row -> row
 
-  val add_row : BitVector.vector -> row -> int
+  val add_row : V.vector -> row -> int
 
 end = struct
 
@@ -377,15 +285,15 @@ end = struct
     | S.View.N -> oshift
     | S.View.C (base, mask, cells') ->
       let addr = oaddr + base / A.bound in
-      let len = BitVector.length table in
+      let len = V.length table in
       if addr >= len then
         oshift
       else
-        let cells0 = BitVector.get table addr in
+        let cells0 = V.get table addr in
         let cells1 =
           if addr + 1 = len
           then A.empty
-          else BitVector.get table (addr + 1)
+          else V.get table (addr + 1)
         in
         if compatible cells0 cells1 mask oshift then
           fit_cells table oaddr oshift cells'
@@ -402,14 +310,14 @@ end = struct
     | S.View.N -> ()
     | S.View.C (base, mask, cells') ->
       let addr = oaddr + base / A.bound in
-      BitVector.grow table (addr + 1);
+      V.grow table (addr + 1);
       let mask0, mask1 = A.shift mask oshift in
-      let cells0 = BitVector.get table (addr + 0) in
-      let cells1 = BitVector.get table (addr + 1) in
+      let cells0 = V.get table (addr + 0) in
+      let cells1 = V.get table (addr + 1) in
       assert (A.disjoint cells0 mask0);
       assert (A.disjoint cells1 mask1);
-      BitVector.set table (addr + 0) (A.union cells0 mask0);
-      BitVector.set table (addr + 1) (A.union cells1 mask1);
+      V.set table (addr + 0) (A.union cells0 mask0);
+      V.set table (addr + 1) (A.union cells1 mask1);
       write_cells table oaddr oshift cells'
 
   let rec add_cells table oaddr oshift cells =
@@ -509,7 +417,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
 
     (* Compute an offset for each group of source rows *)
 
-    let table = BitVector.create () in
+    let table = V.create () in
 
     let fit_merged_row (_rank, _rows, cells) =
 
@@ -522,7 +430,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
     (* Allocate and populate the final arrays *)
 
     let displacement = Array.make (Array.length t) 0 in
-    let data = Array.make (BitVector.width table) dummy in
+    let data = Array.make (V.width table) dummy in
 
     let store_rows offset (_rank, rows, cells) =
 
