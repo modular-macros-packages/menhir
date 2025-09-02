@@ -11,14 +11,14 @@
 open MenhirLib
 
 (* A cell is a pair of an index and a piece of data. *)
-type cell =
-  int * int
+type 'a cell =
+  int * 'a
 
 (* A sparse row is a list of cells, whose indices must be pairwise distinct.
    A sparse row may have holes: that is, it may be that, for some index [i],
    there is no cell of the form [(i, v)]. *)
-type sparse_row =
-  cell list
+type 'a sparse_row =
+  'a cell list
 
 (* This fast packing algorithm proceeds in two steps:
 
@@ -56,23 +56,23 @@ module Merge :
 sig
 
    type group = int list (* A group is a list of row represented by their index *)
-  val merge_rows : sparse_row array -> cols:int -> group list
+  val merge_rows : 'a sparse_row array -> cols:int -> group list
 
 end =
 struct
-  type indexed_row = {
+  type 'a indexed_row = {
     source_index: int; (* Position of the row in the original matrix *)
     rank: int; (* Number of non-empty cells *)
-    cells: sparse_row;
+    cells: 'a sparse_row;
   }
 
   (* Index compatible and defined cells *)
   let build_mergeability_maps
-      (rows : indexed_row array)
+      (rows : 'a indexed_row array)
       (cols : int)
     :
       (* Maps a cell to all rows having this cell *)
-      (cell -> SparseBitSet.t) *
+      ('a cell -> SparseBitSet.t) *
       (* Maps a column to all rows defined in this column *)
       SparseBitSet.t array
     =
@@ -209,7 +209,7 @@ end (* Merge *)
    much faster. *)
 module Pack : sig
   type row
-  val import : sparse_row -> row
+  val import : 'a sparse_row -> row
 
   type table
   val new_table : unit -> table
@@ -329,7 +329,7 @@ end (* Pack *)
    - Pack them
    - Construct the final tables *)
 
-let compress ~hole (t : int array array) : int RowDisplacement.table =
+let compress (type a) ~hole (t : a array array) : a RowDisplacement.table =
 
   if Array.length t = 0 then
     ([||], [||])
@@ -337,9 +337,9 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
 
     (* This turns a row-as-array into a row-as-sparse-list. *)
 
-    let sparse (line : int array) : sparse_row (* index, rank, row *) =
+    let sparse (line : a array) : a sparse_row =
 
-      let[@tail_mod_cons] rec loop (j : int) (row : sparse_row) =
+      let[@tail_mod_cons] rec loop (j : int) (row : a sparse_row) =
         if j < 0 then
           row
         else
@@ -356,7 +356,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
 
     (* Construct an array of all rows. *)
 
-    let rows : sparse_row array = Array.map sparse t in
+    let rows : a sparse_row array = Array.map sparse t in
 
     (* Group mergeable rows. *)
 
@@ -365,7 +365,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
     (* Merge rows, rank them (count the number of non-empty cells), and remember
        their indices. *)
 
-    let merge_rows (indices : int list) : (int * int list * sparse_row) =
+    let merge_rows (indices : int list) : (int * int list * a sparse_row) =
 
       (* Gather cells of all rows *)
 
@@ -377,7 +377,7 @@ let compress ~hole (t : int array array) : int RowDisplacement.table =
         match Int.compare i1 i2 with
         | 0 ->
           (* Safety check: only merge equal values *)
-          assert (Int.equal a1 a2);
+          assert (a1 = a2); (* TODO avoid polymorphic equality *)
           0
         | n -> n
       in

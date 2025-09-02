@@ -19,4 +19,4 @@ open MenhirLib
 (**[compress ~hole t] turns the two-dimensional table [t] into a compressed
    table. The parameter [hole] is the value of empty cells in the table and is
    used to fill holes in the data array. *)
-val compress : hole:int -> int array array -> int RowDisplacement.table
+val compress : hole:'a -> 'a array array -> 'a RowDisplacement.table
