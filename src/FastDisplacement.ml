@@ -234,6 +234,99 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
 
 (* -------------------------------------------------------------------------- *)
 
+(* A simple implementation of bit vectors,
+   that is, dynamic arrays of bits. *)
+
+(* Although the length of the vector is measured in bits, several of the
+   functions access the vector using addresses that are measured in words.
+   A word is a group of [w] bits, where the constant [w] is [A.bound],
+   that is, typically 63. *)
+
+module BitVector : sig
+
+  type vector
+  type word = A.t
+
+  (**[create()] returns a fresh empty vector. *)
+  val create : unit -> vector
+
+  (**[length v] returns the current length of the vector [v] in words. *)
+  val length : vector -> int
+
+  (**[grow v a] grows the vector [v], if necessary, so that the address [a]
+     is a valid address in this vector. When the vector is grown, the new
+     space is initialized with 0 bits. *)
+  val grow : vector -> int -> unit
+
+  (**[get v a] returns the word found in the vector [v] at address [a].
+     The address [a] must be a valid address in the vector [v]. *)
+  val get : vector -> int -> word
+
+  (**[set v a w] writes the word [w] in the vector [v] at address [a].
+     The address [a] must be a valid address in the vector [v]. *)
+  val set : vector -> int -> word -> unit
+
+  (**[width v] returns the width of the vector [v]. If no bit is set in
+     the vector [v] then its width is zero. If the most significant bit
+     that is set in the vector [v] lies at bit index [i] then the width
+     of the vector [v] is [i+1]. *)
+  val width : vector -> int
+
+end = struct
+
+  type data =
+    A.t array
+
+  type vector =
+    data ref
+
+  type word =
+    A.t
+
+  let create () =
+    ref [|A.empty|]
+
+  let[@inline] length v =
+    let data = !v in
+    Array.length data
+
+  let grow v a =
+    let data = !v in
+    let len = Array.length data in
+    if a < len then
+      ()
+    else
+      let rlen = ref len in
+      while !rlen <= a do rlen := !rlen * 2 done;
+      let data' = Array.make !rlen A.empty in
+      Array.blit data 0 data' 0 len;
+      v := data'
+
+  let[@inline] get v a =
+    let data = !v in
+    data.(a)
+
+  let[@inline] set v a w =
+    let data = !v in
+    data.(a) <- w
+
+  let width v =
+    let data = !v in
+    (* Starting from the end, search for the last nonzero word. *)
+    let last = ref (Array.length data - 1) in
+    while !last >= 0 && A.is_empty data.(!last) do decr last done;
+    if !last < 0 then
+      (* All words are zero. The vector has zero width. *)
+      0
+    else
+      (* Return the index of the most significant bit that is set, plus one. *)
+      let i = !last * A.bound + A.maximum data.(!last) in
+      i + 1
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (* The second step is a variant of the fitting loop of [RowDisplacement]
    specialized to work on bitsets:
    - a row is now a sparse bit set.
