@@ -16,9 +16,15 @@ module A =
 (* A sparse bit set is a linked list pairs of an index and a bit set. The list
    is sorted by order of increasing indices. *)
 
+type offset =
+  int (* a multiple of [AtomicBitSet.bound] *)
+
+type word =
+  A.t
+
 type t =
   | N
-  | C of int * A.t * t
+  | C of offset * word * t
 
 type element =
   int
@@ -391,6 +397,6 @@ let find_first_opt f qs =
 
 type view = t =
   | N
-  | C of int * A.t * t
+  | C of offset * word * t
 
-let view x = x
+let[@inline] view x = x

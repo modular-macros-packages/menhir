@@ -23,8 +23,25 @@ val find_first_opt: (element -> bool) -> t -> element option
 (** [find_first_opt f s] returns the least element [x] of [s] such that
     [f x] is true. It returns [None] if no such element exists. *)
 
+(**The type [view] offers a view of a set as a list of words.
+
+   The constructor [N] represents the empty set.
+
+   The constructor [C (o, word, s)] represents the union of
+   the set [word], whose inhabitants must be shifted up by [o], and
+   the set [s].
+
+   The offset [o] is always a multiple of the word size,
+   [AtomicBitSet.bound]. *)
 type view =
   | N
-  | C of int * AtomicBitSet.t * t
+  | C of offset * word * t
 
+and offset =
+  int (* a multiple of [AtomicBitSet.bound] *)
+
+and word =
+  AtomicBitSet.t
+
+(**The function [view] offers a view of a sparse bit set as a list of words. *)
 val view : t -> view
