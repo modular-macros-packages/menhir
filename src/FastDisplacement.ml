@@ -8,7 +8,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open MenhirLib
+module RowDisplacement = MenhirLib.RowDisplacement
+module A = AtomicBitSet
+module S = SparseBitSet
 
 (* A cell is a pair of an index and a piece of data. *)
 type 'a cell =
@@ -116,27 +118,27 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
      have a cell in this column. *)
 
   let
-    (compatible : a cell -> SparseBitSet.t),
-    (defined : SparseBitSet.t array)
+    (compatible : a cell -> S.t),
+    (defined : S.t array)
   =
 
     (* We use a hash table whose keys are cells. Therefore the type [a]
        must support OCaml's polymorphic equality and hash functions. *)
     let compatibility = Hashtbl.create 7 in
-    let defined = Array.make cols SparseBitSet.empty in
+    let defined = Array.make cols S.empty in
 
     (* [register i cell] registers the existence of cell [cell] in row [i]. *)
     let register i cell =
       (* Extract the column index [j]. *)
       let j, _ = cell in
       (* Record that this row is defined on column [j]. *)
-      defined.(j) <- SparseBitSet.add i defined.(j);
+      defined.(j) <- S.add i defined.(j);
       (* Record that the cell [cell] appears in row [i]. *)
       match Hashtbl.find_opt compatibility cell with
       | Some rows ->
-          rows := SparseBitSet.add i !rows
+          rows := S.add i !rows
       | None ->
-          let rows = ref (SparseBitSet.singleton i) in
+          let rows = ref (S.singleton i) in
           Hashtbl.add compatibility cell rows
     in
 
@@ -163,7 +165,7 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
   let build_merge_group (i : index) : group =
 
     (* We accumulate the rows that are incompatible with the current group. *)
-    let incompatible = ref SparseBitSet.empty in
+    let incompatible = ref S.empty in
 
     (* Update incompatible candidates *)
     let select_cell row_index candidates (col_index, _ as cell) =
@@ -171,15 +173,15 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
          we are only interested about what happens to rows
          with greater indices *)
       let compatible_at_col =
-        SparseBitSet.above row_index (compatible cell)
+        S.above row_index (compatible cell)
       and defined_at_col =
-        SparseBitSet.above row_index defined.(col_index)
+        S.above row_index defined.(col_index)
       in
       let incompatible_at_col =
-        SparseBitSet.diff defined_at_col compatible_at_col
+        S.diff defined_at_col compatible_at_col
       in
-      incompatible := SparseBitSet.union incompatible_at_col !incompatible;
-      SparseBitSet.union compatible_at_col candidates
+      incompatible := S.union incompatible_at_col !incompatible;
+      S.union compatible_at_col candidates
     in
 
     (* Add a row to the group *)
@@ -192,19 +194,19 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
       let row = rows.(row_index) in
       let group = row.index :: group in
       let candidates = List.fold_left (select_cell row_index) candidates row.cells in
-      let candidates = SparseBitSet.diff candidates !incompatible in
+      let candidates = S.diff candidates !incompatible in
       (* Find the first candidate that has not been merged yet *)
-      match SparseBitSet.find_first_opt (Array.get available) candidates with
+      match S.find_first_opt (Array.get available) candidates with
       | None -> group
       | Some next_row ->
         (* Prune irrelevant rows *)
-        incompatible := SparseBitSet.above next_row !incompatible;
-        let candidates = SparseBitSet.above next_row candidates in
+        incompatible := S.above next_row !incompatible;
+        let candidates = S.above next_row candidates in
         add_row group next_row candidates
     in
 
     (* Start with the row [i] and build a group for it. *)
-    add_row [] i SparseBitSet.empty
+    add_row [] i S.empty
 
   (* Build a merge plan. A merge plan is a partition of the rows; it is
      represented as a list of groups. The rows within a group are compatible
@@ -234,8 +236,8 @@ end (* Merge *)
 
 (* The second step is a variant of the fitting loop of [RowDisplacement]
    specialized to work on bitsets:
-   - a row is now a [SparseBitSet].
-   - table is now an array of [AtomicBitSet].
+   - a row is now a [S].
+   - table is now an array of [A].
 
    (The values are thus ignored, only the occupancy matters.)
 
@@ -258,28 +260,28 @@ end = struct
   type row =
     (* Offset of first element, and a sparse set of all elements where the first
        is at index [0]. *)
-    int * SparseBitSet.t
+    int * S.t
 
   let import = function
-    | [] -> (0, SparseBitSet.empty)
+    | [] -> (0, S.empty)
     | (index0, _) :: rest ->
-      let add set (index, _) = SparseBitSet.add (index - index0) set in
+      let add set (index, _) = S.add (index - index0) set in
       (* Reverse the list to avoid quadratic insertion *)
-      let set = List.fold_left add SparseBitSet.empty (List.rev rest) in
-      (index0, SparseBitSet.add 0 set)
+      let set = List.fold_left add S.empty (List.rev rest) in
+      (index0, S.add 0 set)
 
   let compatible cells0 cells1 mask shift =
-    let mask0, mask1 = AtomicBitSet.shift mask shift in
-    AtomicBitSet.disjoint cells0 mask0 &&
-    AtomicBitSet.disjoint cells1 mask1
+    let mask0, mask1 = A.shift mask shift in
+    A.disjoint cells0 mask0 &&
+    A.disjoint cells1 mask1
 
-  type table = AtomicBitSet.t array ref
+  type table = A.t array ref
 
   let rec fit_cells table oaddr oshift cells =
-    match SparseBitSet.View.view cells with
-    | SparseBitSet.View.N -> oshift
-    | SparseBitSet.View.C (base, mask, cells') ->
-      let addr = oaddr + base / AtomicBitSet.bound in
+    match S.View.view cells with
+    | S.View.N -> oshift
+    | S.View.C (base, mask, cells') ->
+      let addr = oaddr + base / A.bound in
       let len = Array.length table in
       if addr >= len then
         oshift
@@ -287,14 +289,14 @@ end = struct
         let cells0 = table.(addr) in
         let cells1 =
           if addr + 1 = len
-          then AtomicBitSet.empty
+          then A.empty
           else table.(addr + 1)
         in
         if compatible cells0 cells1 mask oshift then
           fit_cells table oaddr oshift cells'
         else (
           let oshift = ref (oshift + 1) in
-          while !oshift < AtomicBitSet.bound &&
+          while !oshift < A.bound &&
                 not (compatible cells0 cells1 mask !oshift)
           do incr oshift; done;
           !oshift
@@ -309,31 +311,31 @@ end = struct
       while !rlen <= target do
         rlen := !rlen * 2
       done;
-      let table' = Array.make !rlen AtomicBitSet.empty in
+      let table' = Array.make !rlen A.empty in
       Array.blit table 0 table' 0 len;
       table'
 
   let rec write_cells table oaddr oshift cells =
-    match SparseBitSet.View.view cells with
-    | SparseBitSet.View.N -> table
-    | SparseBitSet.View.C (base, mask, cells') ->
-      let addr = oaddr + base / AtomicBitSet.bound in
+    match S.View.view cells with
+    | S.View.N -> table
+    | S.View.C (base, mask, cells') ->
+      let addr = oaddr + base / A.bound in
       let table = grow_table table (addr + 1) in
-      let mask0, mask1 = AtomicBitSet.shift mask oshift in
+      let mask0, mask1 = A.shift mask oshift in
       let cells0 = table.(addr) in
       let cells1 = table.(addr + 1) in
-      assert (AtomicBitSet.disjoint cells0 mask0);
-      assert (AtomicBitSet.disjoint cells1 mask1);
-      table.(addr + 0) <- AtomicBitSet.union cells0 mask0;
-      table.(addr + 1) <- AtomicBitSet.union cells1 mask1;
+      assert (A.disjoint cells0 mask0);
+      assert (A.disjoint cells1 mask1);
+      table.(addr + 0) <- A.union cells0 mask0;
+      table.(addr + 1) <- A.union cells1 mask1;
       write_cells table oaddr oshift cells'
 
   let rec add_cells table oaddr oshift cells =
     let oshift' = fit_cells table oaddr oshift cells in
     if oshift' = oshift then
       let table = write_cells table oaddr oshift cells in
-      (table, oaddr * AtomicBitSet.bound + oshift)
-    else if oshift' < AtomicBitSet.bound then
+      (table, oaddr * A.bound + oshift)
+    else if oshift' < A.bound then
       add_cells table oaddr oshift' cells
     else
       add_cells table (oaddr + 1) 0 cells
@@ -343,19 +345,19 @@ end = struct
     rtable := table;
     offset - index
 
-  let new_table () = ref [|AtomicBitSet.empty|]
+  let new_table () = ref [|A.empty|]
 
   let length rtable =
     let table = !rtable in
     let last = ref (Array.length table - 1) in
-    while !last >= 0 && AtomicBitSet.is_empty table.(!last) do
+    while !last >= 0 && A.is_empty table.(!last) do
       decr last
     done;
     if !last < 0 then
       0
     else
-      let msb = AtomicBitSet.maximum table.(!last) in
-      !last * AtomicBitSet.bound + msb + 1
+      let msb = A.maximum table.(!last) in
+      !last * A.bound + msb + 1
 
 end (* Pack *)
 
