@@ -27,7 +27,7 @@ val find_first_opt: (element -> bool) -> t -> element option
 
    The constructor [N] represents the empty set.
 
-   The constructor [C (o, word, s)] represents the union of
+   The constructor [C (o, word, s)] represents the disjoint union of
    the set [word], whose inhabitants must be shifted up by [o], and
    the set [s].
 
