@@ -291,24 +291,24 @@ end = struct
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
 
-  let rec fit_cells table oaddr oshift cells =
+  let rec fit_cells v oaddr oshift cells =
     match S.view cells with
     | S.N ->
         oshift
     | S.C (base, mask, cells') ->
         let addr = oaddr + base / A.bound in
-        let len = V.length table in
+        let len = V.length v in
         if addr >= len then
           oshift
         else
-          let cells0 = V.get table addr in
+          let cells0 = V.get v addr in
           let cells1 =
             if addr + 1 = len
             then A.empty
-            else V.get table (addr + 1)
+            else V.get v (addr + 1)
           in
           if compatible cells0 cells1 mask oshift then
-            fit_cells table oaddr oshift cells'
+            fit_cells v oaddr oshift cells'
           else
             let oshift = ref (oshift + 1) in
             while !oshift < A.bound &&
@@ -316,30 +316,30 @@ end = struct
             do incr oshift; done;
             !oshift
 
-  let rec write_cells table oaddr oshift cells =
+  let rec write_cells v oaddr oshift cells =
     match S.view cells with
     | S.N ->
         ()
     | S.C (base, mask, cells') ->
         let addr = oaddr + base / A.bound in
-        V.grow table (addr + 1);
+        V.grow v (addr + 1);
         let mask0, mask1 = A.shift mask oshift in
-        set_mask table (addr + 0) mask0;
-        set_mask table (addr + 1) mask1;
-        write_cells table oaddr oshift cells'
+        set_mask v (addr + 0) mask0;
+        set_mask v (addr + 1) mask1;
+        write_cells v oaddr oshift cells'
 
-  let rec add_cells table oaddr oshift cells =
-    let oshift' = fit_cells table oaddr oshift cells in
+  let rec add_cells v oaddr oshift cells =
+    let oshift' = fit_cells v oaddr oshift cells in
     if oshift' = oshift then
-      let () = write_cells table oaddr oshift cells in
+      let () = write_cells v oaddr oshift cells in
       oaddr * A.bound + oshift
     else if oshift' < A.bound then
-      add_cells table oaddr oshift' cells
+      add_cells v oaddr oshift' cells
     else
-      add_cells table (oaddr + 1) 0 cells
+      add_cells v (oaddr + 1) 0 cells
 
-  let add_row table (index, cells) =
-    let offset = add_cells table 0 0 cells in
+  let add_row v (index, cells) =
+    let offset = add_cells v 0 0 cells in
     offset - index
 
 end (* Pack *)
@@ -425,20 +425,19 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
 
     (* Compute an offset for each group of source rows *)
 
-    let table = V.create () in
+    let v = V.create () in
 
     let fit_merged_row (_rank, _rows, cells) =
-
-      Pack.add_row table (Pack.import cells)
-
+      Pack.add_row v (Pack.import cells)
     in
 
     let offsets = List.map fit_merged_row merged_rows in
+    let width = V.width v in
 
     (* Allocate and populate the final arrays *)
 
     let displacement = Array.make (Array.length t) 0 in
-    let data = Array.make (V.width table) dummy in
+    let data = Array.make width dummy in
 
     let store_rows offset (_rank, rows, cells) =
 
@@ -447,7 +446,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
       List.iter (fun row -> displacement.(row) <- code) rows;
 
       (* Store cells *)
-      List.iter (fun (i, v) -> data.(offset + i) <- v) cells
+      List.iter (fun (i, d) -> data.(offset + i) <- d) cells
 
     in
 
