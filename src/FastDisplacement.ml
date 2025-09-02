@@ -156,10 +156,13 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
   let available =
     Array.map (fun _ -> true) rows
 
-  (* Helper function to greedily pick a group of rows to merge. *)
+  (* [build_merge_group i] builds a new group, which contains at least the
+     row [i]. The array [available] is updated: the rows in the new group
+     are marked as no longer available. *)
 
-  let build_merge_group (current_row : int): group =
-    (* Accumulate rows incompatible with the current group *)
+  let build_merge_group (i : index) : group =
+
+    (* We accumulate the rows that are incompatible with the current group. *)
     let incompatible = ref SparseBitSet.empty in
 
     (* Update incompatible candidates *)
@@ -200,8 +203,8 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
         add_row group next_row candidates
     in
 
-    (* Start with the current row and build its group *)
-    add_row [] current_row SparseBitSet.empty
+    (* Start with the row [i] and build a group for it. *)
+    add_row [] i SparseBitSet.empty
 
   (* Build a merge plan. A merge plan is a partition of the rows; it is
      represented as a list of groups. The rows within a group are compatible
@@ -214,16 +217,15 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
        been sorted by decreasing rank, we begin with the rows that have higher
        ranks. *)
     let merge_plan = ref [] in
-    for row = 0 to Array.length rows - 1 do
-      if available.(row) then
-        let group = build_merge_group row in
+    for i = 0 to Array.length rows - 1 do
+      if available.(i) then
+        let group = build_merge_group i in
         merge_plan := group :: !merge_plan
     done;
     !merge_plan
 
   end (* M *)
-
-  (* Build a merge plan. *)
+  (* Return the merge plan. *)
   in M.merge_plan
 
 end (* Merge *)
