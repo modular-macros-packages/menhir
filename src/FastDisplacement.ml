@@ -256,6 +256,14 @@ module Pack : sig
 
 end = struct
 
+  (* [set_mask v a mask] updates the word at address [a] in the vector [v]
+     by setting the bits in [mask]. These bits must not be set already. *)
+
+  let[@inline] set_mask v a mask =
+    let word = V.get v a in
+    assert (A.disjoint word mask);
+    V.set v a (A.union word mask)
+
   (* A row is represented internally as a pair of
      - an offset [delta] that must be added to all elements, and
      - a sparse bit set of elements, [cells].
@@ -312,12 +320,8 @@ end = struct
       let addr = oaddr + base / A.bound in
       V.grow table (addr + 1);
       let mask0, mask1 = A.shift mask oshift in
-      let cells0 = V.get table (addr + 0) in
-      let cells1 = V.get table (addr + 1) in
-      assert (A.disjoint cells0 mask0);
-      assert (A.disjoint cells1 mask1);
-      V.set table (addr + 0) (A.union cells0 mask0);
-      V.set table (addr + 1) (A.union cells1 mask1);
+      set_mask table (addr + 0) mask0;
+      set_mask table (addr + 1) mask1;
       write_cells table oaddr oshift cells'
 
   let rec add_cells table oaddr oshift cells =
