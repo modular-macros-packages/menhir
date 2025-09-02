@@ -70,25 +70,44 @@ module Merge : sig
 
 end = struct
 
-  type index =
-    int
+type index =
+  int
 
-  (**A rich row, or ranked row, is a row that has been decorated with:
+type group =
+  index list
 
-     - the index of this row in the original array of rows;
-     - its rank, that is, the number of its nonempty cells.
+(**A rich row, or ranked row, is a row that has been decorated with:
 
-     We sort the array [rows] in place, which is why a row must be
-     explicitly decorated with its original index. Outside of this
-     specific field, when we use row indices, these are indices
-     into the *sorted* array [rows]. *)
-  type 'a rrow = {
-    index: int;
-    rank: int;
-    cells: 'a sparse_row;
-  }
+   - the index of this row in the original array of rows;
+   - its rank, that is, the number of its nonempty cells.
 
-  (* We begin by computing two mappings, [compatible] and [defined].
+   We sort the array [rows] in place, which is why a row must be
+   explicitly decorated with its original index. Outside of this
+   specific field, when we use row indices, these are indices
+   into the *sorted* array [rows]. *)
+type 'a rrow = {
+  index: int;
+  rank: int;
+  cells: 'a sparse_row;
+}
+
+(* The main function, [merge_rows], is quite long, so, for syntactic comfort,
+   we write its body as a local module. *)
+
+let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
+  let module M = struct
+
+  (* Enrich each row with its index and rank. *)
+  let enrich index cells =
+    let rank = List.length cells in
+    { index; rank; cells }
+  let rows : a rrow array = Array.mapi enrich rows
+
+  (* Sort the rows by decreasing rank. *)
+  let decreasing_rank r1 r2 = Int.compare r2.rank r1.rank
+  let () = Array.sort decreasing_rank rows
+
+  (* Compute two mappings, [compatible] and [defined].
 
      The function [compatible] maps a cell to a set of all rows that
      have this cell. (This cell must exist in some row.)
@@ -96,10 +115,9 @@ end = struct
      The array [defined] maps a column to the set of all rows that
      have a cell in this column. *)
 
-  let precompute (type a) (rows : a rrow array) (cols : int)
-  :
-    (* compatible: *) (a cell -> SparseBitSet.t) *
-    (* defined:    *) SparseBitSet.t array
+  let
+    (compatible : a cell -> SparseBitSet.t),
+    (defined : SparseBitSet.t array)
   =
 
     (* We use a hash table whose keys are cells. Therefore the type [a]
@@ -131,19 +149,13 @@ end = struct
     let compatible cell = !(Hashtbl.find compatibility cell) in
     compatible, defined
 
-  type group =
-    index list
-
   (* Helper function to greedily pick a group of rows to merge. *)
-  let build_merge_group
-      rows compatible defined
+
       (* A row can be merged only once.
          Use [available] to pick only availabled rows and mark selected rows as
          unavailable. *)
-      (available : bool array)
-      (current_row : int)
-    : group
-    =
+
+  let build_merge_group available (current_row : int): group =
     (* Accumulate rows incompatible with the current group *)
     let incompatible = ref SparseBitSet.empty in
 
@@ -188,11 +200,12 @@ end = struct
     (* Start with the current row and build its group *)
     add_row [] current_row SparseBitSet.empty
 
-  (* [build_merge_plan] builds a merge plan. A merge plan is a partition of
-     the rows; it is represented as a list of groups. The rows within a group
-     are compatible with each other. *)
+  (* Build a merge plan. A merge plan is a partition of the rows; it is
+     represented as a list of groups. The rows within a group are compatible
+     with each other. *)
 
-  let build_merge_plan rows compatible defined : group list =
+  let merge_plan : group list =
+
     let count = Array.length rows in
 
     (* A row is available until it becomes part of a group. *)
@@ -205,31 +218,15 @@ end = struct
     let merge_plan = ref [] in
     for row = 0 to count - 1 do
       if available.(row) then
-        let group = build_merge_group rows compatible defined available row in
+        let group = build_merge_group available row in
         merge_plan := group :: !merge_plan
     done;
     !merge_plan
 
-  (* The main function, [merge_rows], determines which rows can be merged. *)
+  end (* M *)
 
-  let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
-
-    (* Enrich each row with its index and rank. *)
-    let enrich index cells =
-      let rank = List.length cells in
-      { index; rank; cells }
-    in
-    let rows = Array.mapi enrich rows in
-
-    (* Sort the rows by decreasing rank. *)
-    let decreasing_rank r1 r2 = Int.compare r2.rank r1.rank in
-    Array.sort decreasing_rank rows;
-
-    (* Compute [compatible] and [defined]. *)
-    let compatible, defined = precompute rows cols in
-
-    (* Build a merge plan. *)
-    build_merge_plan rows compatible defined
+  (* Build a merge plan. *)
+  in M.merge_plan
 
 end (* Merge *)
 
