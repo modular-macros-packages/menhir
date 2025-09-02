@@ -54,50 +54,39 @@ type 'a sparse_row =
       row (the step 1. allows compatibility to be quickly determined).
 *)
 
-module Merge : sig
-
-  (**A row is represented by its index in the array of rows that is passed
-     to [merge_rows]. *)
-  type index =
-    int
-
-  (**A group is a list of row indices. *)
-   type group =
-     index list
-
-  (**[merge_rows rows cols] determines which rows in the array [rows] are
-     compatible and therefore can be merged. [cols] is the common logical
-     width of all rows. *)
-  val merge_rows : 'a sparse_row array -> int -> group list
-
-end = struct
-
+(**A row is represented by its index in the array of rows that is passed
+   to [merge_rows]. *)
 type index =
   int
 
-type group =
-  index list
+(**A group is a list of row indices. *)
+ type group =
+   index list
 
-(**A rich row, or ranked row, is a row that has been decorated with:
-
-   - the index of this row in the original array of rows;
-   - its rank, that is, the number of its nonempty cells.
-
-   We sort the array [rows] in place, which is why a row must be
-   explicitly decorated with its original index. Outside of this
-   specific field, when we use row indices, these are indices
-   into the *sorted* array [rows]. *)
-type 'a rrow = {
-  index: int;
-  rank: int;
-  cells: 'a sparse_row;
-}
-
-(* The main function, [merge_rows], is quite long, so, for syntactic comfort,
-   we write its body as a local module. *)
+(**[merge_rows rows cols] determines which rows in the array [rows] are
+   compatible and therefore can be merged. [cols] is the common logical
+   width of all rows. *)
 
 let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
   let module M = struct
+
+  (* This function is quite long, so, for syntactic comfort,
+     we write its body as a local module. *)
+
+  (* A rich row, or ranked row, is a row that has been decorated with:
+
+     - the index of this row in the original array of rows;
+     - its rank, that is, the number of its nonempty cells.
+
+     We sort the array [rows] in place, which is why a row must be
+     explicitly decorated with its original index. Outside of this
+     specific field, when we use row indices, these are indices
+     into the *sorted* array [rows]. *)
+  type 'a rrow = {
+    index: int;
+    rank: int;
+    cells: 'a sparse_row;
+  }
 
   (* Enrich each row with its index and rank. *)
   let enrich index cells =
@@ -242,8 +231,6 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
   end (* M *)
   (* Return the merge plan. *)
   in M.merge_plan
-
-end (* Merge *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -414,7 +401,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
     (* Group mergeable rows. *)
 
     let cols = Array.length t.(0) in
-    let merge_plan = Merge.merge_rows rows cols in
+    let merge_plan = merge_rows rows cols in
 
     (* Merge rows, rank them (count the number of non-empty cells), and remember
        their indices. *)
