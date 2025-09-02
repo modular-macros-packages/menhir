@@ -268,8 +268,11 @@ end = struct
      - an offset [delta] that must be added to all elements, and
      - a sparse bit set of elements, [cells].
      If [cells] is empty then the value of [delta] is irrelevant. *)
+
   type row =
     int * S.t
+
+  (* [import] converts a sparse row to the above representation. *)
 
   let import (type a) (row : a sparse_row) : row =
     match row with
