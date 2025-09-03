@@ -249,11 +249,9 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
    but the merging and the packing make the $n$ smaller and the constant-factors
    much faster. *)
 module Pack : sig
-  type row
   type table
   val create : unit -> table
-  val import : 'a sparse_row -> row
-  val add_row : table -> row -> int
+  val add_row : table -> 'a sparse_row -> int
   val width : table -> int
 end = struct
 
@@ -343,7 +341,8 @@ end = struct
     else
       add_cells v (oaddr + 1) 0 cells
 
-  let add_row v (index, cells) =
+  let add_row v row =
+    let (index, cells) = import row in
     let offset = add_cells v 0 0 cells in
     offset - index
 
@@ -433,7 +432,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
     let v = Pack.create () in
 
     let fit_merged_row (_rank, _rows, cells) =
-      Pack.add_row v (Pack.import cells)
+      Pack.add_row v cells
     in
 
     let offsets = List.map fit_merged_row merged_rows in
