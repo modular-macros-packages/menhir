@@ -307,61 +307,66 @@ end = struct
         let cells = List.fold_left add S.empty (List.rev row) in
         (delta, S.add 0 cells)
 
-  let compatible cells0 cells1 mask shift =
+  (* [compatible cells0 cells1 mask shift] determines whether the two
+     words [cells0] and [cells1] are compatible with the mask [mask],
+     shifted up by the offset [shift]. This offset must be comprised
+     between 0 included and [A.bound] excluded. *)
+
+  let compatible cells0 cells1 mask shift : bool =
     let mask0, mask1 = A.shift mask shift in
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
 
-  let rec fit_cells v oaddr oshift cells =
+  let rec fit table oaddr shift cells : int =
     match S.view cells with
     | S.N ->
-        oshift
+        shift
     | S.C (base, mask, cells') ->
         let addr = oaddr + base / A.bound in
-        let len = V.length v in
+        let len = V.length table in
         if addr >= len then
-          oshift
+          shift
         else
-          let cells0 = V.get v addr in
+          let cells0 = V.get table addr in
           let cells1 =
             if addr + 1 = len
             then A.empty
-            else V.get v (addr + 1)
+            else V.get table (addr + 1)
           in
-          if compatible cells0 cells1 mask oshift then
-            fit_cells v oaddr oshift cells'
+          if compatible cells0 cells1 mask shift then
+            fit table oaddr shift cells'
           else
-            let oshift = ref (oshift + 1) in
-            while !oshift < A.bound &&
-                  not (compatible cells0 cells1 mask !oshift)
-            do incr oshift; done;
-            !oshift
+            let shift = ref (shift + 1) in
+            while !shift < A.bound &&
+                  not (compatible cells0 cells1 mask !shift)
+            do incr shift; done;
+            !shift
 
-  let rec write_cells v oaddr oshift cells =
+  let rec write_cells table oaddr shift cells =
     match S.view cells with
     | S.N ->
         ()
     | S.C (base, mask, cells') ->
         let addr = oaddr + base / A.bound in
-        V.grow v (addr + 1);
-        let mask0, mask1 = A.shift mask oshift in
-        set_mask v (addr + 0) mask0;
-        set_mask v (addr + 1) mask1;
-        write_cells v oaddr oshift cells'
+        V.grow table (addr + 1);
+        let mask0, mask1 = A.shift mask shift in
+        set_mask table (addr + 0) mask0;
+        set_mask table (addr + 1) mask1;
+        write_cells table oaddr shift cells'
 
-  let rec add_cells v oaddr oshift cells =
-    let oshift' = fit_cells v oaddr oshift cells in
-    if oshift' = oshift then
-      let () = write_cells v oaddr oshift cells in
-      oaddr * A.bound + oshift
-    else if oshift' < A.bound then
-      add_cells v oaddr oshift' cells
+  let rec add_cells table oaddr shift cells =
+    let shift' = fit table oaddr shift cells in
+    if shift' = shift then
+      let () = write_cells table oaddr shift cells in
+      oaddr * A.bound + shift
+    else if shift' < A.bound then
+      add_cells table oaddr shift' cells
     else
-      add_cells v (oaddr + 1) 0 cells
+      add_cells table (oaddr + 1) 0 cells
 
-  let add v row =
+  let add table row =
     let (index, cells) = import row in
-    let offset = add_cells v 0 0 cells in
+    let offset = add_cells table 0 0 cells in
     offset - index
 
 end (* Pack *)
