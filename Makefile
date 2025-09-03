@@ -169,7 +169,7 @@ NEW_VERSIONS := \
 .PHONY: old_versions new_versions versions
 old_versions:
 	@(echo "(lang dune 2.0)" && \
-	  for v in $(NEW_VERSIONS) ; do \
+	  for v in $(OLD_VERSIONS) ; do \
 	    echo "(context (opam (switch $$v)))" ; \
 	  done) > dune-workspace.versions
 	@ dune build --workspace dune-workspace.versions lib sdk src
