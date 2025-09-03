@@ -418,112 +418,111 @@ end (* Pack *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* Connect the dots:
-   - Take a matrix with empty cells,
-   - Find and merge compatible rows,
-   - Pack them
-   - Construct the final tables *)
+(* The main function is organized as follows:
+   - Determine which rows can be merged;
+   - Determine how to pack the (merged) rows,
+     now assumed to be pairwise incompatible,
+     can be packed within a one-dimensional table;
+   - Based on this information,
+     construct a displacement table and a data table. *)
 
-let compress (type a) insignificant dummy (t : a array array) : a RowDisplacement.table =
+let compress_nonempty (type a)
+  (insignificant : a -> bool) (dummy : a)
+  (t : a array array)
+: a RowDisplacement.table =
+  let module C = struct
 
+  (* This turns a row-as-array into a row-as-sparse-list. *)
+
+  let sparse (line : a array) : a sparse_row =
+
+    let[@tail_mod_cons] rec loop (j : int) (row : a sparse_row) =
+      if j < 0 then
+        row
+      else
+        let x = line.(j) in
+        if insignificant x then
+          loop (j - 1) row
+        else
+          loop (j - 1) ((j, x) :: row)
+    in
+
+    loop (Array.length line - 1) []
+
+  (* Construct an array of all rows. *)
+
+  let rows : a sparse_row array = Array.map sparse t
+
+  (* Group mergeable rows. *)
+
+  let cols = Array.length t.(0)
+  let merge_plan = merge_rows rows cols
+
+  (* Merge rows, rank them (count the number of non-empty cells), and remember
+     their indices. *)
+
+  let merge_rows (indices : int list) : (int * int list * a sparse_row) =
+
+    (* Gather cells of all rows *)
+
+    let cells = List.map (Array.get rows) indices in
+
+    (* Merge cells lists, rank result *)
+
+    let compare_cell (i1,a1) (i2,a2) =
+      match Int.compare i1 i2 with
+      | 0 ->
+        (* Safety check: only merge equal values *)
+        assert (a1 = a2);
+        0
+      | n -> n
+    in
+
+    let cells, rank =
+      match MList.reduce (MList.merge_uniq compare_cell) cells with
+      | None -> ([], 0)
+      | Some cells -> (cells, List.length cells)
+    in
+
+    (rank, indices, cells)
+
+  (* Merge and rank the rows (longest row first) *)
+
+  let merged_rows =
+    List.map merge_rows merge_plan
+    |> List.sort (fun (r1, _, _) (r2, _, _) -> Int.compare r2 r1)
+
+  (* Compute an offset for each group of source rows *)
+
+  let v = Pack.create ()
+  let fit_merged_row (_rank, _rows, cells) =
+    Pack.add v cells
+  let offsets = List.map fit_merged_row merged_rows
+  let width = Pack.width v
+
+  (* Allocate and populate the final arrays *)
+
+  let displacement = Array.make (Array.length t) 0
+  let data = Array.make width dummy
+
+  let store_rows offset (_rank, rows, cells) =
+
+    (* Store encoded displacements *)
+    let code = RowDisplacement.encode offset in
+    List.iter (fun row -> displacement.(row) <- code) rows;
+
+    (* Store cells *)
+    List.iter (fun (i, d) -> data.(offset + i) <- d) cells
+
+  let () =
+    List.iter2 store_rows offsets merged_rows
+
+  end (* C *)
+  (* Return the compressed tables. *)
+  in C.(displacement, data)
+
+let compress insignificant dummy t =
   if Array.length t = 0 then
     ([||], [||])
   else
-
-    (* This turns a row-as-array into a row-as-sparse-list. *)
-
-    let sparse (line : a array) : a sparse_row =
-
-      let[@tail_mod_cons] rec loop (j : int) (row : a sparse_row) =
-        if j < 0 then
-          row
-        else
-          let x = line.(j) in
-          if insignificant x then
-            loop (j - 1) row
-          else
-            loop (j - 1) ((j, x) :: row)
-      in
-
-      loop (Array.length line - 1) []
-
-    in
-
-    (* Construct an array of all rows. *)
-
-    let rows : a sparse_row array = Array.map sparse t in
-
-    (* Group mergeable rows. *)
-
-    let cols = Array.length t.(0) in
-    let merge_plan = merge_rows rows cols in
-
-    (* Merge rows, rank them (count the number of non-empty cells), and remember
-       their indices. *)
-
-    let merge_rows (indices : int list) : (int * int list * a sparse_row) =
-
-      (* Gather cells of all rows *)
-
-      let cells = List.map (Array.get rows) indices in
-
-      (* Merge cells lists, rank result *)
-
-      let compare_cell (i1,a1) (i2,a2) =
-        match Int.compare i1 i2 with
-        | 0 ->
-          (* Safety check: only merge equal values *)
-          assert (a1 = a2);
-          0
-        | n -> n
-      in
-
-      let cells, rank =
-        match MList.reduce (MList.merge_uniq compare_cell) cells with
-        | None -> ([], 0)
-        | Some cells -> (cells, List.length cells)
-      in
-
-      (rank, indices, cells)
-
-    in
-
-    (* Merge and rank the rows (longest row first) *)
-
-    let merged_rows =
-      List.map merge_rows merge_plan
-      |> List.sort (fun (r1, _, _) (r2, _, _) -> Int.compare r2 r1)
-    in
-
-    (* Compute an offset for each group of source rows *)
-
-    let v = Pack.create () in
-
-    let fit_merged_row (_rank, _rows, cells) =
-      Pack.add v cells
-    in
-
-    let offsets = List.map fit_merged_row merged_rows in
-    let width = Pack.width v in
-
-    (* Allocate and populate the final arrays *)
-
-    let displacement = Array.make (Array.length t) 0 in
-    let data = Array.make width dummy in
-
-    let store_rows offset (_rank, rows, cells) =
-
-      (* Store encoded displacements *)
-      let code = RowDisplacement.encode offset in
-      List.iter (fun row -> displacement.(row) <- code) rows;
-
-      (* Store cells *)
-      List.iter (fun (i, d) -> data.(offset + i) <- d) cells
-
-    in
-
-    List.iter2 store_rows offsets merged_rows;
-
-    (* Return the compressed tables. *)
-
-    (displacement, data)
+    compress_nonempty insignificant dummy t
