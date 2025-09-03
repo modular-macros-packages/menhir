@@ -372,31 +372,46 @@ end = struct
           do incr shift; done;
           !shift
 
-  let rec write_cells table oaddr shift cells =
+  (* [fit table oaddr shift cells] writes the cells [cells] in the table
+     [table] at address [oaddr] and offset [shift]. These cells must fit. *)
+
+  let rec write table oaddr shift cells =
     match S.view cells with
     | S.N ->
         ()
-    | S.C (base, mask, cells') ->
+    | S.C (base, mask, cells) ->
         let addr = oaddr + base / A.bound in
         V.grow table (addr + 1);
         let mask0, mask1 = A.shift mask shift in
         set_mask table (addr + 0) mask0;
         set_mask table (addr + 1) mask1;
-        write_cells table oaddr shift cells'
+        write table oaddr shift cells
 
-  let rec add_cells table oaddr shift cells =
+  (* [add table oaddr shift cells] fits the row [cells] in the table [table]
+     at address [oaddr] and offset [shift] or above. The position at which
+     this row was inserted is returned. *)
+
+  let rec add table oaddr shift cells =
+    (* Determine whether this row fits at this address and offset. *)
     let shift' = fit table oaddr shift cells in
     if shift' = shift then
-      let () = write_cells table oaddr shift cells in
+      (* It does fit. Commit and return this address and offset,
+         converted to an offset expressed in bits. *)
+      let () = write table oaddr shift cells in
       oaddr * A.bound + shift
     else if shift' < A.bound then
-      add_cells table oaddr shift' cells
+      (* It does not fit. Retry. *)
+      add table oaddr shift' cells
     else
-      add_cells table (oaddr + 1) 0 cells
+      (* It does not fit. Retry. *)
+      add table (oaddr + 1) 0 cells
+
+  (* [add table cells] fits the row [cells] in the table [table].
+     The position at which this row was inserted is returned. *)
 
   let add table row =
-    let (index, cells) = import row in
-    let offset = add_cells table 0 0 cells in
+    let index, cells = import row in
+    let offset = add table 0 0 cells in
     offset - index
 
 end (* Pack *)
