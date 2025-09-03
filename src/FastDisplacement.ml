@@ -331,27 +331,46 @@ end = struct
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
 
-  (* [fit table] *)
+  (* [fit table oaddr shift cells] determines whether the cells [cells]
+     fit in the table [table] at address [oaddr] and offset [shift].
+
+     Three outcomes are possible:
+     - If [shift] itself is returned, fitting was successful.
+     - If a value comprised between [shift] and [A.bound] (both excluded)
+       is returned, then fitting should be retried with this new offset.
+     - If [A.bound] is returned then fitting should be retried with
+       an incremented address.
+
+     The reason why [fit] can return "please retry", as opposed to
+     retrying by itself, is that retrying requires starting over
+     with a full row, of which [cells] is just a subrow.  *)
 
   let rec fit table oaddr shift cells : int =
     match S.view cells with
     | S.N ->
-        shift
-    | S.C (base, mask, cells') ->
+        shift (* success *)
+    | S.C (base, mask, cells) ->
         let addr = oaddr + base / A.bound in
-        if not (valid table addr) then
-          shift
+        (* Shortcut: if [addr] is out of bounds then the table is logically
+           empty at [addr] and beyond. Therefore fitting this entire row
+           must succeed. *)
+        if not (valid table addr) then shift (* success *) else
+        (* Read two words in the table and test whether they are compatible
+           with the bit set [mask], shifted up by [shift]. *)
+        let cells0 = V.get table addr in
+        let cells1 = get' table (addr + 1) in
+        if compatible cells0 cells1 mask shift then
+          (* This cell fits: continue with the rest. *)
+          fit table oaddr shift cells
         else
-          let cells0 = V.get table addr in
-          let cells1 = get' table (addr + 1) in
-          if compatible cells0 cells1 mask shift then
-            fit table oaddr shift cells'
-          else
-            let shift = ref (shift + 1) in
-            while !shift < A.bound &&
-                  not (compatible cells0 cells1 mask !shift)
-            do incr shift; done;
-            !shift
+          (* This cell does not fit: increment [shift] until either this
+             cell fits or [shift] reaches [A.bound]. In either case, return
+             a request for a retry. *)
+          let shift = ref (shift + 1) in
+          while !shift < A.bound &&
+                not (compatible cells0 cells1 mask !shift)
+          do incr shift; done;
+          !shift
 
   let rec write_cells table oaddr shift cells =
     match S.view cells with
