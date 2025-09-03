@@ -235,24 +235,42 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The second step is a variant of the fitting loop of [RowDisplacement]
-   specialized to work on bitsets:
-   - a row is now a sparse bit set.
-   - table is now an array of atomic bit sets.
+(* The second step is a variant of the fitting loop of [RowDisplacement].
+   It is specialized to work on bit sets:
 
-   (The values are thus ignored, only the occupancy matters.)
+   - a row is represented as a sparse bit set;
+   - the table is represented as a dense bit vector.
 
-   Rows are added to the table one after another, the offsets being computed on
-   the fly.
+   No merging is attempted; only packing (fitting all rows in a single table)
+   is attempted. For this reason, in a row of type [a sparse_row], the data of
+   type [a] is irrelevant. This data is ignored; only occupancy matters. This
+   explains why a row can be represented as a bit set.
 
-   The core loop is still $O(n^2)$ ($n$ being the number of non-empty cells),
-   but the merging and the packing make the $n$ smaller and the constant-factors
-   much faster. *)
+   The function [add] allows adding rows one by one to the table, in a greedy
+   manner. As each row is added, its final offset within the table is computed.
+
+   The cost of adding rows is quadratic in the number of non-empty cells.
+   Still, the use of bit vectors allows this code to be significantly faster
+   than the original algorithm in [RowDisplacement]. *)
+
 module Pack : sig
+
+  (**A table is a bit set where a number of rows have been packed. *)
   type table
+
+  (**[create()] creates an empty table. *)
   val create : unit -> table
-  val add_row : table -> 'a sparse_row -> int
+
+  (**[add table row] adds the row [row] to the table [table]. This row is
+     moved towards by a certain offset so that it fits in a position where it
+     does not collide with previously added rows. This offset is returned.
+     This offset can be negative. *)
+  val add : table -> 'a sparse_row -> int
+
+  (**[width table] returns the current width of the table [table], expressed
+     in bits. *)
   val width : table -> int
+
 end = struct
 
   type table = V.vector
@@ -341,7 +359,7 @@ end = struct
     else
       add_cells v (oaddr + 1) 0 cells
 
-  let add_row v row =
+  let add v row =
     let (index, cells) = import row in
     let offset = add_cells v 0 0 cells in
     offset - index
@@ -432,7 +450,7 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
     let v = Pack.create () in
 
     let fit_merged_row (_rank, _rows, cells) =
-      Pack.add_row v cells
+      Pack.add v cells
     in
 
     let offsets = List.map fit_merged_row merged_rows in
