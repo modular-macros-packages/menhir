@@ -124,10 +124,10 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
       (* Record that this row is defined on column [j]. *)
       defined.(j) <- S.add i defined.(j);
       (* Record that the cell [cell] appears in row [i]. *)
-      match Hashtbl.find_opt compatibility cell with
-      | Some rows ->
+      match Hashtbl.find compatibility cell with
+      | rows ->
           rows := S.add i !rows
-      | None ->
+      | exception Not_found ->
           let rows = ref (S.singleton i) in
           Hashtbl.add compatibility cell rows
     in
