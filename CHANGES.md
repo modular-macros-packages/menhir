@@ -1,5 +1,27 @@
 # Changes
 
+## 2025/09/03
+
+* The table back-end uses a new table compression algorithm.
+
+  This algorithm is significantly faster than the previous algorithm:
+  in our tests, it can be up to 8 times faster.
+  This results in observably faster compilation:
+  for example, the time required to compile the OCaml parser
+  drops from 1.2 seconds to 0.6 seconds.
+
+  Compared with the previous algorithm,
+  the new algorithm produces results of roughly similar quality:
+  the size of the compressed tables can increase or decrease
+    by a few percent, up to 20% in the most dramatic cases.
+  On average, we observe a 1% increase in size.
+
+  The use of the previous algorithm can be requested
+  by the command line switch `--pack-classic`.
+  This command line switch may disappear in the future.
+
+  (Contributed by Frédéric Bour; reviewed by François Pottier.)
+
 ## 2024/07/15
 
 * Fix a bug that could in principle cause `menhir --list-errors` to produce
