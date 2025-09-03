@@ -459,7 +459,7 @@ let compress_nonempty (type a)
   (* Construct a merge plan; that is, gather compatible rows in groups. *)
 
   let merge_plan : group list =
-    let cols = Array.length t.(0) in
+    let cols = Array.length t.(0) in (* this requires [t] to be nonempty *)
     merge_rows rows cols
 
   (* [compare_cells] compares two cells that originate in two rows that we
@@ -491,46 +491,52 @@ let compress_nonempty (type a)
   let enrich (group : group) : a rgroup =
     (* Gather every row in this group. *)
     let rows : a sparse_row list = List.map (Array.get rows) group in
-    (* Merge these rows using (roughly) a home-made merge sort. *)
-    let cells = MList.reduce [] (MList.merge_uniq compare_cells) rows in
+    (* Merge these rows into a single row using via merge sort. *)
+    let cells : a sparse_row =
+      MList.reduce [] (MList.merge_uniq compare_cells) rows in
+    (* Done. *)
     let rank = List.length cells in
-
     { group; rank; cells }
 
-  (* Merge and rank the rows (longest row first) *)
+  (* Construct a list of rich groups. Sort it by decreasing rank. *)
 
-  let merged_rows =
+  let decreasing_rank rgroup1 rgroup2 =
+    Int.compare rgroup2.rank rgroup1.rank
+
+  let rgroups : a rgroup list =
     List.map enrich merge_plan
-    |> List.sort (fun rgroup1 rgroup2 -> Int.compare rgroup2.rank rgroup1.rank)
+    |> List.sort decreasing_rank
 
-  (* Compute an offset for each group of source rows *)
+  (* Pack each rich group in turn into a one-dimensional table.
+     This yields a list [offsets], which maps each rich group
+     to an offset, and an integer [width], which is the length
+     of the necessary table. *)
 
   let v = Pack.create ()
-  let fit_merged_row rgroup =
-    Pack.add v rgroup.cells
-  let offsets = List.map fit_merged_row merged_rows
-  let width = Pack.width v
+  let add rgroup = Pack.add v rgroup.cells
+  let offsets : int list = List.map add rgroups
+  let width : int = Pack.width v
 
-  (* Allocate and populate the final arrays *)
+  (* Allocate and populate the displacement and data arrays. *)
 
-  let displacement = Array.make (Array.length t) 0
-  let data = Array.make width dummy
+  let displacement : int array = Array.make (Array.length t) 0
+  let data : a array = Array.make width dummy
 
-  let store_rows offset rgroup =
-
-    (* Store encoded displacements *)
+  let store offset rgroup =
+    (* Store an (encoded) offset in the displacement table. *)
     let code = RowDisplacement.encode offset in
     List.iter (fun row -> displacement.(row) <- code) rgroup.group;
-
-    (* Store cells *)
-    List.iter (fun (i, d) -> data.(offset + i) <- d) rgroup.cells
+    (* Store the content of the data cells in the data table. *)
+    List.iter (fun (j, a) -> data.(offset + j) <- a) rgroup.cells
 
   let () =
-    List.iter2 store_rows offsets merged_rows
+    List.iter2 store offsets rgroups
 
   end (* C *)
   (* Return the compressed tables. *)
   in C.(displacement, data)
+
+(* The case where [t] has length zero must be dealt with separately. *)
 
 let compress insignificant dummy t =
   if Array.length t = 0 then
