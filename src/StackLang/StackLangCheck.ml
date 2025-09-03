@@ -389,7 +389,7 @@ let wt_subtype env context target =
   let actual, expected = current.stack, target.stack in
   let fail message =
     wt_fail env
-      "Failed stack subtype check (%s) : %s.\n\
+      "Failed stack subtype check (%s) : %s\n\
        Actual shape: %s\n\
        Expected shape: %s\n"
       context
