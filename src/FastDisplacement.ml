@@ -249,9 +249,13 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
    The function [add] allows adding rows one by one to the table, in a greedy
    manner. As each row is added, its final offset within the table is computed.
 
-   The cost of adding rows is quadratic in the number of non-empty cells.
-   Still, the use of bit vectors allows this code to be significantly faster
-   than the original algorithm in [RowDisplacement]. *)
+   In the worst case, the cost of adding one row is quadratic in the number
+   of non-empty cells in this row. Therefore, in the worst case, the cost of
+   adding all rows is cubic. However, according to Yao and Tarjan, under a
+   certain harmonic decay assumption, the worst-case is only quadratic.
+
+   Anyway, the use of bit vectors allows this code to be significantly
+   faster than the original algorithm in [RowDisplacement]. *)
 
 module Pack : sig
 
