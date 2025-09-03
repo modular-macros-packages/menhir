@@ -250,11 +250,16 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
    much faster. *)
 module Pack : sig
   type row
+  type table
+  val create : unit -> table
   val import : 'a sparse_row -> row
-
-  val add_row : V.vector -> row -> int
-
+  val add_row : table -> row -> int
+  val width : table -> int
 end = struct
+
+  type table = V.vector
+  let create = V.create
+  let width = V.width
 
   (* [set_mask v a mask] updates the word at address [a] in the vector [v]
      by setting the bits in [mask]. These bits must not be set already. *)
@@ -425,14 +430,14 @@ let compress (type a) insignificant dummy (t : a array array) : a RowDisplacemen
 
     (* Compute an offset for each group of source rows *)
 
-    let v = V.create () in
+    let v = Pack.create () in
 
     let fit_merged_row (_rank, _rows, cells) =
       Pack.add_row v (Pack.import cells)
     in
 
     let offsets = List.map fit_merged_row merged_rows in
-    let width = V.width v in
+    let width = Pack.width v in
 
     (* Allocate and populate the final arrays *)
 
