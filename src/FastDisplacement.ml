@@ -277,6 +277,13 @@ end = struct
   let create = V.create
   let width = V.width
 
+  (* [get' v a] reads the vector [v] at address [a]. If this address is
+     out of bounds then an empty word is returned. *)
+
+  let[@inline] get' v a =
+    assert (0 <= a);
+    if a < V.length v then V.get v a else A.empty
+
   (* [set_mask v a mask] updates the word at address [a] in the vector [v]
      by setting the bits in [mask]. These bits must not be set already. *)
 
@@ -328,11 +335,7 @@ end = struct
           shift
         else
           let cells0 = V.get table addr in
-          let cells1 =
-            if addr + 1 = len
-            then A.empty
-            else V.get table (addr + 1)
-          in
+          let cells1 = get' table (addr + 1) in
           if compatible cells0 cells1 mask shift then
             fit table oaddr shift cells'
           else
