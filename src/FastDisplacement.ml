@@ -436,36 +436,42 @@ let compress_nonempty (type a)
 : a RowDisplacement.table =
   let module C = struct
 
-  (* This turns a row-as-array into a row-as-sparse-list. *)
+  (* [sparsify] turns a dense row, represented as an array, into a sparse row. *)
 
-  let sparse (line : a array) : a sparse_row =
-
-    let[@tail_mod_cons] rec loop (j : int) (row : a sparse_row) =
-      if j < 0 then
-        row
+  let rec sparsify (line : a array) j (row : a sparse_row) =
+    if j < 0 then
+      row
+    else
+      let x = line.(j) in
+      if insignificant x then
+        sparsify line (j - 1) row
       else
-        let x = line.(j) in
-        if insignificant x then
-          loop (j - 1) row
-        else
-          loop (j - 1) ((j, x) :: row)
-    in
+        sparsify line (j - 1) ((j, x) :: row)
 
-    loop (Array.length line - 1) []
+  let[@inline] sparsify (line : a array) : a sparse_row =
+    sparsify line (Array.length line - 1) []
 
-  (* Construct an array of all rows. *)
+  (* Construct an array of sparse rows. *)
 
-  let rows : a sparse_row array = Array.map sparse t
+  let rows : a sparse_row array =
+    Array.map sparsify t
 
-  (* Group mergeable rows. *)
+  (* Construct a merge plan; that is, gather compatible rows in groups. *)
 
-  let cols = Array.length t.(0)
-  let merge_plan = merge_rows rows cols
+  let merge_plan : group list =
+    let cols = Array.length t.(0) in
+    merge_rows rows cols
 
   (* Merge rows, rank them (count the number of non-empty cells), and remember
      their indices. *)
 
-  let merge_rows (indices : int list) : (int * int list * a sparse_row) =
+  let compare_cells (i1, a1) (i2, a2) =
+    let c = Int.compare i1 i2 in
+    (* Sanity check: only two equal values can be merged. *)
+    assert (c <> 0 || a1 = a2);
+    c
+
+  let merge_rows (indices : group) : (int * group * a sparse_row) =
 
     (* Gather cells of all rows *)
 
@@ -473,17 +479,8 @@ let compress_nonempty (type a)
 
     (* Merge cells lists, rank result *)
 
-    let compare_cell (i1,a1) (i2,a2) =
-      match Int.compare i1 i2 with
-      | 0 ->
-        (* Safety check: only merge equal values *)
-        assert (a1 = a2);
-        0
-      | n -> n
-    in
-
     let cells, rank =
-      match MList.reduce (MList.merge_uniq compare_cell) cells with
+      match MList.reduce (MList.merge_uniq compare_cells) cells with
       | None -> ([], 0)
       | Some cells -> (cells, List.length cells)
     in
