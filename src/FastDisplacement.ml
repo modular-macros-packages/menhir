@@ -326,7 +326,7 @@ end = struct
      shifted up by the offset [shift]. This offset must be comprised
      between 0 included and [A.bound] excluded. *)
 
-  let compatible cells0 cells1 mask shift : bool =
+  let[@inline] compatible cells0 cells1 mask shift : bool =
     let mask0, mask1 = A.shift mask shift in
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
