@@ -184,11 +184,11 @@ let[@tail_mod_cons] rec reduce_round f xys =
 (* [reduce] iterates [reduce_round] until the size of the list
    becomes zero or one. The number of iterations is logarithmic. *)
 
-let rec reduce f xs =
+let rec reduce e f xs =
   match reduce_round f xs with
   | [] ->
-      None
+      e
   | [x] ->
-      Some x
+      x
   | xs ->
-      reduce f xs
+      reduce e f xs

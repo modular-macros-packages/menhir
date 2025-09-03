@@ -462,42 +462,52 @@ let compress_nonempty (type a)
     let cols = Array.length t.(0) in
     merge_rows rows cols
 
-  (* Merge rows, rank them (count the number of non-empty cells), and remember
-     their indices. *)
+  (* [compare_cells] compares two cells that originate in two rows that we
+     wish to merge. Because we assume that the two rows are compatible, if
+     the column indices [j1] and [j2] are equal then the pieces of data [a1]
+     and [a2] must be equal as well. Thus, two cells can be compared based
+     on [j1] and [j2] alone. *)
 
-  let compare_cells (i1, a1) (i2, a2) =
-    let c = Int.compare i1 i2 in
+  let compare_cells (j1, a1) (j2, a2) =
+    let c = Int.compare j1 j2 in
     (* Sanity check: only two equal values can be merged. *)
     assert (c <> 0 || a1 = a2);
     c
 
-  let merge_rows (indices : group) : (int * group * a sparse_row) =
+  (* The type ['a rgroup] is analogous to the type ['a rrow] that was used
+     earlier, except it represents a group of merged rows, as opposed to a
+     single row. Therefore, instead of an [index] field, it carries a [group]
+     field, a list of indices. *)
 
-    (* Gather cells of all rows *)
+  type 'a rgroup = {
+    group: group;
+    rank: int;
+    cells: 'a sparse_row;
+  }
 
-    let cells = List.map (Array.get rows) indices in
+  (* [enrich] converts a group (a list of row indices) to a rich group,
+     as described above. *)
 
-    (* Merge cells lists, rank result *)
+  let enrich (group : group) : a rgroup =
+    (* Gather every row in this group. *)
+    let rows : a sparse_row list = List.map (Array.get rows) group in
+    (* Merge these rows using (roughly) a home-made merge sort. *)
+    let cells = MList.reduce [] (MList.merge_uniq compare_cells) rows in
+    let rank = List.length cells in
 
-    let cells, rank =
-      match MList.reduce (MList.merge_uniq compare_cells) cells with
-      | None -> ([], 0)
-      | Some cells -> (cells, List.length cells)
-    in
-
-    (rank, indices, cells)
+    { group; rank; cells }
 
   (* Merge and rank the rows (longest row first) *)
 
   let merged_rows =
-    List.map merge_rows merge_plan
-    |> List.sort (fun (r1, _, _) (r2, _, _) -> Int.compare r2 r1)
+    List.map enrich merge_plan
+    |> List.sort (fun rgroup1 rgroup2 -> Int.compare rgroup2.rank rgroup1.rank)
 
   (* Compute an offset for each group of source rows *)
 
   let v = Pack.create ()
-  let fit_merged_row (_rank, _rows, cells) =
-    Pack.add v cells
+  let fit_merged_row rgroup =
+    Pack.add v rgroup.cells
   let offsets = List.map fit_merged_row merged_rows
   let width = Pack.width v
 
@@ -506,14 +516,14 @@ let compress_nonempty (type a)
   let displacement = Array.make (Array.length t) 0
   let data = Array.make width dummy
 
-  let store_rows offset (_rank, rows, cells) =
+  let store_rows offset rgroup =
 
     (* Store encoded displacements *)
     let code = RowDisplacement.encode offset in
-    List.iter (fun row -> displacement.(row) <- code) rows;
+    List.iter (fun row -> displacement.(row) <- code) rgroup.group;
 
     (* Store cells *)
-    List.iter (fun (i, d) -> data.(offset + i) <- d) cells
+    List.iter (fun (i, d) -> data.(offset + i) <- d) rgroup.cells
 
   let () =
     List.iter2 store_rows offsets merged_rows
