@@ -277,12 +277,19 @@ end = struct
   let create = V.create
   let width = V.width
 
+  (* [valid v a] determines whether the address [a] is valid with respect
+     to the vector [v], that is, less than the length of this vector. *)
+
+  let[@inline] valid v a =
+    assert (0 <= a);
+    a < V.length v
+
   (* [get' v a] reads the vector [v] at address [a]. If this address is
      out of bounds then an empty word is returned. *)
 
   let[@inline] get' v a =
     assert (0 <= a);
-    if a < V.length v then V.get v a else A.empty
+    if valid v a then V.get v a else A.empty
 
   (* [set_mask v a mask] updates the word at address [a] in the vector [v]
      by setting the bits in [mask]. These bits must not be set already. *)
@@ -324,14 +331,15 @@ end = struct
     A.disjoint cells0 mask0 &&
     A.disjoint cells1 mask1
 
+  (* [fit table] *)
+
   let rec fit table oaddr shift cells : int =
     match S.view cells with
     | S.N ->
         shift
     | S.C (base, mask, cells') ->
         let addr = oaddr + base / A.bound in
-        let len = V.length table in
-        if addr >= len then
+        if not (valid table addr) then
           shift
         else
           let cells0 = V.get table addr in
