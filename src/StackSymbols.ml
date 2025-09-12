@@ -166,25 +166,36 @@ module Long () = struct
 
   (* Define the data flow graph. *)
 
-  (* We perform the data flow analysis at the level of the LR(0) automaton. *)
+  (* 2025/09/12: we used to perform this data flow analysis at the level of
+     the LR(0) automaton, because we assumed that the paths in the LR(0) and
+     the paths in the LR(1) automaton are the same, up to the projection that
+     maps a state of the LR(1) automaton down to its LR(0) core. However, this
+     is incorrect. Some edges in the LR(1) automaton can be removed by the
+     conflict resolution procedure. Then, it is possible that a state in the
+     LR(1) automaton can be reached via fewer paths than the corresponding
+     state in the LR(0) automaton. By taking this into account, we may be able
+     to produce more precise information (that is, a longer known suffix of
+     the stack) at this state. We must do so, otherwise we might produce an
+     invariant that is not self-consistent; that would later lead to a failure
+     in StackLangCheck. (See wiktor.mly.) *)
 
   module G = struct
 
-    type variable = Lr0.node
+    type variable = Lr1.node
 
     type property = SymbolVector.property
 
     (* At each start state of the automaton, the stack is empty. *)
 
     let foreach_root contribute =
-      Lr0.entry |> ProductionMap.iter (fun _prod root ->
+      Lr1.entry |> ProductionMap.iter (fun _prod root ->
         contribute root empty
       )
 
     (* The edges of the data flow graph are the transitions of the automaton. *)
 
     let foreach_successor source stack contribute =
-      Lr0.outgoing_edges source |> SymbolMap.iter (fun symbol target ->
+      Lr1.ForwardEdges.foreach_outgoing_edge source (fun symbol target ->
         (* The contribution of [source], through this edge, to [target], is the
            stack at [source], extended with a new cell for this transition. *)
         contribute target (push stack symbol)
@@ -194,26 +205,21 @@ module Long () = struct
 
   (* Compute the least fixed point. *)
 
-  let stack_symbols : Lr0.node -> property option =
-    let module F = Fix.DataFlow.Run(Lr0.ImperativeNodeMap)(SymbolVector)(G) in
+  let stack_symbols : Lr1.node -> property option =
+    let module F = Fix.DataFlow.Run(Lr1.ImperativeNodeMap)(SymbolVector)(G) in
     F.solution
 
   (* If every state is reachable, then the least fixed point must be non-[None]
      everywhere, so we may view it as a function that produces a vector of
      symbols. *)
 
-  let stack_symbols (node : Lr0.node) : property =
+  let stack_symbols (node : Lr1.node) : property =
     match stack_symbols node with
     | None ->
         (* Apparently this node is unreachable. *)
         assert false
     | Some v ->
         v
-
-  (* Move up to the level of the LR(1) automaton. *)
-
-  let stack_symbols (node : Lr1.node) : property =
-    stack_symbols (Lr0.core (Lr1.state node))
 
   let stack_height (node : Lr1.node) : int =
     Array.length (stack_symbols node)
