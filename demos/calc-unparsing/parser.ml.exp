@@ -69,7 +69,11 @@ module Tables = struct
       | EOL ->
           Obj.repr ()
       | INT _v ->
-          Obj.repr _v
+          Obj.repr (_v : (
+# 3 "demos/calc-unparsing/parser.mly"
+       (int)
+# 76 "demos/calc-unparsing/parser.ml"
+          ))
       | LPAREN ->
           Obj.repr ()
       | MINUS ->
@@ -113,7 +117,7 @@ module Tables = struct
         let i : (
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
-# 117 "demos/calc-unparsing/parser.ml"
+# 121 "demos/calc-unparsing/parser.ml"
         ) = Obj.magic i in
         let _endpos__0_ = _menhir_stack.MenhirLib.EngineTypes.endp in
         let _startpos = _startpos_i_ in
@@ -121,7 +125,7 @@ module Tables = struct
         let _v : (AST.main) = 
 # 46 "demos/calc-unparsing/parser.mly"
     ( EConst i )
-# 125 "demos/calc-unparsing/parser.ml"
+# 129 "demos/calc-unparsing/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -160,7 +164,7 @@ module Tables = struct
         let _v : (AST.main) = 
 # 52 "demos/calc-unparsing/parser.mly"
     ( e )
-# 164 "demos/calc-unparsing/parser.ml"
+# 168 "demos/calc-unparsing/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -193,12 +197,12 @@ module Tables = struct
           let op = 
 # 66 "demos/calc-unparsing/parser.mly"
         ( UNeg )
-# 197 "demos/calc-unparsing/parser.ml"
+# 201 "demos/calc-unparsing/parser.ml"
            in
           (
 # 58 "demos/calc-unparsing/parser.mly"
     ( EUnOp (op, e) )
-# 202 "demos/calc-unparsing/parser.ml"
+# 206 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -239,12 +243,12 @@ module Tables = struct
           let op = 
 # 69 "demos/calc-unparsing/parser.mly"
         ( BAdd )
-# 243 "demos/calc-unparsing/parser.ml"
+# 247 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 248 "demos/calc-unparsing/parser.ml"
+# 252 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -285,12 +289,12 @@ module Tables = struct
           let op = 
 # 70 "demos/calc-unparsing/parser.mly"
         ( BSub )
-# 289 "demos/calc-unparsing/parser.ml"
+# 293 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 294 "demos/calc-unparsing/parser.ml"
+# 298 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -331,12 +335,12 @@ module Tables = struct
           let op = 
 # 71 "demos/calc-unparsing/parser.mly"
         ( BMul )
-# 335 "demos/calc-unparsing/parser.ml"
+# 339 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 340 "demos/calc-unparsing/parser.ml"
+# 344 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -377,12 +381,12 @@ module Tables = struct
           let op = 
 # 72 "demos/calc-unparsing/parser.mly"
         ( BDiv )
-# 381 "demos/calc-unparsing/parser.ml"
+# 385 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 386 "demos/calc-unparsing/parser.ml"
+# 390 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -415,7 +419,7 @@ module Tables = struct
         let _v : (AST.main) = 
 # 41 "demos/calc-unparsing/parser.mly"
     ( e )
-# 419 "demos/calc-unparsing/parser.ml"
+# 423 "demos/calc-unparsing/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -572,7 +576,7 @@ module CST = struct
     method virtual visit_INT : (
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
-# 576 "demos/calc-unparsing/parser.ml"
+# 580 "demos/calc-unparsing/parser.ml"
     ) -> 'r
     
     method virtual visit_EOL : 'r
