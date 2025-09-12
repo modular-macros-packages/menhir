@@ -1,5 +1,14 @@
 # Changes
 
+## 2025/09/12
+
+* Fix a vulnerability in the code produced by the table back-end.
+  With `--table` and `--external-tokens`, if the user proposed two
+  inconsistent views of the types of the tokens, then Menhir would
+  produce code that contains incorrect unsafe type casts, which the
+  OCaml compiler would silently accept. (Reported by Fay Carsons;
+  fixed by Frédéric Bour.)
+
 ## 2025/09/03
 
 * The table back-end uses a new table compression algorithm.
