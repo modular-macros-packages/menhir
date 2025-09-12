@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 402 distinct tests.
+;; 403 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -29255,6 +29255,70 @@
   (action
     (diff why3_1_1_0-py_parser_stripped.ml.log.exp
       why3_1_1_0-py_parser_stripped.ml.log)))
+
+(rule (target wiktor.opp.out) (deps wiktor.mly)
+  (action
+    (with-outputs-to wiktor.opp.out
+      (with-accepted-exit-codes 0 (run menhir --only-preprocess %{deps})))))
+
+(rule (alias quick) (action (diff wiktor.opp.exp wiktor.opp.out)))
+
+(rule
+  (targets wiktor.out wiktor.automaton wiktor.automaton.resolved
+    wiktor.conflicts wiktor.timings)
+  (deps wiktor.mly)
+  (action
+    (with-outputs-to wiktor.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to wiktor.timings %{deps})))))
+
+(rule (alias quick) (action (diff wiktor.exp wiktor.out)))
+
+(rule (alias quick) (action (diff wiktor.automaton.exp wiktor.automaton)))
+
+(rule (alias quick)
+  (action (diff wiktor.automaton.resolved.exp wiktor.automaton.resolved)))
+
+(rule (alias quick) (action (diff wiktor.conflicts.exp wiktor.conflicts)))
+
+(rule (target wiktor_stripped.mly) (deps wiktor.mly)
+  (action
+    (with-stderr-to wiktor_stripped.ignored
+      (with-stdout-to wiktor_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu %{deps}))))))
+
+(rule
+  (targets wiktor_stripped.log wiktor_stripped.mli wiktor_stripped.ml
+    wiktor_stripped.stacklang wiktor_stripped.timings wiktor_stripped.scount
+    wiktor_stripped.dcount)
+  (deps wiktor_stripped.mly)
+  (action
+    (with-outputs-to wiktor_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to wiktor_stripped.timings %{deps})))))
+
+(alias (name quick) (deps
+                      wiktor_stripped.stacklang))
+
+(rule (targets wiktor_stripped.cmi wiktor_stripped.mli.log)
+  (deps wiktor_stripped.mli)
+  (action
+    (with-stdout-to wiktor_stripped.mli.dtimings
+      (with-stderr-to wiktor_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -c wiktor_stripped.mli)))))
+
+(rule (targets wiktor_stripped.cmo wiktor_stripped.ml.log)
+  (deps wiktor_stripped.ml wiktor_stripped.cmi)
+  (action
+    (with-stdout-to wiktor_stripped.ml.dtimings
+      (with-stderr-to wiktor_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -c wiktor_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff wiktor_stripped.ml.log.exp wiktor_stripped.ml.log)))
 
 (rule (target xpath_parser.opp.out) (deps xpath_parser.mly)
   (action

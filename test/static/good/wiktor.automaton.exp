@@ -1,0 +1,141 @@
+State 0:
+## Known stack suffix:
+##
+## LR(1) items:
+expr' -> . expr [ # ]
+## Transitions:
+-- On BACKSLASH shift to state 1
+-- On expr shift to state 9
+## Reductions:
+
+State 1:
+## Known stack suffix:
+## BACKSLASH
+## LR(1) items:
+expr -> BACKSLASH . bar_list [ BAR # ]
+expr -> BACKSLASH . loption(separated_nonempty_list(BAR,ATOM)) [ BAR # ]
+## Transitions:
+-- On BACKSLASH shift to state 1
+-- On ATOM shift to state 2
+-- On separated_nonempty_list(BAR,ATOM) shift to state 5
+-- On loption(separated_nonempty_list(BAR,ATOM)) shift to state 6
+-- On expr shift to state 7
+-- On bar_list shift to state 8
+## Reductions:
+-- On BAR #
+--   reduce production loption(separated_nonempty_list(BAR,ATOM)) ->
+** End-of-stream conflict on BAR BACKSLASH ATOM
+**   There is a tension between
+**   (1) reducing production loption(separated_nonempty_list(BAR,ATOM)) ->
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 2:
+## Known stack suffix:
+## ATOM
+## LR(1) items:
+separated_nonempty_list(BAR,ATOM) -> ATOM . [ BAR # ]
+separated_nonempty_list(BAR,ATOM) -> ATOM . BAR separated_nonempty_list(BAR,ATOM) [ BAR # ]
+## Transitions:
+-- On BAR shift to state 3
+## Reductions:
+-- On BAR #
+--   reduce production separated_nonempty_list(BAR,ATOM) -> ATOM
+** Conflict on BAR
+** End-of-stream conflict on BAR
+**   There is a tension between
+**   (1) reducing production separated_nonempty_list(BAR,ATOM) -> ATOM
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 3:
+## Known stack suffix:
+## ATOM BAR
+## LR(1) items:
+separated_nonempty_list(BAR,ATOM) -> ATOM BAR . separated_nonempty_list(BAR,ATOM) [ BAR # ]
+## Transitions:
+-- On ATOM shift to state 2
+-- On separated_nonempty_list(BAR,ATOM) shift to state 4
+## Reductions:
+
+State 4:
+## Known stack suffix:
+## ATOM BAR separated_nonempty_list(BAR,ATOM)
+## LR(1) items:
+separated_nonempty_list(BAR,ATOM) -> ATOM BAR separated_nonempty_list(BAR,ATOM) . [ BAR # ]
+## Transitions:
+## Reductions:
+-- On BAR #
+--   reduce production separated_nonempty_list(BAR,ATOM) -> ATOM BAR separated_nonempty_list(BAR,ATOM)
+** End-of-stream conflict on BAR
+**   There is a tension between
+**   (1) reducing production separated_nonempty_list(BAR,ATOM) -> ATOM BAR separated_nonempty_list(BAR,ATOM)
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 5:
+## Known stack suffix:
+## separated_nonempty_list(BAR,ATOM)
+## LR(1) items:
+loption(separated_nonempty_list(BAR,ATOM)) -> separated_nonempty_list(BAR,ATOM) . [ BAR # ]
+## Transitions:
+## Reductions:
+-- On BAR #
+--   reduce production loption(separated_nonempty_list(BAR,ATOM)) -> separated_nonempty_list(BAR,ATOM)
+** End-of-stream conflict on BAR
+**   There is a tension between
+**   (1) reducing production loption(separated_nonempty_list(BAR,ATOM)) -> separated_nonempty_list(BAR,ATOM)
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 6:
+## Known stack suffix:
+## BACKSLASH loption(separated_nonempty_list(BAR,ATOM))
+## LR(1) items:
+expr -> BACKSLASH loption(separated_nonempty_list(BAR,ATOM)) . [ BAR # ]
+## Transitions:
+## Reductions:
+-- On BAR #
+--   reduce production expr -> BACKSLASH loption(separated_nonempty_list(BAR,ATOM))
+** End-of-stream conflict on BAR
+**   There is a tension between
+**   (1) reducing production expr -> BACKSLASH loption(separated_nonempty_list(BAR,ATOM))
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 7:
+## Known stack suffix:
+## expr
+## LR(1) items:
+bar_list -> expr . [ BAR # ]
+bar_list -> expr . BAR bar_list [ BAR # ]
+## Transitions:
+## Reductions:
+-- On #
+--   reduce production bar_list -> expr
+
+State 8:
+## Known stack suffix:
+## BACKSLASH bar_list
+## LR(1) items:
+expr -> BACKSLASH bar_list . [ BAR # ]
+## Transitions:
+## Reductions:
+-- On BAR #
+--   reduce production expr -> BACKSLASH bar_list
+** End-of-stream conflict on BAR
+**   There is a tension between
+**   (1) reducing production expr -> BACKSLASH bar_list
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 9:
+## Known stack suffix:
+## expr
+## LR(1) items:
+expr' -> expr . [ # ]
+## Transitions:
+## Reductions:
+-- On #
+--   accept expr
+

@@ -1,0 +1,46 @@
+Grammar has 4 nonterminal symbols, among which 1 start symbols.
+Grammar has 3 terminal symbols.
+Grammar has 8 productions.
+nullable(separated_nonempty_list(BAR,ATOM)) = false
+nullable(loption(separated_nonempty_list(BAR,ATOM))) = true
+nullable(expr) = false
+nullable(bar_list) = false
+first(separated_nonempty_list(BAR,ATOM)) = ATOM
+first(loption(separated_nonempty_list(BAR,ATOM))) = ATOM
+first(expr) = BACKSLASH
+first(bar_list) = BACKSLASH
+minimal(separated_nonempty_list(BAR,ATOM)) = (* 1 *) ATOM
+minimal(loption(separated_nonempty_list(BAR,ATOM))) = (* 0 *)
+minimal(expr) = (* 1 *) BACKSLASH
+minimal(bar_list) = (* 1 *) BACKSLASH
+maximal(separated_nonempty_list(BAR,ATOM)) = infinity
+maximal(loption(separated_nonempty_list(BAR,ATOM))) = infinity
+maximal(expr) = infinity
+maximal(bar_list) = infinity
+follow(separated_nonempty_list(BAR,ATOM)) = BAR #
+follow(loption(separated_nonempty_list(BAR,ATOM))) = BAR #
+follow(expr) = BAR #
+follow(bar_list) = BAR #
+Built an LR(0) automaton with 12 states.
+The grammar is not SLR(1) -- 2 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 12 states.
+One shift/reduce conflict was silently solved.
+Only 10 states remain after resolving shift/reduce conflicts.
+Warning: one state has shift/reduce conflicts.
+Warning: one shift/reduce conflict was arbitrarily resolved.
+Warning: 6 end-of-stream conflicts were arbitrarily resolved.
+File "wiktor.mly", line 28, characters 4-27:
+Warning: production bar_list -> expr BAR bar_list is never reduced.
+File "<standard.mly>", line 249, characters 2-7:
+Warning: production separated_nonempty_list(BAR,ATOM) -> ATOM is never reduced.
+Warning: in total, 2 productions are never reduced.
+5 out of 10 states have a default reduction.
+The action table is 40 entries; 6 non-zero; 14 compressed.
+The action table occupies roughly 104 bytes.
+The goto table is 50 entries; 6 non-zero; 16 compressed.
+The goto table occupies roughly 104 bytes.
+The error table occupies roughly 40 bytes.
+The default_reduction table occupies roughly 40 bytes.
+The lhs table occupies roughly 40 bytes.
+The trace table occupies roughly 8 bytes.
