@@ -678,12 +678,13 @@ let token2value =
         match Terminal.ocamltype tok with
         | None ->
             EUnit
-        | Some (Stretch.Inferred _) ->
-            EVar semv
-        | Some (Stretch.Declared typ) ->
-            let {Stretch.stretch_content; _} = typ in
-            let stretch_content = "(" ^ semv ^ " : " ^ stretch_content ^ ")" in
-            ETextual {typ with Stretch.stretch_content}
+        | Some typ ->
+            (* 2025/09/12: a type annotation is required for safety when the
+               user uses an external [token] type (via --external-tokens).
+               We might have two inconsistent views of the type of the
+               semantic value: one in our .mly file, and one in the external
+               definition of the [token] type. See MR 38. *)
+            EAnnot (EVar semv, type2scheme (TypTextual typ))
       )
     )
 
