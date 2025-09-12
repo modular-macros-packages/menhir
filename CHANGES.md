@@ -2,6 +2,12 @@
 
 ## 2025/09/12
 
+* In the new code back-end, fix a problem that could lead to an internal error
+  in `StackLangCheck` with the message `Failed stack subtype check (jump)`.
+  This problem could appear only when shift/reduce conflicts were resolved in
+  favor of reduction, causing edges to be removed in the LR(1) automaton.
+  (Reported by Wiktor Kuchta; fixed by François Pottier.)
+
 * Fix a vulnerability in the code produced by the table back-end.
   With `--table` and `--external-tokens`, if the user proposed two
   inconsistent views of the types of the tokens, then Menhir would
