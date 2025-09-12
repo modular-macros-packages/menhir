@@ -412,7 +412,7 @@ release:
 	@ echo "Done."
 	@ echo "If happy, please type:"
 	@ echo "  \"make publish\"   to push this release to gitlab.inria.fr"
-	@ echo "  \"make export\"    to upload the manual to yquem.inria.fr"
+	@ echo "  \"make export\"    to upload the manual to yquem.paris.inria.fr"
 	@ echo "  \"make opam\"      to create a new opam package"
 	@ echo "Otherwise, please type:"
 	@ echo "  \"make undo\"      to undo this release"
@@ -442,7 +442,7 @@ undo:
 # points to the latest released version of the documentation.
 
 RSYNC   := scp -p -C
-TARGET  := yquem.inria.fr:public_html/menhir/
+TARGET  := yquem.paris.inria.fr:public_html/menhir/
 
 # This assumes that [make release] has been run.
 
