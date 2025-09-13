@@ -8,10 +8,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This functor is invoked inside the generated parser, in [--table] mode. It
+(**This functor is invoked inside the generated parser, in [--table] mode. It
    produces no code! It simply constructs the types [symbol] and [xsymbol] on
    top of the generated types [terminal] and [nonterminal]. *)
-
 module Symbols (T : sig
 
   type 'a terminal
@@ -23,10 +22,9 @@ end)
   with type 'a terminal := 'a T.terminal
    and type 'a nonterminal := 'a T.nonterminal
 
-(* This functor is invoked inside the generated parser, in [--table] mode. It
+(**This functor is invoked inside the generated parser, in [--table] mode. It
    constructs the inspection API on top of the inspection tables described in
    [InspectionTableFormat]. *)
-
 module Make
   (TT : TableFormat.TABLES)
   (IT : InspectionTableFormat.TABLES

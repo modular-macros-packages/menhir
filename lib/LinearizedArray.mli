@@ -8,52 +8,53 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* An array of arrays (of possibly different lengths!) can be ``linearized'',
-   i.e., encoded as a data array (by concatenating all of the little arrays)
-   and an entry array (which contains offsets into the data array). *)
-
+(**This module offers support for linearizing an array of arrays (of possibly
+   different lengths). All of the data is placed in a single data array, which
+   is constructed by concatenating all of the little arrays. An entry array,
+   which contains offsets into the data array, is also constructed. *)
 type 'a t =
   (* data: *)   'a array *
   (* entry: *) int array
 
-(* [make a] turns the array of arrays [a] into a linearized array. *)
-
+(**[make a] turns the array of arrays [a] into a linearized array. *)
 val make: 'a array array -> 'a t
 
-(* [read la i j] reads the linearized array [la] at indices [i] and [j].
+(**[read la i j] reads the linearized array [la] at indices [i] and [j].
    Thus, [read (make a) i j] is equivalent to [a.(i).(j)]. *)
-
 val read: 'a t -> int -> int -> 'a
 
-(* [write la i j v] writes the value [v] into the linearized array [la]
+(**[write la i j v] writes the value [v] into the linearized array [la]
    at indices [i] and [j]. *)
-
 val write: 'a t -> int -> int -> 'a -> unit
 
-(* [length la] is the number of rows of the array [la]. Thus, [length (make
-   a)] is equivalent to [Array.length a]. *)
-
+(**[length la] is the number of rows of the array [la].
+   Thus, [length (make a)] is equivalent to [Array.length a]. *)
 val length: 'a t -> int
 
-(* [row_length la i] is the length of the row at index [i] in the linearized
-   array [la]. Thus, [row_length (make a) i] is equivalent to [Array.length
-   a.(i)]. *)
-
+(**[row_length la i] is the length of the row at index [i] in the linearized
+   array [la].
+   Thus, [row_length (make a) i] is equivalent to [Array.length a.(i)]. *)
 val row_length: 'a t -> int -> int
 
-(* [read_row la i] reads the row at index [i], producing a list. Thus,
+(**[read_row la i] reads the row at index [i], producing a list. Thus,
    [read_row (make a) i] is equivalent to [Array.to_list a.(i)]. *)
-
 val read_row: 'a t -> int -> 'a list
 
 (* The following variants read the linearized array via accessors
    [get_data : int -> 'a] and [get_entry : int -> int]. *)
 
+(**Provided the accessor function [get_entry] offers read access to the entry
+   array of the linearized array [la], [row_length_via get_entry i] is the
+   length of the row at index [i] in the linearized array [la]. *)
 val row_length_via:
   (* get_entry: *) (int -> int) ->
   (* i: *)         int ->
                    int
 
+(**Provided the accessor functions [get_data] and [get_entry] offers read
+   access to the data and entry arrays of the linearized array [la],
+   [read_via get_data get_entry i j] reads the linearized array [la] at
+   indices [i] and [j]. *)
 val read_via:
   (* get_data: *)  (int -> 'a) ->
   (* get_entry: *) (int -> int) ->
@@ -61,9 +62,12 @@ val read_via:
   (* j: *)         int ->
                    'a
 
+(**Provided the accessor functions [get_data] and [get_entry] offers read
+   access to the data and entry arrays of the linearized array [la],
+   [read_row_via get_data get_entry i] reads a row at index [i]
+   in the linearized array [la]. *)
 val read_row_via:
   (* get_data: *)  (int -> 'a) ->
   (* get_entry: *) (int -> int) ->
   (* i: *)         int ->
                    'a list
-
