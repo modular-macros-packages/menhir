@@ -10,6 +10,8 @@
 
 * The deprecated demos in `demos/ocamlbuild` have been removed.
 
+* Documentation comments have been added in `MenhirSdk` and `MenhirLib`.
+
 ## 2025/09/12
 
 * In the new code back-end, fix a problem that could lead to an internal error
