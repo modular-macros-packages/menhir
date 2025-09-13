@@ -29,7 +29,7 @@ module type INCREMENTAL_ENGINE = sig
 
      In normal operation, the parser works with checkpoints: see the functions
      {!offer} and {!resume}. However, it is also possible to work directly with
-     environments (see the functions {!pop}, {!force_reduction}, and {!feed}) and
+     environments (see the functions {!pop}, {!force_reduction}, and [feed]) and
      to reconstruct a checkpoint out of an environment (see {!input_needed}).
      This is considered advanced functionality; its purpose is to allow error
      recovery strategies to be programmed by the user. *)
