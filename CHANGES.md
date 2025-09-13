@@ -3,10 +3,12 @@
 ## 2025/09/XX
 
 * In the incremental API, the deprecated type `stack` and the deprecated
-  function `stack` have been removed. The functions `top` and `pop` can be
-  used instead to inspect the parser's stack.
+  function `stack` have been removed. To inspect the parser's stack, the
+  functions `top` and `pop` should be used instead .
 
 * The deprecated module `MenhirLib.General` has been removed.
+
+* The deprecated demos in `demos/ocamlbuild` have been removed.
 
 ## 2025/09/12
 
