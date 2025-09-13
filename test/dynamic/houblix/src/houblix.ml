@@ -1,7 +1,3 @@
-(** The Hopix programming language. *)
-
-let name = "houblix"
-
 type ast = AST.t
 
 let parse lexer_init input =
@@ -9,7 +5,6 @@ let parse lexer_init input =
     ~lexer_init
     ~lexer_fun:(fun buf ->
       let tok = Lexer.token buf in
-      (* Printf.printf "%s\n" (HopixASTHelper.string_of_token tok) ;*)
       tok )
     ~parser_fun:(fun lexer lexbuf ->
       try Parser.program lexer lexbuf with
@@ -53,8 +48,6 @@ let parse_filename ?(from_sexp = false) filename =
   else
     parse from_channel_with_positions (open_in filename)
 
-
-let extension = ".hopix"
 
 let executable_format = false
 
