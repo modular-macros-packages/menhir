@@ -157,6 +157,23 @@ let extract (p : 'a -> bool) (xs : 'a list) : 'a option * 'a list =
   | Some (x, xs) ->
       Some x, xs
 
+let rec uniq1 cmp x ys =
+  match ys with
+  | [] ->
+      []
+  | y :: ys ->
+      if cmp x y = 0 then
+        uniq1 cmp x ys
+      else
+        y :: uniq1 cmp y ys
+
+let uniq cmp xs =
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      x :: uniq1 cmp x xs
+
 let[@tail_mod_cons] rec merge_uniq cmp l1 l2 =
   match l1, l2 with
   | [], l2 ->

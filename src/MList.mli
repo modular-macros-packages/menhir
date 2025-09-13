@@ -75,6 +75,11 @@ val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
    remaining elements. *)
 val extract : ('a -> bool) -> 'a list -> 'a option * 'a list
 
+(**[uniq cmp xs] assumes that the list [xs] is sorted according to the
+   ordering [cmp] and returns the list [xs] deprived of any duplicate
+   elements. *)
+val uniq: ('a -> 'a -> int) -> 'a list -> 'a list
+
 (** [merge_uniq cmp l1 l2] merges two sorted lists (without duplicate
     elements) and produces a sorted list (without duplicate elements). *)
 val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
