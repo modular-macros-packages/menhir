@@ -10,8 +10,7 @@
 
 open EngineTypes
 
-(* The LR parsing engine. *)
-
+(**The LR parsing engine. *)
 module Make (T : TABLE)
 : ENGINE
   with type state = T.state
