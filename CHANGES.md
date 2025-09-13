@@ -1,5 +1,13 @@
 # Changes
 
+## 2025/09/XX
+
+* In the incremental API, the deprecated type `stack` and the deprecated
+  function `stack` have been removed. The functions `top` and `pop` can be
+  used instead to inspect the parser's stack.
+
+* The deprecated module `MenhirLib.General` has been removed.
+
 ## 2025/09/12
 
 * In the new code back-end, fix a problem that could lead to an internal error
