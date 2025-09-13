@@ -43,9 +43,8 @@ val get: t -> int -> int
    parameter [t] is just a string. *)
 val get1: string -> int -> int
 
-(**[unflatten1 (n, data) i j] accesses the two-dimensional bitmap
-   represented by [(n, data)] at indices [i] and [j]. The integer
-   [n] is the width of the bitmap; the string [data] is the second
-   component of the packed array obtained by encoding the table as
-   a one-dimensional array. *)
+(**[unflatten1 (n, data) i j] accesses the two-dimensional bitmap represented
+   by [(n, data)] at indices [i] and [j]. The integer [n] is the width of the
+   bitmap; the string [data] is the second component of the packed array
+   obtained by encoding the table as a one-dimensional array. *)
 val unflatten1: int * string -> int -> int -> int

@@ -174,7 +174,8 @@ module type TABLE = sig
   (**[production_index] maps a production to its integer index. *)
   val production_index: production -> int
 
-  (**[find_production] maps a production index to a production. *)
+  (**[find_production] maps a production index to a production.
+     Its argument must be a valid index; use with care. *)
   val find_production: int -> production
 
   (**If a state [s] has a default reduction on production [prod], then, upon
