@@ -8,27 +8,30 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module compresses a two-dimensional table, where some values
+(**This module compresses a two-dimensional table, where some values
    are considered insignificant, via row displacement. *)
 
-(* A compressed table is represented as a pair of arrays. The displacement
-   array contains nonnegative integers, which, once decoded in a certain
-   way, represent (possibly negative) offsets into the data array. *)
+(* A faster implementation of this compression algorithm,
+   is available in the module [FastDisplacement],
+   which currently is part of Menhir -- not part of MenhirLib. *)
 
+(**A displacement is a nonnegative integer, which, once decoded in a certain
+   way, represents a possibly negative offset into a data array. *)
 type displacement =
   int
 
+(**A compressed table is represented as a pair of a displacement array and a
+   data array. *)
 type 'a table =
   displacement array * (* displacement *)
             'a array   (* data *)
 
-(* [compress equal insignificant dummy m n t] turns the two-dimensional table
+(**[compress equal insignificant dummy m n t] turns the two-dimensional table
    [t] into a compressed table. The parameter [equal] is equality of data
    values. The parameter [insignificant] determines which data values are
    insignificant, and can thus be overwritten with other values. The parameter
    [dummy] is used to fill holes in the data array. [m] and [n] are the
    integer dimensions of the table [t]. *)
-
 val compress:
   ('a -> 'a -> bool) ->
   ('a -> bool) ->
@@ -37,23 +40,21 @@ val compress:
   'a array array ->
   'a table
 
-(* [get ct i j] returns the value found at indices [i] and [j] in the
+(**[get ct i j] returns the value found at indices [i] and [j] in the
    compressed table [ct]. This function call is permitted only if the
    value found at indices [i] and [j] in the original table is
-   significant -- otherwise, it could fail abruptly. *)
+   significant -- otherwise, it could fail abruptly.
 
-(* Together, [compress] and [get] have the property that, if the value
+   Together, [compress] and [get] have the property that, if the value
    found at indices [i] and [j] in an uncompressed table [t] is
    significant, then [get (compress t) i j] is equal to that value. *)
-
 val get:
   'a table ->
   int -> int ->
   'a
 
-(* [getget] is a variant of [get] which only requires read access,
+(**[getget] is a variant of [get] which only requires read access,
    via accessors, to the two components of the table. *)
-
 val getget:
   ('displacement -> int -> int) ->
   ('data -> int -> 'a) ->
@@ -61,7 +62,7 @@ val getget:
   int -> int ->
   'a
 
-(* In order to guarantee that all displacements are nonnegative, an encoding
+(**In order to guarantee that all displacements are nonnegative, an encoding
    of negative numbers is used. It is implemented by the functions [encode]
    and [decode]. These functions are in principle internal. We expose [encode]
    because it is used by [FastDisplacement]. *)
