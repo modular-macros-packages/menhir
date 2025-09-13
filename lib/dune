@@ -1,4 +1,9 @@
-;; Note: the library MenhirLib is not built here; it is built in lib/pack.
+;; The library MenhirLib is built here.
+
+(library
+  (name menhirLib)
+  (public_name menhirLib)
+)
 
 ;; These rules generate the module [StaticVersion]. This module defines a
 ;; value of type [unit] whose name is [require_XXXXXXXX], where [XXXXXXXX]

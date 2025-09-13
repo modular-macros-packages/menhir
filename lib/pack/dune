@@ -11,12 +11,3 @@
   (deps (glob_files ../*.{ml,mli}) menhirLib.mlpack)
   (action (run ./pack.exe))
 )
-
-;; We can then compile MenhirLib from menhirLib.{ml,mli}
-;; in this directory.
-
-(library
-  (name menhirLib)
-  (public_name menhirLib)
-  (modules menhirLib)
-)
