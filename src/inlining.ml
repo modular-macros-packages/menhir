@@ -15,8 +15,8 @@ open Attribute
 open Syntax
 open BasicSyntax
 open ListMonad
-let drop = MenhirLib.General.drop
-let take = MenhirLib.General.take
+let drop = MList.drop
+let take = MList.take
 
 (* -------------------------------------------------------------------------- *)
 

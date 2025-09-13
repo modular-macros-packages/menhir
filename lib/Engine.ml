@@ -743,51 +743,10 @@ module Make (T : TABLE) = struct
      value associated with (the incoming symbol of) this state. Note that the
      type [element] is an existential type. *)
 
-  (* As of 2017/03/31, the type [stack] and the function [stack] are DEPRECATED.
-     If desired, they could now be implemented outside Menhir, by relying on
-     the functions [top] and [pop]. *)
+  (* Access to the stack is offered by the functions [top] and [pop]. *)
 
   type element =
     | Element: 'a lr1state * 'a * position * position -> element
-
-  open General
-
-  type stack =
-    element stream
-
-  (* If [current] is the current state and [cell] is the top stack cell,
-     then [stack cell current] is a view of the parser's state as a stream
-     of elements. *)
-
-  let rec stack cell current : element stream =
-    lazy (
-      (* The stack is empty iff the top stack cell is its own successor. In
-         that case, the current state [current] should be an initial state
-         (which has no incoming symbol).
-         We do not allow the user to inspect this state. *)
-      let next = cell.next in
-      if next == cell then
-        Nil
-      else
-        (* Construct an element containing the current state [current] as well
-           as the semantic value contained in the top stack cell. This semantic
-           value is associated with the incoming symbol of this state, so it
-           makes sense to pair them together. The state has type ['a state] and
-           the semantic value has type ['a], for some type ['a]. Here, the OCaml
-           type-checker thinks ['a] is [semantic_value] and considers this code
-           well-typed. Outside, we will use magic to provide the user with a way
-           of inspecting states and recovering the value of ['a]. *)
-        let element = Element (
-          current,
-          cell.semv,
-          cell.startp,
-          cell.endp
-        ) in
-        Cons (element, stack next cell.state)
-    )
-
-  let stack env : element stream =
-    stack env.stack env.current
 
   (* As explained above, the function [top] allows access to the top stack
      element only if the stack is nonempty, i.e., only if the current state
@@ -797,8 +756,21 @@ module Make (T : TABLE) = struct
     let cell = env.stack in
     let next = cell.next in
     if next == cell then
+      (* The stack is empty iff the top stack cell is its own successor. In
+         that case, the current state [current] should be an initial state
+         (which has no incoming symbol). We do not allow the user to inspect
+         this state. *)
       None
     else
+      (* Construct an element containing the current state [env.current], the
+         semantic value contained in the top stack cell, and a pair of
+         positions. The semantic value is associated with the incoming symbol
+         of this state, so it makes sense to pair them together. The state has
+         type ['a state] and the semantic value has type ['a], for some type
+         ['a]. Here, the OCaml type-checker thinks ['a] is [semantic_value]
+         and considers this code well-typed. Outside, we will use magic to
+         provide the user with a way of inspecting states and recovering the
+         value of ['a]. *)
       Some (Element (env.current, cell.semv, cell.startp, cell.endp))
 
   (* [equal] compares the stacks for physical equality, and compares the

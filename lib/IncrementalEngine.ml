@@ -10,8 +10,6 @@
 
 type position = Lexing.position
 
-open General
-
 (* This signature describes the incremental LR engine. *)
 
 (* In this mode, the user controls the lexer, and the parser suspends
@@ -235,20 +233,6 @@ module type INCREMENTAL_ENGINE = sig
 
   (* The parser's stack is (or, more precisely, can be viewed as) a stream of
      elements. The type [stream] is defined by the module [General]. *)
-
-  (* As of 2017/03/31, the types [stream] and [stack] and the function [stack]
-     are DEPRECATED. They might be removed in the future. An alternative way
-     of inspecting the stack is via the functions [top] and [pop]. *)
-
-  type stack = (* DEPRECATED *)
-    element stream
-
-  (* This is the parser's stack, a stream of elements. This stream is empty if
-     the parser is in an initial state; otherwise, it is non-empty.  The LR(1)
-     automaton's current state is the one found in the top element of the
-     stack. *)
-
-  val stack: 'a env -> stack (* DEPRECATED *)
 
   (* [top env] returns the parser's top stack element. The state contained in
      this stack element is the current state of the automaton. If the stack is
