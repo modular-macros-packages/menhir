@@ -10,11 +10,9 @@
 
 type position = Lexing.position
 
-(* This signature describes the incremental LR engine. *)
-
-(* In this mode, the user controls the lexer, and the parser suspends
-   itself when it needs to read a new token. *)
-
+(**This signature describes the incremental LR engine. When the engine
+   is used in this mode, the user controls the lexer, and the parser
+   suspends itself when it needs to read a new token. *)
 module type INCREMENTAL_ENGINE = sig
 
   type token

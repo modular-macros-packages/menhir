@@ -8,8 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This file defines several types and module types that are used in the
-   specification of module [Engine]. *)
+(**This module defines several types and module types that are used in the
+   specification of the module {!Engine}. *)
 
 (* --------------------------------------------------------------------------- *)
 
@@ -19,82 +19,70 @@
 
 (* --------------------------------------------------------------------------- *)
 
-(* A stack is a linked list of cells. A sentinel cell -- which is its own
+(**A stack is a linked list of cells. A sentinel cell -- which is its own
    successor -- is used to mark the bottom of the stack. The sentinel cell
    itself is not significant -- it contains dummy values. *)
-
 type ('state, 'semantic_value) stack = {
 
-  (* The state that we should go back to if we pop this stack cell. *)
+  state: 'state;
+  (**The state that we should go back to if we pop this stack cell.
 
-  (* This convention means that the state contained in the top stack cell is
+     This convention means that the state contained in the top stack cell is
      not the current state [env.current]. It also means that the state found
      within the sentinel is a dummy -- it is never consulted. This convention
      is the same as that adopted by the code-based back-end. *)
 
-  state: 'state;
-
-  (* The semantic value associated with the chunk of input that this cell
-     represents. *)
-
   semv: 'semantic_value;
-
-  (* The start and end positions of the chunk of input that this cell
+  (**The semantic value associated with the chunk of input that this cell
      represents. *)
 
   startp: Lexing.position;
-  endp: Lexing.position;
+  (**The start position of the chunk of input that this cell represents. *)
 
-  (* The next cell down in the stack. If this is a self-pointer, then this
-     cell is the sentinel, and the stack is conceptually empty. *)
+  endp: Lexing.position;
+  (**The end position of the chunk of input that this cell represents. *)
 
   next: ('state, 'semantic_value) stack;
+  (**The next cell down in the stack. If this is a self-pointer, then this
+     cell is the sentinel, and the stack is conceptually empty. *)
 
 }
 
 (* --------------------------------------------------------------------------- *)
 
-(* A parsing environment contains all of the parser's state (except for the
+(**A parsing environment contains all of the parser's state (except for the
    current program point). *)
-
 type ('state, 'semantic_value, 'token) env = {
 
-  (* If this flag is true, then the first component of [env.triple] should
+  error: bool;
+  (**If this flag is true, then the first component of [env.triple] should
      be ignored, as it has been logically overwritten with the [error]
      pseudo-token. *)
 
-  error: bool;
-
-  (* The last token that was obtained from the lexer, together with its start
+  triple: 'token * Lexing.position * Lexing.position;
+  (**The last token that was obtained from the lexer, together with its start
      and end positions. Warning: before the first call to the lexer has taken
      place, a dummy (and possibly invalid) token is stored here. *)
 
-  triple: 'token * Lexing.position * Lexing.position;
-
-  (* The stack. In [CodeBackend], it is passed around on its own,
-     whereas, here, it is accessed via the environment. *)
-
   stack: ('state, 'semantic_value) stack;
-
-  (* The current state. In [CodeBackend], it is passed around on its
-     own, whereas, here, it is accessed via the environment. *)
+  (**The stack. *)
 
   current: 'state;
+  (**The current state. *)
 
 }
 
 (* --------------------------------------------------------------------------- *)
 
-(* A number of logging hooks are used to (optionally) emit logging messages. *)
-
-(* The comments indicate the conventional messages that correspond
-   to these hooks in the code-based back-end; see [CodeBackend]. *)
-
+(**A number of logging hooks are used to (optionally) emit logging messages. *)
 module type LOG = sig
 
   type state
   type terminal
   type production
+
+  (* The comments below indicate the conventional messages that correspond to
+     these hooks. *)
 
   (* State %d: *)
 
@@ -132,98 +120,95 @@ end
 
 (* --------------------------------------------------------------------------- *)
 
-(* This signature describes the parameters that must be supplied to the LR
+(**This signature describes the parameters that must be supplied to the LR
    engine. *)
-
 module type TABLE = sig
 
-  (* The type of automaton states. *)
-
+  (**The type of automaton states. *)
   type state
 
-  (* States are numbered. *)
-
+  (**States are numbered. *)
   val number: state -> int
 
-  (* The type of tokens. These can be thought of as real tokens, that is,
+  (**The type of tokens. These can be thought of as real tokens, that is,
      tokens returned by the lexer. They carry a semantic value. This type
      does not include the [error] pseudo-token. *)
-
   type token
 
-  (* The type of terminal symbols. These can be thought of as integer codes.
+  (**The type of terminal symbols. These can be thought of as integer codes.
      They do not carry a semantic value. This type does include the [error]
      pseudo-token. *)
-
   type terminal
 
-  (* The type of nonterminal symbols. *)
-
+  (**The type of nonterminal symbols. *)
   type nonterminal
 
-  (* The type of semantic values. *)
-
+  (**The type of semantic values. *)
   type semantic_value
 
-  (* A token is conceptually a pair of a (non-[error]) terminal symbol and
-     a semantic value. The following two functions are the pair projections. *)
-
+  (**A token is conceptually a pair of a (non-[error]) terminal symbol and a
+     semantic value. The function [token2terminal] is the first the pair
+     projection. *)
   val token2terminal: token -> terminal
+
+  (**A token is conceptually a pair of a (non-[error]) terminal symbol and a
+     semantic value. The function [token2value] is the second the pair
+     projection. *)
   val token2value: token -> semantic_value
 
   (* Even though the [error] pseudo-token is not a real token, it is a
      terminal symbol. Furthermore, for regularity, it must have a semantic
      value. *)
-
+  (**The terminal symbol associated with the [error] token. *)
   val error_terminal: terminal
+
+  (**The semantic value associated with the [error] token. *)
   val error_value: semantic_value
 
-  (* [foreach_terminal] allows iterating over all terminal symbols. *)
-
+  (**[foreach_terminal] iterates over all terminal symbols. *)
   val foreach_terminal: (terminal -> 'a -> 'a) -> 'a -> 'a
 
-  (* The type of productions. *)
-
+  (**The type of productions. *)
   type production
 
+  (**[production_index] maps a production to its integer index. *)
   val production_index: production -> int
+
+  (**[find_production] maps a production index to a production. *)
   val find_production: int -> production
 
-  (* If a state [s] has a default reduction on production [prod], then, upon
+  (**If a state [s] has a default reduction on production [prod], then, upon
      entering [s], the automaton should reduce [prod] without consulting the
-     lookahead token. The following function allows determining which states
-     have default reductions. *)
+     lookahead token.
 
-  (* Instead of returning a value of a sum type -- either [DefRed prod], or
-     [NoDefRed] -- it accepts two continuations, and invokes just one of
-     them. This mechanism allows avoiding a memory allocation. *)
-
+     [default_reduction s] determines whether the state [s] has a default
+     reduction. Instead of returning a value of a sum type -- say, either
+     [DefRed prod] or [NoDefRed] -- it accepts two continuations, and invokes
+     just one of them. *)
   val default_reduction:
     state ->
     ('env -> production -> 'answer) ->
     ('env -> 'answer) ->
     'env -> 'answer
 
-  (* An LR automaton can normally take three kinds of actions: shift, reduce,
+  (**An LR automaton can normally take three kinds of actions: shift, reduce,
      or fail. (Acceptance is a particular case of reduction: it consists in
-     reducing a start production.) *)
+     reducing a start production.)
 
-  (* There are two variants of the shift action. [shift/discard s] instructs
+     There are two variants of the shift action. [shift/discard s] instructs
      the automaton to discard the current token, request a new one from the
      lexer, and move to state [s]. [shift/nodiscard s] instructs it to move to
      state [s] without requesting a new token. This instruction should be used
-     when [s] has a default reduction on [#]. See [CodeBackend.gettoken] for
-     details. *)
+     when [s] has a default reduction on [#].
 
-  (* This is the automaton's action table. It maps a pair of a state and a
-     terminal symbol to an action. *)
+     The function [action] provides access to the automaton's action table. It
+     maps a pair of a state and a terminal symbol to an action.
 
-  (* Instead of returning a value of a sum type -- one of shift/discard,
+     Instead of returning a value of a sum type -- one of shift/discard,
      shift/nodiscard, reduce, or fail -- this function accepts three
-     continuations, and invokes just one them. This mechanism allows avoiding
-     a memory allocation. *)
+     continuations, and invokes just one them.
 
-  (* In summary, the parameters to [action] are as follows:
+     The parameters of the function [action] are as follows:
 
      - the first two parameters, a state and a terminal symbol, are used to
        look up the action table;
@@ -243,7 +228,6 @@ module type TABLE = sig
 
      - the last parameter is the environment; it is not used, only passed
        along to the selected continuation. *)
-
   val action:
     state ->
     terminal ->
@@ -263,31 +247,35 @@ module type TABLE = sig
      accounts for the possible existence of a default reduction. *)
   val may_reduce_prod : state -> terminal -> production -> bool
 
-  (* This is the automaton's goto table. This table maps a pair of a state
-     and a nonterminal symbol to a new state. By extension, it also maps a
-     pair of a state and a production to a new state. *)
+  (**The function [goto_nt] provides access to the automaton's goto table. It
+     maps a pair of a state [s] and a nonterminal symbol [nt] to a state. The
+     function call [goto_nt s nt] is permitted ONLY if the state [s] has an
+     outgoing transition labeled [nt]. Otherwise, its result is undefined. *)
+  val goto_nt : state -> nonterminal -> state
 
-  (* The function [goto_nt] can be applied to [s] and [nt] ONLY if the state
-     [s] has an outgoing transition labeled [nt]. Otherwise, its result is
-     undefined. Similarly, the call [goto_prod prod s] is permitted ONLY if
-     the state [s] has an outgoing transition labeled with the nonterminal
-     symbol [lhs prod]. The function [maybe_goto_nt] involves an additional
-     dynamic check and CAN be called even if there is no outgoing transition. *)
-
-  val       goto_nt  : state -> nonterminal -> state
+  (**The function [goto_prod] also provides access to the goto table. It maps
+     a pair of a production [prod] and a state [s] to a state. The call
+     [goto_prod prod s] is permitted ONLY if the state [s] has an outgoing
+     transition labeled with the nonterminal symbol [lhs prod]. *)
   val       goto_prod: state -> production  -> state
+
+  (**The function [maybe_goto_nt] serves the same purpose as [goto_nt].
+     Compared to [goto_nt], it involves an additional dynamic check, so it CAN
+     be called even the state [s] has no outgoing transition labeled [nt]. *)
   val maybe_goto_nt:   state -> nonterminal -> state option
 
-  (* [lhs prod] returns the left-hand side of production [prod],
+  (**[lhs prod] returns the left-hand side of production [prod],
      a nonterminal symbol. *)
-
   val lhs: production -> nonterminal
 
-  (* [is_start prod] tells whether the production [prod] is a start production. *)
-
+  (**[is_start prod] tells whether the production [prod] is a start
+     production. *)
   val is_start: production -> bool
 
-  (* By convention, a semantic action is responsible for:
+  (**A semantic action can raise the exception [Error]. *)
+  exception Error
+
+  (**By convention, a semantic action is responsible for:
 
      1. fetching whatever semantic values and positions it needs off the stack;
 
@@ -299,37 +287,30 @@ module type TABLE = sig
      4. pushing a new stack cell, which contains the three values
         computed in step 3;
 
-     5. returning the new stack computed in steps 2 and 4.
-
-     Point 1 is essentially forced upon us: if semantic values were fetched
-     off the stack by this interpreter, then the calling convention for
-     semantic actions would be variadic: not all semantic actions would have
-     the same number of arguments. The rest follows rather naturally. *)
-
-  (* Semantic actions are allowed to raise [Error]. *)
-
-  exception Error
-
+     5. returning the new stack computed in steps 2 and 4.  *)
   type semantic_action =
       (state, semantic_value, token) env -> (state, semantic_value) stack
 
+  (* Point 1 above is essentially forced upon us: if semantic values were
+     fetched off the stack by this interpreter, then the calling convention
+     for semantic actions would be variadic: not all semantic actions would
+     have the same number of arguments. The rest follows rather naturally. *)
+
+  (**The function [semantic_action] maps a production to its semantic action. *)
   val semantic_action: production -> semantic_action
 
-  (* [may_reduce state prod] tests whether the state [state] is capable of
+  (**[may_reduce state prod] tests whether the state [state] is capable of
      reducing the production [prod]. This function is currently costly and
      is not used by the core LR engine. It is used in the implementation
      of certain functions, such as [force_reduction], which allow the engine
      to be driven programmatically. *)
-
   val may_reduce: state -> production -> bool
 
-  (* If the flag [log] is false, then the logging functions are not called.
+  (**If the flag [log] is false, then the logging functions are not called.
      If it is [true], then they are called. *)
-
   val log : bool
 
-  (* The logging hooks required by the LR engine. *)
-
+  (**The logging hooks required by the LR engine. *)
   module Log : LOG
     with type state := state
      and type terminal := terminal
@@ -339,10 +320,8 @@ end
 
 (* --------------------------------------------------------------------------- *)
 
-(* This signature describes the monolithic (traditional) LR engine. *)
-
-(* In this interface, the parser controls the lexer. *)
-
+(**This signature describes the monolithic (traditional) LR engine. When the
+   engine is used in this mode, the parser controls the lexer. *)
 module type MONOLITHIC_ENGINE = sig
 
   type state
@@ -351,12 +330,11 @@ module type MONOLITHIC_ENGINE = sig
 
   type semantic_value
 
-  (* An entry point to the engine requires a start state, a lexer, and a lexing
-     buffer. It either succeeds and produces a semantic value, or fails and
-     raises [Error]. *)
-
   exception Error
 
+  (**An entry point to the engine requires a start state, a lexer, and a
+     lexing buffer. It either succeeds and produces a semantic value, or fails
+     and raises {!Error}. *)
   val entry:
     (* strategy: *) [ `Legacy | `Simplified ] -> (* see [IncrementalEngine] *)
     state ->
@@ -368,34 +346,30 @@ end
 
 (* --------------------------------------------------------------------------- *)
 
-(* The following signatures describe the incremental LR engine. *)
+(**This signature describes just the entry point of the incremental LR engine.
+   It is a supplement to {!IncrementalEngine.INCREMENTAL_ENGINE}.
 
-(* First, see [INCREMENTAL_ENGINE] in the file [IncrementalEngine.ml]. *)
-
-(* The [start] function is set apart because we do not wish to publish
-   it as part of the generated [parser.mli] file. Instead, the table
-   back-end will publish specialized versions of it, with a suitable
-   type cast. *)
-
+   The [start] function is set apart because we do not wish to publish it as
+   part of the generated file  [parser.mli]. Instead, the table back-end will
+   publish specialized versions of it, with a suitable type cast. *)
 module type INCREMENTAL_ENGINE_START = sig
-
-  (* [start] is an entry point. It requires a start state and a start position
-     and begins the parsing process. If the lexer is based on an OCaml lexing
-     buffer, the start position should be [lexbuf.lex_curr_p]. [start] produces
-     a checkpoint, which usually will be an [InputNeeded] checkpoint. (It could
-     be [Accepted] if this starting state accepts only the empty word. It could
-     be [Rejected] if this starting state accepts no word at all.) It does not
-     raise any exception. *)
-
-  (* [start s pos] should really produce a checkpoint of type ['a checkpoint],
-     for a fixed ['a] that depends on the state [s]. We cannot express this, so
-     we use [semantic_value checkpoint], which is safe. The table back-end uses
-     [Obj.magic] to produce safe specialized versions of [start]. *)
 
   type state
   type semantic_value
   type 'a checkpoint
 
+  (**[start] is an entry point. It requires a start state and a start position
+     and begins the parsing process. If the lexer is based on an OCaml lexing
+     buffer, the start position should be [lexbuf.lex_curr_p]. [start] produces
+     a checkpoint, which usually will be an [InputNeeded] checkpoint. (It could
+     be [Accepted] if this starting state accepts only the empty word. It could
+     be [Rejected] if this starting state accepts no word at all.) It does not
+     raise any exception.
+
+     [start s pos] should really produce a checkpoint of type ['a checkpoint],
+     for a fixed ['a] that depends on the state [s]. We cannot express this, so
+     we use [semantic_value checkpoint], which is safe. The table back-end uses
+     [Obj.magic] to produce safe specialized versions of [start]. *)
   val start:
     state ->
     Lexing.position ->
@@ -405,9 +379,8 @@ end
 
 (* --------------------------------------------------------------------------- *)
 
-(* This signature describes the LR engine, which combines the monolithic
+(**This signature describes the LR engine, which combines the monolithic
    and incremental interfaces. *)
-
 module type ENGINE = sig
 
   include MONOLITHIC_ENGINE
