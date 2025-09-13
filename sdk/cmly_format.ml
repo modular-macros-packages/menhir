@@ -8,14 +8,15 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module defines the data that is stored in .cmly files. In short, a
-   .cmly file contains a value of type [grammar], defined below. *)
+(**This module defines the data that is stored in .cmly files. *)
 
-(* The type definitions in this module are used by [Cmly_write], which writes
-   a .cmly file, and by [Cmly_read], which reads a .cmly file. They should not
-   be used anywhere else. *)
+(**In short, a .cmly file contains a value of type {!grammar}. *)
 
-(* All entities (terminal symbols, nonterminal symbols, and so on) are
+(**The type definitions in this module are used in [Cmly_write], which
+   writes a .cmly file, and in {!Cmly_read}, which reads a .cmly file.
+   They should not be used anywhere else. *)
+
+(**All entities (terminal symbols, nonterminal symbols, and so on) are
    represented as integers. These integers serve as indices into arrays. This
    enables simple and efficient hashing, comparison, indexing, etc. *)
 

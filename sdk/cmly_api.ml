@@ -8,8 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module defines a signature that describes the result of {!Cmly_read}. *)
+
 (* The following signatures describe the API offered by the functor
-   [Cfmly_read.Read]. This functor reads in a .cmly file and gives
+   [Cmly_read.Read]. This functor reads in a .cmly file and gives
    access to the description of the grammar and automaton contained
    in this file. *)
 
