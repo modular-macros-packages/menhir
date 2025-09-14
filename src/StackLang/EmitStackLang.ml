@@ -452,13 +452,6 @@ let rec run mode s =
   | None, NormalMode ->
       run_normal_dispatch s
   | None, ErrorHandlingMode ->
-      (* The old code-back end claims that this point in the code can be
-         reached only if the state [s] satisfies [errorpeeker s], that is,
-         only if [s] is the target of a reduction on [error]. Here, this may
-         or may not be true. (One must keep in mind that the old code back-end
-         uses the legacy strategy, whereas we use the simplified strategy,
-         which is somewhat different.) I prefer not to take chances and to
-         generate this code anyway. *)
       log "Resuming error handling";
       run_error_dispatch s
 
