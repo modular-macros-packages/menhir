@@ -292,6 +292,13 @@
 
 ## Code Cleanup
 
+* `LRijkstraClassic` is superseded by `LRijkstraFast`
+  and could be removed.
+
+* The encoding functions in `RowDisplacement`
+  are superseded by those in `FastDisplacement`
+  and could be removed.
+
 * Ideally, `PartialGrammar` should avoid renaming the parameters of
   a rule, when there is no need to do so. The renamed parameter is
   visible in sort unification error messages and in messages about
