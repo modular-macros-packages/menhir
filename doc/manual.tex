@@ -380,12 +380,11 @@ backwards compatibility and is ignored. It may be removed in the future.
 
 \docswitch{\ostrategy \nt{strategy}} This switch selects an error-handling
 strategy, to be used by the code back-end, the table back-end, and the
-reference interpreter. The available strategies are \legacy and
-simplified. (However, at the time of writing, the code back-end does
-not yet support the simplified strategy.) When this switch is
-omitted, the \legacy strategy is used. The choice of a strategy
-matters only if the grammar uses the \error token. For more details, see
-\sref{sec:errors}.
+reference interpreter. The available strategies are \legacy and simplified.
+When this switch is omitted, the \legacy strategy is used, if it is available.
+(At the time of writing, the code back-end supports only the simplified
+strategy.) The choice of a strategy matters only if the grammar uses the
+\error token. For more details, see \sref{sec:errors}.
 
 \docswitch{\ostrict} This switch causes several warnings about the grammar
 and about the automaton to be considered errors. This includes warnings about
