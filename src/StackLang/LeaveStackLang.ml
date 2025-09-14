@@ -22,8 +22,6 @@ open CodeBits
 let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics =
   CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit,
               basics, mbasics)
-let print_token, call_assertfalse, printtokendef, assertfalsedef =
-  CodeBackend.(print_token, call_assertfalse, printtokendef, assertfalsedef)
 let exvar (r : register) = EVar (Reg.export r)
 let pxvar (r : register) = PVar (Reg.export r)
 let exvars rs = map exvar rs
@@ -86,6 +84,60 @@ let actionname prod =
 let stoken =
   let tctoken = sprintf "%s.%s" basics TokenType.tctoken in
   type2scheme (IL.TypApp (tctoken, []))
+
+(* -------------------------------------------------------------------------- *)
+
+(* The function [assertfalse] represents a fatal dynamic failure. Defining
+   such a function allows us to have just one copy of [assert false] in the
+   generated code. I believe that this reduces the code size. *)
+
+(* The name of this function. *)
+
+let assertfalse =
+  prefix "fail"
+
+(* The definition of this function. *)
+
+let internal_failure =
+  "Internal failure -- please contact the parser generator's developers."
+
+let assertfalsedef = {
+  valpublic = false;
+  valpat = PVar assertfalse;
+  valval =
+    EAnnot (
+      EFun ([ PUnit ],
+        blet (
+          [ PUnit, eprintf internal_failure []],
+          eassert efalse
+        )
+      ),
+      scheme [ "a" ] (arrow tunit (tvar "a"))
+    )
+}
+
+(* A call to the function [assertfalse]. *)
+
+let call_assertfalse =
+  EApp (EVar assertfalse, [ EUnit ])
+
+(* -------------------------------------------------------------------------- *)
+
+(* The function [print_token] is used in [--trace] mode. *)
+
+(* The name of this function. *)
+
+let print_token =
+  prefix "print_token"
+
+(* The definition of this function. *)
+
+let printtokendef =
+  CodePieces.destructuretokendef
+    print_token
+    tstring
+    false
+    (fun tok -> EStringConst (Terminal.print tok))
 
 (* -------------------------------------------------------------------------- *)
 
