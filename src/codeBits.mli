@@ -53,9 +53,6 @@ val type2scheme: typ -> typescheme
 (** Constraining an expression to have a (monomorphic) type. *)
 val annotate: expr -> typ -> expr
 
-(** Projecting out of a [PVar] pattern. *)
-val pat2var: pattern -> string
-
 (** This function constructs a nested sequence of [let] definitions.
    Certain simplifications are performed on the fly. *)
 val blet: (pattern * expr) list * expr -> expr

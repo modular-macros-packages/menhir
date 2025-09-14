@@ -142,12 +142,6 @@ let rec annotate e t =
   | _ ->
       EAnnot (e, type2scheme t)
 
-let pat2var = function
-  | PVar x ->
-      x
-  | _ ->
-      assert false
-
 (* [simplify] removes bindings of the form [let v = v in ...] and
    [let _ = v in ...]. *)
 
