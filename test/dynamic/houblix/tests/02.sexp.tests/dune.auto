@@ -3,16 +3,6 @@
 
 
 (rule
-  (target 08-arithmetic-08.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 08-arithmetic-08.hopix)
-    08-arithmetic-08.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 08-arithmetic-08.hopix))))
-
-(rule
   (target 08-arithmetic-08.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -81,16 +71,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 08-arithmetic-08.hopix))))
-
-(rule
-  (target 53-match-12.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 53-match-12.hopix)
-    53-match-12.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 53-match-12.hopix))))
 
 (rule
   (target 53-match-12.code-O2-specialize-token.backend.output)
@@ -163,16 +143,6 @@
       (run %{exe} --sexp 53-match-12.hopix))))
 
 (rule
-  (target 12-boolean-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 12-boolean-04.hopix)
-    12-boolean-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 12-boolean-04.hopix))))
-
-(rule
   (target 12-boolean-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -241,16 +211,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 12-boolean-04.hopix))))
-
-(rule
-  (target 72-list-monad-3.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 72-list-monad-3.hopix)
-    72-list-monad-3.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 72-list-monad-3.hopix))))
 
 (rule
   (target 72-list-monad-3.code-O2-specialize-token.backend.output)
@@ -323,16 +283,6 @@
       (run %{exe} --sexp 72-list-monad-3.hopix))))
 
 (rule
-  (target 18-constructor-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 18-constructor-04.hopix)
-    18-constructor-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 18-constructor-04.hopix))))
-
-(rule
   (target 18-constructor-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -401,16 +351,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 18-constructor-04.hopix))))
-
-(rule
-  (target 29-local-definition-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 29-local-definition-03.hopix)
-    29-local-definition-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 29-local-definition-03.hopix))))
 
 (rule
   (target 29-local-definition-03.code-O2-specialize-token.backend.output)
@@ -483,16 +423,6 @@
       (run %{exe} --sexp 29-local-definition-03.hopix))))
 
 (rule
-  (target 13-boolean-05.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 13-boolean-05.hopix)
-    13-boolean-05.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 13-boolean-05.hopix))))
-
-(rule
   (target 13-boolean-05.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -561,16 +491,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 13-boolean-05.hopix))))
-
-(rule
-  (target 41-allocate-06.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 41-allocate-06.hopix)
-    41-allocate-06.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 41-allocate-06.hopix))))
 
 (rule
   (target 41-allocate-06.code-O2-specialize-token.backend.output)
@@ -643,16 +563,6 @@
       (run %{exe} --sexp 41-allocate-06.hopix))))
 
 (rule
-  (target 02-arithmetic-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 02-arithmetic-02.hopix)
-    02-arithmetic-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 02-arithmetic-02.hopix))))
-
-(rule
   (target 02-arithmetic-02.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -721,16 +631,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 02-arithmetic-02.hopix))))
-
-(rule
-  (target 20-record-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 20-record-02.hopix)
-    20-record-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 20-record-02.hopix))))
 
 (rule
   (target 20-record-02.code-O2-specialize-token.backend.output)
@@ -803,16 +703,6 @@
       (run %{exe} --sexp 20-record-02.hopix))))
 
 (rule
-  (target 15-constructor-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 15-constructor-01.hopix)
-    15-constructor-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 15-constructor-01.hopix))))
-
-(rule
   (target 15-constructor-01.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -881,16 +771,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 15-constructor-01.hopix))))
-
-(rule
-  (target 19-record-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 19-record-01.hopix)
-    19-record-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 19-record-01.hopix))))
 
 (rule
   (target 19-record-01.code-O2-specialize-token.backend.output)
@@ -963,16 +843,6 @@
       (run %{exe} --sexp 19-record-01.hopix))))
 
 (rule
-  (target 26-sequence-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 26-sequence-02.hopix)
-    26-sequence-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 26-sequence-02.hopix))))
-
-(rule
   (target 26-sequence-02.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -1041,16 +911,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 26-sequence-02.hopix))))
-
-(rule
-  (target 67-sorted.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 67-sorted.hopix)
-    67-sorted.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 67-sorted.hopix))))
 
 (rule
   (target 67-sorted.code-O2-specialize-token.backend.output)
@@ -1123,16 +983,6 @@
       (run %{exe} --sexp 67-sorted.hopix))))
 
 (rule
-  (target 04-arithmetic-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 04-arithmetic-04.hopix)
-    04-arithmetic-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 04-arithmetic-04.hopix))))
-
-(rule
   (target 04-arithmetic-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -1201,16 +1051,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 04-arithmetic-04.hopix))))
-
-(rule
-  (target 66-concat.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 66-concat.hopix)
-    66-concat.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 66-concat.hopix))))
 
 (rule
   (target 66-concat.code-O2-specialize-token.backend.output)
@@ -1283,16 +1123,6 @@
       (run %{exe} --sexp 66-concat.hopix))))
 
 (rule
-  (target 36-allocate-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 36-allocate-01.hopix)
-    36-allocate-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 36-allocate-01.hopix))))
-
-(rule
   (target 36-allocate-01.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -1361,16 +1191,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 36-allocate-01.hopix))))
-
-(rule
-  (target 71-list-monad.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 71-list-monad.hopix)
-    71-list-monad.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 71-list-monad.hopix))))
 
 (rule
   (target 71-list-monad.code-O2-specialize-token.backend.output)
@@ -1443,16 +1263,6 @@
       (run %{exe} --sexp 71-list-monad.hopix))))
 
 (rule
-  (target 49-match-08.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 49-match-08.hopix)
-    49-match-08.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 49-match-08.hopix))))
-
-(rule
   (target 49-match-08.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -1521,16 +1331,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 49-match-08.hopix))))
-
-(rule
-  (target 14-string-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 14-string-01.hopix)
-    14-string-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 14-string-01.hopix))))
 
 (rule
   (target 14-string-01.code-O2-specialize-token.backend.output)
@@ -1603,16 +1403,6 @@
       (run %{exe} --sexp 14-string-01.hopix))))
 
 (rule
-  (target 50-match-09.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 50-match-09.hopix)
-    50-match-09.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 50-match-09.hopix))))
-
-(rule
   (target 50-match-09.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -1681,16 +1471,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 50-match-09.hopix))))
-
-(rule
-  (target 42-match-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 42-match-01.hopix)
-    42-match-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 42-match-01.hopix))))
 
 (rule
   (target 42-match-01.code-O2-specialize-token.backend.output)
@@ -1763,16 +1543,6 @@
       (run %{exe} --sexp 42-match-01.hopix))))
 
 (rule
-  (target 32-application.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 32-application.hopix)
-    32-application.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 32-application.hopix))))
-
-(rule
   (target 32-application.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -1841,16 +1611,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 32-application.hopix))))
-
-(rule
-  (target 62-for-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 62-for-01.hopix)
-    62-for-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 62-for-01.hopix))))
 
 (rule
   (target 62-for-01.code-O2-specialize-token.backend.output)
@@ -1923,16 +1683,6 @@
       (run %{exe} --sexp 62-for-01.hopix))))
 
 (rule
-  (target 70-tree.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 70-tree.hopix)
-    70-tree.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 70-tree.hopix))))
-
-(rule
   (target 70-tree.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2001,16 +1751,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 70-tree.hopix))))
-
-(rule
-  (target 47-match-06.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 47-match-06.hopix)
-    47-match-06.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 47-match-06.hopix))))
 
 (rule
   (target 47-match-06.code-O2-specialize-token.backend.output)
@@ -2083,16 +1823,6 @@
       (run %{exe} --sexp 47-match-06.hopix))))
 
 (rule
-  (target 59-while-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 59-while-02.hopix)
-    59-while-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 59-while-02.hopix))))
-
-(rule
   (target 59-while-02.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2161,16 +1891,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 59-while-02.hopix))))
-
-(rule
-  (target 25-sequence-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 25-sequence-01.hopix)
-    25-sequence-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 25-sequence-01.hopix))))
 
 (rule
   (target 25-sequence-01.code-O2-specialize-token.backend.output)
@@ -2243,16 +1963,6 @@
       (run %{exe} --sexp 25-sequence-01.hopix))))
 
 (rule
-  (target 54-match-13.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 54-match-13.hopix)
-    54-match-13.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 54-match-13.hopix))))
-
-(rule
   (target 54-match-13.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2321,16 +2031,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 54-match-13.hopix))))
-
-(rule
-  (target 31-local-definition-05.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 31-local-definition-05.hopix)
-    31-local-definition-05.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 31-local-definition-05.hopix))))
 
 (rule
   (target 31-local-definition-05.code-O2-specialize-token.backend.output)
@@ -2403,16 +2103,6 @@
       (run %{exe} --sexp 31-local-definition-05.hopix))))
 
 (rule
-  (target 05-arithmetic-05.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 05-arithmetic-05.hopix)
-    05-arithmetic-05.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 05-arithmetic-05.hopix))))
-
-(rule
   (target 05-arithmetic-05.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2481,16 +2171,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 05-arithmetic-05.hopix))))
-
-(rule
-  (target 69-sort-big.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 69-sort-big.hopix)
-    69-sort-big.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 69-sort-big.hopix))))
 
 (rule
   (target 69-sort-big.code-O2-specialize-token.backend.output)
@@ -2563,16 +2243,6 @@
       (run %{exe} --sexp 69-sort-big.hopix))))
 
 (rule
-  (target 22-field-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 22-field-01.hopix)
-    22-field-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 22-field-01.hopix))))
-
-(rule
   (target 22-field-01.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2641,16 +2311,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 22-field-01.hopix))))
-
-(rule
-  (target 55-if-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 55-if-01.hopix)
-    55-if-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 55-if-01.hopix))))
 
 (rule
   (target 55-if-01.code-O2-specialize-token.backend.output)
@@ -2723,16 +2383,6 @@
       (run %{exe} --sexp 55-if-01.hopix))))
 
 (rule
-  (target 17-constructor-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 17-constructor-03.hopix)
-    17-constructor-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 17-constructor-03.hopix))))
-
-(rule
   (target 17-constructor-03.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2801,16 +2451,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 17-constructor-03.hopix))))
-
-(rule
-  (target 03-arithmetic-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 03-arithmetic-03.hopix)
-    03-arithmetic-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 03-arithmetic-03.hopix))))
 
 (rule
   (target 03-arithmetic-03.code-O2-specialize-token.backend.output)
@@ -2883,16 +2523,6 @@
       (run %{exe} --sexp 03-arithmetic-03.hopix))))
 
 (rule
-  (target 35-application-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 35-application-04.hopix)
-    35-application-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 35-application-04.hopix))))
-
-(rule
   (target 35-application-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -2961,16 +2591,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 35-application-04.hopix))))
-
-(rule
-  (target 10-boolean-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 10-boolean-02.hopix)
-    10-boolean-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 10-boolean-02.hopix))))
 
 (rule
   (target 10-boolean-02.code-O2-specialize-token.backend.output)
@@ -3043,16 +2663,6 @@
       (run %{exe} --sexp 10-boolean-02.hopix))))
 
 (rule
-  (target 11-boolean-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 11-boolean-03.hopix)
-    11-boolean-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 11-boolean-03.hopix))))
-
-(rule
   (target 11-boolean-03.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -3121,16 +2731,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 11-boolean-03.hopix))))
-
-(rule
-  (target 60-while-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 60-while-03.hopix)
-    60-while-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 60-while-03.hopix))))
 
 (rule
   (target 60-while-03.code-O2-specialize-token.backend.output)
@@ -3203,16 +2803,6 @@
       (run %{exe} --sexp 60-while-03.hopix))))
 
 (rule
-  (target 56-if-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 56-if-02.hopix)
-    56-if-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 56-if-02.hopix))))
-
-(rule
   (target 56-if-02.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -3281,16 +2871,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 56-if-02.hopix))))
-
-(rule
-  (target 52-match-11.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 52-match-11.hopix)
-    52-match-11.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 52-match-11.hopix))))
 
 (rule
   (target 52-match-11.code-O2-specialize-token.backend.output)
@@ -3363,16 +2943,6 @@
       (run %{exe} --sexp 52-match-11.hopix))))
 
 (rule
-  (target 01-arithmetic-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 01-arithmetic-01.hopix)
-    01-arithmetic-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 01-arithmetic-01.hopix))))
-
-(rule
   (target 01-arithmetic-01.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -3441,16 +3011,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 01-arithmetic-01.hopix))))
-
-(rule
-  (target 07-arithmetic-07.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 07-arithmetic-07.hopix)
-    07-arithmetic-07.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 07-arithmetic-07.hopix))))
 
 (rule
   (target 07-arithmetic-07.code-O2-specialize-token.backend.output)
@@ -3523,16 +3083,6 @@
       (run %{exe} --sexp 07-arithmetic-07.hopix))))
 
 (rule
-  (target 24-field-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 24-field-03.hopix)
-    24-field-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 24-field-03.hopix))))
-
-(rule
   (target 24-field-03.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -3601,16 +3151,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 24-field-03.hopix))))
-
-(rule
-  (target 43-match-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 43-match-02.hopix)
-    43-match-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 43-match-02.hopix))))
 
 (rule
   (target 43-match-02.code-O2-specialize-token.backend.output)
@@ -3683,16 +3223,6 @@
       (run %{exe} --sexp 43-match-02.hopix))))
 
 (rule
-  (target 34-application-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 34-application-03.hopix)
-    34-application-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 34-application-03.hopix))))
-
-(rule
   (target 34-application-03.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -3761,16 +3291,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 34-application-03.hopix))))
-
-(rule
-  (target 57-if-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 57-if-03.hopix)
-    57-if-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 57-if-03.hopix))))
 
 (rule
   (target 57-if-03.code-O2-specialize-token.backend.output)
@@ -3843,16 +3363,6 @@
       (run %{exe} --sexp 57-if-03.hopix))))
 
 (rule
-  (target 68-sort.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 68-sort.hopix)
-    68-sort.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 68-sort.hopix))))
-
-(rule
   (target 68-sort.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -3921,16 +3431,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 68-sort.hopix))))
-
-(rule
-  (target 30-local-definition-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 30-local-definition-04.hopix)
-    30-local-definition-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 30-local-definition-04.hopix))))
 
 (rule
   (target 30-local-definition-04.code-O2-specialize-token.backend.output)
@@ -4003,16 +3503,6 @@
       (run %{exe} --sexp 30-local-definition-04.hopix))))
 
 (rule
-  (target 45-match-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 45-match-04.hopix)
-    45-match-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 45-match-04.hopix))))
-
-(rule
   (target 45-match-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -4081,16 +3571,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 45-match-04.hopix))))
-
-(rule
-  (target 27-local-definition-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 27-local-definition-01.hopix)
-    27-local-definition-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 27-local-definition-01.hopix))))
 
 (rule
   (target 27-local-definition-01.code-O2-specialize-token.backend.output)
@@ -4163,16 +3643,6 @@
       (run %{exe} --sexp 27-local-definition-01.hopix))))
 
 (rule
-  (target 37-allocate-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 37-allocate-02.hopix)
-    37-allocate-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 37-allocate-02.hopix))))
-
-(rule
   (target 37-allocate-02.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -4241,16 +3711,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 37-allocate-02.hopix))))
-
-(rule
-  (target 09-boolean-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 09-boolean-01.hopix)
-    09-boolean-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 09-boolean-01.hopix))))
 
 (rule
   (target 09-boolean-01.code-O2-specialize-token.backend.output)
@@ -4323,16 +3783,6 @@
       (run %{exe} --sexp 09-boolean-01.hopix))))
 
 (rule
-  (target 61-while-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 61-while-04.hopix)
-    61-while-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 61-while-04.hopix))))
-
-(rule
   (target 61-while-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -4401,16 +3851,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 61-while-04.hopix))))
-
-(rule
-  (target 48-match-07.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 48-match-07.hopix)
-    48-match-07.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 48-match-07.hopix))))
 
 (rule
   (target 48-match-07.code-O2-specialize-token.backend.output)
@@ -4483,16 +3923,6 @@
       (run %{exe} --sexp 48-match-07.hopix))))
 
 (rule
-  (target 65-for-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 65-for-04.hopix)
-    65-for-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 65-for-04.hopix))))
-
-(rule
   (target 65-for-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -4561,16 +3991,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 65-for-04.hopix))))
-
-(rule
-  (target 16-constructor-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 16-constructor-02.hopix)
-    16-constructor-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 16-constructor-02.hopix))))
 
 (rule
   (target 16-constructor-02.code-O2-specialize-token.backend.output)
@@ -4643,16 +4063,6 @@
       (run %{exe} --sexp 16-constructor-02.hopix))))
 
 (rule
-  (target 64-for-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 64-for-03.hopix)
-    64-for-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 64-for-03.hopix))))
-
-(rule
   (target 64-for-03.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -4721,16 +4131,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 64-for-03.hopix))))
-
-(rule
-  (target 46-match-05.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 46-match-05.hopix)
-    46-match-05.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 46-match-05.hopix))))
 
 (rule
   (target 46-match-05.code-O2-specialize-token.backend.output)
@@ -4803,16 +4203,6 @@
       (run %{exe} --sexp 46-match-05.hopix))))
 
 (rule
-  (target 58-while-01.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 58-while-01.hopix)
-    58-while-01.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 58-while-01.hopix))))
-
-(rule
   (target 58-while-01.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -4881,16 +4271,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 58-while-01.hopix))))
-
-(rule
-  (target 38-allocate-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 38-allocate-03.hopix)
-    38-allocate-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 38-allocate-03.hopix))))
 
 (rule
   (target 38-allocate-03.code-O2-specialize-token.backend.output)
@@ -4963,16 +4343,6 @@
       (run %{exe} --sexp 38-allocate-03.hopix))))
 
 (rule
-  (target 06-arithmetic-06.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 06-arithmetic-06.hopix)
-    06-arithmetic-06.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 06-arithmetic-06.hopix))))
-
-(rule
   (target 06-arithmetic-06.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -5041,16 +4411,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 06-arithmetic-06.hopix))))
-
-(rule
-  (target 28-local-definition-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 28-local-definition-02.hopix)
-    28-local-definition-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 28-local-definition-02.hopix))))
 
 (rule
   (target 28-local-definition-02.code-O2-specialize-token.backend.output)
@@ -5123,16 +4483,6 @@
       (run %{exe} --sexp 28-local-definition-02.hopix))))
 
 (rule
-  (target 39-allocate-04.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 39-allocate-04.hopix)
-    39-allocate-04.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 39-allocate-04.hopix))))
-
-(rule
   (target 39-allocate-04.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -5201,16 +4551,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 39-allocate-04.hopix))))
-
-(rule
-  (target 40-allocate-05.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 40-allocate-05.hopix)
-    40-allocate-05.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 40-allocate-05.hopix))))
 
 (rule
   (target 40-allocate-05.code-O2-specialize-token.backend.output)
@@ -5283,16 +4623,6 @@
       (run %{exe} --sexp 40-allocate-05.hopix))))
 
 (rule
-  (target 63-for-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 63-for-02.hopix)
-    63-for-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 63-for-02.hopix))))
-
-(rule
   (target 63-for-02.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -5361,16 +4691,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 63-for-02.hopix))))
-
-(rule
-  (target 23-field-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 23-field-02.hopix)
-    23-field-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 23-field-02.hopix))))
 
 (rule
   (target 23-field-02.code-O2-specialize-token.backend.output)
@@ -5443,16 +4763,6 @@
       (run %{exe} --sexp 23-field-02.hopix))))
 
 (rule
-  (target 51-match-10.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 51-match-10.hopix)
-    51-match-10.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 51-match-10.hopix))))
-
-(rule
   (target 51-match-10.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -5521,16 +4831,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 51-match-10.hopix))))
-
-(rule
-  (target 33-application-02.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 33-application-02.hopix)
-    33-application-02.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 33-application-02.hopix))))
 
 (rule
   (target 33-application-02.code-O2-specialize-token.backend.output)
@@ -5603,16 +4903,6 @@
       (run %{exe} --sexp 33-application-02.hopix))))
 
 (rule
-  (target 21-record-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 21-record-03.hopix)
-    21-record-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 21-record-03.hopix))))
-
-(rule
   (target 21-record-03.code-O2-specialize-token.backend.output)
   (deps
     (:exe ../../backends/code-O2-specialize-token.backend/houblix.exe)
@@ -5681,16 +4971,6 @@
   (action
     (with-stdout-to %{target}
       (run %{exe} --sexp 21-record-03.hopix))))
-
-(rule
-  (target 44-match-03.old_code.backend.output)
-  (deps
-    (:exe ../../backends/old_code.backend/houblix.exe)
-    (:input 44-match-03.hopix)
-    44-match-03.expected)
-  (action
-    (with-stdout-to %{target}
-      (run %{exe} --sexp 44-match-03.hopix))))
 
 (rule
   (target 44-match-03.code-O2-specialize-token.backend.output)
