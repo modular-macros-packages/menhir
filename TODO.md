@@ -30,7 +30,7 @@
   Make this optional by introducing a new flag, `--log-messages`.
   (Suggested by John Jackson.)
 
-## New Code Back-End
+## Code Back-End
 
 * Document the various optimisation levels.
 
@@ -304,7 +304,7 @@
   used as library modules. Only a few modules (those that really implement
   the Menhir command line tool) should be allowed to have global state.
 
-* Remove the ancient code back-end. Remove support for the `legacy` strategy.
+* Remove support for the `legacy` strategy.
   Once the OCaml parser abandons the `error` token, remove support for the
   `error` token.
 
