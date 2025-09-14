@@ -169,33 +169,6 @@ end
 module Short : STACK
 
 (* ------------------------------------------------------------------------- *)
-(* Information about error handling. *)
-
-type instruction =
-  | Die
-  | DownTo of word * state
-
-and state =
-  | Represented
-  | UnRepresented of Lr1.node
-
-(**[rewind s] explains how to rewind the stack when dealing with an
-   error in state [s]. It produces an instruction to either die
-   (because no state on the stack can handle errors) or pop a suffix
-   of the stack. In the latter case, one reaches a state that is
-   either represented (its identity is physically stored in the
-   bottommost cell that is popped) or unrepresented (its identity is
-   statically known). This function is used only in the [legacy]
-   error-handling strategy. *)
-val rewind: Lr1.node -> instruction
-
-(**[errorpeeker s] tells whether state [s] can potentially peek at an
-   error. This is the case if, in state [s], an error token may be on
-   the stream. This function is used only in the [legacy]
-   error-handling strategy. *)
-val errorpeeker: Lr1.node -> bool
-
-(* ------------------------------------------------------------------------- *)
 (* Information about which states and positions need to physically
    exist on the stack. *)
 
@@ -210,10 +183,6 @@ val track_startp: Symbol.t -> bool
 (**[track_endp symbol] tells whether an end position must be recorded
    for the symbol [symbol]. *)
 val track_endp: Symbol.t -> bool
-
-(**[universal symbol] tells whether every represented state has an
-   outgoing transition along [symbol]. *)
-val universal: Symbol.t -> bool
 
 (* ------------------------------------------------------------------------- *)
 (* More information about the stack. *)
