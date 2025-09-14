@@ -141,14 +141,9 @@ let define_and_measure (x, e) =
 
 (* Code generation for semantic actions. *)
 
-(* The functions [reducecellparams] and [reducebody] are adapted from
-   [CodeBackend]. *)
-
-(* Things are slightly more regular here than in the code-based
-   back-end, since there is no optimization: every stack cell has the
-   same structure and holds a state, a semantic value, and a pair of
-   positions. Because every semantic value is represented, we do not
-   have a separate [unitbindings]. *)
+(* Things are slightly more regular here than in the code back-end, since
+   there is no optimization: every stack cell has the same structure and
+   holds a state, a semantic value, and a pair of positions. *)
 
 (* [reducecellparams] constructs a pattern that describes the contents
    of a stack cell. If this is the bottom cell, the variable [state]

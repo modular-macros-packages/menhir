@@ -706,9 +706,9 @@ let reduction_tokens reductions =
 (* This inverts a mapping of tokens to productions into a mapping of
    productions to sets of tokens. *)
 
-(* This is needed, in [CodeBackend], to avoid producing two (or more)
-   separate branches that call the same [reduce] function. Instead,
-   we generate just one branch, guarded by a [POr] pattern. *)
+(* This is needed, in the code back-end, to avoid producing two (or more)
+   separate branches that call the same [reduce] function. Instead, we
+   generate just one branch, guarded by a [POr] pattern. *)
 
 let invert reductions : TerminalSet.t ProductionMap.t =
   TerminalMap.fold (fun tok prods inverse ->
