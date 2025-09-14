@@ -114,13 +114,7 @@ let handlers states =
    one of the productions associated with [nt] is non-epsilon and needs
    [beforeendp], then [s] must be represented. This caters for the (rare)
    situation where the new code back-end must perform a case analysis of
-   the current state in order to peek at the top stack cell.
-
-   (3) If a stack cell contains more than one state and if at least
-   one of these states is able to handle the [error] token, then these
-   states are represented. (Old code back-end only. This is required by
-   the stack inspection that takes place in the legacy error-handling
-   strategy.) *)
+   the current state in order to peek at the top stack cell. *)
 
 module RepresentedStates () : sig
   val represented : Lr1.node -> bool
@@ -143,9 +137,6 @@ let represented state =
 
 let represent state =
   UnionFind.set (represented state) true
-
-let represents states =
-  represent (Lr1.NodeSet.choose states)
 
 (* Enforce condition (1) above. *)
 
@@ -190,18 +181,6 @@ let () =
         )
       ) () symbol
   )
-
-(* Enforce condition (3) above. *)
-
-let () =
-  if Settings.backend = `OldCodeBackend then
-    Lr1.iter (fun node ->
-      let v = StackStatesShort.stack_states node in
-      Array.iter (fun states ->
-        if Lr1.NodeSet.cardinal states >= 2 && handlers states then
-          represents states
-      ) v
-    )
 
 (* Define an accessor. *)
 
@@ -334,28 +313,18 @@ end
    stack) may be consulted for its end position. This implies that this cell
    must exist and must store an end position! Now, when does this happen?
 
-   1- This happens if [prod] is an epsilon production and the left-hand symbol
-      of the production, [nt prod], keeps track of its start or end position.
-   2- This happens if the semantic action explicitly mentions the keyword
-      [$endpos($0)].
-
    In the new code back-end, this happens only if [prod] is not an epsilon
    production and only if the current state is not an initial state. Indeed,
    for epsilon productions, we read the register [endp] instead of peeking
    at the top stack cell, and at initial states, we read the register [initp].
+   Furthermore, this happens only if the semantic action explicitly mentions
+   the keyword [$endpos($0)].
 
-   Now, if this happens, what should we do?
+   Now, if this happens, what should we do? If this happens in a state [s]
+   whose incoming symbol is [sym], then [sym] must keep track of its end
+   position. *)
 
-   a- If this happens in a state [s] whose incoming symbol is [sym], then [sym]
-      must keep track of its end position.
-   b- If this happens in an initial state, where the stack may be empty, then
-      the sentinel cell at the bottom of the stack must contain an end position.
-
-   Point (b) doesn't concern us here, but point (a) does. We must implement the
-   constraint (1) \/ (2) -> (a). Point (b) is taken care of in the code back-end,
-   where, for simplicity, we always create a sentinel cell. *)
-
-(* I will say that this is a lot more sophisticated than I would like. The code
+(* I will say that this is a more sophisticated than I would like. The code
    back-end has been known for its efficiency and I am trying to maintain this
    property -- in particular, I would like to keep track of no positions at all,
    if the user doesn't use any position keyword. But I am suffering. *)
@@ -383,28 +352,7 @@ let () =
     and action = Production.action prod in
     let length = Array.length rhs in
 
-    if length = 0 then begin
-
-      (* An epsilon production. *)
-
-      (* Condition (1) in the long comment above (2015/11/11). If [prod] can
-         be reduced in a state [s] whose incoming symbol is [sym], then emit
-         the following constraint: if the left-hand side [nt] keeps track of
-         its start or end position, then [sym] must keep track of its end
-         position. *)
-
-      (* This constraint concerns the old code back-end only. *)
-
-      if Settings.backend = `OldCodeBackend then
-        Lr1.production_where prod |> Lr1.NodeSet.iter begin fun s ->
-          Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-            F.record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
-            F.record_VarVar (Symbol.N nt, WhereEnd)   (sym, WhereEnd)
-          end
-        end
-
-    end
-    else begin
+    if length > 0 then begin
 
       (* A non-epsilon production. *)
 
@@ -421,16 +369,12 @@ let () =
 
     Action.keywords action |> KeywordSet.iter begin function
       | Position (Before, _, _) ->
-          (* Condition (2) in the long comment above (2015/11/11). This condition
-             was incorrectly implemented until 2021/10/12, because of a confusion
-             between the state where the production is reduced and the state that
-             carries the outgoing edge labeled [nt]. The condition is as follows:
-             if [prod] refers to [$endpos($0)], if the state [s] carries an
-             outgoing transition labeled [nt], and if the incoming symbol of [s]
-             is [sym], then [sym] must keep track of its end position. In the new
-             code back-end, we impose this constraint only if [prod] is not an
-             epsilon production. *)
-          if Settings.backend = `OldCodeBackend || length > 0 then
+          (* See the long comment above (2015/11/11). The condition is as
+             follows: if [prod] refers to [$endpos($0)], if the state [s]
+             carries an outgoing transition labeled [nt], if the incoming
+             symbol of [s] is [sym], and if [prod] is not an epsilon
+             production, then [sym] must keep track of its end position. *)
+          if length > 0 then
             Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
               Lr1.incoming_symbol s |> Option.iter begin fun sym ->
                 F.record_ConVar true (sym, WhereEnd)

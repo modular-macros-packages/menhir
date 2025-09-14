@@ -15,7 +15,6 @@ val backend: [
   | `ReferenceInterpreter
   | `CoqBackend
   | `NewCodeBackend
-  | `OldCodeBackend
   | `TableBackend
 ]
 

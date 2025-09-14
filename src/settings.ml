@@ -22,6 +22,9 @@ let backend =
 let set_backend b () =
   backend := b
 
+let use_ancient_code_backend () =
+  error "Error: --code-ancient is no longer supported.\n"
+
 type token_type_mode =
   | TokenTypeAndCode   (* produce the definition of the [token] type and code for the parser *)
   | TokenTypeOnly      (* produce the type definition only *)
@@ -403,7 +406,7 @@ let options = Arg.align [
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
   "--code", Arg.Unit (set_backend `NewCodeBackend), " Use the code back-end (default)";
-  "--code-ancient", Arg.Unit (set_backend `OldCodeBackend), " Use the ancient code back-end";
+  "--code-ancient", Arg.Unit use_ancient_code_backend, " (no longer supported)";
   "--comment", Arg.Set comment, " Include comments in the generated code";
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
   "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code";
@@ -541,7 +544,6 @@ let backend =
           `NewCodeBackend
       | `CoqBackend
       | `NewCodeBackend
-      | `OldCodeBackend
       | `TableBackend
         as backend ->
           backend
@@ -552,7 +554,6 @@ let extension =
       ".vy"
   | `ReferenceInterpreter
   | `NewCodeBackend
-  | `OldCodeBackend
   | `TableBackend ->
       ".mly"
 
@@ -560,8 +561,6 @@ let print_backend backend =
   match backend with
   | `ReferenceInterpreter ->
       "reference interpreter"
-  | `OldCodeBackend ->
-      "ancient code back-end"
   | `NewCodeBackend ->
       "new code back-end"
   | `CoqBackend ->
@@ -582,9 +581,6 @@ let strategy =
   | (`Unspecified | `Simplified), `NewCodeBackend ->
       (* The new code back-end supports only the simplified strategy. *)
       `Simplified
-  | (`Unspecified | `Legacy), `OldCodeBackend ->
-      (* The old code back-end supports only the legacy strategy. *)
-      `Legacy
   | `Simplified, (`ReferenceInterpreter | `TableBackend) ->
       (* The reference interpreter and the table back-end support both
          strategies. *)
@@ -597,8 +593,7 @@ let strategy =
   | _, `CoqBackend ->
       (* The Coq back-end does not care. *)
       `Legacy
-  | (`Legacy as strategy), `NewCodeBackend
-  | (`Simplified as strategy), `OldCodeBackend ->
+  | (`Legacy as strategy), `NewCodeBackend ->
       error "Error: the %s does not allow --strategy %s.\n"
         (print_backend backend)
         (print_strategy strategy)
@@ -900,7 +895,6 @@ let () =
   | `TableBackend
   | `CoqBackend ->
       represent_everything()
-  | `OldCodeBackend
   | `NewCodeBackend ->
       ()
 

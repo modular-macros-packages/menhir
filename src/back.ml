@@ -46,10 +46,6 @@ let () =
       let filename = Settings.base ^ ".v" in
       let f = open_out filename in
       B.write_all f
-  | `OldCodeBackend ->
-      let module B = CodeBackend.Run () in
-      write (CodeInliner.inline B.program);
-      Interface.write Front.grammar ()
   | `NewCodeBackend ->
       let module B = NewCodeBackend.Run () in
       write B.program;

@@ -10,14 +10,6 @@
 
 open IL
 
-(* The (code-based) code generator. *)
-
-module Run () : sig
-
-  val program: program
-
-end
-
 (* Some auxiliary functions are exposed for use by the new code back-end. *)
 
 val print_token: string
