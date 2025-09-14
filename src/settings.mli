@@ -14,7 +14,7 @@
 val backend: [
   | `ReferenceInterpreter
   | `CoqBackend
-  | `NewCodeBackend
+  | `CodeBackend
   | `TableBackend
 ]
 

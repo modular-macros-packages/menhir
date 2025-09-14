@@ -405,7 +405,7 @@ let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
-  "--code", Arg.Unit (set_backend `NewCodeBackend), " Use the code back-end (default)";
+  "--code", Arg.Unit (set_backend `CodeBackend), " Use the code back-end (default)";
   "--code-ancient", Arg.Unit use_ancient_code_backend, " (no longer supported)";
   "--comment", Arg.Set comment, " Include comments in the generated code";
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
@@ -541,9 +541,9 @@ let backend =
       match !backend with
       | `Unspecified ->
           (* The new code back-end is the default. *)
-          `NewCodeBackend
+          `CodeBackend
       | `CoqBackend
-      | `NewCodeBackend
+      | `CodeBackend
       | `TableBackend
         as backend ->
           backend
@@ -553,7 +553,7 @@ let extension =
   | `CoqBackend ->
       ".vy"
   | `ReferenceInterpreter
-  | `NewCodeBackend
+  | `CodeBackend
   | `TableBackend ->
       ".mly"
 
@@ -561,7 +561,7 @@ let print_backend backend =
   match backend with
   | `ReferenceInterpreter ->
       "reference interpreter"
-  | `NewCodeBackend ->
+  | `CodeBackend ->
       "code back-end"
   | `CoqBackend ->
       "Coq back-end"
@@ -578,7 +578,7 @@ let print_strategy strategy =
 let strategy =
   let strategy = !strategy in
   match strategy, backend with
-  | (`Unspecified | `Simplified), `NewCodeBackend ->
+  | (`Unspecified | `Simplified), `CodeBackend ->
       (* The code back-end supports only the simplified strategy. *)
       `Simplified
   | `Simplified, (`ReferenceInterpreter | `TableBackend) ->
@@ -593,7 +593,7 @@ let strategy =
   | _, `CoqBackend ->
       (* The Coq back-end does not care. *)
       `Legacy
-  | (`Legacy as strategy), `NewCodeBackend ->
+  | (`Legacy as strategy), `CodeBackend ->
       error "Error: the %s does not allow --strategy %s.\n"
         (print_backend backend)
         (print_strategy strategy)
@@ -612,7 +612,7 @@ let () =
 
 let () =
   if !exn_carries_state
-  && backend <> `NewCodeBackend then
+  && backend <> `CodeBackend then
     error
       "Error: --exn-carries-state is supported only by the code back-end.\n"
 
@@ -895,7 +895,7 @@ let () =
   | `TableBackend
   | `CoqBackend ->
       represent_everything()
-  | `NewCodeBackend ->
+  | `CodeBackend ->
       ()
 
 let represent_positions =

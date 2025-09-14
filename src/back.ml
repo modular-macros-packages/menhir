@@ -46,8 +46,8 @@ let () =
       let filename = Settings.base ^ ".v" in
       let f = open_out filename in
       B.write_all f
-  | `NewCodeBackend ->
-      let module B = NewCodeBackend.Run () in
+  | `CodeBackend ->
+      let module B = CodeBackend.Run () in
       write B.program;
       Interface.write Front.grammar ()
 
