@@ -2,6 +2,9 @@
 
 ## 2025/09/XX
 
+* The ancient code back-end has been removed.
+  The command line switch `--code-ancient` is no longer supported.
+
 * In the incremental API, the deprecated type `stack` and the deprecated
   function `stack` have been removed. To inspect the parser's stack, the
   functions `top` and `pop` should be used instead .
