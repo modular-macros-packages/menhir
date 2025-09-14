@@ -97,7 +97,7 @@ end
    (2b) If a state [s] has an outgoing transition labeled [nt], and if
    one of the productions associated with [nt] is non-epsilon and needs
    [beforeendp], then [s] must be represented. This caters for the (rare)
-   situation where the new code back-end must perform a case analysis of
+   situation where the code back-end must perform a case analysis of
    the current state in order to peek at the top stack cell. *)
 
 module RepresentedStates () : sig
@@ -297,10 +297,10 @@ end
    stack) may be consulted for its end position. This implies that this cell
    must exist and must store an end position! Now, when does this happen?
 
-   In the new code back-end, this happens only if [prod] is not an epsilon
+   In the code back-end, this happens only if [prod] is not an epsilon
    production and only if the current state is not an initial state. Indeed,
-   for epsilon productions, we read the register [endp] instead of peeking
-   at the top stack cell, and at initial states, we read the register [initp].
+   for epsilon productions, we read the register [endp] instead of peeking at
+   the top stack cell, and at initial states, we read the register [initp].
    Furthermore, this happens only if the semantic action explicitly mentions
    the keyword [$endpos($0)].
 
@@ -708,11 +708,11 @@ end (* Long *)
 
 (* This information is computed only on demand. *)
 
-(* This information is used in the new code back-end to determine in which
-   states we have static knowledge of the final result type of the parser,
-   ['final]. This information can be built into the GADT that describes the
-   states, and this in turn can be used to perform certain optimizations (such
-   as removing case analyses that have only one branch) while preserving the
+(* This information is used in the code back-end to determine in which states
+   we have static knowledge of the final result type of the parser, ['final].
+   This information can be built into the GADT that describes the states, and
+   this in turn can be used to perform certain optimizations (such as removing
+   case analyses that have only one branch) while preserving the
    well-typedness of the OCaml code. *)
 
 (* This information is computed via a forward data flow analysis. *)

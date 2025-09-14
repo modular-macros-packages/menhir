@@ -562,7 +562,7 @@ let print_backend backend =
   | `ReferenceInterpreter ->
       "reference interpreter"
   | `NewCodeBackend ->
-      "new code back-end"
+      "code back-end"
   | `CoqBackend ->
       "Coq back-end"
   | `TableBackend ->
@@ -579,7 +579,7 @@ let strategy =
   let strategy = !strategy in
   match strategy, backend with
   | (`Unspecified | `Simplified), `NewCodeBackend ->
-      (* The new code back-end supports only the simplified strategy. *)
+      (* The code back-end supports only the simplified strategy. *)
       `Simplified
   | `Simplified, (`ReferenceInterpreter | `TableBackend) ->
       (* The reference interpreter and the table back-end support both
@@ -600,7 +600,7 @@ let strategy =
 
 (* ------------------------------------------------------------------------- *)
 
-(* [--exn-carries-state] is supported only by the new code back-end,
+(* [--exn-carries-state] is supported only by the code back-end,
    and is incompatible with [--fixed-exception]. *)
 
 let () =
@@ -886,7 +886,7 @@ let infer =
       infer
 
 (* [--table] or [--coq] implies [--represent-everything]. Indeed, only the
-   code back-ends need clever computations of which states, values, and
+   code back-end needs clever computations of which states, values, and
    positions are represented as part of stack cells. *)
 
 let () =
