@@ -32,7 +32,7 @@ let check program =
 
 (* -------------------------------------------------------------------------- *)
 
-(* This is the driver of the new code back-end. *)
+(* This is the driver of the code back-end. *)
 
 module Run () = struct
 

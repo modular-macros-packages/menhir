@@ -352,7 +352,7 @@ let process_positive_test basenames : unit =
     "--only-preprocess-uu";
   ] @ flags);
 
-  (* Run menhir again to compile *.stripped.mly using the new code back-end.
+  (* Run menhir again to compile *.stripped.mly using the code back-end.
      [--infer] is required. Take this opportunity to pass [--stacklang-test]
      and [--stacklang-dump] and other flags. *)
   let basenames = [ocamlbase ^ ""] in
@@ -380,7 +380,7 @@ let process_positive_test basenames : unit =
 
   (* Compile the file produced by --only-preprocess-uu. Since the semantic
      actions have been removed, this file should be well-typed and
-     stand-alone. Thus, we check that the code produced by the new code
+     stand-alone. Thus, we check that the code produced by the code
      back-end is accepted by OCaml. *)
   compile ocamlbase
 

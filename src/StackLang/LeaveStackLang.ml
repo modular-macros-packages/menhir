@@ -526,7 +526,7 @@ let must_not_return e msg =
    an exception. We check this at runtime, and if this check fails, we blame
    the user. *)
 
-(* For the moment, this is done only here, in the new code back-end, but it
+(* For the moment, this is done only here, in the code back-end, but it
    could in principle be done uniformly for every back-end. *)
 
 let blame prod =

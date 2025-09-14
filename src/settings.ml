@@ -540,7 +540,7 @@ let backend =
   | `No ->
       match !backend with
       | `Unspecified ->
-          (* The new code back-end is the default. *)
+          (* The code back-end is the default. *)
           `CodeBackend
       | `CoqBackend
       | `CodeBackend

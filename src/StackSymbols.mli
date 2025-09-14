@@ -72,7 +72,7 @@ module Long () : STACK_SYMBOLS
    extra information that it contains, compared to the "short invariant",
    was useless; computing it was a waste of time. As of 2012/08/25, the
    short invariant has been used. As of 2021/05/14, the long invariant
-   is re-introduced, for possible use in the new code back-end. *)
+   is re-introduced, for use in the code back-end. *)
 
 (**This utility function prints a sequence of symbols. Every symbol is
    preceded with a space. *)

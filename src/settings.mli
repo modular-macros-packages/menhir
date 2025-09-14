@@ -188,7 +188,7 @@ val fixedexc: bool
 
 (**This flag causes the exception [Error] to carry an integer state.
    This is the state where a syntax error is detected.
-   This feature is supported only by the new code back-end. *)
+   This feature is supported only by the code back-end. *)
 val exn_carries_state: bool
 
 (** This is a set of tokens which may be unused and about which we should not
@@ -283,7 +283,7 @@ val random_sentence : (string * int * [`Abstract | `Concrete]) option
 val strategy: [`Legacy | `Simplified]
 
 (**The setting -O allows choosing an optimization level. It is used only by
-   the new code back-end. *)
+   the code back-end. *)
 val optimization_level: int
 
 (**The undocumented flag [--stacklang-dump] causes the StackLang program to be
