@@ -10,11 +10,14 @@
 
 (* -------------------------------------------------------------------------- *)
 
-(* A compressed table is represented as a pair of arrays. The displacement
-   array is an array of offsets into the data array. *)
-
+(**A displacement is a nonnegative integer, which, once decoded in a certain
+   way, represents a possibly negative offset into a data array. *)
 type displacement =
   int
+
+(* A compressed table is represented as a pair of a displacement array and a
+   data array. The displacement array is an array of (encoded) offsets into
+   the data array. *)
 
 (* -------------------------------------------------------------------------- *)
 
