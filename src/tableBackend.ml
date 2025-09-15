@@ -458,7 +458,7 @@ let marshal2 name m n (matrix : int list list) =
   let (displacement : int array), (data : int array) =
     let insignificant x = (x = hole) in
     if Settings.pack_classic then
-      MenhirLib.RowDisplacement.compress
+      RowDisplacement.compress
         (=) insignificant hole
         m n matrix
     else

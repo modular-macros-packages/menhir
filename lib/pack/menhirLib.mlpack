@@ -10,7 +10,7 @@ LexerUtil
 Printers
 InfiniteArray
 PackedIntArray
-RowDisplacement
+RowDisplacementDecode
 LinearizedArray
 TableFormat
 InspectionTableFormat

@@ -92,7 +92,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
      matrix, like the action and goto tables. *)
 
   let unmarshal2 table i j =
-    RowDisplacement.getget
+    RowDisplacementDecode.get
       PackedIntArray.get
       PackedIntArray.get
       table

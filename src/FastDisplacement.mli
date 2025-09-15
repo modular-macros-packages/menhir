@@ -14,8 +14,6 @@
    that has been constructed by this module can be looked up by the accessor
    functions in the module [RowDisplacement]. *)
 
-open MenhirLib
-
 (**[compress insignificant dummy t] turns the two-dimensional table [t] into
    a compressed table. The parameter [insignificant] determines which data
    values are insignificant, and can thus be overwritten with other values.

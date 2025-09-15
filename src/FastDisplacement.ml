@@ -8,7 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module RowDisplacement = MenhirLib.RowDisplacement
 module A = AtomicBitSet
 module S = SparseBitSet
 module V = DenseBitVector
@@ -34,8 +33,8 @@ type 'a sparse_row =
    and the other row has a cell [(i, v2)] then the values [v1] and [v2] must
    be equal.
 
-   The classic implementation in [RowDisplacement] performs both steps in a
-   single pass. This implies checking for compatibility while fitting a row
+   The classic implementation of compression in Menhir performs both steps in
+   a single pass. This implies checking for compatibility while fitting a row
    in the sparse table; this forbids the use of vectorised operations (i.e.,
    operations on bit sets) to speed things up.
 
@@ -235,8 +234,7 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The second step is a variant of the fitting loop of [RowDisplacement].
-   It is specialized to work on bit sets:
+(* The second step is specialized to work on bit sets:
 
    - a row is represented as a sparse bit set;
    - the table is represented as a dense bit vector.
@@ -254,8 +252,8 @@ let merge_rows (type a) (rows : a sparse_row array) (cols : int) : group list =
    adding all rows is cubic. However, according to Yao and Tarjan, under a
    certain harmonic decay assumption, the worst-case is only quadratic.
 
-   Anyway, the use of bit vectors allows this code to be significantly
-   faster than the original algorithm in [RowDisplacement]. *)
+   Anyway, the use of bit vectors allows this code to be significantly faster
+   than the classic algorithm. *)
 
 module Pack : sig
 

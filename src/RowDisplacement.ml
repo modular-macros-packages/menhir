@@ -16,6 +16,8 @@
    ``Storing a Sparse Table'' (1979) and in Dencker, Dürre, and Heuft's
    ``Optimization of Parser Tables for Portable Compilers'' (1984). *)
 
+module InfiniteArray = MenhirLib.InfiniteArray
+
 (* A compressed table is represented as a pair of arrays. The
    displacement array is an array of offsets into the data array. *)
 
