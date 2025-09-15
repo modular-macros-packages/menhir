@@ -390,7 +390,7 @@ let encode_bool b =
 (* Table compression. *)
 
 (* Our sparse, two-dimensional tables are turned into one-dimensional tables
-   via [RowDisplacement]. *)
+   via [RowDisplacementEncode]. *)
 
 (* The error bitmap, which is two-dimensional but not sparse, is made
    one-dimensional by simple flattening. *)
@@ -458,11 +458,11 @@ let marshal2 name m n (matrix : int list list) =
   let (displacement : int array), (data : int array) =
     let insignificant x = (x = hole) in
     if Settings.pack_classic then
-      RowDisplacement.compress
+      RowDisplacementEncodeClassic.compress
         (=) insignificant hole
         m n matrix
     else
-      FastDisplacement.compress insignificant hole matrix
+      RowDisplacementEncode.compress insignificant hole matrix
   in
   Error.logC 1 (fun f ->
     fprintf f

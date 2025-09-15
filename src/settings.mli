@@ -305,10 +305,10 @@ val stacklang_test: bool
 val specialize_token: bool
 
 (**The undocumented flag [--pack-classic] causes the table back-end to perform
-   table compression using the old algorithm in [RowDisplacement]. Without
-   this flag, table compression is performed using the new algorithm in
-   [FastDisplacement]. The new algorithm has been found to be significantly
-   faster and to produce results of roughly comparable quality. The size of
-   the resulting tables can vary, up or down, by up to 5% or 10%. This flag
-   may be removed in the future. *)
+   table compression using the classic row displacement algorithm. Without
+   this flag, table compression is performed using the new row displacement
+   algorithm. The new algorithm has been found to be significantly faster and
+   to produce results of roughly comparable quality. The size of the resulting
+   tables can vary, up or down, by up to 5% or 10%. This flag will be removed
+   in the future. *)
 val pack_classic : bool

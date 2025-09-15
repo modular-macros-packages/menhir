@@ -8,12 +8,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module compresses a two-dimensional table, where some values
-   are considered insignificant, via row displacement. *)
+(**Row displacement aims to compress a two-dimensional table where some values
+   are considered insignificant.
 
-(* A faster implementation of this compression algorithm,
-   is available in the module [FastDisplacement],
-   which currently is part of Menhir -- not part of MenhirLib. *)
+   A faster compression algorithm is available in [RowDisplacementEncode].
+   The "classic" implementation offered in this module will be removed in
+   the future. *)
 
 (**A displacement is a nonnegative integer, which, once decoded in a certain
    way, represents a possibly negative offset into a data array. *)
@@ -23,8 +23,7 @@ type displacement =
 (**A compressed table is represented as a pair of a displacement array and a
    data array. *)
 type 'a table =
-  displacement array * (* displacement *)
-            'a array   (* data *)
+  displacement array * 'a array
 
 (**[compress equal insignificant dummy m n t] turns the two-dimensional table
    [t] into a compressed table. The parameter [equal] is equality of data
@@ -39,31 +38,3 @@ val compress:
   int -> int ->
   'a array array ->
   'a table
-
-(**[get ct i j] returns the value found at indices [i] and [j] in the
-   compressed table [ct]. This function call is permitted only if the
-   value found at indices [i] and [j] in the original table is
-   significant -- otherwise, it could fail abruptly.
-
-   Together, [compress] and [get] have the property that, if the value
-   found at indices [i] and [j] in an uncompressed table [t] is
-   significant, then [get (compress t) i j] is equal to that value. *)
-val get:
-  'a table ->
-  int -> int ->
-  'a
-
-(**[getget] is a variant of [get] which only requires read access,
-   via accessors, to the two components of the table. *)
-val getget:
-  ('displacement -> int -> int) ->
-  ('data -> int -> 'a) ->
-  'displacement * 'data ->
-  int -> int ->
-  'a
-
-(**In order to guarantee that all displacements are nonnegative, an encoding
-   of negative numbers is used. It is implemented by the functions [encode]
-   and [decode]. These functions are in principle internal. We expose [encode]
-   because it is used by [FastDisplacement]. *)
-val encode: int -> displacement

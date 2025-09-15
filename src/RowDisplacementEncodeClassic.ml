@@ -11,22 +11,13 @@
 (* This module compresses a two-dimensional table, where some values
    are considered insignificant, via row displacement. *)
 
-(* This idea reportedly appears in Aho and Ullman's ``Principles
-   of Compiler Design'' (1977). It is evaluated in Tarjan and Yao's
-   ``Storing a Sparse Table'' (1979) and in Dencker, Dürre, and Heuft's
-   ``Optimization of Parser Tables for Portable Compilers'' (1984). *)
-
 module InfiniteArray = MenhirLib.InfiniteArray
-
-(* A compressed table is represented as a pair of arrays. The
-   displacement array is an array of offsets into the data array. *)
 
 type displacement =
   int
 
 type 'a table =
-  displacement array * (* displacement *)
-            'a array   (* data *)
+  displacement array * 'a array
 
 (* In a natural version of this algorithm, displacements would be greater
    than (or equal to) [-n]. However, in the particular setting of Menhir,
@@ -34,25 +25,15 @@ type 'a table =
    does not efficiently support negative numbers. For this reason, we are
    careful not to produce negative displacements. *)
 
-(* In order to avoid producing negative displacements, we simply use the
-   least significant bit as the sign bit. This is implemented by [encode]
-   and [decode] below. *)
+(* In order to avoid producing negative displacements, we encode displacements
+   by moving to the sign bit to the least significant position. This encoding
+   function does this. *)
 
-(* One could also think, say, of adding [n] to every displacement, so as
-   to ensure that all displacements are nonnegative. This would work, but
-   would require [n] to be published, for use by the decoder. *)
-
-let encode (displacement : int) : displacement =
+let[@inline] encode (displacement : int) : displacement =
   if displacement >= 0 then
     displacement lsl 1
   else
     (-displacement) lsl 1 + 1
-
-let[@inline] decode (displacement : displacement) : int =
-  if displacement land 1 = 0 then
-    displacement lsr 1
-  else
-    -(displacement lsr 1)
 
 (* It is reasonable to assume that, as matrices grow large, their
    density becomes low, i.e., they have many insignificant entries.
@@ -233,28 +214,3 @@ let compress
   (* Return the compressed tables. *)
 
   displacement, InfiniteArray.domain data
-
-(* [get ct i j] returns the value found at indices [i] and [j] in the
-   compressed table [ct]. This function call is permitted only if the
-   value found at indices [i] and [j] in the original table is
-   significant -- otherwise, it could fail abruptly. *)
-
-(* Together, [compress] and [get] have the property that, if the value
-   found at indices [i] and [j] in an uncompressed table [t] is
-   significant, then [get (compress t) i j] is equal to that value. *)
-
-let get (displacement, data) i j =
-  assert (0 <= i && i < Array.length displacement);
-  let k = decode displacement.(i) in
-  assert (0 <= k + j && k + j < Array.length data);
-    (* failure of this assertion indicates an attempt to access an
-       insignificant element that happens to be mapped out of the bounds
-       of the [data] array. *)
-  data.(k + j)
-
-(* [getget] is a variant of [get] which only requires read access,
-   via accessors, to the two components of the table. *)
-
-let[@inline] getget get_displacement get_data (displacement, data) i j =
-  let k = decode (get_displacement displacement i) in
-  get_data data (k + j)

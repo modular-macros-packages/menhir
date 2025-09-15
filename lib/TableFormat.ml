@@ -83,8 +83,8 @@ module type TABLES = sig
      ``shift to state s without discarding the current token'' (encoded as: s |
      11), or ``reduce prod'' (encoded as: prod | 01). *)
 
-  (* The action table is first compressed via [RowDisplacement], then packed
-     via [PackedIntArray]. *)
+  (* The action table is first compressed via [RowDisplacementEncode],
+     then packed via [PackedIntArray]. *)
 
   (* Like the error bitmap, the action table does not contain a column for the
      [#] pseudo-terminal. *)
@@ -99,8 +99,8 @@ module type TABLES = sig
   (* A two-dimensional goto table maps a state and a non-terminal symbol to
      either undefined (encoded as: 0) or a new state s (encoded as: 1 + s). *)
 
-  (* The goto table is first compressed via [RowDisplacement], then packed
-     via [PackedIntArray]. *)
+  (* The goto table is first compressed via [RowDisplacementEncode],
+     then packed via [PackedIntArray]. *)
 
   val goto: PackedIntArray.t * PackedIntArray.t
 
