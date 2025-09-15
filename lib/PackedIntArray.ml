@@ -151,14 +151,14 @@ let pack (a : int array) : t =
 
 (* Access to a string. *)
 
-let read (s : string) (i : int) : int =
+let[@inline] read (s : string) (i : int) : int =
   Char.code (String.unsafe_get s i)
 
 (* [get1 t i] returns the integer stored in the packed array [t] at index [i].
    It assumes (and does not check) that the array's bit width is [1]. The
    parameter [t] is just a string. *)
 
-let get1 (s : string) (i : int) : int =
+let[@inline] get1 (s : string) (i : int) : int =
   let c = read s (i lsr 3) in
   let c = c lsr ((lnot i) land 0b111) in
   let c = c land 0b1 in
@@ -201,4 +201,3 @@ let get ((k, s) : t) (i : int) : int =
 
 let unflatten1 (n, data) i j =
    get1 data (n * i + j)
-
