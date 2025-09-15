@@ -295,9 +295,8 @@
 * `LRijkstraClassic` is superseded by `LRijkstraFast`
   and could be removed.
 
-* The encoding functions in `RowDisplacement`
-  are superseded by those in `FastDisplacement`
-  and could be removed.
+* `RowDisplacementEncodeClassic` is superseded by `RowDisplacementEncode`
+  and could be removed. (Remove `--pack-classic`.)
 
 * Ideally, `PartialGrammar` should avoid renaming the parameters of
   a rule, when there is no need to do so. The renamed parameter is
