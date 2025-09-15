@@ -8,11 +8,24 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module offers a fast replacement for the table compression algorithm
-   in MenhirLib's [RowDisplacement] module. Its representation of compressed
-   tables is the same, so it is compatible with [RowDisplacement]: a table
-   that has been constructed by this module can be looked up by the accessor
-   functions in the module [RowDisplacement]. *)
+(**Row displacement aims to compress a two-dimensional table where some values
+   are considered insignificant. *)
+
+(* This idea reportedly appears in Aho and Ullman's "Principles of Compiler
+   Design" (1977). It is evaluated in Tarjan and Yao's "Storing a Sparse
+   Table" (1979) and in Dencker, Dürre, and Heuft's "Optimization of Parser
+   Tables for Portable Compilers" (1984). *)
+
+(**A displacement is a nonnegative integer, which, once decoded in a certain
+   way, represents a possibly negative offset into a data array. *)
+type displacement =
+  int
+
+(**A compressed table is represented as a pair of a displacement array and a
+   data array. The displacement array is an array of (encoded) offsets into
+   the data array. *)
+type 'a table =
+  displacement array * 'a array
 
 (**[compress insignificant dummy t] turns the two-dimensional table [t] into
    a compressed table. The parameter [insignificant] determines which data
@@ -23,4 +36,4 @@ val compress :
   ('a -> bool) ->
   'a ->
   'a array array ->
-  'a RowDisplacement.table
+  'a table

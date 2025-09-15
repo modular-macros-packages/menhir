@@ -8,6 +8,37 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(* -------------------------------------------------------------------------- *)
+
+(**A displacement is a nonnegative integer, which, once decoded in a certain
+   way, represents a possibly negative offset into a data array. *)
+type displacement =
+  int
+
+(**A compressed table is represented as a pair of a displacement array and a
+   data array. The displacement array is an array of (encoded) offsets into
+   the data array. *)
+type 'a table =
+  displacement array * 'a array
+
+(* -------------------------------------------------------------------------- *)
+
+(* In order to avoid producing negative displacements, we encode displacements
+   by moving to the sign bit to the least significant position. This encoding
+   function undoes this. *)
+
+(* One could also think, say, of adding [n] to every displacement, so as to
+   ensure that all displacements are nonnegative. This would work, but would
+   require [n] to be published, for use by the decoder. *)
+
+let[@inline] encode (displacement : int) : displacement =
+  if displacement >= 0 then
+    displacement lsl 1
+  else
+    (-displacement) lsl 1 + 1
+
+(* -------------------------------------------------------------------------- *)
+
 module A = AtomicBitSet
 module S = SparseBitSet
 module V = DenseBitVector
@@ -43,16 +74,15 @@ type 'a sparse_row =
 (* -------------------------------------------------------------------------- *)
 
 (* The first step is to compute a merge plan, that is, a partition of the
-   rows, grouped by compatibility.
+   rows, grouped by compatibility. This is done in two passes:
 
-   This is done in two passes over the rows and their cells:
    1. For each column, a set of rows defined in this column.
       For each cell, a set of "compatible" rows having this cell.
       (Rows and columns are represented by their index, a cell is represented as
       a pair of a column index and a value.)
+
    2. For each row, merging the next non-merged row that is compatible with this
-      row (the step 1. allows compatibility to be quickly determined).
-*)
+      row (the step 1. allows compatibility to be quickly determined). *)
 
 (**A row is represented by its index in the array of rows that is passed
    to [merge_rows]. *)
@@ -431,7 +461,7 @@ end (* Pack *)
 let compress_nonempty (type a)
   (insignificant : a -> bool) (dummy : a)
   (t : a array array)
-: a RowDisplacement.table =
+: a table =
   let module C = struct
 
   (* [sparsify] turns a dense row, represented as an array, into a sparse row. *)
@@ -522,7 +552,7 @@ let compress_nonempty (type a)
 
   let store offset rgroup =
     (* Store an (encoded) offset in the displacement table. *)
-    let code = RowDisplacement.encode offset in
+    let code = encode offset in
     List.iter (fun row -> displacement.(row) <- code) rgroup.group;
     (* Store the content of the data cells in the data table. *)
     List.iter (fun (j, a) -> data.(offset + j) <- a) rgroup.cells
