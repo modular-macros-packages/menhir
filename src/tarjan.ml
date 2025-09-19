@@ -95,11 +95,11 @@ end) = struct
   let scc_stack : data Stack.t =
     Stack.create()
 
-  (* Initialize a function which allocates numbers for (internal)
-     nodes. A new number is assigned to each node the first time it is
-     visited. Numbers returned by this function start at 1 and
-     increase. Initially, all nodes have number 0, so they are
-     considered unvisited. *)
+  (* Initialize a function which allocates numbers for (internal) nodes.
+     A new number is assigned to each node the first time it is visited.
+     The numbers returned by this function start at 1 and increase.
+     Initially, all nodes have number 0, so they are considered
+     unvisited. *)
 
   let mark : data -> unit =
     let counter = ref 0 in
@@ -126,7 +126,7 @@ end) = struct
 
       if dy.number = 0 then begin
 
-        (* $y$ hasn't been visited yet, so $(x,y)$ is a regular
+        (* [y] hasn't been visited yet, so [(x, y)] is a regular
            edge, part of the search forest. *)
 
         mark dy;
@@ -142,12 +142,11 @@ end) = struct
       end
       else if (dy.low < dx.low) && dy.stacked then begin
 
-        (* The first condition above indicates that $y$ has been
-           visited before $x$, so $(x, y)$ is a backwards or
-           transverse edge. The second condition indicates that
-           $y$ is inside the same SCC as $x$; indeed, if it
-           belongs to another SCC, then the latter has already
-           been identified and moved out of [scc_stack]. *)
+        (* The first condition above indicates that [y] has been visited
+           before [x], so [(x, y)] is a backwards or transverse edge. The
+           second condition indicates that [y] is inside the same SCC as
+           [x]; indeed, if it belongs to another SCC, then the latter has
+           already been identified and moved out of [scc_stack]. *)
 
         if dy.number < dx.low then
           dx.low <- dy.number
@@ -156,13 +155,13 @@ end) = struct
 
     ) x;
 
-    (* We are done visiting $x$'s neighbors. *)
+    (* We are done visiting [x]'s neighbors. *)
 
     if dx.low = dx.number then begin
 
-      (* $x$ is the entry point of a SCC. The whole SCC is now
-         available; move it out of the stack. We pop elements out
-         of the SCC stack until $x$ itself is found. *)
+      (* [x] is the entry point of a SCC. The whole SCC is now available;
+         move it out of the stack. We pop elements out of the SCC stack
+         until [x] itself is found. *)
 
       let rec loop () =
         let element = Stack.pop scc_stack in
