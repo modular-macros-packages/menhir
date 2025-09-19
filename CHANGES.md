@@ -2,18 +2,43 @@
 
 ## 2025/09/XX
 
+* The new command line switch `--no-code-generation` causes Menhir to stop
+  without generating any code: in other words, no back-end is invoked. The
+  analyses in Menhir's front-end are still performed. If requested via the
+  command line switch `--cmly`, a `.cmly` file is written.
+
+* Some additions have been made in `MenhirSdk`:
+
+  + In the signature `GRAMMAR`, the functions
+    `Lr1.conflicting_transitions`,
+    `Lr1.conflicting_reductions`, and
+    `Lr1.extra_reductions`
+    document the changes made to the LR(1) automaton by resolving conflicts
+    and by obeying `%on_error_reduce` declarations.
+  + In the signature `GRAMMAR`,
+    the module `Surface` is new.
+    This module provides access to two versions of the grammar,
+    namely the source grammar (as found in the `.mly` file)
+    and the grammar that is obtained
+    after parameterized nonterminal symbols have been expanded away
+    (before the nonterminal symbols marked `%inline` are eliminated).
+
+  (Contributed by Frédéric Bour; reviewed by François Pottier.)
+
 * The ancient code back-end has been removed.
   The command line switch `--code-ancient` is no longer supported.
 
 * In the incremental API, the deprecated type `stack` and the deprecated
   function `stack` have been removed. To inspect the parser's stack, the
-  functions `top` and `pop` should be used instead .
+  functions `top` and `pop` should be used instead.
 
 * The deprecated module `MenhirLib.General` has been removed.
 
 * The deprecated demos in `demos/ocamlbuild` have been removed.
 
-* Documentation comments have been added in `MenhirSdk` and `MenhirLib`.
+* Documentation comments have been added in `MenhirLib`.
+
+* Some documentation comments have been added in `MenhirSdk`.
 
 ## 2025/09/12
 
@@ -938,8 +963,8 @@
 * Fixes in the output of `--only-preprocess`:
   * The order of productions is now preserved.
       (It was not. This matters if there are reduce/reduce conflicts.)
-  * `%parameter` directives are now printed. (They were not).
-  * `%on_error_reduce` directives are now printed. (They were not.)
+  * `%parameter` declarations are now printed. (They were not).
+  * `%on_error_reduce` declarations are now printed. (They were not.)
 
 ## 2016/08/25
 
@@ -1442,7 +1467,7 @@
 * Fixed bug that caused some precedence declarations to be incorrectly
   reported as useless.
 * Improved things so that useless pseudo-tokens now also cause warnings.
-* Fixed bug that would cause `%type` directives for terminal symbols to
+* Fixed bug that would cause `%type` declarations for terminal symbols to
   be incorrectly accepted.
 * Fixed bug that would occur when a semantic action containing `$i` keywords
   was inlined.
