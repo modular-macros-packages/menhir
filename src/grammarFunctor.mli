@@ -254,36 +254,6 @@ module Terminal : sig
   val alias: t -> string option
   val unquoted_alias: t -> string option
 
-  (* The sub-module [Word] offers an implementation of words (that is,
-     sequences) of terminal symbols. It is used by [LRijkstra]. We
-     make it a functor, because it has internal state (a hash table)
-     and a side effect (failure if there are more than 256 terminal
-     symbols). *)
-
-  (* The type [word] should be treated, as much as possible, as an
-     abstract type. In fact, for efficiency reasons, we represent a
-     word as a unique integer codes, and we allocate these integer
-     codes sequentially, from 0 upwards. The conversion from [int]
-     to [word] is of course unsafe and should be used wisely. *)
-
-  module Word (X : sig end) : sig
-
-    type word = int
-    val epsilon: word
-    val singleton: t -> word
-    val append: word -> word -> word
-    val length: word -> int
-    (* [first w z] returns the first symbol of the word [w.z]. *)
-    val first: word -> t -> t
-    val elements: word -> t list
-    val print: word -> string
-    (* [verbose()] prints statistics about the use of the internal
-       hash-consing table so far. *)
-    val verbose: unit -> unit
-    (* Lexicographic ordering. *)
-    val compare: word -> word -> int
-  end
-
 end
 
 (* ------------------------------------------------------------------------ *)
