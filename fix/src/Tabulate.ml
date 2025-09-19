@@ -59,3 +59,14 @@ module ForIntSegment (K : sig val n: int end) = struct
       table.(x)
 
 end
+
+module ForNumberedType (T : NUMBERING) = struct
+
+  type key = T.t
+
+  let tabulate (f : key -> 'a) : key -> 'a =
+    let table = Array.init T.n (fun i -> f (T.decode i)) in
+    fun x ->
+      table.(T.encode x)
+
+end

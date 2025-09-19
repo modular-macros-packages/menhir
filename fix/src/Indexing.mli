@@ -54,8 +54,8 @@ val equal : 'n cardinal -> 'm cardinal -> ('n, 'm) eq option
 (**[assert_equal n m] checks that the cardinals [n] and [m] are equal, and
    produces a type-level equality between the types ['n] and ['m]. If the
    cardinals [n] or [m] are not yet fixed, then, as a side effect of this
-   call, they become fixed.
-   @raise Invalid_argument if the cardinals are not equal. *)
+   call, they become fixed. The exception [Invalid_argument] is raised if
+   the cardinals are not equal. *)
 val assert_equal : 'n cardinal -> 'm cardinal -> ('n, 'm) eq
 
 (**If [n] is a type-level name for a finite set, then a value [i] of type
@@ -151,8 +151,8 @@ module Index : sig
      an integer [i] of type [int] into an index: that is, [of_int n i] returns
      [i] at type [n index]. The integer [i] must lie in the semi-open interval
      [\[0, n)]. This is enforced by a runtime check. Calling [of_int n i]
-     fixes the cardinal [n].
-     @raise Invalid_argument if the index [i] is out of bounds. *)
+     fixes the cardinal [n]. The exception [Invalid_argument] is raised if the
+     index [i] is out of bounds. *)
   val of_int : 'n cardinal -> int -> 'n index
 
   (**{!to_int} casts an index [i] back to an ordinary integer value. *)
@@ -272,8 +272,9 @@ module Vector : sig
 
   (**[of_array n a] checks that the cardinal [n] is equal to the length of the
      array [a] and converts the array [a] to a vector. If the cardinal [n] is
-     not yet fixed, then, as a side effect of this call, it becomes fixed.
-     @raise Invalid_argument if the cardinal and array length are not equal. *)
+     not yet fixed, then, as a side effect of this call, it becomes fixed. The
+     exception [Invalid_argument] is raised if the cardinal and array length
+     are not equal. *)
   val of_array : 'n cardinal -> 'a array -> ('n, 'a) t
 
   (**The module type [V] is a module-level analogue of the type [vector]. *)

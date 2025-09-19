@@ -26,11 +26,11 @@ let rec rev_take accu n xs =
   | _, x :: xs ->
       rev_take (x :: accu) (n - 1) xs
 
-module Make (M : MINIMAL_IMPERATIVE_MAPS) = struct
+module[@inline] Make (M : MINIMAL_IMPERATIVE_MAPS) = struct
 
   type key = M.key
 
-  let add x y table =
+  let[@inline] add x y table =
     M.add x y table;
     y
 

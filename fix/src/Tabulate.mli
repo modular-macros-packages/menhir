@@ -51,3 +51,10 @@ module ForType (F : FINITE_TYPE)
 module ForIntSegment
   (K : sig val n: int end)
      : TABULATOR with type key = int
+
+(**{!ForNumberedType} constructs a tabulator for a type that is equipped
+   with a bijection with an integer segment.
+   An array is used to hold the table. *)
+module ForNumberedType
+  (T : NUMBERING)
+     : TABULATOR with type key = T.t

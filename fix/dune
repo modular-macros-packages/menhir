@@ -5,6 +5,6 @@
     -w @A-4-44-67-70
   ))
   (release (flags
-    :standard
+    :standard -noassert
   ))
 )

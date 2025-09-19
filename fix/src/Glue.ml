@@ -150,8 +150,8 @@ module HashTablesAsImperativeMaps (H : HashedType) = struct
   let add key data table =
     add table key data
 
-  let find table key =
-    find key table
+  let find key table =
+    find table key
 
 end
 

@@ -83,6 +83,13 @@ module Run
     | exception Not_found ->
         (* [x'] is newly discovered. *)
         M.add x' p' properties;
+        (* We assume that the transformation function [foreach_successor] maps
+           the property [bottom] at the source to [bottom] at each successor.
+           Thanks to this assumption, if the newly discovered property [p'] is
+           [bottom] then there is really no need to schedule [x']. However, at
+           present, we have no way of testing whether a property is bottom.
+           Furthermore, [p'] is likely to be non-bottom in practice anyway.
+           So, we do not exploit this assumption; we schedule [x'] always. *)
         schedule x'
     | p ->
         (* [x'] has been discovered earlier. *)
@@ -169,6 +176,17 @@ module ForCustomMaps
   (* The queue stores a set of dirty variables, whose outgoing transitions
      must be examined. The map [B] records whether a variable is currently
      queued. *)
+
+  (* We assume that the transformation function [foreach_successor] maps the
+     property [bottom] at the source to [bottom] at each successor. In this
+     code, contrary to [Run] above, this assumption *is* used. Indeed, we
+     assume that the map [V] initially maps every variable to [bottom], and in
+     [update], we mark a variable dirty (and insert it into the queue) only if
+     its property has changed, so only if its new property is non-bottom. In
+     other words, as long as a variable is mapped to [bottom], we do not
+     examine its successors. This is acceptable only because we assume that
+     [bottom] at the source of an edge translates to [bottom] at the
+     destination of this edge. *)
 
   let schedule (x : variable) =
     if not (B.get x) then begin

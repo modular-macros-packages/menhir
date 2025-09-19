@@ -365,7 +365,9 @@ module type DATA_FLOW_GRAPH = sig
   (**{!foreach_successor} describes the edges of the data flow graph as well
      as the manner in which a property at the source of an edge is
      transformed into a property at the target. The property at the target
-     must of course be a monotonic function of the property at the source. *)
+     must of course be a monotonic function of the property at the source.
+     Furthermore, if the property at the source is [bottom] then the
+     property that is transmitted to each target should be [bottom] as well. *)
   val foreach_successor:
     variable -> property ->
     (variable -> property -> unit) -> unit

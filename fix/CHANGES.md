@@ -1,5 +1,24 @@
 # CHANGES
 
+## 2025/09/19
+
+* The new submodule `Fix.SCC` provides an implementation of Tarjan's
+  linear-time strongly-connected-component discovery algorithm.
+
+## 2025/04/28
+
+* New functor `Fix.Tabulate.ForNumberedType`.
+
+* In the signature `DATA_FLOW_GRAPH`, document the fact that the transfer
+  function `foreach_successor` must transform the property `⊥` at a source
+  node to the property `⊥` at each destination node. The least fixed point
+  computation would otherwise be incorrect.
+
+  (In reality, only `Fix.DataFlow.ForCustomMaps` actually exploits this
+  assumption; the other functors in `Fix.DataFlow` do not. For the sake
+  of caution and uniformity, we prefer to document that every functor
+  makes this assumption.)
+
 ## 2023/05/05
 
 * New modules `Fix.Partition` and `Fix.Minimize`.
