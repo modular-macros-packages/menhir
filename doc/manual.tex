@@ -295,6 +295,11 @@ switches must always be used in conjunction so as to specify the names of two
 \menhir to merge these two \messages files and print the result on the
 standard output channel. For more information, see \sref{sec:errors:new}.
 
+\docswitch{\onocodegeneration} This switch causes Menhir to stop without
+generating any code: in other words, no back-end is invoked. The analyses in
+Menhir's front-end are still performed. If requested via the command line
+switch \ocmly, a \cmly file is written.
+
 \docswitch{\onodollars} This switch disallows the use of positional keywords
 of the form \kw{\$i}.
 
