@@ -5,6 +5,20 @@
   (public_name menhirLib)
 )
 
+;; Explicitly enable warnings during development
+;; and disable assertions in releases.
+
+(env
+  (dev (flags
+    :standard
+    -g
+    -w @A-4-44-67-70
+  ))
+  (release (flags
+    :standard -noassert
+  ))
+)
+
 ;; These rules generate the module [StaticVersion]. This module defines a
 ;; value of type [unit] whose name is [require_XXXXXXXX], where [XXXXXXXX]
 ;; is our 8-digit version number. This number is set in the [dune-project]
