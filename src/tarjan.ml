@@ -8,30 +8,27 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module provides an implementation of Tarjan's algorithm for
-   finding the strongly connected components of a graph.
-
-   The algorithm runs when the functor is applied. Its complexity is
-   $O(V+E)$, where $V$ is the number of vertices in the graph $G$, and
-   $E$ is the number of edges. *)
-
 module Run (G : sig
 
-  type node
+  (**The type of vertices, or nodes. *)
+    type node
 
-  (* We assume each node has a unique index. Indices must range from
-     $0$ to $n-1$, where $n$ is the number of nodes in the graph. *)
-
+  (**[n] is the number of nodes in the graph. *)
   val n: int
+
+  (**Each node must have a unique integer index. These indices must range
+     from 0 (included) to [n] (excluded). The function [index] maps a node
+     to its integer index. *)
   val index: node -> int
 
-  (* Iterating over a node's immediate successors. *)
-
-  val successors: (node -> unit) -> node -> unit
-
-  (* Iterating over all nodes. *)
-
+  (**[iter] enumerates all nodes in the graph. That is, [iter yield]
+     applies the function [yield] to every node in the graph. *)
   val iter: (node -> unit) -> unit
+
+  (**[successors] enumerates the immediate successors of a node. That is, if
+     [v] is a node then [successors yield v] applies the function [yield] to
+     every node [w] such that there exists an edge from [v] to [w]. *)
+  val successors: (node -> unit) -> node -> unit
 
 end) = struct
 
@@ -39,39 +36,34 @@ end) = struct
 
   type data = {
 
-      (* Each node carries a flag which tells whether it appears
+      mutable stacked: bool;
+      (**Each node carries a flag which tells whether it appears
          within the SCC stack (which is defined below). *)
 
-      mutable stacked: bool;
-
-      (* Each node carries a number. Numbers represent the order in
+      mutable number: int;
+      (**Each node carries a number. Numbers represent the order in
          which nodes were discovered. *)
 
-      mutable number: int;
-
-      (* Each node [x] records the lowest number associated to a node
+      mutable low: int;
+      (**Each node [x] records the lowest number associated to a node
          already detected within [x]'s SCC. *)
 
-      mutable low: int;
-
-      (* Each node carries a pointer to a representative element of
-         its SCC. This field is used by the algorithm to store its
-         results. *)
-
       mutable representative: G.node;
-
-      (* Each representative node carries a list of the nodes in
+      (**Each node carries a pointer to a representative element of
          its SCC. This field is used by the algorithm to store its
          results. *)
 
       mutable scc: G.node list
+      (**Each representative node carries a list of the nodes in
+         its SCC. This field is used by the algorithm to store its
+         results. *)
 
     }
 
   (* Define a mapping from external nodes to internal ones. Here, we
      simply use each node's index as an entry into a global array. *)
 
-  let table =
+  let table : G.node -> data =
 
     (* Create the array. We initially fill it with [None], of type
        [data option], because we have no meaningful initial value of
@@ -95,16 +87,13 @@ end) = struct
        each node to its associated piece of internal data. *)
 
     function x ->
-      match table.(G.index x) with
-      | Some dx ->
-          dx
-      | None ->
-          assert false (* Indices do not cover the range $0\ldots n$, as expected. *)
+      match table.(G.index x) with Some dx -> dx | None -> assert false
 
   (* Create an empty stack, used to record all nodes which belong to
      the current SCC. *)
 
-  let scc_stack = Stack.create()
+  let scc_stack : data Stack.t =
+    Stack.create()
 
   (* Initialize a function which allocates numbers for (internal)
      nodes. A new number is assigned to each node the first time it is
@@ -112,7 +101,7 @@ end) = struct
      increase. Initially, all nodes have number 0, so they are
      considered unvisited. *)
 
-  let mark =
+  let mark : data -> unit =
     let counter = ref 0 in
     fun dx ->
       incr counter;
@@ -123,13 +112,13 @@ end) = struct
      The components that have been identified last appear at the
      head of the list. *)
 
-  let representatives =
+  let representatives : G.node list ref =
     ref []
 
   (* Look at all nodes of the graph, one after the other. Any
      unvisited nodes become roots of the search forest. *)
 
-  let () = G.iter (fun root ->
+  let () = G.iter @@ fun root ->
     let droot = table root in
 
     if droot.number = 0 then begin
@@ -203,7 +192,6 @@ end) = struct
       walk root
 
     end
-  )
 
   (* There only remains to make our results accessible to the outside. *)
 
