@@ -8,7 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Make (X : Order.S) = struct
+module Make (X : sig
+  type t
+  val compare : t -> t -> int
+end) = struct
 
   module XSet =
     Set.Make(X)

@@ -8,7 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Make (X : Order.S) : sig
+module Make (X : sig
+  type t
+  val compare : t -> t -> int
+end) : sig
 
   (** A type of FIFO queues that detects and eliminates duplicate elements. *)
   type t
