@@ -115,82 +115,79 @@ end) = struct
   let representatives : G.node list ref =
     ref []
 
-  (* Look at all nodes of the graph, one after the other. Any
-     unvisited nodes become roots of the search forest. *)
+  (* [walk] performs the depth-first search traversal
+     that forms the heart of the algorithm. *)
+
+  let rec walk x =
+    let dx = table x in
+
+    G.successors (fun y ->
+      let dy = table y in
+
+      if dy.number = 0 then begin
+
+        (* $y$ hasn't been visited yet, so $(x,y)$ is a regular
+           edge, part of the search forest. *)
+
+        mark dy;
+        dy.stacked <- true;
+        Stack.push dy scc_stack;
+
+        (* Continue walking, depth-first. *)
+
+        walk y;
+        if dy.low < dx.low then
+          dx.low <- dy.low
+
+      end
+      else if (dy.low < dx.low) && dy.stacked then begin
+
+        (* The first condition above indicates that $y$ has been
+           visited before $x$, so $(x, y)$ is a backwards or
+           transverse edge. The second condition indicates that
+           $y$ is inside the same SCC as $x$; indeed, if it
+           belongs to another SCC, then the latter has already
+           been identified and moved out of [scc_stack]. *)
+
+        if dy.number < dx.low then
+          dx.low <- dy.number
+
+      end
+
+    ) x;
+
+    (* We are done visiting $x$'s neighbors. *)
+
+    if dx.low = dx.number then begin
+
+      (* $x$ is the entry point of a SCC. The whole SCC is now
+         available; move it out of the stack. We pop elements out
+         of the SCC stack until $x$ itself is found. *)
+
+      let rec loop () =
+        let element = Stack.pop scc_stack in
+        element.stacked <- false;
+        dx.scc <- element.representative :: dx.scc;
+        element.representative <- x;
+        if element != dx then
+          loop() in
+
+      loop();
+      representatives := x :: !representatives
+
+    end
+
+  (* Enumerate all nodes of the graph. At every unvisited node, start
+     a depth-first traversal. *)
 
   let () = G.iter @@ fun root ->
     let droot = table root in
-
     if droot.number = 0 then begin
-
-      (* This node hasn't been visited yet. Start a depth-first walk
-         from it. *)
-
+      (* This node has not been visited yet. *)
       mark droot;
       droot.stacked <- true;
       Stack.push droot scc_stack;
-
-      let rec walk x =
-        let dx = table x in
-
-        G.successors (fun y ->
-          let dy = table y in
-
-          if dy.number = 0 then begin
-
-            (* $y$ hasn't been visited yet, so $(x,y)$ is a regular
-               edge, part of the search forest. *)
-
-            mark dy;
-            dy.stacked <- true;
-            Stack.push dy scc_stack;
-
-            (* Continue walking, depth-first. *)
-
-            walk y;
-            if dy.low < dx.low then
-              dx.low <- dy.low
-
-          end
-          else if (dy.low < dx.low) && dy.stacked then begin
-
-            (* The first condition above indicates that $y$ has been
-               visited before $x$, so $(x, y)$ is a backwards or
-               transverse edge. The second condition indicates that
-               $y$ is inside the same SCC as $x$; indeed, if it
-               belongs to another SCC, then the latter has already
-               been identified and moved out of [scc_stack]. *)
-
-            if dy.number < dx.low then
-              dx.low <- dy.number
-
-          end
-
-        ) x;
-
-        (* We are done visiting $x$'s neighbors. *)
-
-        if dx.low = dx.number then begin
-
-          (* $x$ is the entry point of a SCC. The whole SCC is now
-             available; move it out of the stack. We pop elements out
-             of the SCC stack until $x$ itself is found. *)
-
-          let rec loop () =
-            let element = Stack.pop scc_stack in
-            element.stacked <- false;
-            dx.scc <- element.representative :: dx.scc;
-            element.representative <- x;
-            if element != dx then
-              loop() in
-
-          loop();
-          representatives := x :: !representatives
-
-        end in
-
       walk root
-
     end
 
   (* There only remains to make our results accessible to the outside. *)
