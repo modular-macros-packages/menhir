@@ -211,7 +211,7 @@ let () =
 (* Compute its strongly connected components, ignoring the distinction between
    safe and dangerous edges. *)
 
-module T = Tarjan.Run(G)
+module T = Fix.SCC.Run(G)
 
 (* -------------------------------------------------------------------------- *)
 

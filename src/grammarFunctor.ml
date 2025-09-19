@@ -1428,7 +1428,7 @@ end
 let unbounded : bool array Lazy.t =
   lazy begin
     let unbounded = Array.make Nonterminal.n false in
-    let module T = Tarjan.Run(G) in
+    let module T = Fix.SCC.Run(G) in
     (* For each edge of [nt] to [nt'] labeled [gnw], *)
     G.iter begin fun nt ->
       nt |> G.labeled_successors begin fun gnw nt' ->

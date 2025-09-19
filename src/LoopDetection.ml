@@ -179,7 +179,7 @@ let fail prod =
    in the same component, then we have detected hidden left recursion. *)
 
 let () =
-  let module T = Tarjan.Run (struct
+  let module T = Fix.SCC.Run (struct
     type node = Nonterminal.t
     let n = Nonterminal.n
     let index = Nonterminal.n2i

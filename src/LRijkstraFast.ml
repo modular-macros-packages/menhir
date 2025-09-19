@@ -399,7 +399,7 @@ struct
       let iter f = Index.iter Node.n f
     end
 
-    module Scc = Tarjan.Run(Gr)
+    module Scc = Fix.SCC.Run(Gr)
 
     let () = Time.tick "LRijkstraFast: class graph SCC"
 

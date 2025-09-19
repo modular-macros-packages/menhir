@@ -894,7 +894,7 @@ module G = struct
 end
 
 module S =
-  Tarjan.Run(G)
+  Fix.SCC.Run(G)
 
 let () =
   Time.tick "StackLang: computing the mutually recursive groups"
