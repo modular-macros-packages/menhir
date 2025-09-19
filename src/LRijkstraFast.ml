@@ -8,15 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Run
-    (X : sig
-       val validate : bool
-       val verbose : bool
-     end)
-    () :
-  LRijkstra.REACHABILITY_RESULT
-=
-struct
+module Run () = struct
   open Grammar
 
   (* ---------------------------------------------------------------------- *)
@@ -104,7 +96,7 @@ struct
     val symbol : any index -> Symbol.t
 
     (* Symbol that labels a goto transition *)
-    val goto_symbol : goto index -> Nonterminal.t
+    (* val goto_symbol : goto index -> Nonterminal.t *)
 
     (* Symbol that labels a shift transition *)
     val shift_symbol : shift index -> Terminal.t
@@ -238,7 +230,7 @@ struct
       | L i -> Symbol.N (Vector.get nt_symbols i)
       | R i -> Symbol.T (Vector.get t_symbols i)
 
-    let goto_symbol i = Vector.get nt_symbols i
+    (* let goto_symbol i = Vector.get nt_symbols i *)
     let shift_symbol i = Vector.get t_symbols i
 
     let target i = Vector.get targets i
@@ -1390,115 +1382,4 @@ struct
         end
   end
 
-  (* ---------------------------------------------------------------------- *)
-
-  (* Optional code to validate the minimal costs.
-     It runs LRijkstraClassic and then check that for each class, the minimal
-     costs coincide. *)
-  module Validation = struct
-
-    (* Find the class missing in a partition.
-
-       In a partition, there is always one class that we can deduce from the
-       other ones by removing all other classes from T.
-       The algorithm is crafted such that this class contains all unreachable
-       configurations.
-       For instance, for a shift transition on a, the partition {{a}, T/{a}} is
-       simply represented as [TerminalSet.singleton a]. The
-
-       The missing function reconstructs this class (T/{a} in the example).
-    *)
-    let missing classes =
-      let diff a b = TerminalSet.fold TerminalSet.remove b a in
-      Array.fold_left diff TerminalSet.universe classes
-
-    let validate () =
-      (* A flag to remember if we found an error.
-         We could print the first error and exit immediately, but debugging was
-         much nicer when accumulating errors and failing afterwards.
-         This helped to find patterns in the errors that made fixing easier.
-      *)
-      let failed = ref false in
-      let module Classic = LRijkstraClassic.Run(X)() in
-      (* Iterate over all goto transitions *)
-      Index.iter Transition.goto begin fun tr ->
-        (* Find the symbol, the source lr1 state and the corresponding node
-           in the tree of matrix products. *)
-        let nt = Transition.goto_symbol tr in
-        let tr = Transition.of_goto tr in
-        let node = Tree.leaf tr in
-        let lr1 = Lr1C.to_g (Transition.source tr) in
-        (* Check that the classical algorithm agrees that the node is
-           unreachable when the pre-lookahead is in the missing class *)
-        let pre_missing = missing (Tree.pre_classes node) in
-        TerminalSet.iter begin fun t ->
-          Classic.query lr1 nt t (fun _ _ ->
-              Printf.eprintf "fast algorithm determined that state %d is \
-                              unreachable with lookahead %s, \
-                              classic algorithm disagrees"
-                (Lr1.number lr1)
-                (Terminal.print t);
-              failed := true;
-            )
-        end pre_missing;
-        (* Check that the classical algorithm agrees on the minimum cost, and
-           on the unreachable configurations after following the transition. *)
-        let post_missing = missing (Tree.post_classes node) in
-        Array.iteri begin fun i_pre c_pre ->
-          (* We can visit the pre-classes in order, but the post classes are
-             visited in an unpredictable order (determined by the Classic
-             algorithm).
-             We use a hash table to store temporary results, then visit the
-             hash table in an order convenient for comparing the post classes.
-          *)
-          let min_table = Hashtbl.create 7 in
-          TerminalSet.iter begin fun t ->
-            Classic.query lr1 nt t begin fun w t' ->
-              (* Check unreachability *)
-              if TerminalSet.mem t' post_missing then (
-                Printf.eprintf "not expecting %s in {%s}\n%!"
-                  (Terminal.print t')
-                  (TerminalSet.print post_missing);
-                failed := true;
-              );
-              let n = Classic.Word.length w in
-              (* Remember the word of minimal length for this
-                 post-transition lookahead symbol *)
-              let data =
-                try Some (Hashtbl.find min_table t') with Not_found -> None
-              in
-              match data with
-              | Some (_, n') when n' <= n -> ()
-              | _ -> Hashtbl.replace min_table t' (w, n)
-            end
-          end c_pre;
-          (* Now checks that both algorithms agree on the minimal length
-             for each post class *)
-          Array.iteri begin fun i_post c_post ->
-            let cell = Cells.encode node i_pre i_post in
-            let cost = Cells.cost cell in
-            TerminalSet.iter begin fun t ->
-              match Hashtbl.find min_table t with
-              | (w, n)->
-                let word ts = String.concat " " (List.map Terminal.print ts) in
-                if n <> cost then (
-                  Printf.eprintf "  lengths differ: %d <> %d\n" n cost;
-                  Printf.eprintf "    pre-class: {%s}\n"
-                    (TerminalSet.print c_pre);
-                  Printf.eprintf "    post-class: {%s}\n"
-                    (TerminalSet.print c_post);
-                  Printf.eprintf "    Classic: %s\n\
-                                 \    Fast: %s\n%!"
-                    (word (Classic.Word.elements w))
-                    (word (Graph.append_word cell []))
-                )
-              | exception Not_found -> ()
-            end c_post
-          end (Tree.post_classes node)
-        end (Tree.pre_classes node)
-      end;
-      if !failed then exit 1
-
-    let () = if X.validate then validate ()
-  end
 end

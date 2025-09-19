@@ -208,20 +208,6 @@ val ignore_all_unused_precedence_levels: bool
    where an error can occur. *)
 val list_errors: bool
 
-type list_errors_algorithm = [
-  | `Fast
-  | `Classic
-  | `Validate
-]
-
-(** When using --list-errors, this setting determines which algorithm is used
-   to produce a list of erroneous input sentences.
-   Fast is the default, described in the SLE 2021 paper by Bour and Pottier.
-   Classic is described in the CC 2016 paper by Pottier and was default
-   before september 2021.
-   Validate runs both algorithms and checks they agree on their output.  *)
-val list_errors_algorithm: list_errors_algorithm
-
 (** This flag causes Menhir to read the error message descriptions stored in
    [filename] and compile them to OCaml code. *)
 val compile_errors: string option

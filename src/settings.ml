@@ -278,26 +278,6 @@ let ignore_all_unused_precedence_levels =
 let list_errors =
   ref false
 
-type list_errors_algorithm = [
-  | `Fast
-  | `Classic
-  | `Validate
-]
-
-let list_errors_algorithm =
-  ref `Fast
-
-let set_list_errors_algorithm (algorithm: string) : unit =
-  let algorithm = match algorithm with
-    | "fast"     -> `Fast
-    | "classic"  -> `Classic
-    | "validate" -> `Validate
-    | algorithm ->
-        error "Error: --list-errors-algorithm should be followed with \
-               fast | classic | validate (got %S).\n" algorithm
-  in
-  list_errors_algorithm := algorithm
-
 let compile_errors =
   ref None
 
@@ -441,7 +421,6 @@ let options = Arg.align [
   "--interpret-error", Arg.Unit (fun () -> interpret := `Error), " Interpret an error sentence";
   "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
-  "--list-errors-algorithm", Arg.String set_list_errors_algorithm, " (undocumented)";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
@@ -809,9 +788,6 @@ let ignore_all_unused_precedence_levels =
 
 let list_errors =
   !list_errors
-
-let list_errors_algorithm : list_errors_algorithm =
-  !list_errors_algorithm
 
 let compile_errors =
   !compile_errors

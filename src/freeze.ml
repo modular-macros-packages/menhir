@@ -36,18 +36,9 @@ let () =
       let verbose = Settings.logA >= 2
       (* For my own purposes, LRijkstra can print one line of statistics to a .csv file. *)
       let statistics = if false then Some "lr.csv" else None
-      (* Fast algorithm can validate its results against classic one if
-         [validate] is true. *)
-      let validate = Settings.list_errors_algorithm = `Validate
     end in
-    let (module Alg) = match Settings.list_errors_algorithm with
-      | `Fast | `Validate ->
-        (module LRijkstraFast.Run(X) : LRijkstra.REACHABILITY_ALGORITHM)
-      | `Classic ->
-        (module LRijkstraClassic.Run(X) : LRijkstra.REACHABILITY_ALGORITHM)
-    in
     let module L = struct
-      include LRijkstra.Run(X)(Alg)()
+      include LRijkstra.Run(X)()
     end in
     exit 0
   end

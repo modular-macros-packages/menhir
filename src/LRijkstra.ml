@@ -31,45 +31,6 @@
 
 open Grammar
 
-module type REACHABILITY_RESULT = sig
-  module Word : sig
-    type t
-    val singleton : Terminal.t -> t
-    val elements : t -> Terminal.t list
-    val compare : t -> t -> int
-    val length : t -> int
-  end
-
-  module Graph : sig
-    (* Graph nodes. *)
-    type node
-    include Hashtbl.HashedType with type t := node
-
-    val state : node -> Lr1.node
-    val lookaheads : node -> TerminalSet.t
-
-    (* Edge labels. *)
-    type label
-    val append_word : label -> Word.t -> Word.t
-
-    (* The source node(s). *)
-
-    val sources: (node -> unit) -> unit
-
-    (* [successors n f] presents each of [n]'s successors, in
-       an arbitrary order, to [f], together with the cost of
-       the edge that was followed. *)
-    val successors: node -> (label -> int -> node -> unit) -> unit
-  end
-
-  module Statistics : sig
-    val header : string
-    val print : out_channel -> time:float -> heap:int -> unit
-  end
-end
-
-module type REACHABILITY_ALGORITHM = functor () -> REACHABILITY_RESULT
-
 (* ------------------------------------------------------------------------ *)
 
 (* To delay the side effects performed by this module, we wrap everything in
@@ -84,7 +45,6 @@ module Run
           a file to which one line of statistics is appended. *)
        val statistics: string option
      end)
-    (Alg : REACHABILITY_ALGORITHM)
     () =
 struct
 
@@ -110,7 +70,7 @@ let start =
    what conditions each nonterminal transition in the automaton can be
    taken. *)
 
-module Core = Alg()
+module Core = LRijkstraFast.Run()
 module Word = Core.Word
 
 (* ------------------------------------------------------------------------ *)
