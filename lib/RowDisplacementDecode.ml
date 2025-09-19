@@ -41,6 +41,8 @@ let[@inline] decode (displacement : displacement) : int =
    at indices [i] and [j] in an uncompressed table [t] is significant, then
    [get (compress t) i j] is equal to that value. *)
 
+(* Unused:
+
 let get (displacement, data) i j =
   assert (0 <= i && i < Array.length displacement);
   let k = decode displacement.(i) in
@@ -49,7 +51,8 @@ let get (displacement, data) i j =
        insignificant element that happens to be mapped out of the bounds
        of the [data] array. *)
   data.(k + j)
-[@@warning "-32"] (* [get] is unused *)
+
+ *)
 
 (* -------------------------------------------------------------------------- *)
 
