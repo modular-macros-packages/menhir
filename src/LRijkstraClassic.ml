@@ -87,7 +87,7 @@ let is_solid s =
 
 (* ------------------------------------------------------------------------ *)
 
-(* To delay the side effects performed by this module, we wrap everything in
+(* To delay the side effects performed by this module, we wrap everything
    in a big functor. The functor also serves to pass verbosity parameters. *)
 
 module Run (X : sig
