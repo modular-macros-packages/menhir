@@ -209,27 +209,27 @@ end) = struct
      A component is identified only after its successors have been identified;
      therefore, this array is naturally in topological order. *)
 
-  let yield action x =
+  let[@inline] process yield x =
       let data = table x in
       assert (data.representative == x); (* a sanity check *)
       assert (data.scc <> []);           (* a sanity check *)
-      action x data.scc
+      yield x data.scc
 
-  let iter action =
-    Array.iter (yield action) representatives
+  let iter yield =
+    Array.iter (process yield) representatives
 
-  let rev_topological_iter action =
+  let rev_topological_iter yield =
     for i = Array.length representatives - 1 downto 0 do
-      yield action representatives.(i)
+      process yield representatives.(i)
     done
 
-  let map action =
-    Array.map (yield action) representatives |> Array.to_list
+  let map yield =
+    Array.map (process yield) representatives |> Array.to_list
 
-  let rev_map action =
+  let rev_map yield =
     let accu = ref [] in
     rev_topological_iter (fun repr labels ->
-      accu := action repr labels :: !accu
+      accu := yield repr labels :: !accu
     );
     !accu
 
