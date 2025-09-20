@@ -15,6 +15,7 @@
     `Lr1.extra_reductions`
     document the changes made to the LR(1) automaton by resolving conflicts
     and by obeying `%on_error_reduce` declarations.
+
   + In the signature `GRAMMAR`,
     the module `Surface` is new.
     This module provides access to two versions of the grammar,
@@ -27,6 +28,8 @@
 
 * The ancient code back-end has been removed.
   The command line switch `--code-ancient` is no longer supported.
+
+* The command line switch `--list-errors-algorithm` is no longer supported.
 
 * In the incremental API, the deprecated type `stack` and the deprecated
   function `stack` have been removed. To inspect the parser's stack, the
