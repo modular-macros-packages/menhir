@@ -295,9 +295,7 @@
 
 ## Code Cleanup
 
-* Vendor the library `bitsets`.
-
-* Use bit sets in `TerminalSet`, `NonterminalSet`, etc.
+* Use bit sets in `NonterminalSet`, etc.
   Get rid of `gSet.ml` and of `Patricia`.
 
 * Ideally, `PartialGrammar` should avoid renaming the parameters of
