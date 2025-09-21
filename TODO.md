@@ -295,11 +295,10 @@
 
 ## Code Cleanup
 
-* `LRijkstraClassic` is superseded by `LRijkstraFast`
-  and could be removed.
+* Vendor the library `bitsets`.
 
-* `RowDisplacementEncodeClassic` is superseded by `RowDisplacementEncode`
-  and could be removed. (Remove `--pack-classic`.)
+* Use bit sets in `TerminalSet`, `NonterminalSet`, etc.
+  Get rid of `gSet.ml` and of `Patricia`.
 
 * Ideally, `PartialGrammar` should avoid renaming the parameters of
   a rule, when there is no need to do so. The renamed parameter is
