@@ -8,7 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module IntSet = SparseBitSet
+module IntSet =
+  Bitsets.SparseBitSet
 
 module type DECOMPOSABLE = sig
   type t

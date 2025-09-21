@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 (* This signature describes several implementations of sets, including
-   [Patricia], [AtomicBitSet], and [SparseBitSet]. *)
+   [Patricia], [WordBitSet], and [SparseBitSet]. *)
 
 module type S = sig
 

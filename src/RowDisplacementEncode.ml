@@ -39,8 +39,8 @@ let[@inline] encode (displacement : int) : displacement =
 
 (* -------------------------------------------------------------------------- *)
 
-module A = AtomicBitSet
-module S = SparseBitSet
+module A = Bitsets.WordBitSet
+module S = Bitsets.SparseBitSet
 module V = DenseBitVector
 
 (* A cell is a pair of an index and a piece of data. *)

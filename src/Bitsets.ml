@@ -8,10 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module offers bitsets that fit within *four* OCaml integers. This can
-   be used to represent sets of integers in the semi-open interval [0, bound),
-   where [bound] is [4 * AtomicBitSet.bound], that is, usually 252. *)
+(* The library bitsets, which is found in the subdirectory bitsets/, has been
+   renamed vendored_bitsets so as to prevent Dune from complaining about a
+   conflict with a copy of bitsets that might be installed on the user's
+   system. *)
 
-val bound: int
+(* As a result, the library is now accessible under the name Vendored_bitsets.
+   Because we do not want to pollute Menhir's sources with this name, we
+   define the module Bitsets as an alias for Vendored_bitsets. *)
 
-include GSet.S with type element = int
+include Vendored_bitsets

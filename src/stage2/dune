@@ -64,6 +64,7 @@
   (name main)
   (libraries
     unix
+    vendored_bitsets
     vendored_fix
     vendored_pprint
     menhirLib menhirSdk

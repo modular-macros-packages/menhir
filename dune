@@ -1,2 +1,2 @@
-(vendored_dirs fix pprint)
+(vendored_dirs bitsets fix pprint)
 (data_only_dirs analysis attic headers releases www)

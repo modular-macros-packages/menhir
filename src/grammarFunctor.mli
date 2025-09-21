@@ -263,7 +263,7 @@ module TerminalSet : sig
 
   (* All of the operations documented in [GSet] are available. *)
 
-  include GSet.S with type element = Terminal.t
+  include Bitsets.API.SET with type elt = Terminal.t
 
   (* [diff xs ys] returns the set [xs], deprived of all elements that are
      members of the set [ys]. *)

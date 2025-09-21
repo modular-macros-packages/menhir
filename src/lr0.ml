@@ -36,7 +36,7 @@ let () =
    terminal symbols and of a number of set variables. Set variables as
    encoded as integers. *)
 
-module VarSet = SparseBitSet
+module VarSet = Bitsets.SparseBitSet
 
 module SymbolicLookahead = struct
 

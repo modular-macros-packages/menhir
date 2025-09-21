@@ -13,16 +13,16 @@
 
    Although the length of the vector is measured in bits, several of the
    functions access the vector using addresses that are measured in words.
-   A word is a group of [w] bits, where the constant [w] is [A.bound],
-   that is, typically 63. *)
+   A word is a group of [w] bits, where the constant [w] is
+   [WordBitSet.bound], that is, typically 63. *)
 
 (**A mutable vector of bits. *)
 type vector
 
 (**A word is a group of [w] bits, where the constant [w] is
-   [AtomicBitSet.bound], that is, typically 63. *)
+   [WordBitSet.bound], that is, typically 63. *)
 type word =
-  AtomicBitSet.t
+  Bitsets.WordBitSet.t
 
 (**[create()] returns a fresh empty vector. *)
 val create : unit -> vector

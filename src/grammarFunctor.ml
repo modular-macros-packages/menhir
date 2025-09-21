@@ -411,7 +411,7 @@ module TerminalSet = struct
 
   (* 2020/01/29: use [BoundedBitSet] instead of [SparseBitSet]. *)
 
-  include BoundedBitSet.Make(Terminal)()
+  include Bitsets.BoundedBitSet.Make(Terminal)()
 
   (* The signature [GSet.S] does not offer [diff], [of_list] and [big_union],
      so we implement these functions here in a naive way. *)
@@ -445,7 +445,7 @@ module TerminalSet = struct
   (* [big_max f toks] computes the maximum of the function [f] over the
      set of terminal symbols [toks]. *)
 
-  let big_max (f : element -> int) (toks : t) : int =
+  let big_max (f : elt -> int) (toks : t) : int =
     fold (fun t accu -> max (f t) accu) toks 0
 
   (* [separator] is a run of underscore characters '_' that is long

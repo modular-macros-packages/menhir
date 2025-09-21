@@ -8,20 +8,20 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module A =
-  AtomicBitSet
+module W =
+  Bitsets.WordBitSet
 
 type data =
-  A.t array
+  W.t array
 
 type vector =
   data ref
 
 type word =
-  A.t
+  W.t
 
 let create () =
-  ref [|A.empty|]
+  ref [|W.empty|]
 
 let[@inline] length v =
   let data = !v in
@@ -35,7 +35,7 @@ let grow v a =
   else
     let rlen = ref len in
     while !rlen <= a do rlen := !rlen * 2 done;
-    let data' = Array.make !rlen A.empty in
+    let data' = Array.make !rlen W.empty in
     Array.blit data 0 data' 0 len;
     v := data'
 
@@ -51,11 +51,11 @@ let width v =
   let data = !v in
   (* Starting from the end, search for the last nonzero word. *)
   let last = ref (Array.length data - 1) in
-  while !last >= 0 && A.is_empty data.(!last) do decr last done;
+  while !last >= 0 && W.is_empty data.(!last) do decr last done;
   if !last < 0 then
     (* All words are zero. The vector has zero width. *)
     0
   else
     (* Return the index of the most significant bit that is set, plus one. *)
-    let i = !last * A.bound + A.maximum data.(!last) in
+    let i = !last * W.bound + W.maximum data.(!last) in
     i + 1
