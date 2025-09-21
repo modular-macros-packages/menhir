@@ -257,7 +257,7 @@ let rec quick_subset a1 ss1 = function
 let quick_subset s1 s2 =
   match s1 with
   | N ->
-      true
+      false
   | C (a1, ss1, _) ->
       (* We know that, by construction, [ss1] is not empty. It suffices to
          test whether [s2] has elements in common with [ss1] at address [a1]. *)
