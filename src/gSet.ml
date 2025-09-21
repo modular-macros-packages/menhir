@@ -110,26 +110,4 @@ module type S = sig
 
   val subset: t -> t -> bool
 
-   (* [quick_subset s1 s2] is a fast test for the set inclusion [s1 ⊆ s2].
-
-      The sets [s1] and [s2] must be nonempty.
-
-      It must be known ahead of time that either [s1] is a subset of [s2] or
-      these sets are disjoint: that is, [s1 ⊆ s2 ⋁ s1 ∩ s2 = ∅] must hold.
-
-      Under this hypothesis, [quick_subset s1 s2] can be implemented simply
-      by picking an arbitrary element of [s1] (if there is one) and testing
-      whether it is a member of [s2]. *)
-   val quick_subset: t -> t -> bool
-
-   (** {1 Decomposing sets}
-
-       The following functions implement the signature [Refine.DECOMPOSABLE].
-       We cannot refer to this signature here because [Refine] is implemented
-       using bitsets; that would create a reference cycle. *)
-
-   val compare_minimum : t -> t -> int
-   val extract_unique_prefix : t -> t -> t * t
-   val extract_shared_prefix : t -> t -> t * (t * t)
-   val sorted_union : t list -> t
 end
