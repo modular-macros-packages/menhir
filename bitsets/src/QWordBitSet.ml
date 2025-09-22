@@ -78,40 +78,48 @@ let add i s =
   if i < middle then
     if i < quarter then
       let llo' = W.add i llo in
-      if llo == llo' then s else Q (hhi, hlo, lhi, llo')
+      if llo == llo' then s else
+      Q (hhi, hlo, lhi, llo')
     else
       let i = i - quarter in
       let lhi' = W.add i lhi in
-      if lhi == lhi' then s else Q (hhi, hlo, lhi', llo)
+      if lhi == lhi' then s else
+      Q (hhi, hlo, lhi', llo)
   else
     if i < quarter3 then
       let i = i - middle in
       let hlo' = W.add i hlo in
-      if hlo == hlo' then s else Q (hhi, hlo', lhi, llo)
+      if hlo == hlo' then s else
+      Q (hhi, hlo', lhi, llo)
     else
       let i = i - quarter3 in
       let hhi' = W.add i hhi in
-      if hhi == hhi' then s else Q (hhi', hlo, lhi, llo)
+      if hhi == hhi' then s else
+      Q (hhi', hlo, lhi, llo)
 
 let remove i s =
   let Q (hhi, hlo, lhi, llo) = s in
   if i < middle then
     if i < quarter then
       let llo' = W.remove i llo in
-      if llo == llo' then s else construct hhi hlo lhi llo'
+      if llo == llo' then s else
+      construct hhi hlo lhi llo'
     else
       let i = i - quarter in
       let lhi' = W.remove i lhi in
-      if lhi == lhi' then s else construct hhi hlo lhi' llo
+      if lhi == lhi' then s else
+      construct hhi hlo lhi' llo
   else
     if i < quarter3 then
       let i = i - middle in
       let hlo' = W.remove i hlo in
-      if hlo == hlo' then s else construct hhi hlo' lhi llo
+      if hlo == hlo' then s else
+      construct hhi hlo' lhi llo
     else
       let i = i - quarter3 in
       let hhi' = W.remove i hhi in
-      if hhi == hhi' then s else construct hhi' hlo lhi llo
+      if hhi == hhi' then s else
+      construct hhi' hlo lhi llo
 
 let union s1 s2 =
   let Q (hhi1, hlo1, lhi1, llo1) = s1
@@ -120,35 +128,57 @@ let union s1 s2 =
   and hlo = W.union hlo1 hlo2
   and lhi = W.union lhi1 lhi2
   and llo = W.union llo1 llo2 in
-  if hhi == hhi2 && hlo == hlo2 && lhi == lhi2 && llo == llo2 then s2
-  else Q (hhi, hlo, lhi, llo)
+  if hhi2 == hhi && hlo2 == hlo && lhi2 == lhi && llo2 == llo then s2 else
+  if hhi1 == hhi && hlo1 == hlo && lhi1 == lhi && llo1 == llo then s1 else
+  Q (hhi, hlo, lhi, llo)
 
 let inter s1 s2 =
   let Q (hhi1, hlo1, lhi1, llo1) = s1
   and Q (hhi2, hlo2, lhi2, llo2) = s2 in
-  construct
-    (W.inter hhi1 hhi2) (W.inter hlo1 hlo2)
-    (W.inter lhi1 lhi2) (W.inter llo1 llo2)
+  let hhi = W.inter hhi1 hhi2
+  and hlo = W.inter hlo1 hlo2
+  and lhi = W.inter lhi1 lhi2
+  and llo = W.inter llo1 llo2 in
+  if hhi2 == hhi && hlo2 == hlo && lhi2 == lhi && llo2 == llo then s2 else
+  if hhi1 == hhi && hlo1 == hlo && lhi1 == lhi && llo1 == llo then s1 else
+  construct hhi hlo lhi llo
 
 let diff s1 s2 =
   let Q (hhi1, hlo1, lhi1, llo1) = s1
   and Q (hhi2, hlo2, lhi2, llo2) = s2 in
-  construct
-    (W.diff hhi1 hhi2) (W.diff hlo1 hlo2)
-    (W.diff lhi1 lhi2) (W.diff llo1 llo2)
+  let hhi = W.diff hhi1 hhi2
+  and hlo = W.diff hlo1 hlo2
+  and lhi = W.diff lhi1 lhi2
+  and llo = W.diff llo1 llo2 in
+  if hhi1 == hhi && hlo1 == hlo && lhi1 == lhi && llo1 == llo then s1 else
+  construct hhi hlo lhi llo
 
 let above x s =
   let Q (hhi, hlo, lhi, llo) = s in
   if x < middle then
     if x < quarter then
-      construct hhi hlo lhi (W.above x llo)
+      let llo' = W.above x llo in
+      if llo == llo' then s else
+      construct hhi hlo lhi llo'
     else
-      construct hhi hlo (W.above (x - quarter) lhi) W.empty
+      let lhi' = W.above (x - quarter) lhi
+      and llo' = W.empty in
+      if lhi == lhi' && llo == llo' then s else
+      construct hhi hlo lhi' llo'
   else
     if x < quarter3 then
-      construct hhi (W.above (x - middle) hlo) W.empty W.empty
+      let hlo' = W.above (x - middle) hlo
+      and lhi' = W.empty
+      and llo' = W.empty in
+      if hlo == hlo' && lhi == lhi' && llo == llo' then s else
+      construct hhi hlo' lhi' llo'
     else
-      construct (W.above (x - quarter3) hhi) W.empty W.empty W.empty
+      let hhi' = W.above (x - quarter3) hhi
+      and hlo' = W.empty
+      and lhi' = W.empty
+      and llo' = W.empty in
+      if hhi == hhi' && hlo == hlo' && lhi == lhi' && llo == llo' then s else
+      construct hhi' hlo' lhi' llo'
 
 (* -------------------------------------------------------------------------- *)
 

@@ -12,7 +12,7 @@
   (license "LGPL-2.0-only WITH OCaml-LGPL-linking-exception")
   (depends
     (ocaml (>= 4.14))
-    (monolith :with-test)
+    (monolith (and :with-test (>= 20250922)))
     (ocamlfind :with-test)
   )
 )

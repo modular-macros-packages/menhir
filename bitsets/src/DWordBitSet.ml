@@ -65,43 +65,61 @@ let add i s =
   let D (hi, lo) = s in
   if i < W.bound then
     let lo' = W.add i lo in
-    if lo == lo' then s else D (hi, lo')
+    if lo == lo' then s else
+    D (hi, lo')
   else
     let hi' = W.add (i - W.bound) hi in
-    if hi == hi' then s else D (hi', lo)
+    if hi == hi' then s else
+    D (hi', lo)
 
 let remove i s =
   let D (hi, lo) = s in
   if i < W.bound then
     let lo' = W.remove i lo in
-    if lo == lo' then s else construct hi lo'
+    if lo == lo' then s else
+    construct hi lo'
   else
     let hi' = W.remove (i - W.bound) hi in
-    if hi == hi' then s else construct hi' lo
+    if hi == hi' then s else
+    construct hi' lo
 
 let union s1 s2 =
   let D (hi1, lo1) = s1
   and D (hi2, lo2) = s2 in
   let hi = W.union hi1 hi2
   and lo = W.union lo1 lo2 in
-  if hi == hi2 && lo == lo2 then s2 else D (hi, lo)
+  if hi2 == hi && lo2 == lo then s2 else
+  if hi1 == hi && lo1 == lo then s1 else
+  D (hi, lo)
 
 let inter s1 s2 =
   let D (hi1, lo1) = s1
   and D (hi2, lo2) = s2 in
-  construct (W.inter hi1 hi2) (W.inter lo1 lo2)
+  let hi = W.inter hi1 hi2
+  and lo = W.inter lo1 lo2 in
+  if hi2 == hi && lo2 == lo then s2 else
+  if hi1 == hi && lo1 == lo then s1 else
+  construct hi lo
 
 let diff s1 s2 =
   let D (hi1, lo1) = s1
   and D (hi2, lo2) = s2 in
-  construct (W.diff hi1 hi2) (W.diff lo1 lo2)
+  let hi = W.diff hi1 hi2
+  and lo = W.diff lo1 lo2 in
+  if hi1 == hi && lo1 == lo then s1 else
+  construct hi lo
 
 let above x s =
   let D (hi, lo) = s in
   if x < W.bound then
-    construct hi (W.above x lo)
+    let lo' = W.above x lo in
+    if lo == lo' then s else
+    construct hi lo'
   else
-    construct (W.above (x - W.bound) hi) W.empty
+    let hi' = W.above (x - W.bound) hi
+    and lo' = W.empty in
+    if hi == hi' && lo == lo' then s else
+    construct hi' lo'
 
 (* -------------------------------------------------------------------------- *)
 
@@ -227,6 +245,11 @@ let compare_minimum s1 s2 =
 
 let[@inline] sorted_union ss =
   List.fold_left union empty ss
+
+(* In the following two functions, we do *not* attempt to avoid memory
+   allocation by testing whether one of the results happens to be
+   structurally equal to one of the arguments. This would result in
+   excessive pollution of the code. *)
 
 let extract_unique_prefix s1 s2 =
   assert (not (is_empty s2));

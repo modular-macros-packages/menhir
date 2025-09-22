@@ -32,24 +32,47 @@ module type SET = sig
   (**[singleton x] is a singleton set containing just the element [x]. *)
   val singleton: elt -> t
 
-  (**[add x s] is the union of the sets [singleton x] and [s]. *)
+  (**[add x s] is the union of the sets [singleton x] and [s].
+
+     Sharing with [s], when possible, is guaranteed.
+     That is, if the result is mathematically equal to [s]
+     then it is physically equal to [s]. *)
   val add: elt -> t -> t
 
-  (**[remove x s] is the set [s] deprived of the element [x]. *)
+  (**[remove x s] is the set [s] deprived of the element [x].
+
+     Sharing with [s], when possible, is guaranteed.
+     That is, if the result is mathematically equal to [s]
+     then it is physically equal to [s]. *)
   val remove: elt -> t -> t
 
-  (**[union s1 s2] is the union of the sets [s1] and [s2]. If the union is
-     mathematically equal to [s2], then [union s1 s2] returns [s2] itself. *)
+  (**[union s1 s2] is the union of the sets [s1] and [s2].
+
+     Sharing with [s2], when possible, is guaranteed.
+     That is, if the result is mathematically equal to [s2]
+     then it is physically equal to [s2]. *)
   val union: t -> t -> t
 
-  (**[inter s1 s2] is the intersection of the sets [s1] and [s2]. *)
+  (**[inter s1 s2] is the intersection of the sets [s1] and [s2].
+
+     Sharing with [s2], when possible, is guaranteed.
+     That is, if the result is mathematically equal to [s2]
+     then it is physically equal to [s2]. *)
   val inter: t -> t -> t
 
-  (** [diff s1 s2] is the set difference of the sets [s1] and [s2]. *)
+  (** [diff s1 s2] is the set difference of the sets [s1] and [s2].
+
+     Sharing with [s1], when possible, is guaranteed.
+     That is, if the result is mathematically equal to [s1]
+     then it is physically equal to [s1]. *)
   val diff: t -> t -> t
 
   (** [above x s] is the set of the elements of [s] that are greater
-      than [x]. *)
+      than [x].
+
+     Sharing with [s], when possible, is guaranteed.
+     That is, if the result is mathematically equal to [s]
+     then it is physically equal to [s]. *)
   val above: elt -> t -> t
 
   (** {1 Cardinality} *)

@@ -16,7 +16,9 @@
 (* The functor [Make] must take a dummy argument [()] in order to indicate
    that it is not an applicative functor. Otherwise, we get a cryptic type
    error message: "This expression creates fresh types. It is not allowed
-   inside applicative functors." *)
+   inside applicative functors." If this was a warning, we would override
+   it, as our use is safe -- the type that we choose is a function of [n].
+   Unfortunately, it is an error and cannot be ignored. *)
 
 module Make (N : sig
   val n: int

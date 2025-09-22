@@ -16,7 +16,7 @@ module W =
 (* An offset is a nonnegative multiple of [W.bound]. *)
 
 type offset =
-  int (* a multiple of [W.bound] *)
+  int
 
 let[@inline] check_offset (o : offset) =
   assert (0 <= o);
@@ -78,11 +78,13 @@ let rec add1 base i s =
       else if base = o then
         (* Found appropriate cell, update bit field. *)
         let w' = W.add i w in
-        if W.equal w' w then s else C (o, w', qs)
+        if W.equal w' w then s else
+        C (o, w', qs)
       else
         (* Not there yet, continue. *)
         let qs' = add1 base i qs in
-        if qs == qs' then s else C (o, w, qs')
+        if qs == qs' then s else
+        C (o, w, qs')
 
 let[@inline] add x s =
   let i = x mod W.bound in
@@ -104,14 +106,14 @@ let rec remove1 base i s =
         s
       else if base = o then
         (* Found appropriate cell, update bit field. *)
-        let ss' = W.remove i w in
-        if W.is_empty ss' then
-          qs
-        else if W.equal ss' w then s else C (o, ss', qs)
+        let w' = W.remove i w in
+        if W.equal w' w then s else
+        construct o w' qs
       else
         (* Not there yet, continue. *)
         let qs' = remove1 base i qs in
-        if qs == qs' then s else C (o, w, qs')
+        if qs == qs' then s else
+        C (o, w, qs')
 
 let[@inline] remove x s =
   let i = x mod W.bound in
@@ -125,18 +127,19 @@ let rec union s1 s2 =
       s
   | C (o1, w1, qs1), C (o2, w2, qs2) ->
       if o1 < o2 then
-        C (o1, w1, union qs1 s2)
+        let qs1' = union qs1 s2 in
+        if qs1 == qs1' then s1 else
+        C (o1, w1, qs1')
       else if o1 > o2 then
-        let s = union s1 qs2 in
-        if s == qs2 then s2 else C (o2, w2, s)
+        let qs2' = union s1 qs2 in
+        if qs2 == qs2' then s2 else
+        C (o2, w2, qs2')
       else
-        let ss = W.union w1 w2 in
-        let s = union qs1 qs2 in
-        if W.equal ss w2 && s == qs2 then s2 else C (o1, ss, s)
-
-(* [inter] attempts to preserve sharing between its first argument and its
-   result. This is an arbitrary decision; furthermore, it is not mandatory,
-   as the specification of [inter] does not guarantee this. *)
+        let w = W.union w1 w2 in
+        let qs = union qs1 qs2 in
+        if W.equal w2 w && qs2 == qs then s2 else
+        if W.equal w1 w && qs1 == qs then s1 else
+        C (o1, w, qs)
 
 let rec inter s1 s2 =
   match s1, s2 with
@@ -149,10 +152,11 @@ let rec inter s1 s2 =
       else if o1 > o2 then
         inter s1 qs2
       else
-        let ss = W.inter w1 w2 in
-        let s = inter qs1 qs2 in
-        if W.is_empty ss then s else
-        if W.equal ss w1 && s == qs1 then s1 else C (o1, ss, s)
+        let w = W.inter w1 w2 in
+        let qs = inter qs1 qs2 in
+        if W.equal w2 w && qs2 == qs then s2 else
+        if W.equal w1 w && qs1 == qs then s1 else
+        construct o1 w qs
 
 let rec diff s1 s2 =
   match s1, s2 with
@@ -162,16 +166,15 @@ let rec diff s1 s2 =
   | C (o1, w1, qs1), C (o2, w2, qs2) ->
       if o1 < o2 then
         let qs1' = diff qs1 s2 in
-        if qs1' == qs1 then s1 else C (o1, w1, qs1')
+        if qs1' == qs1 then s1 else
+        C (o1, w1, qs1')
       else if o1 > o2 then
         diff s1 qs2
       else
-        let ss = W.diff w1 w2 in
-        if W.is_empty ss then
-          diff qs1 qs2
-        else
-          let qs1' = diff qs1 qs2 in
-          if W.equal ss w1 && qs1' == qs1 then s1 else C (o1, ss, qs1')
+        let w = W.diff w1 w2 in
+        let qs1' = diff qs1 qs2 in
+        if W.equal w1 w && qs1 == qs1' then s1 else
+        construct o1 w qs1'
 
 let rec above1 base i s =
   match s with
@@ -183,13 +186,9 @@ let rec above1 base i s =
         s
       else if base = o then
         (* Found appropriate cell, split bit field. *)
-        let ss' = W.above i w in
-        if W.is_empty ss' then
-          qs
-        else if W.equal w ss' then
-          s
-        else
-          C (o, ss', qs)
+        let w' = W.above i w in
+        if W.equal w w' then s else
+        construct o w' qs
       else
         (* Not there yet, continue. *)
         above1 base i qs
@@ -401,18 +400,23 @@ let rec extract_unique_prefix1 o2 w2 s1 =
   | C (o1, w1, qs1) ->
       if o1 < o2 then
         let head1, tail1 = extract_unique_prefix1 o2 w2 qs1 in
-        (if qs1 == head1 then s1 else C (o1, w1, head1)),
+        (
+          if qs1 == head1 then s1 else
+          C (o1, w1, head1)
+        ),
         tail1
       else if o1 > o2 || W.equal w1 w2 then
         empty, s1
       else
         let w1a, w1b = W.extract_unique_prefix w1 w2 in
-        if W.is_empty w1a then
-          empty, s1
-        else
-          C (o1, w1a, empty),
-          if W.is_empty w1b then qs1 else
-          if w1 == w1b then s1 else C (o1, w1b, qs1)
+        (
+          if w1 == w1a && is_empty qs1 then s1 else
+          construct o1 w1a empty
+        ),
+        (
+          if w1 == w1b then s1 else
+          construct o1 w1b qs1
+        )
 
 let[@inline] extract_unique_prefix s1 s2 =
   assert (not (is_empty s2));
@@ -428,13 +432,17 @@ let rec extract_shared_prefix s1 s2 =
   | C (o1, w1, qs1), C (o2, w2, qs2) when o1 = o2 ->
       if W.equal w1 w2 then
         let head, tails = extract_shared_prefix qs1 qs2 in
-        C (o1, w1, head), tails
+        (
+          if qs1 == head then s1 else
+          C (o1, w1, head)
+        ),
+        tails
       else
-        let head, (w1, w2) = W.extract_shared_prefix w1 w2 in
-        let head = construct o1 head empty in
-        let qs1 = construct o1 w1 qs1 in
-        let qs2 = construct o2 w2 qs2 in
-        head, (qs1, qs2)
+        let head, (w1', w2') = W.extract_shared_prefix w1 w2 in
+        let qs1 = if w1 == w1' then s1 else construct o1 w1' qs1 in
+        let qs2 = if w2 == w2' then s2 else construct o2 w2' qs2 in
+        construct o1 head empty,
+        (qs1, qs2)
   | _, _ ->
       empty, (s1, s2)
 
