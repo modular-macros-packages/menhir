@@ -1,15 +1,17 @@
 (******************************************************************************)
 (*                                                                            *)
-(*                                    Menhir                                  *)
+(*                                  Bitsets                                   *)
 (*                                                                            *)
-(*   Copyright Inria. All rights reserved. This file is distributed under     *)
-(*   the terms of the GNU General Public License version 2, as described in   *)
-(*   the file LICENSE.                                                        *)
+(*                       François Pottier, Inria Paris                        *)
+(*                                                                            *)
+(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
+(*       distributed under the terms of the GNU Library General Public        *)
+(*       License, with an exception, as described in the file LICENSE.        *)
 (*                                                                            *)
 (******************************************************************************)
 
 module W =
-  Bitsets.WordBitSet
+  WordBitSet
 
 type data =
   W.t array
@@ -19,6 +21,9 @@ type vector =
 
 type word =
   W.t
+
+type address =
+  int
 
 let create () =
   ref [|W.empty|]

@@ -41,7 +41,7 @@ let[@inline] encode (displacement : int) : displacement =
 
 module A = Bitsets.WordBitSet
 module S = Bitsets.SparseBitSet
-module V = DenseBitVector
+module V = Bitsets.DenseBitVector
 
 (* A cell is a pair of an index and a piece of data. *)
 type 'a cell =
