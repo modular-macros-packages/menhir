@@ -383,7 +383,7 @@ let compare_minimum s1 s2 =
   | N, _ -> -1
   | _, N -> +1
   | C (o1, w1, _), C (o2, w2, _) ->
-      let c = Int.compare o1 o2 in if c <> 0 then c else
+      let c = compare_offsets o1 o2 in if c <> 0 then c else
       W.compare_minimum w1 w2
 
 let[@inline] sorted_union ss =
