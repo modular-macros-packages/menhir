@@ -102,16 +102,32 @@ val remove: 'a t -> 'a box -> unit
 (**[update q box i] sets the priority of the box [box] to [i]. This box
    must be a member of the queue [q], and remains a member of this queue.
 
-   Under these conditions, [update box i]
-   is equivalent to [remove box; add q box i].
+   Provided its precondition is respected,
+   [update box i] is equivalent to [remove q box; add q box i].
 
-   If the condition [mem q box] is violated, then [update q box i] cannot be
-   expected to fail: in some cases, it can seem to silently succeed. To
-   avoid this problem, it is recommended to write [assert (mem q box);
-   update q box i].
+   If its precondition is violated, then [update q box i] cannot be expected
+   to fail: in some cases, it can appear to silently succeed. To avoid this
+   problem, it is recommended to write [assert (mem q box); update q box i].
 
    Time complexity: {m O(1)}. *)
 val update: 'a t -> 'a box -> priority -> unit
+
+(**[add_or_update q box i] inserts the box [box] with priority [i] into the
+   queue [q], if this box was isolated, or sets the priority of this box to
+   [i], if this box was already a member of the queue [q]. This box must not
+   be a member of some queue other than [q].
+
+   Provided its precondition is respected,
+   [add_or_update q box i] is equivalent to
+   [if mem box q then update q box i else add q box i].
+
+   If its precondition is violated, then [add_or_update q box i] cannot be
+   expected to fail: in some cases, it can appear to silently succeed. To
+   avoid this problem, it is recommended to write
+   [assert (not (busy box) || mem q box); add_or_update q box i].
+
+   Time complexity: {m O(1)}. *)
+val add_or_update: 'a t -> 'a box -> priority -> unit
 
 (**[is_empty q] tests whether the queue [q] is empty.
 
