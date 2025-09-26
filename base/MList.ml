@@ -36,13 +36,6 @@ let[@inline] ifnlazy c xs =
 let[@inline] sum li =
   fold_left (+) 0 li
 
-let rec at_most k xs =
-  match xs with
-  | [] ->
-      true
-  | _ :: xs ->
-      k > 0 && at_most (k - 1) xs
-
 let rec drop k xs =
   match k, xs with
   | 0, _
