@@ -62,15 +62,6 @@ val support_assoc : ('a * 'a) list -> 'a -> 'a
 
 val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
 
-(* [smap] has the same semantics as [List.map], but attempts to
-   physically return the input list when [f] is the identity. *)
-
-val smap: ('a -> 'a) -> 'a list -> 'a list
-
-(* [smapa] is a variant of [smap] that maintains an accumulator. *)
-
-val smapa: ('b -> 'a -> 'b * 'a) -> 'b -> 'a list -> 'b * 'a list
-
 (* [normalize s] returns a copy of [s] where parentheses and commas
    are replaced with underscores. *)
 

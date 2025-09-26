@@ -92,29 +92,6 @@ let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
   in
   loop x
 
-let rec smap f = function
-  | [] ->
-      []
-  | (x :: xs) as l ->
-      let x' = f x
-      and xs' = smap f xs in
-      if x == x' && xs == xs' then
-        l
-      else
-        x' :: xs'
-
-let rec smapa f accu = function
-  | [] ->
-      accu, []
-  | (x :: xs) as l ->
-      let accu, x' = f accu x in
-      let accu, xs' = smapa f accu xs in
-      accu,
-      if x == x' && xs == xs' then
-        l
-      else
-        x' :: xs'
-
 let normalize s =
   let s = Bytes.of_string s in
   let n = Bytes.length s in
