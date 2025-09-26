@@ -8,54 +8,83 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This signature defines an implicit representation for graphs where
-   edges have integer costs, there is a distinguished start node, and
-   there is a set of distinguished goal nodes. It is also assumed that
-   some geometric knowledge of the graph allows safely estimating the
-   cost of shortest paths to goal nodes. If no such knowledge is
-   available, [estimate] should be the constant zero function. *)
+(**This module implements the A* graph search algorithm, following Hart,
+   Nilsson, and Raphael (1968), under the assumption that edge costs are
+   low (nonnegative) integers. *)
 
 module Make (G : sig
 
-  (* Graph nodes. *)
+  (**This signature defines an implicit representation of graphs where edges
+     have integer costs, there is a set of source nodes, and there is a set of
+     goal nodes. Furthermore, we assume that (perhaps through some geometric
+     knowledge) it is possible to safely under-estimate the cost of a shortest
+     path from a node to the goal set. *)
+
+  (**Graph nodes must support equality and hashing. *)
   type node
   include Hashtbl.HashedType with type t := node
 
-  (* Edge labels. *)
+  (**Edge labels. *)
   type label
 
-  (* The source node(s). *)
-
+  (**[sources] enumerates the source node(s). *)
   val sources: (node -> unit) -> unit
 
-  (* [successors n f] presents each of [n]'s successors, in
-     an arbitrary order, to [f], together with the cost of
-     the edge that was followed. *)
+  (**[successors node] enumerates the outgoing edges of the node [node]
+     in an arbitrary order. Each edge is represented by a triple of the
+     edge's label, the edge's cost, and the edge's destination node. *)
   val successors: node -> (label -> int -> node -> unit) -> unit
 
-  (* An estimate of the cost of the shortest path from the
-     supplied node to some goal node. This estimate must
-     be a correct under-approximation of the actual cost. *)
+  (**[estimate node] returns an under-approximation of the cost of the
+     shortest path from the node [node] to some goal node. A correct
+     under-approximation is zero everywhere; if this trivial estimate is used,
+     then A* degenerates into Dijkstra's shortest paths algorithm.
+
+     The definition of the goal set is implicit in the definition of the
+     function [estimate]. Otherwise, nothing distinguishes a goal node. *)
   val estimate: node -> int
 
 end) : sig
+  open G
 
-  (* A path (from a target node back to some source node) is described by a
-     series of labels and ends in a source node. *)
-
+  (**A path (from a goal node back to a source node) is described by a series
+     of labels and ends in a source node. *)
   type path =
-    | Edge of G.label * path
-    | Source of G.node
+    | Edge of label * path
+    | Source of node
 
-  (* A path can also be presented as a pair of a source node and a list of
-     labels, which describe the edges from the source node to a target node. *)
+  (**A path can also be presented as a pair of a source node and a list of
+     labels, which describe the edges from the source node to a goal node.
+     The function [reverse] computes this presentation. *)
+  val reverse: path -> node * label list
 
-  val reverse: path -> G.node * G.label list
+  (**[search yield] runs the search algorithm. It must be invoked at most
+     once.
 
-  (* Search. Newly discovered nodes are presented to the user, in order of
-     increasing distance from the source nodes, by invoking the user-supplied
-     function [f]. At the end, a mapping of nodes to distances to the source
-     nodes and a mapping of nodes to shortest paths are returned. *)
-  val search: (G.node * path -> unit) -> (G.node -> int) * (G.node -> path)
+     During the search, each newly discovered node [node] is presented to the
+     user, in order of increasing distance from the source nodes, by invoking
+     [yield node path]. The path [path] is an optimal path from this node back
+     to some source node.
+
+     The function [yield] returns a Boolean request: [true] allows the search
+     to continue; [false] causes the search to stop.
+
+     The search terminates once the graph has been entirely traversed (that
+     is, once every reachable node has been yielded) or once [yield] has
+     returned [false]. *)
+  val search: (node -> path -> bool) -> unit
+
+  (**The following functions may be called only after the search has ended
+     (either spontaneously or because [yield] has returned [false]). *)
+
+  (**[distance node] returns the distance from the set of source nodes to the
+     node [node]. If this node has not been reached by the search then
+     [max_int] is returned. *)
+  val distance: node -> int
+
+  (**[path node] returns a shortest path from the set of source nodes to the
+     node [node]. If this node has not been reached by the search then
+     [Not_found] is raised. *)
+  val path: node -> path
 
 end

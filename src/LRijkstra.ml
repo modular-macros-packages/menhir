@@ -121,15 +121,13 @@ let validate nt s' elements : ReferenceInterpreter.target =
    unmodified. Experiments show that the running time of this phase is
    typically 10x shorter than the running time of the main loop above. *)
 
-module A = Astar.Make(struct
-    include Core.Graph
-
-    (* Algorithm A*, used with a zero estimate, is Dijkstra's algorithm.
-       We have experimented with a non-zero estimate, but the performance
-       increase was minimal. *)
-    let estimate _ =
-      0
-  end)
+module G = struct
+  include Core.Graph
+  (* Algorithm A*, used with a zero estimate, is Dijkstra's algorithm.
+     We have experimented with a non-zero estimate, but the performance
+     increase was minimal. *)
+  let estimate _ = 0
+end
 
 (* ------------------------------------------------------------------------ *)
 
@@ -169,31 +167,36 @@ let reachable =
 
 (* Perform the forward search. *)
 
-let _, _ =
-  A.search (fun (node', path) ->
-      incr explored;
-      let s' = Core.Graph.state node' in
-      let zs = Core.Graph.lookaheads node' in
-      reachable := Lr1.NodeSet.add s' !reachable;
-      (* If [z] causes an error in state [s'] and this is the first time
-         we are able to trigger an error in this state, ... *)
-      if not (Lr1.NodeSet.mem s' !domain) then
-        begin match find_erroneous s' zs with
-          | None -> ()
-          | Some z ->
-            (* Reconstruct the initial state [s] and the word [w] that lead
-               to this error. *)
-            let node, ws = A.reverse path in
-            let w = List.fold_right Core.Graph.append_word ws (Word.singleton z) in
-            (* Check that the reference interpreter confirms our finding.
-               At the same time, compute a list of spurious reductions. *)
-            let nt = Lr1.nt_of_entry (Core.Graph.state node) in
-            let target = validate nt s' (Word.elements w) in
-            (* Store this new data. *)
-            domain := Lr1.NodeSet.add s' !domain;
-            data := (nt, w, target) :: !data
-        end
-    )
+module A =
+  Astar.Make(G)
+
+let visit node' path =
+  incr explored;
+  let s' = Core.Graph.state node' in
+  let zs = Core.Graph.lookaheads node' in
+  reachable := Lr1.NodeSet.add s' !reachable;
+  (* If [z] causes an error in state [s'] and this is the first time
+     we are able to trigger an error in this state, ... *)
+  if not (Lr1.NodeSet.mem s' !domain) then
+    match find_erroneous s' zs with
+    | None -> ()
+    | Some z ->
+        (* Reconstruct the initial state [s] and the word [w] that lead
+           to this error. *)
+        let node, ws = A.reverse path in
+        let w = List.fold_right Core.Graph.append_word ws (Word.singleton z) in
+        (* Check that the reference interpreter confirms our finding.
+           At the same time, compute a list of spurious reductions. *)
+        let nt = Lr1.nt_of_entry (Core.Graph.state node) in
+        let target = validate nt s' (Word.elements w) in
+        (* Store this new data. *)
+        domain := Lr1.NodeSet.add s' !domain;
+        data := (nt, w, target) :: !data
+
+let () =
+  A.search @@ fun node' path ->
+    visit node' path;
+    true (* continue *)
 
 (* Sort and output the data. *)
 

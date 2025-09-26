@@ -8,315 +8,240 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module implements A* search, following Hart, Nilsson,
-   and Raphael (1968).
+module P = IntPQueue.Boxed
 
-   To each visited graph node, the algorithm associates an
-   internal record, carrying various information. For this
-   reason, the algorithm's space complexity is, in the worst
-   case, linear in the size of the graph.
+let fail format =
+  Printf.ksprintf invalid_arg format
 
-   The mapping of nodes to internal records is implemented
-   via a hash table, while the converse mapping is direct
-   (via a record field).
+(* To each visited graph node, the algorithm associates an internal record of
+   type [inode], which itself is wrapped in a box of type [box]. Therefore the
+   algorithm's space complexity is linear in the size of the graph.
 
-   Nodes that remain to be examined are kept in a priority
-   queue, where the priority of a node is the cost of the
-   shortest known path from the start node to it plus the
-   estimated cost of a path from this node to a goal node.
-   (Lower priority nodes are considered first).
+   The mapping of a node to a box is implemented via a hash table, while the
+   reverse mappings, from a box to an inode and from an inode to a node, are
+   direct: they are performed via record fields.
 
-   It is the use of the second summand that makes A* more
-   efficient than Dijkstra's standard algorithm for finding
-   shortest paths in an arbitrary graph. In fact, when
-   [G.estimate] is the constant zero function, A* coincides
-   with Dijkstra's algorithm. One should note that A* is
-   faster than Dijkstra's algorithm only when a path to some
-   goal node exists. Otherwise, both algorithms explore the
-   entire graph, and have similar time requirements.
+   The nodes that remain to be examined are stored in a priority queue, where
+   the priority of a node is the cost of the shortest known path from the
+   start node to it plus the estimated cost of a path from this node to a goal
+   node. Lower priority nodes are considered first.
 
-   The priority queue is implemented as an array of doubly
-   linked lists. *)
+   It is the use of the second summand that makes A* more efficient than
+   Dijkstra's standard algorithm for finding shortest paths in an arbitrary
+   graph. When [G.estimate] is the constant function zero, A* coincides with
+   Dijkstra's algorithm. One should note that A* is faster than Dijkstra's
+   algorithm only when a path to some goal node exists. Otherwise, both
+   algorithms explore the entire graph, and have similar time requirements. *)
 
 module Make (G : sig
 
-  (* Graph nodes. *)
+  (**This signature defines an implicit representation of graphs where edges
+     have integer costs, there is a set of source nodes, and there is a set of
+     goal nodes. Furthermore, we assume that (perhaps through some geometric
+     knowledge) it is possible to safely under-estimate the cost of a shortest
+     path from a node to the goal set. *)
+
+  (**Graph nodes must support equality and hashing. *)
   type node
   include Hashtbl.HashedType with type t := node
 
-  (* Edge labels. *)
+  (**Edge labels. *)
   type label
 
-  (* The source node(s). *)
-
+  (**[sources] enumerates the source node(s). *)
   val sources: (node -> unit) -> unit
 
-  (* [successors n f] presents each of [n]'s successors, in
-     an arbitrary order, to [f], together with the cost of
-     the edge that was followed. *)
+  (**[successors node] enumerates the outgoing edges of the node [node]
+     in an arbitrary order. Each edge is represented by a triple of the
+     edge's label, the edge's cost, and the edge's destination node. *)
   val successors: node -> (label -> int -> node -> unit) -> unit
 
-  (* An estimate of the cost of the shortest path from the
-     supplied node to some goal node. For algorithms such as
-     A* and IDA* to find shortest paths, this estimate must
-     be a correct under-approximation of the actual cost. *)
+  (**[estimate node] returns an estimate of the cost of the shortest path from
+     the node [node] to some goal node. For algorithms such as A* and IDA* to
+     find shortest paths, this estimate must be a correct under-approximation
+     of the actual cost. *)
   val estimate: node -> int
 
 end) = struct
 
-  type cost = int
+type path =
+  | Edge of G.label * path
+  | Source of G.node
 
-  (* Nodes with low priorities are dealt with first. *)
-  type priority = cost
+let rec follow labels path =
+  match path with
+  | Source node ->
+      node, labels
+  | Edge (label, path) ->
+      follow (label :: labels) path
 
-  (* Paths back to a source (visible by the user). *)
-  type path =
-    | Edge of G.label * path
-    | Source of G.node
+let reverse path =
+  follow [] path
 
-  let rec follow labels path =
-    match path with
-    | Source node ->
-        node, labels
-    | Edge (label, path) ->
-        follow (label :: labels) path
+(* With each graph node, we associate the following information, which we
+   group in a record of type [inode]:
+   - [node] is the graph node associated with this inode.
+   - [path] is a best known path from from a source node to this node.
+   - [cost] is the cost of a best known path from a source to this node.
+     In the paper, it is known as g-hat.
+   - [estimate] is the estimated cost of the best path from this node to
+     the goal set. It is equal to [G.estimate node]. It must be stored
+     so that [G.estimate node] is computed only once per node. *)
 
-  let reverse path =
-    follow [] path
+type inode = {
+  node: G.node;
+  mutable path: path;
+  mutable cost: int;
+  estimate: int;
+}
 
-  type inode = {
-      (* Graph node associated with this internal record. *)
-      this: G.node;
-      (* Cost of the best known path from a source node to this node. (ghat) *)
-      mutable cost: cost;
-      (* Estimated cost of the best path from this node to a goal node. (hhat) *)
-      estimate: cost;
-      (* Best known path from a source node to this node. *)
-      mutable path: path;
-      (* Previous node on doubly linked priority list *)
-      mutable prev: inode;
-      (* Next node on doubly linked priority list *)
-      mutable next: inode;
-      (* The node's priority, if the node is in the queue; -1 otherwise *)
-      mutable priority: priority;
-  }
+(* Set up the priority queue. It contains boxes which contain inodes. *)
 
-  (* This auxiliary module maintains a mapping of graph nodes
-     to internal records. *)
+(* While a node is in the queue, its priority is the sum of its [cost]
+   and [estimate] fields. *)
 
-  module M : sig
+type box =
+  inode P.box
 
-    (* Adds a binding to the mapping. *)
-    val add: G.node -> inode -> unit
+let q : inode P.t =
+  P.create()
 
-    (* Retrieves the internal record for this node.
-       Raises [Not_found] no such record exists. *)
-    val get: G.node -> inode
+(* Set up a hash table that maps graph nodes to boxes. *)
 
-  end = struct
+module M = struct
 
-    module H =
-      Hashtbl.Make(struct include G type t = node end)
+  module H =
+    Hashtbl.Make(struct include G type t = node end)
 
-    let t = H.create 100003
+  let t : box H.t =
+    H.create 4096
 
-    let add node inode =
-      H.add t node inode
+  (* [add node box] adds an entry to the hash table. *)
+  let[@inline] add node box =
+    assert (not (H.mem t node));
+    H.add t node box
 
-    let get node =
-      H.find t node
+  (* [box node] looks up the hash table. It can raise [Not_found]. *)
+  let[@inline] box node : box =
+    H.find t node
 
-  end
+  (* [get node] looks up the hash table. It can raise [Not_found]. *)
+  let[@inline] get node : inode =
+    P.payload (box node)
 
-  (* This auxiliary module maintains a priority queue of
-     internal records. *)
+  (* [remove box] removes a node from the hash table. *)
+  let[@inline] remove box =
+    H.remove t (P.payload box).node
 
-  module P : sig
+end (* M *)
 
-    (* Adds this node to the queue. *)
-    val add: inode -> priority -> unit
+module Search (Y : sig
+  val yield: G.node -> path -> bool
+end) = struct
 
-    (* Adds this node to the queue, or changes its
-       priority, if it already was in the queue. It
-       is assumed, in the second case, that the priority
-       can only decrease. *)
-    val add_or_decrease: inode -> priority -> unit
+  (* Wrap the user-supplied function [G.estimate] with a defensive check. *)
 
-    (* Retrieve a node with lowest priority of the queue. *)
-    val get: unit -> inode option
-
-  end = struct
-
-    module InfiniteArray = MenhirLib.InfiniteArray
-
-    (* Array of pointers to the doubly linked lists, indexed by priorities.
-       There is no a priori bound on the size of this array -- its size is
-       increased if needed. It is up to the user to use a graph where paths
-       have reasonable lengths. *)
-    let a = InfiniteArray.make None
-
-    (* Index of lowest nonempty list, if there is one; or lower (sub-optimal,
-       but safe). If the queue is empty, [best] is arbitrary. *)
-    let best = ref 0
-
-    (* Current number of elements in the queue. Used in [get] to stop the
-       search for a nonempty bucket. *)
-    let cardinal = ref 0
-
-    (* Adjust node's priority and insert into doubly linked list. *)
-    let add inode priority =
-      assert (0 <= priority);
-      cardinal := !cardinal + 1;
-      inode.priority <- priority;
-      match InfiniteArray.get a priority with
-      | None ->
-          InfiniteArray.set a priority (Some inode);
-          (* Decrease [best], if necessary, so as not to miss the new element.
-             In the special case of A*, this never happens. *)
-          assert (!best <= priority);
-          (* if priority < !best then best := priority *)
-      | Some inode' ->
-          inode.next <- inode';
-          inode.prev <- inode'.prev;
-          inode'.prev.next <- inode;
-          inode'.prev <- inode
-
-    (* Takes a node off its doubly linked list. Does not adjust [best],
-       as this is not necessary in order to preserve the invariant. *)
-    let remove inode =
-      cardinal := !cardinal - 1;
-      if inode.next == inode then
-        InfiniteArray.set a inode.priority None
-      else begin
-        InfiniteArray.set a inode.priority (Some inode.next);
-        inode.next.prev <- inode.prev;
-        inode.prev.next <- inode.next;
-        inode.next <- inode;
-        inode.prev <- inode
-      end;
-      inode.priority <- -1
-
-    let rec get () =
-      if !cardinal = 0 then
-        None
-      else
-        get_nonempty()
-
-    and get_nonempty () =
-      (* Look for next nonempty bucket. We know there is one. This may
-         seem inefficient, because it is a linear search. However, in
-         A*, [best] never decreases, so the total cost of this loop is
-         the maximum priority ever used. *)
-      match InfiniteArray.get a !best with
-      | None ->
-          best := !best + 1;
-          get_nonempty()
-      | Some inode as result ->
-          remove inode;
-          result
-
-    let add_or_decrease inode priority =
-      if inode.priority >= 0 then
-        remove inode;
-      add inode priority
-
-  end
-
-  (* Initialization. *)
-
-  let estimate node =
+  let[@inline] estimate node =
     let e = G.estimate node in
-    assert (0 <= e); (* failure means user error *)
+    if e < 0 then fail "cost estimate is negative (%d)" e;
     e
 
+  (* As a precaution, when computing the sum of two costs, detect overflow. *)
+
+  let[@inline] sum cost1 cost2 =
+    let cost = cost1 + cost2 in
+    assert (0 <= cost);
+    cost
+
+  (* When a new node is discovered, a new inode and box are allocated,
+     and the box is inserted into the priority queue. *)
+
+  let discover node path cost =
+    let estimate = estimate node in
+    let box = P.box { node; path; cost; estimate } in
+    M.add node box;
+    P.add q box (sum cost estimate)
+
+  (* Initialization: discover the sources. *)
+
   let () =
-    G.sources (fun node ->
-      let rec inode = {
-        this = node;
-        cost = 0;
-        estimate = estimate node;
-        path = Source node;
-        prev = inode;
-        next = inode;
-        priority = -1
-      } in
-      M.add node inode;
-      P.add inode inode.estimate
-    )
+    G.sources @@ fun node ->
+      let path = Source node and cost = 0 in
+      discover node path cost
 
-  (* Access to the search results (after the search is over). *)
+  (* [process box] processes a box that has just been extracted out of
+     the priority queue. *)
 
-  let distance node =
-    try (M.get node).cost with Not_found -> max_int
+  exception Stopped
 
-  let path node =
-    (M.get node).path (* let [Not_found] escape if no path was found *)
+  let process box =
+    let { node; path; cost; _ } = P.payload box in
+    (* The distance to this node is now fixed. Let the user know about it. *)
+    let continue = Y.yield node path in
+    if not continue then raise Stopped;
+    (* Examine this node's outgoing edges. *)
+    G.successors node @@ fun label edge_cost target ->
+      (* A defensive check. *)
+      if edge_cost < 0 then fail "edge cost is negative (%d)" edge_cost;
+      (* Determine the cost of the best known path from the source set,
+         through the node [node], through this edge, to the node [target]. *)
+      let cost = sum cost edge_cost in
+      (* Has the node [target] been discovered yet? *)
+      match M.box target with
+      | box ->
+          (* Yes, [target] has been discovered already. *)
+          let itarget = P.payload box in
+          if cost < itarget.cost then begin
+            itarget.cost <- cost;
+            itarget.path <- Edge (label, path);
+            (* This path to [target] is shorter than the previously known
+               paths. It must be the case that [target] is still in the
+               priority queue. Update (decrease) its priority. *)
+            assert (P.mem q box);
+            let fhat = sum cost itarget.estimate in
+            assert (fhat < P.priority box);
+            P.update q box fhat
+          end
+      | exception Not_found ->
+          (* No; [target] has not been discovered until now. Allocate a new
+             inode and box for it, and insert this box into the queue. *)
+          let path = Edge (label, path) in
+          discover target path cost
 
-  (* Search. *)
+  (* The main loop. *)
 
-  let rec search f =
+  (* As long as the queue is nonempty, extract and process one box. *)
 
-    (* Pick the open node that currently has lowest fhat,
-       that is, lowest estimated distance to a goal node. *)
+  let () =
+    try
+      P.repeat q process
+    with Stopped ->
+      (* The search has been stopped by the user. Every node that is still in
+         the priority queue must be removed from the hash table, so that the
+         functions [distance] and [path] do not allow the user to obtain
+         suboptimal information about it. *)
+      P.iter q M.remove
 
-    match P.get() with
-    | None ->
-       (* Finished. *)
-       distance, path
+end (* Search *)
 
-    | Some inode ->
-        let node = inode.this in
+(* Present the functor [Search] as a function [search]. *)
 
-        (* Let the user know about this newly discovered node. *)
-        f (node, inode.path);
+(* Ensure that it is called at most once. *)
 
-        (* Otherwise, examine its successors. *)
-        G.successors node (fun label edge_cost son ->
-          assert (0 <= edge_cost); (* failure means user error *)
+let called = ref false
 
-          (* Determine the cost of the best known path from the
-             start node, through this node, to this son. *)
-          let new_cost = inode.cost + edge_cost in
-          assert (0 <= new_cost); (* failure means overflow *)
+let search yield =
+  if !called then fail "search: must be called at most once";
+  called := true;
+  let module S = Search(struct let yield = yield end) in
+  ()
 
-          try
-            let ison = M.get son in
-            if new_cost < ison.cost then begin
+(* These functions offer access to the results of the search. *)
 
-              (* This son has been visited before, but this new
-                 path to it is shorter. If it was already open
-                 and waiting in the priority queue, increase its
-                 priority; otherwise, mark it as open and insert
-                 it into the queue. *)
+let distance node =
+  try (M.get node).cost with Not_found -> max_int
 
-              let new_fhat = new_cost + ison.estimate in
-              assert (0 <= new_fhat); (* failure means overflow *)
-              P.add_or_decrease ison new_fhat;
-              ison.cost <- new_cost;
-              ison.path <- Edge (label, inode.path)
+let path node =
+  (M.get node).path (* raises [Not_found] if no path was found *)
 
-            end
-          with Not_found ->
-
-            (* This son was never visited before. Allocate a new
-               status record for it and mark it as open. *)
-
-            let rec ison = {
-              this = son;
-              cost = new_cost;
-              estimate = estimate son;
-              path = Edge (label, inode.path);
-              prev = ison;
-              next = ison;
-              priority = -1
-            } in
-            M.add son ison;
-            let fhat = new_cost + ison.estimate in
-            assert (0 <= fhat); (* failure means overflow *)
-            P.add ison fhat
-
-        );
-
-        search f
-
-end
+end (* Make *)
