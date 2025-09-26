@@ -11,47 +11,29 @@
 include List
 
 let rec init_aux i n f =
-  if n <= i then []
+  if n <= i then
+    []
   else
     let r = f i in
     r :: init_aux (i+1) n f
 
-let init n f =
+let[@inline] init n f =
   assert (0 <= n);
   init_aux 0 n f
 
-(** A list subject to a condition. (Be careful, though: the list is
-   of course constructed even if the condition is false.) *)
-let ifn condition xs =
-  if condition then
-    xs
-  else
-    []
+let[@inline] ifn c xs =
+  if c then xs else []
 
-(** A list subject to a condition. (Be careful, though: the list is
-         of course constructed even if the condition is false.) *)
-let if1 condition x =
-  if condition then
-    [ x ]
-  else
-    []
+let[@inline] if1 c x =
+  if c then [x] else []
 
-(** A cons subject to a condition. *)
-let cons_if condition x xs =
-  if condition then
-    x :: xs
-  else
-    xs
+let[@inline] cons_if c x xs =
+  if c then x :: xs else xs
 
-(** A lazy version of [ifn], where the list is constructed only
-         if the condition is true. *)
-let ifnlazy condition xs =
-  if condition then
-    xs()
-  else
-    []
+let[@inline] ifnlazy c xs =
+  if c then xs() else []
 
-let sum li =
+let[@inline] sum li =
   fold_left (+) 0 li
 
 let rec at_most k xs =

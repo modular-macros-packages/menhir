@@ -12,34 +12,37 @@
 
 include module type of List
 
-(** An alias for [List.init], when it exists. *)
+(**An alias for [List.init], when it exists. *)
 val init : int -> (int -> 'a) -> 'a list
 
-(** A list subject to a condition. (Be careful, though: the list is of course
-    constructed even if the condition is false.) *)
+(* Conditionals in list construction expressions. *)
+
+(**[ifn c xs] constructs the list [if c then xs else []]. Be careful: the
+   expression [xs] is evaluated even if the condition [c] is false. *)
 val ifn : bool -> 'a list -> 'a list
 
-(** A list subject to a condition. (Be careful, though: the list is of course
-    constructed even if the condition is false.) *)
-val if1 : bool -> 'a -> 'a list
-
-(** A cons subject to a condition. *)
-val cons_if : bool -> 'a -> 'a list -> 'a list
-
-(** A lazy version of [ifn], where the list is constructed only if the condition
-    is true. *)
+(**[ifnlazy c xs] constructs the list [if c then xs() else []]. *)
 val ifnlazy : bool -> (unit -> 'a list) -> 'a list
 
-(** The sum of a list of integers. *)
+(**[if1 c x] constructs the list [if c then [x] else []]. Be careful: the
+   expression [x] is evaluated even if the condition [c] is false. *)
+val if1 : bool -> 'a -> 'a list
+
+(**[cons_if c x xs] constructs the list [if c then x :: xs else xs]. Be
+   careful: the expression [x] is evaluated even if the condition [c] is
+   false. *)
+val cons_if : bool -> 'a -> 'a list -> 'a list
+
+(**The sum of a list of integers. *)
 val sum : int list -> int
 
-(** [at_most k xs] tests whether the list [xs] contains at most [k] elements. *)
+(**[at_most k xs] tests whether the list [xs] contains at most [k] elements. *)
 val at_most : int -> 'a list -> bool
 
-(** [drop k xs] is the list [xs] deprived of its first [k] elements. *)
+(**[drop k xs] is the list [xs] deprived of its first [k] elements. *)
 val drop : int -> 'a list -> 'a list
 
-(** [take k xs] is the list of the first [k] elements of the list [xs]. *)
+(**[take k xs] is the list of the first [k] elements of the list [xs]. *)
 val take : int -> 'a list -> 'a list
 
 (**Given a [leq_join] function on elements, [leq_join] constructs a [leq_join]
@@ -48,7 +51,7 @@ val take : int -> 'a list -> 'a list
    [Fix.MINIMAL_SEMI_LATTICE]. *)
 val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
 
-(** Group equivalent elements of a list.
+(**Group equivalent elements of a list.
     [group_by ~compare ~group xs] sorts the list [xs] using [compare] and then
     groups runs of equivalent elements using [group].
     The order of the elements in [xs] is not preserved, neither between groups
@@ -57,16 +60,16 @@ val group_by :
   compare:('a -> 'a -> int) -> group:('a -> 'a list -> 'b) ->
   'a list -> 'b list
 
-(** [find_map f xs] applies [f] to the elements of [xs] in order and returns
+(**[find_map f xs] applies [f] to the elements of [xs] in order and returns
     the first result of the form [Some y], if there is one, or [None]. *)
 val find_map : ('a -> 'b option) -> 'a list -> 'b option
 
-(** [partition_map f xs] classifies elements of list [xs] in a left and a right
+(**[partition_map f xs] classifies elements of list [xs] in a left and a right
     lists according to the result of [f]. *)
 val partition_map :
   ('a -> [< `L of 'l | `R of 'r ]) -> 'a list -> 'l list * 'r list
 
-(** [compare f l1 l2] compares two lists according to the lexicographic
+(**[compare f l1 l2] compares two lists according to the lexicographic
     ordering. Elements are compared using the argument [f]. *)
 val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
 
@@ -80,11 +83,11 @@ val extract : ('a -> bool) -> 'a list -> 'a option * 'a list
    elements. *)
 val uniq: ('a -> 'a -> int) -> 'a list -> 'a list
 
-(** [merge_uniq cmp l1 l2] merges two sorted lists (without duplicate
+(**[merge_uniq cmp l1 l2] merges two sorted lists (without duplicate
     elements) and produces a sorted list (without duplicate elements). *)
 val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
 
-(** [reduce e f l] reduces the list [xs] using the associative binary
+(**[reduce e f l] reduces the list [xs] using the associative binary
     operation [f], whose unit (neutral element) is [e].
 
     The reduction is performed in a balanced fashion.
