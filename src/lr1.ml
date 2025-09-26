@@ -212,7 +212,7 @@ let discover (raw_node : Raw.node) =
 
   (* Number this node. *)
 
-  let node : node = Misc.postincrement n in
+  let node : node = MInt.postincrement n in
   _number.(i) <- node;
 
   (* Detect conflicts. We iterate over the table [Lr0.reductions_table state],

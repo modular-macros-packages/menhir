@@ -883,7 +883,7 @@ module G = struct
   type node = label
   let count = ref 0
   let index =
-    Label.Map.map (fun _block -> Misc.postincrement count) program.cfg
+    Label.Map.map (fun _block -> MInt.postincrement count) program.cfg
   let n = !count
   let index label =
     Label.Map.find label index

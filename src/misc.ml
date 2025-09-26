@@ -200,18 +200,6 @@ let normalize s =
   done;
   Bytes.unsafe_to_string s
 
-(* [postincrement r] increments [r] and returns its original value. *)
-
-let postincrement r =
-  let x = !r in
-  r := x + 1;
-  x
-
-let mkgensym () =
-  let r = ref 0 in
-  fun () ->
-    postincrement r
-
 (* [filter_map f l] returns the list of [y]s such that [f x = Some y] where [x]
    is in [l], preserving the order of elements of [l]. *)
 let filter_map f l =

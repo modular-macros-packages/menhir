@@ -59,7 +59,7 @@ let successors
     let nullable_prefix = ref true in
     let i = ref 0 in
     while !nullable_prefix && !i < n do
-      match rhs.(Misc.postincrement i) with
+      match rhs.(MInt.postincrement i) with
       | Symbol.T _   ->
           nullable_prefix := false
       | Symbol.N nt' ->
@@ -82,7 +82,7 @@ let show_cycle nts nt =
   if List.length nts = 1 then "" else begin
     let nts = Array.of_list (nts @ [nt]) in
     let i = ref 0 in
-    let next () = Nonterminal.print false nts.(Misc.postincrement i)
+    let next () = Nonterminal.print false nts.(MInt.postincrement i)
     and finished () = !i = Array.length nts in
     Misc.with_buffer 1024 begin fun b ->
       let out format = Printf.bprintf b format in

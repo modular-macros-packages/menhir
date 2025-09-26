@@ -385,7 +385,7 @@ let subst_branches inst env branches =
 let freshen : string -> string =
   let c = ref 0 in
   fun x ->
-    Printf.sprintf "%s__menhir__%d" x (Misc.postincrement c)
+    Printf.sprintf "%s__menhir__%d" x (MInt.postincrement c)
 
 (* -------------------------------------------------------------------------- *)
 

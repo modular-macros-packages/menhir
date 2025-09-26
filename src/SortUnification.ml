@@ -98,7 +98,7 @@ let rec unground (GroundSort.GArrow ss) =
 let make_gensym () : unit -> string =
   let c = ref 0 in
   let gensym () =
-    let n = Misc.postincrement c in
+    let n = MInt.postincrement c in
     Printf.sprintf "%c%s"
       (char_of_int (Char.code 'a' + n mod 26))
       (let d = n / 26 in if d = 0 then "" else string_of_int d)

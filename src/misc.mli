@@ -122,14 +122,6 @@ val smapa: ('b -> 'a -> 'b * 'a) -> 'b -> 'a list -> 'b * 'a list
 
 val normalize: string -> string
 
-(* [postincrement r] increments [r] and returns its original value. *)
-
-val postincrement: int ref -> int
-
-(* [mkgensym()] returns a fresh generator of unique integers. *)
-
-val mkgensym : unit -> (unit -> int)
-
 (* [filter_map f l] returns the list of [y]s such that [f x = Some y] where [x]
    is in [l], preserving the order of elements of [l]. *)
 val filter_map : ('a -> 'b option) -> 'a list -> 'b list

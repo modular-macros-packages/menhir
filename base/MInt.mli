@@ -8,9 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module provides a number of utility functions that have something to
+   do with integers. *)
 
-
-(**[postincrement r] increments [r] and returns its original value. *)
+(**[postincrement r] increments the integer reference [r] and returns its
+   original value. *)
 val postincrement: int ref -> int
 
 (**[mkgensym()] returns a fresh generator of unique integers. *)

@@ -51,7 +51,7 @@ module Run () = struct
 let fresh : unit -> string =
   let next = ref 0 in
   fun () ->
-    Printf.sprintf "__anonymous_%d" (Misc.postincrement next)
+    Printf.sprintf "__anonymous_%d" (MInt.postincrement next)
 
 (* ------------------------------------------------------------------------ *)
 

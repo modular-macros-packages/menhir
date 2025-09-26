@@ -153,7 +153,7 @@ let tilde_used_warning positions =
 let pattern (x1 : identifier) (p : pattern) : IL.pattern =
 
   let c = ref 1 in
-  let fresh () = Printf.sprintf "%s_%d" x1 (Misc.postincrement c) in
+  let fresh () = Printf.sprintf "%s_%d" x1 (MInt.postincrement c) in
 
   let rec pattern p =
     match p with
