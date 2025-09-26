@@ -51,7 +51,7 @@ module Label = struct
     nt1 = nt2 &&
     List.for_all2 (Option.equal Parameters.equal) inst1 inst2
   let hash (nt, inst) =
-    Hashtbl.hash (nt, Misc.ListExtras.hash (Option.hash Parameters.hash) inst)
+    Hashtbl.hash (nt, MList.hash (Option.hash Parameters.hash) inst)
 end
 
 (* -------------------------------------------------------------------------- *)

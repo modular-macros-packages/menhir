@@ -101,6 +101,16 @@ let rec partition_map f = function
       | `L l -> (l :: ls, rs)
       | `R r -> (ls, r :: rs)
 
+let rec equal eq xs ys =
+  match xs, ys with
+  | [], [] ->
+      true
+  | [], _ :: _
+  | _ :: _, [] ->
+      false
+  | x :: xs, y :: ys ->
+      eq x y && equal eq xs ys
+
 let rec compare cmp l1 l2 =
   match l1, l2 with
   | [], [] ->
@@ -112,6 +122,12 @@ let rec compare cmp l1 l2 =
   | x1 :: xs1, x2 :: xs2 ->
       let c = cmp x1 x2 in
       if c = 0 then compare cmp xs1 xs2 else c
+
+let hash hash xs =
+  Hashtbl.hash (List.map hash xs)
+    (* TODO I believe [Hashtbl.hash] inspects the list only down to a certain
+       depth, so it is useless to eagerly hash all of the elements. Find some
+       other way? Convert to an array, then compute a hash of this array? *)
 
 (* [removeq x xs] returns the list [xs] deprived of the element [x],
    which must physically appear in the list. *)

@@ -220,20 +220,6 @@ let once x y =
     s := y;
     result
 
-module ListExtras = struct
-  let rec equal (=) xs ys =
-    match xs, ys with
-    | [], [] ->
-        true
-    | x :: xs, y :: ys ->
-        x = y && equal (=) xs ys
-    | _ :: _, []
-    | [], _ :: _ ->
-        false
-  let hash hash xs =
-    Hashtbl.hash (List.map hash xs)
-end
-
 let nth = function
   | 1 -> "first"
   | 2 -> "second"

@@ -110,7 +110,7 @@ module P = struct
   (* Because our lists are sorted, they can be easily tested for equality. *)
 
   let equal p1 p2 =
-    Misc.ListExtras.equal Lr0.equal p1 p2
+    MList.equal Lr0.equal p1 p2
 
   (* This definition turns off an optimization in [Fix]. It has nothing to do
      with our use of the word "maximal" in this file. *)

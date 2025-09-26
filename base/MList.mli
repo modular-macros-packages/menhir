@@ -71,10 +71,18 @@ val find_map : ('a -> 'b option) -> 'a list -> 'b option
 val partition_map :
   ('a -> [< `L of 'l | `R of 'r ]) -> 'a list -> 'l list * 'r list
 
-(**[compare cmp l1 l2] compares two lists according to the lexicographic
-   ordering. The elements of the lists are compared using the total ordering
-   function [cmp]. *)
+(**[equal eq xs ys] tests whether the lists [xs] and [ys] are equal. The
+   elements of the lists are compared using the function [eq]. *)
+val equal : ('a -> 'b -> bool) -> 'a list -> 'b list -> bool
+
+(**[compare cmp xs ys] compares the lists [xs] and [ys] according to the
+   lexicographic ordering. The elements of the lists are compared using the
+   total ordering function [cmp]. *)
 val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
+
+(**If [h] is a hash function for elements
+   then [hash h] is a hash function for lists. *)
+val hash: ('a -> int) -> 'a list -> int
 
 (**[extract p xs] searches the list [xs] for an element [x] such that [p x] is
    true. It returns a pair of this element (if it exists) and a list of the
