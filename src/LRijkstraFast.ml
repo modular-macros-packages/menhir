@@ -324,17 +324,19 @@ module Run () = struct
           TerminalMap.fold add (Lr1.reductions lr1) []
         in
         (* Regroup lookahead tokens by production *)
-        MList.group_by raw
-          ~compare:(fun (_, p1) (_, p2) ->
-              Int.compare (Production.p2i p1) (Production.p2i p2)
-            )
-          ~group:(fun (t, p) tps ->
+        let compare (_, p1) (_, p2) =
+          Int.compare (Production.p2i p1) (Production.p2i p2)
+        and group tps =
+          match tps with
+          | [] -> assert false (* group cannot be empty *)
+          | (t, p) :: tps ->
               let set = List.fold_left
                   (fun set (t, _) -> TerminalSet.add t set)
                   (TerminalSet.singleton t) tps
               in
               (p, set)
-            )
+        in
+        MList.group compare raw |> List.map group
 
     let () =
       (* Populate [table] with the reductions of all state *)
