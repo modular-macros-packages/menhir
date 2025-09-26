@@ -168,7 +168,7 @@ let reachable =
 (* Perform the forward search. *)
 
 module A =
-  Astar.Make(G)
+  AStar.Make(G)
 
 let visit node' path =
   incr explored;

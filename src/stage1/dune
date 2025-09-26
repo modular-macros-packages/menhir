@@ -15,10 +15,11 @@
   (name main)
   (libraries
     unix
+    base
     vendored_bitsets
     vendored_fix
     vendored_pprint
     menhirLib menhirSdk
   )
-  (flags :standard -open MenhirSdk)
+  (flags :standard -open Base -open MenhirSdk)
 )

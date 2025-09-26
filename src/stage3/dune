@@ -51,13 +51,14 @@
 (executable
   (name main)
   (libraries
+    base
     unix
     vendored_bitsets
     vendored_fix
     vendored_pprint
     menhirLib menhirSdk
   )
-  (flags :standard -open MenhirSdk)
+  (flags :standard -open Base -open MenhirSdk)
   (link_deps (alias bootstrap))
 )
 

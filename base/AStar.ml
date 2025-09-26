@@ -212,7 +212,7 @@ end) = struct
 
   (* As long as the queue is nonempty, extract and process one box. *)
 
-  let () =
+  let main : unit =
     try
       P.repeat q process
     with Stopped ->
@@ -234,7 +234,7 @@ let search yield =
   if !called then fail "search: must be called at most once";
   called := true;
   let module S = Search(struct let yield = yield end) in
-  ()
+  ignore S.main (* avoid warning 60 *)
 
 (* These functions offer access to the results of the search. *)
 
