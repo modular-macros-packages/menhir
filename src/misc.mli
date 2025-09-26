@@ -39,10 +39,6 @@ val preceded_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
 val normalize: string -> string
 
-(* [filter_map f l] returns the list of [y]s such that [f x = Some y] where [x]
-   is in [l], preserving the order of elements of [l]. *)
-val filter_map : ('a -> 'b option) -> 'a list -> 'b list
-
 (* [new_encode_decode capacity] creates a new service for assigning unique
    integer codes to strings. [capacity] is the initial capacity of the
    internal hash table. [new_encode_decode] returns a triple [encode, decode,

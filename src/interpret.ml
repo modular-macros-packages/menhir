@@ -385,7 +385,7 @@ let validate_located_sentence c (poss, sentence) : targeted_sentence =
    from the list, and the validation process continues. *)
 
 let validate_entry c entry : targeted_sentence or_comment list =
-  Misc.filter_map (function
+  MList.filter_map (function
   | Thing sentence ->
       begin try
         Some (Thing (validate_located_sentence c sentence))
@@ -584,7 +584,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
   let branches =
     List.fold_left (or_comment_fold (fun branches run ->
       (* Create an or-pattern for these states. *)
-      let states = Misc.filter_map (or_comment_filter_map (fun (_, target) ->
+      let states = MList.filter_map (or_comment_filter_map (fun (_, target) ->
         let s = target2state target in
         pint (Lr1.number s)
       )) run.elements in

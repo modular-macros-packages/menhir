@@ -297,7 +297,7 @@ let mk_stretch pos1 pos2 parenthesize monsters =
     stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
     stretch_content = content;
     stretch_raw_content = raw_content;
-    stretch_keywords = Misc.filter_map (fun monster -> monster.keyword) monsters
+    stretch_keywords = MList.filter_map (fun monster -> monster.keyword) monsters
   })
 
 (* Creating a stretch from a located identifier. (This does not require the

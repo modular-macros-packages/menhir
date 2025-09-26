@@ -232,7 +232,7 @@ and map_casetok env r branches odefault =
   let default_tokens = P.diff env (all_tokens branches) in
   let dead_default = P.is_empty default_tokens in
   (* Transform every live branch, and drop every dead branch. *)
-  let branches = Misc.filter_map (map_tokbranch env) branches in
+  let branches = MList.filter_map (map_tokbranch env) branches in
   (* If the default branch is dead and if there is only one explicit
      branch (whose pattern does not assign any register) then this
      [case] construct is redundant and can be removed. *)

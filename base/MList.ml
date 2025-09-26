@@ -17,7 +17,7 @@ let single xs =
   | _ ->
       assert false
 
-let rec init_aux i n f =
+let[@tail_mod_cons] rec init_aux i n f =
   if n <= i then
     []
   else
@@ -51,7 +51,7 @@ let rec drop k xs =
   | _, _ :: xs ->
       drop (k - 1) xs
 
-let rec take k xs =
+let[@tail_mod_cons] rec take k xs =
   match k, xs with
   | 0, _
   | _, [] ->
@@ -97,6 +97,17 @@ let rec find_map f = function
       match f x with
       | Some _ as o -> o
       | None -> find_map f xs
+
+let rec filter_map_rev f accu = function
+  | [] ->
+      accu
+  | x :: xs ->
+      let accu = match f x with None -> accu | Some y -> y :: accu in
+      filter_map_rev f accu xs
+
+let filter_map f xs =
+  filter_map_rev f [] xs
+  |> List.rev
 
 let rec partition_map f = function
   | [] ->

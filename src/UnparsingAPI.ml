@@ -426,7 +426,7 @@ and dcst_constructor_params prod : pattern list =
   |> List.mapi dcst_constructor_param
   (* Drop the unnecessary parameters, which correspond to terminal
      symbols that do not carry a semantic value. *)
-  |> Misc.filter_map (fun opat -> opat)
+  |> MList.filter_map (fun opat -> opat)
   (* If we end up with a list of zero parameters, insert a unit parameter. *)
   |> (fun pats -> if pats = [] then [ PUnit ] else pats)
 
@@ -575,7 +575,7 @@ and prod_method_args csts prod : expr list =
   |> List.mapi (prod_method_arg csts)
   (* Drop the unnecessary arguments, which correspond to terminal
      symbols that do not carry a semantic value. *)
-  |> Misc.filter_map (fun oexpr -> oexpr)
+  |> MList.filter_map (fun oexpr -> oexpr)
   (* If we end up with a list of zero arguments, pass a unit argument. *)
   |> (fun exprs -> if exprs = [] then [ EUnit ] else exprs)
 
@@ -825,7 +825,7 @@ and dcst_constructor_params prod : typ list =
   |> List.map dcst_constructor_param
   (* Drop the unnecessary parameters, which correspond to terminal
      symbols that do not carry a semantic value. *)
-  |> Misc.filter_map (fun otyp -> otyp)
+  |> MList.filter_map (fun otyp -> otyp)
   (* If we end up with a list of zero parameters, insert a unit parameter. *)
   |> (fun typs -> if typs = [] then [ tunit ] else typs)
 

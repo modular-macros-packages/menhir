@@ -66,6 +66,10 @@ val group_by :
    it returns [None]. *)
 val find_map : ('a -> 'b option) -> 'a list -> 'b option
 
+(**[filter_map f xs] returns the list of the elements [y] such that
+   [f x = Some y], where [x] ranges over the list [xs]. *)
+val filter_map : ('a -> 'b option) -> 'a list -> 'b list
+
 (**[partition_map] splits the list [xs] in two sublists; each element [x]
    is placed in the left-hand or right-hand result list according to the
    result of the function call [f x]. *)
