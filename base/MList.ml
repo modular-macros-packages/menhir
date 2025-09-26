@@ -60,76 +60,75 @@ let leq_join leq_join xs1 xs2 =
     (* The lists have different lengths. *)
     assert false
 
-(** Group equivalent elements of a list. *)
 let group_by
-    ~(compare:'a -> 'a -> int)
-    ~(group:'a -> 'a list -> 'b)
-    (list : 'a list) : 'b list
-  =
-  match List.sort compare list with
-  | [] -> []
-  | key :: rest ->
-    let rec loop acc ks key = function
-      | [] -> group key ks :: acc
-      | key' :: rest ->
-        if compare key key' = 0
-        then loop acc (key' :: ks) key rest
-        else loop (group key ks :: acc) [] key' rest
-    in
-    loop [] [] key rest
+  ~(compare:'a -> 'a -> int)
+  ~(group:'a -> 'a list -> 's)
+  (xs : 'a list) : 's list
+=
+  match List.sort compare xs with
+  | [] ->
+      []
+  | x :: xs ->
+      (* [summaries] is the list of the group summaries obtained so far. *)
+      (* [xs] and [x] form the current group, which is nonempty. *)
+      (* [ys] is the list of elements that remain to be scanned. *)
+      let rec loop summaries xs x ys =
+        match ys with
+        | [] ->
+            group x xs :: summaries
+        | y :: ys ->
+            if compare x y = 0
+            then loop summaries (y :: xs) x ys
+            else loop (group x xs :: summaries) [] y ys
+      in
+      loop [] [] x xs
 
-(** [find_map f xs] applies [f] to elements of [xs] in order and the returns
-    the first result of the form [Some y], or [None]. *)
 let rec find_map f = function
-  | [] -> None
-  | x :: xs ->
-    match f x with
-    | Some _ as result -> result
-    | None -> find_map f xs
-
-(** Classify elements of a list in a left and a right list *)
-let rec partition_map f = function
-  | [] -> ([], [])
-  | x :: xs ->
-    let y = f x in
-    let (ls, rs) = partition_map f xs in
-    match y with
-    | `L l -> (l :: ls, rs)
-    | `R r -> (ls, r :: rs)
-
-(** Compare two lists *)
-let rec compare cmp l1 l2 =
-  match l1, l2 with
-  | [], [] -> 0
-  | (_ :: _), [] -> 1
-  | [], (_ :: _) -> -1
-  | (x1 :: xs1), (x2 :: xs2) ->
-    match cmp x1 x2 with
-    | 0 -> compare cmp xs1 xs2
-    | n -> n
-
-(* By writing [extract] in two successive steps, as follows, we avoid
-   rebuilding an identical list when no list element satisfies [p]. *)
-
-let rec extract (p : 'a -> bool) (xs : 'a list) : ('a * 'a list) option =
-  match xs with
   | [] ->
       None
   | x :: xs ->
-      if p x then
-        Some (x, xs)
-      else
-        match extract p xs with
-        | None ->
-            None
-        | Some (w, xs) ->
-            Some (w, x :: xs)
+      match f x with
+      | Some _ as o -> o
+      | None -> find_map f xs
+
+let rec partition_map f = function
+  | [] ->
+      [], []
+  | x :: xs ->
+      let y = f x in
+      let ls, rs = partition_map f xs in
+      match y with
+      | `L l -> (l :: ls, rs)
+      | `R r -> (ls, r :: rs)
+
+let rec compare cmp l1 l2 =
+  match l1, l2 with
+  | [], [] ->
+      0
+  | _ :: _, [] ->
+      +1
+  | [], _ :: _ ->
+      -1
+  | x1 :: xs1, x2 :: xs2 ->
+      let c = cmp x1 x2 in
+      if c = 0 then compare cmp xs1 xs2 else c
+
+(* [removeq x xs] returns the list [xs] deprived of the element [x],
+   which must physically appear in the list. *)
+
+let rec removeq x xs =
+  match xs with
+  | [] ->
+      assert false
+  | x' :: xs ->
+      if x == x' then xs else x' :: removeq x xs
 
 let extract (p : 'a -> bool) (xs : 'a list) : 'a option * 'a list =
-  match extract p xs with
-  | None ->
+  match List.find p xs with
+  | exception Not_found ->
       None, xs
-  | Some (x, xs) ->
+  | x ->
+      let xs = removeq x xs in
       Some x, xs
 
 let rec uniq1 cmp x ys =

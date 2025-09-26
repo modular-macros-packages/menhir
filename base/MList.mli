@@ -48,26 +48,32 @@ val take : int -> 'a list -> 'a list
    [Fix.MINIMAL_SEMI_LATTICE]. *)
 val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
 
-(**Group equivalent elements of a list.
-    [group_by ~compare ~group xs] sorts the list [xs] using [compare] and then
-    groups runs of equivalent elements using [group].
-    The order of the elements in [xs] is not preserved, neither between groups
-    nor between the elements of the same group.  *)
+(**[group_by ~compare ~group xs] first sorts the list [xs] with respect to the
+   total order [compare], then summarizes each run of equivalent elements
+   using [group]. Thus, the function [group] must map a nonempty list of
+   elements to a summary. The result of [group_by] is a list of summaries.
+
+   The order of the elements of [xs] is not preserved. Elements can be
+   exchanged within a group, and groups can be exchanged. *)
 val group_by :
-  compare:('a -> 'a -> int) -> group:('a -> 'a list -> 'b) ->
-  'a list -> 'b list
+  compare:('a -> 'a -> int) ->
+  group:('a -> 'a list -> 'summary) ->
+  'a list -> 'summary list
 
 (**[find_map f xs] applies [f] to the elements of [xs] in order and returns
-    the first result of the form [Some y], if there is one, or [None]. *)
+   the first result of the form [Some y], if there is one. If there is none,
+   it returns [None]. *)
 val find_map : ('a -> 'b option) -> 'a list -> 'b option
 
-(**[partition_map f xs] classifies elements of list [xs] in a left and a right
-    lists according to the result of [f]. *)
+(**[partition_map] splits the list [xs] in two sublists; each element [x]
+   is placed in the left-hand or right-hand result list according to the
+   result of the function call [f x]. *)
 val partition_map :
   ('a -> [< `L of 'l | `R of 'r ]) -> 'a list -> 'l list * 'r list
 
-(**[compare f l1 l2] compares two lists according to the lexicographic
-    ordering. Elements are compared using the argument [f]. *)
+(**[compare cmp l1 l2] compares two lists according to the lexicographic
+   ordering. The elements of the lists are compared using the total ordering
+   function [cmp]. *)
 val compare : ('a -> 'b -> int) -> 'a list -> 'b list -> int
 
 (**[extract p xs] searches the list [xs] for an element [x] such that [p x] is
@@ -81,12 +87,12 @@ val extract : ('a -> bool) -> 'a list -> 'a option * 'a list
 val uniq: ('a -> 'a -> int) -> 'a list -> 'a list
 
 (**[merge_uniq cmp l1 l2] merges two sorted lists (without duplicate
-    elements) and produces a sorted list (without duplicate elements). *)
+   elements) and produces a sorted list (without duplicate elements). *)
 val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
 
 (**[reduce e f l] reduces the list [xs] using the associative binary
-    operation [f], whose unit (neutral element) is [e].
+   operation [f], whose unit (neutral element) is [e].
 
-    The reduction is performed in a balanced fashion.
-    For example, [reduce f [a; b; c; d]] is [f (f a b) (f c d)]. *)
+   The reduction is performed in a balanced fashion.
+   For example, [reduce f [a; b; c; d]] is [f (f a b) (f c d)]. *)
 val reduce : 'a -> ('a -> 'a -> 'a) -> 'a list -> 'a
