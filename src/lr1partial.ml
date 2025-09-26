@@ -187,7 +187,7 @@ end) = struct
           explore None shadow (restrict (Lr0.start k))
       ) Lr0.entry;
 
-      Misc.qiter (fun node ->
+      MQueue.repeat queue (fun node ->
         SymbolMap.iter (fun symbol state ->
           try
             let shadow =
@@ -199,7 +199,7 @@ end) = struct
                was resolved in favor in reduce. Ignore that transition. *)
             ()
         ) (Lr0.transitions node.state)
-      ) queue;
+      );
 
       (* We didn't find a goal node. This shouldn't happen! If the
          goal node in the merged LR(1) automaton has a conflict,

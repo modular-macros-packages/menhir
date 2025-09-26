@@ -448,7 +448,7 @@ let inspect_routine _label tblock =
 
 let program =
   cfg := Label.Map.mapi inspect_routine program.cfg;
-  Misc.qiter spec_routine queue;
+  MQueue.repeat queue spec_routine;
   { program with cfg = !cfg }
 
 let () =
@@ -998,7 +998,7 @@ let program =
     discover label
   end;
   (* Process the waiting labels. *)
-  waiting |> Misc.qiter begin fun label ->
+  MQueue.repeat waiting begin fun label ->
     assert (Label.Set.mem label !discovered);
     assert (not (Label.Map.mem label !cfg));
     let tblock = lookup program label in
@@ -1194,7 +1194,7 @@ let program =
     discover label
   end;
   (* Process the waiting labels. *)
-  waiting |> Misc.qiter begin fun label ->
+  MQueue.repeat waiting begin fun label ->
     assert (Label.Set.mem label !discovered);
     assert (not (Label.Map.mem label !cfg));
     let tblock = lookup program label in

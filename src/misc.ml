@@ -92,18 +92,6 @@ let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
   in
   loop x
 
-(* [qiter f q] repeatedly takes an element [x] off the queue [q] and
-   applies [f] to [x], until [q] becomes empty. Of course, [f] can add
-   elements to [q] as a side-effect. *)
-
-let qiter f q =
-  try
-    while true do
-      f (Queue.take q)
-    done
-  with Queue.Empty ->
-    ()
-
 let rec smap f = function
   | [] ->
       []

@@ -120,7 +120,7 @@ let explain_shift_item
 
   enqueue None (start, 0);
   try
-    Misc.qiter (function (item, offset) as config ->
+    MQueue.repeat queue (function (item, offset) as config ->
 
       (* If the item we're looking at is the goal item and if
          we have read all of the input symbols, stop. *)
@@ -154,7 +154,7 @@ let explain_shift_item
         | Symbol.T _ ->
             ()
 
-    ) queue;
+    );
     assert false
   with Done ->
 
@@ -300,7 +300,7 @@ let explain_reduce_item
 
   enqueue None (start, Terminal.equal tok Terminal.sharp, 0);
   try
-    Misc.qiter (function (item, lookahead, offset) as config ->
+    MQueue.repeat queue (function (item, lookahead, offset) as config ->
 
       (* If the item we're looking at is the goal item and if
          we have read all of the input symbols, stop. *)
@@ -339,7 +339,7 @@ let explain_reduce_item
         | Symbol.T _ ->
             ()
 
-    ) queue;
+    );
     assert false
   with Done ->
 

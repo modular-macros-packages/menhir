@@ -62,12 +62,6 @@ val support_assoc : ('a * 'a) list -> 'a -> 'a
 
 val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
 
-(* [qiter f q] repeatedly takes an element [x] off the queue [q] and
-   applies [f] to [x], until [q] becomes empty. Of course, [f] can add
-   elements to [q] as a side-effect. *)
-
-val qiter: ('b -> unit) -> 'b Queue.t -> unit
-
 (* [smap] has the same semantics as [List.map], but attempts to
    physically return the input list when [f] is the identity. *)
 

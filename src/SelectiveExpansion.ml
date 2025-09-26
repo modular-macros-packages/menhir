@@ -211,7 +211,7 @@ let enqueue, repeatedly =
   let enqueue label =
     Queue.add label queue
   and repeatedly visit =
-    Misc.qiter visit queue
+    MQueue.repeat queue visit
   in
   enqueue, repeatedly
 

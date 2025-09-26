@@ -286,7 +286,7 @@ end) = struct
       Queue.add addr waiting
     end;
     (* Process the waiting queue. *)
-    waiting |> Misc.qiter begin fun (addr : address) ->
+    MQueue.repeat waiting begin fun (addr : address) ->
       let label = print addr in
       if not (Label.Map.mem label !cfg) then begin
         (* Generate code for this address. *)
