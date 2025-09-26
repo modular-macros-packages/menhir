@@ -47,12 +47,6 @@ val normalize: string -> string
    so far. *)
 val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
 
-(* If [preferable] is a partial order on elements, then [best preferable xs]
-   returns the best (least) element of [xs], if there is one. Its complexity
-   is quadratic. *)
-
-val best: ('a -> 'a -> bool) -> 'a list -> 'a option
-
 (* [once x y] produces a function [f] which produces [x] the first time it
    is called and produces [y] forever thereafter. *)
 

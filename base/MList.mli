@@ -102,3 +102,8 @@ val merge_uniq : ('a -> 'a -> int) -> 'a list -> 'a list -> 'a list
    The reduction is performed in a balanced fashion.
    For example, [reduce f [a; b; c; d]] is [f (f a b) (f c d)]. *)
 val reduce : 'a -> ('a -> 'a -> 'a) -> 'a list -> 'a
+
+(**If [preferable] is a partial order on elements, then [best preferable xs]
+   returns the best (least) element of [xs], if there is one. Its complexity
+   is quadratic. *)
+val best: ('a -> 'a -> bool) -> 'a list -> 'a option

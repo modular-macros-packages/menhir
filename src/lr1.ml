@@ -1038,7 +1038,7 @@ let extra_reductions_in_node node =
   (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
   let prods = List.filter OnErrorReduce.reduce prods in
   (* Check if one of them is preferable to every other one. *)
-  match Misc.best OnErrorReduce.preferable prods with
+  match MList.best OnErrorReduce.preferable prods with
   | None ->
       (* Either no production is marked [%on_error_reduce], or several of them
          are marked and none is preferable. *)

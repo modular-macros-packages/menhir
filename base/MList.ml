@@ -213,3 +213,31 @@ let rec reduce e f xs =
       x
   | xs ->
       reduce e f xs
+
+let rec best (preferable : 'a -> 'a -> bool) (xs : 'a list) : 'a option =
+  match xs with
+  | [] ->
+      (* Special case: no elements at all, so no best element. This case
+         does not participate in the recursion. *)
+      None
+  | [x] ->
+      Some x
+  | x :: xs ->
+      (* If [x] is preferable to every element of [xs], then it is the
+         best element of [x :: xs]. *)
+      if List.for_all (preferable x) xs then
+        Some x
+      else
+        (* [xs] is nonempty, so the recursive call is permitted. *)
+        match best preferable xs with
+        | Some y ->
+            if preferable y x then
+              (* If [y] is the best element of [xs] and [y] is preferable to
+                 [x], then [y] is the best element of [x :: xs]. *)
+              Some y
+            else
+              (* There is no best element. *)
+              None
+        | None ->
+            (* There is no best element. *)
+            None
