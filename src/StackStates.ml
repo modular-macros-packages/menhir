@@ -202,7 +202,7 @@ let bottom height : property =
 
 let truncate k (v : property) : property =
   assert (k <= Array.length v);
-  MArray.truncate k v
+  MArray.suffix v k
 
 let leq_join (v1 : property) (v2 : property) : property =
   MArray.leq_join Lr1.NodeSet.leq_join v1 v2

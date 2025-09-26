@@ -13,7 +13,7 @@ include Array
 let empty =
   [||]
 
-let last a =
+let[@inline] last a =
   let n = length a in
   assert (n > 0);
   unsafe_get a (n - 1)
@@ -27,16 +27,9 @@ let push a x =
   let n = length a in
   init (n + 1) (fun i -> if i = n then x else a.(i))
 
-let truncate k a =
-  let n = length a in
-  if n <= k then
-    a
-  else
-    sub a (n-k) k
-
 let suffix a k =
-  truncate k a
-    (* TODO keep only one of [truncate] and [suffix] *)
+  let n = length a in
+  if n <= k then a else sub a (n-k) k
 
 let rec equal_segments equal a1 i1 a2 i2 n =
   n = 0 ||
@@ -55,7 +48,7 @@ let rec greatest_suffix_forall p a n k =
 
 let greatest_suffix_forall p a =
   let k = greatest_suffix_forall p a (length a) 0 in
-  truncate k a
+  suffix a k
 
 let rev a =
   let n = length a in
@@ -145,8 +138,8 @@ let rec findi f i arr =
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;
-  assert (truncate 2 [|1; 2; 3; 4|] = [|3; 4|]) ;
-  assert (truncate 4 [|1; 2|] = [|1; 2|]) ;
+  assert (suffix [|1; 2; 3; 4|] 2 = [|3; 4|]) ;
+  assert (suffix [|1; 2|] 4 = [|1; 2|]) ;
   assert (is_suffix (=) [||] [||]) ;
   assert (is_suffix (=) [||] [|0;3;4|]) ;
   assert (is_suffix (=) [|2|] [|0;2|]) ;

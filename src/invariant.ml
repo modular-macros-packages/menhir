@@ -583,7 +583,7 @@ let publish (long : bool) tabulate symbols states =
        states that are not equi-represented. In that case, we truncate
        [symbols] to match [states]. *)
     let k = Array.length states in
-    let symbols = MArray.truncate k symbols in
+    let symbols = MArray.suffix symbols k in
     Array.init k (fun i ->
       let ostates =
         if long || short_states_needed then Some states.(i) else None

@@ -144,7 +144,7 @@ module Long () = struct
 
     (* Given two arrays [v1] and [v2] of lengths [n1] and [n2], the function
        call [lcs v1 v2 n1 n2 (min n1 n2) 0] computes the greatest [k] such
-       that [truncate k v1] and [truncate k v2] are equal. *)
+       that [suffix v1 k] and [suffix v2 k] are equal. *)
 
     let rec lcs v1 v2 n1 n2 n k =
       (* [n] is [min n1 n2]. *)
@@ -158,7 +158,7 @@ module Long () = struct
       let k = lcs v1 v2 n1 n2 n 0 in
       if k = n2 then v2
       else if k = n1 then v1
-      else MArray.truncate k v1
+      else MArray.suffix v1 k
 
   end
 
