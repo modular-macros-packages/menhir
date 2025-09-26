@@ -87,12 +87,13 @@ let structure v =
 
 (* [fresh] creates a fresh variable with specified structure. *)
 
-let fresh =
-  let c = ref 0 in
-  fun structure ->
-    let id = Misc.postincrement c in
-    let mark = Mark.none in
-    UnionFind.fresh { id; structure; mark }
+let fresh : unit -> int =
+  MInt.mkgensym()
+
+let fresh structure : variable =
+  let id = fresh() in
+  let mark = Mark.none in
+  UnionFind.fresh { id; structure; mark }
 
 (* -------------------------------------------------------------------------- *)
 
