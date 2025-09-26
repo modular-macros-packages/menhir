@@ -86,29 +86,6 @@ let group cmp xs =
       let ys1, yss = group1 cmp x1 xs in
       ys1 :: yss
 
-let group_by
-  ~(compare:'a -> 'a -> int)
-  ~(group:'a -> 'a list -> 's)
-  (xs : 'a list) : 's list
-=
-  match List.sort compare xs with
-  | [] ->
-      []
-  | x :: xs ->
-      (* [summaries] is the list of the group summaries obtained so far. *)
-      (* [xs] and [x] form the current group, which is nonempty. *)
-      (* [ys] is the list of elements that remain to be scanned. *)
-      let rec loop summaries xs x ys =
-        match ys with
-        | [] ->
-            group x xs :: summaries
-        | y :: ys ->
-            if compare x y = 0
-            then loop summaries (y :: xs) x ys
-            else loop (group x xs :: summaries) [] y ys
-      in
-      loop [] [] x xs
-
 let rec find_map f = function
   | [] ->
       None

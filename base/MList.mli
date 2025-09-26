@@ -54,18 +54,6 @@ val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
    adjacent equivalent elements. Every group is a nonempty list. *)
 val group: ('a -> 'a -> int) -> 'a list -> 'a list list
 
-(**[group_by ~compare ~group xs] first sorts the list [xs] with respect to the
-   total order [compare], then summarizes each run of equivalent elements
-   using [group]. Thus, the function [group] must map a nonempty list of
-   elements to a summary. The result of [group_by] is a list of summaries.
-
-   The order of the elements of [xs] is not preserved. Elements can be
-   exchanged within a group, and groups can be exchanged. *)
-val group_by :
-  compare:('a -> 'a -> int) ->
-  group:('a -> 'a list -> 'summary) ->
-  'a list -> 'summary list
-
 (**[find_map f xs] applies [f] to the elements of [xs] in order and returns
    the first result of the form [Some y], if there is one. If there is none,
    it returns [None]. *)
