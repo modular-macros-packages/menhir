@@ -24,10 +24,6 @@ val mapd: ('a -> 'b * 'b) -> 'a list -> 'b list
 
 val tabulate: int -> (int -> 'a) -> (int -> 'a)
 
-(* [sum n f] computes the sum [f 0 + f 1 + ... + f (n-1)]. *)
-
-val sum: int -> (int -> int) -> int
-
 (* [with_buffer n f] creates a fresh buffer of size [n], passes it to [f],
    and returns the final content of the buffer. *)
 
@@ -65,36 +61,6 @@ val support_assoc : ('a * 'a) list -> 'a -> 'a
    not included in the explicit list. *)
 
 val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
-
-(* [iteri] implements a [for] loop over integers, from 0 to
-   [n-1]. *)
-
-val iteri:         int -> (int -> unit) -> unit
-val iterij: int -> int -> (int -> unit) -> unit
-
-(* [foldij i j f accu] iterates on the semi-open interval [i, j),
-   with an accumulator. [foldij_lazy i j f accu] is analogous,
-   but is interruptible: if at some point the function [f] does
-   not demand its second argument, then iteration stops early.
-   [foldij] and [foldij_lazy] iterate in the same direction, from
-   left to right, but do not build the accumulator in the same way:
-   the calls to [f] are associated differently. (In that respect,
-   [foldij] is a left fold, while [foldij_lazy] is a right fold.) *)
-
-(* [foldi] implements a [for] loop over integers, from 0 to [n-1],
-   with an accumulator. *)
-
-val foldi:              int -> (int ->          'a  -> 'a) -> 'a -> 'a
-val foldij:      int -> int -> (int ->          'a  -> 'a) -> 'a -> 'a
-val foldij_lazy: int -> int -> (int -> (unit -> 'a) -> 'a) -> 'a -> 'a
-
-(* [mapij start n f] produces the list [ f start; ... f (n-1) ]. *)
-
-val mapij: int -> int -> (int -> 'a) -> 'a list
-
-(* [mapi n f] produces the list [ f 0; ... f (n-1) ]. *)
-
-val mapi: int -> (int -> 'a) -> 'a list
 
 (* [qfold f accu q] repeatedly takes an element [x] off the queue [q]
    and applies [f] to the accumulator and to [x], until [q] becomes

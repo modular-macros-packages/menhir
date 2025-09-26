@@ -25,13 +25,6 @@ let tabulate n f =
   let a = Array.init n f in
   Array.get a
 
-let sum n (f : int -> int) : int =
-  let sum = ref 0 in
-  for x = 0 to n - 1 do
-    sum := !sum + f x
-  done;
-  !sum
-
 let with_buffer n f =
   let b = Buffer.create n in
   f b;
@@ -98,47 +91,6 @@ let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
         x :: loop x
   in
   loop x
-
-(* [iteri] implements a [for] loop over integers, from 0 to
-   [n-1]. *)
-
-let[@inline] iterij i j f =
-  for x = i to j - 1 do
-    f x
-  done
-
-let[@inline] iteri n f =
-  iterij 0 n f
-
-let[@inline] foldij i j f accu =
-  let accu = ref accu in
-  for k = i to j-1 do
-    accu := f k !accu
-  done;
-  !accu
-
-let[@inline] foldi n f accu =
-  foldij 0 n f accu
-
-let rec foldij_lazy i j f accu =
-  if i < j then
-    f i (fun () -> foldij_lazy (i + 1) j f accu)
-  else
-    accu
-
-(* [mapij start n f] produces the list [ f start; ... f (n-1) ]. *)
-
-let mapij start n f =
-  List.rev (
-    foldij start n (fun i accu ->
-      f i :: accu
-    ) []
-  )
-
-(* [mapi n f] produces the list [ f 0; ... f (n-1) ]. *)
-
-let[@inline] mapi n f =
-  mapij 0 n f
 
 (* [qfold f accu q] repeatedly takes an element [x] off the queue [q]
    and applies [f] to the accumulator and to [x], until [q] becomes

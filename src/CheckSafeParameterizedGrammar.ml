@@ -41,7 +41,7 @@ type formal =
 
 let formals (nt, rule) : formal list =
   let arity = List.length rule.pr_parameters in
-  Misc.mapi arity (fun i -> nt, i)
+  MInt.mapi arity (fun i -> nt, i)
 
 let formals : formal array =
   StringMap.bindings g.p_rules

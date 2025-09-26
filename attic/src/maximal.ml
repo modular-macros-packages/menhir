@@ -179,7 +179,7 @@ let start, finish =
   Array.make Lr0.n 0 (* dummy *)
 
 let m =
-  Misc.iteri Lr0.n (fun node ->
+  MInt.iteri Lr0.n (fun node ->
     start.(node) <- current();
     mu node
     |> P.export
@@ -197,7 +197,7 @@ let state : lr1index -> lr1state =
   (* Initialize an array of states. *)
   let state = Array.make m dummy in
   (* Populate this array. *)
-  Misc.iteri Lr0.n (fun node ->
+  MInt.iteri Lr0.n (fun node ->
     mu node
     |> P.export
     |> List.iter (fun s ->
@@ -278,7 +278,7 @@ let rrc_tokens (state : lr1state) : TerminalSet.t =
    conflict in the maximal automaton. *)
 
 let max_rrc_tokens (node : Lr0.node) : TerminalSet.t =
-  Misc.foldij start.(node) finish.(node) (fun i toks ->
+  MInt.foldij start.(node) finish.(node) (fun i toks ->
     TerminalSet.union
       (rrc_tokens (state i))
       toks
@@ -294,7 +294,7 @@ let max_rrc_tokens : Lr0.node -> TerminalSet.t =
    core is [node]. *)
 
 let max_eos_conflict (node : Lr0.node) : bool =
-  Misc.foldij start.(node) finish.(node) (fun i accu ->
+  MInt.foldij start.(node) finish.(node) (fun i accu ->
     accu || Lr0.has_eos_conflict_lr1state (state i)
   ) false
 
@@ -355,7 +355,7 @@ let weight : Lr0.node -> int =
         f target
       ) (Lr0.outgoing_edges node)
     let iter f =
-      Misc.iteri Lr0.n f
+      MInt.iteri Lr0.n f
   end) in
   (* Traverse the tree of the strongly connected components, assigning
      an integer weight to each component. The weight of a component is
@@ -442,7 +442,7 @@ let _transition : int array =
     (* This array is used below to tabulate the transition function. *)
 
 let () =
-  Misc.iteri Lr0.n (fun node ->
+  MInt.iteri Lr0.n (fun node ->
     let start = start.(node)
     and finish = finish.(node) in
     for i = start to finish - 1 do
@@ -547,7 +547,7 @@ let (next : unit -> node), (current : unit -> node) =
 (* The numbering pass. *)
 
 let n =
-  Misc.iteri Lr0.n (fun node ->
+  MInt.iteri Lr0.n (fun node ->
     let start = start.(node)
     and finish = finish.(node) in
     for i = start to finish - 1 do
@@ -586,7 +586,7 @@ let state : node -> lr1state =
   (* Allocate an array of options. *)
   let state_ : lr1state option array = Array.make n None in
   (* Populate this array. *)
-  Misc.iteri m (fun i ->
+  MInt.iteri m (fun i ->
     let s = representative.(i) in
     state_.(s) <- Some (
       match state_.(s) with
@@ -614,7 +614,7 @@ let transitions : node -> node SymbolMap.t =
   (* Allocate an array of options. *)
   let transitions_ : node SymbolMap.t option array = Array.make n None in
   (* Populate this array. *)
-  Misc.iteri m (fun i ->
+  MInt.iteri m (fun i ->
     let s = representative.(i) in
     match transitions_.(s) with
     | Some _ ->

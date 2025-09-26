@@ -135,7 +135,7 @@ module N =
   (* This yields [N.encode : lr1state -> node]. *)
 
 let () =
-  Misc.iteri Lr0.n (fun c ->
+  MInt.iteri Lr0.n (fun c ->
     P.iter (fun s -> ignore (N.encode s)) (mu c)
   )
 

@@ -621,7 +621,7 @@ let tabulate (f : node -> 'a) =
   Misc.tabulate n f
 
 let sum (f : node -> int) =
-  Misc.sum n f
+  MInt.sum n f
 
 (* -------------------------------------------------------------------------- *)
 

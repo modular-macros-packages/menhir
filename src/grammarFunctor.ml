@@ -153,22 +153,22 @@ module Nonterminal = struct
     Array.init n f
 
   let[@inline] iter f =
-    Misc.iteri n f
+    MInt.iteri n f
 
   let[@inline] fold f accu =
-    Misc.foldi n f accu
+    MInt.foldi n f accu
 
   let[@inline] map f =
-    Misc.mapi n f
+    MInt.mapi n f
 
   let[@inline] iterx f =
-    Misc.iterij start n f
+    MInt.iterij start n f
 
   let[@inline] foldx f accu =
-    Misc.foldij start n f accu
+    MInt.foldij start n f accu
 
   let[@inline] mapx f =
-    Misc.mapij start n f
+    MInt.mapij start n f
 
   let ocamltype nt =
     assert (not (is_internal_start nt));
@@ -328,29 +328,29 @@ module Terminal = struct
     Array.init n f
 
   let[@inline] iter f =
-    Misc.iteri n f
+    MInt.iteri n f
 
   let[@inline] fold f accu =
-    Misc.foldi n f accu
+    MInt.foldi n f accu
 
   let[@inline] map f =
-    Misc.mapi n f
+    MInt.mapi n f
 
   let () =
     assert (sharp = n - 1)
   let[@inline] foldx f accu =
-    Misc.foldi sharp f accu
+    MInt.foldi sharp f accu
   let[@inline] mapx f =
-    Misc.mapi sharp f
+    MInt.mapi sharp f
 
   let () =
     assert (error = 0)
   let[@inline] iter_real f =
-    Misc.iterij 1 sharp f
+    MInt.iterij 1 sharp f
   let[@inline] fold_real f accu =
-    Misc.foldij 1 sharp f accu
+    MInt.foldij 1 sharp f accu
   let[@inline] map_real f =
-    Misc.mapij 1 sharp f
+    MInt.mapij 1 sharp f
 
   let tokens_without_an_alias =
     let accu = ref [] in
@@ -789,19 +789,19 @@ module Production = struct
 
   let[@inline] iternt nt f =
     let k, k' = ntprods.(nt) in
-    Misc.iterij k k' f
+    MInt.iterij k k' f
 
   let[@inline] foldnt nt f accu =
     let k, k' = ntprods.(nt) in
-    Misc.foldij k k' f accu
+    MInt.foldij k k' f accu
 
   let[@inline] mapnt nt f =
     let k, k' = ntprods.(nt) in
-    Misc.mapij k k' f
+    MInt.mapij k k' f
 
   let foldnt_lazy nt f accu =
     let k, k' = ntprods.(nt) in
-    Misc.foldij_lazy k k' f accu
+    MInt.foldij_lazy k k' f accu
 
   (* Accessors. *)
 
@@ -868,25 +868,25 @@ module Production = struct
     Array.init n f
 
   let[@inline] iter f =
-    Misc.iteri n f
+    MInt.iteri n f
 
   let[@inline] fold f accu =
-    Misc.foldi n f accu
+    MInt.foldi n f accu
 
   let[@inline] map f =
-    Misc.mapi n f
+    MInt.mapi n f
 
   let[@inline] amap f =
     Array.init n f
 
   let[@inline] iterx f =
-    Misc.iterij start n f
+    MInt.iterij start n f
 
   let[@inline] foldx f accu =
-    Misc.foldij start n f accu
+    MInt.foldij start n f accu
 
   let[@inline] mapx f =
-    Misc.mapij start n f
+    MInt.mapij start n f
 
   (* Printing a production. *)
 
@@ -917,7 +917,7 @@ module Production = struct
     Misc.tabulate n f
 
   let[@inline] sum f =
-    Misc.sum n f
+    MInt.sum n f
 
   (* This array allows recording, for each %prec declaration, whether it is
      ever useful. This allows us to emit a warning about useless %prec
@@ -1021,7 +1021,7 @@ module ProductionMap = struct
   (* Iteration over the start productions only. *)
 
   let[@inline] start f =
-    Misc.foldi Production.start (fun prod m ->
+    MInt.foldi Production.start (fun prod m ->
       add prod (f prod) m
     ) empty
 
