@@ -62,12 +62,6 @@ val support_assoc : ('a * 'a) list -> 'a -> 'a
 
 val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
 
-(* [qfold f accu q] repeatedly takes an element [x] off the queue [q]
-   and applies [f] to the accumulator and to [x], until [q] becomes
-   empty. Of course, [f] can add elements to [q] as a side-effect. *)
-
-val qfold: ('a -> 'b -> 'a) -> 'a -> 'b Queue.t -> 'a
-
 (* [qiter f q] repeatedly takes an element [x] off the queue [q] and
    applies [f] to [x], until [q] becomes empty. Of course, [f] can add
    elements to [q] as a side-effect. *)

@@ -1046,8 +1046,8 @@ let in_degree program =
     degree := Label.Map.add label (d + delta) !degree
   in
 
-  (* [visit () label] examines the block at address [label]. *)
-  let visit () label =
+  (* [visit label] examines the block at address [label]. *)
+  let visit label =
     (lookup program label).block
     |> Block.jumps tick
   in
@@ -1060,8 +1060,12 @@ let in_degree program =
     degree := Label.Map.add label 2 !degree
   );
 
-  (* Process the queue until it  becomes empty. Return the final table. *)
-  Misc.qfold visit () queue;
+  (* Process the queue until it becomes empty. Return the final table. *)
+  while not (Queue.is_empty queue) do
+    let label = Queue.take queue in
+    visit label
+  done;
+
   !degree
 
 (* -------------------------------------------------------------------------- *)
