@@ -71,10 +71,10 @@ let rev_of_list xs =
       List.iteri (fun i x -> r.(n - i - 2) <- x) xs ;
       r
 
-let rev_to_list a =
+let[@inline] rev_to_list a =
   fold_left (fun xs x -> x :: xs) [] a
 
-let iter_rev f a =
+let[@inline] iter_rev f a =
   for i = length a - 1 downto 0 do
     f a.(i)
   done
