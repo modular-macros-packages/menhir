@@ -160,8 +160,9 @@ let domain =
 let data : (Nonterminal.t * Word.t * ReferenceInterpreter.target) list ref =
   ref []
 
-(* The set [reachable] stores every reachable state (regardless of whether an
-   error can be triggered in that state). *)
+(* The set [reachable] counts all reachable LR(1) states (not just those where
+   an error can be triggered). It is used only to print an information message
+   and could be removed if desired. *)
 
 let reachable =
   ref Lr1.NodeSet.empty
