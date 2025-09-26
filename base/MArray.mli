@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(** This module is an extension of Stdlib.Array *)
+(** This module is an extension of [Stdlib.Array]. *)
 
 include module type of Array
 
