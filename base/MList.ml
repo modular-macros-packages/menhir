@@ -67,6 +67,25 @@ let leq_join leq_join xs1 xs2 =
     (* The lists have different lengths. *)
     assert false
 
+let rec group1 cmp x1 xs =
+  match xs with
+  | [] ->
+      [x1], []
+  | x2 :: xs ->
+      let ys1, yss = group1 cmp x2 xs in
+      if cmp x1 x2 = 0 then
+        x1 :: ys1, yss
+      else
+        [x1], ys1 :: yss
+
+let group cmp xs =
+  match List.sort cmp xs with
+  | [] ->
+      []
+  | x1 :: xs ->
+      let ys1, yss = group1 cmp x1 xs in
+      ys1 :: yss
+
 let group_by
   ~(compare:'a -> 'a -> int)
   ~(group:'a -> 'a list -> 's)

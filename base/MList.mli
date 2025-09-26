@@ -49,6 +49,11 @@ val take : int -> 'a list -> 'a list
    [Fix.MINIMAL_SEMI_LATTICE]. *)
 val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
 
+(**[group cmp xs] first sorts the list [xs] with respect to the ordering
+   [cmp], then returns a list of groups, where each group is a maximal run of
+   adjacent equivalent elements. Every group is a nonempty list. *)
+val group: ('a -> 'a -> int) -> 'a list -> 'a list list
+
 (**[group_by ~compare ~group xs] first sorts the list [xs] with respect to the
    total order [compare], then summarizes each run of equivalent elements
    using [group]. Thus, the function [group] must map a nonempty list of

@@ -278,9 +278,7 @@ let print_tokens f g =
   ) g.tokens;
   (* Sort the tokens wrt. precedence, and group them into levels. *)
   let levels : (string * token_properties) list list =
-    Misc.levels compare_tokens (List.sort compare_tokens (
-      StringMap.bindings g.tokens
-    ))
+    MList.group compare_tokens (StringMap.bindings g.tokens)
   in
   (* Print the precedence declarations: %left, %right, %nonassoc. *)
   List.iter (fun level ->
@@ -387,9 +385,7 @@ let print_on_error_reduce_declarations f g =
     compare_branch_production_levels oel oel'
   in
   let levels : (string * on_error_reduce_level) list list =
-    Misc.levels cmp (List.sort cmp (
-      StringMap.bindings g.on_error_reduce
-    ))
+    MList.group cmp (StringMap.bindings g.on_error_reduce)
   in
   List.iter (fun level ->
     fprintf f "%%on_error_reduce";
