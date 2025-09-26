@@ -34,13 +34,6 @@ val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
 val preceded_list_to_string: ('a -> string) -> string -> 'a list -> string
 val preceded_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
-(* If [a] is an array, therefore a mapping of integers to elements, then
-   [inverse a] computes its inverse, a mapping of elements to integers.
-   The type ['a] of elements must support the use of OCaml's generic
-   equality and hashing functions. *)
-
-val inverse: 'a array -> ('a -> int)
-
 (* [support_assoc l x] returns the second component of the first couple
    in [l] whose first component is [x]. If it does not exist, it returns
    [x]. *)

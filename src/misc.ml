@@ -48,18 +48,6 @@ let preceded_iter_to_string printer del iter =
 let preceded_list_to_string printer del xs =
   preceded_iter_to_string printer del (fun f -> List.iter f xs)
 
-let inverse (a : 'a array) : 'a -> int =
-  let table = Hashtbl.create (Array.length a) in
-  Array.iteri (fun i data ->
-    assert (not (Hashtbl.mem table data));
-    Hashtbl.add table data i
-  ) a;
-  fun data ->
-    try
-      Hashtbl.find table data
-    with Not_found ->
-      assert false
-
 let support_assoc l x =
   try
     List.assoc x l

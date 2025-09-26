@@ -188,7 +188,7 @@ let successors f (formal : formal) =
 module G = struct
   type node = formal
   let n = Array.length formals
-  let index = Misc.inverse formals
+  let index = MArray.inverse formals
   let successors f = successors (fun _ target -> f target)
   let iter f = Array.iter f formals
 end

@@ -135,6 +135,18 @@ let rec findi f i arr =
   else
     findi f (i + 1) arr
 
+let inverse (a : 'a array) : 'a -> int =
+  let table = Hashtbl.create (Array.length a) in
+  Array.iteri (fun i data ->
+    assert (not (Hashtbl.mem table data));
+    Hashtbl.add table data i
+  ) a;
+  fun data ->
+    try
+      Hashtbl.find table data
+    with Not_found ->
+      assert false
+
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;

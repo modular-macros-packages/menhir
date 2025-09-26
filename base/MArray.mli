@@ -88,5 +88,11 @@ val leq_join : ('a -> 'b -> 'b) -> 'a array -> 'b array -> 'b array
     raise [Not_found]. *)
 val findi : (int -> 'a -> bool) -> int -> 'a array -> int
 
+(**If the array [a] represents an injective mapping of integers to elements
+   then [inverse a] computes its inverse, a mapping of elements to integers.
+   The type of elements must support OCaml's generic equality and hashing
+   functions. *)
+val inverse: 'a array -> ('a -> int)
+
 (** Unit tests. *)
 val test : unit -> unit
