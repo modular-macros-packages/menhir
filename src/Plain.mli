@@ -68,13 +68,18 @@ val is_empty: 'a t -> bool
    Time complexity: {m O(1)}. *)
 val cardinal: 'a t -> int
 
-(**[repeat q f] repeatedly extracts an element with minimum priority out of [q]
-   and passes it to [f] (which may insert new elements into [q]), until [q] is
-   exhausted.
+(**[repeat q yield] repeatedly extracts an element with minimum priority out
+   of [q] and passes it to [yield] (which may insert new elements into [q]),
+   until [q] is exhausted.
 
    Time complexity: the total cost of {m n} calls to {!extract} and {m n}
-   invocations of the function [f]. *)
+   invocations of the function [yield]. *)
 val repeat: 'a t -> ('a -> unit) -> unit
+
+(**[iter q yield] enumerates the elements of the queue [q], by increasing
+   order of priority, by passing them to the function [yield]. This function
+   must not modify the queue [q]. *)
+val iter: 'a t -> ('a -> unit) -> unit
 
 (**[reset q] empties the queue [q], freeing up the space that the queue
    occupies in memory. The queue [q] becomes identical to a queue that
