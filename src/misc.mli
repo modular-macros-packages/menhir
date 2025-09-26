@@ -34,12 +34,6 @@ val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
 val preceded_list_to_string: ('a -> string) -> string -> 'a list -> string
 val preceded_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
-(* [support_assoc l x] returns the second component of the first couple
-   in [l] whose first component is [x]. If it does not exist, it returns
-   [x]. *)
-
-val support_assoc : ('a * 'a) list -> 'a -> 'a
-
 (* Turning an implicit list, stored using pointers through a hash
    table, into an explicit list. The head of the implicit list is
    not included in the explicit list. *)

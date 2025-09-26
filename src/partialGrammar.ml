@@ -172,10 +172,13 @@ let identity_renaming =
   []
 
 let rewrite_nonterminal (phi : renaming) nonterminal =
-  Misc.support_assoc phi nonterminal
+  try
+    List.assoc nonterminal phi
+  with Not_found ->
+    nonterminal
 
 let rewrite_parameter phi parameter =
-  Parameters.map (Positions.map (Misc.support_assoc phi)) parameter
+  Parameters.map (Positions.map (rewrite_nonterminal phi)) parameter
 
 let rewrite_producer phi ((ido, parameter, attrs) : producer) =
   ido, rewrite_parameter phi parameter, attrs
@@ -219,7 +222,7 @@ let alphaconvert_rule parameters prule =
     List.combine parameters (List.map (fun x -> fresh ~hint:x ()) parameters)
   in
     { prule with
-        pr_parameters  = List.map (Misc.support_assoc phi) prule.pr_parameters;
+        pr_parameters  = List.map (rewrite_nonterminal phi) prule.pr_parameters;
         pr_branches    = rewrite_branches phi prule.pr_branches
     }
 

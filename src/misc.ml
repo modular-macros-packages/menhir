@@ -48,11 +48,6 @@ let preceded_iter_to_string printer del iter =
 let preceded_list_to_string printer del xs =
   preceded_iter_to_string printer del (fun f -> List.iter f xs)
 
-let support_assoc l x =
-  try
-    List.assoc x l
-  with Not_found -> x
-
 (* Turning an implicit list, stored using pointers through a hash
    table, into an explicit list. The head of the implicit list is
    not included in the explicit list. *)
