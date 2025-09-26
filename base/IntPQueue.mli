@@ -1,16 +1,4 @@
 module Plain : sig
-(******************************************************************************)
-(*                                                                            *)
-(*                                  IntPQueue                                 *)
-(*                                                                            *)
-(*                       François Pottier, Inria Paris                        *)
-(*                                                                            *)
-(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
-(*       distributed under the terms of the GNU Library General Public        *)
-(*       License, with an exception, as described in the file LICENSE.        *)
-(*                                                                            *)
-(******************************************************************************)
-
 (**This is a priority queue whose keys are {i low} nonnegative integers. *)
 
 (**This queue is optimized for throughput, that is, speed. When an element
@@ -95,18 +83,6 @@ val reset: 'a t -> unit
 val check : 'a t -> unit
 end
 module Boxed : sig
-(******************************************************************************)
-(*                                                                            *)
-(*                                  IntPQueue                                 *)
-(*                                                                            *)
-(*                       François Pottier, Inria Paris                        *)
-(*                                                                            *)
-(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
-(*       distributed under the terms of the GNU Library General Public        *)
-(*       License, with an exception, as described in the file LICENSE.        *)
-(*                                                                            *)
-(******************************************************************************)
-
 (**This is a priority queue whose keys are {i low} nonnegative integers.
    It supports removing or updating the priority of a specific element of
    the queue. *)

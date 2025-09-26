@@ -1,16 +1,14 @@
-module Plain = struct
 (******************************************************************************)
 (*                                                                            *)
-(*                                  IntPQueue                                 *)
+(*                                    Menhir                                  *)
 (*                                                                            *)
-(*                       François Pottier, Inria Paris                        *)
-(*                                                                            *)
-(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
-(*       distributed under the terms of the GNU Library General Public        *)
-(*       License, with an exception, as described in the file LICENSE.        *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
 (*                                                                            *)
 (******************************************************************************)
 
+module Plain = struct
 let fail format =
   Printf.ksprintf invalid_arg format
 
@@ -191,18 +189,6 @@ let iter q yield =
   done
 end
 module Boxed = struct
-(******************************************************************************)
-(*                                                                            *)
-(*                                  IntPQueue                                 *)
-(*                                                                            *)
-(*                       François Pottier, Inria Paris                        *)
-(*                                                                            *)
-(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
-(*       distributed under the terms of the GNU Library General Public        *)
-(*       License, with an exception, as described in the file LICENSE.        *)
-(*                                                                            *)
-(******************************************************************************)
-
 (* This is a variant of IntPQueue, which supports changing the priority of
    an element while it is in the queue, testing whether an element is in
    the queue, and removing an element from the queue. To this end, instead
