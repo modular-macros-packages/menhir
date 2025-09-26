@@ -281,6 +281,8 @@ FIND            := $(shell if command -v gfind >/dev/null ; then echo gfind ; el
 
 .PHONY: headache
 headache:
+	@ cd base && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
+	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ cd src && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ cd sdk && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
