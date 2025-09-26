@@ -49,6 +49,38 @@ open Grammar
 
 (* -------------------------------------------------------------------------- *)
 
+(* Suppose [ys] is a list of elements that are pairwise incomparable
+   with respect to the partial order [<=], and [x] is a new element.
+   Then, [insert (<=) x ys] is the list obtained by inserting [x] and
+   removing any non-maximal elements; so it is again a list of pairwise
+   incomparable elements. *)
+
+let insert (<=) x ys =
+  (* If [x] is subsumed by some element [y] of [ys], then there is nothing
+     to do. In particular, no element [y] of [ys] can be subsumed by [x],
+     since the elements of [ys] are pairwise incomparable. *)
+  if List.exists (fun y -> x <= y) ys then
+    ys
+  (* Or [x] must be inserted, and any element [y] of [ys] that is subsumed
+     by [x] must be removed. *)
+  else
+    x :: List.filter (fun y -> not (y <= x)) ys
+
+(* Suppose [xs] is an arbitrary list of elements. Then [trim (<=) xs] is the
+   sublist of the elements of [xs] that are maximal with respect to the
+   partial order [<=]. In other words, it is a sublist where every element
+   that is less than some other element has been removed. *)
+
+(* One might wish to define [trim] using [List.filter] to keep just the
+   maximal elements, but it is not so easy to say "keep an element only
+   if it is not subsumed by some *other* element of the list". Instead,
+   we iterate [insert]. *)
+
+let trim (<=) xs =
+  List.fold_right (insert (<=)) xs []
+
+(* -------------------------------------------------------------------------- *)
+
 (* A property is an irredundant set of core-compatible LR(1) states. In fact,
    for each LR(0) core [c], we have a different space of properties, namely
    the irredundant sets of LR(1) states whose core is [c]. *)
@@ -93,7 +125,7 @@ module P = struct
     Lr0.error_compatible s1 s2
 
   let trim p =
-    Misc.trim subsume p
+    trim subsume p
 
   (* A list of LR(1) states is sorted as follows. (A fixed, arbitrary total
      order is used.) *)
