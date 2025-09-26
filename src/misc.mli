@@ -8,15 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* Projection out of a singleton list. *)
-
-val single: 'a list -> 'a
-
-(* A variant of [List.map] where [f] returns a pair of elements,
-   to be flattened into the new list. *)
-
-val mapd: ('a -> 'b * 'b) -> 'a list -> 'b list
-
 (* Tabulating a function using an internal array. [tabulate n f]
    returns a function that is extensionally equal to [f], but relies
    on an internal array. Arguments to [f] are of type [int] and are

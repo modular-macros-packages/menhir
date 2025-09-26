@@ -238,7 +238,7 @@ and map_casetok env r branches odefault =
      [case] construct is redundant and can be removed. *)
   begin try
     if not (dead_default && List.length branches = 1) then raise Break;
-    let branch = Misc.single branches in
+    let branch = MList.single branches in
     let tokpat, block = branch in
     if not (no_assigns tokpat) then raise Break;
     (* Keep only the live branch. *)

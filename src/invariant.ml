@@ -769,7 +769,7 @@ module G = struct
           yield (Run node') origin
         end;
         Lr1.reductions node |> TerminalMap.iter begin fun _tok prods ->
-          let prod = Misc.single prods in
+          let prod = MList.single prods in
           yield (Reduce prod) origin
         end
     | Reduce prod ->

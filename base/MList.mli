@@ -12,10 +12,11 @@
 
 include module type of List
 
+(**If [xs] is a singleton list then [single xs] is its single element. *)
+val single: 'a list -> 'a
+
 (**An alias for [List.init], when it exists. *)
 val init : int -> (int -> 'a) -> 'a list
-
-(* Conditionals in list construction expressions. *)
 
 (**[ifn c xs] constructs the list [if c then xs else []]. Be careful: the
    expression [xs] is evaluated even if the condition [c] is false. *)

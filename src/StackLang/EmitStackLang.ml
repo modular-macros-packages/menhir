@@ -543,7 +543,7 @@ and run_error_dispatch s =
 
   match TerminalMap.lookup tok (Lr1.reductions s) with
   | prods ->
-      let prod = Misc.single prods in
+      let prod = MList.single prods in
 
       (* There is a reduce transition on error. Invoke [reduce prod], still in
          error-handling mode. Note that [reduce] can invoke [goto] which can

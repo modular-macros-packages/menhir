@@ -311,7 +311,7 @@ module Run () = struct
               fprintf f "    | %s => Shift_act %s (eq_refl _)\n" (print_term t) (print_nis target)
             with Not_found ->
               try
-                let prod = Misc.single (TerminalMap.find t (Lr1.reductions node)) in
+                let prod = MList.single (TerminalMap.find t (Lr1.reductions node)) in
                 fprintf f "    | %s => Reduce_act %s\n" (print_term t) (print_prod prod)
               with Not_found -> has_fail := true);
           if !has_fail then

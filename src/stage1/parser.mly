@@ -104,8 +104,10 @@ declaration:
 
 | START OCAMLTYPE nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
-    { Misc.mapd (fun ntloc ->
-        Positions.mapd (fun nt -> DStart nt, DType ($2, ParameterVar ntloc)) ntloc) $3 }
+    { let dstart nt = DStart nt
+      and dtype ntloc = Positions.map (fun _nt -> DType ($2, ParameterVar ntloc)) ntloc in (* ugly/weird *)
+      List.map (Positions.map dstart) $3 @
+      List.map dtype $3 }
 
 | priority_keyword symbols
     { let prec = ParserAux.new_precedence_level (rhs_start_pos 1, rhs_end_pos 1) in

@@ -49,9 +49,6 @@ val pmap: (t -> 'a -> 'b) -> 'a located -> 'b located
 (** [iter f dv] applies [f] to the value inside [dv]. *)
 val iter: ('a -> unit) -> 'a located -> unit
 
-(** [mapd f v] extends the decoration from [v] to both members of the pair [f v]. *)
-val mapd: ('a -> 'b1 * 'b2) -> 'a located -> 'b1 located * 'b2 located
-
 (** This value is used when an object does not come from
     a particular input location. *)
 val dummy: t

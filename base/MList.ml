@@ -10,6 +10,13 @@
 
 include List
 
+let single xs =
+  match xs with
+  | [ x ] ->
+      x
+  | _ ->
+      assert false
+
 let rec init_aux i n f =
   if n <= i then
     []

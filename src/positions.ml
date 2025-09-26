@@ -55,12 +55,6 @@ let pmap f v =
 let iter f { value = v } =
   f v
 
-let mapd f v =
-  let w1, w2 = f v.value in
-  let pos = v.position in
-  { value = w1; position = pos },
-  { value = w2; position = pos }
-
 let dummy =
   (dummy_pos, dummy_pos)
 

@@ -88,7 +88,7 @@ module T = struct
     with Not_found ->
       try
 
-        let prod = Misc.single (TerminalMap.find tok (Lr1.reductions s)) in
+        let prod = MList.single (TerminalMap.find tok (Lr1.reductions s)) in
         reduce env prod
 
       (* There is no reduction either. Fail. *)
@@ -109,7 +109,7 @@ module T = struct
         prod = prod'
     | None ->
         try
-          let prod' = Misc.single (TerminalMap.find tok (Lr1.reductions s)) in
+          let prod' = MList.single (TerminalMap.find tok (Lr1.reductions s)) in
           prod = prod'
         with Not_found ->
           false

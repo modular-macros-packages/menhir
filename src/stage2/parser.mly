@@ -204,8 +204,10 @@ declaration:
       | None ->
           List.map (Positions.map (fun nonterminal -> DStart nonterminal)) nts
       | Some t ->
-          Misc.mapd (fun ntloc ->
-            Positions.mapd (fun nt -> DStart nt, DType (t, ParameterVar ntloc)) ntloc) nts
+         let dstart nt = DStart nt
+         and dtype ntloc = Positions.map (fun _nt -> DType (t, ParameterVar ntloc)) ntloc in (* ugly/weird *)
+         List.map (Positions.map dstart) nts @
+         List.map dtype nts
     }
 
 | TYPE t = OCAMLTYPE ss = clist(strict_actual)

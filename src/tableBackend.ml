@@ -512,7 +512,7 @@ let action node t =
 
           (* [node] has a reduction. *)
 
-          let prod = Misc.single (TerminalMap.find t (Lr1.reductions node)) in
+          let prod = MList.single (TerminalMap.find t (Lr1.reductions node)) in
           encode_Reduce prod
 
         with Not_found ->

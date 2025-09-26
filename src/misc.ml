@@ -8,19 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let single = function
-  | [ x ] ->
-      x
-  | _ ->
-      assert false
-
-let rec mapd f = function
-  | [] ->
-      []
-  | x :: xs ->
-      let y1, y2 = f x in
-      y1 :: y2 :: mapd f xs
-
 let tabulate n f =
   let a = Array.init n f in
   Array.get a

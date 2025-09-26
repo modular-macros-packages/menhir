@@ -795,7 +795,7 @@ let initialize_production_where () =
   production_where := Some (
     fold (fun accu node ->
       TerminalMap.fold (fun _ prods accu ->
-        let prod = Misc.single prods in
+        let prod = MList.single prods in
         let nodes =
           try
             ProductionMap.lookup prod accu
