@@ -48,20 +48,6 @@ let preceded_iter_to_string printer del iter =
 let preceded_list_to_string printer del xs =
   preceded_iter_to_string printer del (fun f -> List.iter f xs)
 
-(* Turning an implicit list, stored using pointers through a hash
-   table, into an explicit list. The head of the implicit list is
-   not included in the explicit list. *)
-
-let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
-  let rec loop x =
-    match Hashtbl.find table x with
-    | None ->
-        []
-    | Some x ->
-        x :: loop x
-  in
-  loop x
-
 let normalize s =
   let s = Bytes.of_string s in
   let n = Bytes.length s in

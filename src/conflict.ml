@@ -30,6 +30,22 @@ let () =
     D.dump (Settings.base ^ ".automaton")
 
 (* -------------------------------------------------------------------------- *)
+
+(* [materialize table x] turns an implicit list, stored using pointers through
+   the hash table [table], into an explicit list. The head [x] of the implicit
+   list is not included in the explicit list. *)
+
+let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
+  let rec loop x =
+    match Hashtbl.find table x with
+    | None ->
+        []
+    | Some x ->
+        x :: loop x
+  in
+  loop x
+
+(* -------------------------------------------------------------------------- *)
 (* Explaining shift actions. *)
 
 (* The existence of a shift action stems from the existence of a shift
@@ -161,7 +177,7 @@ let explain_shift_item
     (* We have found a (shortest) path from the start configuration to
        the goal configuration. Turn it into an explicit derivation. *)
 
-    let configs = Misc.materialize table (stop, n) in
+    let configs = materialize table (stop, n) in
     let _, _, rhs, pos, _ = Item.def stop in
     let derivation = Derivation.tail pos rhs in
     let derivation = follow derivation n configs in
@@ -346,7 +362,7 @@ let explain_reduce_item
     (* We have found a (shortest) path from the start configuration to
        the goal configuration. Turn it into an explicit derivation. *)
 
-    let configs = Misc.materialize table (stop, true, n) in
+    let configs = materialize table (stop, true, n) in
     let derivation = Derivation.empty in
     let derivation = follow1 tok derivation n configs in
     derivation

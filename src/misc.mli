@@ -34,12 +34,6 @@ val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
 val preceded_list_to_string: ('a -> string) -> string -> 'a list -> string
 val preceded_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
-(* Turning an implicit list, stored using pointers through a hash
-   table, into an explicit list. The head of the implicit list is
-   not included in the explicit list. *)
-
-val materialize: ('a, 'a option) Hashtbl.t -> 'a -> 'a list
-
 (* [normalize s] returns a copy of [s] where parentheses and commas
    are replaced with underscores. *)
 
