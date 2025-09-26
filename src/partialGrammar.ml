@@ -701,11 +701,12 @@ let check_parameterized_grammar_is_well_defined grammar =
 
          (* The formal parameters of each rule must have distinct names. *)
          prule.pr_parameters
-           |> List.sort compare
-           |> Misc.dup compare
-           |> Option.iter (fun x ->
-                Error.error prule.pr_positions
-                  "several parameters of this rule are named \"%s\"." x
+           |> MList.group compare
+           |> List.iter (fun xs ->
+               if List.length xs > 1 then
+                 let x = List.hd xs in
+                 Error.error prule.pr_positions
+                   "several parameters of this rule are named \"%s\"." x
               );
 
          (* Check each branch. *)

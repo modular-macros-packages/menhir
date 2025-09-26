@@ -124,23 +124,6 @@ let rec best (preferable : 'a -> 'a -> bool) (xs : 'a list) : 'a option =
             (* There is no best element. *)
             None
 
-let rec dup1 cmp x ys =
-  match ys with
-  | [] ->
-      None
-  | y :: ys ->
-      if cmp x y = 0 then
-        Some x
-      else
-        dup1 cmp y ys
-
-let dup cmp xs =
-  match xs with
-  | [] ->
-      None
-  | x :: xs ->
-      dup1 cmp x xs
-
 let once x y =
   let s = ref x in
   fun () ->
