@@ -8,12 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let defined = function
-  | None ->
-      false
-  | Some _ ->
-      true
-
 let map f = function
   | None ->
       None
@@ -39,13 +33,6 @@ let force = function
       x
   | None ->
       assert false
-
-let project = function
-  | Some x ->
-      x
-  | None ->
-      (* Presumably, an error message has already been printed. *)
-      exit 1
 
 let equal equal o1 o2 =
   match o1, o2 with
@@ -96,10 +83,3 @@ let split o =
       None, None
   | Some (x, x') ->
       Some x, Some x'
-
-let elements o =
-  match o with
-  | None ->
-      []
-  | Some x ->
-      [x]

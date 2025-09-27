@@ -32,9 +32,9 @@ val with_file: string -> (unit -> unit) -> (unit -> 'a) -> 'a
 
 val exhaust: in_channel -> string
 
-(* [invoke command] invokes an external command (which expects no input)
-   and returns its output, if the command succeeds. It returns [None] if
-   the command fails. *)
+(* [invoke command] invokes an external command (which expects no input).
+   If the command succeeds, its output is returned. Otherwise, [None] is
+   returned. *)
 
 val invoke: string -> string option
 
@@ -42,4 +42,3 @@ val invoke: string -> string option
    returns its contents as a string. *)
 
 val read_whole_file: string -> string
-

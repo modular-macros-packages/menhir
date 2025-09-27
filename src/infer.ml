@@ -16,6 +16,18 @@ open CodeBits
 open TokenType
 
 (* ------------------------------------------------------------------------- *)
+
+(* [invoke command] invokes an external command (which expects no input)
+   and returns its output. If the command fails, we exit abruptly. *)
+
+let invoke (command : string) : string =
+  match IO.invoke command with
+  | Some output ->
+      output
+  | None ->
+      exit 1
+
+(* ------------------------------------------------------------------------- *)
 (* Naming conventions. *)
 
 (* The type variable associated with a nonterminal symbol. Its name begins
@@ -300,13 +312,11 @@ let depend postprocess grammar =
   in
 
   let output : string =
-    Option.project (
-      IO.moving_away mlname (fun () ->
-      IO.moving_away mliname (fun () ->
-      IO.with_file mlname (write grammar mlname) (fun () ->
-      IO.with_file mliname (Interface.write grammar) (fun () ->
-      IO.invoke ocamldep_command
-    )))))
+    IO.moving_away mlname @@ fun () ->
+    IO.moving_away mliname @@ fun () ->
+    IO.with_file mlname (write grammar mlname) @@ fun () ->
+    IO.with_file mliname (Interface.write grammar) @@ fun () ->
+    invoke ocamldep_command
   in
 
   (* Echo ocamldep's output. *)
@@ -416,14 +426,11 @@ let infer grammar =
 
   let output =
     write grammar mlname ();
-    match IO.invoke ocamlc_command with
-    | Some result ->
-        Sys.remove mlname;
-        result
-    | None ->
-        (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
-           fails. (Or if an exception is thrown.) *)
-        exit 1
+    let result = invoke ocamlc_command in
+    (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
+       fails. (Or if an exception is thrown.) *)
+    Sys.remove mlname;
+    result
   in
 
   (* Make sense out of ocamlc's output. *)
