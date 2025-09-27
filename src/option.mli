@@ -11,7 +11,7 @@
 val map: ('a -> 'b) -> 'a option -> 'b option
 val iter: ('a -> unit) -> 'a option -> unit
 val fold: ('a -> 'b -> 'b) -> 'a option -> 'b -> 'b
-val force: 'a option -> 'a
+val get: 'a option -> 'a
 val equal: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
 val compare: ('a -> 'b -> int) -> 'a option -> 'b option -> int
 val hash: ('a -> int) -> 'a option -> int

@@ -91,7 +91,7 @@ let n =
   Lr0.n
 
 let states : lr1state array =
-  Array.init n (fun node -> Option.force (F.solution node))
+  Array.init n (fun node -> Option.get (F.solution node))
 
 let state : node -> lr1state =
   Array.get states

@@ -123,7 +123,7 @@ let n =
 
 let states : lr1state array =
   Array.init n (fun c ->
-    Option.force (mu c)
+    Option.get (mu c)
   )
 
 (* -------------------------------------------------------------------------- *)

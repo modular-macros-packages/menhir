@@ -359,17 +359,17 @@ let rec spec_block env block =
          request (if necessary) and replace this instruction with a jump to
          the specialized block. *)
       if env.state <> None && can_inline_when_known_state label then
-        let tag = Option.force env.state in
+        let tag = Option.get env.state in
         info "(spec) Inlining %s (state = %s)" (Label.export label) (print tag)
         (spec_block env (lookup program label).block)
 
       else if env.stack <> None && can_inline_when_known_stack label then
-        let tag = Option.force env.stack in
+        let tag = Option.get env.stack in
         info "(spec) Inlining %s (stack = %s)" (Label.export label) (print tag)
         (spec_block env (lookup program label).block)
 
       else if env.state <> None && can_specialize label then begin
-        let tag = Option.force env.state in
+        let tag = Option.get env.state in
         enqueue label tag;
         info "(spec) Specializing %s (state = %s)" (Label.export label) (print tag)
         (IJump (spec_label label tag))
@@ -1564,7 +1564,7 @@ let rec walk
       assert (r = token);
       (* The current token must be known, because the transformation inserts
          a [CASEtok] instruction immediately after every lexer call. *)
-      let t = Option.force env in
+      let t = Option.get env in
       (* Thus, this [CASEtok] instruction can be simplified. Only one branch
          can be taken, and we can statically tell which branch that is. *)
       begin match find_tokbranch branches (TSet.singleton t), odefault with
@@ -1760,7 +1760,7 @@ let decode_vertex' (s : M.state) : vertex' =
        [(label, Some t)] for some terminal symbol [t], and construct a
        single vertex' [(label, Some toks)] where the set [toks ]gathers
        all of these terminal symbols. *)
-    let extract (label', t) = assert (label = label'); Option.force t in
+    let extract (label', t) = assert (label = label'); Option.get t in
     let toks = List.map extract ss in
     let toks = TSet.of_list toks in
     (label, Some toks)
@@ -1791,7 +1791,7 @@ let () =
 let transport (v : vertex) : vertex' =
   v
   |> DFA.encode_vertex
-  |> M.transport_state |> Option.force
+  |> M.transport_state |> Option.get
   |> decode_vertex'
 
 (* [enlarge] maps a candidate new vertex [v'] to a valid new vertex.
@@ -1819,7 +1819,7 @@ let enlarge (v' : vertex') : vertex' =
       let v' = transport (label, Some t) in
       assert (
         let label', otoks' = v' in
-        let toks' = Option.force otoks' in
+        let toks' = Option.get otoks' in
         Label.equal label label' &&
         TSet.subset toks toks'
       );
@@ -1856,7 +1856,7 @@ let groups block : TSet.t list =
     let target' : M.state =
       target
       |> DFA.encode_vertex
-      |> M.transport_state |> Option.force
+      |> M.transport_state |> Option.get
     in
     (* Add [t] to the set stored at index [target'] in the vector. *)
     let toks = Indexing.Vector.get edges target' in
@@ -1949,7 +1949,7 @@ let rec spec_block (env : env) block =
       assert (r = token);
       (* because we insert a [CASEtok] instruction immediately after every
          lexer call, the current token must be known. *)
-      let toks = Option.force env in
+      let toks = Option.get env in
       assert (not (TSet.is_empty toks));
       (* Thus, this CASEtok instruction can be simplified. *)
       begin match find_tokbranch branches toks, odefault with

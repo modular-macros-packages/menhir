@@ -64,7 +64,7 @@ let spec_label (label, env) : label =
       |> Label.import
 
 let assert_known_token =
-  Option.force
+  Option.get
 
 let analyze_token (k : env -> block) : block =
   let branches =

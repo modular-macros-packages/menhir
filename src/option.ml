@@ -28,7 +28,7 @@ let fold f o accu =
   | Some x ->
       f x accu
 
-let force = function
+let get = function
   | Some x ->
       x
   | None ->
