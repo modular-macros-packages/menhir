@@ -14,7 +14,6 @@ type sw = subject * where
 open Attribute
 open Syntax
 open BasicSyntax
-open ListMonad
 let drop = MList.drop
 let take = MList.take
 
@@ -494,14 +493,14 @@ module Inline (G : sig val grammar: grammar end) = struct
 
   let rec expand_branches expand_symbol i branches : branches =
     (* For each branch [caller] in the list [branches], *)
-    branches >>= fun (caller : branch) ->
+    MList.bind branches @@ fun (caller : branch) ->
       (* Search for an inlining site in the branch [caller]. We begin the
          search at position [i], as we know that every inlining site left
          of this position has been dealt with already. *)
       match search_at is_inline_producer i caller.producers with
       | None ->
           (* There is none; we are done. *)
-          return caller
+          MList.return caller
       | Some ((i, producer) as site) ->
           (* There is one. This is an occurrence of a nonterminal symbol
              [symbol] that is marked %inline. We look up its (expanded)

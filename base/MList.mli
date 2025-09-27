@@ -12,6 +12,13 @@
 
 include module type of List
 
+(**[return x] is the singleton list [[x]]. *)
+val return : 'a -> 'a list
+
+(**[bind xs k] applies [k] to each element in the list [xs]; this produces
+   a list of lists of results, which is flattened to a list of results. *)
+val bind : 'a list -> ('a -> 'b list) -> 'b list
+
 (**If [xs] is a singleton list then [single xs] is its single element. *)
 val single: 'a list -> 'a
 

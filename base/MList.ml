@@ -10,6 +10,12 @@
 
 include List
 
+let[@inline] return x =
+  [x]
+
+let[@inline] bind xs k =
+  List.flatten (List.map k xs)
+
 let single xs =
   match xs with
   | [ x ] ->
