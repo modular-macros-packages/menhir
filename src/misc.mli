@@ -39,14 +39,6 @@ val preceded_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
 val normalize: string -> string
 
-(* [new_encode_decode capacity] creates a new service for assigning unique
-   integer codes to strings. [capacity] is the initial capacity of the
-   internal hash table. [new_encode_decode] returns a triple [encode, decode,
-   verbose], where [encode] and [decode] translate between strings and unique
-   integer codes and [verbose] prints statistics about the use of the service
-   so far. *)
-val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
-
 (* [once x y] produces a function [f] which produces [x] the first time it
    is called and produces [y] forever thereafter. *)
 

@@ -62,40 +62,6 @@ let normalize s =
   done;
   Bytes.unsafe_to_string s
 
-let new_encode_decode capacity =
-  (* Set up a a hash table, mapping strings to unique integers. *)
-  let module H = Hashtbl.Make(struct
-    type t = string
-    let equal = (=)
-    let hash = Hashtbl.hash
-  end) in
-  let table = H.create capacity in
-  (* Set up a vector, mapping integers to strings. *)
-  let text = Vector.create() in
-  (* This counts the calls to [encode]. *)
-  let c = ref 0 in
-  (* A string is mapped to a unique integer, as follows. *)
-  let encode (s : string) : int =
-    c := !c + 1;
-    try
-      H.find table s
-    with Not_found ->
-      (* The number of elements in the vector is the next available
-         unique integer code. *)
-      let i = Vector.length text in
-      H.add table s i;
-      Vector.push text s;
-      i
-  (* An integer code can be mapped back to a string, as follows. *)
-  and decode (i : int) : string =
-    Vector.get text i
-  and verbose () =
-    Printf.fprintf stderr
-      "%d calls to intern; %d unique strings.\n%!"
-      !c (H.length table)
-  in
-  encode, decode, verbose
-
 let once x y =
   let s = ref x in
   fun () ->
