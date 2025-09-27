@@ -8,26 +8,52 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This is the lattice of the natural numbers, completed with [infinity], and
-   ordered towards infinity: thatis, [bottom] is zero, [top] is infinity. *)
+type property =
+  int
 
-(* Please be aware that this lattice has unbounded height, so a fixed point
-   computation in this lattice does not necessarily terminate. *)
+let bottom =
+  0
 
-type property
+let infinity =
+  max_int
 
-val bottom: property
-val infinity: property
-val finite: int -> property
+let[@inline] finite n =
+  n
 
-val equal: property -> property -> bool
-val is_maximal: property -> bool
+let equal : property -> property -> bool =
+  (=)
 
-val max: property -> property -> property
-val add: property -> property -> property
+let[@inline] is_maximal p =
+  p = infinity
 
-val max_lazy: property -> (unit -> property) -> property
-val add_lazy: property -> (unit -> property) -> property
+let max : property -> property -> property =
+  max
 
-val print: property -> string
-val to_int: property -> int
+let max_lazy p q =
+  if p = infinity then infinity else max p (q())
+
+let add p q =
+  if p = infinity || q = infinity then
+    infinity
+  else
+    let n = p + q in
+    assert (n < infinity);
+    n
+
+let add_lazy p q =
+  if p = infinity then
+    infinity
+  else
+    let q = q() in
+    if q = infinity then
+      infinity
+    else
+      let n = p + q in
+      assert (n < infinity);
+      n
+
+let print p =
+  if p = infinity then "infinity" else string_of_int p
+
+let[@inline] to_int p =
+  p
