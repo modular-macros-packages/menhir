@@ -8,6 +8,28 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let hash hash = function
+  | Some x ->
+      hash x
+  | None ->
+      Hashtbl.hash None
+
+let split o =
+  match o with
+  | None ->
+      None, None
+  | Some (x, x') ->
+      Some x, Some x'
+
+let sub (<=) o1 o2 =
+  match o1, o2 with
+  | None, _ ->
+      true
+  | Some _, None ->
+      false
+  | Some x1, Some x2 ->
+      x1 <= x2
+
 let map f = function
   | None ->
       None
@@ -55,31 +77,9 @@ let compare cmp o1 o2 =
   | Some _, None ->
       +1
 
-let sub sub o1 o2 =
-  match o1, o2 with
-  | None, _ ->
-      true
-  | Some _, None ->
-      false
-  | Some x1, Some x2 ->
-      sub x1 x2
-
-let hash hash = function
-  | Some x ->
-      hash x
-  | None ->
-      Hashtbl.hash None
-
 let value o ~default =
   match o with
   | Some x ->
       x
   | None ->
       default
-
-let split o =
-  match o with
-  | None ->
-      None, None
-  | Some (x, x') ->
-      Some x, Some x'
