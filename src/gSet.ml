@@ -8,8 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This signature describes several implementations of sets, including
-   [Patricia], [WordBitSet], and [SparseBitSet]. *)
+(* This signature describes the implementations of sets in [Patricia]. *)
 
 module type S = sig
 
