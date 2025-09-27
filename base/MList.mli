@@ -10,8 +10,6 @@
 
 (** This module is an extension of Stdlib.List *)
 
-include module type of List
-
 (**[return x] is the singleton list [[x]]. *)
 val return : 'a -> 'a list
 

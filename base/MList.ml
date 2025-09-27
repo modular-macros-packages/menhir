@@ -8,8 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-include List
-
 let[@inline] return x =
   [x]
 
@@ -47,7 +45,7 @@ let[@inline] ifnlazy c xs =
   if c then xs() else []
 
 let[@inline] sum li =
-  fold_left (+) 0 li
+  List.fold_left (+) 0 li
 
 let rec drop k xs =
   match k, xs with
@@ -68,7 +66,7 @@ let[@tail_mod_cons] rec take k xs =
 let leq_join leq_join xs1 xs2 =
   try
     let xs = List.map2 leq_join xs1 xs2 in
-    if for_all2 (==) xs2 xs then xs2 else xs
+    if List.for_all2 (==) xs2 xs then xs2 else xs
   with Invalid_argument _ ->
     (* The lists have different lengths. *)
     assert false
