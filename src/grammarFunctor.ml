@@ -1250,6 +1250,10 @@ module FIRST =
    its cost is not measurable for any of the grammars in our benchmark
    suite. *)
 
+(* This analysis could be made cheaper by computing just the length of a
+   minimal sequence, as opposed to a minimal sequence. Currently the sequence
+   itself is printed at verbosity level 2 but is otherwise unused. *)
+
 module MINIMAL =
   GenericAnalysis
     (struct
