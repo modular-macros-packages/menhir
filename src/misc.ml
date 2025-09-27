@@ -70,8 +70,8 @@ let new_encode_decode capacity =
     let hash = Hashtbl.hash
   end) in
   let table = H.create capacity in
-  (* Set up a resizable array, mapping integers to strings. *)
-  let text = MenhirLib.InfiniteArray.make "" in
+  (* Set up a vector, mapping integers to strings. *)
+  let text = Vector.create() in
   (* This counts the calls to [encode]. *)
   let c = ref 0 in
   (* A string is mapped to a unique integer, as follows. *)
@@ -80,15 +80,15 @@ let new_encode_decode capacity =
     try
       H.find table s
     with Not_found ->
-      (* The number of elements in the hash table is the next available
+      (* The number of elements in the vector is the next available
          unique integer code. *)
-      let i = H.length table in
+      let i = Vector.length text in
       H.add table s i;
-      MenhirLib.InfiniteArray.set text i s;
+      Vector.push text s;
       i
   (* An integer code can be mapped back to a string, as follows. *)
   and decode (i : int) : string =
-    MenhirLib.InfiniteArray.get text i
+    Vector.get text i
   and verbose () =
     Printf.fprintf stderr
       "%d calls to intern; %d unique strings.\n%!"
