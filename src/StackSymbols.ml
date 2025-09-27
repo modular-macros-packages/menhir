@@ -84,7 +84,7 @@ module Short () = struct
     let dummy =
       Array.make 0 (Symbol.T Terminal.sharp)
     in
-    Misc.tabulate Lr0.n (fun node ->
+    MArray.tabulate Lr0.n (fun node ->
       Item.Set.fold (fun item accu ->
         let _prod, _nt, rhs, pos, _length = Item.def item in
         if pos > Array.length accu then Array.sub rhs 0 pos else accu

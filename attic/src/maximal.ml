@@ -319,7 +319,7 @@ let max_rrc_tokens (node : Lr0.node) : TerminalSet.t =
 (* For efficiency, tabulate the above function. *)
 
 let max_rrc_tokens : Lr0.node -> TerminalSet.t =
-  Misc.tabulate Lr0.n max_rrc_tokens
+  MArray.tabulate Lr0.n max_rrc_tokens
 
 (* [max_eos_conflict node] computes the disjunction of [has_eos_conflict state]
    where [state] ranges over all states in the maximal automaton whose LR(0)
@@ -333,7 +333,7 @@ let max_eos_conflict (node : Lr0.node) : bool =
 (* For efficiency, tabulate the above function. *)
 
 let max_eos_conflict : Lr0.node -> bool =
-  Misc.tabulate Lr0.n max_eos_conflict
+  MArray.tabulate Lr0.n max_eos_conflict
 
 (* Two states [s0] and [s1] can be merged if every reduce/reduce conflict
    token in the merged state [union s0 s1] is already a reduce/reduce conflict

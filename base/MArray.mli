@@ -94,5 +94,9 @@ val findi : (int -> 'a -> bool) -> int -> 'a array -> int
    functions. *)
 val inverse: 'a array -> ('a -> int)
 
+(**[tabulate n f] returns a function that is extensionally equal to [f] on the
+   semi-open interval [\[0, n)] and that relies on an internal array. *)
+val tabulate: int -> (int -> 'a) -> (int -> 'a)
+
 (** Unit tests. *)
 val test : unit -> unit

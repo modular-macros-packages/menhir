@@ -147,6 +147,10 @@ let inverse (a : 'a array) : 'a -> int =
     with Not_found ->
       assert false
 
+let tabulate n f =
+  let a = Array.init n f in
+  Array.get a
+
 let test () =
   assert (pop [|1; 2; 3; 4|] = [|1; 2; 3|]) ;
   assert (push [|1; 2; 3|] 4 = [|1; 2; 3; 4|]) ;

@@ -8,10 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let tabulate n f =
-  let a = Array.init n f in
-  Array.get a
-
 let with_buffer n f =
   let b = Buffer.create n in
   f b;

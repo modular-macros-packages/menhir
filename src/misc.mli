@@ -8,13 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* Tabulating a function using an internal array. [tabulate n f]
-   returns a function that is extensionally equal to [f], but relies
-   on an internal array. Arguments to [f] are of type [int] and are
-   supposed to lie in the range [0..n). *)
-
-val tabulate: int -> (int -> 'a) -> (int -> 'a)
-
 (* [with_buffer n f] creates a fresh buffer of size [n], passes it to [f],
    and returns the final content of the buffer. *)
 

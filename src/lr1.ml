@@ -618,7 +618,7 @@ let iterx f =
   )
 
 let tabulate (f : node -> 'a) =
-  Misc.tabulate n f
+  MArray.tabulate n f
 
 let sum (f : node -> int) =
   MInt.sum n f

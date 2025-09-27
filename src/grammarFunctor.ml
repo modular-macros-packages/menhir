@@ -914,7 +914,7 @@ module Production = struct
   (* Tabulation and sum. *)
 
   let[@inline] tabulate f =
-    Misc.tabulate n f
+    MArray.tabulate n f
 
   let[@inline] sum f =
     MInt.sum n f
@@ -1739,8 +1739,8 @@ module Analysis = struct
      right-hand side. *)
 
   let nullable_first_prod =
-    Misc.tabulate Production.n (fun prod ->
-      Misc.tabulate (Production.length prod + 1) (fun i ->
+    MArray.tabulate Production.n (fun prod ->
+      MArray.tabulate (Production.length prod + 1) (fun i ->
         nullable_first_prod prod i
       )
     )
