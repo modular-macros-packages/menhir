@@ -12,15 +12,6 @@ type 'a t =
 | Finite of int * 'a CatSeq.seq
 | Infinity
 
-let equal p1 p2 =
-  match p1, p2 with
-  | Finite (i1, _), Finite (i2, _) ->
-      i1 = i2
-  | Infinity, Infinity ->
-      true
-  | _, _ ->
-      false
-
 let bottom =
   Infinity
 
@@ -29,6 +20,15 @@ let epsilon =
 
 let singleton x =
   Finite (1, CatSeq.singleton x)
+
+let equal p1 p2 =
+  match p1, p2 with
+  | Finite (i1, _), Finite (i2, _) ->
+      i1 = i2
+  | Infinity, Infinity ->
+      true
+  | _, _ ->
+      false
 
 let is_maximal p =
   match p with
