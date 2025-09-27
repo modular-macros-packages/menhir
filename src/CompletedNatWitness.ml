@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 type 'a t =
-| Finite of int * 'a Seq.seq
+| Finite of int * 'a CatSeq.seq
 | Infinity
 
 let equal p1 p2 =
@@ -25,10 +25,10 @@ let bottom =
   Infinity
 
 let epsilon =
-  Finite (0, Seq.empty)
+  Finite (0, CatSeq.empty)
 
 let singleton x =
-  Finite (1, Seq.singleton x)
+  Finite (1, CatSeq.singleton x)
 
 let is_maximal p =
   match p with
@@ -55,7 +55,7 @@ let min_lazy p1 p2 =
 let add p1 p2 =
   match p1, p2 with
   | Finite (i1, xs1), Finite (i2, xs2) ->
-      Finite (i1 + i2, Seq.append xs1 xs2)
+      Finite (i1 + i2, CatSeq.append xs1 xs2)
   | _, _ ->
       Infinity
 
@@ -73,7 +73,7 @@ let print conv p =
       Printf.sprintf "(* 0 *)"
   | Finite (i, xs) ->
       Printf.sprintf "(* %d *) " i ^
-      String.concat " " (List.map conv (Seq.elements xs))
+      String.concat " " (List.map conv (CatSeq.elements xs))
   | Infinity ->
       "infinity"
 
@@ -87,6 +87,6 @@ let to_int p =
 let extract p =
   match p with
   | Finite (_, xs) ->
-      Seq.elements xs
+      CatSeq.elements xs
   | Infinity ->
       assert false

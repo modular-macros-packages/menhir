@@ -12,7 +12,7 @@
 (******************************************************************************)
 
 type 'a t =
-| Reachable of 'a Seq.seq
+| Reachable of 'a CatSeq.seq
 | Unreachable
 
 let equal p1 p2 =
@@ -27,10 +27,10 @@ let bottom =
   Unreachable
 
 let epsilon =
-  Reachable Seq.empty
+  Reachable CatSeq.empty
 
 let singleton x =
-  Reachable (Seq.singleton x)
+  Reachable (CatSeq.singleton x)
 
 let is_maximal p =
   match p with
@@ -56,7 +56,7 @@ let min_lazy p1 p2 =
 let add p1 p2 =
   match p1, p2 with
   | Reachable xs1, Reachable xs2 ->
-      Reachable (Seq.append xs1 xs2)
+      Reachable (CatSeq.append xs1 xs2)
   | _, _ ->
       Unreachable
 
@@ -70,6 +70,6 @@ let add_lazy p1 p2 =
 let print conv p =
   match p with
   | Reachable xs ->
-      String.concat " " (List.map conv (Seq.elements xs))
+      String.concat " " (List.map conv (CatSeq.elements xs))
   | Unreachable ->
       "unreachable"

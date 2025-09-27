@@ -19,7 +19,7 @@
    of as witnesses, or proofs, that explain why the number [n] was obtained. *)
 
 type 'a t =
-| Finite of int * 'a Seq.seq
+| Finite of int * 'a CatSeq.seq
 | Infinity
 
 val bottom: 'a t
