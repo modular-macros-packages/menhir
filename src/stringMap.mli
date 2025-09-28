@@ -10,9 +10,6 @@
 
 include Map.S with type key = string
 
-(**[cardinal m] is the cardinal of the map [m]. *)
-val cardinal : 'a t -> int
-
 (**[restrict s m] restricts the domain of the map [m] to (its
    intersection with) the set [s]. *)
 val restrict: StringSet.t -> 'a t -> 'a t
@@ -28,6 +25,3 @@ val domain: 'a t -> StringSet.t
    which maps keys to *lists* of values. The list currently associated
    with [k] is extended with the value [v]. *)
 val multiple_add: key -> 'a -> 'a list t -> 'a list t
-
-(**[of_list] converts a list of key-value pairs to a map. *)
-val of_list: (key * 'a) list -> 'a t

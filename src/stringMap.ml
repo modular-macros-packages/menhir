@@ -10,9 +10,6 @@
 
 include Map.Make (String)
 
-let cardinal s =
-  fold (fun _ _ x -> x + 1) s 0
-
 let filter p m =
   fold (fun key v m ->
     if p key v then
