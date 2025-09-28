@@ -8,11 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-include Set.S with type elt = string
+include Set.Make(String)
 
-(**[map f s] applies the transformation [f] to the set [s]. *)
-val map: (elt -> elt) -> t -> t
+(* [map] appears in OCaml 4.04. *)
+let map f xs =
+  fold (fun x accu -> add (f x) accu) xs empty
 
-(**[print] prints a set of strings as a comma-separated list,
-   without opening and closing delimiters. *)
-val print: t -> string
+let print s =
+  MString.separated_iter (fun s -> s) ", " (fun f -> iter f s)

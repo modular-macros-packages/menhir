@@ -14,6 +14,7 @@
    table keeps track of all strings that have ever been encountered. *)
 module Make () : sig
 
+  (* Interned strings. *)
   type t
 
   val equal : t -> t -> bool
@@ -23,6 +24,7 @@ module Make () : sig
   val import : string -> t
   val export : t -> string
 
+  (* Sets of interned strings. *)
   module Set : sig
 
     include Set.S with type elt = t
@@ -35,6 +37,7 @@ module Make () : sig
 
   end
 
+  (* Maps over interned strings. *)
   module Map : sig
 
     include Map.S with type key := t

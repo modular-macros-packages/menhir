@@ -8,11 +8,15 @@
 (*                                                                            *)
 (******************************************************************************)
 
-include Set.Make (String)
+(**This module offers sets of strings. *)
 
-(* [map] appears in OCaml 4.04. *)
-let map f xs =
-  fold (fun x accu -> add (f x) accu) xs empty
+include Set.S
+  with type elt = string
+   and type t = Set.Make(String).t
 
-let print s =
-  MString.separated_iter (fun s -> s) ", " (fun f -> iter f s)
+(**[map f s] applies the transformation [f] to the set [s]. *)
+val map: (elt -> elt) -> t -> t
+
+(**[print] prints a set of strings as a comma-separated list,
+   without opening and closing delimiters. *)
+val print: t -> string
