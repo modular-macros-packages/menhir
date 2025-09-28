@@ -144,7 +144,7 @@ end) = struct
                automaton state, also exists in the merged automaton --
                that is, it wasn't suppressed by conflict resolution. *)
 
-            if List.mem prod (TerminalMap.lookup tok reductions1) then
+            if List.mem prod (TerminalMap.find tok reductions1) then
 
               try
                 let (_ : Lr1.node) =

@@ -58,9 +58,9 @@ val classify: t -> kind
 (* Sets of items and maps over items. Hashing these data structures is
    specifically allowed. *)
 
-module Set : GSet.S with type element = t
-module Map : GMap.S with type key = t
-                     and type Domain.t = Set.t
+module Map : API.MAP_AND_SET with type key = t
+
+module Set = Map.Domain
 
 (* This functor performs precomputation that helps efficiently compute
    the closure of an LR(0) or LR(1) state. The precomputation requires
@@ -78,4 +78,3 @@ module Closure (L : Lookahead.S) : sig
   val closure: state -> state
 
 end
-

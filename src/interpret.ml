@@ -116,18 +116,18 @@ let start poss ((nto, _) : sentence) : Nonterminal.t =
   | Some nt ->
       nt
   | None ->
-      match ProductionMap.is_singleton Lr1.entry with
-      | None ->
-          Error.error poss
-            "because the grammar has multiple start symbols, each of the\n\
-             sentences provided on the standard input channel must be of the\n\
-             form: <start symbol>: <token>*"
-      | Some (prod, _) ->
-          match Production.classify prod with
-          | Some nt ->
-              nt
-          | None ->
-              assert false
+      if not (ProductionMap.is_singleton Lr1.entry) then
+        Error.error poss
+          "because the grammar has multiple start symbols, each of the\n\
+           sentences provided on the standard input channel must be of the\n\
+           form: <start symbol>: <token>*"
+      else
+        let prod, _ = ProductionMap.choose Lr1.entry in
+        match Production.classify prod with
+        | Some nt ->
+            nt
+        | None ->
+            assert false
 
 (* --------------------------------------------------------------------------- *)
 

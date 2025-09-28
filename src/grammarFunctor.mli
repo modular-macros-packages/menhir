@@ -140,7 +140,7 @@ end
 (* ------------------------------------------------------------------------ *)
 (* Sets of nonterminals. *)
 
-module NonterminalMap : GMap.S with type key = Nonterminal.t
+module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
 
 module NonterminalSet = NonterminalMap.Domain
 
@@ -261,23 +261,12 @@ end
 
 module TerminalSet : sig
 
-  (* All of the operations documented in [GSet] are available. *)
-
   include Bitsets.API.SET with type elt = Terminal.t
-
-  (* [diff xs ys] returns the set [xs], deprived of all elements that are
-     members of the set [ys]. *)
-
-  val diff: t -> t -> t
 
   (* [of_list] converts a list of terminal symbols into a set of terminal
      symbols. *)
 
   val of_list: Terminal.t list -> t
-
-  (* [big_union xss] returns the union of the sets in the list [xss]. *)
-
-  val big_union: t list -> t
 
   (* [print] offers a string representation of a set of terminals. The
      symbols are simply listed one after the other and separated with
@@ -308,9 +297,7 @@ module TerminalSet : sig
 
 end
 
-(* All of the operations documented in [GMap] are available. *)
-
-module TerminalMap : GMap.S with type key = Terminal.t
+module TerminalMap : API.MAP with type key = Terminal.t
 
 (* ------------------------------------------------------------------------ *)
 (* Symbols. *)
@@ -538,7 +525,7 @@ end
 
 module ProductionMap : sig
 
-  include GMap.S with type key = Production.index
+  include API.MAP with type key = Production.index
 
   (* Iteration over the start productions only. *)
 

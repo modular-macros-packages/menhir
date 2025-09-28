@@ -541,7 +541,7 @@ and run_error_dispatch s =
 
   | exception Not_found ->
 
-  match TerminalMap.lookup tok (Lr1.reductions s) with
+  match TerminalMap.find tok (Lr1.reductions s) with
   | prods ->
       let prod = MList.single prods in
 

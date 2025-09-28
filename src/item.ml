@@ -118,8 +118,15 @@ let classify item =
    specifically allowed, so balanced trees (for instance) would not be
    applicable here. *)
 
-module Map = Patricia.Big
-module Set = Map.Domain
+(* The main reason why [Set] is implemented using Patricia trees, as
+   opposed to bit sets, is that, given our current encoding of items,
+   items are not small consecutive integers. *)
+
+module Map =
+  IntMap.Unbounded
+
+module Set =
+  Map.Domain
 
 (* This functor performs precomputation that helps efficiently compute
    the closure of an LR(0) or LR(1) state. The precomputation requires

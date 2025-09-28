@@ -365,7 +365,7 @@ let discover (raw_node : Raw.node) =
   if Lr0.has_eos_conflict transitions reductions then begin
     (* Conceptually suppress the reduce action at [#]. *)
       let prods, reductions =
-        TerminalMap.lookup_and_remove Terminal.sharp reductions in
+        TerminalMap.find_and_remove Terminal.sharp reductions in
     (* Compute the tokens involved in the transitions and remaining
        reductions. *)
     let toks =
@@ -798,7 +798,7 @@ let initialize_production_where () =
         let prod = MList.single prods in
         let nodes =
           try
-            ProductionMap.lookup prod accu
+            ProductionMap.find prod accu
           with Not_found ->
             NodeSet.empty
         in
@@ -815,7 +815,7 @@ let production_where (prod : Production.index) : NodeSet.t =
   | Some production_where ->
       try
         (* Production [prod] may be reduced at [nodes]. *)
-        let nodes = ProductionMap.lookup prod production_where in
+        let nodes = ProductionMap.find prod production_where in
         assert (not (NodeSet.is_empty nodes));
         nodes
       with Not_found ->
@@ -960,7 +960,7 @@ let default_conflict_resolution () =
 
       (* Suppress the reduce action at [#]. *)
       let prods, reductions =
-        TerminalMap.lookup_and_remove Terminal.sharp reductions in
+        TerminalMap.find_and_remove Terminal.sharp reductions in
       set_reductions node reductions;
       conflicting_reductions.(node) <-
         (Terminal.sharp, prods, false) :: conflicting_reductions.(node);

@@ -678,7 +678,7 @@ type reductions =
 let add_reduction prod tok reductions =
   let prods =
     try
-      TerminalMap.lookup tok reductions
+      TerminalMap.find tok reductions
     with Not_found ->
       []
   in
@@ -715,7 +715,7 @@ let invert reductions : TerminalSet.t ProductionMap.t =
     List.fold_left (fun inverse prod ->
       let toks =
         try
-          ProductionMap.lookup prod inverse
+          ProductionMap.find prod inverse
         with Not_found ->
           TerminalSet.empty
       in
@@ -728,7 +728,7 @@ let invert reductions : TerminalSet.t ProductionMap.t =
    at least one other (shift or reduce) action. *)
 
 let has_eos_conflict transitions reductions =
-  match TerminalMap.lookup_and_remove Terminal.sharp reductions with
+  match TerminalMap.find_and_remove Terminal.sharp reductions with
   | exception Not_found ->
       (* There is no reduction action on [#], thus no conflict. *)
       false

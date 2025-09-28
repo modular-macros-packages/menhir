@@ -55,19 +55,17 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
    reductions, as they seem to be beneficial when explaining syntax errors. *)
 
 let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option =
-  Lr1.tabulate (fun s ->
+  Lr1.tabulate @@ fun s ->
     if Lr1.forbid_default_reduction s then
       None
     else
-      let reduction = ProductionMap.is_singleton (Lr0.invert (Lr1.reductions s)) in
-      match reduction with
-      | Some _ ->
-          if SymbolMap.purelynonterminal (Lr1.transitions s)
-          then reduction
-          else None
-      | None ->
-          reduction
-  )
+      let reductions = Lr0.invert (Lr1.reductions s) in
+      if ProductionMap.is_singleton reductions
+      && SymbolMap.purelynonterminal (Lr1.transitions s) then
+        let reduction = ProductionMap.choose reductions in
+        Some reduction
+      else
+        None
 
 let () =
   let count =

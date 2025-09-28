@@ -213,9 +213,11 @@ end
 
 (* Sets and maps over nonterminals. *)
 
-module NonterminalMap = Patricia.Big
+module NonterminalMap =
+  IntMap.Make(Nonterminal)()
 
-module NonterminalSet = Patricia.Big.Domain
+module NonterminalSet =
+  NonterminalMap.Domain
 
 (* ------------------------------------------------------------------------ *)
 (* Terminals. *)
@@ -404,26 +406,23 @@ module Terminal = struct
 
 end
 
+(* Maps over terminals. *)
+
+module TerminalMap =
+  IntMap.Make(Terminal)()
+
 (* Sets of terminals are used intensively in the LR(1) construction,
    so it is important that they be as efficient as possible. *)
 
 module TerminalSet = struct
 
-  (* 2020/01/29: use [BoundedBitSet] instead of [SparseBitSet]. *)
+  include TerminalMap.Domain
 
-  include Bitsets.BoundedBitSet.Make(Terminal)()
-
-  (* The signature [GSet.S] does not offer [diff], [of_list] and [big_union],
-     so we implement these functions here in a naive way. *)
-
-  let diff xs ys =
-    fold remove ys xs
+  (* The signature [Bitsets.API.SET] does not offer [of_list],
+     so we implement this function here in a naive way. *)
 
   let of_list xs =
     List.fold_right add xs empty
-
-  let big_union xss =
-    List.fold_right union xss empty
 
   let print toks =
     Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
@@ -488,10 +487,6 @@ module TerminalSet = struct
     union
 
 end
-
-(* Maps over terminals. *)
-
-module TerminalMap = Patricia.Big
 
 (* ------------------------------------------------------------------------ *)
 (* Symbols. *)
@@ -1016,7 +1011,7 @@ let grammar_uses_error_token =
 
 module ProductionMap = struct
 
-  include Patricia.Big
+  include IntMap.Make(Production)()
 
   (* Iteration over the start productions only. *)
 
