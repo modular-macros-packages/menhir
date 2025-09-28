@@ -6,6 +6,9 @@
 
 (library
   (name base)
+  (libraries
+    vendored_bitsets
+  )
 )
 
 ;; Explicitly enable warnings during development
