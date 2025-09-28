@@ -8,7 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-include Map.S with type key = string
+(**This module offers maps whose keys are strings. *)
+
+include Map.S
+  with type key = string
+   and type 'a t = 'a Map.Make(String).t
 
 (**[restrict s m] restricts the domain of the map [m] to (its
    intersection with) the set [s]. *)

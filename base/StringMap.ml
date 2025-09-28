@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-include Map.Make (String)
+include Map.Make(String)
 
 let filter p m =
   fold (fun key v m ->
@@ -32,6 +32,3 @@ let multiple_add k v m =
       []
   in
   add k (v :: vs) m
-
-let of_list xs =
-  List.fold_left (fun m (x, v) -> add x v m) empty xs
