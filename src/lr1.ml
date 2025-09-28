@@ -760,7 +760,7 @@ module NodeSet = struct
 
   let print s =
     Printf.sprintf "{ %s }" (
-      Misc.separated_iter_to_string print ", " (fun f -> iter f s)
+      MString.separated_iter print ", " (fun f -> iter f s)
     )
 
 end

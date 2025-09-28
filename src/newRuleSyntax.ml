@@ -140,7 +140,7 @@ let tilde_used_warning positions =
       "%s nameless %s been introduced by %s,\n\
        yet this sequence does not end in a point-free semantic action <...>.\n\
        Perhaps %s should be used instead."
-      (Misc.count n) variables_have tpatterns wpatterns
+      (MString.count n) variables_have tpatterns wpatterns
 
 (* -------------------------------------------------------------------------- *)
 

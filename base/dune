@@ -24,3 +24,9 @@
     :standard -noassert
   ))
 )
+
+;; The following lexers are built by ocamllex.
+
+(ocamllex
+  DecodeString
+)

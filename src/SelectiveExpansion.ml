@@ -61,7 +61,7 @@ end
 
 (* We include parentheses and commas in this name, because that is readable
    and acceptable in many situations. We replace them with underscores in
-   situations where these characters are not valid; see [Misc.normalize]. *)
+   situations where these characters are not valid; see [MString.normalize]. *)
 
 let mangle_po (po : parameter option) =
   match po with
@@ -73,7 +73,7 @@ let mangle_po (po : parameter option) =
       Parameters.print false p
 
 let mangle_inst (pos : instantiation) =
-  Misc.separated_list_to_string mangle_po "," pos
+  MString.separated_list mangle_po "," pos
 
 let mangle ((nt, pos) : label) : nonterminal =
   if pos = [] then nt else
@@ -92,10 +92,10 @@ let mangle ((nt, pos) : label) : nonterminal =
    is preceded with an underscore character. *)
 
 let normalize_mangle_po po =
-  Misc.normalize (mangle_po po)
+  MString.normalize (mangle_po po)
 
 let subst_name_attribute inst (name : string) : string =
-  name ^ Misc.preceded_list_to_string normalize_mangle_po "_" inst
+  name ^ MString.preceded_list normalize_mangle_po "_" inst
 
 let subst_attributes inst (attrs : attributes) : attributes =
   transform_attribute "name" (subst_name_attribute inst) attrs
@@ -269,7 +269,7 @@ let mangle : label -> nonterminal =
   let module M = Fix.Memoize.ForHashedType(Label) in
   M.memoize (fun label ->
     let name = mangle label in
-    ensure_fresh (Misc.normalize name);
+    ensure_fresh (MString.normalize name);
     name
   )
 

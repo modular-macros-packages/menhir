@@ -24,7 +24,7 @@ let tnonterminalgadt a =
    GADT. *)
 
 let tnonterminalgadtdata nt =
-  "N_" ^ Misc.normalize nt
+  "N_" ^ MString.normalize nt
 
 (* This is the definition of the nonterminal GADT. Here, the data
    constructors have no value argument, but have a type index. *)

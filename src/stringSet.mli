@@ -10,6 +10,7 @@
 
 include Set.S with type elt = string
 
+(**[map f s] applies the transformation [f] to the set [s]. *)
 val map: (elt -> elt) -> t -> t
 
 (**[print] prints a set of strings as a comma-separated list,

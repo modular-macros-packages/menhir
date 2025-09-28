@@ -123,6 +123,6 @@ let rec print with_spaces = function
       let separator = if with_spaces then ", " else "," in
       Printf.sprintf "%s(%s)"
         x.value
-        (Misc.separated_list_to_string (print with_spaces) separator ps)
+        (MString.separated_list (print with_spaces) separator ps)
   | ParameterAnonymous _ ->
       assert false

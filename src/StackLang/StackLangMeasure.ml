@@ -48,7 +48,7 @@ let zero () = {
 }
 
 let print f m =
-  let pad i = Misc.padded_index m.total i in
+  let pad i = MString.padded_index m.total i in
   fprintf f "#### count PUSH    %s\n" (pad m.push);
   fprintf f "#### count POP     %s\n" (pad m.pop);
   fprintf f "#### count PEEK    %s\n" (pad m.peek);

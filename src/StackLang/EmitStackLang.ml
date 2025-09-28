@@ -299,11 +299,11 @@ let print addr =
   Label.import (prefix (
     match addr with
     | Run (mode, s) ->
-        let s = Misc.padded_index Lr1.n (Lr1.number s) in
+        let s = MString.padded_index Lr1.n (Lr1.number s) in
         sprintf "run_%s" s
         |> mode_prefix mode
     | Reduce (mode, prod) ->
-        let prod = Misc.padded_index Production.n (Production.p2i prod) in
+        let prod = MString.padded_index Production.n (Production.p2i prod) in
         sprintf "reduce_%s" prod
         |> mode_prefix mode
     | Goto (mode, nt) ->
@@ -311,11 +311,11 @@ let print addr =
         sprintf "goto_%s" nt
         |> mode_prefix mode
     | ActGoto (mode, prod) ->
-        let prod = Misc.padded_index Production.n (Production.p2i prod) in
+        let prod = MString.padded_index Production.n (Production.p2i prod) in
         sprintf "act_goto_%s" prod
         |> mode_prefix mode
     | Stop s ->
-        let s = Misc.padded_index Lr1.n (Lr1.number s) in
+        let s = MString.padded_index Lr1.n (Lr1.number s) in
         sprintf "stop_%s" s
   ))
 

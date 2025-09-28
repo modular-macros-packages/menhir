@@ -247,7 +247,7 @@ let print (v : property) =
   if Array.length v = 0 then
     "epsilon"
   else
-    Misc.separated_list_to_string Lr1.NodeSet.print "; " (Array.to_list v)
+    MString.separated_list Lr1.NodeSet.print "; " (Array.to_list v)
 
 (* Dump. *)
 

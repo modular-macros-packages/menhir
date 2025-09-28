@@ -139,7 +139,7 @@ module Nonterminal = struct
 
   let print normalize nt =
     if normalize then
-      Misc.normalize name.(nt)
+      MString.normalize name.(nt)
     else
       name.(nt)
 
@@ -381,7 +381,7 @@ module Terminal = struct
 
   let unquoted_alias tok =
     alias tok
-    |> Option.map Misc.unquote
+    |> Option.map MString.unquote
 
   let print_concrete t =
   match unquoted_alias t with
@@ -425,7 +425,7 @@ module TerminalSet = struct
     List.fold_right add xs empty
 
   let print toks =
-    Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
+    MString.separated_iter Terminal.print " " (fun f -> iter f toks)
 
   let universe =
     Terminal.fold_real add empty
@@ -453,7 +453,7 @@ module TerminalSet = struct
 
   let separator : string Lazy.t =
     lazy begin
-      let longest_run t = Misc.longest_run '_' (Terminal.print t) in
+      let longest_run t = MString.longest_run '_' (Terminal.print t) in
       let k = big_max longest_run universe in
       String.make (k+1) '_'
     end
@@ -1961,11 +1961,11 @@ module Sentence = struct
   open Printf
 
   let print_abstract (nto, terminals) : string =
-    Misc.with_buffer 128 (fun b ->
+    MString.with_buffer 128 (fun b ->
       Option.iter (fun nt ->
         bprintf b "%s: " (Nonterminal.print false nt)
       ) nto;
-      let separator = Misc.once "" " " in
+      let separator = MString.this_then_that "" " " in
       List.iter (fun t ->
         bprintf b "%s%s" (separator()) (Terminal.print t)
       ) terminals;
@@ -1973,8 +1973,8 @@ module Sentence = struct
     )
 
   let print_concrete (_nto, terminals) : string =
-    Misc.with_buffer 128 (fun b ->
-      let separator = Misc.once "" " " in
+    MString.with_buffer 128 (fun b ->
+      let separator = MString.this_then_that "" " " in
       List.iter (fun t ->
         bprintf b "%s%s" (separator()) (Terminal.print_concrete t)
       ) terminals

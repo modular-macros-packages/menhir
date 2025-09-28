@@ -240,7 +240,7 @@ let () =
               "the parameterized nonterminal symbols in this grammar\n\
                cannot be expanded away: expansion would not terminate.\n\
                The %s formal parameter of \"%s\" grows without bound."
-              (Misc.nth (i + 1)) nt
+              (MString.nth (i + 1)) nt
 
     ) source
   )

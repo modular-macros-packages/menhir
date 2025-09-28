@@ -994,7 +994,7 @@ let print_expr f e =
   P.expr e
 
 let string_of_expr e =
-  Misc.with_buffer 512 (fun b ->
+  MString.with_buffer 512 (fun b ->
     let module P =
       MakeBuffered (struct
         let f = b

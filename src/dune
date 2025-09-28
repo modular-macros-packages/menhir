@@ -28,7 +28,6 @@
 ;; The following lexers are built by ocamllex.
 
 (ocamllex
-  DecodeString
   lexer
   lineCount
   lexmli

@@ -35,14 +35,14 @@ let invoke (command : string) : string =
    cannot clash with OCaml keywords. *)
 
 let ntvar symbol =
-  TypVar (Printf.sprintf "tv_%s" (Misc.normalize symbol))
+  TypVar (Printf.sprintf "tv_%s" (MString.normalize symbol))
 
 (* The term variable associated with a nonterminal symbol. Its name begins
    with a prefix which ensures that it begins with a lowercase letter and
    cannot clash with OCaml keywords. *)
 
 let encode symbol =
-  Printf.sprintf "xv_%s" (Misc.normalize symbol)
+  Printf.sprintf "xv_%s" (MString.normalize symbol)
 
 let decode s =
   let n = String.length s in
@@ -236,7 +236,7 @@ let program grammar =
 
   let ps, ts =
     StringMap.fold (fun nt _ (ps, ts) ->
-      PVar (encode (Misc.normalize nt)) :: ps,
+      PVar (encode (MString.normalize nt)) :: ps,
       ntvar nt :: ts
     ) grammar.rules ([], [])
   in
@@ -397,7 +397,7 @@ let read_reply (output : string) grammar =
     StringMap.fold (fun symbol _ types ->
       let ocamltype =
         try
-          List.assoc (Misc.normalize symbol) env
+          List.assoc (MString.normalize symbol) env
         with Not_found ->
           (* No type information was inferred for this symbol.
              Perhaps the mock [.ml] file or the inferred [.mli] file

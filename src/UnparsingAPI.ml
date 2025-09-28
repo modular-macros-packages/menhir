@@ -988,7 +988,7 @@ let unparsing_API (grammar : grammar) : interface =
     module Nonterminal = struct
       type t = nonterminal
       let print normalize nt =
-        if normalize then Misc.normalize nt else nt
+        if normalize then MString.normalize nt else nt
       let mapx f =
         List.rev_map f (nonterminals grammar)
     end

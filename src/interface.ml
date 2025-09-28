@@ -96,7 +96,7 @@ let monolithic_api grammar =
   IIComment "The monolithic API." ::
   IIValDecls (
     StringSet.fold (fun symbol decls ->
-      (Misc.normalize symbol, entrytypescheme grammar symbol) :: decls
+      (MString.normalize symbol, entrytypescheme grammar symbol) :: decls
     ) grammar.start_symbols []
   ) ::
 

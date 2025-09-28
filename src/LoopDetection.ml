@@ -84,7 +84,7 @@ let show_cycle nts nt =
     let i = ref 0 in
     let next () = Nonterminal.print false nts.(MInt.postincrement i)
     and finished () = !i = Array.length nts in
-    Misc.with_buffer 1024 begin fun b ->
+    MString.with_buffer 1024 begin fun b ->
       let out format = Printf.bprintf b format in
       out "%s" (next());
       while not (finished()) do

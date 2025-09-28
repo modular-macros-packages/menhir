@@ -8,74 +8,62 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(* -------------------------------------------------------------------------- *)
+
+(* Buffering. *)
+
 let with_buffer n f =
   let b = Buffer.create n in
   f b;
   Buffer.contents b
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing. *)
+
 type 'a iter = ('a -> unit) -> unit
 
-let separated_iter_to_string printer separator iter =
-  with_buffer 32 (fun b ->
-    let first = ref true in
-    iter (fun x ->
-      if !first then begin
-        Buffer.add_string b (printer x);
-        first := false
-      end
-      else begin
-        Buffer.add_string b separator;
-        Buffer.add_string b (printer x)
-      end
-    )
-  )
-
-let separated_list_to_string printer separator xs =
-  separated_iter_to_string printer separator (fun f -> List.iter f xs)
-
-let preceded_iter_to_string printer del iter =
-  with_buffer 32 (fun b ->
-    iter (fun x ->
-      Buffer.add_string b del;
-      Buffer.add_string b (printer x)
-    )
-  )
-
-let preceded_list_to_string printer del xs =
-  preceded_iter_to_string printer del (fun f -> List.iter f xs)
-
-let normalize s =
-  let s = Bytes.of_string s in
-  let n = Bytes.length s in
-  for i = 0 to n - 1 do
-    match Bytes.get s i with
-    | '('
-    | ')'
-    | ',' ->
-        Bytes.set s i '_'
-    | _ ->
-        ()
-  done;
-  Bytes.unsafe_to_string s
-
-let once x y =
+let this_then_that x y =
   let s = ref x in
   fun () ->
     let result = !s in
     s := y;
     result
 
-let nth = function
-  | 1 -> "first"
-  | 2 -> "second"
-  | 3 -> "third"
-  | i -> Printf.sprintf "%dth" i
+let separated_iter print separator iter =
+  let separator = this_then_that "" separator in
+  with_buffer 32 @@ fun b ->
+  let emit s = Buffer.add_string b s in
+  iter @@ fun x ->
+  separator() |> emit;
+  print x |> emit
+
+let separated_list print separator xs =
+  let iter f = List.iter f xs in
+  separated_iter print separator iter
+
+let preceded_iter print del iter =
+  with_buffer 32 @@ fun b ->
+  let emit s = Buffer.add_string b s in
+  iter @@ fun x ->
+  del |> emit;
+  print x |> emit
+
+let preceded_list print del xs =
+  let iter f = List.iter f xs in
+  preceded_iter print del iter
 
 let count = function
   | 1 -> "one"
   | 2 -> "two"
   | 3 -> "three"
   | i -> Printf.sprintf "%d" i
+
+let nth = function
+  | 1 -> "first"
+  | 2 -> "second"
+  | 3 -> "third"
+  | i -> Printf.sprintf "%dth" i
 
 (* [digits n] computes how many decimal digits are involved in the
    decimal representation of the integer [n]. *)
@@ -89,14 +77,18 @@ let digits n =
   in
   loop 0 n
 
-(* [pad n s] pads the string [s] with zeroes in front so that its length
-   is [n]. *)
+(* [pad n s] pads the string [s] with zeroes in front so that its
+   length is [n]. *)
 
 let pad n s =
   String.make (n - String.length s) '0' ^ s
 
 let padded_index n i =
   pad (digits n) (Printf.sprintf "%d" i)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Analysis. *)
 
 (* [longest_run c s] computes the length of the longest run of consecutive
    characters equal to [c] in the string [s]. *)
@@ -115,12 +107,31 @@ let rec longest_run c s n i m k =
 let longest_run c s =
   longest_run c s (String.length s) 0 0 0
 
+(* -------------------------------------------------------------------------- *)
+
+(* Transformations. *)
+
+let normalize s =
+  let s = Bytes.of_string s in
+  let n = Bytes.length s in
+  for i = 0 to n - 1 do
+    match Bytes.get s i with
+    | '('
+    | ')'
+    | ',' ->
+        Bytes.set s i '_'
+    | _ ->
+        ()
+  done;
+  Bytes.unsafe_to_string s
+
 let unquote s =
   if String.length s = 0 || s.[0] <> '"' then
-    invalid_arg "unescape"
+    invalid_arg "unquote"
   else
     (* Skip the opening quote and decode the remainder using the lexer
        [DecodeString.unescape], which stops at the closing quote. *)
     let s = String.sub s 1 (String.length s - 1) in
     let lexbuf = Lexing.from_string s in
-    with_buffer 8 (fun b -> DecodeString.unescape b lexbuf)
+    with_buffer 8 @@ fun b ->
+    DecodeString.unescape b lexbuf

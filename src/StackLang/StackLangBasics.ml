@@ -69,7 +69,7 @@ end = struct
     lazy (make s)
 
   let print tag =
-    Misc.padded_index Lr1.n tag
+    MString.padded_index Lr1.n tag
 
   let compare (tag1 : tag) (tag2 : tag) =
     compare tag1 tag2

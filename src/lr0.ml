@@ -320,7 +320,7 @@ let export (k, toksr) =
 (* Displaying a concrete state. *)
 
 let print_concrete leading (state : concretelr1state) =
-  Misc.with_buffer 1024 (fun buffer ->
+  MString.with_buffer 1024 (fun buffer ->
     Item.Map.iter (fun item toks ->
       Printf.bprintf buffer "%s%s [ %s ]\n"
         leading

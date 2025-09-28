@@ -204,7 +204,7 @@ let print_postludes f g =
 
 let print_start_symbols f g =
   StringSet.iter (fun symbol ->
-    fprintf f "%%start %s\n" (Misc.normalize symbol)
+    fprintf f "%%start %s\n" (MString.normalize symbol)
   ) g.start_symbols
 
 (* -------------------------------------------------------------------------- *)
@@ -301,7 +301,7 @@ let print_types f g =
   StringMap.iter (fun symbol ty ->
     fprintf f "%%type%s %s\n"
       (print_nonterminal_type ty)
-      (Misc.normalize symbol)
+      (MString.normalize symbol)
   ) g.types
 
 (* -------------------------------------------------------------------------- *)
@@ -312,12 +312,12 @@ let print_producer sep f producer =
   fprintf f "%s%s%s%a"
     (sep())
     (print_binding (producer_identifier producer))
-    (Misc.normalize (producer_symbol producer))
+    (MString.normalize (producer_symbol producer))
     print_attributes (producer_attributes producer)
 
 let print_branch f g branch =
   (* Print the producers. *)
-  let sep = Misc.once "" " " in
+  let sep = MString.this_then_that "" " " in
   List.iter (print_producer sep f) branch.producers;
   (* Print the %prec annotation, if there is one. *)
   Option.iter (fun x ->
@@ -363,10 +363,10 @@ let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
       compare_branches b b'
 
 let print_rule f g (nt, r) =
-  fprintf f "\n%s%a:\n" (Misc.normalize nt) print_attributes r.attributes;
+  fprintf f "\n%s%a:\n" (MString.normalize nt) print_attributes r.attributes;
   (* Menhir accepts a leading "|", but bison does not. Let's not print it.
      So, we print a bar-separated list. *)
-  let sep = Misc.once ("  ") ("| ") in
+  let sep = MString.this_then_that ("  ") ("| ") in
   List.iter (fun br ->
     fprintf f "%s" (sep());
     print_branch f g br
@@ -390,7 +390,7 @@ let print_on_error_reduce_declarations f g =
   List.iter (fun level ->
     fprintf f "%%on_error_reduce";
     List.iter (fun (nt, _level) ->
-      fprintf f " %s" (Misc.normalize nt)
+      fprintf f " %s" (MString.normalize nt)
     ) level;
     fprintf f "\n"
   ) levels

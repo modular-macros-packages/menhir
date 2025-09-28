@@ -172,7 +172,7 @@ let alias grammar symbol : alias =
 
 let unquoted_alias grammar symbol : alias =
   alias grammar symbol
-  |> Option.map Misc.unquote
+  |> Option.map MString.unquote
 
 (* -------------------------------------------------------------------------- *)
 
