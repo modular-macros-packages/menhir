@@ -295,8 +295,9 @@
 
 ## Code Cleanup
 
-* Use bit sets in `NonterminalSet`, etc.
-  Get rid of `gSet.ml` and of `Patricia`.
+* `Item.Set` : it would be nice to use bitsets. Could we use a consecutive
+  numbering of items internally, and use the old encoding only when saving
+  data to the table needed by the inspection API?
 
 * Ideally, `PartialGrammar` should avoid renaming the parameters of
   a rule, when there is no need to do so. The renamed parameter is
