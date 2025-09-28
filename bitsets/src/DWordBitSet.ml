@@ -243,7 +243,7 @@ let compare_minimum s1 s2 =
       | false, true  -> -1
       | true , true  -> W.compare_minimum hi1 hi2
 
-let[@inline] sorted_union ss =
+let[@inline] big_union ss =
   List.fold_left union empty ss
 
 (* In the following two functions, we do *not* attempt to avoid memory

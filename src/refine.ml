@@ -15,7 +15,7 @@ module type DECOMPOSABLE = sig
   type t
   val is_empty : t -> bool
   val compare_minimum : t -> t -> int
-  val sorted_union : t list -> t
+  val big_union : t list -> t
   val extract_unique_prefix : t -> t -> t * t
   val extract_shared_prefix : t -> t -> t * (t * t)
 end
@@ -105,12 +105,12 @@ module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
     | [] -> []
     | (s1, k1) :: rest ->
       let rec merge acc ss key = function
-        | [] -> Set.sorted_union ss :: acc
+        | [] -> Set.big_union ss :: acc
         | (s, key') :: rest ->
           if IntSet.equal key key' then
             merge acc (s :: ss) key rest
           else
-            merge (Set.sorted_union ss :: acc) [s] key' rest
+            merge (Set.big_union ss :: acc) [s] key' rest
       in
       merge [] [s1] k1 rest
 
@@ -118,7 +118,7 @@ module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
 
   let partition_and_total xs =
     let parts = compute_parts xs in
-    let total = Set.sorted_union (List.rev_map fst parts) in
+    let total = Set.big_union (List.rev_map fst parts) in
     let union = union_parts parts in
     union, total
 
@@ -127,12 +127,12 @@ module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
     | [] -> []
     | (s1, k1) :: rest ->
       let rec merge acc ss key = function
-        | [] -> (Set.sorted_union ss, key) :: acc
+        | [] -> (Set.big_union ss, key) :: acc
         | (s, key') :: rest ->
           if IntSet.equal key key' then
             merge acc (s :: ss) key rest
           else
-            merge ((Set.sorted_union ss, key) :: acc) [s] key' rest
+            merge ((Set.big_union ss, key) :: acc) [s] key' rest
       in
       merge [] [s1] k1 rest
 

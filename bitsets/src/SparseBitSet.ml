@@ -386,11 +386,13 @@ let compare_minimum s1 s2 =
       let c = compare_offsets o1 o2 in if c <> 0 then c else
       W.compare_minimum w1 w2
 
-let[@inline] sorted_union ss =
-  (* The list [ss] is sorted. By starting from its right end, we repeatedly
-     prepend elements to the accumulator. This makes the complexity of this
-     algorithm linear in the length of the list [ss]. Starting from the left
-     end would make it quadratic. *)
+let[@inline] big_union ss =
+  let ss = List.sort compare_minimum ss in
+  (* The list [ss] is now sorted. Perform the unions by starting from the
+     right end. This way, we repeatedly prepend elements to the accumulator.
+     This makes the cost of this algorithm more likely to be linear in the
+     length of the list [ss]. Starting from the left end would definitely
+     cause us to fall into the quadratic worst case. *)
   List.fold_right union ss empty
 
 let rec extract_unique_prefix1 o2 w2 s1 =

@@ -161,12 +161,8 @@ module type SET = sig
        is [compare (minimum s1) (minimum s2)]. *)
   val compare_minimum : t -> t -> int
 
-  (**[sorted_union ss] computes the union of the sets in the list [ss]. Every
-     set in the list [ss] must be nonempty. The intervals that underlie these
-     sets must be ordered and nonoverlapping: that is, if [s1] and [s2] are
-     two adjacent sets in the list [ss], then they must satisfy the condition
-     [maximum s1 < minimum s2]. *)
-  val sorted_union : t list -> t
+  (**[big_union ss] computes the union of the sets in the list [ss]. *)
+  val big_union : t list -> t
 
   (**[extract_unique_prefix s1 s2] requires the set [s2] to be
      nonempty. It splits [s1] into two disjoint subsets [head1] and

@@ -345,7 +345,7 @@ let compare_minimum s1 s2 =
               | true , true  ->
                   W.compare_minimum hhi1 hhi2
 
-let[@inline] sorted_union ss =
+let[@inline] big_union ss =
   List.fold_left union empty ss
 
 let extract_unique_prefix s1 s2 =
