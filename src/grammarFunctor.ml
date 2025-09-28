@@ -1011,7 +1011,7 @@ let grammar_uses_error_token =
 
 module ProductionMap = struct
 
-  include IntMap.Make(Production)()
+  include Patricia
 
   (* Iteration over the start productions only. *)
 
