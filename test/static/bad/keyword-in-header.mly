@@ -7,4 +7,6 @@
 %token A B
 %start foo
 
+%%
+
 foo: A B {}
