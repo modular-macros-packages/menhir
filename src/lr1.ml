@@ -84,14 +84,7 @@ type node =
 
 (* All of the arrays below are indexed by raw node numbers. *)
 
-module M = struct
-  let marked : bool array =
-    Array.make Raw.n false
-  let mark (node : Raw.node) =
-    marked.(Raw.number node) <- true
-  let is_marked (node : Raw.node) =
-    marked.(Raw.number node)
-end
+module M = DFS.MarkArray(Raw)
 
 (* This array is initialized during the traversal. We assign new consecutive
    numbers to the reachable nodes. *)
