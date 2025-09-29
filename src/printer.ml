@@ -178,27 +178,41 @@ let classtypeparams p f = function
       fprintf f "[%a] " (seplist p comma) params
 
 (* ------------------------------------------------------------------------- *)
-(* Creating a stretch from a located identifier. (This does not require the
-   input file to be currently opened.) In this variant, [parenthesize] is
-   false, [monsters] is empty. *)
 
-let stretch_of_id id (* : string located *) =
-  let open Lexing in
-  let raw_content, pos = Positions.decompose id in
+(* [locate f ... body] invokes [body f], which is expected to print some
+   material, and optionally surrounds this invocation with line number
+   directives and with horizontal padding. (Horizontal padding is useful in
+   order to obtain correct column numbers in error messages.) *)
+
+let locate f filename linenum linecount padding body =
+  match X.locate_stretches with
+  | Some basename ->
+      sharp f linenum filename;
+      output_string f (String.make padding ' ');
+      body f;
+      line := !line + linecount;
+      (* The addition [_ + 2] anticipates the effect on the line
+         counter of the directive that we are just about to print. *)
+      sharp f (!line + 2) basename;
+      output_substring f whitespace 0 !indentation
+  | None ->
+      body f
+
+(* [locate_id f x] prints the identifier [x], optionally surrounded with line
+   number directives and horizontal padding. *)
+
+let locate_id f x (* : string located *) =
+  let x, pos = Positions.decompose x in
   let pos1 = Positions.start_of_position pos
   and pos2 = Positions.end_of_position pos
   and filename = Positions.filename_of_position pos in
   assert (pos1 != Lexing.dummy_pos);
-  let padding = pos1.pos_cnum - pos1.pos_bol in
-  let content = String.make padding ' ' ^ raw_content in
-  Stretch.({
-    stretch_filename = filename;
-    stretch_linenum = pos1.pos_lnum;
-    stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
-    stretch_content = content;
-    stretch_raw_content = raw_content;
-    stretch_keywords = []
-  })
+  let open Lexing in
+  let linenum = pos1.pos_lnum
+  and linecount = pos2.pos_lnum - pos1.pos_lnum
+  and padding = pos1.pos_cnum - pos1.pos_bol in
+  locate f filename linenum linecount padding @@ fun f ->
+    output_string f x
 
 (* When printing a stretch, the string [content] includes padding (that is,
    whitespace) so as to preserve the column numbers of the source file,
@@ -528,8 +542,7 @@ and pat0 f = function
   | PVar x ->
       var f x
   | PVarLocated x ->
-      (* Turn [x] on the fly into a stretch and print that. *)
-      stretch true f (stretch_of_id x)
+      locate_id f x
   | PData (d, []) ->
       var f d
   | PTuple [] ->
