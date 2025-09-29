@@ -33,10 +33,9 @@ end)
     if not (is_marked node) then begin
       mark node;
       discover node;
-      foreach_outgoing_edge node (fun label target ->
+      foreach_outgoing_edge node @@ fun label target ->
         traverse node label target;
         visit target
-      )
     end
 
   let () =
