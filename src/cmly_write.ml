@@ -16,17 +16,14 @@ let t2i = Terminal.t2i
 let p2i = Production.p2i
 open Cmly_format
 
-let raw_content stretch =
-  stretch.Stretch.stretch_raw_content
-
-let ocamltype (typ : Stretch.ocamltype) : ocamltype =
+let ocamltype (typ : Grammar.ocamltype) : ocamltype =
   match typ with
-  | Stretch.Declared stretch ->
-      raw_content stretch
-  | Stretch.Inferred typ ->
+  | Grammar.Declared fragment ->
+      Fragment.content fragment
+  | Grammar.Inferred typ ->
       typ
 
-let ocamltype_option (typo : Stretch.ocamltype option) : ocamltype option =
+let ocamltype_option (typo : Grammar.ocamltype option) : ocamltype option =
   match typo with
   | None ->
       None
@@ -268,8 +265,8 @@ let higher_syntax (g : Syntax.grammar) : higher_syntax = {
 let encode () : grammar =
   {
     g_basename     = Settings.base;
-    g_preludes     = List.map raw_content Front.grammar.preludes;
-    g_postludes    = List.map raw_content Front.grammar.postludes;
+    g_preludes     = List.map Fragment.content Front.grammar.preludes;
+    g_postludes    = List.map Fragment.content Front.grammar.postludes;
     g_terminals    = Terminal.init terminal;
     g_nonterminals = Nonterminal.init nonterminal;
     g_productions  = Production.init production;
@@ -277,7 +274,7 @@ let encode () : grammar =
     g_lr1_states   = Array.of_list (Lr1.map lr1_state);
     g_entry_points = Lr1.fold_entry entry_point [];
     g_attributes   = attributes Analysis.attributes;
-    g_parameters   = List.map raw_content Front.grammar.parameters;
+    g_parameters   = List.map Fragment.content Front.grammar.parameters;
     g_start_symbols = StringSet.elements Front.grammar.start_symbols;
     g_on_error_reduce =
       List.map (fun (sym, lvl) -> (sym, production_level lvl))

@@ -209,7 +209,7 @@ let produce_tokentypes grammar =
       let module P =
         Printer.Make (struct
                         let f = open_out (Settings.base ^ ".mli")
-                        let locate_stretches = None
+                        let locate = None
                       end)
       in
       P.interface [
@@ -218,7 +218,7 @@ let produce_tokentypes grammar =
       let module P =
         Printer.Make (struct
                         let f = open_out (Settings.base ^ ".ml")
-                        let locate_stretches = None
+                        let locate = None
                       end)
       in
       P.program [

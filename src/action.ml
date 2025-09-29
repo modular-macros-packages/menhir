@@ -35,13 +35,10 @@ type t = {
 
 (* Constructors. *)
 
-let from_stretch xs s =
-  {
-    expr      = IL.ETextual s;
-    standard  = s.Stretch.stretch_filename = Settings.stdlib_filename;
-    semvars   = xs;
-    keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
-  }
+let make standard semvars keywords fragment =
+  let expr = IL.ETextual fragment
+  and keywords = KeywordSet.of_list keywords in
+  { expr; standard; semvars; keywords }
 
 let rec from_il_expr e =
   {
@@ -81,10 +78,6 @@ and fv_aux accu e =
 (* Building [let x = a1 in a2]. *)
 
 let compose x a1 a2 =
-  (* 2015/07/20: there used to be a call to [parenthesize_stretch] here,
-     which would insert parentheses around every stretch in [a1]. This is
-     not necessary, as far as I can see, since every stretch that represents
-     a semantic action is already parenthesized by the lexer. *)
   {
     expr      = CodeBits.blet ([ IL.PVar x, a1.expr ], a2.expr);
     semvars   = StringSet.union a1.semvars (StringSet.remove x a2.semvars);

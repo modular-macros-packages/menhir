@@ -25,7 +25,11 @@ module Make (G : sig
 
 end) () = struct
 
-  open G
+open G
+
+type ocamltype = OCamlType.ocamltype =
+  | Declared of string fragment
+  | Inferred of string
 
 (* ------------------------------------------------------------------------ *)
 

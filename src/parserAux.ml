@@ -9,7 +9,6 @@
 (******************************************************************************)
 
 open Positions
-open Stretch
 open Attribute
 open Syntax
 
@@ -116,19 +115,12 @@ let producer_names (producers : early_producers) =
   |> List.map (fun (_, oid, _, _) -> Option.map Positions.value oid)
   |> Array.of_list
 
-(* Check that a stretch contains an OCaml lowercase or uppercase identifier,
-   and convert this stretch to a string. The stretch may be empty, too. *)
-
-let validate_pointfree_action (ty : ocamltype) : Stretch.t option =
-  match ty with
-  | Inferred _ ->
-      assert false
-  | Declared stretch ->
-      let s = stretch.stretch_raw_content in
-      if Lexpointfree.validate_pointfree_action (Lexing.from_string s) then
-        Some stretch
-      else
-        None
+let validate_pointfree_action (fragment : string fragment) : string fragment option =
+  let s = Fragment.content fragment in
+  if Lexpointfree.validate_pointfree_action (Lexing.from_string s) then
+    Some fragment (* a non-empty action *)
+  else
+    None          (* an empty action *)
 
 (* Test whether a string is a valid OCaml lowercase identifier. *)
 

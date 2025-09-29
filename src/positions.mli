@@ -74,6 +74,8 @@ val end_of_position: t -> Lexing.position
 
 val filename_of_position: t -> string
 
+val fragment : 'a located -> 'a Fragment.fragment
+
 (** {2 Position handling} *)
 
 (** [join p1 p2] returns a position that starts where [p1]

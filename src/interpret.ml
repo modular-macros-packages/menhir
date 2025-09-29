@@ -611,7 +611,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
 
   let module P = Printer.Make (struct
     let f = stdout
-    let locate_stretches = None
+    let locate = None
   end) in
   P.program program
 

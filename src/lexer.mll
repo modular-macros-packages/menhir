@@ -261,43 +261,50 @@ let gather_monsters monsters =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Creates a stretch. *)
+(* Create a fragment. *)
 
-let mk_stretch pos1 pos2 parenthesize monsters =
+let fragment pos1 pos2 =
   (* Read the specified chunk of the file. *)
-  let raw_content : string = InputFile.chunk (pos1, pos2) in
-  (* Transform the monsters, if there are any. (This explicit test
-     allows saving one string copy and keeping just one live copy.) *)
-  let content : string =
-    match monsters with
-    | [] ->
-        raw_content
-    | _ :: _ ->
-        let content : bytes = Bytes.of_string raw_content in
-        List.iter (fun monster -> monster.transform pos1.pos_cnum content) monsters;
-        Bytes.unsafe_to_string content
-  in
-  (* Add whitespace so that the column numbers match those of the source file.
-     If requested, add parentheses so that the semantic action can be inserted
-     into other code without ambiguity. *)
-  let content =
-    if parenthesize then
-      (* If [parenthesize] is true then we are at the beginning of a semantic
-         action, just after the opening brace. This guarantees that we cannot
-         be at the beginning of a line, so the subtraction [_ - 1] below
-         cannot produce a negative result. *)
-      (String.make (pos1.pos_cnum - pos1.pos_bol - 1) ' ') ^ "(" ^ content ^ ")"
-    else
-      (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
-  in
-  Stretch.({
-    stretch_filename = (InputFile.get_input_file() |> InputFile.get_file_name);
-    stretch_linenum = pos1.pos_lnum;
-    stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
-    stretch_content = content;
-    stretch_raw_content = raw_content;
-    stretch_keywords = MList.filter_map (fun monster -> monster.keyword) monsters
-  })
+  let content = InputFile.chunk (pos1, pos2) in
+  (* Construct a fragment. *)
+  Fragment.make pos1 pos2 content
+
+(* ------------------------------------------------------------------------ *)
+
+(* Create a semantic action. *)
+
+let transform ofs1 content monsters : string =
+  match monsters with
+  | [] ->
+      content
+  | _ :: _ ->
+      let content = Bytes.of_string content in
+      List.iter (fun monster -> monster.transform ofs1 content) monsters;
+      Bytes.unsafe_to_string content
+
+let make_action pos1 pos2 monsters dollars producers =
+  (* Check that the monsters are well-formed. *)
+  List.iter (fun monster -> monster.check dollars producers) monsters;
+  (* Gather all of the identifiers that the semantic action may use to refer
+     to a semantic value. This includes the identifiers that are explicitly
+     bound by the user (these appear in the array [producers]) and the
+     identifiers [_i] when the semantic action uses [$i]. *)
+  let ids = StringSet.union (gather_oids producers) (gather_monsters monsters) in
+  (* Collect their keywords. *)
+  let keywords = MList.filter_map (fun monster -> monster.keyword) monsters in
+  (* Read the specified chunk of the file. *)
+  let content = InputFile.chunk (pos1, pos2) in
+  (* Transform the monsters, if there are any. *)
+  let ofs1 = pos1.pos_cnum in
+  let content = transform ofs1 content monsters in
+  (* Construct a fragment. *)
+  let fragment = Fragment.make pos1 pos2 content in
+  (* Add parentheses to delimit the semantic action. *)
+  let fragment = Fragment.parenthesize fragment in
+  (* Record whether this action originates in Menhir's standard library. *)
+  let standard = (pos1.pos_fname = Settings.stdlib_filename) in
+  (* Build a semantic action. *)
+  Action.make standard ids keywords fragment
 
 (* ------------------------------------------------------------------------ *)
 
@@ -438,16 +445,16 @@ rule main = parse
     { try Hashtbl.find directives directive
       with Not_found -> error2 lexbuf "unknown directive: %s." directive }
 | "%%"
-    { (* The token [PERCENTPERCENT] carries a stretch that contains
+    { (* The token [PERCENTPERCENT] carries a fragment that contains
          everything that follows %% in the input file. This string
          must be created lazily. The parser decides (based on the
-         context) whether this stretch is needed. If it is indeed
-         needed, then constructing this stretch drives the lexer
+         context) whether this fragment is needed. If it is indeed
+         needed, then constructing this fragment drives the lexer
          to the end of the file. *)
       PERCENTPERCENT (lazy (
         let openingpos = lexeme_end_p lexbuf in
         let closingpos = finish lexbuf in
-        mk_stretch openingpos closingpos false []
+        fragment openingpos closingpos
       )) }
 | ";"
     { SEMI }
@@ -507,45 +514,30 @@ rule main = parse
 | "(*"
     { ocamlcomment (lexeme_start_p lexbuf) lexbuf; main lexbuf }
 | "<"
-    { savestart lexbuf (ocamltype (lexeme_end_p lexbuf)) }
+    { savestart lexbuf (angled (lexeme_end_p lexbuf)) }
 | "%{"
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_start_p lexbuf in
-        let stretchpos = lexeme_end_p lexbuf in
+        let startpos = lexeme_end_p lexbuf in
         let closingpos, monsters = action true openingpos [] lexbuf in
         no_monsters monsters;
-        HEADER (mk_stretch stretchpos closingpos false [])
+        HEADER (fragment startpos closingpos)
       ) }
 | "{"
-    { savestart lexbuf (fun lexbuf ->
-        let openingpos = lexeme_start_p lexbuf in
-        let stretchpos = lexeme_end_p lexbuf in
-        let closingpos, monsters = action false openingpos [] lexbuf in
-        ACTION (
-          fun dollars producers ->
-            (* Check that the monsters are well-formed. *)
-            List.iter (fun monster -> monster.check dollars producers) monsters;
-            (* Gather all of the identifiers that the semantic action may use
-               to refer to a semantic value. This includes the identifiers
-               that are explicitly bound by the user (these appear in the
-               array [producers]) and the identifiers [_i] when the semantic
-               action uses [$i]. *)
-            let ids =
-              StringSet.union (gather_oids producers) (gather_monsters monsters)
-            in
-            (* Extract a stretch of text. *)
-            let stretch = mk_stretch stretchpos closingpos true monsters in
-            (* Build a semantic action. *)
-            Action.from_stretch ids stretch
-        )
-      )
+    { savestart lexbuf @@ fun lexbuf ->
+      let openingpos = lexeme_start_p lexbuf in
+      let startpos = lexeme_end_p lexbuf in
+      let closingpos, monsters = action false openingpos [] lexbuf in
+      ACTION (make_action startpos closingpos monsters)
+        (* Partial application: [dollars] and [producers] are supplied by the
+           parser once they are available. *)
     }
 | ('%'? as percent) "[@" (attributechar+ as key) whitespace*
     { let openingpos = lexeme_start_p lexbuf in
-      let stretchpos = lexeme_end_p lexbuf in
+      let startpos = lexeme_end_p lexbuf in
       let closingpos = attribute openingpos lexbuf in
       let origin = Positions.import (openingpos, lexeme_end_p lexbuf) in
-      let payload = InputFile.chunk (stretchpos, closingpos) in
+      let payload = InputFile.chunk (startpos, closingpos) in
       let attr : attribute = { key; payload; origin } in
       if percent = "" then
         (* No [%] sign: this is a normal attribute. *)
@@ -575,24 +567,27 @@ and comment openingpos = parse
 
 (* ------------------------------------------------------------------------ *)
 
-(* Collect an O'Caml type delimited by angle brackets. Angle brackets can
-   appear as part of O'Caml function types and variant types, so we must
-   recognize them and *not* treat them as a closing bracket. *)
+(* Collect a fragment delimited by angle brackets (for example, an OCaml
+   type). Angle brackets can appear as part of O'Caml function types and
+   variant types, so we must recognize them and *not* treat them as a
+   closing bracket. *)
 
-and ocamltype openingpos = parse
+and angled openingpos = parse
 | "->"
 | "[>"
-    { ocamltype openingpos lexbuf }
+    { angled openingpos lexbuf }
 | '>'
-    { OCAMLTYPE (Stretch.Declared (mk_stretch openingpos (lexeme_start_p lexbuf) true [])) }
+    { let closingpos = lexeme_start_p lexbuf in
+      let fragment = fragment openingpos closingpos in
+      ANGLED fragment }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; ocamltype openingpos lexbuf }
+    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; angled openingpos lexbuf }
 | newline
-    { new_line lexbuf; ocamltype openingpos lexbuf }
+    { new_line lexbuf; angled openingpos lexbuf }
 | eof
-    { error1 openingpos "unterminated OCaml type." }
+    { error1 openingpos "unterminated opening bracket." }
 | _
-    { ocamltype openingpos lexbuf }
+    { angled openingpos lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -810,7 +805,7 @@ and char = parse
 
 (* Read until the end of the file. This is used after finding a %%
    that marks the end of the grammar specification. We update the
-   current position as we go. This allows us to build a stretch
+   current position as we go. This allows us to build a fragment
    for the postlude. *)
 
 and finish = parse

@@ -12,7 +12,6 @@ open Printf
 open Positions
 open Attribute
 open Syntax
-open Stretch
 open BasicSyntax
 open Settings
 
@@ -52,8 +51,8 @@ open X
 let print_ocamltype ty : string =
   Printf.sprintf " <%s>" (
     match ty with
-    | Declared stretch ->
-        stretch.stretch_raw_content
+    | Declared fragment ->
+        Fragment.content fragment
     | Inferred t ->
         t
     )
@@ -190,12 +189,12 @@ let print_semantic_action f g branch =
 
 let print_preludes f g =
   List.iter (fun prelude ->
-    fprintf f "%%{%s%%}\n" prelude.stretch_raw_content
+    fprintf f "%%{%s%%}\n" (Fragment.content prelude)
   ) g.preludes
 
 let print_postludes f g =
   List.iter (fun postlude ->
-    fprintf f "%s\n" postlude.stretch_raw_content
+    fprintf f "%s\n" (Fragment.content postlude)
   ) g.postludes
 
 (* -------------------------------------------------------------------------- *)
@@ -211,8 +210,8 @@ let print_start_symbols f g =
 
 (* Printing %parameter declarations. *)
 
-let print_parameter f stretch =
-  fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
+let print_parameter f parameter =
+  fprintf f "%%parameter<%s>\n" (Fragment.content parameter)
 
 let print_parameters f g =
   match mode with

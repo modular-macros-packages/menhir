@@ -28,9 +28,9 @@ open Positions
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token PERCENTATTRIBUTE SEMI
 %token <string Positions.located> LID UID QID
-%token <Stretch.t> HEADER
-%token <Stretch.ocamltype> OCAMLTYPE
-%token <Stretch.t Lazy.t> PERCENTPERCENT
+%token <string Fragment.fragment> HEADER
+%token <string Fragment.fragment> ANGLED
+%token <string Fragment.fragment Lazy.t> PERCENTPERCENT
 %token <Syntax.raw_action> ACTION
 %token <Attribute.attribute> ATTRIBUTE GRAMMARATTRIBUTE
 /* For the new rule syntax: */
@@ -98,11 +98,11 @@ declaration:
 | START nonterminals
     { List.map (Positions.map (fun nonterminal -> DStart nonterminal)) $2 }
 
-| TYPE OCAMLTYPE actuals
+| TYPE ocamltype actuals
     { List.map (Positions.map (fun nt -> DType ($2, nt)))
         (List.map Parameters.with_pos $3) }
 
-| START OCAMLTYPE nonterminals
+| START ocamltype nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
     { let dstart nt = DStart nt
       and dtype ntloc = Positions.map (fun _nt -> DType ($2, ParameterVar ntloc)) ntloc in (* ugly/weird *)
@@ -113,7 +113,7 @@ declaration:
     { let prec = ParserAux.new_precedence_level (rhs_start_pos 1, rhs_end_pos 1) in
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, $1, prec))) $2 }
 
-| PARAMETER OCAMLTYPE
+| PARAMETER ANGLED
     { [ unknown_pos (DParameter $2) ] }
 
 | GRAMMARATTRIBUTE
@@ -127,10 +127,14 @@ declaration:
       List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.with_pos $2) }
 
+ocamltype:
+  ANGLED
+    { OCamlType.Declared $1 }
+
 optional_ocamltype:
   /* epsilon */
     { None }
-| OCAMLTYPE /* lexically delimited by angle brackets */
+| ocamltype /* lexically delimited by angle brackets */
     { Some $1 }
 
 priority_keyword:

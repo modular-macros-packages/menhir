@@ -25,10 +25,8 @@ let join_declaration filename (grammar : grammar) decl =
 
   | DCode code ->
       { grammar with p_preludes = grammar.p_preludes @ [ code ] }
-  | DParameter (Stretch.Declared stretch) ->
-      { grammar with p_parameters = grammar.p_parameters @ [ stretch ] }
-  | DParameter (Stretch.Inferred _) ->
-      assert false
+  | DParameter fragment ->
+      { grammar with p_parameters = grammar.p_parameters @ [ fragment ] }
 
   (* Token declarations are recorded. Things are made somewhat
      difficult by the fact that %token and %left-%right-%nonassoc

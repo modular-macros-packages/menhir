@@ -11,7 +11,6 @@
 (* This module provides utilities that are shared by the two versions
    of the parser. *)
 
-open Stretch
 open Attribute
 open Syntax
 
@@ -85,11 +84,12 @@ val override: Positions.t -> 'a option -> 'a option -> 'a option
 
 val producer_names: early_producers -> identifier option array
 
-(* Check that a stretch represents valid content for a point-free semantic
+(* Check that a fragment represents valid content for a point-free semantic
    action, i.e., either just whitespace, or an OCaml lowercase or uppercase
-   identifier. May raise [Lexpointfree.InvalidPointFreeAction]. *)
+   identifier. May raise [Lexpointfree.InvalidPointFreeAction]. Returns [None]
+   if the action is empty and [Some _] if it is nonempty. *)
 
-val validate_pointfree_action: ocamltype -> Stretch.t option
+val validate_pointfree_action: string fragment -> string fragment option
 
 (* Test whether a string is a valid OCaml lowercase identifier. *)
 

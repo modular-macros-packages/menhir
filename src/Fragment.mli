@@ -1,3 +1,12 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
+(*                                                                            *)
+(******************************************************************************)
 
 (**A fragment represents a value together with a range in a source file. *)
 type 'a fragment = {

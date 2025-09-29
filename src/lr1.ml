@@ -1097,7 +1097,7 @@ let fold_entry f accu =
       | None ->
           assert false (* this is a start production *)
     in
-    let t : Stretch.ocamltype =
+    let t : ocamltype =
       Nonterminal.ocamltype_of_start_symbol nt
     in
     f prod state nt t accu

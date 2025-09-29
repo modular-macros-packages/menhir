@@ -19,6 +19,13 @@
 type 'a located =
   'a Positions.located
 
+type 'a fragment =
+  'a Fragment.fragment
+
+type ocamltype = OCamlType.ocamltype =
+  | Declared of string fragment
+  | Inferred of string
+
 (* ------------------------------------------------------------------------ *)
 
 (* Terminals and nonterminal symbols are strings. *)
@@ -65,14 +72,7 @@ type filename =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A postlude is a source file fragment. *)
-
-type postlude =
-  Stretch.t
-
-(* ------------------------------------------------------------------------ *)
-
-(* OCaml semantic actions are represented as stretches. *)
+(* OCaml semantic actions. *)
 
 type action =
   Action.t
@@ -128,7 +128,7 @@ type precedence_level =
 type token_properties =
   {
              tk_filename      : filename;
-             tk_ocamltype     : Stretch.ocamltype option;
+             tk_ocamltype     : ocamltype option;
              tk_position      : Positions.t;
              tk_alias         : alias;
              tk_attributes    : attributes;
@@ -290,7 +290,7 @@ and symbol_expression =
 
 and extended_action =
   | XATraditional of raw_action
-  | XAPointFree of Stretch.t option
+  | XAPointFree of string fragment option
   (* A semantic action is either traditional { ... } or point-free.
      There are two forms of point-free actions, <> and <id>.
      In the latter case, [id] is an OCaml identifier. *)
@@ -314,15 +314,15 @@ type declaration =
 
     (* Raw OCaml code. *)
 
-  | DCode of Stretch.t
+  | DCode of string fragment
 
     (* Raw OCaml functor parameter. *)
 
-  | DParameter of Stretch.ocamltype (* really a stretch *)
+  | DParameter of string fragment
 
     (* Terminal symbol (token) declaration. *)
 
-  | DToken of Stretch.ocamltype option * terminal * alias * attributes
+  | DToken of ocamltype option * terminal * alias * attributes
 
     (* Start symbol declaration. *)
 
@@ -334,7 +334,7 @@ type declaration =
 
     (* Type declaration. *)
 
-  | DType of Stretch.ocamltype * parameter
+  | DType of ocamltype * parameter
 
     (* Grammar-level attribute declaration. *)
 
@@ -355,7 +355,7 @@ type declaration =
 type partial_grammar =
   {
     pg_filename          : filename;
-    pg_postlude          : postlude option;
+    pg_postlude          : string fragment option;
     pg_declarations      : declaration located list;
     pg_rules             : parameterized_rule list;
   }
@@ -376,11 +376,11 @@ type partial_grammar =
  *)
 type grammar =
   {
-    p_preludes           : Stretch.t list;
-    p_postludes          : postlude list;
-    p_parameters         : Stretch.t list;
+    p_preludes           : string fragment list;
+    p_postludes          : string fragment list;
+    p_parameters         : string fragment list;
     p_start_symbols      : Positions.t StringMap.t;
-    p_types              : (parameter * Stretch.ocamltype located) list;
+    p_types              : (parameter * ocamltype located) list;
     p_tokens             : token_properties StringMap.t;
     p_on_error_reduce    : (parameter * on_error_reduce_level) list;
     p_grammar_attributes : attributes;

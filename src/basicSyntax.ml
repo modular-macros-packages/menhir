@@ -85,11 +85,11 @@ type rule =
 
 type grammar =
   {
-    preludes        : Stretch.t list;
-    postludes       : Syntax.postlude list;
-    parameters      : Stretch.t list;
+    preludes        : string fragment list;
+    postludes       : string fragment list;
+    parameters      : string fragment list;
     start_symbols   : StringSet.t;
-    types           : Stretch.ocamltype StringMap.t;
+    types           : ocamltype StringMap.t;
     tokens          : Syntax.token_properties StringMap.t;
     on_error_reduce : on_error_reduce_level StringMap.t;
     gr_attributes   : attributes;
@@ -150,7 +150,7 @@ let typed_tokens grammar =
    [None] is returned if and only if this token does not carry a
    semantic value. *)
 
-let ocamltype_of_token grammar symbol : Stretch.ocamltype option =
+let ocamltype_of_token grammar symbol : ocamltype option =
   try
     let properties = StringMap.find symbol grammar.tokens in
     assert properties.tk_is_declared;
@@ -196,7 +196,7 @@ let is_nonterminal grammar symbol =
    of the nonterminal symbol [symbol] in the grammar [grammar],
    if it is known. *)
 
-let ocamltype_of_symbol grammar symbol : Stretch.ocamltype option =
+let ocamltype_of_symbol grammar symbol : ocamltype option =
   try
     Some (StringMap.find symbol grammar.types)
   with Not_found ->
@@ -205,7 +205,7 @@ let ocamltype_of_symbol grammar symbol : Stretch.ocamltype option =
 (* [ocamltype_of_start_symbol grammar symbol] produces the OCaml type
    of the start symbol [symbol] in the grammar [grammar]. *)
 
-let ocamltype_of_start_symbol grammar symbol : Stretch.ocamltype =
+let ocamltype_of_start_symbol grammar symbol : ocamltype =
   try
     StringMap.find symbol grammar.types
   with Not_found ->

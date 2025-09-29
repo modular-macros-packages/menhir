@@ -67,7 +67,7 @@ val entry: node ProductionMap.t
    symbol and to the OCaml type associated with this production. *)
 
 val fold_entry:
-  (Production.index -> node -> Nonterminal.t -> Stretch.ocamltype -> 'a -> 'a) ->
+  (Production.index -> node -> Nonterminal.t -> ocamltype -> 'a -> 'a) ->
   'a -> 'a
 
 (* [entry_of_nt] maps a (user) non-terminal start symbol to the corresponding

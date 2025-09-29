@@ -397,9 +397,9 @@ and production_aux
       (* As a special case, if [oid] is [None], then we must not build
          an application node -- we simply build a tuple. *)
 
-     (* [id] is actually a stretch, not just a string, and this matters when
+     (* [id] is actually a fragment, not just a string, and this matters when
         there is an OCaml error (e.g., [id] is undeclared, or ill-typed).
-        The stretch contains source code location information which allows
+        The fragment contains source code location information which allows
         the error to be reported in the source file. *)
 
       (* Build the tuple as an IL expression. *)

@@ -966,7 +966,7 @@ let program =
 
       mbasics grammar @
 
-      SIStretch grammar.preludes ::
+      SIFragment grammar.preludes ::
 
       SITypeDefs (statetypedef :: celltypedefs @ finaldatadefs) ::
 
@@ -983,7 +983,7 @@ let program =
 
       valdefs (StringMap.fold entrydef program.entry []) @
 
-      SIStretch grammar.postludes ::
+      SIFragment grammar.postludes ::
 
       []
 

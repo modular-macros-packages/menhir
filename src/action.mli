@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Fragment
 open Keyword (* from sdk/ *)
 
 (** A semantic action is a piece of OCaml code together with information about
@@ -21,10 +22,12 @@ type t
 
 (* Constructors. *)
 
-(** [from_stretch xs s] builds an action out of a textual piece of code.
-   The set [xs] must contain all of the variables that occur free
-   in the semantic action and denote a semantic value. *)
-val from_stretch: StringSet.t -> Stretch.t -> t
+(** [make standard xs keywords fragment] builds an action out of the text
+    fragment [fragment]. The flag [standard] indicates whether this action
+    originates in Menhir's standard library. The list [keywords] is the list
+    of Menhir keywords found in this semantic action. The set [xs] is the
+    set of semantic-value variables that occur free in this action. *)
+val make: bool -> StringSet.t -> keyword list -> string fragment -> t
 
 (** [from_il_expr] builds an action out of an IL expression. Not every IL
    expression is accepted; only the expressions built by NewRuleSyntax are

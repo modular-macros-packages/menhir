@@ -16,7 +16,7 @@ let write program =
   let module P = Printer.Make (struct
     let filename = Settings.base ^ ".ml"
     let f = open_out filename
-    let locate_stretches =
+    let locate =
       (* 2017/05/09: always include line number directives in generated .ml
          files. Indeed, they affect the semantics of [assert] instructions
          in the semantic actions. *)

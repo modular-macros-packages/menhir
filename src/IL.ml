@@ -8,6 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+type 'a fragment = 'a Fragment.fragment
+type ocamltype = OCamlType.ocamltype
 open Positions
 
 (* Abstract syntax of the language used for code production. *)
@@ -17,7 +19,7 @@ type interface =
 
 and interface_item =
     (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
-  | IIFunctor of Stretch.t list * interface
+  | IIFunctor of string fragment list * interface
     (* Exception declarations. *)
   | IIExcDecls of excdef list
     (* Algebraic data type declarations (mutually recursive). *)
@@ -130,7 +132,7 @@ and datadef = {
 and typ =
 
   (* Textual OCaml type. *)
-  | TypTextual of Stretch.ocamltype
+  | TypTextual of ocamltype
 
   (* Type variable, without its leading quote. Can also be "_". *)
   | TypVar of string
@@ -237,7 +239,7 @@ and expr =
   | ERecordWrite of expr * string * expr
 
   (* Textual OCaml code. *)
-  | ETextual of Stretch.t
+  | ETextual of string fragment
 
   (* Comments. *)
   | EComment of string * expr
@@ -297,7 +299,7 @@ and structure =
 
 and structure_item =
     (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
-  | SIFunctor of Stretch.t list * structure
+  | SIFunctor of string fragment list * structure
     (* Exception definitions. *)
   | SIExcDefs of excdef list
     (* Algebraic data type definitions (mutually recursive). *)
@@ -305,7 +307,7 @@ and structure_item =
     (* Value definitions (mutually recursive or not, as per the flag). *)
   | SIValDefs of bool * valdef list
     (* Raw OCaml code. *)
-  | SIStretch of Stretch.t list
+  | SIFragment of string fragment list
     (* Sub-module definition. *)
   | SIModuleDef of string * modexpr
     (* Module inclusion. *)

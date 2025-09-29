@@ -10,6 +10,8 @@
 
 (* A pretty-printer for [IL]. *)
 
+open Fragment
+open OCamlType
 open IL
 
 module PreliminaryMake (X : sig
@@ -26,9 +28,9 @@ module PreliminaryMake (X : sig
 
   val f: channel
 
-  (* [locate_stretches] controls the way we print OCaml stretches (types and
+  (* [locate] controls the way we print OCaml source code fragments (types and
      semantic actions). If it is [Some dstfilename], where [dstfilename] is
-     the name of the file that is being written, then we surround stretches
+     the name of the file that is being written, then we surround fragments
      with OCaml line number directives of the form # <line number> <filename>.
      If it is [None], then we don't. *)
 
@@ -41,7 +43,7 @@ module PreliminaryMake (X : sig
      except perhaps where we think that they decrease readability (e.g., in a
      generated .mli file). *)
 
-  val locate_stretches: string option
+  val locate: string option
 
 end) = struct
 open X
@@ -73,7 +75,7 @@ let line =
 (* [rawnl] should ideally be the only place where writing a newline character
    to the output channel is permitted. This ensures that the line counter
    remains correct. However, [line] is also updated in a few other auxiliary
-   functions, such as [stretch] and [typ0] and [exprk] and [datadefcomment]. *)
+   functions, such as [locate] and [typ0] and [exprk] and [datadefcomment]. *)
 
 let rawnl f =
   incr line;
@@ -184,11 +186,11 @@ let classtypeparams p f = function
    directives and with horizontal padding. (Horizontal padding is useful in
    order to obtain correct column numbers in error messages.) *)
 
-let locate f filename linenum linecount padding body =
-  match X.locate_stretches with
+let locate f filename linenum linecount column body =
+  match X.locate with
   | Some basename ->
       sharp f linenum filename;
-      output_string f (String.make padding ' ');
+      output_string f (String.make column ' ');
       body f;
       line := !line + linecount;
       (* The addition [_ + 2] anticipates the effect on the line
@@ -198,43 +200,13 @@ let locate f filename linenum linecount padding body =
   | None ->
       body f
 
-(* [locate_id f x] prints the identifier [x], optionally surrounded with line
-   number directives and horizontal padding. *)
+let fragment f (frag : string fragment) =
+  let { filename; linenum; linecount; column; content } = frag in
+  locate f filename linenum linecount column @@ fun f ->
+  output_string f content
 
-let locate_id f x (* : string located *) =
-  let x, pos = Positions.decompose x in
-  let pos1 = Positions.start_of_position pos
-  and pos2 = Positions.end_of_position pos
-  and filename = Positions.filename_of_position pos in
-  assert (pos1 != Lexing.dummy_pos);
-  let open Lexing in
-  let linenum = pos1.pos_lnum
-  and linecount = pos2.pos_lnum - pos1.pos_lnum
-  and padding = pos1.pos_cnum - pos1.pos_bol in
-  locate f filename linenum linecount padding @@ fun f ->
-    output_string f x
-
-(* When printing a stretch, the string [content] includes padding (that is,
-   whitespace) so as to preserve the column numbers of the source file,
-   whereas the string [raw_content] does not. When [X.locate_stretches]
-   is [None], the parameter [raw] controls the choice between them. When
-   [X.locate_stretches] is [Some _], we ignore [raw] and force the use of
-   the [content] string, so as to have correct column numbers. *)
-
-let stretch raw f stretch =
-  let content = stretch.Stretch.stretch_content
-  and raw_content = stretch.Stretch.stretch_raw_content in
-  match X.locate_stretches with
-  | Some basename ->
-      sharp f stretch.Stretch.stretch_linenum stretch.Stretch.stretch_filename;
-      output_string f content;
-      line := !line + stretch.Stretch.stretch_linecount;
-      (* The addition [_ + 2] anticipates the effect on the line
-         counter of the directive that we are just about to print. *)
-      sharp f (!line + 2) basename;
-      output_substring f whitespace 0 !indentation
-  | None ->
-      output_string f (if raw then raw_content else content)
+let parenthesized_fragment f frag =
+  fragment f (Fragment.parenthesize frag)
 
 (* ------------------------------------------------------------------------- *)
 (* Expression printer. *)
@@ -484,8 +456,8 @@ and exprk k f e =
         fprintf f "%s (%a)" d (seplist app comma) args
     | EVar v ->
         var f v
-    | ETextual action ->
-        stretch false f action
+    | ETextual frag ->
+        fragment f frag
     | EUnit ->
         fprintf f "()"
     | EIntConst k ->
@@ -542,7 +514,7 @@ and pat0 f = function
   | PVar x ->
       var f x
   | PVarLocated x ->
-      locate_id f x
+      fragment f (Positions.fragment x)
   | PData (d, []) ->
       var f d
   | PTuple [] ->
@@ -597,9 +569,9 @@ and quote_less_typevar f = function
       fprintf f "%s" v
 
 and typ0 f = function
-  | TypTextual (Stretch.Declared ocamltype) ->
-      fprintf f "(%a)" (stretch true) ocamltype
-  | TypTextual (Stretch.Inferred t) ->
+  | TypTextual (Declared ocamltype) ->
+      parenthesized_fragment f ocamltype
+  | TypTextual (Inferred t) ->
       line := !line + LineCount.count 0 (Lexing.from_string t);
       fprintf f "(%s)" t
   | TypVar v ->
@@ -788,14 +760,14 @@ let rec structure_item f item =
   match item with
   | SIFunctor ([], s) ->
       structure f s
-  | SIStretch stretches ->
-      List.iter (stretch false f) stretches
+  | SIFragment fragments ->
+      List.iter (fragment f) fragments
   | _ ->
     nl f;
     begin match item with
     | SIFunctor (params, s) ->
         fprintf f "module Make%a%t= %a"
-          (list (stretch false) nl) params
+          (list parenthesized_fragment nl) params
           nl
           structend s
     | SIExcDefs defs ->
@@ -804,7 +776,7 @@ let rec structure_item f item =
         typedefs f defs
     | SIValDefs (recursive, defs) ->
         valdefs recursive f defs
-    | SIStretch _ ->
+    | SIFragment _ ->
         assert false (* already handled above *)
     | SIModuleDef (name, rhs) ->
         fprintf f "module %s = %a" name modexpr rhs
@@ -944,7 +916,7 @@ and interface_item f item =
     begin match item with
     | IIFunctor (params, i) ->
         fprintf f "module Make%a%t: %a"
-          (list (stretch false) nl) params nl
+          (list parenthesized_fragment nl) params nl
           sigend i
     | IIExcDecls defs ->
         excdefs true f defs
@@ -992,7 +964,7 @@ end
 
 module Make (X : sig
   val f: out_channel
-  val locate_stretches: string option
+  val locate: string option
 end) = struct
   include PreliminaryMake(struct
     type channel = out_channel
@@ -1007,7 +979,7 @@ end
 
 module MakeBuffered (X : sig
   val f: Buffer.t
-  val locate_stretches: string option
+  val locate: string option
 end) = struct
   include PreliminaryMake(struct
     type channel = Buffer.t
@@ -1024,7 +996,7 @@ let print_expr f e =
   let module P =
     Make (struct
       let f = f
-      let locate_stretches = None
+      let locate = None
     end)
   in
   P.expr e
@@ -1034,7 +1006,7 @@ let string_of_expr e =
     let module P =
       MakeBuffered (struct
         let f = b
-        let locate_stretches = None
+        let locate = None
       end)
     in
     P.expr e

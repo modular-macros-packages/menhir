@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Fragment
 open Attribute
 
 (* The functor [Make] transforms an abstract syntax tree for the grammar into a
@@ -28,6 +29,10 @@ module Make (G : sig
   val verbose: bool
 
 end) () : sig
+
+type ocamltype = OCamlType.ocamltype =
+  | Declared of string fragment
+  | Inferred of string
 
 (* ------------------------------------------------------------------------ *)
 (* Nonterminals. *)
@@ -79,12 +84,12 @@ module Nonterminal : sig
      %type declarations.) This function is not applicable to the internally
      generated nonterminals. *)
 
-  val ocamltype: t -> Stretch.ocamltype option
+  val ocamltype: t -> ocamltype option
 
   (* A start symbol always has a type. This allows us to define
      a simplified version of [ocamltype] for start symbols. *)
 
-  val ocamltype_of_start_symbol: t -> Stretch.ocamltype
+  val ocamltype_of_start_symbol: t -> ocamltype
 
   (* [symbols_without_ocamltype()] returns a list of the nonterminal symbols
      that do not have a known OCaml type. *)
@@ -186,7 +191,7 @@ module Terminal : sig
      terminal symbol [t]. If this terminal symbol carries no semantic
      value, then it returns [None]. *)
 
-  val ocamltype: t -> Stretch.ocamltype option
+  val ocamltype: t -> ocamltype option
 
   (* These are the two pseudo-tokens [#] and [error]. The former is
      used to denote the end of the token stream. The latter is

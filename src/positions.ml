@@ -71,6 +71,11 @@ let end_of_position (_, p) = p
 let filename_of_position p =
   (start_of_position p).pos_fname
 
+let fragment { value; position } =
+  let pos1 = start_of_position position
+  and pos2 = end_of_position position in
+  Fragment.make pos1 pos2 value
+
 let line p =
   p.pos_lnum
 

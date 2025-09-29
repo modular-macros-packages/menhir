@@ -8,13 +8,13 @@ Either a declaration or '%%' is expected at this point.
 # ----------------------------------------------------------------------------
 
 grammar: TYPE UID
-grammar: TYPE OCAMLTYPE TYPE
-grammar: TYPE OCAMLTYPE UID PREC
-grammar: TYPE OCAMLTYPE UID LPAREN TYPE
-grammar: TYPE OCAMLTYPE UID COMMA TYPE
-grammar: TYPE OCAMLTYPE UID LPAREN UID UID
-grammar: TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE
-grammar: TYPE OCAMLTYPE UID PLUS RPAREN
+grammar: TYPE ANGLED TYPE
+grammar: TYPE ANGLED UID PREC
+grammar: TYPE ANGLED UID LPAREN TYPE
+grammar: TYPE ANGLED UID COMMA TYPE
+grammar: TYPE ANGLED UID LPAREN UID UID
+grammar: TYPE ANGLED UID LPAREN UID COMMA TYPE
+grammar: TYPE ANGLED UID PLUS RPAREN
 grammar: ON_ERROR_REDUCE TYPE
 
 # %type<ocamltype> and %on_error_reduce are both followed with clist(strict_actual),
@@ -32,7 +32,7 @@ Examples of well-formed declarations:
 # ----------------------------------------------------------------------------
 
 grammar: TOKEN TYPE
-grammar: TOKEN OCAMLTYPE TYPE
+grammar: TOKEN ANGLED TYPE
 grammar: TOKEN UID STAR
 grammar: TOKEN UID QID STAR
 grammar: TOKEN UID COMMA TYPE
@@ -48,7 +48,7 @@ Examples of well-formed declarations:
 # ----------------------------------------------------------------------------
 
 grammar: START UID
-grammar: START OCAMLTYPE LEFT
+grammar: START ANGLED LEFT
 grammar: START LID UID
 grammar: START LID COMMA UID
 
@@ -289,7 +289,7 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-grammar: TYPE OCAMLTYPE UID LPAREN UID LPAREN TYPE
+grammar: TYPE ANGLED UID LPAREN UID LPAREN TYPE
 grammar: PERCENTPERCENT UID COLON UID LPAREN UID COMMA TYPE
 grammar: PERCENTPERCENT UID COLON UID LPAREN UID LPAREN TYPE
 
@@ -306,7 +306,7 @@ Examples of well-formed actual parameters:
 
 # ----------------------------------------------------------------------------
 
-grammar: TYPE OCAMLTYPE UID LPAREN UID PLUS UID
+grammar: TYPE ANGLED UID LPAREN UID PLUS UID
 
 Ill-formed list of actual parameters.
 Either a modifier '*' or '+' or '?'

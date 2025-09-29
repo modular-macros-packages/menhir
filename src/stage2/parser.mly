@@ -20,7 +20,6 @@
 
 %{
 
-open Stretch
 open Syntax
 open Positions
 
@@ -36,38 +35,6 @@ let inject (e : symbol_expression located) : expression =
     in
     EChoice [ branch ]
   ) e
-
-(* When a stretch has been created by [Lexer.mk_stretch] with [parenthesize]
-   set to [true], it includes parentheses. In some (rare) cases, this is
-   undesirable. The following function removes the parentheses a posteriori.
-   They are replaced with whitespace, so as to not alter column numbers. *)
-
-let rec find s n i =
-  assert (i < n);
-  if s.[i] = '(' then i
-  else begin
-    assert (s.[i] = ' ');
-    find s n (i+1)
-  end
-
-let unparenthesize (s : string) : string =
-  let n = String.length s in
-  (* The string [s] must end with a closing parenthesis. *)
-  assert (n >= 2 && s.[n-1] = ')');
-  (* The string [s] must begin with a certain amount of spaces
-     followed with an opening parenthesis. Find its offset [i]. *)
-  let i = find s n 0 in
-  (* Create a copy without the parentheses. *)
-  let b = Bytes.of_string s in
-  Bytes.set b i ' ';
-  Bytes.set b (n-1) ' ';
-  Bytes.to_string b
-
-let unparenthesize (s : Stretch.t) : Stretch.t =
-  { s with stretch_content = unparenthesize s.stretch_content }
-
-let unparenthesize (o : Stretch.t option) : Stretch.t option =
-  Option.map unparenthesize o
 
 %}
 
@@ -104,13 +71,13 @@ let unparenthesize (o : Stretch.t option) : Stretch.t option =
   UID              "UIdent"
   QID              "\"alias\""
 
-%token <Stretch.t>
+%token <string Fragment.fragment>
   HEADER           "%{ header %}"
 
-%token <Stretch.ocamltype>
-  OCAMLTYPE        "<unit>"
+%token <string Fragment.fragment>
+  ANGLED           "<unit>"
 
-%token <Stretch.t Lazy.t>
+%token <string Fragment.fragment Lazy.t>
   PERCENTPERCENT   "%%"
 
 %token <Syntax.raw_action>
@@ -192,12 +159,12 @@ declaration:
 | h = HEADER /* lexically delimited by %{ ... %} */
     { [ with_loc $loc (DCode h) ] }
 
-| TOKEN ty = OCAMLTYPE? ts = clist(terminal_alias_attrs)
+| TOKEN ty = ocamltype? ts = clist(terminal_alias_attrs)
     { List.map (Positions.map (fun (terminal, alias, attrs) ->
         DToken (ty, terminal, alias, attrs)
       )) ts }
 
-| START t = OCAMLTYPE? nts = clist(nonterminal)
+| START t = ocamltype? nts = clist(nonterminal)
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
     {
       match t with
@@ -210,7 +177,7 @@ declaration:
          List.map dtype nts
     }
 
-| TYPE t = OCAMLTYPE ss = clist(strict_actual)
+| TYPE t = ocamltype ss = clist(strict_actual)
     { List.map (Positions.map (fun nt -> DType (t, nt)))
         (List.map Parameters.with_pos ss) }
 
@@ -218,7 +185,7 @@ declaration:
     { let prec = ParserAux.new_precedence_level $loc(k) in
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
 
-| PARAMETER t = OCAMLTYPE
+| PARAMETER t = ANGLED
     { [ with_loc $loc (DParameter t) ] }
 
 | attr = GRAMMARATTRIBUTE
@@ -245,6 +212,10 @@ declaration:
         "syntax error inside a declaration.\n\
          Did you perhaps forget the %%%% that separates declarations and rules?"
     }
+
+%inline ocamltype:
+  fragment = ANGLED
+    { OCamlType.Declared fragment }
 
 priority_keyword:
   LEFT
@@ -662,22 +633,20 @@ action_expression:
    expression between curly braces) or a point-free semantic action (an
    optional OCaml identifier between angle brackets). */
 
-/* The token OCAMLTYPE, which until now was supposed to denote an OCaml
+/* The token ANGLED, which until now was supposed to denote an OCaml
    type between angle brackets, is re-used for this purpose. This is not
    very pretty. */
 
-/* The stretch produced by the lexer is validated -- i.e., we check that
-   it contains just an OCaml identifier, or is empty. The parentheses
-   added by the lexer to the [stretch_content] field are removed (ugh!)
-   because they are problematic when this identifier is a data constructor. */
+/* The fragment produced by the lexer is validated -- i.e., we check that
+   it contains just an OCaml identifier, or is empty. */
 
 action:
   action = ACTION
     { XATraditional action }
-| action = OCAMLTYPE
+| action = ANGLED
     { match ParserAux.validate_pointfree_action action with
       | os ->
-          XAPointFree (unparenthesize os)
+          XAPointFree os
       | exception Lexpointfree.InvalidPointFreeAction ->
           Error.error [Positions.import $loc]
             "A point-free semantic action must consist \

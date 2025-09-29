@@ -166,7 +166,7 @@ module Code (G : sig
     val print: t -> string
     val real: t -> bool
     val unquoted_alias: t -> string option
-    val ocamltype: t -> Stretch.ocamltype option
+    val ocamltype: t -> ocamltype option
     val map_real: (t -> 'a) -> 'a list
   end
   module Nonterminal : sig
@@ -517,9 +517,9 @@ and tok_method_def tok : class_field =
      a token alias for it, then we can use this alias to provide
      a plausible definition. *)
   match Terminal.ocamltype tok with
-  | Some stretch ->
+  | Some fragment ->
       (* Virtual method, one argument. *)
-      let ty = TypTextual stretch in
+      let ty = TypTextual fragment in
       vmeth (tok_method_name tok) (marrow [ty] tresult)
   | None ->
       match Terminal.unquoted_alias tok with
@@ -711,7 +711,7 @@ module Interface (G : sig
     val print: t -> string
     val real: t -> bool
     val unquoted_alias: t -> string option
-    val ocamltype: t -> Stretch.ocamltype option
+    val ocamltype: t -> ocamltype option
     val map_real: (t -> 'a) -> 'a list
   end
   module Nonterminal : sig
@@ -916,9 +916,9 @@ and tok_method_decl tok : class_field_spec =
      a token alias for it, then we can use this alias to provide
      a plausible definition. *)
   match Terminal.ocamltype tok with
-  | Some stretch ->
+  | Some fragment ->
       (* Virtual method, one argument. *)
-      let ty = TypTextual stretch in
+      let ty = TypTextual fragment in
       vmeth (tok_method_name tok) (arrow ty tresult)
   | None ->
       match Terminal.unquoted_alias tok with

@@ -21,7 +21,7 @@ module Code (G : sig
     val sharp: t
     val real: t -> bool
     val unquoted_alias: t -> string option
-    val ocamltype: t -> Stretch.ocamltype option
+    val ocamltype: t -> ocamltype option
     val map_real: (t -> 'a) -> 'a list
   end
   module Nonterminal : sig
@@ -63,7 +63,7 @@ module Interface (G : sig
     val print: t -> string
     val real: t -> bool
     val unquoted_alias: t -> string option
-    val ocamltype: t -> Stretch.ocamltype option
+    val ocamltype: t -> ocamltype option
     val map_real: (t -> 'a) -> 'a list
   end
   module Nonterminal : sig

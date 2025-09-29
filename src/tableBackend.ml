@@ -1095,7 +1095,7 @@ let program =
        define the value [_eRR] above this line so that we do not
        have a problem if a user prelude hides the name [Error]. *)
 
-    SIStretch grammar.preludes ::
+    SIFragment grammar.preludes ::
 
     (* Define the tables. *)
 
@@ -1146,7 +1146,7 @@ let program =
     (* Optionally generate the unparsing API. *)
     MList.ifnlazy Settings.unparsing unparsing_API @
 
-    SIStretch grammar.postludes ::
+    SIFragment grammar.postludes ::
 
   [])]
 

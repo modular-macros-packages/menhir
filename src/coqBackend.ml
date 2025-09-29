@@ -46,11 +46,11 @@ module Run () = struct
 
   let print_type ty =
     if Settings.coq_no_actions then "unit"
-    else match ty with
-         | None -> "unit"
-         | Some t -> match t with
-                     | Stretch.Declared s -> s.Stretch.stretch_content
-                     | Stretch.Inferred _ -> assert false (* We cannot infer coq types *)
+    else
+      match ty with
+      | None -> "unit"
+      | Some (Declared s) -> Fragment.content s
+      | Some (Inferred _) -> assert false (* We cannot infer Coq types *)
 
   let is_final_state node =
     match Default.has_default_reduction node with
@@ -522,7 +522,7 @@ module Run () = struct
 
   let write_all f =
     if not Settings.coq_no_actions then
-      List.iter (fun s -> fprintf f "%s\n\n" s.Stretch.stretch_content)
+      List.iter (fun s -> fprintf f "%s\n\n" (Fragment.content s))
         Front.grammar.BasicSyntax.preludes;
 
     fprintf f "From Coq.extraction Require Extraction.\n";
@@ -545,6 +545,6 @@ module Run () = struct
     write_theorems f;
 
     if not Settings.coq_no_actions then
-      List.iter (fun stretch -> fprintf f "\n\n%s" stretch.Stretch.stretch_raw_content)
+      List.iter (fun postlude -> fprintf f "\n\n%s" (Fragment.content postlude))
         Front.grammar.BasicSyntax.postludes
 end

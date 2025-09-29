@@ -9,7 +9,6 @@
 (******************************************************************************)
 
 open Syntax
-open Stretch
 open BasicSyntax
 open IL
 open CodeBits
@@ -270,9 +269,9 @@ let program grammar =
 
   [ SIFunctor (grammar.parameters,
     interface_to_structure (tokentypedef grammar) @
-    SIStretch grammar.preludes ::
+    SIFragment grammar.preludes ::
     SIValDefs (false, [ begindef; def; enddef ]) ::
-    SIStretch grammar.postludes ::
+    SIFragment grammar.postludes ::
   [])]
 
 (* ------------------------------------------------------------------------- *)
@@ -282,7 +281,7 @@ let write grammar filename () =
   let ml = open_out filename in
   let module P = Printer.Make (struct
     let f = ml
-    let locate_stretches = Some filename
+    let locate = Some filename
   end) in
   P.program (program grammar);
   close_out ml
