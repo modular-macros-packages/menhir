@@ -74,172 +74,172 @@ open ARMBase
 
 main:
   _1 = semi_opt _2 = proc_list _3 = iol_list _4 = EOF
-    {                                  ( _2,_3 )}
+    {( _2,_3 )}
 
 semi_opt:
   
-    {  ( () )}
+    {( () )}
 | _1 = SEMI
-    {       ( () )}
+    {( () )}
 
 proc_list:
   _1 = PROC _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = PROC _2 = PIPE _3 = proc_list
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 iol_list:
   _1 = instr_option_list _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = instr_option_list _2 = SEMI _3 = iol_list
-    {                                   (_1::_3)}
+    {(_1::_3)}
 
 instr_option_list:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = PIPE _3 = instr_option_list
-    {      (_1::_3)}
+    {(_1::_3)}
 
 instr_option_seq:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = SEMI _3 = instr_option_seq
-    {      (_1::_3)}
+    {(_1::_3)}
 
 instr_option:
   
-    {             ( Nop )}
+    {( Nop )}
 | _1 = NAME _2 = COLON _3 = instr_option
-    {                          ( Label (_1,_3) )}
+    {( Label (_1,_3) )}
 | _1 = CODEVAR
-    {          ( Symbolic _1 )}
+    {( Symbolic _1 )}
 | _1 = instr
-    {             ( Instruction _1)}
+    {( Instruction _1)}
 
 reg:
   _1 = SYMB_REG
-    {           ( Symbolic_reg _1 )}
+    {( Symbolic_reg _1 )}
 | _1 = ARCH_REG
-    {           ( _1 )}
+    {( _1 )}
 
 k:
   _1 = NUM
-    {       ( MetaConst.Int _1 )}
+    {( MetaConst.Int _1 )}
 | _1 = META
-    {       ( MetaConst.Meta _1 )}
+    {( MetaConst.Meta _1 )}
 
 instr:
   _1 = I_ADD _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {     ( I_ADD (DontSetFlags,_2,_4,_6) )}
+    {( I_ADD (DontSetFlags,_2,_4,_6) )}
 | _1 = I_ADDS _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {     ( I_ADD (SetFlags,_2,_4,_6) )}
+    {( I_ADD (SetFlags,_2,_4,_6) )}
 | _1 = I_ADD _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {     ( I_ADD3 (DontSetFlags,_2, _4, _6) )}
+    {( I_ADD3 (DontSetFlags,_2, _4, _6) )}
 | _1 = I_ADDS _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {     ( I_ADD3 (SetFlags,_2, _4, _6) )}
+    {( I_ADD3 (SetFlags,_2, _4, _6) )}
 | _1 = I_AND _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {     ( I_AND (DontSetFlags,_2,_4,_6) )}
+    {( I_AND (DontSetFlags,_2,_4,_6) )}
 | _1 = I_ANDS _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {     ( I_AND (SetFlags,_2,_4,_6) )}
+    {( I_AND (SetFlags,_2,_4,_6) )}
 | _1 = I_B _2 = NAME
-    {     ( I_B _2 )}
+    {( I_B _2 )}
 | _1 = I_BNE _2 = NAME
-    {     ( I_BNE _2 )}
+    {( I_BNE _2 )}
 | _1 = I_BEQ _2 = NAME
-    {     ( I_BEQ _2 )}
+    {( I_BEQ _2 )}
 | _1 = I_CBZ _2 = reg _3 = COMMA _4 = NAME
-    {     ( I_CB (false,_2,_4) )}
+    {( I_CB (false,_2,_4) )}
 | _1 = I_CBNZ _2 = reg _3 = COMMA _4 = NAME
-    {     ( I_CB (true,_2,_4) )}
+    {( I_CB (true,_2,_4) )}
 | _1 = I_CMP _2 = reg _3 = COMMA _4 = k
-    {     ( I_CMPI (_2,_4) )}
+    {( I_CMPI (_2,_4) )}
 | _1 = I_CMP _2 = reg _3 = COMMA _4 = reg
-    {     ( I_CMP (_2,_4) )}
+    {( I_CMP (_2,_4) )}
 | _1 = I_LDR _2 = reg _3 = COMMA _4 = reg
-    {     ( I_LDR (_2,_4, AL) )}
+    {( I_LDR (_2,_4, AL) )}
 | _1 = I_LDR _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_LDR (_2,_5,AL) )}
+    {( I_LDR (_2,_5,AL) )}
 | _1 = I_LDR _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = COMMA _7 = reg _8 = RBRK
-    {     ( I_LDR3 (_2,_5,_7,AL) )}
+    {( I_LDR3 (_2,_5,_7,AL) )}
 | _1 = I_LDRNE _2 = reg _3 = COMMA _4 = reg
-    {     ( I_LDR (_2,_4,NE) )}
+    {( I_LDR (_2,_4,NE) )}
 | _1 = I_LDRNE _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_LDR (_2,_5,NE) )}
+    {( I_LDR (_2,_5,NE) )}
 | _1 = I_LDRNE _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = COMMA _7 = reg _8 = RBRK
-    {     ( I_LDR3 (_2,_5,_7,NE) )}
+    {( I_LDR3 (_2,_5,_7,NE) )}
 | _1 = I_LDREQ _2 = reg _3 = COMMA _4 = reg
-    {     ( I_LDR (_2,_4,EQ) )}
+    {( I_LDR (_2,_4,EQ) )}
 | _1 = I_LDREQ _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_LDR (_2,_5,EQ) )}
+    {( I_LDR (_2,_5,EQ) )}
 | _1 = I_LDREQ _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = COMMA _7 = reg _8 = RBRK
-    {     ( I_LDR3 (_2,_5,_7,EQ) )}
+    {( I_LDR3 (_2,_5,_7,EQ) )}
 | _1 = I_LDREX _2 = reg _3 = COMMA _4 = reg
-    {     ( I_LDREX (_2,_4) )}
+    {( I_LDREX (_2,_4) )}
 | _1 = I_LDREX _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_LDREX (_2,_5) )}
+    {( I_LDREX (_2,_5) )}
 | _1 = I_STR _2 = reg _3 = COMMA _4 = reg
-    {     ( I_STR (_2,_4,AL) )}
+    {( I_STR (_2,_4,AL) )}
 | _1 = I_STR _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_STR (_2,_5,AL) )}
+    {( I_STR (_2,_5,AL) )}
 | _1 = I_STR _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = COMMA _7 = reg _8 = RBRK
-    {     ( I_STR3 (_2,_5,_7,AL) )}
+    {( I_STR3 (_2,_5,_7,AL) )}
 | _1 = I_STRNE _2 = reg _3 = COMMA _4 = reg
-    {     ( I_STR (_2,_4,NE) )}
+    {( I_STR (_2,_4,NE) )}
 | _1 = I_STRNE _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_STR (_2,_5,NE) )}
+    {( I_STR (_2,_5,NE) )}
 | _1 = I_STRNE _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = COMMA _7 = reg _8 = RBRK
-    {     ( I_STR3 (_2,_5,_7,NE) )}
+    {( I_STR3 (_2,_5,_7,NE) )}
 | _1 = I_STREQ _2 = reg _3 = COMMA _4 = reg
-    {     ( I_STR (_2,_4,EQ) )}
+    {( I_STR (_2,_4,EQ) )}
 | _1 = I_STREQ _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = RBRK
-    {     ( I_STR (_2,_5,EQ) )}
+    {( I_STR (_2,_5,EQ) )}
 | _1 = I_STREQ _2 = reg _3 = COMMA _4 = LBRK _5 = reg _6 = COMMA _7 = reg _8 = RBRK
-    {     ( I_STR3 (_2,_5,_7,EQ) )}
+    {( I_STR3 (_2,_5,_7,EQ) )}
 | _1 = I_STREX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = LBRK _7 = reg _8 = RBRK
-    {     ( I_STREX (_2,_4,_7,AL) )}
+    {( I_STREX (_2,_4,_7,AL) )}
 | _1 = I_MOV _2 = reg _3 = COMMA _4 = k
-    {     ( I_MOVI (_2,_4,AL) )}
+    {( I_MOVI (_2,_4,AL) )}
 | _1 = I_MOVNE _2 = reg _3 = COMMA _4 = k
-    {     ( I_MOVI (_2,_4,NE) )}
+    {( I_MOVI (_2,_4,NE) )}
 | _1 = I_MOVEQ _2 = reg _3 = COMMA _4 = k
-    {     ( I_MOVI (_2,_4,EQ) )}
+    {( I_MOVI (_2,_4,EQ) )}
 | _1 = I_MOV _2 = reg _3 = COMMA _4 = reg
-    {     ( I_MOV (_2,_4,AL) )}
+    {( I_MOV (_2,_4,AL) )}
 | _1 = I_MOVNE _2 = reg _3 = COMMA _4 = reg
-    {     ( I_MOV (_2,_4,NE) )}
+    {( I_MOV (_2,_4,NE) )}
 | _1 = I_MOVEQ _2 = reg _3 = COMMA _4 = reg
-    {     ( I_MOV (_2,_4,EQ) )}
+    {( I_MOV (_2,_4,EQ) )}
 | _1 = I_XOR _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {     ( I_XOR (DontSetFlags,_2,_4,_6) )}
+    {( I_XOR (DontSetFlags,_2,_4,_6) )}
 | _1 = I_XORS _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {     ( I_XOR (SetFlags,_2,_4,_6) )}
+    {( I_XOR (SetFlags,_2,_4,_6) )}
 | _1 = I_DMB
-    {          ( I_DMB SY )}
+    {( I_DMB SY )}
 | _1 = I_DSB _2 = opt
-    {              ( I_DSB _2 )}
+    {( I_DSB _2 )}
 | _1 = I_DMB _2 = opt
-    {              ( I_DMB _2 )}
+    {( I_DMB _2 )}
 | _1 = I_DSB
-    {          ( I_DSB SY )}
+    {( I_DSB SY )}
 | _1 = I_ISB
-    {          ( I_ISB )}
+    {( I_ISB )}
 
 opt:
   _1 = I_SY
-    {         ( SY )}
+    {( SY )}
 | _1 = I_ST
-    {         ( ST )}
+    {( ST )}
 | _1 = I_ISH
-    {          ( ISH )}
+    {( ISH )}
 | _1 = I_ISHST
-    {            ( ISHST )}
+    {( ISHST )}
 | _1 = I_NSH
-    {          ( NSH )}
+    {( NSH )}
 | _1 = I_NSHST
-    {            ( NSHST )}
+    {( NSHST )}
 | _1 = I_OSH
-    {          ( OSH )}
+    {( OSH )}
 | _1 = I_OSHST
-    {            ( OSHST )}
+    {( OSHST )}
 
 %%

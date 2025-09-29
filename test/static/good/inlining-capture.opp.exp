@@ -12,10 +12,10 @@ main:
     {let a =
   let _startpos__1_ = _startpos__1_inlined1_ in
   let _startpos = _startpos__1_ in
-                            ( _startpos_a_, _startpos )
+  ( _startpos_a_, _startpos )
 in
 let _startpos_a_ = _startpos__1_inlined1_ in
 let _startpos = _startpos__1_ in
-                         ( a, _startpos_a_, _startpos, _startpos_e_ )}
+( a, _startpos_a_, _startpos, _startpos_e_ )}
 
 %%

@@ -732,7 +732,7 @@ let define_ident (proc_name:E.V.procedure_name)
 
 pvd:
   _1 = DIAGRAM _2 = OPEN_BRACKET _3 = IDENT _4 = CLOSE_BRACKET _5 = NODES _6 = COLON _7 = node_list _8 = BOXES _9 = COLON _10 = box_list _11 = INITIAL _12 = COLON _13 = node_id_list _14 = EDGES _15 = COLON _16 = edge_list _17 = ACCEPTANCE _18 = COLON _19 = acceptance_list
-    {    (
+    {(
       let name = get_name _3 in
       let nodes = _7 in
       let boxes = _10 in
@@ -744,37 +744,37 @@ pvd:
 
 node_list:
   _1 = node
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = node _2 = COMMA _3 = node_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 node:
   _1 = IDENT
-    {    (
+    {(
       let n = get_name _1 in
       (n, Formula.True)
     )}
 | _1 = IDENT _2 = OPEN_SET _3 = formula _4 = CLOSE_SET
-    {    ( let n = get_name _1 in
+    {( let n = get_name _1 in
       let phi = _3 in
       (n,phi)
     )}
 
 node_id_list:
   _1 = IDENT
-    {    ( [get_name _1] )}
+    {( [get_name _1] )}
 | _1 = IDENT _2 = COMMA _3 = node_id_list
-    {    ( (get_name _1) :: _3 )}
+    {( (get_name _1) :: _3 )}
 
 box_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = box _2 = box_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 box:
   _1 = OPEN_SET _2 = IDENT _3 = OPEN_BRACKET _4 = IDENT _5 = CLOSE_BRACKET _6 = COLON _7 = node_id_list _8 = CLOSE_SET
-    {    ( let box_id = get_name _2 in
+    {( let box_id = get_name _2 in
       let param = E.VarTh (E.build_global_var (get_name _4) E.Tid) in
       let nodes = _7 in
       (box_id, nodes, param)
@@ -782,13 +782,13 @@ box:
 
 trans_list:
   _1 = trans
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = trans _2 = COMMA _3 = trans_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 trans:
   _1 = NUMBER _2 = OPEN_PAREN _3 = IDENT _4 = CLOSE_PAREN
-    {    (
+    {(
       let i = _1 in
       let t = E.build_global_var (get_name _3) E.Tid in
       (i, t)
@@ -796,32 +796,32 @@ trans:
 
 edge_list:
   _1 = edge
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = edge _2 = edge_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 edge:
   _1 = OPEN_BRACKET _2 = IDENT _3 = EDGE_ARROW _4 = IDENT _5 = CLOSE_BRACKET _6 = SEMICOLON
-    {    (
+    {(
       let n1 = get_name _2 in
       let n2 = get_name _4 in
       (n1, n2, (PVD.Pres, PVD.NoLabel))
     )}
 | _1 = IDENT _2 = EDGE_ARROW _3 = IDENT _4 = SEMICOLON
-    {    (
+    {(
       let n1 = get_name _1 in
       let n2 = get_name _3 in
       (n1, n2, (PVD.Any, PVD.NoLabel))
     )}
 | _1 = OPEN_BRACKET _2 = IDENT _3 = EDGE_ARROW_OPEN _4 = trans_list _5 = EDGE_ARROW_CLOSE _6 = IDENT _7 = CLOSE_BRACKET _8 = SEMICOLON
-    {    (
+    {(
       let n1 = get_name _2 in
       let n2 = get_name _6 in
       let trans = _4 in
       (n1, n2, (PVD.Pres, PVD.Label trans))
     )}
 | _1 = IDENT _2 = EDGE_ARROW_OPEN _3 = trans_list _4 = EDGE_ARROW_CLOSE _5 = IDENT _6 = SEMICOLON
-    {    (
+    {(
       let n1 = get_name _1 in
       let n2 = get_name _5 in
       let trans = _3 in
@@ -830,21 +830,21 @@ edge:
 
 acceptance_list:
   _1 = acceptance
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = acceptance _2 = acceptance_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 accept_edge_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = accept_edge
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = accept_edge _2 = COMMA _3 = accept_edge_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 accept_edge:
   _1 = OPEN_PAREN _2 = IDENT _3 = COMMA _4 = IDENT _5 = COMMA _6 = IDENT _7 = CLOSE_PAREN
-    {    (
+    {(
       let n1 = get_name _2 in
       let n2 = get_name _4 in
       let p = match (get_name _6) with
@@ -856,7 +856,7 @@ accept_edge:
 
 acceptance:
   _1 = OPEN_ANGLE _2 = BAD _3 = COLON _4 = OPEN_SET _5 = accept_edge_list _6 = CLOSE_SET _7 = SEMICOLON _8 = GOOD _9 = COLON _10 = OPEN_SET _11 = accept_edge_list _12 = CLOSE_SET _13 = SEMICOLON _14 = OPEN_BRACKET _15 = delta_list _16 = CLOSE_BRACKET _17 = CLOSE_ANGLE
-    {    (
+    {(
       let bad = _5 in
       let good = _11 in
       let delta = _15 in
@@ -865,31 +865,31 @@ acceptance:
 
 delta_list:
   _1 = delta
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = delta _2 = SEMICOLON _3 = delta_list
-    {    ( _1 :: _3)}
+    {( _1 :: _3)}
 
 delta:
   _1 = OPEN_PAREN _2 = term _3 = COMMA _4 = wf_op _5 = CLOSE_PAREN
-    {    ( (_2, _4) )}
+    {( (_2, _4) )}
 
 wf_op:
   _1 = WF_INTSUBSET
-    {    ( PVD.WFIntSubset )}
+    {( PVD.WFIntSubset )}
 | _1 = WF_PAIRSUBSET
-    {    ( PVD.WFPairSubset )}
+    {( PVD.WFPairSubset )}
 | _1 = WF_ADDRSUBSET
-    {    ( PVD.WFAddrSubset )}
+    {( PVD.WFAddrSubset )}
 | _1 = WF_ELEMSUBSET
-    {    ( PVD.WFElemSubset )}
+    {( PVD.WFElemSubset )}
 | _1 = WF_TIDSUBSET
-    {    ( PVD.WFTidSubset )}
+    {( PVD.WFTidSubset )}
 | _1 = WF_INTLESS
-    {    ( PVD.WFIntLess )}
+    {( PVD.WFIntLess )}
 
 axiom:
   _1 = param _2 = COLON _3 = inv_var_declarations _4 = AXIOM _5 = formula_tag _6 = COLON _7 = formula_decl_list
-    {    ( let declInvVars = System.copy_var_table invVars in
+    {( let declInvVars = System.copy_var_table invVars in
       let tag         = _5 in
       let inv_decl    = _7 in
       let _           = System.clear_table invVars
@@ -899,7 +899,7 @@ axiom:
 
 invariant:
   _1 = param _2 = COLON _3 = inv_var_declarations _4 = INVARIANT _5 = formula_tag _6 = COLON _7 = formula_decl_list
-    {    ( let declInvVars = System.copy_var_table invVars in
+    {( let declInvVars = System.copy_var_table invVars in
       let tag         = _5 in
       let inv_decl    = _7 in
       let _           = System.clear_table invVars
@@ -909,9 +909,9 @@ invariant:
 
 formula_tag:
   
-    {    ( None )}
+    {( None )}
 | _1 = OPEN_BRACKET _2 = IDENT _3 = CLOSE_BRACKET
-    {    (
+    {(
       let tag_name = get_name _2 in
       curr_tag := tag_name;
       Some (Tag.new_tag tag_name "")
@@ -919,38 +919,38 @@ formula_tag:
 
 formula_decl_list:
   _1 = formula_decl
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = formula_decl _2 = formula_decl_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 formula_decl:
   _1 = formula
-    {    ( (None, _1) )}
+    {( (None, _1) )}
 | _1 = SHARP _2 = IDENT _3 = COLON _4 = formula
-    {    (
+    {(
       let tag_name = get_name _2 in
       (Some (Tag.new_tag !curr_tag tag_name), _4)
     )}
 
 param:
   _1 = VARS
-    {    ( )}
+    {( )}
 
 inv_var_declarations:
   
-    {    ( )}
+    {( )}
 | _1 = inv_var_decl_list
-    {    ( )}
+    {( )}
 
 inv_var_decl_list:
   _1 = inv_var_decl
-    {    ( () )}
+    {( () )}
 | _1 = inv_var_decl _2 = inv_var_decl_list
-    {    ( () )}
+    {( () )}
 
 inv_var_decl:
   _1 = IDENT _2 = IDENT
-    {    (
+    {(
       let s      = check_and_get_sort (get_name _1) in
       let v_name = get_name _2 in
       decl_inv_var v_name s None
@@ -958,31 +958,31 @@ inv_var_decl:
 
 formula:
   _1 = OPEN_PAREN _2 = formula _3 = CLOSE_PAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = literal
-    {      ( Formula.Literal _1 )}
+    {( Formula.Literal _1 )}
 | _1 = LOGICAL_TRUE
-    {      ( Formula.True )}
+    {( Formula.True )}
 | _1 = LOGICAL_FALSE
-    {      ( Formula.False )}
+    {( Formula.False )}
 | _1 = LOGICAL_NOT _2 = formula
-    {      ( Formula.Not _2 )}
+    {( Formula.Not _2 )}
 | _1 = formula _2 = LOGICAL_AND _3 = formula
-    {      ( Formula.And (_1, _3) )}
+    {( Formula.And (_1, _3) )}
 | _1 = formula _2 = LOGICAL_OR _3 = formula
-    {      ( Formula.Or (_1, _3) )}
+    {( Formula.Or (_1, _3) )}
 | _1 = formula _2 = LOGICAL_THEN _3 = formula
-    {      ( Formula.Implies (_1, _3) )}
+    {( Formula.Implies (_1, _3) )}
 | _1 = formula _2 = EQUALS _3 = formula
-    {      ( Formula.Iff (_1, _3) )}
+    {( Formula.Iff (_1, _3) )}
 | _1 = AT _2 = NUMBER _3 = opt_th_param _4 = DOT
-    {      (
+    {(
         let line_num = _2 in
         let th_p     = _3 in
           E.pc_form line_num th_p false
       )}
 | _1 = AT _2 = IDENT _3 = opt_th_param _4 = DOT
-    {      (
+    {(
         let label_name = get_name _2 in
         let th_p       = _3 in
         let labelTbl   = System.get_labels !Symtbl.sys in
@@ -999,25 +999,25 @@ formula:
 
 opt_th_param:
   
-    {    ( E.V.Shared )}
+    {( E.V.Shared )}
 | _1 = th_param
-    {    ( _1 )}
+    {( _1 )}
 
 th_param:
   _1 = OPEN_PAREN _2 = IDENT _3 = CLOSE_PAREN
-    {    (
+    {(
       let th_id = get_name _2 in
         E.V.Local (E.build_global_var th_id E.Tid)
     )}
 | _1 = OPEN_PAREN _2 = NUMBER _3 = CLOSE_PAREN
-    {    (
+    {(
       let th_id = _2 in
         E.V.Local (E.build_num_tid_var th_id)
     )}
 
 literal:
   _1 = APPEND _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "append(%s,%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5)
                                                        (E.term_to_str _7) in
@@ -1027,7 +1027,7 @@ literal:
         Formula.Atom (E.Append (p1,p2,pres))
     )}
 | _1 = REACH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "reach(%s,%s,%s,%s)" (E.term_to_str _3)
                                                          (E.term_to_str _5)
                                                          (E.term_to_str _7)
@@ -1039,7 +1039,7 @@ literal:
         Formula.Atom (E.Reach (h,a_from,a_to,p))
     )}
 | _1 = REACH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = COMMA _11 = term _12 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "reach(%s,%s,%s,%s,%s)" (E.term_to_str _3)
                                                             (E.term_to_str _5)
                                                             (E.term_to_str _7)
@@ -1053,7 +1053,7 @@ literal:
         Formula.Atom (E.ReachAt (h,a_from,a_to,l,p))
     )}
 | _1 = ORDERLIST _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "orderlist(%s,%s,%s)" (E.term_to_str _3)
                                                           (E.term_to_str _5)
                                                           (E.term_to_str _7) in
@@ -1063,7 +1063,7 @@ literal:
         Formula.Atom (E.OrderList (h,a_from,a_to))
     )}
 | _1 = SKIPLIST _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = COMMA _11 = term _12 = COMMA _13 = term _14 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "skiplist(%s,%s,%s,%s,%s,%s)"
                                         (E.term_to_str _3)
                                         (E.term_to_str _5)
@@ -1080,7 +1080,7 @@ literal:
         Formula.Atom (E.Skiplist (h,s,l,a_from,a_to,elems))
     )}
 | _1 = HASHTBL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = COMMA _11 = term _12 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "hashtbl(%s,%s,%s,%s,%s)"
                                         (E.term_to_str _3)
                                         (E.term_to_str _5)
@@ -1095,7 +1095,7 @@ literal:
         Formula.Atom (E.Hashtbl (h,s,se,bb,i))
     )}
 | _1 = IN _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "in(%s,%s)" (E.term_to_str _3)
                                                 (E.term_to_str _5) in
       let a = parser_check_type check_type_addr _3 E.Addr get_str_expr in
@@ -1103,7 +1103,7 @@ literal:
         Formula.Atom (E.In (a,r))
     )}
 | _1 = SUBSETEQ _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "subseteq(%s,%s)" (E.term_to_str _3)
                                                       (E.term_to_str _5) in
       let s = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -1111,7 +1111,7 @@ literal:
         Formula.Atom (E.SubsetEq(s,r))
     )}
 | _1 = INTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "tin(%s,%s)" (E.term_to_str _3)
                                                  (E.term_to_str _5) in
       let th = parser_check_type check_type_tid  _3 E.Tid get_str_expr in
@@ -1119,7 +1119,7 @@ literal:
         Formula.Atom (E.InTh (th,s))
     )}
 | _1 = SUBSETEQTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "tsubseteq(%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5) in
       let r = parser_check_type check_type_setth _3 E.SetTh get_str_expr in
@@ -1127,7 +1127,7 @@ literal:
         Formula.Atom (E.SubsetEqTh(r,s))
     )}
 | _1 = ININT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "iin(%s,%s)" (E.term_to_str _3)
                                                  (E.term_to_str _5) in
       let i = parser_check_type check_type_int _3 E.Int get_str_expr in
@@ -1135,7 +1135,7 @@ literal:
         Formula.Atom (E.InInt (i,s))
     )}
 | _1 = SUBSETEQINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "isubseteq(%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5) in
       let r = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -1143,7 +1143,7 @@ literal:
         Formula.Atom (E.SubsetEqInt(r,s))
     )}
 | _1 = INELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "ein(%s,%s)" (E.term_to_str _3)
                                                  (E.term_to_str _5) in
       let e = parser_check_type check_type_elem _3 E.Elem get_str_expr in
@@ -1151,7 +1151,7 @@ literal:
         Formula.Atom (E.InElem (e,s))
     )}
 | _1 = SUBSETEQELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "esubseteq(%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5) in
       let r = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -1159,7 +1159,7 @@ literal:
         Formula.Atom (E.SubsetEqElem(r,s))
     )}
 | _1 = SETPAIRIN _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spin(%s,%s)" (E.term_to_str _3)
                                                   (E.term_to_str _5) in
       let p = parser_check_type check_type_pair _3 E.Pair get_str_expr in
@@ -1167,7 +1167,7 @@ literal:
         Formula.Atom (E.InPair (p,s))
     )}
 | _1 = SETPAIRSUBSETEQ _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spsubseteq(%s,%s)" (E.term_to_str _3)
                                                         (E.term_to_str _5) in
       let r = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
@@ -1175,7 +1175,7 @@ literal:
         Formula.Atom (E.SubsetEqPair(r,s))
     )}
 | _1 = SETPAIRINTIDPAIR _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "inintpair(%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5) in
       let t = parser_check_type check_type_tid _3 E.Tid get_str_expr in
@@ -1183,7 +1183,7 @@ literal:
         Formula.Atom (E.InTidPair(t,s))
     )}
 | _1 = SETPAIRININTPAIR _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "inintpair(%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5) in
       let i = parser_check_type check_type_int _3 E.Int get_str_expr in
@@ -1191,19 +1191,19 @@ literal:
         Formula.Atom (E.InIntPair(i,s))
     )}
 | _1 = SETPAIRUNIQUETID _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "uniquetid(%s)" (E.term_to_str _3) in
       let s = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
         Formula.Atom (E.UniqueTid(s))
     )}
 | _1 = SETPAIRUNIQUEINT _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "uniqueint(%s)" (E.term_to_str _3) in
       let s = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
         Formula.Atom (E.UniqueInt(s))
     )}
 | _1 = term _2 = MATH_LESS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s < %s" (E.term_to_str _1)
                                               (E.term_to_str _3) in
       try
@@ -1216,7 +1216,7 @@ literal:
                Formula.Atom (E.Less (i1, i2))
     )}
 | _1 = term _2 = MATH_GREATER _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s > %s" (E.term_to_str _1)
                                               (E.term_to_str _3) in
       try
@@ -1228,7 +1228,7 @@ literal:
                   Formula.Atom (E.Greater (i1, i2))
     )}
 | _1 = term _2 = MATH_LESS_EQ _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s <= %s" (E.term_to_str _1)
                                                (E.term_to_str _3) in
       let i1 = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1236,7 +1236,7 @@ literal:
         Formula.Atom (E.LessEq (i1, i2))
     )}
 | _1 = term _2 = MATH_GREATER_EQ _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s >= %s" (E.term_to_str _1)
                                                (E.term_to_str _3) in
       let i1 = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1244,17 +1244,17 @@ literal:
         Formula.Atom (E.GreaterEq (i1, i2))
     )}
 | _1 = equals
-    {    ( Formula.Atom (E.Eq(_1)) )}
+    {( Formula.Atom (E.Eq(_1)) )}
 | _1 = disequals
-    {    ( Formula.Atom (E.InEq(_1)) )}
+    {( Formula.Atom (E.InEq(_1)) )}
 | _1 = DOT _2 = ident _3 = DOT
-    {    (
+    {(
       match _2 with
       | E.VarT v -> Formula.Atom(E.BoolVar v)
       | _           -> raise(Boolean_var_expected _2)
     )}
 | _1 = DOT _2 = IDENT _3 = DOUBLECOLON _4 = IDENT _5 = th_param _6 = DOT
-    {    (
+    {(
       let p = get_name _2 in
       let proc_name = E.V.Scope p in
       let id = get_name _4 in
@@ -1276,7 +1276,7 @@ literal:
 
 equals:
   _1 = term _2 = EQUALS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s = %s" (E.term_to_str _1)
                                               (E.term_to_str _3) in
       let t1 = _1 in
@@ -1288,7 +1288,7 @@ equals:
 
 disequals:
   _1 = term _2 = NOT_EQUALS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s != %s" (E.term_to_str _1)
                                                (E.term_to_str _3) in
       let t1= _1 in
@@ -1300,73 +1300,73 @@ disequals:
 
 term:
   _1 = ident
-    {    ( _1 )}
+    {( _1 )}
 | _1 = set
-    {    ( E.SetT(_1) )}
+    {( E.SetT(_1) )}
 | _1 = elem
-    {    ( E.ElemT(_1) )}
+    {( E.ElemT(_1) )}
 | _1 = tid
-    {    ( E.TidT(_1) )}
+    {( E.TidT(_1) )}
 | _1 = addr
-    {    ( E.AddrT(_1) )}
+    {( E.AddrT(_1) )}
 | _1 = cell
-    {    ( E.CellT(_1) )}
+    {( E.CellT(_1) )}
 | _1 = setth
-    {    ( E.SetThT(_1) )}
+    {( E.SetThT(_1) )}
 | _1 = setint
-    {    ( E.SetIntT(_1) )}
+    {( E.SetIntT(_1) )}
 | _1 = setelem
-    {    ( E.SetElemT(_1) )}
+    {( E.SetElemT(_1) )}
 | _1 = setpair
-    {    ( E.SetPairT(_1) )}
+    {( E.SetPairT(_1) )}
 | _1 = path
-    {    ( E.PathT(_1) )}
+    {( E.PathT(_1) )}
 | _1 = mem
-    {    ( E.MemT(_1) )}
+    {( E.MemT(_1) )}
 | _1 = integer
-    {    ( E.IntT(_1) )}
+    {( E.IntT(_1) )}
 | _1 = pair
-    {    ( E.PairT(_1) )}
+    {( E.PairT(_1) )}
 | _1 = arrays
-    {    ( _1 )}
+    {( _1 )}
 | _1 = addrarr
-    {    ( E.AddrArrayT(_1) )}
+    {( E.AddrArrayT(_1) )}
 | _1 = tidarr
-    {    ( E.TidArrayT(_1) )}
+    {( E.TidArrayT(_1) )}
 | _1 = mark
-    {    ( E.MarkT(_1) )}
+    {( E.MarkT(_1) )}
 | _1 = bucket
-    {    ( E.BucketT(_1) )}
+    {( E.BucketT(_1) )}
 | _1 = lock
-    {    ( E.LockT(_1) )}
+    {( E.LockT(_1) )}
 | _1 = OPEN_PAREN _2 = term _3 = CLOSE_PAREN
-    {    ( _2 )}
+    {( _2 )}
 
 ident:
   _1 = IDENT
-    {    (
+    {(
       define_ident E.V.GlobalScope (get_name _1) E.V.Shared
     )}
 | _1 = IDENT _2 = DOUBLECOLON _3 = IDENT
-    {    (
+    {(
       define_ident (E.V.Scope (get_name _1)) (get_name _3) E.V.Shared
     )}
 | _1 = IDENT _2 = DOUBLECOLON _3 = IDENT _4 = th_param
-    {    (
+    {(
       define_ident (E.V.Scope (get_name _1)) (get_name _3) _4
     )}
 
 set:
   _1 = EMPTYSET
-    {    ( E.EmptySet )}
+    {( E.EmptySet )}
 | _1 = OPEN_SET _2 = term _3 = CLOSE_SET
-    {    (
+    {(
       let get_str_expr() = sprintf "{ %s }" (E.term_to_str _2) in
       let a = parser_check_type check_type_addr _2 E.Addr get_str_expr in
         E.Singl(a)
     )}
 | _1 = UNION _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "union(%s,%s)" (E.term_to_str _3)
                                                   (E.term_to_str _5) in
       let s1 = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -1374,7 +1374,7 @@ set:
         E.Union(s1,s2)
     )}
 | _1 = INTR _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "intr(%s,%s)" (E.term_to_str _3)
                                                  (E.term_to_str _5) in
       let s1 = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -1382,7 +1382,7 @@ set:
         E.Intr(s1,s2)
     )}
 | _1 = SETDIFF _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "diff(%s,%s)" (E.term_to_str _3)
                                                     (E.term_to_str _5) in
       let s1 = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -1390,13 +1390,13 @@ set:
         E.Setdiff(s1,s2)
     )}
 | _1 = PATH2SET _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "path2set(%s)" (E.term_to_str _3) in
       let p = parser_check_type check_type_path _3 E.Path get_str_expr in
         E.PathToSet(p)
     )}
 | _1 = ADDR2SET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "addr2set(%s,%s)" (E.term_to_str _3)
                                                       (E.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -1404,7 +1404,7 @@ set:
         E.AddrToSet(h,a)
     )}
 | _1 = ADDR2SET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "addr2set(%s,%s,%s)" (E.term_to_str _3)
                                                          (E.term_to_str _5)
                                                          (E.term_to_str _7) in
@@ -1414,7 +1414,7 @@ set:
         E.AddrToSetAt(h,a,l)
     )}
 | _1 = term _2 = DOT _3 = BREGION
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.bregion" (E.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         E.BucketRegion(b)
@@ -1422,23 +1422,23 @@ set:
 
 elem:
   _1 = term _2 = DOT _3 = DATA
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.data" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell  _1 E.Cell get_str_expr in
         E.CellData(c)
     )}
 | _1 = LOWEST_ELEM
-    {    (
+    {(
       E.LowestElem
     )}
 | _1 = HIGHEST_ELEM
-    {    (
+    {(
       E.HighestElem
     )}
 
 tid:
   _1 = term _2 = DOT _3 = LOCKID
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.lockid" (E.term_to_str _1) in
       try
         let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
@@ -1448,15 +1448,15 @@ tid:
           E.LockId(l)
     )}
 | _1 = SHARP
-    {    ( E.NoTid )}
+    {( E.NoTid )}
 | _1 = TIDOF _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "tid_of(%s)" (E.term_to_str _3) in
       let p = parser_check_type check_type_pair _3 E.Pair get_str_expr in
         E.PairTid(p)
     )}
 | _1 = term _2 = DOT _3 = BTID
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.btid" (E.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         E.BucketTid(b)
@@ -1464,15 +1464,15 @@ tid:
 
 addr:
   _1 = NULL
-    {    ( E.Null )}
+    {( E.Null )}
 | _1 = term _2 = DOT _3 = NEXT
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.next" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell  _1 E.Cell get_str_expr in
         E.Next(c)
     )}
 | _1 = term _2 = DOT _3 = NEXTAT _4 = OPEN_BRACKET _5 = term _6 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.nextat[%s]" (E.term_to_str _1)
                                                     (E.term_to_str _5) in
       let c = parser_check_type check_type_cell  _1 E.Cell get_str_expr in
@@ -1480,7 +1480,7 @@ addr:
         E.NextAt(c,l)
     )}
 | _1 = FIRSTLOCKED _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "firstlocked(%s,%s)" (E.term_to_str _3)
                                                          (E.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -1488,7 +1488,7 @@ addr:
         E.FirstLocked(h,p)
     )}
 | _1 = FIRSTLOCKED _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "firstlocked(%s,%s,%s)"
                                           (E.term_to_str _3)
                                           (E.term_to_str _5)
@@ -1499,7 +1499,7 @@ addr:
         E.FirstLockedAt(h,p,l)
     )}
 | _1 = LASTLOCKED _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "lastlocked(%s,%s)" (E.term_to_str _3)
                                                         (E.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -1507,13 +1507,13 @@ addr:
         E.LastLocked(h,p)
     )}
 | _1 = term _2 = DOT _3 = BINIT
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.binit" (E.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         E.BucketInit(b)
     )}
 | _1 = term _2 = DOT _3 = BEND
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.bend" (E.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         E.BucketEnd(b)
@@ -1521,9 +1521,9 @@ addr:
 
 cell:
   _1 = ERROR
-    {    ( E.Error )}
+    {( E.Error )}
 | _1 = MKCELL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mkcell(%s,%s,%s)"
                                            (E.term_to_str _3)
                                            (E.term_to_str _5)
@@ -1534,7 +1534,7 @@ cell:
         E.MkCell(d,a,th)
     )}
 | _1 = MKCELL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mkcell(%s,%s,%s,%s)"
                                            (E.term_to_str _3)
                                            (E.term_to_str _5)
@@ -1547,7 +1547,7 @@ cell:
         E.MkSLCell(e,aa,ta,l)
     )}
 | _1 = MKCELL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = OPEN_BRACKET _6 = term_list _7 = CLOSE_BRACKET _8 = COMMA _9 = OPEN_BRACKET _10 = term_list _11 = CLOSE_BRACKET _12 = CLOSE_PAREN
-    {    (
+    {(
       let list_term_to_str ts = String.concat "," (List.map E.term_to_str ts) in
       let addrs_str = list_term_to_str _6 in
       let tids_str = list_term_to_str _10 in
@@ -1573,7 +1573,7 @@ cell:
         E.MkSLKCell(e,addrs,tids)
     )}
 | _1 = term _2 = DOT _3 = LOCK _4 = OPEN_PAREN _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.lock(%s)" (E.term_to_str _1)
                                                   (E.term_to_str _5) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
@@ -1581,7 +1581,7 @@ cell:
         E.CellLock(c,t)
     )}
 | _1 = term _2 = DOT _3 = LOCKAT _4 = OPEN_PAREN _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.lock(%s)" (E.term_to_str _1)
                                                   (E.term_to_str _5) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
@@ -1590,20 +1590,20 @@ cell:
         E.CellLockAt(c,l,t)
     )}
 | _1 = term _2 = DOT _3 = UNLOCK
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.unlock" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
         E.CellUnlock(c)
     )}
 | _1 = term _2 = DOT _3 = UNLOCKAT _4 = OPEN_PAREN _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.unlock" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
       let l = parser_check_type check_type_int  _5 E.Int get_str_expr in
         E.CellUnlockAt(c,l)
     )}
 | _1 = MEMORY_READ _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "%s [ %s ]" (E.term_to_str _3)
                                                 (E.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -1613,21 +1613,21 @@ cell:
 
 term_list:
   _1 = term _2 = COMMA _3 = term
-    {    ( [_1;_3] )}
+    {( [_1;_3] )}
 | _1 = term _2 = COMMA _3 = term_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 setth:
   _1 = EMPTYSETTH
-    {  ( E.EmptySetTh )}
+    {( E.EmptySetTh )}
 | _1 = SINGLETH _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tsingle(%s)" (E.term_to_str _3) in
       let th = parser_check_type check_type_tid  _3 E.Tid get_str_expr in
         E.SinglTh(th)
     )}
 | _1 = UNIONTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tunion(%s,%s)" (E.term_to_str _3)
                                                     (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setth  _3 E.SetTh get_str_expr in
@@ -1635,7 +1635,7 @@ setth:
         E.UnionTh(s1,s2)
     )}
 | _1 = INTRTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tintr(%s,%s)" (E.term_to_str _3)
                                                    (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setth  _3 E.SetTh get_str_expr in
@@ -1643,7 +1643,7 @@ setth:
         E.IntrTh(s1,s2)
     )}
 | _1 = SETDIFFTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tdiff(%s,%s)" (E.term_to_str _3)
                                                       (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setth  _3 E.SetTh get_str_expr in
@@ -1651,7 +1651,7 @@ setth:
         E.SetdiffTh(s1,s2)
     )}
 | _1 = LOCKSET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "lockset(%s,%s)" (E.term_to_str _3)
                                                     (E.term_to_str _5) in
       let m = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -1661,15 +1661,15 @@ setth:
 
 setint:
   _1 = EMPTYSETINT
-    {     ( E.EmptySetInt )}
+    {( E.EmptySetInt )}
 | _1 = SINGLEINT _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "isingle(%s)" (E.term_to_str _3) in
       let th = parser_check_type check_type_int _3 E.Int get_str_expr in
         E.SinglInt(th)
     )}
 | _1 = UNIONINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "iunion(%s,%s)" (E.term_to_str _3)
                                                      (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setint  _3 E.SetInt get_str_expr in
@@ -1677,7 +1677,7 @@ setint:
         E.UnionInt(s1,s2)
     )}
 | _1 = INTRINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "iintr(%s,%s)" (E.term_to_str _3)
                                                     (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setint  _3 E.SetInt get_str_expr in
@@ -1685,7 +1685,7 @@ setint:
         E.IntrInt(s1,s2)
     )}
 | _1 = SETDIFFINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "idiff(%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -1693,7 +1693,7 @@ setint:
         E.SetdiffInt(s1,s2)
     )}
 | _1 = SETLOWER _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "setLower(%s,%s)" (E.term_to_str _3)
                                                      (E.term_to_str _5) in
       let s = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -1703,15 +1703,15 @@ setint:
 
 setpair:
   _1 = SETPAIREMPTY
-    {     ( E.EmptySetPair )}
+    {( E.EmptySetPair )}
 | _1 = SETPAIRSINGLE _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spsingle(%s)" (E.term_to_str _3) in
       let p = parser_check_type check_type_pair _3 E.Pair get_str_expr in
         E.SinglPair(p)
     )}
 | _1 = SETPAIRUNION _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spunion(%s,%s)" (E.term_to_str _3)
                                                     (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setpair  _3 E.SetPair get_str_expr in
@@ -1719,7 +1719,7 @@ setpair:
         E.UnionPair(s1,s2)
     )}
 | _1 = SETPAIRINTR _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spintr(%s,%s)" (E.term_to_str _3)
                                                    (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setpair  _3 E.SetPair get_str_expr in
@@ -1727,7 +1727,7 @@ setpair:
         E.IntrPair(s1,s2)
     )}
 | _1 = SETPAIRDIFF _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spdiff(%s,%s)" (E.term_to_str _3)
                                                    (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
@@ -1735,7 +1735,7 @@ setpair:
         E.SetdiffPair(s1,s2)
     )}
 | _1 = SETPAIRLOWER _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "splower(%s,%s)" (E.term_to_str _3)
                                                     (E.term_to_str _5) in
       let s = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
@@ -1745,15 +1745,15 @@ setpair:
 
 setelem:
   _1 = EMPTYSETELEM
-    {     ( E.EmptySetElem )}
+    {( E.EmptySetElem )}
 | _1 = SINGLEELEM _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "esingle(%s)" (E.term_to_str _3) in
       let e = parser_check_type check_type_elem _3 E.Elem get_str_expr in
         E.SinglElem(e)
     )}
 | _1 = UNIONELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "eunion(%s,%s)" (E.term_to_str _3)
                                                       (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -1761,7 +1761,7 @@ setelem:
         E.UnionElem(s1,s2)
     )}
 | _1 = INTRELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "eintr(%s,%s)" (E.term_to_str _3)
                                                      (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -1769,7 +1769,7 @@ setelem:
         E.IntrElem(s1,s2)
     )}
 | _1 = SETDIFFELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "ediff(%s,%s)" (E.term_to_str _3)
                                                         (E.term_to_str _5) in
       let s1 = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -1777,7 +1777,7 @@ setelem:
         E.SetdiffElem(s1,s2)
     )}
 | _1 = SET2ELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "set2elem(%s,%s)" (E.term_to_str _3)
                                                       (E.term_to_str _5) in
       let m = parser_check_type check_type_mem _3 E.Mem get_str_expr in
@@ -1787,15 +1787,15 @@ setelem:
 
 path:
   _1 = EPSILON
-    {    ( E.Epsilon )}
+    {( E.Epsilon )}
 | _1 = OPEN_BRACKET _2 = term _3 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "[ %s ]" (E.term_to_str _2) in
       let a = parser_check_type check_type_addr _2 E.Addr get_str_expr in
         E.SimplePath(a)
     )}
 | _1 = GETP _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "getp(%s,%s,%s)" (E.term_to_str _3)
                                                      (E.term_to_str _5)
                                                      (E.term_to_str _7) in
@@ -1805,7 +1805,7 @@ path:
         E.GetPath(h,first,last)
     )}
 | _1 = GETP _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "getp(%s,%s,%s,%s)" (E.term_to_str _3)
                                                         (E.term_to_str _5)
                                                         (E.term_to_str _7)
@@ -1819,7 +1819,7 @@ path:
 
 mem:
   _1 = UPDATE _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "update(%s,%s,%s)" (E.term_to_str _3)
                                                        (E.term_to_str _5)
                                                        (E.term_to_str _7) in
@@ -1831,15 +1831,15 @@ mem:
 
 integer:
   _1 = NUMBER
-    {    ( E.IntVal _1 )}
+    {( E.IntVal _1 )}
 | _1 = MATH_MINUS _2 = term %prec MATH_NEG
-    {    (
+    {(
       let get_str_expr () = sprintf "-%s" (E.term_to_str _2) in
       let i  = parser_check_type check_type_int _2 E.Int get_str_expr in
         E.IntNeg i
     )}
 | _1 = term _2 = MATH_PLUS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s+%s" (E.term_to_str _1)
                                             (E.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1847,7 +1847,7 @@ integer:
         E.IntAdd (i1,i2)
     )}
 | _1 = term _2 = MATH_MINUS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s-%s" (E.term_to_str _1)
                                             (E.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1855,7 +1855,7 @@ integer:
         E.IntSub (i1,i2)
     )}
 | _1 = term _2 = MATH_MULT _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s*%s" (E.term_to_str _1)
                                             (E.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1863,7 +1863,7 @@ integer:
         E.IntMul (i1,i2)
     )}
 | _1 = term _2 = MATH_DIV _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s/%s" (E.term_to_str _1)
                                             (E.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1871,7 +1871,7 @@ integer:
         E.IntDiv (i1,i2)
     )}
 | _1 = term _2 = MATH_MOD _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s %% %s" (E.term_to_str _1)
                                                (E.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -1879,7 +1879,7 @@ integer:
         E.IntMod (i1,i2)
     )}
 | _1 = SETINTMIN _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let iSet = _3 in
       let get_str_expr () = sprintf "setIntMin(%s)" (E.term_to_str iSet) in
       let s  = parser_check_type check_type_setint iSet E.SetInt get_str_expr
@@ -1887,7 +1887,7 @@ integer:
         E.IntSetMin (s)
     )}
 | _1 = SETINTMAX _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let iSet = _3 in
       let get_str_expr () = sprintf "setIntMax(%s)" (E.term_to_str iSet) in
       let s  = parser_check_type check_type_setint iSet E.SetInt get_str_expr
@@ -1895,14 +1895,14 @@ integer:
         E.IntSetMax (s)
     )}
 | _1 = term _2 = DOT _3 = MAX
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.max" (E.term_to_str _1) in
       let c  = parser_check_type check_type_cell _1 E.Cell get_str_expr
       in
         E.CellMax (c)
     )}
 | _1 = INTOF _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "int_of(%s)" (E.term_to_str _3) in
       let p  = parser_check_type check_type_pair _3 E.Pair get_str_expr
       in
@@ -1911,7 +1911,7 @@ integer:
 
 pair:
   _1 = OPEN_PAREN _2 = term _3 = COMMA _4 = term _5 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "(%s,%s)" (E.term_to_str _2)
                                               (E.term_to_str _4) in
       let i  = parser_check_type check_type_int _2 E.Int get_str_expr in
@@ -1919,13 +1919,13 @@ pair:
         E.IntTidPair(i,t)
     )}
 | _1 = SETPAIRMIN _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spmin(%s)" (E.term_to_str _3) in
       let s  = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
         E.SetPairMin(s)
     )}
 | _1 = SETPAIRMAX _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spmax(%s)" (E.term_to_str _3) in
       let s  = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
         E.SetPairMax(s)
@@ -1933,7 +1933,7 @@ pair:
 
 arrays:
   _1 = term _2 = OPEN_BRACKET _3 = term _4 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s[%s]" (E.term_to_str _1)
                                              (E.term_to_str _3) in
       let i = parser_check_type check_type_int _3 E.Int get_str_expr in
@@ -1965,7 +1965,7 @@ arrays:
                   | _           -> raise(e)
     )}
 | _1 = ARR_UPDATE _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "arrUpd (%s,%s,%s)" (E.term_to_str _3)
                                                         (E.term_to_str _5)
                                                         (E.term_to_str _7) in
@@ -1992,7 +1992,7 @@ arrays:
 
 addrarr:
   _1 = term _2 = DOT _3 = ARR
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.arr" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
         E.CellArr(c)
@@ -2000,7 +2000,7 @@ addrarr:
 
 tidarr:
   _1 = term _2 = DOT _3 = TIDS
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.tids" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
         E.CellTids(c)
@@ -2008,15 +2008,15 @@ tidarr:
 
 mark:
   _1 = MARK_T
-    {    (
+    {(
       E.MarkTrue
     )}
 | _1 = MARK_F
-    {    (
+    {(
       E.MarkFalse
     )}
 | _1 = term _2 = DOT _3 = MARKED
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.marked" (E.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
         E.Marked(c)
@@ -2024,7 +2024,7 @@ mark:
 
 bucket:
   _1 = MKBUCKET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mkbucket(%s,%s,%s,%s)"
                                            (E.term_to_str _3)
                                            (E.term_to_str _5)
@@ -2039,7 +2039,7 @@ bucket:
 
 lock:
   _1 = LOCK _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "lock(%s,%s)"
                                            (E.term_to_str _3)
                                            (E.term_to_str _5) in
@@ -2048,7 +2048,7 @@ lock:
         E.LLock(l,t)
     )}
 | _1 = UNLOCK _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "unlock(%s)"
                                            (E.term_to_str _3) in
       let l = parser_check_type check_type_lock _3 E.Lock get_str_expr in
@@ -2057,7 +2057,7 @@ lock:
 
 vc_info:
   _1 = param _2 = COLON _3 = inv_var_declarations _4 = SUPPORT _5 = COLON _6 = formula_list _7 = TID_CONSTRAINT _8 = COLON _9 = tid_constraint_list _10 = RHO _11 = COLON _12 = formula _13 = GOAL _14 = COLON _15 = formula _16 = TRANSITION_TID _17 = COLON _18 = term _19 = LINE _20 = COLON _21 = NUMBER
-    {      (
+    {(
         let _ = System.clear_table invVars in
         let supp_list = _6 in
         let tid_const = _9 in
@@ -2085,19 +2085,19 @@ vc_info:
 
 formula_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = formula _2 = formula_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 tid_constraint_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = tid_constraint _2 = SEMICOLON _3 = tid_constraint_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 tid_constraint:
   _1 = equals
-    {    (
+    {(
       let (t1,t2) = _1 in
       let get_str_expr () = sprintf "%s = %s" (E.term_to_str t1)
                                               (E.term_to_str t2) in
@@ -2107,7 +2107,7 @@ tid_constraint:
         E.Eq (E.TidT t1', E.TidT t2')
     )}
 | _1 = disequals
-    {    (
+    {(
       let (t1,t2) = _1 in
       let get_str_expr () = sprintf "%s != %s" (E.term_to_str t1)
                                                (E.term_to_str t2) in
@@ -2119,7 +2119,7 @@ tid_constraint:
 
 single_formula:
   _1 = param _2 = COLON _3 = inv_var_declarations _4 = FORMULA _5 = COLON _6 = formula
-    {      (
+    {(
         let _ = System.clear_table invVars in
         let phi = _6 in
         phi

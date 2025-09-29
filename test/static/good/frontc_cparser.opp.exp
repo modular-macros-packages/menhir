@@ -281,94 +281,94 @@
 
 option_IDENT_:
   
-    {    ( None )} [@name none_IDENT]
+    {( None )} [@name none_IDENT]
 | x = IDENT
-    {    ( Some x )} [@name some_IDENT]
+    {( Some x )} [@name some_IDENT]
 
 option_VOLATILE_:
   
-    {    ( None )} [@name none_VOLATILE]
+    {( None )} [@name none_VOLATILE]
 | x = VOLATILE
-    {    ( Some x )} [@name some_VOLATILE]
+    {( Some x )} [@name some_VOLATILE]
 
 list_field_:
   
-    {    ( [] )} [@name nil_field]
+    {( [] )} [@name nil_field]
 | x = field xs = list_field_
-    {    ( x :: xs )} [@name cons_field]
+    {( x :: xs )} [@name cons_field]
 
 list_global_:
   
-    {    ( [] )} [@name nil_global]
+    {( [] )} [@name nil_global]
 | x = global xs = list_global_
-    {    ( x :: xs )} [@name cons_global]
+    {( x :: xs )} [@name cons_global]
 
 list_global_mod_:
   
-    {    ( [] )} [@name nil_global_mod]
+    {( [] )} [@name nil_global_mod]
 | x = global_mod xs = list_global_mod_
-    {    ( x :: xs )} [@name cons_global_mod]
+    {( x :: xs )} [@name cons_global_mod]
 
 nonempty_list_old_pardef_:
   x = old_pardef
-    {    ( [ x ] )} [@name one_old_pardef]
+    {( [ x ] )} [@name one_old_pardef]
 | x = old_pardef xs = nonempty_list_old_pardef_
-    {    ( x :: xs )} [@name more_old_pardef]
+    {( x :: xs )} [@name more_old_pardef]
 
 separated_nonempty_list_COMMA_field_def_:
   x = field_def
-    {    ( [ x ] )} [@name one_COMMA_field_def]
+    {( [ x ] )} [@name one_COMMA_field_def]
 | x = field_def _2 = COMMA xs = separated_nonempty_list_COMMA_field_def_
-    {    ( x :: xs )} [@name more_COMMA_field_def]
+    {( x :: xs )} [@name more_COMMA_field_def]
 
 separated_nonempty_list_COMMA_global_def_:
   x = global_def
-    {    ( [ x ] )} [@name one_COMMA_global_def]
+    {( [ x ] )} [@name one_COMMA_global_def]
 | x = global_def _2 = COMMA xs = separated_nonempty_list_COMMA_global_def_
-    {    ( x :: xs )} [@name more_COMMA_global_def]
+    {( x :: xs )} [@name more_COMMA_global_def]
 
 separated_nonempty_list_COMMA_gnu_arg_:
   x = gnu_arg
-    {    ( [ x ] )} [@name one_COMMA_gnu_arg]
+    {( [ x ] )} [@name one_COMMA_gnu_arg]
 | x = gnu_arg _2 = COMMA xs = separated_nonempty_list_COMMA_gnu_arg_
-    {    ( x :: xs )} [@name more_COMMA_gnu_arg]
+    {( x :: xs )} [@name more_COMMA_gnu_arg]
 
 separated_nonempty_list_COMMA_gnu_asm_arg_:
   x = gnu_asm_arg
-    {    ( [ x ] )} [@name one_COMMA_gnu_asm_arg]
+    {( [ x ] )} [@name one_COMMA_gnu_asm_arg]
 | x = gnu_asm_arg _2 = COMMA xs = separated_nonempty_list_COMMA_gnu_asm_arg_
-    {    ( x :: xs )} [@name more_COMMA_gnu_asm_arg]
+    {( x :: xs )} [@name more_COMMA_gnu_asm_arg]
 
 interpret:
   _1 = file
-    {                (_1)}
+    {(_1)}
 
 file:
   _1 = globals
-    {              (_1)}
+    {(_1)}
 
 globals:
   _1 = list_global_ _2 = EOF
-    {                (_1)}
+    {(_1)}
 | _1 = error
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-          (parse_error _symbolstartofs _endofs)}
+(parse_error _symbolstartofs _endofs)}
 
 typedef:
   _1 = TYPEDEF _2 = typedef_type _3 = typedef_defs
-    {    (
+    {(
       List.iter (fun (id, _, _, _) -> Clexer.add_type id) _3;
       TYPEDEF (set_name_group (fst _2, snd _2) _3, []))}
 | _1 = gcc_attribute _2 = TYPEDEF _3 = typedef_type _4 = typedef_defs
-    {    (List.iter (fun (id, _, _, _) -> Clexer.add_type id) _4;
+    {(List.iter (fun (id, _, _, _) -> Clexer.add_type id) _4;
      TYPEDEF (set_name_group (fst _3, snd _3) _4, _1))}
 
 global:
   _1 = global_type _2 = global_defs _3 = SEMICOLON
-    {    (DECDEF (set_name_group _1 (List.rev _2)))}
+    {(DECDEF (set_name_group _1 (List.rev _2)))}
 | _1 = global_type _2 = global_proto _3 = body
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
@@ -377,7 +377,7 @@ else
   _startpos__2_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-    (
+(
       let (_, base, _, _) = _2 in
       match base with
       | PROTO _ -> FUNDEF (set_single _1 _2, (snd _3))
@@ -392,7 +392,7 @@ else
   _startpos__2_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-    (
+(
       let (id, base, attr, exp) = _2 in
       let name = (id, base, attr@_4, exp) in
       match base with
@@ -401,83 +401,83 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
       | _ -> parse_error _symbolstartofs _endofs
     )}
 | _1 = global_type _2 = old_proto _3 = old_pardefs _4 = body
-    {    ( OLDFUNDEF (set_single _1 _2, List.rev _3, (snd _4)) )}
+    {( OLDFUNDEF (set_single _1 _2, List.rev _3, (snd _4)) )}
 | _1 = global_type _2 = SEMICOLON
-    {    (ONLYTYPEDEF (set_name_group _1 []))}
+    {(ONLYTYPEDEF (set_name_group _1 []))}
 | _1 = typedef _2 = SEMICOLON
-    {                      (_1)}
+    {(_1)}
 
 global_type:
   _1 = global_mod_list_opt _2 = global_qual
-    {    (apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
+    {(apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
 | _1 = global_mod_list_opt _2 = comp_type _3 = global_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
 | _1 = global_mod_list_opt _2 = NAMED_TYPE _3 = global_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
 | _1 = global_mod_list_opt
-    {    (apply_mods _1 (NO_TYPE, NO_STORAGE))}
+    {(apply_mods _1 (NO_TYPE, NO_STORAGE))}
 
 global_mod_list_opt:
   _1 = list_global_mod_
-    {                                 (_1)}
+    {(_1)}
 
 global_mod:
   _1 = STATIC
-    {                   (BASE_STORAGE STATIC)}
+    {(BASE_STORAGE STATIC)}
 | _1 = CONST
-    {                   (BASE_CONST)}
+    {(BASE_CONST)}
 | _1 = VOLATILE
-    {                   (BASE_VOLATILE)}
+    {(BASE_VOLATILE)}
 | _1 = EXTERN
-    {                   (BASE_STORAGE EXTERN)}
+    {(BASE_STORAGE EXTERN)}
 | _1 = gcc_attribute
-    {                   (BASE_GNU_ATTR _1 )}
+    {(BASE_GNU_ATTR _1 )}
 
 global_qual:
   _1 = qual_type
-    {                    (_1)}
+    {(_1)}
 | _1 = global_qual _2 = qual_type
-    {                             (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = global_qual _2 = global_mod
-    {                              ((fst _1, _2::(snd _1)))}
+    {((fst _1, _2::(snd _1)))}
 
 global_defs:
   _1 = separated_nonempty_list_COMMA_global_def_
-    {                                                         (_1)}
+    {(_1)}
 
 global_def:
   _1 = global_dec _2 = opt_gcc_attributes
-    {    ((fst _1, snd _1, _2, NOTHING))}
+    {((fst _1, snd _1, _2, NOTHING))}
 | _1 = global_dec _2 = opt_gcc_attributes _3 = EQ _4 = init_expression
-    {    ((fst _1, snd _1, _2, _4))}
+    {((fst _1, snd _1, _2, _4))}
 
 global_dec:
   _1 = IDENT
-    {    ((_1, set_tline NO_TYPE))}
+    {((_1, set_tline NO_TYPE))}
 | _1 = LPAREN _2 = global_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 | _1 = STAR _2 = global_dec
-    {    ((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
+    {((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
 | _1 = STAR _2 = CONST _3 = global_dec
-    {    ((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = VOLATILE _3 = global_dec
-    {    ((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = RESTRICT _3 = global_dec
-    {    ((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
+    {((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
 | _1 = STAR _2 = gcc_attributes _3 = global_dec
-    {    ((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
 | _1 = global_dec _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
 | _1 = global_dec _2 = LBRACKET _3 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
 | _1 = global_dec _2 = LPAREN _3 = parameters _4 = RPAREN
-    {    ((fst _1, PROTO (snd _1, fst _3, snd _3)))}
+    {((fst _1, PROTO (snd _1, fst _3, snd _3)))}
 | _1 = LPAREN _2 = global_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    ((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 | _1 = global_dec _2 = LPAREN _3 = old_parameters _4 = RPAREN
-    {    ((fst _1, OLD_PROTO (snd _1, fst _3, snd _3)))}
+    {((fst _1, OLD_PROTO (snd _1, fst _3, snd _3)))}
 | _1 = LPAREN _2 = global_dec _3 = RPAREN _4 = LPAREN _5 = old_parameters _6 = RPAREN
-    {    ((fst _2, set_type (OLD_PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (OLD_PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 
 global_proto:
   _1 = global_dec _2 = opt_gcc_attributes
@@ -485,7 +485,7 @@ global_proto:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-    (match (snd _1) with
+(match (snd _1) with
        PROTO _
      | OLD_PROTO _ ->
  (fst _1, snd _1, _2, NOTHING)
@@ -497,894 +497,894 @@ old_proto:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-    (match (snd _1) with
+(match (snd _1) with
        OLD_PROTO _ -> (fst _1, snd _1, _2, NOTHING)
      (*| PROTO (typ, [], ell) -> fst $1, OLD_PROTO (typ, [], ell), $2, NOTHING*)
      | _ -> parse_error _symbolstartofs _endofs )}
 
 old_parameters:
   _1 = old_pardecs
-    {                 ((List.rev _1, false))}
+    {((List.rev _1, false))}
 | _1 = old_pardecs _2 = ELLIPSIS
-    {                            ((List.rev _1, true))}
+    {((List.rev _1, true))}
 
 old_pardecs:
   _1 = IDENT
-    {                 ([_1])}
+    {([_1])}
 | _1 = old_pardecs _2 = COMMA _3 = IDENT
-    {                               (_3::_1)}
+    {(_3::_1)}
 | _1 = old_pardecs _2 = COMMA _3 = NAMED_TYPE
-    {                                  (_3::_1)}
+    {(_3::_1)}
 
 old_pardefs:
   _1 = nonempty_list_old_pardef_
-    {                         (_1)}
+    {(_1)}
 
 old_pardef:
   _1 = old_type _2 = old_defs _3 = SEMICOLON
-    {    (set_name_group _1 (List.rev _2))}
+    {(set_name_group _1 (List.rev _2))}
 
 old_type:
   _1 = old_mods_opt _2 = NAMED_TYPE _3 = old_mods_opt
-    {    (apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
 | _1 = old_mods_opt _2 = comp_type _3 = old_mods_opt
-    {    (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
 | _1 = old_mods_opt _2 = old_qual
-    {    (apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
+    {(apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
 
 old_mods_opt:
   
-    {                 ([])}
+    {([])}
 | _1 = CONST
-    {                 ([BASE_CONST])}
+    {([BASE_CONST])}
 | _1 = REGISTER
-    {                   ([BASE_STORAGE REGISTER])}
+    {([BASE_STORAGE REGISTER])}
 
 old_qual:
   _1 = qual_type
-    {                    (_1)}
+    {(_1)}
 | _1 = old_qual _2 = qual_type
-    {                           (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = old_qual _2 = CONST
-    {                        ((fst _1, BASE_CONST::(snd _1)))}
+    {((fst _1, BASE_CONST::(snd _1)))}
 | _1 = old_qual _2 = REGISTER
-    {                          ((fst _1, (BASE_STORAGE REGISTER)::(snd _1)))}
+    {((fst _1, (BASE_STORAGE REGISTER)::(snd _1)))}
 
 old_defs:
   _1 = old_def
-    {              ([_1])}
+    {([_1])}
 | _1 = old_defs _2 = COMMA _3 = old_def
-    {                              (_3::_1)}
+    {(_3::_1)}
 
 old_def:
   _1 = old_dec
-    {    ((fst _1, snd _1, [], NOTHING))}
+    {((fst _1, snd _1, [], NOTHING))}
 
 old_dec:
   _1 = IDENT
-    {    ((_1, NO_TYPE))}
+    {((_1, NO_TYPE))}
 | _1 = STAR _2 = old_dec
-    {    ((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
+    {((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
 | _1 = STAR _2 = CONST _3 = old_dec
-    {    ((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = VOLATILE _3 = old_dec
-    {    ((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
 | _1 = old_dec _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
 | _1 = old_dec _2 = LBRACKET _3 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
 | _1 = old_dec _2 = LPAREN _3 = parameters _4 = RPAREN
-    {    ((fst _1, PROTO (snd _1, fst _3, snd _3)))}
+    {((fst _1, PROTO (snd _1, fst _3, snd _3)))}
 | _1 = LPAREN _2 = old_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    ((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 | _1 = LPAREN _2 = old_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 
 local:
   _1 = local_type _2 = local_defs _3 = SEMICOLON
-    {    (DECDEF (set_name_group _1 (List.rev _2)))}
+    {(DECDEF (set_name_group _1 (List.rev _2)))}
 
 local_type:
   _1 = local_mod_list_opt _2 = local_qual
-    {    (apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
+    {(apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
 | _1 = local_mod_list_opt _2 = comp_type _3 = local_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
 | _1 = local_mod_list_opt _2 = NAMED_TYPE _3 = local_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
 
 local_mod_list_opt:
   
-    {                 ([])}
+    {([])}
 | _1 = local_mod_list
-    {                        (List.rev _1)}
+    {(List.rev _1)}
 
 local_mod_list:
   _1 = local_mod
-    {               ([_1])}
+    {([_1])}
 | _1 = local_mod_list _2 = local_mod
-    {                               (_2::_1)}
+    {(_2::_1)}
 
 local_mod:
   _1 = STATIC
-    {             ( BASE_STORAGE STATIC )}
+    {( BASE_STORAGE STATIC )}
 | _1 = AUTO
-    {                ( BASE_STORAGE AUTO )}
+    {( BASE_STORAGE AUTO )}
 | _1 = CONST
-    {                 ( BASE_CONST )}
+    {( BASE_CONST )}
 | _1 = VOLATILE
-    {                   ( BASE_VOLATILE )}
+    {( BASE_VOLATILE )}
 | _1 = REGISTER
-    {                   ( BASE_STORAGE REGISTER )}
+    {( BASE_STORAGE REGISTER )}
 | _1 = EXTERN
-    {                  ( BASE_STORAGE EXTERN )}
+    {( BASE_STORAGE EXTERN )}
 | _1 = gcc_attribute
-    {                       ( BASE_GNU_ATTR _1 )}
+    {( BASE_GNU_ATTR _1 )}
 
 local_qual:
   _1 = qual_type
-    {                    (_1)}
+    {(_1)}
 | _1 = local_qual _2 = qual_type
-    {                            (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = local_qual _2 = local_mod
-    {                            ((fst _1, _2::(snd _1)))}
+    {((fst _1, _2::(snd _1)))}
 
 local_defs:
   _1 = local_def
-    {                    ([_1])}
+    {([_1])}
 | _1 = local_defs _2 = COMMA _3 = local_def
-    {                                 (_3::_1)}
+    {(_3::_1)}
 
 local_def:
   _1 = local_dec _2 = opt_gcc_attributes
-    {    ((fst _1, snd _1, _2, NOTHING))}
+    {((fst _1, snd _1, _2, NOTHING))}
 | _1 = local_dec _2 = opt_gcc_attributes _3 = EQ _4 = init_expression
-    {    ((fst _1, snd _1, _2, _4))}
+    {((fst _1, snd _1, _2, _4))}
 
 local_dec:
   _1 = IDENT
-    {    ((_1, NO_TYPE))}
+    {((_1, NO_TYPE))}
 | _1 = NAMED_TYPE
-    {    (Clexer.add_identifier _1;(_1, NO_TYPE))}
+    {(Clexer.add_identifier _1;(_1, NO_TYPE))}
 | _1 = STAR _2 = local_dec
-    {    ((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
+    {((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
 | _1 = STAR _2 = RESTRICT _3 = local_dec
-    {    ((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
+    {((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
 | _1 = STAR _2 = CONST _3 = local_dec
-    {    ((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = VOLATILE _3 = local_dec
-    {    ((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = gcc_attributes _3 = local_dec
-    {    ((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
 | _1 = local_dec _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
 | _1 = local_dec _2 = LBRACKET _3 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
 | _1 = local_dec _2 = LPAREN _3 = parameters _4 = RPAREN
-    {    ((fst _1, PROTO (snd _1, fst _3, snd _3)))}
+    {((fst _1, PROTO (snd _1, fst _3, snd _3)))}
 | _1 = LPAREN _2 = local_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    ((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 | _1 = LPAREN _2 = local_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 
 typedef_type:
   _1 = typedef_sub
-    {    (apply_mods (snd _1) ((fst _1), NO_STORAGE))}
+    {(apply_mods (snd _1) ((fst _1), NO_STORAGE))}
 | _1 = CONST _2 = typedef_sub
-    {    (apply_mods (BASE_CONST::(snd _2)) ((fst _2), NO_STORAGE))}
+    {(apply_mods (BASE_CONST::(snd _2)) ((fst _2), NO_STORAGE))}
 | _1 = VOLATILE _2 = typedef_sub
-    {    (apply_mods (BASE_VOLATILE::(snd _2)) ((fst _2), NO_STORAGE))}
+    {(apply_mods (BASE_VOLATILE::(snd _2)) ((fst _2), NO_STORAGE))}
 
 typedef_sub:
   _1 = NAMED_TYPE
-    {                ((NAMED_TYPE _1, []))}
+    {((NAMED_TYPE _1, []))}
 | _1 = comp_type
-    {                    ((_1, []))}
+    {((_1, []))}
 | _1 = typedef_qual
-    {                      (_1)}
+    {(_1)}
 | _1 = IDENT
-    {                 ( Clexer.add_type _1; (NAMED_TYPE _1, []))}
+    {( Clexer.add_type _1; (NAMED_TYPE _1, []))}
 | _1 = NAMED_TYPE _2 = CONST
-    {                         ((NAMED_TYPE _1, [BASE_CONST]))}
+    {((NAMED_TYPE _1, [BASE_CONST]))}
 | _1 = NAMED_TYPE _2 = VOLATILE
-    {                            ((NAMED_TYPE _1, [BASE_VOLATILE]))}
+    {((NAMED_TYPE _1, [BASE_VOLATILE]))}
 | _1 = comp_type _2 = CONST
-    {                         ((_1, [BASE_CONST]))}
+    {((_1, [BASE_CONST]))}
 | _1 = comp_type _2 = VOLATILE
-    {                           ((_1, [BASE_VOLATILE]))}
+    {((_1, [BASE_VOLATILE]))}
 | _1 = IDENT _2 = CONST
-    {                      ( Clexer.add_type _1; (NAMED_TYPE _1, [BASE_CONST]))}
+    {( Clexer.add_type _1; (NAMED_TYPE _1, [BASE_CONST]))}
 | _1 = IDENT _2 = VOLATILE
-    {                        ( Clexer.add_type _1; (NAMED_TYPE _1, [BASE_VOLATILE]))}
+    {( Clexer.add_type _1; (NAMED_TYPE _1, [BASE_VOLATILE]))}
 
 typedef_qual:
   _1 = qual_type
-    {               (_1)}
+    {(_1)}
 | _1 = typedef_qual _2 = qual_type
-    {                              (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = typedef_qual _2 = CONST
-    {                           ((fst _1, BASE_CONST::(snd _1)))}
+    {((fst _1, BASE_CONST::(snd _1)))}
 | _1 = typedef_qual _2 = VOLATILE
-    {                             ((fst _1, BASE_VOLATILE::(snd _1)))}
+    {((fst _1, BASE_VOLATILE::(snd _1)))}
 
 typedef_defs:
   _1 = typedef_def
-    {                 ([_1])}
+    {([_1])}
 | _1 = typedef_defs _2 = COMMA _3 = typedef_def
-    {                                    (_3::_1)}
+    {(_3::_1)}
 
 typedef_def:
   _1 = typedef_dec _2 = opt_gcc_attributes
-    {    ((fst _1, snd _1, _2, NOTHING))}
+    {((fst _1, snd _1, _2, NOTHING))}
 
 typedef_dec:
   _1 = IDENT
-    {    ((_1, NO_TYPE))}
+    {((_1, NO_TYPE))}
 | _1 = NAMED_TYPE
-    {    ((_1, NO_TYPE))}
+    {((_1, NO_TYPE))}
 | _1 = STAR _2 = typedef_dec
-    {    ((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
+    {((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
 | _1 = STAR _2 = RESTRICT _3 = typedef_dec
-    {    ((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
+    {((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
 | _1 = STAR _2 = CONST _3 = typedef_dec
-    {    ((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = VOLATILE _3 = typedef_dec
-    {    ((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = gcc_attributes _3 = typedef_dec
-    {    ((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
 | _1 = typedef_dec _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
 | _1 = typedef_dec _2 = LBRACKET _3 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
 | _1 = typedef_dec _2 = LPAREN _3 = parameters _4 = RPAREN
-    {    ((fst _1, PROTO (snd _1, fst _3, snd _3)))}
+    {((fst _1, PROTO (snd _1, fst _3, snd _3)))}
 | _1 = LPAREN _2 = typedef_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    ((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 | _1 = LPAREN _2 = typedef_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 
 field_list:
   _1 = list_field_
-    {                   (_1)}
+    {(_1)}
 
 field:
   _1 = field_type _2 = field_defs _3 = opt_gcc_attributes _4 = SEMICOLON
-    {   (
+    {(
      match _3, set_name_group _1 _2 with
      | [],r -> r
      | attrs,(t,s,ns) -> GNU_TYPE (attrs,t),s,ns
    )}
 | _1 = field_mod_list_opt _2 = struct_type _3 = field_mod_list_opt _4 = field_defs _5 = SEMICOLON
-    {    ( set_name_group (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE))) _4)}
+    {( set_name_group (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE))) _4)}
 | _1 = field_mod_list_opt _2 = struct_type _3 = field_mod_list_opt _4 = SEMICOLON
-    {    ( set_name_group (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE))) [("", NO_TYPE, [], NOTHING)])}
+    {( set_name_group (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE))) [("", NO_TYPE, [], NOTHING)])}
 | _1 = field_mod_list_opt _2 = union_type _3 = field_mod_list_opt _4 = field_defs _5 = SEMICOLON
-    {    ( set_name_group (apply_mods _1 (apply_mods _3 (_2, NO_STORAGE))) _4 )}
+    {( set_name_group (apply_mods _1 (apply_mods _3 (_2, NO_STORAGE))) _4 )}
 | _1 = field_mod_list_opt _2 = union_type _3 = field_mod_list_opt _4 = SEMICOLON
-    {    ( set_name_group (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE))) [("", NO_TYPE, [], NOTHING)])}
+    {( set_name_group (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE))) [("", NO_TYPE, [], NOTHING)])}
 
 field_type:
   _1 = field_mod_list_opt _2 = field_qual
-    {    (apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
+    {(apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
 | _1 = field_mod_list_opt _2 = enum_type _3 = field_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
 | _1 = field_mod_list_opt _2 = NAMED_TYPE _3 = field_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
 
 field_mod_list_opt:
   
-    {                 ([])}
+    {([])}
 | _1 = field_mod_list
-    {                        (List.rev _1)}
+    {(List.rev _1)}
 
 field_mod_list:
   _1 = field_mod
-    {               ([_1])}
+    {([_1])}
 | _1 = field_mod_list _2 = field_mod
-    {                               (_2::_1)}
+    {(_2::_1)}
 
 field_mod:
   _1 = CONST
-    {            (BASE_CONST)}
+    {(BASE_CONST)}
 | _1 = VOLATILE
-    {                   (BASE_VOLATILE)}
+    {(BASE_VOLATILE)}
 | _1 = gcc_attribute
-    {                       ( BASE_GNU_ATTR _1 )}
+    {( BASE_GNU_ATTR _1 )}
 
 field_qual:
   _1 = qual_type
-    {               (_1)}
+    {(_1)}
 | _1 = field_qual _2 = qual_type
-    {                            (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = field_qual _2 = field_mod
-    {                            ((fst _1, _2::(snd _1)))}
+    {((fst _1, _2::(snd _1)))}
 
 field_defs:
   _1 = separated_nonempty_list_COMMA_field_def_
-    {                                                      (_1)}
+    {(_1)}
 
 field_def:
   _1 = field_dec
-    {                     ((fst _1, snd _1, [], NOTHING))}
+    {((fst _1, snd _1, [], NOTHING))}
 
 field_dec:
   _1 = IDENT
-    {    ((_1, NO_TYPE))}
+    {((_1, NO_TYPE))}
 | _1 = NAMED_TYPE
-    {    ((_1, NO_TYPE))}
+    {((_1, NO_TYPE))}
 | _1 = STAR _2 = field_dec
-    {    ((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
+    {((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
 | _1 = STAR _2 = RESTRICT _3 = field_dec
-    {    ((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
+    {((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
 | _1 = STAR _2 = CONST _3 = field_dec
-    {    ((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = VOLATILE _3 = field_dec
-    {    ((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = gcc_attributes _3 = field_dec
-    {    ((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
 | _1 = field_dec _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, smooth_expression _3)) (snd _1)))}
 | _1 = field_dec _2 = LBRACKET _3 = RBRACKET
-    {    ((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
+    {((fst _1, set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
 | _1 = field_dec _2 = LPAREN _3 = parameters _4 = RPAREN
-    {    ((fst _1, PROTO (snd _1, fst _3, snd _3)))}
+    {((fst _1, PROTO (snd _1, fst _3, snd _3)))}
 | _1 = LPAREN _2 = field_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    ((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 | _1 = LPAREN _2 = field_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 | _1 = option_IDENT_ _2 = COLON _3 = expression
-    {    (((match _1 with None -> "" | Some x -> x), BITFIELD (NO_SIGN, _3)))}
+    {(((match _1 with None -> "" | Some x -> x), BITFIELD (NO_SIGN, _3)))}
 
 parameters:
   
-    {                 (([], false))}
+    {(([], false))}
 | _1 = param_list
-    {                     ((List.rev _1, false))}
+    {((List.rev _1, false))}
 | _1 = param_list _2 = COMMA _3 = ELLIPSIS
-    {                                ((List.rev _1, true))}
+    {((List.rev _1, true))}
 
 param_list:
   _1 = param_list _2 = COMMA _3 = param
-    {                         (_3::_1)}
+    {(_3::_1)}
 | _1 = param
-    {                 ([_1])}
+    {([_1])}
 
 param:
   _1 = param_type _2 = param_def
-    {    (set_single _1 _2)}
+    {(set_single _1 _2)}
 
 param_type:
   _1 = param_mods_opt _2 = NAMED_TYPE _3 = param_mods_opt
-    {    (apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
 | _1 = param_mods_opt _2 = comp_type _3 = param_mods_opt
-    {    (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
 | _1 = param_mods_opt _2 = param_qual
-    {    (apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
+    {(apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
 
 param_mods_opt:
   
-    {                 ([])}
+    {([])}
 | _1 = param_mods
-    {                     (List.rev _1)}
+    {(List.rev _1)}
 
 param_mods:
   _1 = param_mod
-    {               ([_1])}
+    {([_1])}
 | _1 = param_mods _2 = param_mod
-    {                            (_2::_1)}
+    {(_2::_1)}
 
 param_mod:
   _1 = CONST
-    {            (BASE_CONST)}
+    {(BASE_CONST)}
 | _1 = REGISTER
-    {                   (BASE_STORAGE REGISTER)}
+    {(BASE_STORAGE REGISTER)}
 | _1 = VOLATILE
-    {                   (BASE_VOLATILE)}
+    {(BASE_VOLATILE)}
 | _1 = gcc_attribute
-    {                       ( BASE_GNU_ATTR _1 )}
+    {( BASE_GNU_ATTR _1 )}
 
 param_qual:
   _1 = qual_type
-    {               (_1)}
+    {(_1)}
 | _1 = param_qual _2 = qual_type
-    {                            (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = param_qual _2 = CONST
-    {                         ((fst _1, BASE_CONST::(snd _1)))}
+    {((fst _1, BASE_CONST::(snd _1)))}
 | _1 = param_qual _2 = REGISTER
-    {                            ((fst _1, (BASE_STORAGE REGISTER)::(snd _1)))}
+    {((fst _1, (BASE_STORAGE REGISTER)::(snd _1)))}
 | _1 = param_qual _2 = VOLATILE
-    {                            ((fst _1, BASE_VOLATILE::(snd _1)))}
+    {((fst _1, BASE_VOLATILE::(snd _1)))}
 | _1 = param_qual _2 = gcc_attribute
-    {                               ((fst _1, (BASE_GNU_ATTR _2)::(snd _1)))}
+    {((fst _1, (BASE_GNU_ATTR _2)::(snd _1)))}
 
 param_def:
   _1 = param_dec
-    {    ( let (name, _type) = _1 in (name, _type, [], NOTHING) )}
+    {( let (name, _type) = _1 in (name, _type, [], NOTHING) )}
 
 param_dec:
   
-    {    ( ("", NO_TYPE) )}
+    {( ("", NO_TYPE) )}
 | _1 = IDENT
-    {    ( (_1, NO_TYPE) )}
+    {( (_1, NO_TYPE) )}
 | _1 = NAMED_TYPE
-    {    ( (_1, NO_TYPE) )}
+    {( (_1, NO_TYPE) )}
 | _1 = STAR _2 = param_dec
-    {    ((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
+    {((fst _2, set_type (PTR NO_TYPE) (snd _2)))}
 | _1 = STAR _2 = RESTRICT _3 = param_dec
-    {    ((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
+    {((fst _3, set_type (RESTRICT_PTR NO_TYPE) (snd _3)))}
 | _1 = STAR _2 = CONST _3 = param_dec
-    {    ((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (CONST (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = VOLATILE _3 = param_dec
-    {    ((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (VOLATILE (PTR NO_TYPE)) (snd _3)))}
 | _1 = STAR _2 = gcc_attributes _3 = param_dec
-    {    ((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
+    {((fst _3, set_type (GNU_TYPE (_2, PTR NO_TYPE)) (snd _3)))}
 | _1 = param_dec _2 = LBRACKET _3 = global_mod_list_opt _4 = comma_expression _5 = RBRACKET
-    {    ((fst _1, apply_mods_to_base_type _3 @@ set_type (ARRAY (NO_TYPE, smooth_expression _4)) (snd _1)))}
+    {((fst _1, apply_mods_to_base_type _3 @@ set_type (ARRAY (NO_TYPE, smooth_expression _4)) (snd _1)))}
 | _1 = param_dec _2 = LBRACKET _3 = global_mod_list_opt _4 = RBRACKET
-    {    ((fst _1, apply_mods_to_base_type _3 @@ set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
+    {((fst _1, apply_mods_to_base_type _3 @@ set_type (ARRAY (NO_TYPE, NOTHING)) (snd _1)))}
 | _1 = LPAREN _2 = param_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    ((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
+    {((fst _2, set_type (PROTO (NO_TYPE, fst _5, snd _5)) (snd _2)))}
 | _1 = LPAREN _2 = param_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 
 only_type:
   _1 = only_type_type _2 = only_def
-    {    (set_type (fst _1) _2)}
+    {(set_type (fst _1) _2)}
 
 only_type_type:
   _1 = only_mod_list_opt _2 = only_qual
-    {    (apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
+    {(apply_mods (snd _2) (apply_mods _1 ((fst _2), NO_STORAGE)))}
 | _1 = only_mod_list_opt _2 = comp_type _3 = only_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (_2, NO_STORAGE)))}
 | _1 = only_mod_list_opt _2 = NAMED_TYPE _3 = only_mod_list_opt
-    {    (apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
+    {(apply_mods _3 (apply_mods _1 (NAMED_TYPE _2, NO_STORAGE)))}
 
 only_mod_list_opt:
   
-    {                 ([])}
+    {([])}
 | _1 = only_mod_list
-    {                       (List.rev _1)}
+    {(List.rev _1)}
 
 only_qual:
   _1 = qual_type
-    {               (_1)}
+    {(_1)}
 | _1 = only_qual _2 = qual_type
-    {                            (apply_qual _1 _2)}
+    {(apply_qual _1 _2)}
 | _1 = only_qual _2 = only_mod
-    {                           ((fst _1, _2::(snd _1)))}
+    {((fst _1, _2::(snd _1)))}
 
 only_mod_list:
   _1 = only_mod
-    {              ([_1])}
+    {([_1])}
 | _1 = only_mod_list _2 = only_mod
-    {                             (_2::_1)}
+    {(_2::_1)}
 
 only_mod:
   _1 = CONST
-    {            (BASE_CONST)}
+    {(BASE_CONST)}
 | _1 = VOLATILE
-    {                   (BASE_VOLATILE)}
+    {(BASE_VOLATILE)}
 | _1 = gcc_attribute
-    {                       ( BASE_GNU_ATTR _1 )}
+    {( BASE_GNU_ATTR _1 )}
 
 only_def:
   _1 = only_dec
-    {              (_1)}
+    {(_1)}
 
 only_dec:
   
-    {    (NO_TYPE)}
+    {(NO_TYPE)}
 | _1 = STAR _2 = only_dec
-    {    (set_type (PTR NO_TYPE) _2)}
+    {(set_type (PTR NO_TYPE) _2)}
 | _1 = STAR _2 = RESTRICT _3 = only_dec
-    {    (set_type (RESTRICT_PTR NO_TYPE) _3)}
+    {(set_type (RESTRICT_PTR NO_TYPE) _3)}
 | _1 = STAR _2 = CONST _3 = only_dec
-    {    (set_type (CONST (PTR NO_TYPE)) _3)}
+    {(set_type (CONST (PTR NO_TYPE)) _3)}
 | _1 = STAR _2 = VOLATILE _3 = only_dec
-    {    (set_type (VOLATILE (PTR NO_TYPE)) _3)}
+    {(set_type (VOLATILE (PTR NO_TYPE)) _3)}
 | _1 = STAR _2 = gcc_attributes _3 = only_dec
-    {    (set_type (GNU_TYPE (_2, PTR NO_TYPE)) _3)}
+    {(set_type (GNU_TYPE (_2, PTR NO_TYPE)) _3)}
 | _1 = only_dec _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    (set_type (ARRAY (NO_TYPE, smooth_expression _3)) _1)}
+    {(set_type (ARRAY (NO_TYPE, smooth_expression _3)) _1)}
 | _1 = only_dec _2 = LBRACKET _3 = RBRACKET
-    {    (set_type (ARRAY (NO_TYPE, NOTHING)) _1)}
+    {(set_type (ARRAY (NO_TYPE, NOTHING)) _1)}
 | _1 = LPAREN _2 = only_dec _3 = RPAREN _4 = LPAREN _5 = parameters _6 = RPAREN
-    {    (set_type (PROTO (NO_TYPE, fst _5, snd _5)) _2)}
+    {(set_type (PROTO (NO_TYPE, fst _5, snd _5)) _2)}
 | _1 = LPAREN _2 = only_dec _3 = RPAREN
-    {    (_2)}
+    {(_2)}
 
 qual_type:
   _1 = VOID
-    {                ((VOID, []))}
+    {((VOID, []))}
 | _1 = BOOL
-    {                ((BOOL, []))}
+    {((BOOL, []))}
 | _1 = CHAR
-    {                ((CHAR NO_SIGN, []))}
+    {((CHAR NO_SIGN, []))}
 | _1 = INT
-    {                ((INT (NO_SIZE, NO_SIGN), []))}
+    {((INT (NO_SIZE, NO_SIGN), []))}
 | _1 = FLOAT
-    {                ((FLOAT false, []))}
+    {((FLOAT false, []))}
 | _1 = DOUBLE
-    {                ((DOUBLE false, []))}
+    {((DOUBLE false, []))}
 | _1 = BUILTIN_TYPE
-    {                  ((BUILTIN_TYPE _1, []))}
+    {((BUILTIN_TYPE _1, []))}
 | _1 = COMPLEX
-    {                ((NO_TYPE, [BASE_COMPLEX]))}
+    {((NO_TYPE, [BASE_COMPLEX]))}
 | _1 = LONG
-    {                ((NO_TYPE, [BASE_SIZE LONG]))}
+    {((NO_TYPE, [BASE_SIZE LONG]))}
 | _1 = SHORT
-    {                ((NO_TYPE, [BASE_SIZE SHORT]))}
+    {((NO_TYPE, [BASE_SIZE SHORT]))}
 | _1 = SIGNED
-    {                ((NO_TYPE, [BASE_SIGN SIGNED]))}
+    {((NO_TYPE, [BASE_SIGN SIGNED]))}
 | _1 = UNSIGNED
-    {                ((NO_TYPE, [BASE_SIGN UNSIGNED]))}
+    {((NO_TYPE, [BASE_SIGN UNSIGNED]))}
 
 comp_type:
   _1 = struct_type
-    {                (_1)}
+    {(_1)}
 | _1 = union_type
-    {               (_1)}
+    {(_1)}
 | _1 = enum_type
-    {              (_1)}
+    {(_1)}
 
 struct_type:
   _1 = STRUCT _2 = type_name
-    {    (STRUCT (_2, []))}
+    {(STRUCT (_2, []))}
 | _1 = STRUCT _2 = LBRACE _3 = field_list _4 = RBRACE
-    {    (STRUCT ("", _3))}
+    {(STRUCT ("", _3))}
 | _1 = STRUCT _2 = type_name _3 = LBRACE _4 = field_list _5 = RBRACE
-    {    (STRUCT (_2, _4))}
+    {(STRUCT (_2, _4))}
 
 union_type:
   _1 = UNION _2 = type_name
-    {    (UNION (_2, []))}
+    {(UNION (_2, []))}
 | _1 = UNION _2 = LBRACE _3 = field_list _4 = RBRACE
-    {    (UNION ("", _3))}
+    {(UNION ("", _3))}
 | _1 = UNION _2 = type_name _3 = LBRACE _4 = field_list _5 = RBRACE
-    {    (UNION (_2, _4))}
+    {(UNION (_2, _4))}
 
 enum_type:
   _1 = ENUM _2 = type_name
-    {    (ENUM (_2, []))}
+    {(ENUM (_2, []))}
 | _1 = ENUM _2 = LBRACE _3 = enum_list _4 = RBRACE
-    {    (ENUM ("", List.rev _3))}
+    {(ENUM ("", List.rev _3))}
 | _1 = ENUM _2 = LBRACE _3 = enum_list _4 = COMMA _5 = RBRACE
-    {    (ENUM ("", List.rev _3))}
+    {(ENUM ("", List.rev _3))}
 | _1 = ENUM _2 = type_name _3 = LBRACE _4 = enum_list _5 = RBRACE
-    {    (ENUM (_2, List.rev _4))}
+    {(ENUM (_2, List.rev _4))}
 
 type_name:
   _1 = IDENT
-    {            (_1)}
+    {(_1)}
 | _1 = NAMED_TYPE
-    {                     (_1)}
+    {(_1)}
 
 enum_list:
   _1 = enum_name
-    {                   ([_1])}
+    {([_1])}
 | _1 = enum_list _2 = COMMA _3 = enum_name
-    {                               (_3::_1)}
+    {(_3::_1)}
 
 enum_name:
   _1 = IDENT
-    {                      ((_1, NOTHING))}
+    {((_1, NOTHING))}
 | _1 = IDENT _2 = EQ _3 = expression
-    {                            ((_1, _3))}
+    {((_1, _3))}
 
 init_expression:
   _1 = LBRACE _2 = compound_comma_expression _3 = RBRACE
-    {    (CONSTANT (CONST_COMPOUND (List.rev _2)))}
+    {(CONSTANT (CONST_COMPOUND (List.rev _2)))}
 | _1 = expression
-    {    (_1)}
+    {(_1)}
 
 compound_expression:
   _1 = LBRACE _2 = compound_comma_expression _3 = RBRACE
-    {    (CONSTANT (CONST_COMPOUND (List.rev _2)))}
+    {(CONSTANT (CONST_COMPOUND (List.rev _2)))}
 | _1 = expression
-    {    (_1)}
+    {(_1)}
 | _1 = DOT _2 = type_name _3 = EQ _4 = expression
-    {    ( DESIGNATED (_2, _4) )}
+    {( DESIGNATED (_2, _4) )}
 
 compound_comma_expression:
   _1 = compound_expression
-    {    ([_1])}
+    {([_1])}
 | _1 = compound_comma_expression _2 = COMMA _3 = compound_expression
-    {    (_3::_1)}
+    {(_3::_1)}
 | _1 = compound_comma_expression _2 = COMMA
-    {    (_1)}
+    {(_1)}
 
 opt_expression:
   
-    {    (NOTHING)}
+    {(NOTHING)}
 | _1 = comma_expression
-    {    (smooth_expression _1)}
+    {(smooth_expression _1)}
 
 comma_expression:
   _1 = expression
-    {    ([_1])}
+    {([_1])}
 | _1 = comma_expression _2 = COMMA _3 = expression
-    {    (_3::_1)}
+    {(_3::_1)}
 
 expression:
   _1 = LPAREN _2 = EXTENSION _3 = expression _4 = RPAREN
-    {                                       (_3)}
+    {(_3)}
 | _1 = constant
-    {   (CONSTANT _1)}
+    {(CONSTANT _1)}
 | _1 = IDENT
-    {    (VARIABLE _1)}
+    {(VARIABLE _1)}
 | _1 = SIZEOF _2 = expression
-    {    (EXPR_SIZEOF _2)}
+    {(EXPR_SIZEOF _2)}
 | _1 = SIZEOF _2 = LPAREN _3 = only_type _4 = RPAREN
-    {    (TYPE_SIZEOF _3)}
+    {(TYPE_SIZEOF _3)}
 | _1 = PLUS _2 = expression
-    {    (UNARY (PLUS, _2))}
+    {(UNARY (PLUS, _2))}
 | _1 = MINUS _2 = expression
-    {    (UNARY (MINUS, _2))}
+    {(UNARY (MINUS, _2))}
 | _1 = STAR _2 = expression
-    {    (UNARY (MEMOF, _2))}
+    {(UNARY (MEMOF, _2))}
 | _1 = AND _2 = expression %prec ADDROF
-    {    (UNARY (ADDROF, _2))}
+    {(UNARY (ADDROF, _2))}
 | _1 = EXCLAM _2 = expression
-    {    (UNARY (NOT, _2))}
+    {(UNARY (NOT, _2))}
 | _1 = TILDE _2 = expression
-    {    (UNARY (BNOT, _2))}
+    {(UNARY (BNOT, _2))}
 | _1 = PLUS_PLUS _2 = expression %prec CAST
-    {    (UNARY (PREINCR, _2))}
+    {(UNARY (PREINCR, _2))}
 | _1 = expression _2 = PLUS_PLUS
-    {    (UNARY (POSINCR, _1))}
+    {(UNARY (POSINCR, _1))}
 | _1 = MINUS_MINUS _2 = expression %prec CAST
-    {    (UNARY (PREDECR, _2))}
+    {(UNARY (PREDECR, _2))}
 | _1 = expression _2 = MINUS_MINUS
-    {    (UNARY (POSDECR, _1))}
+    {(UNARY (POSDECR, _1))}
 | _1 = expression _2 = ARROW _3 = IDENT
-    {    (MEMBEROFPTR (_1, _3))}
+    {(MEMBEROFPTR (_1, _3))}
 | _1 = expression _2 = ARROW _3 = NAMED_TYPE
-    {    (MEMBEROFPTR (_1, _3))}
+    {(MEMBEROFPTR (_1, _3))}
 | _1 = expression _2 = DOT _3 = IDENT
-    {    (MEMBEROF (_1, _3))}
+    {(MEMBEROF (_1, _3))}
 | _1 = expression _2 = DOT _3 = NAMED_TYPE
-    {    (MEMBEROF (_1, _3))}
+    {(MEMBEROF (_1, _3))}
 | _1 = LPAREN _2 = body _3 = RPAREN
-    {    (Clexer.test_gcc(); set_eline _1 (GNU_BODY (snd _2)))}
+    {(Clexer.test_gcc(); set_eline _1 (GNU_BODY (snd _2)))}
 | _1 = LPAREN _2 = comma_expression _3 = RPAREN
-    {    (set_eline _1 (smooth_expression _2))}
+    {(set_eline _1 (smooth_expression _2))}
 | _1 = LPAREN _2 = only_type _3 = RPAREN _4 = expression %prec CAST
-    {    (set_eline _1 (CAST (_2, _4)))}
+    {(set_eline _1 (CAST (_2, _4)))}
 | _1 = expression _2 = LPAREN _3 = opt_expression _4 = RPAREN
-    {    (set_eline _2 (CALL (_1, list_expression _3)))}
+    {(set_eline _2 (CALL (_1, list_expression _3)))}
 | _1 = expression _2 = LBRACKET _3 = comma_expression _4 = RBRACKET
-    {    (INDEX (_1, smooth_expression _3))}
+    {(INDEX (_1, smooth_expression _3))}
 | _1 = expression _2 = QUEST _3 = expression _4 = COLON _5 = expression
-    {    (QUESTION (_1, _3, _5))}
+    {(QUESTION (_1, _3, _5))}
 | _1 = expression _2 = PLUS _3 = expression
-    {    (BINARY(ADD ,_1 , _3))}
+    {(BINARY(ADD ,_1 , _3))}
 | _1 = expression _2 = MINUS _3 = expression
-    {    (BINARY(SUB ,_1 , _3))}
+    {(BINARY(SUB ,_1 , _3))}
 | _1 = expression _2 = STAR _3 = expression
-    {    (BINARY(MUL ,_1 , _3))}
+    {(BINARY(MUL ,_1 , _3))}
 | _1 = expression _2 = SLASH _3 = expression
-    {    (BINARY(DIV ,_1 , _3))}
+    {(BINARY(DIV ,_1 , _3))}
 | _1 = expression _2 = PERCENT _3 = expression
-    {    (BINARY(MOD ,_1 , _3))}
+    {(BINARY(MOD ,_1 , _3))}
 | _1 = expression _2 = AND_AND _3 = expression
-    {    (BINARY(AND ,_1 , _3))}
+    {(BINARY(AND ,_1 , _3))}
 | _1 = expression _2 = PIPE_PIPE _3 = expression
-    {    (BINARY(OR ,_1 , _3))}
+    {(BINARY(OR ,_1 , _3))}
 | _1 = expression _2 = AND _3 = expression
-    {    (BINARY(BAND ,_1 , _3))}
+    {(BINARY(BAND ,_1 , _3))}
 | _1 = expression _2 = PIPE _3 = expression
-    {    (BINARY(BOR ,_1 , _3))}
+    {(BINARY(BOR ,_1 , _3))}
 | _1 = expression _2 = CIRC _3 = expression
-    {    (BINARY(XOR ,_1 , _3))}
+    {(BINARY(XOR ,_1 , _3))}
 | _1 = expression _2 = EQ_EQ _3 = expression
-    {    (BINARY(EQ ,_1 , _3))}
+    {(BINARY(EQ ,_1 , _3))}
 | _1 = expression _2 = EXCLAM_EQ _3 = expression
-    {    (BINARY(NE ,_1 , _3))}
+    {(BINARY(NE ,_1 , _3))}
 | _1 = expression _2 = INF _3 = expression
-    {    (BINARY(LT ,_1 , _3))}
+    {(BINARY(LT ,_1 , _3))}
 | _1 = expression _2 = SUP _3 = expression
-    {    (BINARY(GT ,_1 , _3))}
+    {(BINARY(GT ,_1 , _3))}
 | _1 = expression _2 = INF_EQ _3 = expression
-    {    (BINARY(LE ,_1 , _3))}
+    {(BINARY(LE ,_1 , _3))}
 | _1 = expression _2 = SUP_EQ _3 = expression
-    {    (BINARY(GE ,_1 , _3))}
+    {(BINARY(GE ,_1 , _3))}
 | _1 = expression _2 = INF_INF _3 = expression
-    {    (BINARY(SHL ,_1 , _3))}
+    {(BINARY(SHL ,_1 , _3))}
 | _1 = expression _2 = SUP_SUP _3 = expression
-    {    (BINARY(SHR ,_1 , _3))}
+    {(BINARY(SHR ,_1 , _3))}
 | _1 = expression _2 = EQ _3 = expression
-    {    (set_eline _2 (BINARY(ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = PLUS_EQ _3 = expression
-    {    (set_eline _2 (BINARY(ADD_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(ADD_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = MINUS_EQ _3 = expression
-    {    (set_eline _2 (BINARY(SUB_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(SUB_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = STAR_EQ _3 = expression
-    {    (set_eline _2 (BINARY(MUL_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(MUL_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = SLASH_EQ _3 = expression
-    {    (set_eline _2 (BINARY(DIV_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(DIV_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = PERCENT_EQ _3 = expression
-    {    (set_eline _2 (BINARY(MOD_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(MOD_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = AND_EQ _3 = expression
-    {    (set_eline _2 (BINARY(BAND_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(BAND_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = PIPE_EQ _3 = expression
-    {    (set_eline _2 (BINARY(BOR_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(BOR_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = CIRC_EQ _3 = expression
-    {    (set_eline _2 (BINARY(XOR_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(XOR_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = INF_INF_EQ _3 = expression
-    {    (set_eline _2 (BINARY(SHL_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(SHL_ASSIGN ,_1 , _3)))}
 | _1 = expression _2 = SUP_SUP_EQ _3 = expression
-    {    (set_eline _2 (BINARY(SHR_ASSIGN ,_1 , _3)))}
+    {(set_eline _2 (BINARY(SHR_ASSIGN ,_1 , _3)))}
 
 constant:
   _1 = CST_INT
-    {                   (CONST_INT _1)}
+    {(CONST_INT _1)}
 | _1 = CST_FLOAT
-    {                    (CONST_FLOAT _1)}
+    {(CONST_FLOAT _1)}
 | _1 = CST_CHAR
-    {                   (CONST_CHAR _1)}
+    {(CONST_CHAR _1)}
 | _1 = string_list
-    {                      (CONST_STRING _1)}
+    {(CONST_STRING _1)}
 
 string_list:
   _1 = CST_STRING
-    {                    (_1)}
+    {(_1)}
 | _1 = string_list _2 = CST_STRING
-    {                             (_1 ^ _2)}
+    {(_1 ^ _2)}
 
 body_begin:
   _1 = LBRACE
-    {              (Clexer.push_context (); _1)}
+    {(Clexer.push_context (); _1)}
 
 body_middle:
   _1 = opt_locals _2 = opt_stats
-    {                        ((_1, _2))}
+    {((_1, _2))}
 
 body:
   _1 = body_begin _2 = body_middle _3 = RBRACE
-    {                               (Clexer.pop_context(); (_1, _2))}
+    {(Clexer.pop_context(); (_1, _2))}
 
 opt_locals:
   
-    {                 ([])}
+    {([])}
 | _1 = locals
-    {                  (List.rev _1)}
+    {(List.rev _1)}
 
 locals:
   _1 = local
-    {            ([_1])}
+    {([_1])}
 | _1 = locals _2 = local
-    {                      (_2::_1)}
+    {(_2::_1)}
 
 opt_stats:
   
-    {                 (NOP)}
+    {(NOP)}
 | _1 = stats
-    {                 (_1)}
+    {(_1)}
 
 stats:
   _1 = statement
-    {               (_1)}
+    {(_1)}
 | _1 = stats _2 = statement
-    {                           (SEQUENCE(_1, _2))}
+    {(SEQUENCE(_1, _2))}
 
 statement:
   _1 = SEMICOLON
-    {    (set_line _1 NOP)}
+    {(set_line _1 NOP)}
 | _1 = comma_expression _2 = SEMICOLON
-    {    (set_line _2 (COMPUTATION (smooth_expression _1)))}
+    {(set_line _2 (COMPUTATION (smooth_expression _1)))}
 | _1 = body
-    {    (set_line (fst _1) (BLOCK (snd _1)))}
+    {(set_line (fst _1) (BLOCK (snd _1)))}
 | _1 = IF _2 = LPAREN _3 = comma_expression _4 = RPAREN _5 = statement %prec IF
-    {    (set_line _1 (IF (smooth_expression _3, _5, NOP)))}
+    {(set_line _1 (IF (smooth_expression _3, _5, NOP)))}
 | _1 = IF _2 = LPAREN _3 = comma_expression _4 = RPAREN _5 = statement _6 = ELSE _7 = statement
-    {    (set_line _1 (IF (smooth_expression _3, _5, set_line _6 _7)))}
+    {(set_line _1 (IF (smooth_expression _3, _5, set_line _6 _7)))}
 | _1 = SWITCH _2 = LPAREN _3 = comma_expression _4 = RPAREN _5 = statement
-    {    (set_line _1 (SWITCH (smooth_expression _3, _5)))}
+    {(set_line _1 (SWITCH (smooth_expression _3, _5)))}
 | _1 = WHILE _2 = LPAREN _3 = comma_expression _4 = RPAREN _5 = statement
-    {    (set_line _1 (WHILE (smooth_expression _3, _5)))}
+    {(set_line _1 (WHILE (smooth_expression _3, _5)))}
 | _1 = DO _2 = statement _3 = WHILE _4 = LPAREN _5 = comma_expression _6 = RPAREN _7 = SEMICOLON
-    {    (set_line _1 (DOWHILE (smooth_expression _5, _2)))}
+    {(set_line _1 (DOWHILE (smooth_expression _5, _2)))}
 | _1 = FOR _2 = LPAREN _3 = opt_expression _4 = SEMICOLON _5 = opt_expression _6 = SEMICOLON _7 = opt_expression _8 = RPAREN _9 = statement
-    {    (set_line _1 (FOR (_3, _5, _7, _9)))}
+    {(set_line _1 (FOR (_3, _5, _7, _9)))}
 | _1 = IDENT _2 = COLON _3 = statement
-    {    (LABEL (_1, _3))}
+    {(LABEL (_1, _3))}
 | _1 = CASE _2 = expression _3 = COLON _4 = statement
-    {    (set_line _1 (CASE (_2, _4)))}
+    {(set_line _1 (CASE (_2, _4)))}
 | _1 = DEFAULT _2 = COLON _3 = statement
-    {    (set_line _1 (DEFAULT _3))}
+    {(set_line _1 (DEFAULT _3))}
 | _1 = RETURN _2 = SEMICOLON
-    {    (set_line _1 (RETURN NOTHING))}
+    {(set_line _1 (RETURN NOTHING))}
 | _1 = RETURN _2 = expression _3 = SEMICOLON
-    {    (set_line _1 (RETURN _2))}
+    {(set_line _1 (RETURN _2))}
 | _1 = BREAK _2 = SEMICOLON
-    {    (set_line _1 BREAK)}
+    {(set_line _1 BREAK)}
 | _1 = CONTINUE _2 = SEMICOLON
-    {    (set_line _1 CONTINUE)}
+    {(set_line _1 CONTINUE)}
 | _1 = GOTO _2 = IDENT _3 = SEMICOLON
-    {    (set_line _1 (GOTO _2))}
+    {(set_line _1 (GOTO _2))}
 | _1 = ASM _2 = LPAREN _3 = CST_STRING _4 = RPAREN _5 = SEMICOLON
-    {    ( ASM _3 )}
+    {( ASM _3 )}
 | _1 = ASM _2 = LPAREN _3 = CST_STRING _4 = gnu_asm_io _5 = gnu_asm_io _6 = opt_gnu_asm_mods _7 = RPAREN _8 = SEMICOLON
-    {    ( Clexer.test_gcc(); GNU_ASM (_3, List.rev _4, List.rev _5, List.rev _6) )}
+    {( Clexer.test_gcc(); GNU_ASM (_3, List.rev _4, List.rev _5, List.rev _6) )}
 
 basic_asm:
   _1 = ASM _2 = option_VOLATILE_ _3 = opt_gcc_attributes _4 = LPAREN asm = string_list _6 = RPAREN
-    {    ( ASM asm )}
+    {( ASM asm )}
 
 gnu_asm_io:
   _1 = COLON _2 = gnu_asm_args
-    {                               ( _2 )}
+    {( _2 )}
 
 gnu_asm_args:
   _1 = separated_nonempty_list_COMMA_gnu_asm_arg_
-    {                                                          (_1)}
+    {(_1)}
 
 gnu_asm_arg:
   _1 = CST_STRING _2 = LPAREN _3 = expression _4 = RPAREN
-    {    ( ("", _1, _3) )}
+    {( ("", _1, _3) )}
 | _1 = LBRACKET _2 = IDENT _3 = RBRACKET _4 = CST_STRING _5 = LPAREN _6 = expression _7 = RPAREN
-    {    ( (_2, _4, _6) )}
+    {( (_2, _4, _6) )}
 
 opt_gnu_asm_mods:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = COLON _2 = gnu_asm_mods
-    {    ( _2 )}
+    {( _2 )}
 
 gnu_asm_mods:
   _1 = CST_STRING
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = gnu_asm_mods _2 = COMMA _3 = CST_STRING
-    {    ( _3::_1 )}
+    {( _3::_1 )}
 
 opt_gcc_attributes:
   
-    {    ( Clexer.test_gcc(); [] )}
+    {( Clexer.test_gcc(); [] )}
 | _1 = gcc_attributes
-    {    ( Clexer.test_gcc(); List.rev _1 )}
+    {( Clexer.test_gcc(); List.rev _1 )}
 
 gcc_attributes:
   _1 = gcc_attribute
-    {    ( _1 )}
+    {( _1 )}
 | _1 = gcc_attributes _2 = gcc_attribute
-    {    ( List.append _1 _2 )}
+    {( List.append _1 _2 )}
 
 gcc_attribute:
   _1 = ATTRIBUTE _2 = LPAREN _3 = LPAREN _4 = opt_gnu_args _5 = RPAREN _6 = RPAREN
-    {    ( List.rev _4 )}
+    {( List.rev _4 )}
 | _1 = EXTENSION
-    {    ( [GNU_EXTENSION] )}
+    {( [GNU_EXTENSION] )}
 | _1 = INLINE
-    {    ( [GNU_INLINE] )}
+    {( [GNU_INLINE] )}
 
 opt_gnu_args:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = gnu_args
-    {    ( _1 )}
+    {( _1 )}
 
 gnu_args:
   _1 = separated_nonempty_list_COMMA_gnu_arg_
-    {                                                 (_1)}
+    {(_1)}
 
 gnu_arg:
   _1 = gnu_id
-    {    ( GNU_ID _1 )}
+    {( GNU_ID _1 )}
 | _1 = local_type
-    {    (GNU_TYPE_ARG (fst _1, snd _1))}
+    {(GNU_TYPE_ARG (fst _1, snd _1))}
 | _1 = constant
-    {    ( GNU_CST _1 )}
+    {( GNU_CST _1 )}
 | _1 = gnu_id _2 = LPAREN _3 = opt_gnu_args _4 = RPAREN
-    {    ( GNU_CALL (_1, _3) )}
+    {( GNU_CALL (_1, _3) )}
 
 gnu_id:
   _1 = IDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = GNU_ATTRS
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-    (
+(
       match _1 with
         [(Cabs.GNU_ID name)] -> name
       | _ -> parse_error _symbolstartofs _endofs

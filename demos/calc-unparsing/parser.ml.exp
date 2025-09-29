@@ -18,11 +18,11 @@ module MenhirBasics = struct
     | PLUS
     | MINUS
     | LPAREN
-    | INT of (
+    | INT of 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
 # 25 "demos/calc-unparsing/parser.ml"
-  )
+  
     | EOL
     | DIV
   
@@ -69,11 +69,11 @@ module Tables = struct
       | EOL ->
           Obj.repr ()
       | INT _v ->
-          Obj.repr (_v : (
+          Obj.repr (_v : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
 # 76 "demos/calc-unparsing/parser.ml"
-          ))
+          )
       | LPAREN ->
           Obj.repr ()
       | MINUS ->
@@ -114,11 +114,11 @@ module Tables = struct
           MenhirLib.EngineTypes.endp = _endpos_i_;
           MenhirLib.EngineTypes.next = _menhir_stack;
         } = _menhir_stack in
-        let i : (
+        let i : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
 # 121 "demos/calc-unparsing/parser.ml"
-        ) = Obj.magic i in
+         = Obj.magic i in
         let _endpos__0_ = _menhir_stack.MenhirLib.EngineTypes.endp in
         let _startpos = _startpos_i_ in
         let _endpos = _endpos_i_ in
@@ -573,11 +573,11 @@ module CST = struct
     
     method visit_LPAREN = self#text "("
     
-    method virtual visit_INT : (
+    method virtual visit_INT : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
 # 580 "demos/calc-unparsing/parser.ml"
-    ) -> 'r
+     -> 'r
     
     method virtual visit_EOL : 'r
     

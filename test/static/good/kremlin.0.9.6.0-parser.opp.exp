@@ -27,71 +27,71 @@
 
 loption_separated_nonempty_list_COMMA_pat__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_pat_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_pat_]
 | x = separated_nonempty_list_COMMA_pat_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_pat_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_pat_]
 
 loption_separated_nonempty_list_DOT_uident__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_DOT_uident_]
+    {( [] )} [@name none_separated_nonempty_list_DOT_uident_]
 | x = separated_nonempty_list_DOT_uident_
-    {    ( x )} [@name some_separated_nonempty_list_DOT_uident_]
+    {( x )} [@name some_separated_nonempty_list_DOT_uident_]
 
 nonempty_list_warn_error_:
   x = warn_error
-    {    ( [ x ] )} [@name one_warn_error]
+    {( [ x ] )} [@name one_warn_error]
 | x = warn_error xs = nonempty_list_warn_error_
-    {    ( x :: xs )} [@name more_warn_error]
+    {( x :: xs )} [@name more_warn_error]
 
 separated_nonempty_list_COMMA_pat_:
   x = pat
-    {    ( [ x ] )} [@name one_COMMA_pat]
+    {( [ x ] )} [@name one_COMMA_pat]
 | x = pat _2 = COMMA xs = separated_nonempty_list_COMMA_pat_
-    {    ( x :: xs )} [@name more_COMMA_pat]
+    {( x :: xs )} [@name more_COMMA_pat]
 
 separated_nonempty_list_DOT_uident_:
   u = UIDENT
-    {let x =   ( u ) in
-    ( [ x ] )} [@name one_DOT_uident]
+    {let x = ( u ) in
+( [ x ] )} [@name one_DOT_uident]
 | u = UIDENT _2 = DOT xs = separated_nonempty_list_DOT_uident_
-    {let x =   ( u ) in
-    ( x :: xs )} [@name more_DOT_uident]
+    {let x = ( u ) in
+( x :: xs )} [@name more_DOT_uident]
 
 separated_nonempty_list_PLUS_api_:
   x = api
-    {    ( [ x ] )} [@name one_PLUS_api]
+    {( [ x ] )} [@name one_PLUS_api]
 | x = api _2 = PLUS xs = separated_nonempty_list_PLUS_api_
-    {    ( x :: xs )} [@name more_PLUS_api]
+    {( x :: xs )} [@name more_PLUS_api]
 
 warn_error_list:
   ws = nonempty_list_warn_error_ _2 = EOF
-    {  ( ws )}
+    {( ws )}
 
 warn_error:
   f = flag r = range
-    {  ( f, r )}
+    {( f, r )}
 
 flag:
   _1 = AT
-    {  ( Flags.CError )}
+    {( Flags.CError )}
 | _1 = MINUS
-    {  ( Flags.CSilent )}
+    {( Flags.CSilent )}
 | _1 = PLUS
-    {  ( Flags.CWarning )}
+    {( Flags.CWarning )}
 
 range:
   i = INT
-    {  ( i, i )}
+    {( i, i )}
 | i = INT _2 = DOT _3 = DOT j = INT
-    {  ( i, j )}
+    {( i, j )}
 
 pat:
   _1 = STAR
-    {  ( Prefix [ ] )}
+    {( Prefix [ ] )}
 | u = UIDENT
-    {  ( Module [ u ] )}
+    {( Module [ u ] )}
 | u = UIDENT _2 = DOT p = pat
-    {  ( match p with
+    {( match p with
     | Module m ->
         Module (u :: m)
     | Prefix m ->
@@ -99,31 +99,31 @@ pat:
 
 mident:
   xs = loption_separated_nonempty_list_DOT_uident__
-    {let l =     ( xs ) in
-  ( l )}
+    {let l = ( xs ) in
+( l )}
 
 api:
   m = mident
-    {  ( m, AsIs )}
+    {( m, AsIs )}
 | _1 = PUBLIC _2 = LPAREN m = mident _4 = RPAREN
-    {  ( m, Public )}
+    {( m, Public )}
 
 drop:
   xs = loption_separated_nonempty_list_COMMA_pat__ _2 = EOF
-    {let p =     ( xs ) in
-  ( p )}
+    {let p = ( xs ) in
+( p )}
 
 bundle:
   apis = separated_nonempty_list_PLUS_api_ _2 = EQUALS l = separated_nonempty_list_COMMA_pat_ _4 = EOF
-    {  ( apis, l )}
+    {( apis, l )}
 | l = separated_nonempty_list_COMMA_pat_ _2 = EOF
-    {  ( [], l )}
+    {( [], l )}
 
 lid:
   l = LIDENT
-    {let l =   ( l ) in
-  ( [], l )}
+    {let l = ( l ) in
+( [], l )}
 | m = UIDENT _2 = DOT l = lid
-    {  ( let m', l = l in m :: m', l )}
+    {( let m', l = l in m :: m', l )}
 
 %%

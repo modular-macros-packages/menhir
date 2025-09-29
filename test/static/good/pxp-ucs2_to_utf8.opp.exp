@@ -14,26 +14,26 @@
 
 main:
   _1 = EOF
-    {                    ( [] )}
+    {( [] )}
 | _1 = declaration _2 = main
-    {                    ( _1::_2 )}
+    {( _1::_2 )}
 
 declaration:
   _1 = LET _2 = IDENT _3 = EQ _4 = regexp _5 = END_OF_LET
-    {      ( { Types.id = _2 ; Types.rel = _4 } )}
+    {( { Types.id = _2 ; Types.rel = _4 } )}
 
 regexp:
   _1 = regexptoken _2 = PIPE _3 = regexp
-    {                            ( _1::_3 )}
+    {( _1::_3 )}
 | _1 = regexptoken
-    {                            ( [_1] )}
+    {( [_1] )}
 
 regexptoken:
   _1 = CHAR
-    {                                      ( Types.Char _1 )}
+    {( Types.Char _1 )}
 | _1 = LBRACKET _2 = CHAR _3 = RANGE _4 = CHAR _5 = RBRACKET
-    {                                      ( Types.Interval (_2,_4) )}
+    {( Types.Interval (_2,_4) )}
 | _1 = IDENT
-    {                                      ( Types.Identifier _1 )}
+    {( Types.Identifier _1 )}
 
 %%

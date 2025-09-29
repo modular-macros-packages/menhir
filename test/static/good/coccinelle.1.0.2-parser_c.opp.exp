@@ -589,44 +589,44 @@ let args_to_params l pb =
 
 main:
   _1 = translation_unit _2 = EOF
-    {                          ( _1 )}
+    {( _1 )}
 
 translation_unit:
   
-    {     ( [] )}
+    {( [] )}
 | _1 = translation_unit _2 = external_declaration
-    {     ( !LP._lexer_hint.context_stack <- [LP.InTopLevel]; _1 @ [_2] )}
+    {( !LP._lexer_hint.context_stack <- [LP.InTopLevel]; _1 @ [_2] )}
 | _1 = translation_unit _2 = Tnamespace _3 = TIdent _4 = TOBrace _5 = translation_unit _6 = TCBrace
-    {     ( !LP._lexer_hint.context_stack <- [LP.InTopLevel];
+    {( !LP._lexer_hint.context_stack <- [LP.InTopLevel];
        _1 @ [Namespace (_5, [_2; snd _3; _4; _6])] )}
 
 ident:
   _1 = TIdent
-    {                ( _1 )}
+    {( _1 )}
 | _1 = TypedefIdent
-    {                ( _1 )}
+    {( _1 )}
 
 identifier:
   _1 = TIdent
-    {                ( _1 )}
+    {( _1 )}
 
 identifier_cpp:
   _1 = TIdent
-    {     ( RegularName (mk_string_wrap _1) )}
+    {( RegularName (mk_string_wrap _1) )}
 | _1 = ident_extra_cpp
-    {                   ( _1 )}
+    {( _1 )}
 
 ident_cpp:
   _1 = TIdent
-    {     ( RegularName (mk_string_wrap _1) )}
+    {( RegularName (mk_string_wrap _1) )}
 | _1 = TypedefIdent
-    {     ( RegularName (mk_string_wrap _1) )}
+    {( RegularName (mk_string_wrap _1) )}
 | _1 = ident_extra_cpp
-    {                   ( _1 )}
+    {( _1 )}
 
 ident_extra_cpp:
   _1 = TIdent _2 = TCppConcatOp _3 = identifier_cpp_list
-    {     (
+    {(
        CppConcatenatedName (
          match _3 with
          | [] -> raise (Impossible 87)
@@ -636,132 +636,132 @@ ident_extra_cpp:
        )
    )}
 | _1 = TCppConcatOp _2 = TIdent
-    {     ( CppVariadicName (fst _2, [_1; snd _2]) )}
+    {( CppVariadicName (fst _2, [_1; snd _2]) )}
 | _1 = TMacroIdentBuilder _2 = TOPar _3 = param_define_list _4 = TCPar
-    {     ( CppIdentBuilder ((fst _1, [snd _1;_2;_4]), _3) )}
+    {( CppIdentBuilder ((fst _1, [snd _1;_2;_4]), _3) )}
 
 identifier_cpp_list:
   _1 = TIdent
-    {          ( [mk_string_wrap _1, []] )}
+    {( [mk_string_wrap _1, []] )}
 | _1 = identifier_cpp_list _2 = TCppConcatOp _3 = TIdent
-    {                                           ( _1 @ [mk_string_wrap _3, [_2]] )}
+    {( _1 @ [mk_string_wrap _3, [_2]] )}
 
 expr:
   _1 = assign_expr
-    {                           ( _1 )}
+    {( _1 )}
 | _1 = expr _2 = TComma _3 = assign_expr
-    {                           ( mk_e (Sequence (_1,_3)) [_2] )}
+    {( mk_e (Sequence (_1,_3)) [_2] )}
 
 assign_expr:
   _1 = cond_expr
-    {                                 ( _1 )}
+    {( _1 )}
 | _1 = cast_expr _2 = TAssign _3 = assign_expr
-    {                                 ( mk_e(Assignment (_1, _2, _3)) [])}
+    {( mk_e(Assignment (_1, _2, _3)) [])}
 | _1 = cast_expr _2 = TEq _3 = assign_expr
-    {                                 ( mk_e (Assignment (_1, (SimpleAssign, [_2]),_3)) [])}
+    {( mk_e (Assignment (_1, (SimpleAssign, [_2]),_3)) [])}
 
 cond_expr:
   _1 = arith_expr
-    {     ( _1 )}
+    {( _1 )}
 | _1 = arith_expr _2 = TWhy _3 = gcc_opt_expr _4 = TDotDot _5 = assign_expr
-    {     ( mk_e (CondExpr (_1,_3,_5)) [_2;_4] )}
+    {( mk_e (CondExpr (_1,_3,_5)) [_2;_4] )}
 
 arith_expr:
   _1 = cast_expr
-    {                                 ( _1 )}
+    {( _1 )}
 | _1 = arith_expr _2 = TMul _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Mul,[_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Mul,[_2]), _3)) [] )}
 | _1 = arith_expr _2 = TDiv _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Div, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Div, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TMin _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Min, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Min, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TMax _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Max, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Max, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TMod _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Mod, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Mod, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TPlus _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Plus, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Plus, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TMinus _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Minus, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Minus, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TShl _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith DecLeft, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith DecLeft, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TShr _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith DecRight, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith DecRight, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TInf _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical Inf, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical Inf, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TSup _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical Sup, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical Sup, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TInfEq _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical InfEq, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical InfEq, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TSupEq _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical SupEq, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical SupEq, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TEqEq _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical Eq, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical Eq, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TNotEq _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical NotEq, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical NotEq, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TAnd _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith And, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith And, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TOr _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Or, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Or, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TXor _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Arith Xor, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Arith Xor, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TAndLog _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical AndLog, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical AndLog, [_2]), _3)) [] )}
 | _1 = arith_expr _2 = TOrLog _3 = arith_expr
-    {                                 ( mk_e(Binary (_1, (Logical OrLog, [_2]), _3)) [] )}
+    {( mk_e(Binary (_1, (Logical OrLog, [_2]), _3)) [] )}
 
 cast_expr:
   _1 = unary_expr
-    {                                     ( _1 )}
+    {( _1 )}
 | _1 = topar2 _2 = type_name _3 = tcpar2 _4 = cast_expr
-    {                                     ( mk_e(Cast (_2, _4)) [_1;_3] )}
+    {( mk_e(Cast (_2, _4)) [_1;_3] )}
 
 unary_expr:
   _1 = postfix_expr
-    {                                   ( _1 )}
+    {( _1 )}
 | _1 = TInc _2 = unary_expr
-    {                                   ( mk_e(Infix (_2, Inc))    [_1] )}
+    {( mk_e(Infix (_2, Inc))    [_1] )}
 | _1 = TDec _2 = unary_expr
-    {                                   ( mk_e(Infix (_2, Dec))    [_1] )}
+    {( mk_e(Infix (_2, Dec))    [_1] )}
 | _1 = unary_op _2 = cast_expr
-    {                                   ( mk_e(Unary (_2, fst _1)) [snd _1] )}
+    {( mk_e(Unary (_2, fst _1)) [snd _1] )}
 | _1 = Tsizeof _2 = unary_expr
-    {                                   ( mk_e(SizeOfExpr (_2))    [_1] )}
+    {( mk_e(SizeOfExpr (_2))    [_1] )}
 | _1 = Tsizeof _2 = topar2 _3 = type_name _4 = tcpar2
-    {                                   ( mk_e(SizeOfType (_3))    [_1;_2;_4] )}
+    {( mk_e(SizeOfType (_3))    [_1;_2;_4] )}
 | _1 = Tnew _2 = new_argument
-    {                                   ( mk_e(New (None, _2))     [_1] )}
+    {( mk_e(New (None, _2))     [_1] )}
 | _1 = Tnew _2 = TOPar _3 = argument_list_ne _4 = TCPar _5 = new_argument
-    {                                                  ( mk_e(New (Some _3, _5))             [_1; _2; _4] )}
+    {( mk_e(New (Some _3, _5))             [_1; _2; _4] )}
 | _1 = Tdelete _2 = cast_expr
-    {                                   ( mk_e(Delete _2)          [_1] )}
+    {( mk_e(Delete _2)          [_1] )}
 | _1 = Tdefined _2 = identifier_cpp
-    {                                   ( mk_e(Defined _2)         [_1] )}
+    {( mk_e(Defined _2)         [_1] )}
 | _1 = Tdefined _2 = TOPar _3 = identifier_cpp _4 = TCPar
-    { ( mk_e(Defined _3) [_1;_2;_4] )}
+    {( mk_e(Defined _3) [_1;_2;_4] )}
 
 new_argument:
   _1 = TIdent _2 = TOPar _3 = argument_list_ne _4 = TCPar
-    {     ( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
+    {( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
        Left (mk_e(FunCall (fn, _3)) [_2;_4]) )}
 | _1 = TIdent _2 = TOPar _3 = TCPar
-    {     ( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
+    {( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
        Left(mk_e(FunCall (fn, [])) [_2;_3]) )}
 | _1 = TypedefIdent _2 = TOPar _3 = argument_list_ne _4 = TCPar
-    {     ( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
+    {( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
        Left (mk_e(FunCall (fn, _3)) [_2;_4]) )}
 | _1 = TypedefIdent _2 = TOPar _3 = TCPar
-    {     ( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
+    {( let fn = mk_e(Ident (RegularName (mk_string_wrap _1))) [] in
        Left (mk_e(FunCall (fn, [])) [_2;_3]) )}
 | _1 = type_spec
-    {     ( let ty = addTypeD (_1,nullDecl) in
+    {( let ty = addTypeD (_1,nullDecl) in
        let ((returnType,hasreg), iihasreg) = fixDeclSpecForParam ty in
        Right (ArgType { p_namei = None; p_type = returnType;
 			p_register = hasreg, iihasreg;
 		      } )
      )}
 | _1 = new_argument _2 = TOCro _3 = expr _4 = TCCro
-    {     (
+    {(
        match _1 with
 	 Left(e) -> Left(mk_e(ArrayAccess (e, _3)) [_2;_4])
        | Right(ArgType(ty)) -> (* lots of hacks to make the right type *)
@@ -773,489 +773,489 @@ new_argument:
 
 unary_op:
   _1 = TAnd
-    {          ( GetRef,     _1 )}
+    {( GetRef,     _1 )}
 | _1 = TMul
-    {          ( DeRef,      _1 )}
+    {( DeRef,      _1 )}
 | _1 = TPlus
-    {          ( UnPlus,     _1 )}
+    {( UnPlus,     _1 )}
 | _1 = TMinus
-    {          ( UnMinus,    _1 )}
+    {( UnMinus,    _1 )}
 | _1 = TTilde
-    {          ( Tilde,      _1 )}
+    {( Tilde,      _1 )}
 | _1 = TBang
-    {          ( Not,        _1 )}
+    {( Not,        _1 )}
 | _1 = TAndLog
-    {           ( GetRefLabel, _1 )}
+    {( GetRefLabel, _1 )}
 
 postfix_expr:
   _1 = primary_expr
-    {                              ( _1 )}
+    {( _1 )}
 | _1 = postfix_expr _2 = TOCro _3 = expr _4 = TCCro
-    {     ( mk_e(ArrayAccess (_1, _3)) [_2;_4] )}
+    {( mk_e(ArrayAccess (_1, _3)) [_2;_4] )}
 | _1 = postfix_expr _2 = TOPar _3 = argument_list_ne _4 = TCPar
-    {     ( mk_e(FunCall (_1, _3)) [_2;_4] )}
+    {( mk_e(FunCall (_1, _3)) [_2;_4] )}
 | _1 = postfix_expr _2 = TOPar _3 = TCPar
-    {                              ( mk_e(FunCall (_1, [])) [_2;_3] )}
+    {( mk_e(FunCall (_1, [])) [_2;_3] )}
 | _1 = postfix_expr _2 = TDot _3 = ident_cpp
-    {                                 ( mk_e(RecordAccess   (_1,_3)) [_2] )}
+    {( mk_e(RecordAccess   (_1,_3)) [_2] )}
 | _1 = postfix_expr _2 = TPtrOp _3 = ident_cpp
-    {                                 ( mk_e(RecordPtAccess (_1,_3)) [_2] )}
+    {( mk_e(RecordPtAccess (_1,_3)) [_2] )}
 | _1 = postfix_expr _2 = TInc
-    {                              ( mk_e(Postfix (_1, Inc)) [_2] )}
+    {( mk_e(Postfix (_1, Inc)) [_2] )}
 | _1 = postfix_expr _2 = TDec
-    {                              ( mk_e(Postfix (_1, Dec)) [_2] )}
+    {( mk_e(Postfix (_1, Dec)) [_2] )}
 | _1 = topar2 _2 = type_name _3 = tcpar2 _4 = TOBrace _5 = TCBrace
-    {     ( mk_e(Constructor (_2, (InitList [], [_4;_5]))) [_1;_3] )}
+    {( mk_e(Constructor (_2, (InitList [], [_4;_5]))) [_1;_3] )}
 | _1 = topar2 _2 = type_name _3 = tcpar2 _4 = TOBrace _5 = initialize_list _6 = gcc_comma_opt_struct _7 = TCBrace
-    {     ( mk_e(Constructor (_2, (InitList (List.rev _5),[_4;_7] @ _6))) [_1;_3] )}
+    {( mk_e(Constructor (_2, (InitList (List.rev _5),[_4;_7] @ _6))) [_1;_3] )}
 
 primary_expr:
   _1 = identifier_cpp
-    {                   ( mk_e(Ident  (_1)) [] )}
+    {( mk_e(Ident  (_1)) [] )}
 | _1 = TInt
-    {    ( let (str,(sign,base)) = fst _1 in
+    {( let (str,(sign,base)) = fst _1 in
       mk_e(Constant (Int (str,Si(sign,base)))) [snd _1] )}
 | _1 = TFloat
-    {           ( mk_e(Constant (Float  (fst _1))) [snd _1] )}
+    {( mk_e(Constant (Float  (fst _1))) [snd _1] )}
 | _1 = TString
-    {           ( mk_e(Constant (String (fst _1))) [snd _1] )}
+    {( mk_e(Constant (String (fst _1))) [snd _1] )}
 | _1 = TQuote _2 = string_fragments _3 = TQuote
-    {     ( let ((fullstring,isW),lqinfo) = _1 in
+    {( let ((fullstring,isW),lqinfo) = _1 in
        let (_,rqinfo) = _3 in
        mk_e (Ast_c.StringConstant(_2, fullstring, isW)) [lqinfo;rqinfo] )}
 | _1 = TChar
-    {           ( mk_e(Constant (Char   (fst _1))) [snd _1] )}
+    {( mk_e(Constant (Char   (fst _1))) [snd _1] )}
 | _1 = TDecimal
-    {            ( let (a,b,c) = fst _1 in
+    {( let (a,b,c) = fst _1 in
               mk_e(Constant (DecimalConst (a,b,c))) [snd _1] )}
 | _1 = TOPar _2 = expr _3 = TCPar
-    {                    ( mk_e(ParenExpr (_2)) [_1;_3] )}
+    {( mk_e(ParenExpr (_2)) [_1;_3] )}
 | _1 = TMacroString
-    {                ( mk_e(Constant (MultiString [fst _1])) [snd _1] )}
+    {( mk_e(Constant (MultiString [fst _1])) [snd _1] )}
 | _1 = string_elem _2 = string_list
-    {     ( mk_e(Constant (MultiString ["TODO: MultiString"])) (_1 @ _2) )}
+    {( mk_e(Constant (MultiString ["TODO: MultiString"])) (_1 @ _2) )}
 | _1 = TOPar _2 = compound _3 = TCPar
-    {                         ( mk_e(StatementExpr (_2)) [_1;_3] )}
+    {( mk_e(StatementExpr (_2)) [_1;_3] )}
 
 string_fragments:
   
-    {               ( [] )}
+    {( [] )}
 | _1 = string_fragment _2 = string_fragments
-    {                                    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 string_fragment:
   _1 = TPct _2 = string_format
-    {                      ( Ast_c.FormatFragment(_2), [_1] )}
+    {( Ast_c.FormatFragment(_2), [_1] )}
 | _1 = TSubString
-    {              ( Ast_c.ConstantFragment(fst _1), [snd _1] )}
+    {( Ast_c.ConstantFragment(fst _1), [snd _1] )}
 
 string_format:
   _1 = TFormat
-    {           ( Ast_c.ConstantFormat(fst _1), [snd _1] )}
+    {( Ast_c.ConstantFormat(fst _1), [snd _1] )}
 
 argument_ne:
   _1 = assign_expr
-    {               ( Left _1 )}
+    {( Left _1 )}
 | _1 = parameter_decl
-    {                  ( Right (ArgType _1)  )}
+    {( Right (ArgType _1)  )}
 | _1 = action_higherordermacro_ne
-    {                              ( Right (ArgAction _1) )}
+    {( Right (ArgAction _1) )}
 
 argument:
   _1 = assign_expr
-    {               ( Left _1 )}
+    {( Left _1 )}
 | _1 = parameter_decl
-    {                  ( Right (ArgType _1)  )}
+    {( Right (ArgType _1)  )}
 | _1 = action_higherordermacro
-    {                           ( Right (ArgAction _1) )}
+    {( Right (ArgAction _1) )}
 
 action_higherordermacro_ne:
   _1 = taction_list_ne
-    {     ( if _1=[]
+    {( if _1=[]
        then ActMisc [Ast_c.fakeInfo()]
        else ActMisc _1
      )}
 
 action_higherordermacro:
   _1 = taction_list
-    {     ( if _1=[]
+    {( if _1=[]
        then ActMisc [Ast_c.fakeInfo()]
        else ActMisc _1
      )}
 
 const_expr:
   _1 = cond_expr
-    {                      ( _1  )}
+    {( _1  )}
 
 topar2:
   _1 = TOPar
-    {              ( et "topar2" (); _1  )}
+    {( et "topar2" (); _1  )}
 
 tcpar2:
   _1 = TCPar
-    {              ( et "tcpar2" (); _1 (*TODO? et ? sure ? c pas dt plutot ? *) )}
+    {( et "tcpar2" (); _1 (*TODO? et ? sure ? c pas dt plutot ? *) )}
 
 statement:
   _1 = statement2
-    {                      ( mk_st (fst _1) (snd _1) )}
+    {( mk_st (fst _1) (snd _1) )}
 
 statement2:
   _1 = labeled
-    {                   ( Labeled      (fst _1), snd _1 )}
+    {( Labeled      (fst _1), snd _1 )}
 | _1 = compound
-    {                   ( Compound     (fst _1), snd _1 )}
+    {( Compound     (fst _1), snd _1 )}
 | _1 = expr_statement
-    {                   ( ExprStatement(fst _1), snd _1 )}
+    {( ExprStatement(fst _1), snd _1 )}
 | _1 = selection
-    {                   ( Selection    (fst _1), snd _1 @ [fakeInfo()] )}
+    {( Selection    (fst _1), snd _1 @ [fakeInfo()] )}
 | _1 = iteration
-    {                   ( Iteration    (fst _1), snd _1 @ [fakeInfo()] )}
+    {( Iteration    (fst _1), snd _1 @ [fakeInfo()] )}
 | _1 = jump _2 = TPtVirg
-    {                   ( Jump         (fst _1), snd _1 @ [_2] )}
+    {( Jump         (fst _1), snd _1 @ [_2] )}
 | _1 = Tasm _2 = TOPar _3 = asmbody _4 = TCPar _5 = TPtVirg
-    {                                                ( Asm _3, [_1;_2;_4;_5] )}
+    {( Asm _3, [_1;_2;_4;_5] )}
 | _1 = Tasm _2 = Tvolatile _3 = TOPar _4 = asmbody _5 = TCPar _6 = TPtVirg
-    {                                                ( Asm _4, [_1;_2;_3;_5;_6] )}
+    {( Asm _4, [_1;_2;_3;_5;_6] )}
 | _1 = TMacroStmt
-    {              ( MacroStmt, [snd _1] )}
+    {( MacroStmt, [snd _1] )}
 | _1 = Texec _2 = identifier _3 = exec_list _4 = TPtVirg
-    {                                      ( Exec(_3), [_1;snd _2;_4] )}
+    {( Exec(_3), [_1;snd _2;_4] )}
 
 labeled:
   _1 = ident_cpp _2 = TDotDot _3 = sw_stat_or_decl
-    {                                              ( Label (_1, _3),  [_2] )}
+    {( Label (_1, _3),  [_2] )}
 | _1 = Tcase _2 = const_expr _3 = TDotDot _4 = sw_stat_or_decl
-    {                                              ( Case (_2, _4),       [_1; _3] )}
+    {( Case (_2, _4),       [_1; _3] )}
 | _1 = Tcase _2 = const_expr _3 = TEllipsis _4 = const_expr _5 = TDotDot _6 = sw_stat_or_decl
-    {     ( CaseRange (_2, _4, _6), [_1;_3;_5] )}
+    {( CaseRange (_2, _4, _6), [_1;_3;_5] )}
 | _1 = Tdefault _2 = TDotDot _3 = sw_stat_or_decl
-    {                                         ( Default _3,             [_1; _2] )}
+    {( Default _3,             [_1; _2] )}
 
 sw_stat_or_decl:
   _1 = decl
-    {             ( mk_st (Decl (_1 Ast_c.LocalDecl)) Ast_c.noii )}
+    {( mk_st (Decl (_1 Ast_c.LocalDecl)) Ast_c.noii )}
 | _1 = statement
-    {             ( _1 )}
+    {( _1 )}
 
 end_labeled:
   _1 = ident_cpp _2 = TDotDot
-    {     ( Label (_1, (mk_st (ExprStatement None) Ast_c.noii)), [_2] )}
+    {( Label (_1, (mk_st (ExprStatement None) Ast_c.noii)), [_2] )}
 | _1 = Tcase _2 = const_expr _3 = TDotDot
-    {     ( Case (_2, (mk_st (ExprStatement None) Ast_c.noii)), [_1;_3] )}
+    {( Case (_2, (mk_st (ExprStatement None) Ast_c.noii)), [_1;_3] )}
 | _1 = Tdefault _2 = TDotDot
-    {     ( Default (mk_st (ExprStatement None) Ast_c.noii),    [_1; _2] )}
+    {( Default (mk_st (ExprStatement None) Ast_c.noii),    [_1; _2] )}
 
 compound:
   _1 = tobrace _2 = compound2 _3 = tcbrace
-    {                                    ( _2, [_1; _3]  )}
+    {( _2, [_1; _3]  )}
 
 compound2:
   
-    {                     ( ([]) )}
+    {( ([]) )}
 | _1 = stat_or_decl_list
-    {                     ( _1 )}
+    {( _1 )}
 
 stat_or_decl_list:
   _1 = stat_or_decl
-    {                                  ( [_1] )}
+    {( [_1] )}
 | _1 = end_labeled
-    {                ( [StmtElem (mk_st (Labeled  (fst _1)) (snd _1))] )}
+    {( [StmtElem (mk_st (Labeled  (fst _1)) (snd _1))] )}
 | _1 = stat_or_decl _2 = stat_or_decl_list
-    {                                  ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 stat_or_decl:
   _1 = decl
-    {             ( StmtElem (mk_st (Decl (_1 Ast_c.LocalDecl)) Ast_c.noii) )}
+    {( StmtElem (mk_st (Decl (_1 Ast_c.LocalDecl)) Ast_c.noii) )}
 | _1 = statement
-    {             ( StmtElem _1 )}
+    {( StmtElem _1 )}
 | _1 = function_definition
-    {                       ( StmtElem (mk_st (NestedFunc _1) Ast_c.noii) )}
+    {( StmtElem (mk_st (NestedFunc _1) Ast_c.noii) )}
 | _1 = cpp_directive
-    {     ( CppDirectiveStmt _1 )}
+    {( CppDirectiveStmt _1 )}
 | _1 = cpp_ifdef_directive
-    {     ( IfdefStmt _1 )}
+    {( IfdefStmt _1 )}
 
 expr_statement:
   _1 = TPtVirg
-    {                ( None,    [_1] )}
+    {( None,    [_1] )}
 | _1 = expr _2 = TPtVirg
-    {                ( Some _1, [_2] )}
+    {( Some _1, [_2] )}
 
 selection:
   _1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = statement %prec SHIFTHERE
-    {     ( If (_3, _5, (mk_st (ExprStatement None) Ast_c.noii)),   [_1;_2;_4] )}
+    {( If (_3, _5, (mk_st (ExprStatement None) Ast_c.noii)),   [_1;_2;_4] )}
 | _1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = statement _6 = Telse _7 = statement
-    {     ( If (_3, _5, _7),  [_1;_2;_4;_6] )}
+    {( If (_3, _5, _7),  [_1;_2;_4;_6] )}
 | _1 = Tswitch _2 = TOPar _3 = expr _4 = TCPar _5 = statement
-    {     ( Switch (_3,_5),   [_1;_2;_4]  )}
+    {( Switch (_3,_5),   [_1;_2;_4]  )}
 | _1 = TUifdef _2 = Tif _3 = TOPar _4 = expr _5 = TCPar _6 = statement _7 = Telse _8 = TUendif _9 = statement
-    {     ( Ifdef_Ite (_4,_6,_9), [_1;_2;_3;_5;_7;_8] )}
+    {( Ifdef_Ite (_4,_6,_9), [_1;_2;_3;_5;_7;_8] )}
 | _1 = TUifdef _2 = Tif _3 = TOPar _4 = expr _5 = TCPar _6 = statement _7 = Telse _8 = TUelseif _9 = statement _10 = TUendif _11 = statement
-    {     ( Ifdef_Ite2 (_4,_6,_9,_11), [_1;_2;_3;_5;_7;_8;_10] )}
+    {( Ifdef_Ite2 (_4,_6,_9,_11), [_1;_2;_3;_5;_7;_8;_10] )}
 
 iteration:
   _1 = Twhile _2 = TOPar _3 = expr _4 = TCPar _5 = statement
-    {     ( While (_3,_5),                [_1;_2;_4] )}
+    {( While (_3,_5),                [_1;_2;_4] )}
 | _1 = Tdo _2 = statement _3 = Twhile _4 = TOPar _5 = expr _6 = TCPar _7 = TPtVirg
-    {     ( DoWhile (_2,_5),              [_1;_3;_4;_6;_7] )}
+    {( DoWhile (_2,_5),              [_1;_3;_4;_6;_7] )}
 | _1 = Tfor _2 = TOPar _3 = expr_statement _4 = expr_statement _5 = TCPar _6 = statement
-    {     ( For (ForExp _3,_4,(None, []),_6),    [_1;_2;_5])}
+    {( For (ForExp _3,_4,(None, []),_6),    [_1;_2;_5])}
 | _1 = Tfor _2 = TOPar _3 = expr_statement _4 = expr_statement _5 = expr _6 = TCPar _7 = statement
-    {     ( For (ForExp _3,_4,(Some _5, []),_7), [_1;_2;_6] )}
+    {( For (ForExp _3,_4,(Some _5, []),_7), [_1;_2;_6] )}
 | _1 = Tfor _2 = TOPar _3 = decl _4 = expr_statement _5 = TCPar _6 = statement
-    {     ( For (ForDecl (_3 Ast_c.LocalDecl),_4,(None, []),_6),    [_1;_2;_5])}
+    {( For (ForDecl (_3 Ast_c.LocalDecl),_4,(None, []),_6),    [_1;_2;_5])}
 | _1 = Tfor _2 = TOPar _3 = decl _4 = expr_statement _5 = expr _6 = TCPar _7 = statement
-    {     ( For (ForDecl (_3 Ast_c.LocalDecl),_4,(Some _5, []),_7), [_1;_2;_6] )}
+    {( For (ForDecl (_3 Ast_c.LocalDecl),_4,(Some _5, []),_7), [_1;_2;_6] )}
 | _1 = TMacroIterator _2 = TOPar _3 = argument_list_ne _4 = TCPar _5 = statement
-    {     ( MacroIteration (fst _1, _3, _5), [snd _1;_2;_4] )}
+    {( MacroIteration (fst _1, _3, _5), [snd _1;_2;_4] )}
 | _1 = TMacroIterator _2 = TOPar _3 = TCPar _4 = statement
-    {     ( MacroIteration (fst _1, [], _4), [snd _1;_2;_3] )}
+    {( MacroIteration (fst _1, [], _4), [snd _1;_2;_3] )}
 
 jump:
   _1 = Tgoto _2 = ident_cpp
-    {                    ( Goto (_2),  [_1] )}
+    {( Goto (_2),  [_1] )}
 | _1 = Tcontinue
-    {                ( Continue,       [_1] )}
+    {( Continue,       [_1] )}
 | _1 = Tbreak
-    {                ( Break,          [_1] )}
+    {( Break,          [_1] )}
 | _1 = Treturn
-    {                ( Return,         [_1] )}
+    {( Return,         [_1] )}
 | _1 = Treturn _2 = expr
-    {                ( ReturnExpr _2,  [_1] )}
+    {( ReturnExpr _2,  [_1] )}
 | _1 = Tgoto _2 = TMul _3 = expr
-    {                   ( GotoComputed _3, [_1;_2] )}
+    {( GotoComputed _3, [_1;_2] )}
 
 string_elem:
   _1 = TString
-    {           ( [snd _1] )}
+    {( [snd _1] )}
 | _1 = TMacroString
-    {                ( [snd _1] )}
+    {( [snd _1] )}
 
 asmbody:
   _1 = string_list _2 = colon_asm_list
-    {                               ( _1, _2 )}
+    {( _1, _2 )}
 | _1 = string_list
-    {               ( _1, [] )}
+    {( _1, [] )}
 
 colon_asm:
   _1 = TDotDot _2 = colon_option_list
-    {                                     ( Colon _2, [_1]   )}
+    {( Colon _2, [_1]   )}
 
 colon_option:
   _1 = TString
-    {                                ( ColonMisc, [snd _1] )}
+    {( ColonMisc, [snd _1] )}
 | _1 = TString _2 = TOPar _3 = asm_expr _4 = TCPar
-    {                                ( ColonExpr _3, [snd _1; _2;_4] )}
+    {( ColonExpr _3, [snd _1; _2;_4] )}
 | _1 = TOCro _2 = identifier _3 = TCCro _4 = TString _5 = TOPar _6 = asm_expr _7 = TCPar
-    {     ( ColonExpr _6, [_1;snd _2;_3;snd _4; _5; _7 ] )}
+    {( ColonExpr _6, [_1;snd _2;_3;snd _4; _5; _7 ] )}
 | _1 = identifier
-    {                                    ( ColonMisc, [snd _1] )}
+    {( ColonMisc, [snd _1] )}
 | 
-    {                                    ( ColonMisc, [] )}
+    {( ColonMisc, [] )}
 
 exec_list:
   
-    {                ( [] )}
+    {( [] )}
 | _1 = TDotDot _2 = identifier_cpp _3 = exec_ident _4 = exec_list
-    {      ( (ExecEval (_3 (mk_e (Ident _2) [])), [_1]) :: _4 )}
+    {( (ExecEval (_3 (mk_e (Ident _2) [])), [_1]) :: _4 )}
 | _1 = TIdent _2 = exec_ident2 _3 = exec_list
-    {      ( (ExecToken, [snd _1]) :: _2 @ _3 )}
+    {( (ExecToken, [snd _1]) :: _2 @ _3 )}
 | _1 = token _2 = exec_list
-    {                    ( (ExecToken, [_1]) :: _2 )}
+    {( (ExecToken, [_1]) :: _2 )}
 
 exec_ident:
   
-    {    ( function prev -> prev )}
+    {( function prev -> prev )}
 | _1 = TDot _2 = TIdent _3 = exec_ident
-    {     ( function prev ->
+    {( function prev ->
        let fld = RegularName (mk_string_wrap _2) in
        _3 (mk_e(RecordAccess   (prev,fld)) [_1]) )}
 | _1 = TPtrOp _2 = TIdent _3 = exec_ident
-    {     ( function prev ->
+    {( function prev ->
        let fld = RegularName (mk_string_wrap _2) in
        _3 (mk_e(RecordPtAccess   (prev,fld)) [_1]) )}
 | _1 = TOCro _2 = expr _3 = TCCro _4 = exec_ident
-    {     ( function prev ->
+    {( function prev ->
        _4 (mk_e(ArrayAccess   (prev,_2)) [_1;_3]) )}
 
 exec_ident2:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = TDot _2 = TIdent _3 = exec_ident2
-    {    ( (ExecToken, [_1]) :: (ExecToken, [snd _2]) :: _3 )}
+    {( (ExecToken, [_1]) :: (ExecToken, [snd _2]) :: _3 )}
 
 asm_expr:
   _1 = assign_expr
-    {                      ( _1 )}
+    {( _1 )}
 
 token:
   _1 = TPlus
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TMinus
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TMul
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TDiv
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TMod
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TMin
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TMax
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TInc
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TDec
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TEq
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TAssign
-    {            ( List.hd (snd _1) )}
+    {( List.hd (snd _1) )}
 | _1 = TEqEq
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TNotEq
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TSupEq
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TInfEq
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TSup
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TInf
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TAndLog
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TOrLog
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TShr
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TShl
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TAnd
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TOr
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TXor
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TOBrace
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TCBrace
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TOPar
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TCPar
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TWhy
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TBang
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TComma
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TypedefIdent
-    {                 ( snd _1 )}
+    {( snd _1 )}
 | _1 = Tif
-    {            ( _1 )}
+    {( _1 )}
 | _1 = Telse
-    {            ( _1 )}
+    {( _1 )}
 | _1 = TInt
-    {            ( snd _1 )}
+    {( snd _1 )}
 | _1 = TFloat
-    {            ( snd _1 )}
+    {( snd _1 )}
 | _1 = TString
-    {            ( snd _1 )}
+    {( snd _1 )}
 | _1 = TChar
-    {            ( snd _1 )}
+    {( snd _1 )}
 
 type_spec2:
   _1 = Tvoid
-    {                        ( Right3 (BaseType Void),            [_1] )}
+    {( Right3 (BaseType Void),            [_1] )}
 | _1 = Tchar
-    {                        ( Right3 (BaseType (IntType CChar)), [_1])}
+    {( Right3 (BaseType (IntType CChar)), [_1])}
 | _1 = Tint
-    {                        ( Right3 (BaseType (IntType (Si (Signed,CInt)))), [_1])}
+    {( Right3 (BaseType (IntType (Si (Signed,CInt)))), [_1])}
 | _1 = Tfloat
-    {                        ( Right3 (BaseType (FloatType CFloat)),  [_1])}
+    {( Right3 (BaseType (FloatType CFloat)),  [_1])}
 | _1 = Tdouble
-    {                        ( Right3 (BaseType (FloatType CDouble)), [_1] )}
+    {( Right3 (BaseType (FloatType CDouble)), [_1] )}
 | _1 = Tsize_t
-    {                        ( Right3 (BaseType SizeType),            [_1] )}
+    {( Right3 (BaseType SizeType),            [_1] )}
 | _1 = Tssize_t
-    {                        ( Right3 (BaseType SSizeType),           [_1] )}
+    {( Right3 (BaseType SSizeType),           [_1] )}
 | _1 = Tptrdiff_t
-    {                        ( Right3 (BaseType PtrDiffType),         [_1] )}
+    {( Right3 (BaseType PtrDiffType),         [_1] )}
 | _1 = Tshort
-    {                        ( Middle3 Short,  [_1])}
+    {( Middle3 Short,  [_1])}
 | _1 = Tlong
-    {                        ( Middle3 Long,   [_1])}
+    {( Middle3 Long,   [_1])}
 | _1 = Tsigned
-    {                        ( Left3 Signed,   [_1])}
+    {( Left3 Signed,   [_1])}
 | _1 = Tunsigned
-    {                        ( Left3 UnSigned, [_1])}
+    {( Left3 UnSigned, [_1])}
 | _1 = struct_or_union_spec
-    {                        ( Right3 (fst _1), snd _1 )}
+    {( Right3 (fst _1), snd _1 )}
 | _1 = enum_spec
-    {                        ( Right3 (fst _1), snd _1 )}
+    {( Right3 (fst _1), snd _1 )}
 | _1 = Tdecimal _2 = TOPar _3 = const_expr _4 = TComma _5 = const_expr _6 = TCPar
-    {     ( Right3 (Decimal(_3,Some _5)), [_1;_2;_4;_6] )}
+    {( Right3 (Decimal(_3,Some _5)), [_1;_2;_4;_6] )}
 | _1 = Tdecimal _2 = TOPar _3 = const_expr _4 = TCPar
-    {     ( Right3 (Decimal(_3,None)), [_1;_2;_4] )}
+    {( Right3 (Decimal(_3,None)), [_1;_2;_4] )}
 | _1 = TypedefIdent
-    {     ( let name = RegularName (mk_string_wrap _1) in
+    {( let name = RegularName (mk_string_wrap _1) in
        Right3 (TypeName (name, Ast_c.noTypedefDef())),[] )}
 | _1 = Ttypeof _2 = TOPar _3 = assign_expr _4 = TCPar
-    {                                   ( Right3 (TypeOfExpr (_3)), [_1;_2;_4] )}
+    {( Right3 (TypeOfExpr (_3)), [_1;_2;_4] )}
 | _1 = Ttypeof _2 = TOPar _3 = type_name _4 = TCPar
-    {                                   ( Right3 (TypeOfType (_3)), [_1;_2;_4] )}
+    {( Right3 (TypeOfType (_3)), [_1;_2;_4] )}
 
 type_spec:
   _1 = type_spec2
-    {                         ( dt "type" (); _1   )}
+    {( dt "type" (); _1   )}
 
 type_qualif:
   _1 = Tconst
-    {             ( {const=true  ; volatile=false}, _1 )}
+    {( {const=true  ; volatile=false}, _1 )}
 | _1 = Tvolatile
-    {             ( {const=false ; volatile=true},  _1 )}
+    {( {const=false ; volatile=true},  _1 )}
 | _1 = Trestrict
-    {             ( (* TODO *) {const=false ; volatile=false},  _1 )}
+    {( (* TODO *) {const=false ; volatile=false},  _1 )}
 
 attribute:
   _1 = Tattribute _2 = TOPar _3 = TCPar
-    {                                    ( raise Todo )}
+    {( raise Todo )}
 | _1 = TMacroAttr
-    {              ( Attribute (fst _1), [snd _1] )}
+    {( Attribute (fst _1), [snd _1] )}
 
 attribute_storage:
   _1 = TMacroAttrStorage
-    {                     ( _1 )}
+    {( _1 )}
 
 type_qualif_attr:
   _1 = type_qualif
-    {               ( _1 )}
+    {( _1 )}
 | _1 = TMacroAttr
-    {              ( {const=true  ; volatile=false}, snd _1   )}
+    {( {const=true  ; volatile=false}, snd _1   )}
 
 declarator:
   _1 = pointer _2 = direct_d
-    {                    ( (fst _2, fun x -> x +> _1 +> (snd _2)  ) )}
+    {( (fst _2, fun x -> x +> _1 +> (snd _2)  ) )}
 | _1 = direct_d
-    {                    ( _1  )}
+    {( _1  )}
 
 pointer:
   _1 = tmul
-    {                          ( fun x -> mk_ty (Pointer x) [_1] )}
+    {( fun x -> mk_ty (Pointer x) [_1] )}
 | _1 = tmul _2 = pointer
-    {                          ( fun x -> mk_ty (Pointer (_2 x)) [_1] )}
+    {( fun x -> mk_ty (Pointer (_2 x)) [_1] )}
 | _1 = tmul _2 = type_qualif_list
-    {     ( fun x -> (_2.qualifD, mk_tybis (Pointer x) [_1]))}
+    {( fun x -> (_2.qualifD, mk_tybis (Pointer x) [_1]))}
 | _1 = tmul _2 = type_qualif_list _3 = pointer
-    {     ( fun x -> (_2.qualifD, mk_tybis (Pointer (_3 x)) [_1]) )}
+    {( fun x -> (_2.qualifD, mk_tybis (Pointer (_3 x)) [_1]) )}
 
 tmul:
   _1 = TMul
-    {        ( _1 )}
+    {( _1 )}
 | _1 = TAnd
-    {     ( if !Flag.c_plus_plus
+    {( if !Flag.c_plus_plus
      then _1
      else
        let i = Ast_c.parse_info_of_info _1 in
@@ -1263,68 +1263,68 @@ tmul:
 
 direct_d:
   _1 = identifier_cpp
-    {     ( (_1, fun x -> x) )}
+    {( (_1, fun x -> x) )}
 | _1 = TOPar _2 = declarator _3 = TCPar
-    {     ( (fst _2, fun x -> mk_ty (ParenType ((snd _2) x)) [_1;_3]) )}
+    {( (fst _2, fun x -> mk_ty (ParenType ((snd _2) x)) [_1;_3]) )}
 | _1 = direct_d _2 = tocro _3 = tccro
-    {     ( (fst _1,fun x->(snd _1) (mk_ty (Array (None,x)) [_2;_3])) )}
+    {( (fst _1,fun x->(snd _1) (mk_ty (Array (None,x)) [_2;_3])) )}
 | _1 = direct_d _2 = tocro _3 = const_expr _4 = tccro
-    {     ( (fst _1,fun x->(snd _1) (mk_ty (Array (Some _3,x)) [_2;_4])) )}
+    {( (fst _1,fun x->(snd _1) (mk_ty (Array (Some _3,x)) [_2;_4])) )}
 | _1 = direct_d _2 = topar _3 = tcpar
-    {     ( (fst _1,
+    {( (fst _1,
        fun x->(snd _1)
          (mk_ty (FunctionType (x,(([],(false, []))))) [_2;_3]))
      )}
 | _1 = direct_d _2 = topar _3 = parameter_type_list _4 = tcpar
-    {     ( (fst _1,fun x->(snd _1)
+    {( (fst _1,fun x->(snd _1)
        (mk_ty (FunctionType (x, _3)) [_2;_4]))
      )}
 
 tocro:
   _1 = TOCro
-    {             ( et "tocro" ();_1 )}
+    {( et "tocro" ();_1 )}
 
 tccro:
   _1 = TCCro
-    {             ( dt "tccro" ();_1 )}
+    {( dt "tccro" ();_1 )}
 
 abstract_declarator:
   _1 = pointer
-    {                                      ( _1 )}
+    {( _1 )}
 | _1 = direct_abstract_declarator
-    {                                      ( _1 )}
+    {( _1 )}
 | _1 = pointer _2 = direct_abstract_declarator
-    {                                      ( fun x -> x +> _2 +> _1 )}
+    {( fun x -> x +> _2 +> _1 )}
 
 direct_abstract_declarator:
   _1 = TOPar _2 = abstract_declarator _3 = TCPar
-    {     ( fun x -> mk_ty (ParenType (_2 x)) [_1;_3] )}
+    {( fun x -> mk_ty (ParenType (_2 x)) [_1;_3] )}
 | _1 = TOCro _2 = TCCro
-    {     ( fun x -> mk_ty (Array (None, x)) [_1;_2] )}
+    {( fun x -> mk_ty (Array (None, x)) [_1;_2] )}
 | _1 = TOCro _2 = const_expr _3 = TCCro
-    {     ( fun x -> mk_ty (Array (Some _2, x)) [_1;_3] )}
+    {( fun x -> mk_ty (Array (Some _2, x)) [_1;_3] )}
 | _1 = direct_abstract_declarator _2 = TOCro _3 = TCCro
-    {     ( fun x -> _1 (mk_ty (Array (None, x))  [_2;_3]) )}
+    {( fun x -> _1 (mk_ty (Array (None, x))  [_2;_3]) )}
 | _1 = direct_abstract_declarator _2 = TOCro _3 = const_expr _4 = TCCro
-    {     ( fun x -> _1 (mk_ty (Array (Some _3,x))  [_2;_4]) )}
+    {( fun x -> _1 (mk_ty (Array (Some _3,x))  [_2;_4]) )}
 | _1 = TOPar _2 = TCPar
-    {     ( fun x -> mk_ty (FunctionType (x, ([], (false,  [])))) [_1;_2] )}
+    {( fun x -> mk_ty (FunctionType (x, ([], (false,  [])))) [_1;_2] )}
 | _1 = topar _2 = parameter_type_list _3 = tcpar
-    {     ( fun x -> mk_ty (FunctionType (x, _2))  [_1;_3] )}
+    {( fun x -> mk_ty (FunctionType (x, _2))  [_1;_3] )}
 | _1 = direct_abstract_declarator _2 = topar _3 = tcpar
-    {     ( fun x -> _1 (mk_ty (FunctionType (x, (([], (false, []))))) [_2;_3]) )}
+    {( fun x -> _1 (mk_ty (FunctionType (x, (([], (false, []))))) [_2;_3]) )}
 | _1 = direct_abstract_declarator _2 = topar _3 = parameter_type_list _4 = tcpar
-    {     ( fun x -> _1 (mk_ty (FunctionType (x, _3)) [_2;_4]) )}
+    {( fun x -> _1 (mk_ty (FunctionType (x, _3)) [_2;_4]) )}
 
 parameter_type_list:
   _1 = parameter_list
-    {                                   ( (_1, (false, [])))}
+    {( (_1, (false, [])))}
 | _1 = parameter_list _2 = TComma _3 = TEllipsis
-    {                                   ( (_1, (true,  [_2;_3])) )}
+    {( (_1, (true,  [_2;_3])) )}
 
 parameter_decl2:
   _1 = TKRParam
-    {            (
+    {(
      let name = RegularName (mk_string_wrap _1) in
      LP.add_ident (str_of_name name);
      { p_namei = Some name;
@@ -1333,7 +1333,7 @@ parameter_decl2:
      }
    )}
 | _1 = decl_spec _2 = declaratorp
-    {     ( let ((returnType,hasreg),iihasreg) = fixDeclSpecForParam _1 in
+    {( let ((returnType,hasreg),iihasreg) = fixDeclSpecForParam _1 in
        let (name, ftyp) = _2 in
        { p_namei = Some (name);
          p_type = ftyp returnType;
@@ -1341,14 +1341,14 @@ parameter_decl2:
        }
      )}
 | _1 = decl_spec _2 = abstract_declaratorp
-    {     ( let ((returnType,hasreg), iihasreg) = fixDeclSpecForParam _1 in
+    {( let ((returnType,hasreg), iihasreg) = fixDeclSpecForParam _1 in
        { p_namei = None;
          p_type = _2 returnType;
          p_register = hasreg, iihasreg;
        }
      )}
 | _1 = decl_spec
-    {     ( let ((returnType,hasreg), iihasreg) = fixDeclSpecForParam _1 in
+    {( let ((returnType,hasreg), iihasreg) = fixDeclSpecForParam _1 in
        { p_namei = None;
          p_type = returnType;
          p_register = hasreg, iihasreg;
@@ -1357,59 +1357,59 @@ parameter_decl2:
 
 parameter_decl:
   _1 = parameter_decl2
-    {                                ( et "param" ();  _1 )}
+    {( et "param" ();  _1 )}
 | _1 = attributes _2 = parameter_decl2
-    {                              ( et "param" (); _2 )}
+    {( et "param" (); _2 )}
 
 declaratorp:
   _1 = declarator
-    {               ( LP.add_ident (str_of_name (fst _1)); _1 )}
+    {( LP.add_ident (str_of_name (fst _1)); _1 )}
 | _1 = attributes _2 = declarator
-    {                           ( LP.add_ident (str_of_name (fst _2)); _2 )}
+    {( LP.add_ident (str_of_name (fst _2)); _2 )}
 | _1 = declarator _2 = attributes
-    {                           ( LP.add_ident (str_of_name (fst _1)); _1 )}
+    {( LP.add_ident (str_of_name (fst _1)); _1 )}
 
 abstract_declaratorp:
   _1 = abstract_declarator
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = attributes _2 = abstract_declarator
-    {                                  ( _2 )}
+    {( _2 )}
 
 spec_qualif_list2:
   _1 = type_spec
-    {                                ( addTypeD (_1, nullDecl) )}
+    {( addTypeD (_1, nullDecl) )}
 | _1 = type_qualif
-    {                                ( {nullDecl with qualifD = (fst _1,[snd _1])})}
+    {( {nullDecl with qualifD = (fst _1,[snd _1])})}
 | _1 = type_spec _2 = spec_qualif_list
-    {                                ( addTypeD (_1,_2)   )}
+    {( addTypeD (_1,_2)   )}
 | _1 = type_qualif _2 = spec_qualif_list
-    {                                ( addQualifD (_1,_2) )}
+    {( addQualifD (_1,_2) )}
 
 spec_qualif_list:
   _1 = spec_qualif_list2
-    {                                               (  dt "spec_qualif" (); _1 )}
+    {(  dt "spec_qualif" (); _1 )}
 
 type_qualif_list:
   _1 = type_qualif_attr
-    {                                     ( {nullDecl with qualifD = (fst _1,[snd _1])} )}
+    {( {nullDecl with qualifD = (fst _1,[snd _1])} )}
 | _1 = type_qualif_list _2 = type_qualif_attr
-    {                                     ( addQualifD (_2,_1) )}
+    {( addQualifD (_2,_1) )}
 
 type_name:
   _1 = spec_qualif_list
-    {     ( let (returnType, _) = fixDeclSpecForDecl _1 in  returnType )}
+    {( let (returnType, _) = fixDeclSpecForDecl _1 in  returnType )}
 | _1 = spec_qualif_list _2 = abstract_declaratort
-    {     ( let (returnType, _) = fixDeclSpecForDecl _1 in _2 returnType )}
+    {( let (returnType, _) = fixDeclSpecForDecl _1 in _2 returnType )}
 
 abstract_declaratort:
   _1 = abstract_declarator
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = attributes _2 = abstract_declarator
-    {                                  ( _2 )}
+    {( _2 )}
 
 decl2:
   _1 = decl_spec _2 = TPtVirg
-    {     ( function local ->
+    {( function local ->
        let (returnType,storage) = fixDeclSpecForDecl _1 in
        let iistart = Ast_c.fakeInfo () in
        DeclList ([{v_namei = None; v_type = returnType;
@@ -1420,7 +1420,7 @@ decl2:
                 (_2::iistart::snd storage))
      )}
 | _1 = decl_spec _2 = init_declarator_list _3 = TPtVirg
-    {     ( function local ->
+    {( function local ->
        let (returnType,storage) = fixDeclSpecForDecl _1 in
        let iistart = Ast_c.fakeInfo () in
        DeclList (
@@ -1440,7 +1440,7 @@ decl2:
          ),  (_3::iistart::snd storage))
      )}
 | _1 = storage_const_opt _2 = TMacroDecl _3 = TOPar _4 = argument_list _5 = TCPar _6 = TPtVirg
-    {     ( function _ ->
+    {( function _ ->
        match _1 with
 	 Some (sto,stoii) ->
 	   MacroDecl
@@ -1449,7 +1449,7 @@ decl2:
 	   MacroDecl
 	     ((NoSto, fst _2, _4, true), [snd _2;_3;_5;_6;fakeInfo()]) )}
 | _1 = storage_const_opt _2 = TMacroDecl _3 = TOPar _4 = argument_list _5 = TCPar _6 = teq _7 = initialize _8 = TPtVirg
-    {     ( function _ ->
+    {( function _ ->
        match _1 with
 	 Some (sto,stoii) ->
 	   MacroDeclInit
@@ -1461,165 +1461,165 @@ decl2:
 
 storage_const_opt:
   _1 = storage_class_spec_nt _2 = TMacroDeclConst
-    {                                         ( Some (fst _1,[snd _1; _2]) )}
+    {( Some (fst _1,[snd _1; _2]) )}
 | _1 = storage_class_spec_nt
-    {                         ( Some (fst _1,[snd _1]) )}
+    {( Some (fst _1,[snd _1]) )}
 | 
-    {                         ( None )}
+    {( None )}
 
 decl_spec2:
   _1 = storage_class_spec
-    {                           ( {nullDecl with storageD = (fst _1, [snd _1]) } )}
+    {( {nullDecl with storageD = (fst _1, [snd _1]) } )}
 | _1 = type_spec
-    {                           ( addTypeD (_1,nullDecl) )}
+    {( addTypeD (_1,nullDecl) )}
 | _1 = type_qualif
-    {                           ( {nullDecl with qualifD  = (fst _1, [snd _1]) } )}
+    {( {nullDecl with qualifD  = (fst _1, [snd _1]) } )}
 | _1 = Tinline
-    {                           ( {nullDecl with inlineD = (true, [_1]) } )}
+    {( {nullDecl with inlineD = (true, [_1]) } )}
 | _1 = storage_class_spec _2 = decl_spec2
-    {                                 ( addStorageD (_1, _2) )}
+    {( addStorageD (_1, _2) )}
 | _1 = type_spec _2 = decl_spec2
-    {                                 ( addTypeD    (_1, _2) )}
+    {( addTypeD    (_1, _2) )}
 | _1 = type_qualif _2 = decl_spec2
-    {                                 ( addQualifD  (_1, _2) )}
+    {( addQualifD  (_1, _2) )}
 | _1 = Tinline _2 = decl_spec2
-    {                                 ( addInlineD ((true, _1), _2) )}
+    {( addInlineD ((true, _1), _2) )}
 
 storage_class_spec_nt:
   _1 = Tstatic
-    {                ( Sto Static,  _1 )}
+    {( Sto Static,  _1 )}
 | _1 = Textern
-    {                ( Sto Extern,  _1 )}
+    {( Sto Extern,  _1 )}
 | _1 = Tauto
-    {                ( Sto Auto,    _1 )}
+    {( Sto Auto,    _1 )}
 | _1 = Tregister
-    {                ( Sto Register,_1 )}
+    {( Sto Register,_1 )}
 
 storage_class_spec2:
   _1 = storage_class_spec_nt
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = Ttypedef
-    {                ( StoTypedef,  _1 )}
+    {( StoTypedef,  _1 )}
 
 storage_class_spec:
   _1 = storage_class_spec2
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = storage_class_spec2 _2 = attribute_storage_list
-    {                                              ( _1 (* TODO *) )}
+    {( _1 (* TODO *) )}
 
 decl:
   _1 = decl2
-    {                         ( et "decl" (); _1 )}
+    {( et "decl" (); _1 )}
 
 decl_spec:
   _1 = decl_spec2
-    {                         ( dt "declspec" (); _1  )}
+    {( dt "declspec" (); _1  )}
 
 init_declarator2:
   _1 = declaratori
-    {                                ( (_1, NoInit) )}
+    {( (_1, NoInit) )}
 | _1 = declaratori _2 = teq _3 = initialize
-    {                                ( (_1, ValInit(_2, _3)) )}
+    {( (_1, ValInit(_2, _3)) )}
 | _1 = declaratori _2 = TOParCplusplusInit _3 = argument_list _4 = TCPar
-    {     ( (_1, ConstrInit(_3,[_2;_4])) )}
+    {( (_1, ConstrInit(_3,[_2;_4])) )}
 
 teq:
   _1 = TEq
-    {          ( et "teq" (); _1 )}
+    {( et "teq" (); _1 )}
 
 init_declarator:
   _1 = init_declarator2
-    {                                   ( dt "init" (); _1 )}
+    {( dt "init" (); _1 )}
 
 declaratori:
   _1 = declarator
-    {                           ( LP.add_ident (str_of_name (fst _1)); _1, Ast_c.noattr )}
+    {( LP.add_ident (str_of_name (fst _1)); _1, Ast_c.noattr )}
 | _1 = declarator _2 = gcc_asm_decl
-    {                           ( LP.add_ident (str_of_name (fst _1)); _1, Ast_c.noattr )}
+    {( LP.add_ident (str_of_name (fst _1)); _1, Ast_c.noattr )}
 | _1 = attributes _2 = declarator
-    {                           ( LP.add_ident (str_of_name (fst _2)); _2, _1 )}
+    {( LP.add_ident (str_of_name (fst _2)); _2, _1 )}
 | _1 = declarator _2 = attributes
-    {                           ( LP.add_ident (str_of_name (fst _1)); _1, Ast_c.noattr (* TODO *) )}
+    {( LP.add_ident (str_of_name (fst _1)); _1, Ast_c.noattr (* TODO *) )}
 
 gcc_asm_decl:
   _1 = Tasm _2 = TOPar _3 = asmbody _4 = TCPar
-    {                                         (  )}
+    {(  )}
 | _1 = Tasm _2 = Tvolatile _3 = TOPar _4 = asmbody _5 = TCPar
-    {                                        (  )}
+    {(  )}
 
 initialize:
   _1 = assign_expr
-    {     ( InitExpr _1,                [] )}
+    {( InitExpr _1,                [] )}
 | _1 = tobrace_ini _2 = initialize_list _3 = gcc_comma_opt_struct _4 = tcbrace_ini
-    {     ( InitList (List.rev _2),     [_1;_4] @ _3 )}
+    {( InitList (List.rev _2),     [_1;_4] @ _3 )}
 | _1 = tobrace_ini _2 = tcbrace_ini
-    {     ( InitList [],       [_1;_2] )}
+    {( InitList [],       [_1;_2] )}
 
 initialize_list:
   _1 = initialize2
-    {                                      ( [_1,   []] )}
+    {( [_1,   []] )}
 | _1 = initialize_list _2 = TComma _3 = initialize2
-    {                                      ( (_3,  [_2])::_1 )}
+    {( (_3,  [_2])::_1 )}
 
 initialize2:
   _1 = cond_expr
-    {     ( InitExpr _1,   [] )}
+    {( InitExpr _1,   [] )}
 | _1 = tobrace_ini _2 = initialize_list _3 = gcc_comma_opt_struct _4 = tcbrace_ini
-    {     ( InitList (List.rev _2),   [_1;_4] @ _3 )}
+    {( InitList (List.rev _2),   [_1;_4] @ _3 )}
 | _1 = tobrace_ini _2 = tcbrace_ini
-    {     ( InitList [],  [_1;_2]  )}
+    {( InitList [],  [_1;_2]  )}
 | _1 = designator_list _2 = TEq _3 = initialize2
-    {     ( InitDesignators (_1, _3), [_2] )}
+    {( InitDesignators (_1, _3), [_2] )}
 | _1 = ident _2 = TDotDot _3 = initialize2
-    {     ( InitFieldOld (fst _1, _3),     [snd _1; _2] )}
+    {( InitFieldOld (fst _1, _3),     [snd _1; _2] )}
 
 designator:
   _1 = TDot _2 = ident
-    {     ( DesignatorField (fst _2), [_1;snd _2] )}
+    {( DesignatorField (fst _2), [_1;snd _2] )}
 | _1 = TOCro _2 = const_expr _3 = TCCro
-    {     ( DesignatorIndex (_2),  [_1;_3] )}
+    {( DesignatorIndex (_2),  [_1;_3] )}
 | _1 = TOCro _2 = const_expr _3 = TEllipsis _4 = const_expr _5 = TCCro
-    {     ( DesignatorRange (_2, _4),  [_1;_3;_5] )}
+    {( DesignatorRange (_2, _4),  [_1;_3;_5] )}
 
 gcc_comma_opt_struct:
   _1 = TComma
-    {          (  [_1] )}
+    {(  [_1] )}
 | 
-    {                    (  [Ast_c.fakeInfo() +> Ast_c.rewrap_str ","]  )}
+    {(  [Ast_c.fakeInfo() +> Ast_c.rewrap_str ","]  )}
 
 s_or_u_spec2:
   _1 = struct_or_union _2 = ident _3 = tobrace_struct _4 = struct_decl_list_gcc _5 = tcbrace_struct
-    {     ( StructUnion (fst _1, Some (fst _2), _4),  [snd _1;snd _2;_3;_5]  )}
+    {( StructUnion (fst _1, Some (fst _2), _4),  [snd _1;snd _2;_3;_5]  )}
 | _1 = struct_or_union _2 = tobrace_struct _3 = struct_decl_list_gcc _4 = tcbrace_struct
-    {     ( StructUnion (fst _1, None, _3), [snd _1;_2;_4] )}
+    {( StructUnion (fst _1, None, _3), [snd _1;_2;_4] )}
 | _1 = struct_or_union _2 = ident
-    {     ( StructUnionName (fst _1, fst _2), [snd _1;snd _2] )}
+    {( StructUnionName (fst _1, fst _2), [snd _1;snd _2] )}
 
 struct_or_union2:
   _1 = Tstruct
-    {             ( Struct, _1 )}
+    {( Struct, _1 )}
 | _1 = Tunion
-    {             ( Union, _1 )}
+    {( Union, _1 )}
 | _1 = Tstruct _2 = attributes
-    {                        ( Struct, _1 (* TODO *) )}
+    {( Struct, _1 (* TODO *) )}
 | _1 = Tunion _2 = attributes
-    {                        ( Union, _1  (* TODO *) )}
+    {( Union, _1  (* TODO *) )}
 
 struct_decl2:
   _1 = field_declaration
-    {                     ( DeclarationField _1 )}
+    {( DeclarationField _1 )}
 | _1 = TPtVirg
-    {           ( EmptyField _1  )}
+    {( EmptyField _1  )}
 | _1 = identifier _2 = TOPar _3 = argument_list _4 = TCPar _5 = TPtVirg
-    {     ( MacroDeclField ((fst _1, _3), [snd _1;_2;_4;_5;fakeInfo()]) )}
+    {( MacroDeclField ((fst _1, _3), [snd _1;_2;_4;_5;fakeInfo()]) )}
 | _1 = cpp_directive
-    {     ( CppDirectiveStruct _1 )}
+    {( CppDirectiveStruct _1 )}
 | _1 = cpp_ifdef_directive
-    {     ( IfdefStruct _1 )}
+    {( IfdefStruct _1 )}
 
 field_declaration:
   _1 = spec_qualif_list _2 = struct_declarator_list _3 = TPtVirg
-    {     (
+    {(
        let (returnType,storage) = fixDeclSpecForDecl _1 in
        if fst (unwrap storage) <> NoSto
        then internal_error "parsing dont allow this";
@@ -1633,7 +1633,7 @@ field_declaration:
           *)
      )}
 | _1 = spec_qualif_list _2 = TPtVirg
-    {     (
+    {(
        (* gccext: allow empty elements if it is a structdef or enumdef *)
        let (returnType,storage) = fixDeclSpecForDecl _1 in
        if fst (unwrap storage) <> NoSto
@@ -1645,87 +1645,87 @@ field_declaration:
 
 struct_declarator:
   _1 = declaratorsd
-    {     ( (fun x -> Simple   (Some (fst _1), (snd _1) x)) )}
+    {( (fun x -> Simple   (Some (fst _1), (snd _1) x)) )}
 | _1 = dotdot _2 = const_expr2
-    {     ( (fun x -> BitField (None, x, _1, _2)) )}
+    {( (fun x -> BitField (None, x, _1, _2)) )}
 | _1 = declaratorsd _2 = dotdot _3 = const_expr2
-    {     ( (fun x -> BitField (Some (fst _1), ((snd _1) x), _2, _3)) )}
+    {( (fun x -> BitField (Some (fst _1), ((snd _1) x), _2, _3)) )}
 
 declaratorsd:
   _1 = declarator
-    {              ( (*also ? LP.add_ident (fst (fst $1)); *) _1 )}
+    {( (*also ? LP.add_ident (fst (fst $1)); *) _1 )}
 | _1 = attributes _2 = declarator
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = declarator _2 = attributes
-    {                           ( _1 )}
+    {( _1 )}
 
 struct_or_union_spec:
   _1 = s_or_u_spec2
-    {                                   ( dt "su" (); _1 )}
+    {( dt "su" (); _1 )}
 
 struct_or_union:
   _1 = struct_or_union2
-    {                                  ( et "su" (); _1 )}
+    {( et "su" (); _1 )}
 
 struct_decl:
   _1 = struct_decl2
-    {                           ( et "struct" (); _1 )}
+    {( et "struct" (); _1 )}
 
 dotdot:
   _1 = TDotDot
-    {                 ( et "dotdot" (); _1 )}
+    {( et "dotdot" (); _1 )}
 
 const_expr2:
   _1 = const_expr
-    {                        ( dt "const_expr2" (); _1 )}
+    {( dt "const_expr2" (); _1 )}
 
 struct_decl_list_gcc:
   _1 = struct_decl_list
-    {                     ( _1 )}
+    {( _1 )}
 | 
-    {                         ( [] )}
+    {( [] )}
 
 enum_spec:
   _1 = Tenum _2 = tobrace_enum _3 = enumerator_list _4 = gcc_comma_opt_struct _5 = tcbrace_enum
-    {     ( Enum (None,    _3),           [_1;_2;_5] @ _4 )}
+    {( Enum (None,    _3),           [_1;_2;_5] @ _4 )}
 | _1 = Tenum _2 = ident _3 = tobrace_enum _4 = enumerator_list _5 = gcc_comma_opt_struct _6 = tcbrace_enum
-    {     ( Enum (Some (fst _2), _4),     [_1; snd _2; _3;_6] @ _5 )}
+    {( Enum (Some (fst _2), _4),     [_1; snd _2; _3;_6] @ _5 )}
 | _1 = Tenum _2 = ident
-    {     ( EnumName (fst _2),       [_1; snd _2] )}
+    {( EnumName (fst _2),       [_1; snd _2] )}
 
 enumerator:
   _1 = idente
-    {                          ( _1, None     )}
+    {( _1, None     )}
 | _1 = idente _2 = TEq _3 = const_expr
-    {                          ( _1, Some (_2, _3) )}
+    {( _1, Some (_2, _3) )}
 
 idente:
   _1 = ident_cpp
-    {                  ( LP.add_ident (str_of_name _1); _1 )}
+    {( LP.add_ident (str_of_name _1); _1 )}
 
 function_definition:
   _1 = function_def
-    {                                     ( fixFunc _1 )}
+    {( fixFunc _1 )}
 
 decl_list:
   _1 = decl
-    {                  ( [_1 Ast_c.LocalDecl]   )}
+    {( [_1 Ast_c.LocalDecl]   )}
 | _1 = decl_list _2 = decl
-    {                  ( _1 @ [_2 Ast_c.LocalDecl] )}
+    {( _1 @ [_2 Ast_c.LocalDecl] )}
 
 cpp_directive_list:
   _1 = cpp_directive
-    {                                    ( )}
+    {( )}
 | _1 = cpp_directive_list _2 = cpp_directive
-    {                                    ( )}
+    {( )}
 
 function_def:
   _1 = start_fun _2 = compound
-    {                           ( LP.del_scope(); (_1, _2, None) )}
+    {( LP.del_scope(); (_1, _2, None) )}
 | _1 = start_fun _2 = cpp_directive_list _3 = compound
-    {                                         ( LP.del_scope(); (_1, _3, None) )}
+    {( LP.del_scope(); (_1, _3, None) )}
 | _1 = start_fun _2 = decl_list _3 = compound
-    {                                     (
+    {(
      (* TODO: undo the typedef added ? *)
      LP.del_scope();
      (_1, _3, Some _2)
@@ -1733,7 +1733,7 @@ function_def:
 
 start_fun:
   _1 = start_fun2
-    {  ( LP.new_scope();
+    {( LP.new_scope();
     fix_add_params_ident _1;
     (* toreput? !LP._lexer_hint.toplevel <- false;  *)
     _1
@@ -1741,16 +1741,16 @@ start_fun:
 
 start_fun2:
   _1 = decl_spec _2 = declaratorfd
-    {     ( let (returnType,storage) = fixDeclSpecForFuncDef _1 in
+    {( let (returnType,storage) = fixDeclSpecForFuncDef _1 in
        let (id, attrs) = _2 in
        (fst id, fixOldCDecl ((snd id) returnType) , storage, attrs)
      )}
 | _1 = ctor_dtor
-    {               ( _1 )}
+    {( _1 )}
 
 ctor_dtor:
   _1 = Tconstructorname _2 = topar _3 = tcpar
-    {                                (
+    {(
      let id = RegularName (mk_string_wrap _1) in
      let ret = mk_ty NoType [] in
      let ty = mk_ty (FunctionType (ret, (([], (false, []))))) [_2;_3] in
@@ -1758,7 +1758,7 @@ ctor_dtor:
      let attrs = [] in
      (id, ty, storage, attrs) )}
 | _1 = Tconstructorname _2 = topar _3 = parameter_type_list _4 = tcpar
-    {                                                    (
+    {(
      let id = RegularName (mk_string_wrap _1) in
      let ret = mk_ty NoType [] in
      let ty = mk_ty (FunctionType (ret, _3)) [_2;_4] in
@@ -1768,15 +1768,15 @@ ctor_dtor:
 
 declaratorfd:
   _1 = declarator
-    {              ( et "declaratorfd" (); _1, Ast_c.noattr )}
+    {( et "declaratorfd" (); _1, Ast_c.noattr )}
 | _1 = attributes _2 = declarator
-    {                           ( et "declaratorfd" (); _2, _1 )}
+    {( et "declaratorfd" (); _2, _1 )}
 | _1 = declarator _2 = attributes
-    {                           ( et "declaratorfd" (); _1, Ast_c.noattr )}
+    {( et "declaratorfd" (); _1, Ast_c.noattr )}
 
 cpp_directive:
   _1 = TIncludeStart _2 = TIncludeFilename
-    {     (
+    {(
        let (i1, in_ifdef) = _1 in
        let (s, i2) = _2 in
 
@@ -1797,56 +1797,56 @@ cpp_directive:
        }
      )}
 | _1 = TDefine _2 = TIdentDefine _3 = define_val _4 = TDefEOL
-    {     ( Define ((fst _2, [_1; snd _2;_4]), (DefineVar, _3)) )}
+    {( Define ((fst _2, [_1; snd _2;_4]), (DefineVar, _3)) )}
 | _1 = TDefine _2 = TIdentDefine _3 = TOParDefine _4 = param_define_list _5 = TCPar _6 = define_val _7 = TDefEOL
-    {     ( Define
+    {( Define
          ((fst _2, [_1; snd _2; _7]),
            (DefineFunc (_4, [_3;_5]), _6))
      )}
 | _1 = TUndef _2 = TIdentDefine _3 = TDefEOL
-    {     ( Define((fst _2, [_1; snd _2; _3]), (Undef,DefineEmpty)) )}
+    {( Define((fst _2, [_1; snd _2; _3]), (Undef,DefineEmpty)) )}
 | _1 = TPragma _2 = TIdentDefine _3 = pragmainfo _4 = TDefEOL
-    {     ( Pragma((fst _2, [_1; snd _2; _4]), _3) )}
+    {( Pragma((fst _2, [_1; snd _2; _4]), _3) )}
 | _1 = TCppDirectiveOther
-    {                      ( OtherDirective ([_1]) )}
+    {( OtherDirective ([_1]) )}
 
 pragmainfo:
   _1 = TOPar _2 = argument_list_ne _3 = TCPar
-    {                                ( (PragmaTuple (_2, [_1;_3])) )}
+    {( (PragmaTuple (_2, [_1;_3])) )}
 | _1 = TOPar _2 = TCPar
-    {               ( PragmaTuple ([], [_1;_2]) )}
+    {( PragmaTuple ([], [_1;_2]) )}
 | _1 = ident_define_list_ne
-    {                        ( PragmaIdList _1 )}
+    {( PragmaIdList _1 )}
 
 define_val:
   _1 = expr
-    {             ( DefineExpr _1 )}
+    {( DefineExpr _1 )}
 | _1 = statement
-    {             ( DefineStmt _1 )}
+    {( DefineStmt _1 )}
 | _1 = decl
-    {             ( DefineStmt (mk_st (Decl (_1 Ast_c.NotLocalDecl)) Ast_c.noii) )}
+    {( DefineStmt (mk_st (Decl (_1 Ast_c.NotLocalDecl)) Ast_c.noii) )}
 | _1 = decl_spec
-    {     ( let returnType = fixDeclSpecForMacro _1 in
+    {( let returnType = fixDeclSpecForMacro _1 in
        DefineType returnType
      )}
 | _1 = decl_spec _2 = abstract_declarator
-    {     ( let returnType = fixDeclSpecForMacro _1 in
+    {( let returnType = fixDeclSpecForMacro _1 in
        let typ = _2 returnType in
        DefineType typ
      )}
 | _1 = stat_or_decl _2 = stat_or_decl_list
-    {     ( DefineMulti
+    {( DefineMulti
 	 (List.map
 	    (function
 		StmtElem e -> e
 	      | _ -> failwith "unexpected statement for DefineMulti")
 	    (_1 :: _2)) )}
 | _1 = function_definition
-    {                       ( DefineFunction _1 )}
+    {( DefineFunction _1 )}
 | _1 = TOBraceDefineInit _2 = initialize_list _3 = gcc_comma_opt_struct _4 = TCBrace _5 = comma_opt
-    {    ( DefineInit (InitList (List.rev _2), [_1;_4] @ _3 @ _5)  )}
+    {( DefineInit (InitList (List.rev _2), [_1;_4] @ _3 @ _5)  )}
 | _1 = Tdo _2 = statement _3 = Twhile _4 = TOPar _5 = expr _6 = TCPar
-    {     (
+    {(
        (* TOREPUT
        if fst $5 <> "0"
        then pr2 "WEIRD: in macro and have not a while(0)";
@@ -1854,52 +1854,52 @@ define_val:
        DefineDoWhileZero ((_2,_5),   [_1;_3;_4;_6])
      )}
 | _1 = Tasm _2 = TOPar _3 = asmbody _4 = TCPar
-    {                                         ( DefineTodo )}
+    {( DefineTodo )}
 | _1 = Tasm _2 = Tvolatile _3 = TOPar _4 = asmbody _5 = TCPar
-    {                                         ( DefineTodo )}
+    {( DefineTodo )}
 | _1 = TMacroAttr
-    {              ( DefineTodo )}
+    {( DefineTodo )}
 | 
-    {                   ( DefineEmpty )}
+    {( DefineEmpty )}
 
 param_define:
   _1 = TIdent
-    {                        ( mk_string_wrap _1 )}
+    {( mk_string_wrap _1 )}
 | _1 = TypedefIdent
-    {                        ( mk_string_wrap _1 )}
+    {( mk_string_wrap _1 )}
 | _1 = TDefParamVariadic
-    {                        ( mk_string_wrap _1 )}
+    {( mk_string_wrap _1 )}
 | _1 = TEllipsis
-    {                        ( "...", [_1] )}
+    {( "...", [_1] )}
 | _1 = Tregister
-    {                        ( "register", [_1] )}
+    {( "register", [_1] )}
 
 cpp_ifdef_directive:
   _1 = TIfdef
-    {     ( let (cond,tag,ii) = _1 in
+    {( let (cond,tag,ii) = _1 in
        IfdefDirective ((Ifdef cond, IfdefTag (Common.some !tag)),  [ii]) )}
 | _1 = TIfdefelse
-    {     ( let (tag,ii) = _1 in
+    {( let (tag,ii) = _1 in
        IfdefDirective ((IfdefElse, IfdefTag (Common.some !tag)), [ii]) )}
 | _1 = TIfdefelif
-    {     ( let (cond,tag,ii) = _1 in
+    {( let (cond,tag,ii) = _1 in
        IfdefDirective ((IfdefElseif cond, IfdefTag (Common.some !tag)), [ii]) )}
 | _1 = TEndif
-    {     ( let (tag,ii) = _1 in
+    {( let (tag,ii) = _1 in
        IfdefDirective ((IfdefEndif, IfdefTag (Common.some !tag)), [ii]) )}
 | _1 = TIfdefBool
-    {     ( let (_b, tag,ii) = _1 in
+    {( let (_b, tag,ii) = _1 in
        IfdefDirective ((Ifdef Gnone, IfdefTag (Common.some !tag)), [ii]) )}
 | _1 = TIfdefMisc
-    {     ( let (_b, tag,ii) = _1 in
+    {( let (_b, tag,ii) = _1 in
        IfdefDirective ((Ifdef Gnone, IfdefTag (Common.some !tag)), [ii]) )}
 | _1 = TIfdefVersion
-    {     ( let (_b, tag,ii) = _1 in
+    {( let (_b, tag,ii) = _1 in
        IfdefDirective ((Ifdef Gnone, IfdefTag (Common.some !tag)), [ii]) )}
 
 cpp_other:
   _1 = identifier _2 = TOPar _3 = argument_list _4 = TCPar _5 = TPtVirg
-    {     (
+    {(
        if args_are_params _3
        then
 	 (* if all args are params, assume it is a prototype of a function
@@ -1927,7 +1927,7 @@ cpp_other:
            (* old: MacroTop (fst $1, $3,    [snd $1;$2;$4;$5])  *)
      )}
 | _1 = identifier _2 = TOPar _3 = argument_list _4 = TCPar _5 = compound
-    {                                                 (
+    {(
    let parameters = args_to_params _3 (Some (snd _1)) in
    let paramlist = (parameters, (false, [])) in (* no varargs *)
    let fninfo =
@@ -1943,200 +1943,200 @@ cpp_other:
    Definition fundef
  )}
 | _1 = identifier _2 = TOPar _3 = argument_list _4 = TCParEOL
-    {     ( Declaration
+    {( Declaration
 	 (MacroDecl ((NoSto, fst _1, _3, false), [snd _1;_2;_4;fakeInfo()])) )}
 | _1 = identifier _2 = TPtVirg
-    {                      ( EmptyDef [snd _1;_2] )}
+    {( EmptyDef [snd _1;_2] )}
 
 external_declaration:
   _1 = function_definition
-    {                                     ( Definition _1 )}
+    {( Definition _1 )}
 | _1 = decl
-    {                                     ( Declaration (_1 Ast_c.NotLocalDecl) )}
+    {( Declaration (_1 Ast_c.NotLocalDecl) )}
 
 celem:
   _1 = Tnamespace _2 = TIdent _3 = TOBrace _4 = translation_unit _5 = TCBrace
-    {     ( !LP._lexer_hint.context_stack <- [LP.InTopLevel];
+    {( !LP._lexer_hint.context_stack <- [LP.InTopLevel];
        Namespace (_4, [_1; snd _2; _3; _5]) )}
 | _1 = external_declaration
-    {                                                ( _1 )}
+    {( _1 )}
 | _1 = cpp_directive
-    {     ( CppTop _1 )}
+    {( CppTop _1 )}
 | _1 = cpp_other
-    {     ( _1 )}
+    {( _1 )}
 | _1 = cpp_ifdef_directive
-    {     ( IfdefTop _1 )}
+    {( IfdefTop _1 )}
 | _1 = Tasm _2 = TOPar _3 = asmbody _4 = TCPar _5 = TPtVirg
-    {                                                ( EmptyDef [_1;_2;_4;_5] )}
+    {( EmptyDef [_1;_2;_4;_5] )}
 | _1 = TPtVirg
-    {              ( EmptyDef [_1] )}
+    {( EmptyDef [_1] )}
 | _1 = EOF
-    {              ( FinalDef _1 )}
+    {( FinalDef _1 )}
 
 tobrace:
   _1 = TOBrace
-    {                  ( LP.push_context LP.InFunction; LP.new_scope (); _1 )}
+    {( LP.push_context LP.InFunction; LP.new_scope (); _1 )}
 
 tcbrace:
   _1 = TCBrace
-    {                  ( LP.pop_context();              LP.del_scope (); _1 )}
+    {( LP.pop_context();              LP.del_scope (); _1 )}
 
 tobrace_enum:
   _1 = TOBrace
-    {                      ( LP.push_context LP.InEnum; _1 )}
+    {( LP.push_context LP.InEnum; _1 )}
 
 tcbrace_enum:
   _1 = TCBrace
-    {                      ( LP.pop_context (); _1 )}
+    {( LP.pop_context (); _1 )}
 
 tobrace_ini:
   _1 = TOBrace
-    {                     ( LP.push_context LP.InInitializer; _1 )}
+    {( LP.push_context LP.InInitializer; _1 )}
 
 tcbrace_ini:
   _1 = TCBrace
-    {                     ( LP.pop_context (); _1 )}
+    {( LP.pop_context (); _1 )}
 
 tobrace_struct:
   _1 = TOBrace
-    {                        ( LP.push_context LP.InStruct; _1)}
+    {( LP.push_context LP.InStruct; _1)}
 
 tcbrace_struct:
   _1 = TCBrace
-    {                        ( LP.pop_context (); _1 )}
+    {( LP.pop_context (); _1 )}
 
 topar:
   _1 = TOPar
-    {     ( LP.new_scope ();et "topar" ();
+    {( LP.new_scope ();et "topar" ();
        LP.push_context LP.InParameter;
        _1
      )}
 
 tcpar:
   _1 = TCPar
-    {     ( LP.del_scope ();dt "tcpar" ();
+    {( LP.del_scope ();dt "tcpar" ();
        LP.pop_context ();
        _1
      )}
 
 string_list:
   _1 = string_elem
-    {               ( _1 )}
+    {( _1 )}
 | _1 = string_list _2 = string_elem
-    {                           ( _1 @ _2 )}
+    {( _1 @ _2 )}
 
 colon_asm_list:
   _1 = colon_asm
-    {             ( [_1] )}
+    {( [_1] )}
 | _1 = colon_asm_list _2 = colon_asm
-    {                             ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 colon_option_list:
   _1 = colon_option
-    {                ( [_1, []] )}
+    {( [_1, []] )}
 | _1 = colon_option_list _2 = TComma _3 = colon_option
-    {                                         ( _1 @ [_3, [_2]] )}
+    {( _1 @ [_3, [_2]] )}
 
 argument_list_ne:
   _1 = argument_ne
-    {                                         ( [_1, []] )}
+    {( [_1, []] )}
 | _1 = argument_list_ne _2 = TComma _3 = argument
-    {                                    ( _1 @ [_3,    [_2]] )}
+    {( _1 @ [_3,    [_2]] )}
 
 argument_list:
   _1 = argument
-    {                                      ( [_1, []] )}
+    {( [_1, []] )}
 | _1 = argument_list _2 = TComma _3 = argument
-    {                                 ( _1 @ [_3,    [_2]] )}
+    {( _1 @ [_3,    [_2]] )}
 
 ident_define_list_ne:
   _1 = TIdentDefine
-    {                             ( [RegularName (mk_string_wrap _1), []] )}
+    {( [RegularName (mk_string_wrap _1), []] )}
 | _1 = ident_define_list_ne _2 = TIdentDefine
-    {     ( _1 @ [RegularName (mk_string_wrap _2), []] )}
+    {( _1 @ [RegularName (mk_string_wrap _2), []] )}
 
 struct_decl_list:
   _1 = struct_decl
-    {                                 ( [_1] )}
+    {( [_1] )}
 | _1 = struct_decl_list _2 = struct_decl
-    {                                 ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 struct_declarator_list:
   _1 = struct_declarator
-    {                                                   ( [_1,           []] )}
+    {( [_1,           []] )}
 | _1 = struct_declarator_list _2 = TComma _3 = struct_declarator
-    {                                                   ( _1 @ [_3,     [_2]] )}
+    {( _1 @ [_3,     [_2]] )}
 
 enumerator_list:
   _1 = enumerator
-    {                                     ( [_1,          []]   )}
+    {( [_1,          []]   )}
 | _1 = enumerator_list _2 = TComma _3 = enumerator
-    {                                     ( _1 @ [_3,    [_2]] )}
+    {( _1 @ [_3,    [_2]] )}
 
 init_declarator_list:
   _1 = init_declarator
-    {                                               ( [_1,   []] )}
+    {( [_1,   []] )}
 | _1 = init_declarator_list _2 = TComma _3 = init_declarator
-    {                                               ( _1 @ [_3,     [_2]] )}
+    {( _1 @ [_3,     [_2]] )}
 
 parameter_list:
   _1 = parameter_decl
-    {                                        ( [_1, []] )}
+    {( [_1, []] )}
 | _1 = parameter_list _2 = TComma _3 = parameter_decl
-    {                                        ( _1 @ [_3,  [_2]] )}
+    {( _1 @ [_3,  [_2]] )}
 
 taction_list_ne:
   _1 = TAction
-    {                           ( [_1] )}
+    {( [_1] )}
 | _1 = TAction _2 = taction_list_ne
-    {                           ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 taction_list:
   
-    {                        ( [] )}
+    {( [] )}
 | _1 = TAction _2 = taction_list
-    {                        ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 param_define_list:
   
-    {                   ( [] )}
+    {( [] )}
 | _1 = param_define
-    {                                          ( [_1, []] )}
+    {( [_1, []] )}
 | _1 = param_define_list _2 = TComma _3 = param_define
-    {                                          ( _1 @ [_3, [_2]] )}
+    {( _1 @ [_3, [_2]] )}
 
 designator_list:
   _1 = designator
-    {              ( [_1] )}
+    {( [_1] )}
 | _1 = designator_list _2 = designator
-    {                              ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 attribute_list:
   _1 = attribute
-    {             ( [_1] )}
+    {( [_1] )}
 | _1 = attribute_list _2 = attribute
-    {                            ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 attribute_storage_list:
   _1 = attribute_storage
-    {                     ( [_1] )}
+    {( [_1] )}
 | _1 = attribute_storage_list _2 = attribute_storage
-    {                                            ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 attributes:
   _1 = attribute_list
-    {                           ( _1 )}
+    {( _1 )}
 
 comma_opt:
   _1 = TComma
-    {          (  [_1] )}
+    {(  [_1] )}
 | 
-    {                    (  []  )}
+    {(  []  )}
 
 gcc_opt_expr:
   _1 = expr
-    {               ( Some _1 )}
+    {( Some _1 )}
 | 
-    {                   ( None  )}
+    {( None  )}
 
 %%

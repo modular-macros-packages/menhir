@@ -164,274 +164,274 @@ let block_of_equation ({ desc = desc; loc = loc } as eq) =
 
 list_of_AND_localized_equation_desc__:
   x = localized_equation_desc_
-    {        ( [x] )}
+    {( [x] )}
 | r = list_of_AND_localized_equation_desc__ _2 = AND x = localized_equation_desc_
-    {                            ( x :: r )}
+    {( x :: r )}
 
 list_of_BAR_CONSTRUCTOR_:
   x = CONSTRUCTOR
-    {        ( [x] )}
+    {( [x] )}
 | r = list_of_BAR_CONSTRUCTOR_ _2 = BAR x = CONSTRUCTOR
-    {                            ( x :: r )}
+    {( x :: r )}
 
 list_of_COMMA_IDENT_:
   x = IDENT
-    {        ( [x] )}
+    {( [x] )}
 | r = list_of_COMMA_IDENT_ _2 = COMMA x = IDENT
-    {                            ( x :: r )}
+    {( x :: r )}
 
 list_of_COMMA_one_local_:
   x = one_local
-    {        ( [x] )}
+    {( [x] )}
 | r = list_of_COMMA_one_local_ _2 = COMMA x = one_local
-    {                            ( x :: r )}
+    {( x :: r )}
 
 list_of_COMMA_type_var_:
   x = type_var
-    {        ( [x] )}
+    {( [x] )}
 | r = list_of_COMMA_type_var_ _2 = COMMA x = type_var
-    {                            ( x :: r )}
+    {( x :: r )}
 
 localized_equation_desc_:
   x = equation_desc
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-        ( make x _startpos _endpos )}
+( make x _startpos _endpos )}
 
 localized_expression_desc_:
   x = expression_desc
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-        ( make x _startpos _endpos )}
+( make x _startpos _endpos )}
 
 localized_implementation_:
   x = implementation
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-        ( make x _startpos _endpos )}
+( make x _startpos _endpos )}
 
 localized_interface_:
   x = interface
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-        ( make x _startpos _endpos )}
+( make x _startpos _endpos )}
 
 localized_simple_equation_desc_:
   x = simple_equation_desc
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-        ( make x _startpos _endpos )}
+( make x _startpos _endpos )}
 
 optional_default_or_init_:
   
-    {      ( None )}
+    {( None )}
 | x = default_or_init
-    {      ( Some(x) )}
+    {( Some(x) )}
 
 implementation_file:
   _1 = EOF
-    {      ( [] )}
+    {( [] )}
 | i = decl_list_localized_implementation__ _2 = EOF
-    {      ( List.rev i )}
+    {( List.rev i )}
 
 decl_list_localized_implementation__:
   dl = decl_list_localized_implementation__ x = localized_implementation_ _3 = opt_semi_semi
-    {      ( x :: dl )}
+    {( x :: dl )}
 | x = localized_implementation_ _2 = opt_semi_semi
-    {      ( [x] )}
+    {( [x] )}
 
 decl_list_localized_interface__:
   dl = decl_list_localized_interface__ x = localized_interface_ _3 = opt_semi_semi
-    {      ( x :: dl )}
+    {( x :: dl )}
 | x = localized_interface_ _2 = opt_semi_semi
-    {      ( [x] )}
+    {( [x] )}
 
 opt_semi_semi:
   
-    {                ()}
+    {()}
 | _1 = SEMISEMI
-    {             ()}
+    {()}
 
 implementation:
   _1 = OPEN c = CONSTRUCTOR
-    {      ( Eopen c )}
+    {( Eopen c )}
 | _1 = TYPE tp = type_params id = IDENT td = type_declaration
-    {      ( Etypedecl(id, tp, td) )}
+    {( Etypedecl(id, tp, td) )}
 | _1 = LET ide = IDENT _3 = EQUAL seq = seq_expression
-    {      ( Econstdecl(ide, seq) )}
+    {( Econstdecl(ide, seq) )}
 | _1 = LET i = IDENT fp = fun_params _4 = EQUAL seq = seq_expression
-    {      ( Efundecl(i, A, false, fp, seq) )}
+    {( Efundecl(i, A, false, fp, seq) )}
 | _1 = LET i = IDENT fp = fun_params _4 = EQUAL seq = seq_expression _6 = WHERE r = is_rec l = list_of_AND_localized_equation_desc__
-    {let eqs =                                                ( l ) in
+    {let eqs = ( l ) in
 let _endpos_eqs_ = _endpos_l_ in
-      ( Efundecl(i, A, false, fp, make(Elet(r, eqs, seq))
+( Efundecl(i, A, false, fp, make(Elet(r, eqs, seq))
                               _startpos_seq_ _endpos_eqs_))}
 | _1 = is_let a = is_atomic k = kind i = IDENT fp = fun_params _6 = EQUAL seq = seq_expression
-    {      ( Efundecl(i, k, a, fp, seq) )}
+    {( Efundecl(i, k, a, fp, seq) )}
 | _1 = is_let a = is_atomic k = kind i = IDENT fp = fun_params _6 = EQUAL seq = seq_expression _8 = WHERE r = is_rec l = list_of_AND_localized_equation_desc__
-    {let eqs =                                                ( l ) in
+    {let eqs = ( l ) in
 let _endpos_eqs_ = _endpos_l_ in
-      ( Efundecl(i, k, a, fp, make(Elet(r, eqs, seq))
+( Efundecl(i, k, a, fp, make(Elet(r, eqs, seq))
                               _startpos_seq_ _endpos_eqs_) )}
 
 is_rec:
   _1 = REC
-    {        ( true )}
+    {( true )}
 | 
-    {        ( false )}
+    {( false )}
 
 is_atomic:
   _1 = ATOMIC
-    {           ( true )}
+    {( true )}
 | 
-    {    ( false )}
+    {( false )}
 
 is_let:
   _1 = LET
-    {        ( )}
+    {( )}
 | 
-    {    ( )}
+    {( )}
 
 fun_params:
   p = pattern
-    {      ( params p )}
+    {( params p )}
 
 interface_file:
   _1 = EOF
-    {      ( [] )}
+    {( [] )}
 | il = decl_list_localized_interface__ _2 = EOF
-    {      ( List.rev il )}
+    {( List.rev il )}
 
 interface:
   _1 = OPEN c = CONSTRUCTOR
-    {      ( Einter_open(c) )}
+    {( Einter_open(c) )}
 | _1 = TYPE tp = type_params i = IDENT td = type_declaration
-    {      ( Einter_typedecl(i, tp, td) )}
+    {( Einter_typedecl(i, tp, td) )}
 | _1 = VAL i = ide _3 = COLON t = type_expression
-    {      ( Einter_constdecl(i, t) )}
+    {( Einter_constdecl(i, t) )}
 | _1 = VAL _2 = UNSAFE i = ide _4 = COLON ta = type_expression a = arrow te = type_expression
-    {      ( Einter_fundecl(i, { sig_inputs = typearg ta; sig_output = te;
+    {( Einter_fundecl(i, { sig_inputs = typearg ta; sig_output = te;
                             sig_kind = a; sig_safe = false }) )}
 | _1 = VAL i = ide _3 = COLON ta = type_expression a = arrow te = type_expression
-    {    ( Einter_fundecl(i, { sig_inputs = typearg ta; sig_output = te;
+    {( Einter_fundecl(i, { sig_inputs = typearg ta; sig_output = te;
                           sig_kind = a; sig_safe = true }) )}
 
 type_declaration:
   
-    {      ( Eabstract_type )}
+    {( Eabstract_type )}
 | _1 = EQUAL e = list_of_BAR_CONSTRUCTOR_
-    {      ( Evariant_type (e) )}
+    {( Evariant_type (e) )}
 | _1 = EQUAL _2 = LBRACE s = label_list_label_type_ _4 = RBRACE
-    {      ( Erecord_type (s) )}
+    {( Erecord_type (s) )}
 | _1 = EQUAL t = type_expression
-    {      ( Eabbrev(t) )}
+    {( Eabbrev(t) )}
 
 type_params:
   _1 = LPAREN tvl = list_of_COMMA_type_var_ _3 = RPAREN
-    {      ( tvl )}
+    {( tvl )}
 | tv = type_var
-    {      ( [tv] )}
+    {( [tv] )}
 | 
-    {      ( [] )}
+    {( [] )}
 
 label_list_label_type_:
   x = label_type
-    {      ( [x] )}
+    {( [x] )}
 | x = label_type _2 = SEMI
-    {      ( [x] )}
+    {( [x] )}
 | x = label_type _2 = SEMI ll = label_list_label_type_
-    {      ( x :: ll )}
+    {( x :: ll )}
 
 label_type:
   i = IDENT _2 = COLON t = type_expression
-    {  ( (i, t) )}
+    {( (i, t) )}
 
 equation_empty_list:
   
-    {      ( [] )}
+    {( [] )}
 | l = list_of_AND_localized_equation_desc__
-    {let eq_list =                                                ( l ) in
-      ( eq_list )}
+    {let eq_list = ( l ) in
+( eq_list )}
 
 optional_init:
   
-    {      ( None )}
+    {( None )}
 | _1 = INIT e = expression
-    {      ( Some(e) )}
+    {( Some(e) )}
 
 simple_equation_desc:
   _1 = AUTOMATON _2 = opt_bar a = automaton_handlers_equation_empty_list_ _4 = opt_end
-    {    ( EQautomaton(List.rev a, None) )}
+    {( EQautomaton(List.rev a, None) )}
 | _1 = AUTOMATON _2 = opt_bar a = automaton_handlers_equation_empty_list_ _4 = INIT s = state
-    {    ( EQautomaton(List.rev a, Some(s)) )}
+    {( EQautomaton(List.rev a, Some(s)) )}
 | _1 = MATCH e = seq_expression _3 = WITH _4 = opt_bar m = match_handlers_block_of_equation_ _6 = opt_end
-    {    ( EQmatch(e, List.rev m) )}
+    {( EQmatch(e, List.rev m) )}
 | _1 = IF e = seq_expression _3 = THEN b1 = block_of_equation _5 = ELSE b2 = block_of_equation _7 = opt_end
-    {    ( EQifthenelse(e, b1, b2) )}
+    {( EQifthenelse(e, b1, b2) )}
 | _1 = PRESENT _2 = opt_bar p = present_handlers_block_of_equation_ _4 = opt_end
-    {    ( EQpresent(List.rev p, None) )}
+    {( EQpresent(List.rev p, None) )}
 | _1 = PRESENT _2 = opt_bar p = present_handlers_block_of_equation_ _4 = ELSE b = block_of_equation _6 = opt_end
-    {    ( EQpresent(List.rev p, Some(b)) )}
+    {( EQpresent(List.rev p, Some(b)) )}
 | _1 = RESET l = list_of_AND_localized_equation_desc__ _3 = EVERY e = expression
-    {let eq =                                                ( l ) in
-    ( EQreset(eq, e) )}
+    {let eq = ( l ) in
+( EQreset(eq, e) )}
 | l = let_list lo = local_list _3 = DO eq_list = equation_empty_list _5 = DONE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos_l_ in
-    ( EQblock(make { b_locals = l; b_vars = lo; b_body = eq_list }
+( EQblock(make { b_locals = l; b_vars = lo; b_body = eq_list }
 		_startpos _endpos) )}
 
 equation_desc:
   eq = simple_equation_desc
-    {    ( eq )}
+    {( eq )}
 | p = pattern _2 = EQUAL e = expression
-    {    ( EQeq(p, e) )}
+    {( EQeq(p, e) )}
 | i = ide _2 = PLUSEQUAL e = expression
-    {    ( EQpluseq(i, e) )}
+    {( EQpluseq(i, e) )}
 | _1 = PERIOD p = pattern _3 = EQUAL e = period_expression
-    {    ( EQeq(p, make (Eperiod(e)) _startpos_e_ _endpos_e_) )}
+    {( EQeq(p, make (Eperiod(e)) _startpos_e_ _endpos_e_) )}
 | _1 = DER i = ide _3 = EQUAL e = expression opt = optional_init
-    {      ( EQder(i, e, opt, []) )}
+    {( EQder(i, e, opt, []) )}
 | _1 = DER i = ide _3 = EQUAL e = expression opt = optional_init _6 = RESET _7 = opt_bar pe = present_handlers_expression_
-    {      ( EQder(i, e, opt, List.rev pe) )}
+    {( EQder(i, e, opt, List.rev pe) )}
 | _1 = NEXT i = ide _3 = EQUAL e = expression
-    {      ( EQnext(i, e, None) )}
+    {( EQnext(i, e, None) )}
 | _1 = NEXT i = ide _3 = EQUAL e = expression _5 = INIT e0 = expression
-    {      ( EQnext(i, e, Some(e0)) )}
+    {( EQnext(i, e, Some(e0)) )}
 | _1 = INIT i = ide _3 = EQUAL e = expression
-    {      ( EQinit(i, e) )}
+    {( EQinit(i, e) )}
 | _1 = EMIT i = ide
-    {      ( EQemit(i, None) )}
+    {( EQemit(i, None) )}
 | _1 = EMIT i = ide _3 = EQUAL e = expression
-    {      ( EQemit(i, Some(e)) )}
+    {( EQemit(i, Some(e)) )}
 
 opt_end:
    %prec prec_no_end
-    {    ( () )}
+    {( () )}
 | _1 = END
-    {        ( () )}
+    {( () )}
 
 automaton_handlers_equation_empty_list_:
   a = automaton_handler_equation_empty_list_
-    {      ( [a] )}
+    {( [a] )}
 | ahs = automaton_handlers_equation_empty_list_ _2 = BAR a = automaton_handler_equation_empty_list_
-    {      ( a :: ahs )}
+    {( a :: ahs )}
 
 automaton_handlers_expression_:
   a = automaton_handler_expression_
-    {      ( [a] )}
+    {( [a] )}
 | ahs = automaton_handlers_expression_ _2 = BAR a = automaton_handler_expression_
-    {      ( a :: ahs )}
+    {( a :: ahs )}
 
 automaton_handler_equation_empty_list_:
   sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = DONE
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b; s_until = []; s_unless = [] } _startpos _endpos)}
+( make { s_state = sp; s_block = b; s_until = []; s_unless = [] } _startpos _endpos)}
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = THEN st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b;
+( make { s_state = sp; s_block = b;
              s_until =
                [{ e_cond = scond_true _endpos_b_ _startpos_st_;
                   e_reset = true; e_block = None; e_next_state = st }];
@@ -440,7 +440,7 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = CONTINUE st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp;
+( make { s_state = sp;
              s_block = b;
              s_until =
                [{ e_cond = scond_true _endpos_b_ _startpos_st_;
@@ -450,7 +450,7 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = THEN emit = emission st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b;
+( make { s_state = sp; s_block = b;
              s_until =
                [{ e_cond = scond_true _endpos_b_ _startpos_emit_;
                   e_reset = true; e_block = Some(emit); e_next_state = st}];
@@ -458,7 +458,7 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = CONTINUE emit = emission st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp;
+( make { s_state = sp;
              s_block = b;
              s_until = [{ e_cond = scond_true _endpos_b_ _startpos_emit_;
                           e_reset = false; e_block = Some(emit);
@@ -467,17 +467,17 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = UNTIL e_until = escape_list
     {let _endpos = _endpos_e_until_ in
 let _startpos = _startpos_sp_ in
-     ( make { s_state = sp; s_block = b; s_until = List.rev e_until; s_unless = [] }
+( make { s_state = sp; s_block = b; s_until = List.rev e_until; s_unless = [] }
        _startpos _endpos )}
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = UNLESS e_unless = escape_list
     {let _endpos = _endpos_e_unless_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b; s_until = []; s_unless = List.rev e_unless }
+( make { s_state = sp; s_block = b; s_until = []; s_unless = List.rev e_unless }
       _startpos _endpos )}
 | sp = state_pat _2 = MINUSGREATER b = block_equation_empty_list_ _4 = UNTIL e_until = escape_list _6 = UNLESS e_unless = escape_list
     {let _endpos = _endpos_e_unless_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b;
+( make { s_state = sp; s_block = b;
 	     s_until = List.rev e_until; s_unless = List.rev e_unless }
       _startpos _endpos )}
 
@@ -485,11 +485,11 @@ automaton_handler_expression_:
   sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = DONE
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b; s_until = []; s_unless = [] } _startpos _endpos)}
+( make { s_state = sp; s_block = b; s_until = []; s_unless = [] } _startpos _endpos)}
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = THEN st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b;
+( make { s_state = sp; s_block = b;
              s_until =
                [{ e_cond = scond_true _endpos_b_ _startpos_st_;
                   e_reset = true; e_block = None; e_next_state = st }];
@@ -498,7 +498,7 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = CONTINUE st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp;
+( make { s_state = sp;
              s_block = b;
              s_until =
                [{ e_cond = scond_true _endpos_b_ _startpos_st_;
@@ -508,7 +508,7 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = THEN emit = emission st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b;
+( make { s_state = sp; s_block = b;
              s_until =
                [{ e_cond = scond_true _endpos_b_ _startpos_emit_;
                   e_reset = true; e_block = Some(emit); e_next_state = st}];
@@ -516,7 +516,7 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = CONTINUE emit = emission st = state
     {let _endpos = _endpos_st_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp;
+( make { s_state = sp;
              s_block = b;
              s_until = [{ e_cond = scond_true _endpos_b_ _startpos_emit_;
                           e_reset = false; e_block = Some(emit);
@@ -525,579 +525,579 @@ let _startpos = _startpos_sp_ in
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = UNTIL e_until = escape_list
     {let _endpos = _endpos_e_until_ in
 let _startpos = _startpos_sp_ in
-     ( make { s_state = sp; s_block = b; s_until = List.rev e_until; s_unless = [] }
+( make { s_state = sp; s_block = b; s_until = List.rev e_until; s_unless = [] }
        _startpos _endpos )}
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = UNLESS e_unless = escape_list
     {let _endpos = _endpos_e_unless_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b; s_until = []; s_unless = List.rev e_unless }
+( make { s_state = sp; s_block = b; s_until = []; s_unless = List.rev e_unless }
       _startpos _endpos )}
 | sp = state_pat _2 = MINUSGREATER b = block_expression_ _4 = UNTIL e_until = escape_list _6 = UNLESS e_unless = escape_list
     {let _endpos = _endpos_e_unless_ in
 let _startpos = _startpos_sp_ in
-    ( make { s_state = sp; s_block = b;
+( make { s_state = sp; s_block = b;
 	     s_until = List.rev e_until; s_unless = List.rev e_unless }
       _startpos _endpos )}
 
 escape:
   _1 = scondpat _2 = THEN _3 = state
-    {      ( { e_cond = _1; e_reset = true; e_block = None; e_next_state = _3 } )}
+    {( { e_cond = _1; e_reset = true; e_block = None; e_next_state = _3 } )}
 | _1 = scondpat _2 = CONTINUE _3 = state
-    {      ( { e_cond = _1; e_reset = false; e_block = None; e_next_state = _3 } )}
+    {( { e_cond = _1; e_reset = false; e_block = None; e_next_state = _3 } )}
 | _1 = scondpat _2 = THEN _3 = emission _4 = state
-    {      ( { e_cond = _1; e_reset = true; e_block = Some(_3); e_next_state = _4 } )}
+    {( { e_cond = _1; e_reset = true; e_block = Some(_3); e_next_state = _4 } )}
 | _1 = scondpat _2 = CONTINUE _3 = emission _4 = state
-    {      ( { e_cond = _1; e_reset = false; e_block = Some(_3); e_next_state = _4 } )}
+    {( { e_cond = _1; e_reset = false; e_block = Some(_3); e_next_state = _4 } )}
 
 escape_list:
   e = escape
-    {      ( [e] )}
+    {( [e] )}
 | el = escape_list _2 = ELSE e = escape
-    {      ( e :: el )}
+    {( e :: el )}
 
 state:
   c = CONSTRUCTOR
     {let _endpos = _endpos_c_ in
 let _startpos = _startpos_c_ in
-      ( make (Estate0(c)) _startpos _endpos )}
+( make (Estate0(c)) _startpos _endpos )}
 | c = CONSTRUCTOR _2 = LPAREN e = expression _4 = RPAREN
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_c_ in
-      ( make (Estate1(c, [e])) _startpos _endpos )}
+( make (Estate1(c, [e])) _startpos _endpos )}
 | c = CONSTRUCTOR _2 = LPAREN l = expression_comma_list _4 = RPAREN
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_c_ in
-      ( make (Estate1(c, l)) _startpos _endpos )}
+( make (Estate1(c, l)) _startpos _endpos )}
 
 state_pat:
   c = CONSTRUCTOR
     {let _endpos = _endpos_c_ in
 let _startpos = _startpos_c_ in
-      ( make (Estate0pat(c)) _startpos _endpos )}
+( make (Estate0pat(c)) _startpos _endpos )}
 | c = CONSTRUCTOR _2 = LPAREN l = list_of_COMMA_IDENT_ _4 = RPAREN
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_c_ in
-      ( make (Estate1pat(c, l)) _startpos _endpos )}
+( make (Estate1pat(c, l)) _startpos _endpos )}
 
 scondpat:
   e = simple_expression p = simple_pattern
     {let _endpos = _endpos_p_ in
 let _startpos = _startpos_e_ in
-      ( make (Econdpat(e, p)) _startpos _endpos )}
+( make (Econdpat(e, p)) _startpos _endpos )}
 | e = simple_expression
     {let _endpos = _endpos_e_ in
 let _startpos = _startpos_e_ in
-      ( make (Econdexp(e)) _startpos _endpos )}
+( make (Econdexp(e)) _startpos _endpos )}
 | _1 = UP e = simple_expression
     {let _endpos = _endpos_e_ in
 let _startpos = _startpos__1_ in
-      ( make
+( make
           (Econdexp (make (Eapp(Eup, [e])) _startpos_e_ _endpos_e_))
           _startpos _endpos )}
 | scpat1 = scondpat _2 = AMPERSAND scpat2 = scondpat
     {let _endpos = _endpos_scpat2_ in
 let _startpos = _startpos_scpat1_ in
-      ( make (Econdand(scpat1, scpat2)) _startpos _endpos )}
+( make (Econdand(scpat1, scpat2)) _startpos _endpos )}
 | scpat1 = scondpat _2 = BAR scpat2 = scondpat
     {let _endpos = _endpos_scpat2_ in
 let _startpos = _startpos_scpat1_ in
-      ( make (Econdor(scpat1, scpat2)) _startpos _endpos )}
+( make (Econdor(scpat1, scpat2)) _startpos _endpos )}
 | scpat1 = scondpat _2 = ON e = simple_expression
     {let _endpos = _endpos_e_ in
 let _startpos = _startpos_scpat1_ in
-      ( make (Econdon(scpat1, e)) _startpos _endpos )}
+( make (Econdon(scpat1, e)) _startpos _endpos )}
 
 block_equation_empty_list_:
   l = let_list lo = local_list _3 = DO x = equation_empty_list
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_l_ in
-      ( make { b_locals = l; b_vars = lo; b_body = x } _startpos _endpos )}
+( make { b_locals = l; b_vars = lo; b_body = x } _startpos _endpos )}
 
 block_expression_:
   l = let_list lo = local_list _3 = DO x = expression
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_l_ in
-      ( make { b_locals = l; b_vars = lo; b_body = x } _startpos _endpos )}
+( make { b_locals = l; b_vars = lo; b_body = x } _startpos _endpos )}
 
 block_of_equation:
   eq = localized_simple_equation_desc_
-    {                                          ( block_of_equation(eq) )}
+    {( block_of_equation(eq) )}
 
 emission:
   l1 = one_let _2 = IN l2 = let_list
     {let _endpos = _endpos_l2_ in
 let _startpos = _startpos_l1_ in
-    ( make { b_vars = []; b_locals = l1 :: l2; b_body = [] } _startpos _endpos )}
+( make { b_vars = []; b_locals = l1 :: l2; b_body = [] } _startpos _endpos )}
 | l = let_list lo = local_list _3 = DO eq = equation_empty_list _5 = IN
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos_l_ in
-      ( make { b_vars = lo; b_locals = l; b_body = eq } _startpos _endpos )}
+( make { b_vars = lo; b_locals = l; b_body = eq } _startpos _endpos )}
 
 let_list:
   
-    {      ( [] )}
+    {( [] )}
 | o = one_let _2 = IN l = let_list
-    {      ( o :: l )}
+    {( o :: l )}
 
 one_let:
   _1 = LET l = list_of_AND_localized_equation_desc__
-    {let eq =                                                ( l ) in
+    {let eq = ( l ) in
 let _endpos_eq_ = _endpos_l_ in
 let _endpos = _endpos_eq_ in
 let _startpos = _startpos__1_ in
-      ( make (false, List.rev eq) _startpos _endpos )}
+( make (false, List.rev eq) _startpos _endpos )}
 | _1 = LET _2 = REC l = list_of_AND_localized_equation_desc__
-    {let eq =                                                ( l ) in
+    {let eq = ( l ) in
 let _endpos_eq_ = _endpos_l_ in
 let _endpos = _endpos_eq_ in
 let _startpos = _startpos__1_ in
-      ( make (true, List.rev eq) _startpos _endpos )}
+( make (true, List.rev eq) _startpos _endpos )}
 
 local_list:
   
-    {      ( [] )}
+    {( [] )}
 | _1 = LOCAL o = list_of_COMMA_one_local_ _3 = IN l = local_list
-    {      ( o @ l )}
+    {( o @ l )}
 
 one_local:
   i = ide v = optional_default_or_init_ c = opt_combine
     {let _endpos = _endpos_c_ in
 let _startpos = _startpos_i_ in
-    ( make { vardec_name = i; vardec_default = v; vardec_combine = c }
+( make { vardec_name = i; vardec_default = v; vardec_combine = c }
 	_startpos _endpos )}
 
 default_or_init:
   _1 = DEFAULT c = constant
-    {      ( Default(c) )}
+    {( Default(c) )}
 | _1 = INIT c = constant
-    {    ( Init(c) )}
+    {( Init(c) )}
 
 opt_combine:
   
-    {      ( None )}
+    {( None )}
 | _1 = WITH i = ext_ident
-    {    ( Some(i) )}
+    {( Some(i) )}
 
 constant:
   i = atomic_constant
-    {    ( Cimmediate(i) )}
+    {( Cimmediate(i) )}
 | i = ext_ident
-    {    ( Cglobal(i) )}
+    {( Cglobal(i) )}
 
 opt_bar:
   _1 = BAR
-    {                    ( () )}
+    {( () )}
 | 
-    {                    ( () )}
+    {( () )}
 
 present_handlers_block_of_equation_:
   p = present_handler_block_of_equation_
-    {      ( [p ] )}
+    {( [p ] )}
 | ps = present_handlers_block_of_equation_ _2 = BAR p = present_handler_block_of_equation_
-    {      ( p :: ps )}
+    {( p :: ps )}
 
 present_handlers_expression_:
   p = present_handler_expression_
-    {      ( [p ] )}
+    {( [p ] )}
 | ps = present_handlers_expression_ _2 = BAR p = present_handler_expression_
-    {      ( p :: ps )}
+    {( p :: ps )}
 
 present_handler_block_of_equation_:
   sc = scondpat _2 = MINUSGREATER x = block_of_equation
-    {      ( { p_cond = sc; p_body = x } )}
+    {( { p_cond = sc; p_body = x } )}
 
 present_handler_expression_:
   sc = scondpat _2 = MINUSGREATER x = expression
-    {      ( { p_cond = sc; p_body = x } )}
+    {( { p_cond = sc; p_body = x } )}
 
 match_handlers_block_of_equation_:
   m = match_handler_block_of_equation_
-    {      ( [m ] )}
+    {( [m ] )}
 | mh = match_handlers_block_of_equation_ _2 = BAR m = match_handler_block_of_equation_
-    {      ( m :: mh )}
+    {( m :: mh )}
 
 match_handlers_expression_:
   m = match_handler_expression_
-    {      ( [m ] )}
+    {( [m ] )}
 | mh = match_handlers_expression_ _2 = BAR m = match_handler_expression_
-    {      ( m :: mh )}
+    {( m :: mh )}
 
 match_handler_block_of_equation_:
   p = pattern _2 = MINUSGREATER x = block_of_equation
-    {      ( { m_pat = p; m_body = x } )}
+    {( { m_pat = p; m_body = x } )}
 
 match_handler_expression_:
   p = pattern _2 = MINUSGREATER x = expression
-    {      ( { m_pat = p; m_body = x } )}
+    {( { m_pat = p; m_body = x } )}
 
 pattern:
   p = simple_pattern
-    {      ( p )}
+    {( p )}
 | p = pattern _2 = AS i = IDENT
     {let _endpos = _endpos_i_ in
 let _startpos = _startpos_p_ in
-      ( make (Ealiaspat(p, i)) _startpos _endpos )}
+( make (Ealiaspat(p, i)) _startpos _endpos )}
 | p1 = pattern _2 = BAR p2 = pattern
     {let _endpos = _endpos_p2_ in
 let _startpos = _startpos_p1_ in
-      ( make (Eorpat(p1, p2)) _startpos _endpos )}
+( make (Eorpat(p1, p2)) _startpos _endpos )}
 | p = pattern_comma_list %prec prec_list
     {let _endpos = _endpos_p_ in
 let _startpos = _startpos_p_ in
-      ( make (Etuplepat(List.rev p)) _startpos _endpos )}
+( make (Etuplepat(List.rev p)) _startpos _endpos )}
 
 simple_pattern:
   a = atomic_constant
     {let _endpos = _endpos_a_ in
 let _startpos = _startpos_a_ in
-      ( make (Econstpat a) _startpos _endpos )}
+( make (Econstpat a) _startpos _endpos )}
 | _1 = SUBTRACTIVE i = INT
     {let _endpos = _endpos_i_ in
 let _startpos = _startpos__1_ in
-      ( make (Econstpat(Eint(unary_minus_int i))) _startpos _endpos )}
+( make (Econstpat(Eint(unary_minus_int i))) _startpos _endpos )}
 | _1 = SUBTRACTIVE f = FLOAT
     {let _endpos = _endpos_f_ in
 let _startpos = _startpos__1_ in
-      ( make (Econstpat(Efloat(unary_minus_float f))) _startpos _endpos )}
+( make (Econstpat(Efloat(unary_minus_float f))) _startpos _endpos )}
 | c = constructor
     {let _endpos = _endpos_c_ in
 let _startpos = _startpos_c_ in
-      ( make (Econstr0pat(c)) _startpos _endpos )}
+( make (Econstr0pat(c)) _startpos _endpos )}
 | i = ide
     {let _endpos = _endpos_i_ in
 let _startpos = _startpos_i_ in
-      ( make (Evarpat i) _startpos _endpos )}
+( make (Evarpat i) _startpos _endpos )}
 | _1 = LPAREN p = pattern _3 = RPAREN
-    {      ( p )}
+    {( p )}
 | _1 = LPAREN p = pattern_comma_list _3 = RPAREN
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-      ( make (Etuplepat (List.rev p)) _startpos _endpos )}
+( make (Etuplepat (List.rev p)) _startpos _endpos )}
 | _1 = LPAREN _2 = RPAREN
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-      ( make (Econstpat(Evoid)) _startpos _endpos )}
+( make (Econstpat(Evoid)) _startpos _endpos )}
 | _1 = UNDERSCORE
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-      ( make Ewildpat _startpos _endpos )}
+( make Ewildpat _startpos _endpos )}
 | _1 = LPAREN p = pattern _3 = COLON t = type_expression _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-      ( make (Etypeconstraintpat(p, t)) _startpos _endpos )}
+( make (Etypeconstraintpat(p, t)) _startpos _endpos )}
 | _1 = LBRACE p = pattern_label_list _3 = RBRACE
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-      ( make (Erecordpat(p)) _startpos _endpos )}
+( make (Erecordpat(p)) _startpos _endpos )}
 
 pattern_comma_list:
   p1 = pattern _2 = COMMA p2 = pattern
-    {      ( [p2; p1] )}
+    {( [p2; p1] )}
 | pc = pattern_comma_list _2 = COMMA p = pattern
-    {      ( p :: pc )}
+    {( p :: pc )}
 
 pattern_label_list:
   p = pattern_label _2 = SEMI pl = pattern_label_list
-    {      ( p :: pl )}
+    {( p :: pl )}
 | p = pattern_label
-    {      ( [p] )}
+    {( [p] )}
 | _1 = UNDERSCORE
-    {      ( [] )}
+    {( [] )}
 | 
-    {      ( [] )}
+    {( [] )}
 
 pattern_label:
   ei = ext_ident _2 = EQUAL p = pattern
-    {      ( (ei, p) )}
+    {( (ei, p) )}
 
 seq_expression:
   e = expression _2 = SEMI seq = seq_expression
     {let _endpos = _endpos_seq_ in
 let _startpos = _startpos_e_ in
-      ( make (Eseq(e, seq)) _startpos _endpos )}
+( make (Eseq(e, seq)) _startpos _endpos )}
 | e = expression %prec prec_seq
-    {      ( e )}
+    {( e )}
 
 simple_expression:
   desc = simple_expression_desc
     {let _endpos = _endpos_desc_ in
 let _startpos = _startpos_desc_ in
-      ( make desc _startpos _endpos )}
+( make desc _startpos _endpos )}
 
 simple_expression_desc:
   c = constructor
-    {      ( Econstr0(c) )}
+    {( Econstr0(c) )}
 | i = ext_ident
-    {      ( Evar i )}
+    {( Evar i )}
 | a = atomic_constant
-    {      ( Econst a )}
+    {( Econst a )}
 | _1 = LBRACE l = label_expression_list _3 = RBRACE
-    {      ( Erecord(l) )}
+    {( Erecord(l) )}
 | _1 = LPAREN _2 = RPAREN
-    {      ( Econst Evoid )}
+    {( Econst Evoid )}
 | _1 = LPAREN e = expression_comma_list _3 = RPAREN
-    {      ( Etuple (List.rev e) )}
+    {( Etuple (List.rev e) )}
 | _1 = LPAREN e = seq_expression _3 = RPAREN
-    {      ( e.desc )}
+    {( e.desc )}
 | _1 = LPAREN e = simple_expression _3 = COLON t = type_expression _5 = RPAREN
-    {      ( Etypeconstraint(e, t) )}
+    {( Etypeconstraint(e, t) )}
 
 expression_comma_list:
   ecl = expression_comma_list _2 = COMMA e = expression
-    {      ( e :: ecl )}
+    {( e :: ecl )}
 | e1 = expression _2 = COMMA e2 = expression
-    {      ( [e2; e1] )}
+    {( [e2; e1] )}
 
 expression:
   x = localized_expression_desc_
-    {    ( x )}
+    {( x )}
 
 expression_desc:
   e = simple_expression_desc
-    {      ( e )}
+    {( e )}
 | e = expression_comma_list %prec prec_list
-    {      ( Etuple(List.rev e) )}
+    {( Etuple(List.rev e) )}
 | e1 = expression _2 = FBY e2 = expression
-    {      ( Eapp(Efby, [e1; e2]) )}
+    {( Eapp(Efby, [e1; e2]) )}
 | _1 = PRE e = expression
-    {      ( Eapp(Eunarypre, [e]) )}
+    {( Eapp(Eunarypre, [e]) )}
 | _1 = INIT
-    {      ( Eapp(Einitial, []) )}
+    {( Eapp(Einitial, []) )}
 | _1 = UP e = expression
-    {      ( Eapp(Eup, [e]) )}
+    {( Eapp(Eup, [e]) )}
 | _1 = TEST e = expression
-    {      (  Eapp(Etest, [e]) )}
+    {(  Eapp(Etest, [e]) )}
 | _1 = DISC e = expression
-    {      (  Eapp(Edisc, [e]) )}
+    {(  Eapp(Edisc, [e]) )}
 | i = ext_ident e = simple_expression
-    {      (  Eapp(Eop(false, i), arg e) )}
+    {(  Eapp(Eop(false, i), arg e) )}
 | _1 = INLINE i = ext_ident e = simple_expression
-    {      (  Eapp(Eop(true, i), arg e) )}
+    {(  Eapp(Eop(true, i), arg e) )}
 | s = SUBTRACTIVE e = expression %prec prec_uminus
-    {      ( unary_minus s e )}
+    {( unary_minus s e )}
 | e1 = expression i = INFIX4 e2 = expression
-    {      ( binop i e1 e2 )}
+    {( binop i e1 e2 )}
 | e1 = expression i = INFIX3 e2 = expression
-    {      ( binop i e1 e2 )}
+    {( binop i e1 e2 )}
 | e1 = expression i = INFIX2 e2 = expression
-    {      ( binop i e1 e2 )}
+    {( binop i e1 e2 )}
 | e1 = expression i = INFIX1 e2 = expression
-    {      ( binop i e1 e2 )}
+    {( binop i e1 e2 )}
 | e1 = expression i = INFIX0 e2 = expression
-    {      ( binop i e1 e2 )}
+    {( binop i e1 e2 )}
 | e1 = expression _2 = EQUAL e2 = expression
-    {      ( binop "=" e1 e2 )}
+    {( binop "=" e1 e2 )}
 | e1 = expression _2 = OR e2 = expression
-    {      ( binop "or" e1 e2 )}
+    {( binop "or" e1 e2 )}
 | e1 = expression _2 = STAR e2 = expression
-    {      ( binop "*" e1 e2 )}
+    {( binop "*" e1 e2 )}
 | e1 = expression _2 = AMPERSAND e2 = expression
-    {      ( binop "&" e1 e2 )}
+    {( binop "&" e1 e2 )}
 | e1 = expression s = SUBTRACTIVE e2 = expression
-    {      ( binop s e1 e2 )}
+    {( binop s e1 e2 )}
 | e1 = expression _2 = AMPERAMPER e2 = expression
-    {      ( binop "&&" e1 e2 )}
+    {( binop "&&" e1 e2 )}
 | e1 = expression _2 = BARBAR e2 = expression
-    {      ( binop "||" e1 e2 )}
+    {( binop "||" e1 e2 )}
 | p = PREFIX e = expression
-    {      ( unop p e )}
+    {( unop p e )}
 | _1 = IF e1 = seq_expression _3 = THEN e2 = seq_expression _5 = ELSE e3 = expression
-    {      ( Eapp(Eifthenelse, [e1; e2; e3]) )}
+    {( Eapp(Eifthenelse, [e1; e2; e3]) )}
 | e1 = expression _2 = MINUSGREATER e2 = expression
-    {      ( Eapp(Eminusgreater, [e1; e2]) )}
+    {( Eapp(Eminusgreater, [e1; e2]) )}
 | e = expression _2 = AFTER n = IDENT
-    {      ( Eapp(Eafter([n]), [e]) )}
+    {( Eapp(Eafter([n]), [e]) )}
 | e = expression _2 = AFTER _3 = LPAREN n_list = list_of_COMMA_IDENT_ _5 = RPAREN
-    {      ( Eapp(Eafter(n_list), [e]) )}
+    {( Eapp(Eafter(n_list), [e]) )}
 | _1 = LAST i = ide
-    {      ( Elast(i) )}
+    {( Elast(i) )}
 | e = expression _2 = DOT i = ext_ident
-    {      ( Erecord_access(e, i) )}
+    {( Erecord_access(e, i) )}
 | _1 = LET l = list_of_AND_localized_equation_desc__ _3 = IN e = seq_expression
-    {let defs =                                                ( l ) in
-      ( Elet(false, List.rev defs, e) )}
+    {let defs = ( l ) in
+( Elet(false, List.rev defs, e) )}
 | _1 = LET _2 = REC l = list_of_AND_localized_equation_desc__ _4 = IN e = seq_expression
-    {let defs =                                                ( l ) in
-      ( Elet(true, List.rev defs, e) )}
+    {let defs = ( l ) in
+( Elet(true, List.rev defs, e) )}
 | _1 = PERIOD p = period_expression
-    {      ( Eperiod(p) )}
+    {( Eperiod(p) )}
 | _1 = AUTOMATON _2 = opt_bar a = automaton_handlers_expression_
-    {      ( Eautomaton(List.rev a, None) )}
+    {( Eautomaton(List.rev a, None) )}
 | _1 = AUTOMATON _2 = opt_bar a = automaton_handlers_expression_ _4 = INIT s = state
-    {      ( Eautomaton(List.rev a, Some(s)) )}
+    {( Eautomaton(List.rev a, Some(s)) )}
 | _1 = MATCH e = seq_expression _3 = WITH _4 = opt_bar m = match_handlers_expression_ _6 = opt_end
-    {      ( Ematch(e, List.rev m) )}
+    {( Ematch(e, List.rev m) )}
 | _1 = PRESENT _2 = opt_bar pe = present_handlers_expression_ _4 = opt_end
-    {      ( Epresent(List.rev pe, None) )}
+    {( Epresent(List.rev pe, None) )}
 | _1 = PRESENT _2 = opt_bar pe = present_handlers_expression_ _4 = INIT e = expression
-    {      ( Epresent(List.rev pe, Some(Init(e))) )}
+    {( Epresent(List.rev pe, Some(Init(e))) )}
 | _1 = PRESENT _2 = opt_bar pe = present_handlers_expression_ _4 = ELSE e = expression _6 = opt_end
-    {      ( Epresent(List.rev pe, Some(Default(e))) )}
+    {( Epresent(List.rev pe, Some(Default(e))) )}
 | _1 = RESET e = seq_expression _3 = EVERY r = expression
-    {      ( Ereset(e, r) )}
+    {( Ereset(e, r) )}
 | lo = local_list _2 = DO l = list_of_AND_localized_equation_desc__ _4 = IN r = expression
-    {let eqs =                                                ( l ) in
+    {let eqs = ( l ) in
 let _endpos = _endpos_r_ in
 let _startpos = _startpos_lo_ in
-      ( Eblock(make { b_locals = []; b_vars = lo; b_body = eqs }
+( Eblock(make { b_locals = []; b_vars = lo; b_body = eqs }
 	       _startpos _endpos, r) )}
 
 period_expression:
   phase = phase _2 = LPAREN period = period _4 = RPAREN
-    {      ( { p_phase = phase; p_period = period } )}
+    {( { p_phase = phase; p_period = period } )}
 
 phase:
   
-    {      ( None )}
+    {( None )}
 | f = FLOAT
-    {      ( Some(f) )}
+    {( Some(f) )}
 
 period:
   f = FLOAT
-    {      ( f )}
+    {( f )}
 
 constructor:
   c = CONSTRUCTOR %prec prec_ident
-    {      ( Name(c) )}
+    {( Name(c) )}
 | c1 = CONSTRUCTOR _2 = DOT c2 = CONSTRUCTOR
-    {      ( Modname({qual = c1; id = c2}) )}
+    {( Modname({qual = c1; id = c2}) )}
 
 qual_ident:
   c = CONSTRUCTOR _2 = DOT i = ide
-    {      ( {qual = c; id = i} )}
+    {( {qual = c; id = i} )}
 
 atomic_constant:
   i = INT
-    {      ( Eint(i) )}
+    {( Eint(i) )}
 | f = FLOAT
-    {      ( Efloat(f) )}
+    {( Efloat(f) )}
 | s = STRING
-    {      ( Estring s )}
+    {( Estring s )}
 | c = CHAR
-    {      ( Echar c )}
+    {( Echar c )}
 | b = BOOL
-    {      ( Ebool b )}
+    {( Ebool b )}
 
 label_expression_list:
   l = label_expression
-    {      ( [l] )}
+    {( [l] )}
 | l = label_expression _2 = SEMI
-    {      ( [l] )}
+    {( [l] )}
 | l = label_expression _2 = SEMI ll = label_expression_list
-    {      ( l :: ll )}
+    {( l :: ll )}
 
 label_expression:
   i = ext_ident _2 = EQUAL e = expression
-    {      ( (i, e) )}
+    {( (i, e) )}
 
 ide:
   i = IDENT
-    {      ( i )}
+    {( i )}
 | _1 = LPAREN i = infx _3 = RPAREN
-    {      ( i )}
+    {( i )}
 
 ext_ident:
   q = qual_ident
-    {      ( Modname(q) )}
+    {( Modname(q) )}
 | i = ide
-    {      ( Name(i) )}
+    {( Name(i) )}
 
 infx:
   _1 = INFIX0
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = INFIX1
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = INFIX2
-    {                                              ( _1 )}
+    {( _1 )}
 | _1 = INFIX3
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = INFIX4
-    {                                              ( _1 )}
+    {( _1 )}
 | _1 = STAR
-    {                    ( "*" )}
+    {( "*" )}
 | _1 = EQUAL
-    {                    ( "=" )}
+    {( "=" )}
 | _1 = EQUALEQUAL
-    {                    ( "==" )}
+    {( "==" )}
 | _1 = SUBTRACTIVE
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = PREFIX
-    {                                              ( _1 )}
+    {( _1 )}
 | _1 = AMPERSAND
-    {                    ( "&" )}
+    {( "&" )}
 | _1 = AMPERAMPER
-    {                                              ( "&&" )}
+    {( "&&" )}
 | _1 = OR
-    {                    ( "or" )}
+    {( "or" )}
 | _1 = BARBAR
-    {                                              ( "||" )}
+    {( "||" )}
 | _1 = ON
-    {                    ( "on" )}
+    {( "on" )}
 
 arrow:
   _1 = MINUSGREATER
-    {      ( A )}
+    {( A )}
 | _1 = AFUN
-    {      ( A )}
+    {( A )}
 | _1 = ADFUN
-    {      ( AD )}
+    {( AD )}
 | _1 = DFUN
-    {      ( D )}
+    {( D )}
 | _1 = CFUN
-    {      ( C )}
+    {( C )}
 
 type_expression:
   t = simple_type_desc
     {let _endpos = _endpos_t_ in
 let _startpos = _startpos_t_ in
-      ( make t _startpos _endpos)}
+( make t _startpos _endpos)}
 | tl = type_star_list
     {let _endpos = _endpos_tl_ in
 let _startpos = _startpos_tl_ in
-      ( make(Etypetuple(List.rev tl)) _startpos _endpos)}
+( make(Etypetuple(List.rev tl)) _startpos _endpos)}
 
 simple_type:
   desc = simple_type_desc
     {let _endpos = _endpos_desc_ in
 let _startpos = _startpos_desc_ in
-      ( make desc _startpos _endpos )}
+( make desc _startpos _endpos )}
 
 simple_type_desc:
   t = type_var
-    {      ( Etypevar t )}
+    {( Etypevar t )}
 | i = ext_ident
-    {      ( Etypeconstr(i, []) )}
+    {( Etypeconstr(i, []) )}
 | t = simple_type i = ext_ident
-    {      ( Etypeconstr(i, [t]) )}
+    {( Etypeconstr(i, [t]) )}
 | _1 = LPAREN t = type_expression _3 = COMMA tl = type_comma_list _5 = RPAREN i = ext_ident
-    {      ( Etypeconstr(i, t :: tl) )}
+    {( Etypeconstr(i, t :: tl) )}
 | _1 = LPAREN t = type_expression _3 = RPAREN
-    {      ( t.desc )}
+    {( t.desc )}
 
 type_star_list:
   t1 = simple_type _2 = STAR t2 = simple_type
-    {      ( [t2; t1] )}
+    {( [t2; t1] )}
 | tsl = type_star_list _2 = STAR t = simple_type
-    {      ( t :: tsl )}
+    {( t :: tsl )}
 
 type_var:
   _1 = QUOTE i = IDENT
-    {      ( i )}
+    {( i )}
 
 type_comma_list:
   te = type_expression _2 = COMMA tl = type_comma_list
-    {      ( te :: tl )}
+    {( te :: tl )}
 | te = type_expression
-    {      ( [te] )}
+    {( [te] )}
 
 kind:
   _1 = NODE
-    {      ( D )}
+    {( D )}
 | _1 = HYBRID
-    {      ( C )}
+    {( C )}
 | _1 = DISCRETE
-    {      ( AD )}
+    {( AD )}
 | _1 = FUN
-    {      ( A )}
+    {( A )}
 
 %%

@@ -50,177 +50,177 @@
 
 loption_separated_nonempty_list_COMMA_ID__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_ID_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_ID_]
 | x = separated_nonempty_list_COMMA_ID_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_ID_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_ID_]
 
 loption_separated_nonempty_list_COMMA_argument__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_argument_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_argument_]
 | x = separated_nonempty_list_COMMA_argument_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_argument_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_argument_]
 
 loption_separated_nonempty_list_COMMA_exp__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_exp_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_exp_]
 | x = separated_nonempty_list_COMMA_exp_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_exp_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_exp_]
 
 list_statement_:
   
-    {    ( [] )} [@name nil_statement]
+    {( [] )} [@name nil_statement]
 | x = statement xs = list_statement_
-    {    ( x :: xs )} [@name cons_statement]
+    {( x :: xs )} [@name cons_statement]
 
 list_uop_or_barrier_:
   
-    {    ( [] )} [@name nil_uop_or_barrier]
+    {( [] )} [@name nil_uop_or_barrier]
 | x = uop_or_barrier xs = list_uop_or_barrier_
-    {    ( x :: xs )} [@name cons_uop_or_barrier]
+    {( x :: xs )} [@name cons_uop_or_barrier]
 
 separated_nonempty_list_COMMA_ID_:
   x = ID
-    {    ( [ x ] )} [@name one_COMMA_ID]
+    {( [ x ] )} [@name one_COMMA_ID]
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )} [@name more_COMMA_ID]
+    {( x :: xs )} [@name more_COMMA_ID]
 
 separated_nonempty_list_COMMA_argument_:
   x = argument
-    {    ( [ x ] )} [@name one_COMMA_argument]
+    {( [ x ] )} [@name one_COMMA_argument]
 | x = argument _2 = COMMA xs = separated_nonempty_list_COMMA_argument_
-    {    ( x :: xs )} [@name more_COMMA_argument]
+    {( x :: xs )} [@name more_COMMA_argument]
 
 separated_nonempty_list_COMMA_exp_:
   x = exp
-    {    ( [ x ] )} [@name one_COMMA_exp]
+    {( [ x ] )} [@name one_COMMA_exp]
 | x = exp _2 = COMMA xs = separated_nonempty_list_COMMA_exp_
-    {    ( x :: xs )} [@name more_COMMA_exp]
+    {( x :: xs )} [@name more_COMMA_exp]
 
 mainprogram:
   _1 = OPENQASM _2 = REAL _3 = SEMICOLON p = program _5 = EOF
-    {                                               ( p )}
+    {( p )}
 
 program:
   sl = list_statement_
-    {                         ( sl )}
+    {( sl )}
 
 statement:
   _1 = INCLUDE inc = STRING _3 = SEMICOLON
-    {                                                                ( Include(inc) )}
+    {( Include(inc) )}
 | d = decl
-    {                                                                ( Decl(d) )}
+    {( Decl(d) )}
 | gd = gatedecl _2 = LBRACE gl = goplist _4 = RBRACE
-    {                                                                ( GateDecl(gd, gl) )}
+    {( GateDecl(gd, gl) )}
 | _1 = OPAQUE name = ID qargs = idlist _4 = SEMICOLON
-    {                                                                ( OpaqueDecl(name, [], qargs) )}
+    {( OpaqueDecl(name, [], qargs) )}
 | _1 = OPAQUE name = ID _3 = LPAREN params = idlist _5 = RPAREN qargs = idlist _7 = SEMICOLON
-    {                                                                ( OpaqueDecl(name, params, qargs) )}
+    {( OpaqueDecl(name, params, qargs) )}
 | q = qop
-    {                                                                ( Qop(q) )}
+    {( Qop(q) )}
 | _1 = IF _2 = LPAREN creg = ID _4 = EQUALS n = NINT _6 = RPAREN q = qop
-    {                                                                ( If(creg, n, q) )}
+    {( If(creg, n, q) )}
 | _1 = BARRIER qargs = anylist _3 = SEMICOLON
-    {                                                                ( Barrier(qargs) )}
+    {( Barrier(qargs) )}
 
 decl:
   _1 = QREG name = ID _3 = LBRACKET size = NINT _5 = RBRACKET _6 = SEMICOLON
-    {                                           ( QReg(name, size) )}
+    {( QReg(name, size) )}
 | _1 = CREG name = ID _3 = LBRACKET size = NINT _5 = RBRACKET _6 = SEMICOLON
-    {                                           ( CReg(name, size) )}
+    {( CReg(name, size) )}
 
 gatedecl:
   _1 = GATE name = ID qargs = idlist
-    {                                                          ( (name, [], qargs) )}
+    {( (name, [], qargs) )}
 | _1 = GATE name = ID _3 = LPAREN params = idlist _5 = RPAREN qargs = idlist
-    {                                                          ( (name, params, qargs) )}
+    {( (name, params, qargs) )}
 
 goplist:
   body = list_uop_or_barrier_
-    {                                ( body )}
+    {( body )}
 
 uop_or_barrier:
   u = uop
-    {                              ( GUop(u) )}
+    {( GUop(u) )}
 | _1 = BARRIER qargs = idlist _3 = SEMICOLON
-    {                              ( GBarrier(qargs) )}
+    {( GBarrier(qargs) )}
 
 qop:
   u = uop
-    {                                                      ( Uop(u) )}
+    {( Uop(u) )}
 | _1 = MEASURE qarg = argument _3 = ARROW carg = argument _5 = SEMICOLON
-    {                                                      ( Meas(qarg, carg) )}
+    {( Meas(qarg, carg) )}
 | _1 = RESET qarg = argument _3 = SEMICOLON
-    {                                                      ( Reset(qarg) )}
+    {( Reset(qarg) )}
 
 uop:
   _1 = CX q1 = argument _3 = COMMA q2 = argument _5 = SEMICOLON
-    {                                                            ( CX(q1, q2) )}
+    {( CX(q1, q2) )}
 | _1 = U _2 = LPAREN params = explist _4 = RPAREN q = argument _6 = SEMICOLON
-    {                                                            ( U(params, q) )}
+    {( U(params, q) )}
 | gname = ID qargs = anylist _3 = SEMICOLON
-    {                                                            ( Gate(gname, [], qargs) )}
+    {( Gate(gname, [], qargs) )}
 | gname = ID _2 = LPAREN params = explist _4 = RPAREN qargs = anylist _6 = SEMICOLON
-    {                                                            ( Gate(gname, params, qargs) )}
+    {( Gate(gname, params, qargs) )}
 
 anylist:
   xs = loption_separated_nonempty_list_COMMA_argument__
-    {let al =     ( xs ) in
-                                            ( al )}
+    {let al = ( xs ) in
+( al )}
 
 idlist:
   xs = loption_separated_nonempty_list_COMMA_ID__
-    {let il =     ( xs ) in
-                                     ( il )}
+    {let il = ( xs ) in
+( il )}
 
 argument:
   name = ID
-    {                                  ( (name, None) )}
+    {( (name, None) )}
 | name = ID _2 = LBRACKET idx = NINT _4 = RBRACKET
-    {                                  ( (name, Some idx) )}
+    {( (name, Some idx) )}
 
 explist:
   xs = loption_separated_nonempty_list_COMMA_exp__
-    {let el =     ( xs ) in
-                                       ( el )}
+    {let el = ( xs ) in
+( el )}
 
 exp:
   r = REAL
-    {                                  ( Real(r) )}
+    {( Real(r) )}
 | n = NINT
-    {                                  ( Nninteger(n) )}
+    {( Nninteger(n) )}
 | _1 = PI
-    {                                  ( Pi )}
+    {( Pi )}
 | id = ID
-    {                                  ( Id(id) )}
+    {( Id(id) )}
 | e1 = exp _2 = PLUS e2 = exp
-    {                                  ( BinaryOp(Plus, e1, e2) )}
+    {( BinaryOp(Plus, e1, e2) )}
 | e1 = exp _2 = MINUS e2 = exp
-    {                                  ( BinaryOp(Minus, e1, e2) )}
+    {( BinaryOp(Minus, e1, e2) )}
 | e1 = exp _2 = TIMES e2 = exp
-    {                                  ( BinaryOp(Times, e1, e2) )}
+    {( BinaryOp(Times, e1, e2) )}
 | e1 = exp _2 = DIV e2 = exp
-    {                                  ( BinaryOp(Div, e1, e2) )}
+    {( BinaryOp(Div, e1, e2) )}
 | _1 = MINUS e = exp %prec UMINUS
-    {                                  ( UnaryOp(UMinus, e) )}
+    {( UnaryOp(UMinus, e) )}
 | e1 = exp _2 = POW e2 = exp
-    {                                  ( BinaryOp(Pow, e1, e2) )}
+    {( BinaryOp(Pow, e1, e2) )}
 | _1 = LPAREN e = exp _3 = RPAREN
-    {                                  ( e )}
+    {( e )}
 | uo = unaryop _2 = LPAREN e = exp _4 = RPAREN
-    {                                  ( UnaryOp(uo, e) )}
+    {( UnaryOp(uo, e) )}
 
 unaryop:
   _1 = SIN
-    {          ( Sin )}
+    {( Sin )}
 | _1 = COS
-    {          ( Cos )}
+    {( Cos )}
 | _1 = TAN
-    {          ( Tan )}
+    {( Tan )}
 | _1 = EXP
-    {          ( Exp )}
+    {( Exp )}
 | _1 = LN
-    {          ( Ln )}
+    {( Ln )}
 | _1 = SQRT
-    {          ( Sqrt )}
+    {( Sqrt )}
 
 %%

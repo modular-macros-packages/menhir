@@ -80,202 +80,202 @@ let mk_sym s = Constant.Symbolic (s,0)
 
 main:
   _1 = semi_opt _2 = proc_list _3 = iol_list _4 = scopes_and_memory_map _5 = EOF
-    {   ( _2,_3, MiscParser.BellExtra _4 )}
+    {( _2,_3, MiscParser.BellExtra _4 )}
 
 semi_opt:
   
-    {  ( () )}
+    {( () )}
 | _1 = SEMI
-    {       ( () )}
+    {( () )}
 
 proc_list:
   _1 = PROC _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = PROC _2 = PIPE _3 = proc_list
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 instr_option:
   
-    {             ( Nop )}
+    {( Nop )}
 | _1 = NAME _2 = COLON _3 = instr_option
-    {                          ( Label (_1,_3) )}
+    {( Label (_1,_3) )}
 | _1 = instr
-    {             ( Instruction _1)}
+    {( Instruction _1)}
 | _1 = CODEVAR
-    {             ( Symbolic _1 )}
+    {( Symbolic _1 )}
 
 instr_option_list:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = PIPE _3 = instr_option_list
-    {      (_1::_3)}
+    {(_1::_3)}
 
 instr_option_seq:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = SEMI _3 = instr_option_seq
-    {      (_1::_3)}
+    {(_1::_3)}
 
 iol_list:
   _1 = instr_option_list _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = instr_option_list _2 = SEMI _3 = iol_list
-    {                                   (_1::_3)}
+    {(_1::_3)}
 
 name:
   _1 = NAME
-    {       ( _1)}
+    {( _1)}
 | _1 = READ
-    {       ("r")}
+    {("r")}
 | _1 = WRITE
-    {        ("w")}
+    {("w")}
 | _1 = BRANCH
-    {         ("b")}
+    {("b")}
 | _1 = FENCE
-    {        ("f")}
+    {("f")}
 
 name_list_ne:
   _1 = name _2 = COMMA _3 = name_list_ne
-    {  (_1::_3)}
+    {(_1::_3)}
 | _1 = name
-    {  ([_1])}
+    {([_1])}
 
 name_list:
   _1 = name_list_ne
-    {               (_1)}
+    {(_1)}
 | 
-    {  ([])}
+    {([])}
 
 name_set:
   _1 = name_list
-    {            ( Label.Set.of_list _1)}
+    {( Label.Set.of_list _1)}
 
 annot_list_option:
   _1 = LBRAC _2 = name_list _3 = RBRAC
-    {                        (_2)}
+    {(_2)}
 | 
-    {  ([])}
+    {([])}
 
 reg:
   _1 = REG
-    {      ( _1)}
+    {( _1)}
 | _1 = SYMB_REG
-    {           ( _1 )}
+    {( _1 )}
 
 reg_or_addr:
   _1 = reg
-    {       (Rega _1)}
+    {(Rega _1)}
 | _1 = name
-    {       ( Abs (mk_sym _1))}
+    {( Abs (mk_sym _1))}
 
 k:
   _1 = NUM
-    {      ( MetaConst.Int _1 )}
+    {( MetaConst.Int _1 )}
 | _1 = META
-    {       ( MetaConst.Meta _1 )}
+    {( MetaConst.Meta _1 )}
 
 reg_or_imm:
   _1 = reg
-    {      (Regi _1)}
+    {(Regi _1)}
 | _1 = k
-    {      ( Imm _1)}
+    {( Imm _1)}
 
 any_value:
   _1 = reg_or_addr
-    {              ( IAR_roa _1 )}
+    {( IAR_roa _1 )}
 | _1 = k
-    {    ( IAR_imm _1)}
+    {( IAR_imm _1)}
 
 addr_op:
   _1 = reg_or_addr
-    {              (BellBase.Addr_op_atom(_1))}
+    {(BellBase.Addr_op_atom(_1))}
 | _1 = reg_or_addr _2 = PLUS _3 = reg_or_imm
-    {                              ( BellBase.Addr_op_add(_1,_3) )}
+    {( BellBase.Addr_op_add(_1,_3) )}
 
 operation:
   _1 = any_value
-    {  ( RAI(_1) )}
+    {( RAI(_1) )}
 | _1 = LPAR _2 = ADD _3 = any_value _4 = any_value _5 = RPAR
-    { ( OP (Add,_3,_4) )}
+    {( OP (Add,_3,_4) )}
 | _1 = LPAR _2 = XOR _3 = any_value _4 = any_value _5 = RPAR
-    { ( OP (Xor,_3,_4) )}
+    {( OP (Xor,_3,_4) )}
 | _1 = LPAR _2 = AND _3 = any_value _4 = any_value _5 = RPAR
-    { ( OP (And,_3,_4) )}
+    {( OP (And,_3,_4) )}
 | _1 = LPAR _2 = EQ _3 = any_value _4 = any_value _5 = RPAR
-    {  ( OP (Eq,_3,_4) )}
+    {( OP (Eq,_3,_4) )}
 | _1 = LPAR _2 = NEQ _3 = any_value _4 = any_value _5 = RPAR
-    {  ( OP (Neq,_3,_4) )}
+    {( OP (Neq,_3,_4) )}
 
 fence_labels_option:
   
-    {  ( None )}
+    {( None )}
 | _1 = LBRACE _2 = name_set _3 = RBRACE _4 = LBRACE _5 = name_set _6 = RBRACE
-    {                                                (Some(_2,_5))}
+    {(Some(_2,_5))}
 
 instr:
   _1 = READ _2 = annot_list_option _3 = reg _4 = addr_op
-    {  ( Pld(_3,_4,_2) )}
+    {( Pld(_3,_4,_2) )}
 | _1 = WRITE _2 = annot_list_option _3 = addr_op _4 = reg_or_imm
-    {  ( Pst(_3,_4,_2) )}
+    {( Pst(_3,_4,_2) )}
 | _1 = FENCE _2 = annot_list_option _3 = fence_labels_option
-    { ( Pfence(Fence (_2,_3)) )}
+    {( Pfence(Fence (_2,_3)) )}
 | _1 = CALL _2 = LBRAC _3 = name _4 = RBRAC
-    {  ( Pcall _3 )}
+    {( Pcall _3 )}
 | _1 = RMW _2 = annot_list_option _3 = reg _4 = operation _5 = addr_op
-    {  ( Prmw(_3,_4,_5,_2))}
+    {( Prmw(_3,_4,_5,_2))}
 | _1 = BRANCH _2 = annot_list_option _3 = reg _4 = NAME
-    {  ( Pbranch (Some _3,_4,_2) )}
+    {( Pbranch (Some _3,_4,_2) )}
 | _1 = BRANCH _2 = annot_list_option _3 = NAME
-    {  ( Pbranch (None,_3,_2) )}
+    {( Pbranch (None,_3,_2) )}
 | _1 = MOV _2 = reg _3 = operation
-    {  ( Pmov (_2,_3) )}
+    {( Pmov (_2,_3) )}
 
 proc:
   _1 = PROC
-    {        ( _1 )}
+    {( _1 )}
 | _1 = NUM
-    {       ( _1 )}
+    {( _1 )}
 
 proc_list_sc:
   _1 = proc _2 = proc_list_sc
-    {                    (_1::_2)}
+    {(_1::_2)}
 | 
-    {  ([])}
+    {([])}
 
 scope_tree_list:
   _1 = scope_tree
-    {             ([_1])}
+    {([_1])}
 | _1 = scope_tree _2 = scope_tree_list
-    {                             (_1::_2)}
+    {(_1::_2)}
 
 scope_tree:
   _1 = LPAR _2 = NAME _3 = scope_tree_list _4 = RPAR
-    {   (
+    {(
    BellInfo.Children(_2,_3)
    )}
 | _1 = LPAR _2 = NAME _3 = proc_list_sc _4 = RPAR
-    {   (
+    {(
    BellInfo.Leaf(_2,_3)
    )}
 
 top_scope_tree:
   _1 = scope_tree_list
-    {    ( let ts = _1 in
+    {( let ts = _1 in
       match ts with
       | [t] -> t
       | _ -> BellInfo.Children ("",ts) )}
 
 scope_option:
   _1 = SCOPES _2 = COLON _3 = top_scope_tree
-    {                              (Some _3)}
+    {(Some _3)}
 | 
-    {  (None)}
+    {(None)}
 
 memory_map_option:
   _1 = REGIONS _2 = COLON _3 = memory_map
-    {                           (Some _3)}
+    {(Some _3)}
 | 
-    {  (None)}
+    {(None)}
 
 memory_map_atom:
   _1 = NAME _2 = COLON _3 = NAME
@@ -283,11 +283,11 @@ memory_map_atom:
 
 memory_map:
   _1 = memory_map_atom _2 = COMMA _3 = memory_map
-    {                                    (_1::_3)}
+    {(_1::_3)}
 | _1 = memory_map_atom
-    {                   ([_1])}
+    {([_1])}
 | 
-    {   ([]
+    {([]
     (*jade: todo memory map*)
    )}
 

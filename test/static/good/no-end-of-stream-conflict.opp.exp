@@ -10,14 +10,14 @@
 
 main:
   e = expr _2 = END
-    {    ( e )}
+    {( e )}
 
 expr:
   i = INT
-    {    ( i )}
+    {( i )}
 | e1 = expr _2 = PLUS e2 = expr
-    {    ( e1 + e2 )}
+    {( e1 + e2 )}
 | e1 = expr _2 = TIMES e2 = expr
-    {    ( e1 * e2 )}
+    {( e1 * e2 )}
 
 %%

@@ -13,22 +13,22 @@
 
 list_expr_:
   
-    {    ( [] )} [@name nil_expr]
+    {( [] )} [@name nil_expr]
 | x = expr xs = list_expr_
-    {    ( x :: xs )} [@name cons_expr]
+    {( x :: xs )} [@name cons_expr]
 
 main:
   es = list_expr_ _2 = EOL
-    {    ( es )}
+    {( es )}
 
 expr:
   i = INT
-    {    ( i )}
+    {( i )}
 | _1 = LPAREN e = expr _3 = RPAREN
-    {    ( e )}
+    {( e )}
 | e1 = expr _2 = PLUS e2 = expr
-    {    ( e1 + e2 )}
+    {( e1 + e2 )}
 | e1 = expr _2 = TIMES e2 = expr
-    {    ( e1 * e2 )}
+    {( e1 * e2 )}
 
 %%

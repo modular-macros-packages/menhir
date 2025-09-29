@@ -271,1934 +271,1934 @@ parse_unit:
   _1 = push_scope _2 = external_definitions _3 = pop_scope _4 = EOF
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TranslationUnit (List.rev _2) )}
+( decl (_startpos, _endpos) @@ TranslationUnit (List.rev _2) )}
 | _1 = EOF
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TranslationUnit ([]) )}
+( decl (_startpos, _endpos) @@ TranslationUnit ([]) )}
 
 parse_decl:
   _1 = push_scope _2 = declaration _3 = pop_scope _4 = EOF
-    {  ( _2 )}
+    {( _2 )}
 
 parse_expr:
   _1 = push_scope _2 = expression _3 = pop_scope _4 = EOF
-    {  ( _2 )}
+    {( _2 )}
 
 parse_stmt:
   _1 = push_scope _2 = statement _3 = pop_scope _4 = EOF
-    {  ( _2 )}
+    {( _2 )}
 
 parse_type:
   _1 = push_scope _2 = type_name _3 = pop_scope _4 = EOF
-    {  ( _2 )}
+    {( _2 )}
 
 test:
   _1 = parse_unit
-    {  ( true )}
+    {( true )}
 
 external_definitions:
   _1 = external_definition
-    {  ( if _1.d == EmptyDecl then [] else [_1] )}
+    {( if _1.d == EmptyDecl then [] else [_1] )}
 | _1 = external_definitions _2 = external_definition
-    {  ( if _2.d == EmptyDecl then _1 else _2 :: _1 )}
+    {( if _2.d == EmptyDecl then _1 else _2 :: _1 )}
 
 external_definition:
   _1 = list_attribute_ _2 = declaration
-    {  ( attr _1 _2 )}
+    {( attr _1 _2 )}
 | _1 = list_attribute_ _2 = default_toplevel_declaring_list _3 = TK_SEMICOLON
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( attr _1 (decl (_startpos, _endpos) @@ DeclaringList (List.rev _2)) )}
+( attr _1 (decl (_startpos, _endpos) @@ DeclaringList (List.rev _2)) )}
 | _1 = list_attribute_ _2 = function_definition
-    {  ( attr _1 _2 )}
+    {( attr _1 _2 )}
 | _1 = KW_ASM _2 = TK_LBRACK _3 = nonempty_list_TK_STRING_LITERAL_ _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ ToplevelAsm _3 )}
+( decl (_startpos, _endpos) @@ ToplevelAsm _3 )}
 | _1 = TK_SEMICOLON
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ EmptyDecl )}
+( decl (_startpos, _endpos) @@ EmptyDecl )}
 | _1 = TK_INCLUDE
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ PreprocessorDirective ("#include " ^ _1) )}
+( decl (_startpos, _endpos) @@ PreprocessorDirective ("#include " ^ _1) )}
 | _1 = KW_EXTENSION _2 = external_definition
-    {  ( _2 )}
+    {( _2 )}
 
 function_definition:
   _1 = function_declaration _2 = compound_statement
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( Decls.leave_function ();
+( Decls.leave_function ();
     decl (_startpos, _endpos) @@ FunctionDefinition (_1, _2) )}
 
 function_declaration:
   decl = old_function_declaration
-    {  ( Decls.enter_function decl; decl )}
+    {( Decls.enter_function decl; decl )}
 | decl = std_function_declaration
-    {  ( Decls.enter_function decl; decl )}
+    {( Decls.enter_function decl; decl )}
 
 std_function_declaration:
   _1 = default_int _2 = identifier_declarator
-    {  ( Decls.set_base_type _2 _1 )}
+    {( Decls.set_base_type _2 _1 )}
 | _1 = declaration_qualifier_list _2 = default_int _3 = identifier_declarator
-    {  ( Decls.set_base_type (Decls.merge_decls _1 _3) _2 )}
+    {( Decls.set_base_type (Decls.merge_decls _1 _3) _2 )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = identifier_declarator
-    {  ( Decls.set_base_type _3 (Types.add_tqual _2 _1) )}
+    {( Decls.set_base_type _3 (Types.add_tqual _2 _1) )}
 
 old_function_declaration:
   _1 = default_int _2 = old_function_declarator _3 = list_declaration_
-    {  ( Decls.add_parameter_types (Decls.set_base_type _2 _1) _3 )}
+    {( Decls.add_parameter_types (Decls.set_base_type _2 _1) _3 )}
 | _1 = declaration_specifier _2 = old_function_declarator _3 = list_declaration_
-    {  ( Decls.add_parameter_types (Decls.merge_decls _1 _2) _3 )}
+    {( Decls.add_parameter_types (Decls.merge_decls _1 _2) _3 )}
 | _1 = type_specifier _2 = old_function_declarator _3 = list_declaration_
-    {  ( Decls.add_parameter_types (Decls.set_base_type _2 _1) _3 )}
+    {( Decls.add_parameter_types (Decls.set_base_type _2 _1) _3 )}
 | _1 = declaration_qualifier_list _2 = default_int _3 = old_function_declarator _4 = list_declaration_
-    {  ( Decls.add_parameter_types (Decls.set_base_type (Decls.merge_decls _1 _3) _2) _4 )}
+    {( Decls.add_parameter_types (Decls.set_base_type (Decls.merge_decls _1 _3) _2) _4 )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = old_function_declarator _4 = list_declaration_
-    {  ( Decls.add_parameter_types (Decls.set_base_type _3 (Types.add_tqual _2 _1)) _4 )}
+    {( Decls.add_parameter_types (Decls.set_base_type _3 (Types.add_tqual _2 _1)) _4 )}
 
 old_function_declarator:
   _1 = postfix_old_function_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = old_function_declarator
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (Decls.set_base_type _3 (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType))) )}
+( attr _2 (Decls.set_base_type _3 (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType))) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_ _4 = old_function_declarator
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
+( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
 
 postfix_old_function_declarator:
   _1 = paren_identifier_declarator _2 = TK_LBRACK _3 = sep_TK_COMMA_simple_identifier_declarator_ _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, ctyp (_startpos, _endpos) @@ FunctionType (ctyp (_startpos, _endpos) @@ EmptyType, List.map (fun id -> Decls.set_base_type id default_int) _3), _1, Decls.empty, None) )}
+( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, ctyp (_startpos, _endpos) @@ FunctionType (ctyp (_startpos, _endpos) @@ EmptyType, List.map (fun id -> Decls.set_base_type id default_int) _3), _1, Decls.empty, None) )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = old_function_declarator _4 = TK_RBRACK
-    {  ( attr _2 _3 )}
+    {( attr _2 _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = old_function_declarator _4 = TK_RBRACK _5 = postfixing_abstract_declarator
-    {  ( attr _2 (Decls.set_base_type _3 _5) )}
+    {( attr _2 (Decls.set_base_type _3 _5) )}
 
 declaration:
   _1 = declaring_list _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
+( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
 | _1 = default_declaring_list _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
+( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
 | _1 = sue_declaration_specifier _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ DeclaringList [_1] )}
+( decl (_startpos, _endpos) @@ DeclaringList [_1] )}
 | _1 = sue_type_specifier _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ DeclaringList [abstract_decl _1] )}
+( decl (_startpos, _endpos) @@ DeclaringList [abstract_decl _1] )}
 | _1 = attr_function_declaration
-    {  ( _1 )}
+    {( _1 )}
 
 attr_function_declaration:
   _1 = attr_function_declarator _2 = compound_statement
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( Decls.leave_function ();
+( Decls.leave_function ();
     attr (fst _1) (decl (_startpos, _endpos) @@ FunctionDefinition (snd _1, _2)) )}
 
 attr_function_declarator:
   _1 = attr_function_declarator_
-    {  ( Decls.enter_function (snd _1); _1 )}
+    {( Decls.enter_function (snd _1); _1 )}
 
 attr_function_declarator_:
   _1 = declaration_specifier _2 = identifier_declarator
-    {  ( [], Decls.merge_decls _1 _2 )}
+    {( [], Decls.merge_decls _1 _2 )}
 | _1 = type_specifier _2 = identifier_declarator
-    {  ( [], Decls.set_base_type _2 _1 )}
+    {( [], Decls.set_base_type _2 _1 )}
 | _1 = declaration_specifier_nosue _2 = nonempty_list_attribute_ _3 = identifier_declarator
-    {  ( _2, Decls.merge_decls _1 _3 )}
+    {( _2, Decls.merge_decls _1 _3 )}
 | _1 = type_specifier_nosue _2 = nonempty_list_attribute_ _3 = identifier_declarator
-    {  ( _2, Decls.set_base_type _3 _1 )}
+    {( _2, Decls.set_base_type _3 _1 )}
 
 declaring_list:
   _1 = declaration_specifier _2 = declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
-    {  ( [attr _4 (Decls.finish_decl (Decls.merge_decls _1 _2) (ast_from_opt _3) _5)] )}
+    {( [attr _4 (Decls.finish_decl (Decls.merge_decls _1 _2) (ast_from_opt _3) _5)] )}
 | _1 = declaration_specifier_nosue _2 = nonempty_list_attribute_ _3 = declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
-    {  ( [attr (_2 @ _5) (Decls.finish_decl (Decls.merge_decls _1 _3) (ast_from_opt _4) _6)] )}
+    {( [attr (_2 @ _5) (Decls.finish_decl (Decls.merge_decls _1 _3) (ast_from_opt _4) _6)] )}
 | _1 = type_specifier _2 = declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( [attr _4 (Decls.finish_decl (Decls.merge_decls (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, _1, Decls.empty, Decls.empty, None)) _2) (ast_from_opt _3) _5)] )}
+( [attr _4 (Decls.finish_decl (Decls.merge_decls (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, _1, Decls.empty, Decls.empty, None)) _2) (ast_from_opt _3) _5)] )}
 | _1 = type_specifier_nosue _2 = nonempty_list_attribute_ _3 = declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( [attr (_2 @ _5) (Decls.finish_decl (Decls.merge_decls (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, _1, Decls.empty, Decls.empty, None)) _3) (ast_from_opt _4) _6)] )}
+( [attr (_2 @ _5) (Decls.finish_decl (Decls.merge_decls (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, _1, Decls.empty, Decls.empty, None)) _3) (ast_from_opt _4) _6)] )}
 | _1 = declaring_list _2 = TK_COMMA _3 = list_attribute_ _4 = declarator _5 = option_asm_declaration_specifier_ _6 = list_attribute_ _7 = option_decl_initialiser_
-    {  ( attr (_3 @ _6) (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _4) (ast_from_opt _5) _7) :: _1 )}
+    {( attr (_3 @ _6) (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _4) (ast_from_opt _5) _7) :: _1 )}
 
 default_declaring_list:
   _1 = declaration_qualifier_list _2 = default_int _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
-    {  ( [attr _5 (Decls.finish_decl (Decls.merge_decls (Decls.set_base_type _1 _2) _3) (ast_from_opt _4) _6)] )}
+    {( [attr _5 (Decls.finish_decl (Decls.merge_decls (Decls.set_base_type _1 _2) _3) (ast_from_opt _4) _6)] )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
-    {  ( [attr _5 (Decls.finish_decl (Decls.set_base_type _3 (Types.add_tqual _2 _1)) (ast_from_opt _4) _6)] )}
+    {( [attr _5 (Decls.finish_decl (Decls.set_base_type _3 (Types.add_tqual _2 _1)) (ast_from_opt _4) _6)] )}
 | _1 = default_declaring_list _2 = TK_COMMA _3 = list_attribute_ _4 = identifier_declarator _5 = option_asm_declaration_specifier_ _6 = list_attribute_ _7 = option_decl_initialiser_
-    {  ( attr (_3 @ _6) (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _4) (ast_from_opt _5) _7) :: _1 )}
+    {( attr (_3 @ _6) (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _4) (ast_from_opt _5) _7) :: _1 )}
 
 default_toplevel_declaring_list:
   _1 = default_int _2 = identifier_declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
-    {  ( [attr _4 (Decls.finish_decl (Decls.set_base_type _2 _1) (ast_from_opt _3) _5)] )}
+    {( [attr _4 (Decls.finish_decl (Decls.set_base_type _2 _1) (ast_from_opt _3) _5)] )}
 | _1 = default_toplevel_declaring_list _2 = TK_COMMA _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
-    {  ( attr _5 (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _3) (ast_from_opt _4) _6) :: _1 )}
+    {( attr _5 (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _3) (ast_from_opt _4) _6) :: _1 )}
 
 declaration_specifier:
   _1 = declaration_specifier_nosue
-    {                               ( _1 )}
+    {( _1 )}
 | _1 = sue_declaration_specifier
-    {                             ( _1 )}
+    {( _1 )}
 
 declaration_specifier_nosue:
   _1 = basic_declaration_specifier
-    {                               ( _1 )}
+    {( _1 )}
 | _1 = typedef_declaration_specifier
-    {                                 ( _1 )}
+    {( _1 )}
 | _1 = typeof_declaration_specifier
-    {                                ( _1 )}
+    {( _1 )}
 | _1 = WC_TYPE
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-           ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, ctyp (_startpos, _endpos) @@ WildcardType _1, Decls.empty, Decls.empty, None) )}
+( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, ctyp (_startpos, _endpos) @@ WildcardType _1, Decls.empty, Decls.empty, None) )}
 
 basic_declaration_specifier:
   _1 = basic_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
+( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
 | _1 = declaration_qualifier_list _2 = basic_type_name
-    {  ( Decls.add_basic_type _1 _2 )}
+    {( Decls.add_basic_type _1 _2 )}
 | _1 = basic_declaration_specifier _2 = declaration_qualifier
-    {  ( Decls.add_dqual _1 _2 )}
+    {( Decls.add_dqual _1 _2 )}
 | _1 = basic_declaration_specifier _2 = basic_type_name
-    {  ( Decls.add_basic_type _1 _2 )}
+    {( Decls.add_basic_type _1 _2 )}
 
 sue_declaration_specifier:
   _1 = sue_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
+( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
 | _1 = declaration_qualifier_list _2 = elaborated_type_name
-    {  ( Decls.set_base_type _1 _2 )}
+    {( Decls.set_base_type _1 _2 )}
 | _1 = sue_declaration_specifier _2 = declaration_qualifier
-    {  ( Decls.add_dqual _1 _2 )}
+    {( Decls.add_dqual _1 _2 )}
 
 typeof_declaration_specifier:
   _1 = typeof_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
+( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
 | _1 = declaration_qualifier_list _2 = typeof_type_name
-    {  ( Decls.set_base_type _1 _2 )}
+    {( Decls.set_base_type _1 _2 )}
 | _1 = typeof_declaration_specifier _2 = declaration_qualifier
-    {  ( Decls.add_dqual _1 _2 )}
+    {( Decls.add_dqual _1 _2 )}
 
 typedef_declaration_specifier:
   _1 = typedef_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
+( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
 | _1 = declaration_qualifier_list _2 = TK_TYPEDEF_NAME
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( Decls.set_base_type _1 (ctyp (_startpos, _endpos) @@ TypedefType _2) )}
+( Decls.set_base_type _1 (ctyp (_startpos, _endpos) @@ TypedefType _2) )}
 | _1 = typedef_declaration_specifier _2 = declaration_qualifier
-    {  ( Decls.add_dqual _1 _2 )}
+    {( Decls.add_dqual _1 _2 )}
 
 declaration_qualifier_list:
   _1 = storage_class _2 = list_attribute_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _1, ctyp (_startpos, _endpos) @@ EmptyType, Decls.empty, Decls.empty, None)) )}
+( attr _2 (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _1, ctyp (_startpos, _endpos) @@ EmptyType, Decls.empty, Decls.empty, None)) )}
 | _1 = nonempty_list_type_qualifier_ _2 = list_attribute_ _3 = storage_class _4 = list_attribute_
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( attr (_2 @ _4) (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _3, Types.add_tqual (ctyp (_startpos, _endpos) @@ EmptyType) _1, Decls.empty, Decls.empty, None)) )}
+( attr (_2 @ _4) (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _3, Types.add_tqual (ctyp (_startpos, _endpos) @@ EmptyType) _1, Decls.empty, Decls.empty, None)) )}
 | _1 = declaration_qualifier_list _2 = declaration_qualifier _3 = list_attribute_
-    {  ( attr _3 (Decls.add_dqual _1 _2) )}
+    {( attr _3 (Decls.add_dqual _1 _2) )}
 
 declaration_qualifier:
   _1 = type_qualifier
-    {                  ( (None, Some _1) )}
+    {( (None, Some _1) )}
 | _1 = storage_class
-    {                 ( (Some _1, None) )}
+    {( (Some _1, None) )}
 
 type_specifier:
   _1 = type_specifier_nosue
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = sue_type_specifier
-    {                      ( _1 )}
+    {( _1 )}
 
 type_specifier_nosue:
   _1 = basic_type_specifier
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = typedef_type_specifier
-    {                          ( _1 )}
+    {( _1 )}
 | _1 = typeof_type_specifier
-    {                         ( _1 )}
+    {( _1 )}
 
 basic_type_specifier:
   _1 = basic_type_name
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ PartialBasicType [_1] )}
+( ctyp (_startpos, _endpos) @@ PartialBasicType [_1] )}
 | _1 = nonempty_list_type_qualifier_ _2 = basic_type_name
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( Types.add_tqual (ctyp (_startpos, _endpos) @@ PartialBasicType [_2]) _1 )}
+( Types.add_tqual (ctyp (_startpos, _endpos) @@ PartialBasicType [_2]) _1 )}
 | _1 = basic_type_specifier _2 = type_qualifier
-    {  ( Types.add_tqual _1 [_2] )}
+    {( Types.add_tqual _1 [_2] )}
 | _1 = basic_type_specifier _2 = basic_type_name
-    {  ( Types.add_basic_type _1 _2 )}
+    {( Types.add_basic_type _1 _2 )}
 
 sue_type_specifier:
   _1 = elaborated_type_name
-    {  ( _1 )}
+    {( _1 )}
 | _1 = nonempty_list_type_qualifier_ _2 = elaborated_type_name
-    {  ( Types.add_tqual _2 _1 )}
+    {( Types.add_tqual _2 _1 )}
 | _1 = sue_type_specifier _2 = type_qualifier
-    {  ( Types.add_tqual _1 [_2] )}
+    {( Types.add_tqual _1 [_2] )}
 
 typedef_type_specifier:
   _1 = TK_TYPEDEF_NAME
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ TypedefType _1 )}
+( ctyp (_startpos, _endpos) @@ TypedefType _1 )}
 | _1 = nonempty_list_type_qualifier_ _2 = TK_TYPEDEF_NAME
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( Types.add_tqual (ctyp (_startpos, _endpos) @@ TypedefType _2) _1 )}
+( Types.add_tqual (ctyp (_startpos, _endpos) @@ TypedefType _2) _1 )}
 | _1 = typedef_type_specifier _2 = type_qualifier
-    {  ( Types.add_tqual _1 [_2] )}
+    {( Types.add_tqual _1 [_2] )}
 
 typeof_type_specifier:
   _1 = typeof_type_name
-    {  ( _1 )}
+    {( _1 )}
 | _1 = nonempty_list_type_qualifier_ _2 = typeof_type_name
-    {  ( Types.add_tqual _2 _1 )}
+    {( Types.add_tqual _2 _1 )}
 | _1 = typeof_type_specifier _2 = type_qualifier
-    {  ( Types.add_tqual _1 [_2] )}
+    {( Types.add_tqual _1 [_2] )}
 
 typeof_type_name:
   _1 = KW_TYPEOF _2 = TK_LBRACK _3 = type_specifier _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ TypeofType _3 )}
+( ctyp (_startpos, _endpos) @@ TypeofType _3 )}
 | _1 = KW_TYPEOF _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ TypeofExpr _3 )}
+( ctyp (_startpos, _endpos) @@ TypeofExpr _3 )}
 
 elaborated_type_name:
   _1 = struct_or_union_specifier
-    {                             ( _1 )}
+    {( _1 )}
 | _1 = enum_specifier _2 = list_attribute_
-    {                             ( _1 )}
+    {( _1 )}
 | _1 = datatype_specifier
-    {                      ( _1 )}
+    {( _1 )}
 
 declarator:
   _1 = paren_typedef_declarator
-    {                            ( _1 )}
+    {( _1 )}
 | _1 = parameter_typedef_declarator
-    {                                ( _1 )}
+    {( _1 )}
 | _1 = identifier_declarator
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = old_function_declarator
-    {                           ( _1 )}
+    {( _1 )}
 | _1 = KW_EXTENSION _2 = declarator
-    {                           ( _2 )}
+    {( _2 )}
 
 paren_typedef_declarator:
   _1 = paren_postfix_typedef_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = paren_typedef_declarator
-    {  ( attr _2 (Decls.add_pointer_type _3) )}
+    {( attr _2 (Decls.add_pointer_type _3) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = TK_LBRACK _4 = list_attribute_ _5 = simple_paren_typedef_declarator _6 = TK_RBRACK
-    {  ( attr (_2 @ _4) (Decls.add_pointer_type _5) )}
+    {( attr (_2 @ _4) (Decls.add_pointer_type _5) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_ _4 = TK_LBRACK _5 = list_attribute_ _6 = simple_paren_typedef_declarator _7 = TK_RBRACK
-    {  ( attr (_2 @ _5) (Decls.add_tqual (Decls.add_pointer_type _6) _3) )}
+    {( attr (_2 @ _5) (Decls.add_tqual (Decls.add_pointer_type _6) _3) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_ _4 = paren_typedef_declarator
-    {  ( attr _2 (Decls.add_tqual (Decls.add_pointer_type _4) _3) )}
+    {( attr _2 (Decls.add_tqual (Decls.add_pointer_type _4) _3) )}
 
 paren_postfix_typedef_declarator:
   _1 = TK_LBRACK _2 = list_attribute_ _3 = paren_typedef_declarator _4 = TK_RBRACK
-    {  ( attr _2 _3 )}
+    {( attr _2 _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = simple_paren_typedef_declarator _4 = postfixing_abstract_declarator _5 = TK_RBRACK
-    {  ( attr _2 (Decls.set_base_type _3 _4) )}
+    {( attr _2 (Decls.set_base_type _3 _4) )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = paren_typedef_declarator _4 = TK_RBRACK _5 = postfixing_abstract_declarator
-    {  ( attr _2 (Decls.set_base_type _3 _5) )}
+    {( attr _2 (Decls.set_base_type _3 _5) )}
 
 simple_paren_typedef_declarator:
   _1 = simple_typedef_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = simple_paren_typedef_declarator _4 = TK_RBRACK
-    {  ( attr _2 _3 )}
+    {( attr _2 _3 )}
 
 parameter_typedef_declarator:
   _1 = simple_typedef_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = simple_typedef_declarator _2 = postfixing_abstract_declarator
-    {  ( Decls.set_base_type _1 _2 )}
+    {( Decls.set_base_type _1 _2 )}
 | _1 = clean_typedef_declarator
-    {  ( _1 )}
+    {( _1 )}
 
 simple_typedef_declarator:
   _1 = TK_TYPEDEF_NAME
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ IdentifierDeclarator ([], _1) )}
+( decl (_startpos, _endpos) @@ IdentifierDeclarator ([], _1) )}
 
 clean_typedef_declarator:
   _1 = clean_postfix_typedef_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = parameter_typedef_declarator
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (Decls.set_base_type _3 (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType))) )}
+( attr _2 (Decls.set_base_type _3 (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType))) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_ _4 = parameter_typedef_declarator
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
+( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
 
 clean_postfix_typedef_declarator:
   _1 = TK_LBRACK _2 = list_attribute_ _3 = clean_typedef_declarator _4 = TK_RBRACK
-    {  ( attr _2 _3 )}
+    {( attr _2 _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = clean_typedef_declarator _4 = TK_RBRACK _5 = postfixing_abstract_declarator
-    {  ( attr _2 (Decls.set_base_type _3 _5) )}
+    {( attr _2 (Decls.set_base_type _3 _5) )}
 
 abstract_declarator:
   _1 = unary_abstract_declarator
-    {                             ( _1 )}
+    {( _1 )}
 | _1 = postfix_abstract_declarator
-    {                               ( _1 )}
+    {( _1 )}
 | _1 = postfixing_abstract_declarator
-    {                                  ( _1 )}
+    {( _1 )}
 
 unary_abstract_declarator:
   _1 = TK_STAR _2 = list_attribute_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType) )}
+( ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3 )}
+( Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = abstract_declarator
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( Types.set_base_type (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3 )}
+( Types.set_base_type (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_ _4 = abstract_declarator
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( Types.set_base_type (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3) _4 )}
+( Types.set_base_type (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3) _4 )}
 
 postfix_abstract_declarator:
   _1 = TK_LBRACK _2 = list_attribute_ _3 = unary_abstract_declarator _4 = TK_RBRACK
-    {  ( _3 )}
+    {( _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = postfix_abstract_declarator _4 = TK_RBRACK
-    {  ( _3 )}
+    {( _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = postfixing_abstract_declarator _4 = TK_RBRACK
-    {  ( _3 )}
+    {( _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = unary_abstract_declarator _4 = TK_RBRACK _5 = postfixing_abstract_declarator
-    {  ( Types.set_base_type _5 _3 )}
+    {( Types.set_base_type _5 _3 )}
 
 postfixing_abstract_declarator:
   _1 = nonempty_list_array_abstract_declarator_
-    {  ( Types.make_array_type _1 )}
+    {( Types.make_array_type _1 )}
 | _1 = TK_LBRACK _2 = option_forward_parameter_type_list_ _3 = TK_RBRACK
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( let params, forwards = list_pair_from_opt _2 in ctyp (_startpos, _endpos) @@ FunctionType (ctyp (_startpos, _endpos) @@ EmptyType, params) )}
+( let params, forwards = list_pair_from_opt _2 in ctyp (_startpos, _endpos) @@ FunctionType (ctyp (_startpos, _endpos) @@ EmptyType, params) )}
 
 identifier_declarator:
   _1 = unary_identifier_declarator
-    {                               ( _1 )}
+    {( _1 )}
 | _1 = paren_identifier_declarator
-    {                               ( _1 )}
+    {( _1 )}
 
 unary_identifier_declarator:
   _1 = postfix_identifier_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = identifier_declarator
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (Decls.set_base_type _3 (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType))) )}
+( attr _2 (Decls.set_base_type _3 (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType))) )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = nonempty_list_pointer_type_qualifier_ _4 = identifier_declarator
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
+( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
 
 postfix_identifier_declarator:
   _1 = paren_identifier_declarator _2 = postfixing_abstract_declarator
-    {  ( Decls.set_base_type _1 _2 )}
+    {( Decls.set_base_type _1 _2 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = unary_identifier_declarator _4 = TK_RBRACK
-    {  ( attr _2 _3 )}
+    {( attr _2 _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = unary_identifier_declarator _4 = TK_RBRACK _5 = postfixing_abstract_declarator
-    {  ( attr _2 (Decls.set_base_type _3 _5) )}
+    {( attr _2 (Decls.set_base_type _3 _5) )}
 
 paren_identifier_declarator:
   _1 = simple_identifier_declarator
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = paren_identifier_declarator _4 = TK_RBRACK
-    {  ( attr _2 _3 )}
+    {( attr _2 _3 )}
 | _1 = WC_DECL
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ WildcardDecl _1 )}
+( decl (_startpos, _endpos) @@ WildcardDecl _1 )}
 
 simple_identifier_declarator:
   _1 = TK_IDENTIFIER
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ IdentifierDeclarator ([], _1) )}
+( decl (_startpos, _endpos) @@ IdentifierDeclarator ([], _1) )}
 
 type_name:
   _1 = list_attribute_ _2 = type_name_noattr
-    {  ( _2 )}
+    {( _2 )}
 
 type_name_noattr:
   _1 = type_specifier
-    {  ( _1 )}
+    {( _1 )}
 | _1 = type_specifier _2 = abstract_declarator
-    {  ( Types.set_base_type _1 _2 )}
+    {( Types.set_base_type _1 _2 )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int
-    {  ( Types.add_tqual _2 _1 )}
+    {( Types.add_tqual _2 _1 )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = abstract_declarator
-    {  ( Types.set_base_type (Types.add_tqual _2 _1) _3 )}
+    {( Types.set_base_type (Types.add_tqual _2 _1) _3 )}
 | _1 = WC_TYPE
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ WildcardType _1 )}
+( ctyp (_startpos, _endpos) @@ WildcardType _1 )}
 
 decl_initialiser:
   _1 = TK_EQUALS _2 = basic_initialiser
-    {  ( _2 )}
+    {( _2 )}
 
 initialiser:
   _1 = basic_initialiser
-    {  ( _1 )}
+    {( _1 )}
 | _1 = member_designators _2 = basic_initialiser
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ DesignatedInitialiser (_1, _2) )}
+( expr (_startpos, _endpos) @@ DesignatedInitialiser (_1, _2) )}
 | _1 = TK_LSQBRACK _2 = range_expression _3 = TK_RSQBRACK _4 = option_TK_EQUALS_ _5 = basic_initialiser
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ ArrayLabelledInitialiser (_2, _5) )}
+( expr (_startpos, _endpos) @@ ArrayLabelledInitialiser (_2, _5) )}
 
 member_designators:
   _1 = nonempty_list_member_designator_ _2 = TK_EQUALS
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( desg (_startpos, _endpos) @@ _1 )}
+( desg (_startpos, _endpos) @@ _1 )}
 | _1 = TK_IDENTIFIER _2 = TK_COLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( desg (_startpos, _endpos) @@ [_1] )}
+( desg (_startpos, _endpos) @@ [_1] )}
 
 member_designator:
   _1 = TK_PERIOD _2 = TK_IDENTIFIER
-    {  ( _2 )}
+    {( _2 )}
 
 range_expression:
   _1 = assignment_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = assignment_expression _2 = TK_ELLIPSIS _3 = assignment_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (OP_Ellipsis, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (OP_Ellipsis, _1, _3) )}
 
 basic_initialiser:
   _1 = bracketed_initialiser_list
-    {                              ( _1 )}
+    {( _1 )}
 | _1 = assignment_expression
-    {                         ( _1 )}
+    {( _1 )}
 
 bracketed_initialiser_list:
   _1 = TK_LBRACE _2 = TK_RBRACE
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ InitialiserList [] )}
+( expr (_startpos, _endpos) @@ InitialiserList [] )}
 | _1 = TK_LBRACE _2 = sep_rev_TK_COMMA_initialiser_ _3 = option_TK_COMMA_ _4 = TK_RBRACE
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ InitialiserList (List.rev _2) )}
+( expr (_startpos, _endpos) @@ InitialiserList (List.rev _2) )}
 
 forward_parameter_type_list:
   _1 = sep_rev_TK_SEMICOLON_parameter_type_list_
-    {  ( List.hd _1, List.rev (List.tl _1) )}
+    {( List.hd _1, List.rev (List.tl _1) )}
 
 parameter_type_list:
   _1 = sep_rev_TK_COMMA_parameter_declaration_
-    {  ( List.rev _1 )}
+    {( List.rev _1 )}
 | _1 = sep_rev_TK_COMMA_parameter_declaration_ _2 = TK_COMMA _3 = TK_ELLIPSIS
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( List.rev (abstract_decl (ctyp (_startpos, _endpos) @@ PartialBasicType [BT_Ellipsis]) :: _1) )}
+( List.rev (abstract_decl (ctyp (_startpos, _endpos) @@ PartialBasicType [BT_Ellipsis]) :: _1) )}
 
 parameter_declaration:
   _1 = list_attribute_ _2 = parameter_declaration_noattr
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( assert (Predicates.is_decl _2); { _2 with d_sloc = (_startpos, _endpos) } )}
+( assert (Predicates.is_decl _2); { _2 with d_sloc = (_startpos, _endpos) } )}
 
 parameter_declaration_noattr:
   _1 = declaration_specifier
-    {  ( _1 )}
+    {( _1 )}
 | _1 = declaration_specifier _2 = abstract_declarator
-    {  ( Decls.merge_decls _1 (abstract_decl _2) )}
+    {( Decls.merge_decls _1 (abstract_decl _2) )}
 | _1 = declaration_specifier _2 = identifier_declarator _3 = list_attribute_
-    {  ( attr _3 (Decls.merge_decls _1 _2) )}
+    {( attr _3 (Decls.merge_decls _1 _2) )}
 | _1 = declaration_specifier _2 = parameter_typedef_declarator _3 = list_attribute_
-    {  ( attr _3 (Decls.merge_decls _1 _2) )}
+    {( attr _3 (Decls.merge_decls _1 _2) )}
 | _1 = declaration_qualifier_list _2 = default_int
-    {  ( Decls.set_base_type _1 _2 )}
+    {( Decls.set_base_type _1 _2 )}
 | _1 = declaration_qualifier_list _2 = default_int _3 = abstract_declarator
-    {  ( Decls.set_base_type (Decls.merge_decls _1 (abstract_decl _3)) _2 )}
+    {( Decls.set_base_type (Decls.merge_decls _1 (abstract_decl _3)) _2 )}
 | _1 = declaration_qualifier_list _2 = default_int _3 = identifier_declarator _4 = list_attribute_
-    {  ( attr _4 (Decls.set_base_type (Decls.merge_decls _1 _3) _2) )}
+    {( attr _4 (Decls.set_base_type (Decls.merge_decls _1 _3) _2) )}
 | _1 = type_specifier
-    {  ( abstract_decl _1 )}
+    {( abstract_decl _1 )}
 | _1 = type_specifier _2 = abstract_declarator
-    {  ( abstract_decl (Types.set_base_type _1 _2) )}
+    {( abstract_decl (Types.set_base_type _1 _2) )}
 | _1 = type_specifier _2 = identifier_declarator _3 = list_attribute_
-    {  ( attr _3 (Decls.set_tspec _2 _1) )}
+    {( attr _3 (Decls.set_tspec _2 _1) )}
 | _1 = type_specifier _2 = parameter_typedef_declarator _3 = list_attribute_
-    {  ( attr _3 (Decls.set_tspec _2 _1) )}
+    {( attr _3 (Decls.set_tspec _2 _1) )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int
-    {  ( abstract_decl (Types.add_tqual _2 _1) )}
+    {( abstract_decl (Types.add_tqual _2 _1) )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = abstract_declarator
-    {  ( abstract_decl (Types.set_base_type (Types.add_tqual _2 _1) _3) )}
+    {( abstract_decl (Types.set_base_type (Types.add_tqual _2 _1) _3) )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = identifier_declarator _4 = list_attribute_
-    {  ( attr _4 (Decls.set_tspec _3 (Types.add_tqual _2 _1)) )}
+    {( attr _4 (Decls.set_tspec _3 (Types.add_tqual _2 _1)) )}
 
 array_abstract_declarator:
   _1 = TK_LSQBRACK _2 = option_constant_expression_ _3 = TK_RSQBRACK
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ ArrayType (_2, ctyp (_startpos, _endpos) @@ EmptyType) )}
+( ctyp (_startpos, _endpos) @@ ArrayType (_2, ctyp (_startpos, _endpos) @@ EmptyType) )}
 
 primary_expression:
   _1 = identifier
-    {  ( _1 )}
+    {( _1 )}
 | _1 = numeric_literal
-    {  ( _1 )}
+    {( _1 )}
 | _1 = string_literal
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_LBRACK _2 = expression _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 | _1 = statement_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = WC_EXPR
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ WildcardExpr _1 )}
+( expr (_startpos, _endpos) @@ WildcardExpr _1 )}
 
 statement_expression:
   _1 = TK_LBRACK _2 = compound_statement _3 = TK_RBRACK
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BraceExpression _2 )}
+( expr (_startpos, _endpos) @@ BraceExpression _2 )}
 
 postfix_expression:
   _1 = primary_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = postfix_expression _2 = TK_LSQBRACK _3 = expression _4 = TK_RSQBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ ArrayAccess (_1, _3) )}
+( expr (_startpos, _endpos) @@ ArrayAccess (_1, _3) )}
 | _1 = postfix_expression _2 = TK_LBRACK _3 = option_sep_TK_COMMA_assignment_expression__ _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ FunctionCall (_1, list_from_opt _3) )}
+( expr (_startpos, _endpos) @@ FunctionCall (_1, list_from_opt _3) )}
 | _1 = postfix_expression _2 = TK_PERIOD _3 = identifier_or_typedef_name
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ MemberAccess (_1, _3) )}
+( expr (_startpos, _endpos) @@ MemberAccess (_1, _3) )}
 | _1 = postfix_expression _2 = TK_ARROW _3 = identifier_or_typedef_name
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ PointerAccess (_1, _3) )}
+( expr (_startpos, _endpos) @@ PointerAccess (_1, _3) )}
 | _1 = postfix_expression _2 = TK_PERIOD _3 = WC_DECL
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ MemberAccess (_1, _3) )}
+( expr (_startpos, _endpos) @@ MemberAccess (_1, _3) )}
 | _1 = postfix_expression _2 = TK_ARROW _3 = WC_DECL
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ PointerAccess (_1, _3) )}
+( expr (_startpos, _endpos) @@ PointerAccess (_1, _3) )}
 | _1 = postfix_expression _2 = TK_INC
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ UnaryExpression (OP_PostIncrement, _1) )}
+( expr (_startpos, _endpos) @@ UnaryExpression (OP_PostIncrement, _1) )}
 | _1 = postfix_expression _2 = TK_DEC
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ UnaryExpression (OP_PostDecrement, _1) )}
+( expr (_startpos, _endpos) @@ UnaryExpression (OP_PostDecrement, _1) )}
 | _1 = KW_OFFSETOF _2 = TK_LBRACK _3 = type_name _4 = TK_COMMA _5 = postfix_expression _6 = TK_RBRACK
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ Offsetof (_3, _5) )}
+( expr (_startpos, _endpos) @@ Offsetof (_3, _5) )}
 | _1 = KW_TYPES_COMPATIBLE_P _2 = TK_LBRACK _3 = type_name _4 = TK_COMMA _5 = type_name _6 = TK_RBRACK
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ TypesCompatibleP (_3, _5) )}
+( expr (_startpos, _endpos) @@ TypesCompatibleP (_3, _5) )}
 | _1 = KW_VA_ARG _2 = TK_LBRACK _3 = assignment_expression _4 = TK_COMMA _5 = type_name _6 = TK_RBRACK
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ VaArg (_3, _5) )}
+( expr (_startpos, _endpos) @@ VaArg (_3, _5) )}
 | _1 = TK_LBRACK _2 = type_name _3 = TK_RBRACK _4 = bracketed_initialiser_list
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ CompoundLiteral (_2, _4) )}
+( expr (_startpos, _endpos) @@ CompoundLiteral (_2, _4) )}
 
 unary_prefix_operator:
   _1 = TK_INC
-    {          ( OP_PreIncrement )}
+    {( OP_PreIncrement )}
 | _1 = TK_DEC
-    {          ( OP_PreDecrement )}
+    {( OP_PreDecrement )}
 
 unary_operator:
   _1 = TK_AND
-    {          ( OP_AddressOf )}
+    {( OP_AddressOf )}
 | _1 = TK_ANDAND
-    {             ( OP_AddressOfLabel )}
+    {( OP_AddressOfLabel )}
 | _1 = TK_STAR
-    {           ( OP_Dereference )}
+    {( OP_Dereference )}
 | _1 = TK_PLUS
-    {           ( OP_Identity )}
+    {( OP_Identity )}
 | _1 = TK_MINUS
-    {            ( OP_Negate )}
+    {( OP_Negate )}
 | _1 = TK_TILDE
-    {            ( OP_BitwiseNot )}
+    {( OP_BitwiseNot )}
 | _1 = TK_EXMARK
-    {             ( OP_LogicalNot )}
+    {( OP_LogicalNot )}
 | _1 = KW_IMAG
-    {           ( OP_Imag )}
+    {( OP_Imag )}
 | _1 = KW_REAL
-    {           ( OP_Real )}
+    {( OP_Real )}
 
 unary_expression:
   _1 = postfix_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = unary_prefix_operator _2 = unary_expression
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ UnaryExpression (_1, _2) )}
+( expr (_startpos, _endpos) @@ UnaryExpression (_1, _2) )}
 | _1 = unary_operator _2 = cast_expression
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ UnaryExpression (_1, _2) )}
+( expr (_startpos, _endpos) @@ UnaryExpression (_1, _2) )}
 | _1 = KW_SIZEOF _2 = unary_expression
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ SizeofExpr (_2) )}
+( expr (_startpos, _endpos) @@ SizeofExpr (_2) )}
 | _1 = KW_SIZEOF _2 = TK_LBRACK _3 = type_name _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ SizeofType (_3) )}
+( expr (_startpos, _endpos) @@ SizeofType (_3) )}
 | _1 = KW_ALIGNOF _2 = TK_LBRACK _3 = unary_expression _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ AlignofExpr (_3) )}
+( expr (_startpos, _endpos) @@ AlignofExpr (_3) )}
 | _1 = KW_ALIGNOF _2 = TK_LBRACK _3 = type_name _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ AlignofType (_3) )}
+( expr (_startpos, _endpos) @@ AlignofType (_3) )}
 | _1 = KW_EXTENSION _2 = cast_expression
-    {  ( _2 )}
+    {( _2 )}
 
 cast_expression:
   _1 = unary_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_LBRACK _2 = type_name _3 = TK_RBRACK _4 = cast_expression
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ Cast (_2, _4) )}
+( expr (_startpos, _endpos) @@ Cast (_2, _4) )}
 
 multiplicative_operator:
   _1 = TK_STAR
-    {           ( OP_Multiply )}
+    {( OP_Multiply )}
 | _1 = TK_SLASH
-    {            ( OP_Divide )}
+    {( OP_Divide )}
 | _1 = TK_PERCENT
-    {              ( OP_Modulo )}
+    {( OP_Modulo )}
 
 multiplicative_expression:
   _1 = cast_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = multiplicative_expression _2 = multiplicative_operator _3 = cast_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 additive_operator:
   _1 = TK_PLUS
-    {           ( OP_Add )}
+    {( OP_Add )}
 | _1 = TK_MINUS
-    {            ( OP_Subtract )}
+    {( OP_Subtract )}
 
 additive_expression:
   _1 = multiplicative_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = additive_expression _2 = additive_operator _3 = multiplicative_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 shift_operator:
   _1 = TK_LTLT
-    {           ( OP_ShiftLeft )}
+    {( OP_ShiftLeft )}
 | _1 = TK_GTGT
-    {           ( OP_ShiftRight )}
+    {( OP_ShiftRight )}
 
 shift_expression:
   _1 = additive_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = shift_expression _2 = shift_operator _3 = additive_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 relational_operator:
   _1 = TK_LESS
-    {           ( OP_Less )}
+    {( OP_Less )}
 | _1 = TK_GREATER
-    {              ( OP_Greater )}
+    {( OP_Greater )}
 | _1 = TK_LESS_EQ
-    {              ( OP_LessEqual )}
+    {( OP_LessEqual )}
 | _1 = TK_GREATER_EQ
-    {                 ( OP_GreaterEqual )}
+    {( OP_GreaterEqual )}
 
 relational_expression:
   _1 = shift_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = relational_expression _2 = relational_operator _3 = shift_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 equality_operator:
   _1 = TK_EQEQ
-    {           ( OP_Equal )}
+    {( OP_Equal )}
 | _1 = TK_NE
-    {         ( OP_NotEqual )}
+    {( OP_NotEqual )}
 
 equality_expression:
   _1 = relational_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = equality_expression _2 = equality_operator _3 = relational_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 and_operator:
   _1 = TK_AND
-    {          ( OP_BitwiseAnd )}
+    {( OP_BitwiseAnd )}
 
 and_expression:
   _1 = equality_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = and_expression _2 = and_operator _3 = equality_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 exclusive_or_operator:
   _1 = TK_CARET
-    {            ( OP_BitwiseXor )}
+    {( OP_BitwiseXor )}
 
 exclusive_or_expression:
   _1 = and_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = exclusive_or_expression _2 = exclusive_or_operator _3 = and_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 inclusive_or_operator:
   _1 = TK_PIPE
-    {           ( OP_BitwiseOr )}
+    {( OP_BitwiseOr )}
 
 inclusive_or_expression:
   _1 = exclusive_or_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = inclusive_or_expression _2 = inclusive_or_operator _3 = exclusive_or_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 logical_and_operator:
   _1 = TK_ANDAND
-    {             ( OP_LogicalAnd )}
+    {( OP_LogicalAnd )}
 
 logical_and_expression:
   _1 = inclusive_or_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = logical_and_expression _2 = logical_and_operator _3 = inclusive_or_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 logical_or_operator:
   _1 = TK_PIPEPIPE
-    {               ( OP_LogicalOr )}
+    {( OP_LogicalOr )}
 
 logical_or_expression:
   _1 = logical_and_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = logical_or_expression _2 = logical_or_operator _3 = logical_and_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 conditional_expression:
   _1 = logical_or_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = logical_or_expression _2 = TK_QMARK _3 = option_expression_ _4 = TK_COLON _5 = conditional_expression
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ TernaryExpression (OP_Conditional, _1, _3, _5) )}
+( expr (_startpos, _endpos) @@ TernaryExpression (OP_Conditional, _1, _3, _5) )}
 
 assignment_operator:
   _1 = TK_EQUALS
-    {             ( OP_Assign )}
+    {( OP_Assign )}
 | _1 = TK_STAR_EQ
-    {              ( OP_MultiplyAssign )}
+    {( OP_MultiplyAssign )}
 | _1 = TK_SLASH_EQ
-    {               ( OP_DivideAssign )}
+    {( OP_DivideAssign )}
 | _1 = TK_PERCENT_EQ
-    {                 ( OP_ModuloAssign )}
+    {( OP_ModuloAssign )}
 | _1 = TK_PLUS_EQ
-    {              ( OP_AddAssign )}
+    {( OP_AddAssign )}
 | _1 = TK_MINUS_EQ
-    {               ( OP_SubtractAssign )}
+    {( OP_SubtractAssign )}
 | _1 = TK_LTLT_EQ
-    {              ( OP_ShiftLeftAssign )}
+    {( OP_ShiftLeftAssign )}
 | _1 = TK_GTGT_EQ
-    {              ( OP_ShiftRightAssign )}
+    {( OP_ShiftRightAssign )}
 | _1 = TK_AND_EQ
-    {             ( OP_BitwiseAndAssign )}
+    {( OP_BitwiseAndAssign )}
 | _1 = TK_CARET_EQ
-    {               ( OP_BitwiseXorAssign )}
+    {( OP_BitwiseXorAssign )}
 | _1 = TK_PIPE_EQ
-    {              ( OP_BitwiseOrAssign )}
+    {( OP_BitwiseOrAssign )}
 
 assignment_expression:
   _1 = conditional_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = cast_expression _2 = assignment_operator _3 = assignment_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 expression:
   _1 = assignment_expression
-    {  ( _1 )}
+    {( _1 )}
 | _1 = expression _2 = TK_COMMA _3 = assignment_expression
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ BinaryExpression (OP_Comma, _1, _3) )}
+( expr (_startpos, _endpos) @@ BinaryExpression (OP_Comma, _1, _3) )}
 
 constant_expression:
   _1 = conditional_expression
-    {  ( _1 )}
+    {( _1 )}
 
 numeric_literal:
   _1 = TK_INTEGER_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Dec, fst _1, snd _1) )}
+( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Dec, fst _1, snd _1) )}
 | _1 = TK_OCTAL_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Oct, fst _1, snd _1) )}
+( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Oct, fst _1, snd _1) )}
 | _1 = TK_HEX_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Hex, fst _1, snd _1) )}
+( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Hex, fst _1, snd _1) )}
 | _1 = TK_BIN_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Bin, fst _1, snd _1) )}
+( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Bin, fst _1, snd _1) )}
 | _1 = TK_FLOATING_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ FloatingLiteral (LIT_Float, fst _1, snd _1) )}
+( expr (_startpos, _endpos) @@ FloatingLiteral (LIT_Float, fst _1, snd _1) )}
 | _1 = TK_HEX_FLOATING_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ FloatingLiteral (LIT_HexFloat, fst _1, snd _1) )}
+( expr (_startpos, _endpos) @@ FloatingLiteral (LIT_HexFloat, fst _1, snd _1) )}
 | _1 = TK_CHAR_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ CharLiteral (LIT_Char, _1) )}
+( expr (_startpos, _endpos) @@ CharLiteral (LIT_Char, _1) )}
 | _1 = TK_WCHAR_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ CharLiteral (LIT_WChar, _1) )}
+( expr (_startpos, _endpos) @@ CharLiteral (LIT_WChar, _1) )}
 
 string_literal:
   _1 = nonempty_list_simple_string_literal_
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ merge_string_literals [] _1 )}
+( expr (_startpos, _endpos) @@ merge_string_literals [] _1 )}
 
 simple_string_literal:
   _1 = TK_STRING_LITERAL
-    {  ( LIT_String, _1 )}
+    {( LIT_String, _1 )}
 | _1 = TK_WSTRING_LITERAL
-    {  ( LIT_WString, _1 )}
+    {( LIT_WString, _1 )}
 
 type_qualifier:
   _1 = KW_CONST
-    {  ( TQ_Const )}
+    {( TQ_Const )}
 | _1 = KW_VOLATILE
-    {  ( TQ_Volatile )}
+    {( TQ_Volatile )}
 | _1 = KW_RESTRICT
-    {  ( TQ_Restrict )}
+    {( TQ_Restrict )}
 | _1 = KW_COMPLEX
-    {  ( TQ_Complex )}
+    {( TQ_Complex )}
 
 pointer_type_qualifier:
   _1 = KW_CONST
-    {  ( TQ_Const )}
+    {( TQ_Const )}
 | _1 = KW_VOLATILE
-    {  ( TQ_Volatile )}
+    {( TQ_Volatile )}
 | _1 = KW_RESTRICT
-    {  ( TQ_Restrict )}
+    {( TQ_Restrict )}
 
 storage_class:
   _1 = KW_TYPEDEF
-    {  ( SC_Typedef )}
+    {( SC_Typedef )}
 | _1 = KW_EXTERN
-    {  ( SC_Extern )}
+    {( SC_Extern )}
 | _1 = KW_STATIC
-    {  ( SC_Static )}
+    {( SC_Static )}
 | _1 = KW_AUTO
-    {  ( SC_Auto )}
+    {( SC_Auto )}
 | _1 = KW_REGISTER
-    {  ( SC_Register )}
+    {( SC_Register )}
 | _1 = KW_INLINE
-    {  ( SC_Inline )}
+    {( SC_Inline )}
 | _1 = KW_THREAD
-    {  ( SC_Thread )}
+    {( SC_Thread )}
 
 basic_type_name:
   _1 = KW_SIGNED
-    {  ( BT_Signed )}
+    {( BT_Signed )}
 | _1 = KW_UNSIGNED
-    {  ( BT_Unsigned )}
+    {( BT_Unsigned )}
 | _1 = KW_BOOL
-    {  ( BT_Bool )}
+    {( BT_Bool )}
 | _1 = KW_CHAR
-    {  ( BT_Char )}
+    {( BT_Char )}
 | _1 = KW_INT
-    {  ( BT_Int )}
+    {( BT_Int )}
 | _1 = KW_SHORT
-    {  ( BT_Short )}
+    {( BT_Short )}
 | _1 = KW_LONG
-    {  ( BT_Long )}
+    {( BT_Long )}
 | _1 = KW_FLOAT
-    {  ( BT_Float )}
+    {( BT_Float )}
 | _1 = KW_DOUBLE
-    {  ( BT_Double )}
+    {( BT_Double )}
 | _1 = KW_INTN
-    {  ( BT_IntN _1 )}
+    {( BT_IntN _1 )}
 | _1 = KW_FLOATN
-    {  ( BT_FloatN _1 )}
+    {( BT_FloatN _1 )}
 | _1 = KW_DECIMALN
-    {  ( BT_DecimalN _1 )}
+    {( BT_DecimalN _1 )}
 | _1 = KW_VA_LIST
-    {  ( BT_VaList )}
+    {( BT_VaList )}
 | _1 = KW_WCHAR_T
-    {  ( BT_WCharT )}
+    {( BT_WCharT )}
 | _1 = KW_VOID
-    {  ( BT_Void )}
+    {( BT_Void )}
 
 default_int:
   
-    {  ( default_int )}
+    {( default_int )}
 
 statement:
   _1 = statement_noexpr
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = expression_statement
-    {                        ( _1 )}
+    {( _1 )}
 
 statement_noexpr:
   _1 = labelled_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = compound_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = selection_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = iteration_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = jump_statement
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = asm_statement
-    {                 ( _1 )}
+    {( _1 )}
 | _1 = KW_EXTENSION _2 = statement_noexpr
-    {                                 ( _2 )}
+    {( _2 )}
 
 statement_or_declaration:
   _1 = statement
-    {  ( _1 )}
+    {( _1 )}
 | _1 = option_KW_EXTENSION_ _2 = list_attribute_ _3 = declaration
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ DeclarationStatement (attr _2 _3) )}
+( stmt (_startpos, _endpos) @@ DeclarationStatement (attr _2 _3) )}
 
 labelled_statement:
   _1 = TK_IDENTIFIER _2 = TK_COLON _3 = statement
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ LabelledStatement (_1, _3) )}
+( stmt (_startpos, _endpos) @@ LabelledStatement (_1, _3) )}
 | _1 = KW_LABEL _2 = sep_TK_COMMA_TK_IDENTIFIER_ _3 = TK_SEMICOLON
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ LocalLabel _2 )}
+( stmt (_startpos, _endpos) @@ LocalLabel _2 )}
 | _1 = KW_CASE _2 = range_expression _3 = TK_COLON
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ CaseStatement _2 )}
+( stmt (_startpos, _endpos) @@ CaseStatement _2 )}
 | _1 = KW_DEFAULT _2 = TK_COLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ DefaultStatement )}
+( stmt (_startpos, _endpos) @@ DefaultStatement )}
 
 compound_statement:
   _1 = TK_LBRACE _2 = push_scope _3 = list_statement_or_declaration_ _4 = pop_scope _5 = TK_RBRACE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ CompoundStatement ("", _3) )}
+( stmt (_startpos, _endpos) @@ CompoundStatement ("", _3) )}
 
 push_scope:
   
-    {   ( Lexer_hack.push_scope () )}
+    {( Lexer_hack.push_scope () )}
 
 pop_scope:
   
-    {   ( Lexer_hack.pop_scope () )}
+    {( Lexer_hack.pop_scope () )}
 
 expression_statement:
   _1 = option_expression_ _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ ExpressionStatement _1 )}
+( stmt (_startpos, _endpos) @@ ExpressionStatement _1 )}
 
 selection_statement:
   _1 = KW_IF _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement %prec KW_IF
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ IfStatement (_3, _5, stmt (_startpos, _endpos) @@ EmptyStmt) )}
+( stmt (_startpos, _endpos) @@ IfStatement (_3, _5, stmt (_startpos, _endpos) @@ EmptyStmt) )}
 | _1 = KW_IF _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement _6 = KW_ELSE _7 = statement
     {let _endpos = _endpos__7_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ IfStatement (_3, _5, _7) )}
+( stmt (_startpos, _endpos) @@ IfStatement (_3, _5, _7) )}
 | _1 = KW_SWITCH _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ SwitchStatement (_3, _5) )}
+( stmt (_startpos, _endpos) @@ SwitchStatement (_3, _5) )}
 
 iteration_statement:
   _1 = KW_WHILE _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ WhileStatement (_3, _5) )}
+( stmt (_startpos, _endpos) @@ WhileStatement (_3, _5) )}
 | _1 = KW_DO _2 = statement _3 = KW_WHILE _4 = TK_LBRACK _5 = expression _6 = TK_RBRACK _7 = TK_SEMICOLON
     {let _endpos = _endpos__7_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ DoWhileStatement (_2, _5) )}
+( stmt (_startpos, _endpos) @@ DoWhileStatement (_2, _5) )}
 | _1 = KW_FOR _2 = TK_LBRACK _3 = option_expression_ _4 = TK_SEMICOLON _5 = option_expression_ _6 = TK_SEMICOLON _7 = option_expression_ _8 = TK_RBRACK _9 = statement
     {let _endpos = _endpos__9_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ ForStatement (_3, _5, _7, _9) )}
+( stmt (_startpos, _endpos) @@ ForStatement (_3, _5, _7, _9) )}
 
 jump_statement:
   _1 = KW_GOTO _2 = expression _3 = TK_SEMICOLON
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ GotoStatement _2 )}
+( stmt (_startpos, _endpos) @@ GotoStatement _2 )}
 | _1 = KW_CONTINUE _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ ContinueStatement )}
+( stmt (_startpos, _endpos) @@ ContinueStatement )}
 | _1 = KW_BREAK _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ BreakStatement )}
+( stmt (_startpos, _endpos) @@ BreakStatement )}
 | _1 = KW_RETURN _2 = option_expression_ _3 = TK_SEMICOLON
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ ReturnStatement _2 )}
+( stmt (_startpos, _endpos) @@ ReturnStatement _2 )}
 
 struct_or_union_specifier:
   _1 = struct_or_union _2 = list_attribute_ _3 = TK_LBRACE _4 = struct_declaration_list_opt _5 = TK_RBRACE _6 = list_attribute_
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, "", _4) )}
+( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, "", _4) )}
 | _1 = struct_or_union _2 = list_attribute_ _3 = identifier_or_typedef_name _4 = list_attribute_
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, _3, []) )}
+( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, _3, []) )}
 | _1 = struct_or_union _2 = list_attribute_ _3 = identifier_or_typedef_name _4 = list_attribute_ _5 = TK_LBRACE _6 = struct_declaration_list_opt _7 = TK_RBRACE _8 = list_attribute_
     {let _endpos = _endpos__8_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, _3, _6) )}
+( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, _3, _6) )}
 
 struct_or_union:
   _1 = KW_STRUCT
-    {  ( SUE_Struct )}
+    {( SUE_Struct )}
 | _1 = KW_UNION
-    {  ( SUE_Union )}
+    {( SUE_Union )}
 
 identifier:
   _1 = TK_IDENTIFIER
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
-  ( expr (_startpos, _endpos) @@ Identifier (_1) )}
+( expr (_startpos, _endpos) @@ Identifier (_1) )}
 
 identifier_or_typedef_name:
   _1 = TK_IDENTIFIER
-    {  ( _1 )}
+    {( _1 )}
 | _1 = TK_TYPEDEF_NAME
-    {  ( _1 )}
+    {( _1 )}
 
 struct_declaration:
   _1 = struct_declaring_list _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
+( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
 | _1 = struct_default_declaring_list _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
+( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
 | _1 = KW_EXTENSION _2 = struct_declaration
-    {  ( _2 )}
+    {( _2 )}
 
 struct_declaration_list:
   _1 = list_attribute_ _2 = struct_declaration
-    {  ( [_2] )}
+    {( [_2] )}
 | _1 = struct_declaration_list _2 = list_attribute_ _3 = struct_declaration
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 struct_declaration_list_opt:
   
-    {  ( [Decls.empty] )}
+    {( [Decls.empty] )}
 | _1 = struct_declaration_list
-    {  ( List.rev _1 )}
+    {( List.rev _1 )}
 
 struct_default_declaring_list:
   _1 = nonempty_list_type_qualifier_ _2 = struct_identifier_declarator
-    {  ( [Decls.add_tqual _2 _1] )}
+    {( [Decls.add_tqual _2 _1] )}
 | _1 = struct_default_declaring_list _2 = TK_COMMA _3 = struct_identifier_declarator
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 struct_declaring_list:
   _1 = type_specifier _2 = struct_declarator
-    {  ( [Decls.set_tspec _2 _1] )}
+    {( [Decls.set_tspec _2 _1] )}
 | _1 = type_specifier_nosue _2 = nonempty_list_attribute_ _3 = struct_declarator
-    {  ( [attr _2 (Decls.set_tspec _3 _1)] )}
+    {( [attr _2 (Decls.set_tspec _3 _1)] )}
 | _1 = struct_declaring_list _2 = TK_COMMA _3 = struct_declarator
-    {  ( (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _3) :: _1 )}
+    {( (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _3) :: _1 )}
 | _1 = struct_or_union _2 = list_attribute_ _3 = TK_LBRACE _4 = struct_declaration_list_opt _5 = TK_RBRACE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( [attr _2 (Decls.set_tspec (decl (_startpos, _endpos) @@ StructDeclarator (Decls.empty, None)) (ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, "", _4)))] )}
+( [attr _2 (Decls.set_tspec (decl (_startpos, _endpos) @@ StructDeclarator (Decls.empty, None)) (ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, "", _4)))] )}
 
 struct_declarator:
   _1 = declarator _2 = option_bit_field_size_ _3 = list_attribute_
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ StructDeclarator (attr _3 _1, _2) )}
+( decl (_startpos, _endpos) @@ StructDeclarator (attr _3 _1, _2) )}
 | _1 = bit_field_size _2 = list_attribute_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ StructDeclarator (Decls.empty, Some _1) )}
+( decl (_startpos, _endpos) @@ StructDeclarator (Decls.empty, Some _1) )}
 
 struct_identifier_declarator:
   _1 = default_int _2 = identifier_declarator _3 = option_bit_field_size_ _4 = list_attribute_
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( Decls.set_tspec (decl (_startpos, _endpos) @@ StructDeclarator (attr _4 _2, _3)) _1 )}
+( Decls.set_tspec (decl (_startpos, _endpos) @@ StructDeclarator (attr _4 _2, _3)) _1 )}
 
 bit_field_size:
   _1 = TK_COLON _2 = constant_expression
-    {  ( _2 )}
+    {( _2 )}
 
 enum_specifier:
   _1 = KW_ENUM _2 = TK_LBRACE _3 = sep_rev_TK_COMMA_enumerator_ _4 = option_TK_COMMA_ _5 = TK_RBRACE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, "", List.rev _3) )}
+( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, "", List.rev _3) )}
 | _1 = KW_ENUM _2 = TK_IDENTIFIER _3 = TK_LBRACE _4 = sep_rev_TK_COMMA_enumerator_ _5 = option_TK_COMMA_ _6 = TK_RBRACE
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, List.rev _4) )}
+( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, List.rev _4) )}
 | _1 = KW_ENUM _2 = TK_IDENTIFIER
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, []) )}
+( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, []) )}
 
 enumerator:
   _1 = TK_IDENTIFIER _2 = option_enumerator_value_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ Enumerator (_1, _2) )}
+( decl (_startpos, _endpos) @@ Enumerator (_1, _2) )}
 
 enumerator_value:
   _1 = TK_EQUALS _2 = constant_expression
-    {  ( _2 )}
+    {( _2 )}
 
 datatype_specifier:
   _1 = KW_DATATYPE _2 = datatype_name _3 = TK_EQUALS _4 = datatype_declaring_list
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, []) )}
+( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, []) )}
 
 datatype_name:
   _1 = identifier_or_typedef_name
-    {  ( Lexer_hack.typedef _1; _1 )}
+    {( Lexer_hack.typedef _1; _1 )}
 
 datatype_declaring_list:
   _1 = TK_PIPE _2 = sep_TK_PIPE_datatype_declarator_
-    {  ( 0 )}
+    {( 0 )}
 
 datatype_declarator:
   _1 = TK_IDENTIFIER _2 = datatype_member_list
-    {  ( 0 )}
+    {( 0 )}
 
 datatype_member_list:
   _1 = TK_LBRACK _2 = sep_TK_COMMA_datatype_member_ _3 = TK_RBRACK
-    {  ( 0 )}
+    {( 0 )}
 
 datatype_member:
   _1 = TK_IDENTIFIER _2 = TK_COLON _3 = type_name
-    {  ( 0 )}
+    {( 0 )}
 
 asm_declaration_specifier:
   _1 = KW_ASM _2 = TK_LBRACK _3 = nonempty_list_TK_STRING_LITERAL_ _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-  ( decl (_startpos, _endpos) @@ AsmSpecifier _3 )}
+( decl (_startpos, _endpos) @@ AsmSpecifier _3 )}
 
 asm_statement:
   _1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = TK_LBRACK _4 = nonempty_list_TK_STRING_LITERAL_ _5 = TK_RBRACK _6 = TK_SEMICOLON
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, [], [], [], []) )}
+( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, [], [], [], []) )}
 | _1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = TK_LBRACK _4 = nonempty_list_TK_STRING_LITERAL_ _5 = TK_COLON _6 = option_asm_argument_list_ _7 = TK_RBRACK _8 = TK_SEMICOLON
     {let _endpos = _endpos__8_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, list_from_opt _6, [], [], []) )}
+( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, list_from_opt _6, [], [], []) )}
 | _1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = TK_LBRACK _4 = nonempty_list_TK_STRING_LITERAL_ _5 = TK_COLON _6 = option_asm_argument_list_ _7 = TK_COLON _8 = option_asm_argument_list_ _9 = TK_RBRACK _10 = TK_SEMICOLON
     {let _endpos = _endpos__10_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, list_from_opt _6, list_from_opt _8, [], []) )}
+( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, list_from_opt _6, list_from_opt _8, [], []) )}
 | _1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = TK_LBRACK _4 = nonempty_list_TK_STRING_LITERAL_ _5 = TK_COLON _6 = option_asm_argument_list_ _7 = TK_COLON _8 = option_asm_argument_list_ _9 = TK_COLON _10 = option_sep_TK_COMMA_asm_clobbered__ _11 = TK_RBRACK _12 = TK_SEMICOLON
     {let _endpos = _endpos__12_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, list_from_opt _6, list_from_opt _8, list_from_opt _10, []) )}
+( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, list_from_opt _6, list_from_opt _8, list_from_opt _10, []) )}
 | _1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = KW_GOTO _4 = TK_LBRACK _5 = nonempty_list_TK_STRING_LITERAL_ _6 = TK_COLON _7 = TK_COLON _8 = option_asm_argument_list_ _9 = TK_COLON _10 = option_sep_TK_COMMA_asm_clobbered__ _11 = TK_COLON _12 = sep_TK_COMMA_TK_IDENTIFIER_ _13 = TK_RBRACK _14 = TK_SEMICOLON
     {let _endpos = _endpos__14_ in
 let _startpos = _startpos__1_ in
-  ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _5, [], list_from_opt _8, list_from_opt _10, _12) )}
+( stmt (_startpos, _endpos) @@ AsmStatement (_2, _5, [], list_from_opt _8, list_from_opt _10, _12) )}
 
 asm_argument_list:
   _1 = sep_TK_COMMA_asm_argument_
-    {  ( _1 )}
+    {( _1 )}
 
 asm_argument:
   _1 = nonempty_list_TK_STRING_LITERAL_ _2 = TK_LBRACK _3 = assignment_expression _4 = TK_RBRACK
-    {  ( AsmArgument (_1, _3) )}
+    {( AsmArgument (_1, _3) )}
 
 asm_clobbered:
   _1 = nonempty_list_TK_STRING_LITERAL_
-    {  ( _1 )}
+    {( _1 )}
 
 sep_TK_COMMA_TK_IDENTIFIER_:
   _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_asm_argument_:
   _1 = sep_rev_TK_COMMA_asm_argument_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_asm_clobbered_:
   _1 = sep_rev_TK_COMMA_asm_clobbered_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_assignment_expression_:
   _1 = sep_rev_TK_COMMA_assignment_expression_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_attrib_:
   _1 = sep_rev_TK_COMMA_attrib_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_datatype_member_:
   _1 = sep_rev_TK_COMMA_datatype_member_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_numeric_literal_:
   _1 = sep_rev_TK_COMMA_numeric_literal_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_COMMA_simple_identifier_declarator_:
   _1 = sep_rev_TK_COMMA_simple_identifier_declarator_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_TK_PIPE_datatype_declarator_:
   _1 = sep_rev_TK_PIPE_datatype_declarator_
-    {                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 sep_rev_TK_COMMA_TK_IDENTIFIER_:
   _1 = TK_IDENTIFIER
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_ _2 = TK_COMMA _3 = TK_IDENTIFIER
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_asm_argument_:
   _1 = asm_argument
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_asm_argument_ _2 = TK_COMMA _3 = asm_argument
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_asm_clobbered_:
   _1 = asm_clobbered
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_asm_clobbered_ _2 = TK_COMMA _3 = asm_clobbered
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_assignment_expression_:
   _1 = assignment_expression
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_assignment_expression_ _2 = TK_COMMA _3 = assignment_expression
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_attrib_:
   _1 = attrib
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_attrib_ _2 = TK_COMMA _3 = attrib
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_datatype_member_:
   _1 = datatype_member
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_datatype_member_ _2 = TK_COMMA _3 = datatype_member
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_enumerator_:
   _1 = enumerator
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_enumerator_ _2 = TK_COMMA _3 = enumerator
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_initialiser_:
   _1 = initialiser
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_initialiser_ _2 = TK_COMMA _3 = initialiser
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_numeric_literal_:
   _1 = numeric_literal
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_numeric_literal_ _2 = TK_COMMA _3 = numeric_literal
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_parameter_declaration_:
   _1 = parameter_declaration
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_parameter_declaration_ _2 = TK_COMMA _3 = parameter_declaration
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_COMMA_simple_identifier_declarator_:
   _1 = simple_identifier_declarator
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_COMMA_simple_identifier_declarator_ _2 = TK_COMMA _3 = simple_identifier_declarator
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_PIPE_datatype_declarator_:
   _1 = datatype_declarator
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_PIPE_datatype_declarator_ _2 = TK_PIPE _3 = datatype_declarator
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 sep_rev_TK_SEMICOLON_parameter_type_list_:
   _1 = parameter_type_list
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = sep_rev_TK_SEMICOLON_parameter_type_list_ _2 = TK_SEMICOLON _3 = parameter_type_list
-    {  ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 list_attribute_:
   _1 = list_rev_attribute_
-    {                     ( List.rev _1 )}
+    {( List.rev _1 )}
 
 list_declaration_:
   _1 = list_rev_declaration_
-    {                     ( List.rev _1 )}
+    {( List.rev _1 )}
 
 list_statement_or_declaration_:
   _1 = list_rev_statement_or_declaration_
-    {                     ( List.rev _1 )}
+    {( List.rev _1 )}
 
 list_rev_attribute_:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = list_rev_attribute_ _2 = attribute
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 list_rev_declaration_:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = list_rev_declaration_ _2 = declaration
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 list_rev_statement_or_declaration_:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = list_rev_statement_or_declaration_ _2 = statement_or_declaration
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_TK_STRING_LITERAL_:
   _1 = nonempty_list_rev_TK_STRING_LITERAL_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_array_abstract_declarator_:
   _1 = nonempty_list_rev_array_abstract_declarator_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_attribute_:
   _1 = nonempty_list_rev_attribute_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_member_designator_:
   _1 = nonempty_list_rev_member_designator_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_pointer_type_qualifier_:
   _1 = nonempty_list_rev_pointer_type_qualifier_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_simple_string_literal_:
   _1 = nonempty_list_rev_simple_string_literal_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_type_qualifier_:
   _1 = nonempty_list_rev_type_qualifier_
-    {                                       ( List.rev _1 )}
+    {( List.rev _1 )}
 
 nonempty_list_rev_TK_STRING_LITERAL_:
   _1 = TK_STRING_LITERAL
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_TK_STRING_LITERAL_ _2 = TK_STRING_LITERAL
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_rev_array_abstract_declarator_:
   _1 = array_abstract_declarator
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_array_abstract_declarator_ _2 = array_abstract_declarator
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_rev_attribute_:
   _1 = attribute
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_attribute_ _2 = attribute
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_rev_member_designator_:
   _1 = member_designator
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_member_designator_ _2 = member_designator
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_rev_pointer_type_qualifier_:
   _1 = pointer_type_qualifier
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_pointer_type_qualifier_ _2 = pointer_type_qualifier
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_rev_simple_string_literal_:
   _1 = simple_string_literal
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_simple_string_literal_ _2 = simple_string_literal
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 nonempty_list_rev_type_qualifier_:
   _1 = type_qualifier
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = nonempty_list_rev_type_qualifier_ _2 = type_qualifier
-    {  ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 option_KW_EXTENSION_:
   
-    {  ( None )}
+    {( None )}
 | _1 = KW_EXTENSION
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_TK_COMMA_:
   
-    {  ( None )}
+    {( None )}
 | _1 = TK_COMMA
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_TK_EQUALS_:
   
-    {  ( None )}
+    {( None )}
 | _1 = TK_EQUALS
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_asm_argument_list_:
   
-    {  ( None )}
+    {( None )}
 | _1 = asm_argument_list
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_asm_declaration_specifier_:
   
-    {  ( None )}
+    {( None )}
 | _1 = asm_declaration_specifier
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_bit_field_size_:
   
-    {  ( None )}
+    {( None )}
 | _1 = bit_field_size
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_constant_expression_:
   
-    {  ( None )}
+    {( None )}
 | _1 = constant_expression
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_decl_initialiser_:
   
-    {  ( None )}
+    {( None )}
 | _1 = decl_initialiser
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_enumerator_value_:
   
-    {  ( None )}
+    {( None )}
 | _1 = enumerator_value
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_expression_:
   
-    {  ( None )}
+    {( None )}
 | _1 = expression
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_forward_parameter_type_list_:
   
-    {  ( None )}
+    {( None )}
 | _1 = forward_parameter_type_list
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_paren_numeric_literal__:
   
-    {  ( None )}
+    {( None )}
 | _1 = paren_numeric_literal_
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_sep_TK_COMMA_asm_clobbered__:
   
-    {  ( None )}
+    {( None )}
 | _1 = sep_TK_COMMA_asm_clobbered_
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_sep_TK_COMMA_assignment_expression__:
   
-    {  ( None )}
+    {( None )}
 | _1 = sep_TK_COMMA_assignment_expression_
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 option_sep_TK_COMMA_attrib__:
   
-    {  ( None )}
+    {( None )}
 | _1 = sep_TK_COMMA_attrib_
-    {  ( Some _1 )}
+    {( Some _1 )}
 
 boption_KW_VOLATILE_:
   
-    {  ( false )}
+    {( false )}
 | _1 = KW_VOLATILE
-    {  ( true )}
+    {( true )}
 
 attribute:
   _1 = KW_ATTRIBUTE _2 = TK_LBRACK _3 = TK_LBRACK _4 = option_sep_TK_COMMA_attrib__ _5 = TK_RBRACK _6 = TK_RBRACK
-    {  ( list_from_opt _4 )}
+    {( list_from_opt _4 )}
 | _1 = KW_DECLSPEC _2 = TK_LBRACK _3 = sep_TK_COMMA_attrib_ _4 = TK_RBRACK
-    {  ( _3 )}
+    {( _3 )}
 | _1 = KW_FASTCALL
-    {  ( ["fastcall", []] )}
+    {( ["fastcall", []] )}
 
 paren_identifier_:
   _1 = TK_LBRACK _2 = identifier _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 | _1 = TK_LBRACK _2 = paren_identifier_ _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 
 paren_numeric_literal_:
   _1 = TK_LBRACK _2 = numeric_literal _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 | _1 = TK_LBRACK _2 = paren_numeric_literal_ _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 
 paren_sep_TK_COMMA_numeric_literal__:
   _1 = TK_LBRACK _2 = sep_TK_COMMA_numeric_literal_ _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 | _1 = TK_LBRACK _2 = paren_sep_TK_COMMA_numeric_literal__ _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 
 paren_string_literal_:
   _1 = TK_LBRACK _2 = string_literal _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 | _1 = TK_LBRACK _2 = paren_string_literal_ _3 = TK_RBRACK
-    {  ( _2 )}
+    {( _2 )}
 
 attrib:
   _1 = KW_ATTR_ALIAS _2 = paren_string_literal_
-    {  ( "alias", [_2] )}
+    {( "alias", [_2] )}
 | _1 = KW_ATTR_ALIGNED _2 = option_paren_numeric_literal__
-    {  ( "aligned", singleton_list_from_opt _2 )}
+    {( "aligned", singleton_list_from_opt _2 )}
 | _1 = KW_ATTR_ALWAYS_INLINE
-    {  ( "always_inline", [] )}
+    {( "always_inline", [] )}
 | _1 = KW_ATTR_COMMON
-    {  ( "common", [] )}
+    {( "common", [] )}
 | _1 = KW_ATTR_COLD
-    {  ( "cold", [] )}
+    {( "cold", [] )}
 | _1 = KW_ATTR_CONST
-    {  ( "const", [] )}
+    {( "const", [] )}
 | _1 = KW_ATTR_DEPRECATED
-    {  ( "deprecated", [] )}
+    {( "deprecated", [] )}
 | _1 = KW_ATTR_DLLEXPORT
-    {  ( "dllexport", [] )}
+    {( "dllexport", [] )}
 | _1 = KW_ATTR_DLLIMPORT
-    {  ( "dllimport", [] )}
+    {( "dllimport", [] )}
 | _1 = KW_ATTR_EXTERNALLY_VISIBLE
-    {  ( "externally_visible", [] )}
+    {( "externally_visible", [] )}
 | _1 = KW_ATTR_FORMAT _2 = TK_LBRACK _3 = identifier _4 = TK_COMMA _5 = numeric_literal _6 = TK_COMMA _7 = numeric_literal _8 = TK_RBRACK
-    {  ( "format", [_3; _5; _7] )}
+    {( "format", [_3; _5; _7] )}
 | _1 = KW_ATTR_FORMAT_ARG _2 = paren_numeric_literal_
-    {  ( "format_arg", [_2] )}
+    {( "format_arg", [_2] )}
 | _1 = KW_ATTR_GNU_INLINE
-    {  ( "gnu_inline", [] )}
+    {( "gnu_inline", [] )}
 | _1 = KW_ATTR_HOT
-    {  ( "hot", [] )}
+    {( "hot", [] )}
 | _1 = KW_ATTR_INTERRUPT _2 = paren_string_literal_
-    {  ( "interrupt", [_2] )}
+    {( "interrupt", [_2] )}
 | _1 = KW_ATTR_MALLOC
-    {  ( "malloc", [] )}
+    {( "malloc", [] )}
 | _1 = KW_ATTR_MAY_ALIAS
-    {  ( "may_alias", [] )}
+    {( "may_alias", [] )}
 | _1 = KW_ATTR_MIPS16
-    {  ( "mips16", [] )}
+    {( "mips16", [] )}
 | _1 = KW_ATTR_MODE _2 = paren_identifier_
-    {  ( "mode", [_2] )}
+    {( "mode", [_2] )}
 | _1 = KW_ATTR_NOCLONE
-    {  ( "noclone", [] )}
+    {( "noclone", [] )}
 | _1 = KW_ATTR_NOCOMMON
-    {  ( "nocommon", [] )}
+    {( "nocommon", [] )}
 | _1 = KW_ATTR_NOINLINE
-    {  ( "noinline", [] )}
+    {( "noinline", [] )}
 | _1 = KW_ATTR_NO_INSTRUMENT_FUNCTION
-    {  ( "no_instrument_function", [] )}
+    {( "no_instrument_function", [] )}
 | _1 = KW_ATTR_NOMIPS16
-    {  ( "nomips16", [] )}
+    {( "nomips16", [] )}
 | _1 = KW_ATTR_NONNULL _2 = paren_sep_TK_COMMA_numeric_literal__
-    {  ( "nonnull", _2 )}
+    {( "nonnull", _2 )}
 | _1 = KW_ATTR_NORETURN
-    {  ( "noreturn", [] )}
+    {( "noreturn", [] )}
 | _1 = KW_ATTR_NO_SPLIT_STACK
-    {  ( "no_split_stack", [] )}
+    {( "no_split_stack", [] )}
 | _1 = KW_ATTR_NOTHROW
-    {  ( "nothrow", [] )}
+    {( "nothrow", [] )}
 | _1 = KW_ATTR_NOTSHARED
-    {  ( "notshared", [] )}
+    {( "notshared", [] )}
 | _1 = KW_ATTR_PACKED
-    {  ( "packed", [] )}
+    {( "packed", [] )}
 | _1 = KW_ATTR_PURE
-    {  ( "pure", [] )}
+    {( "pure", [] )}
 | _1 = KW_ATTR_SECTION _2 = paren_string_literal_
-    {  ( "section", [_2] )}
+    {( "section", [_2] )}
 | _1 = KW_ATTR_SENTINEL
-    {  ( "sentinel", [] )}
+    {( "sentinel", [] )}
 | _1 = KW_ATTR_TRANSPARENT_UNION
-    {  ( "transparent_union", [] )}
+    {( "transparent_union", [] )}
 | _1 = KW_ATTR_UNUSED
-    {  ( "unused", [] )}
+    {( "unused", [] )}
 | _1 = KW_ATTR_USED
-    {  ( "used", [] )}
+    {( "used", [] )}
 | _1 = KW_ATTR_VECTOR_SIZE _2 = TK_LBRACK _3 = assignment_expression _4 = TK_RBRACK
-    {  ( "vector_size", [_3] )}
+    {( "vector_size", [_3] )}
 | _1 = KW_ATTR_VISIBILITY _2 = paren_string_literal_
-    {  ( "visibility", [_2] )}
+    {( "visibility", [_2] )}
 | _1 = KW_ATTR_WARN_UNUSED_RESULT
-    {  ( "warn_unused_result", [] )}
+    {( "warn_unused_result", [] )}
 | _1 = KW_ATTR_WEAK
-    {  ( "weak", [] )}
+    {( "weak", [] )}
 | _1 = KW_ATTR_CDECL
-    {  ( "cdecl", [] )}
+    {( "cdecl", [] )}
 | _1 = KW_ATTR_STDCALL
-    {  ( "stdcall", [] )}
+    {( "stdcall", [] )}
 | _1 = KW_ATTR_THISCALL
-    {  ( "thiscall", [] )}
+    {( "thiscall", [] )}
 | _1 = KW_ATTR_ARTIFICIAL
-    {  ( "artificial", [] )}
+    {( "artificial", [] )}
 | _1 = KW_ATTR_FORCE_ALIGN_ARG_POINTER
-    {  ( "force_align_arg_pointer", [] )}
+    {( "force_align_arg_pointer", [] )}
 | _1 = KW_ATTR_REGPARM _2 = paren_numeric_literal_
-    {  ( "regparm", [_2] )}
+    {( "regparm", [_2] )}
 | _1 = KW_ATTR_CALLEE_POP_AGGREGATE_RETURN _2 = paren_numeric_literal_
-    {  ( "callee_pop_aggregate_return", [_2] )}
+    {( "callee_pop_aggregate_return", [_2] )}
 | _1 = KW_ATTR_SSEREGPARM
-    {  ( "sseregparm", [] )}
+    {( "sseregparm", [] )}
 | _1 = KW_ATTR_CLEANUP _2 = paren_identifier_
-    {  ( "cleanup", [_2] )}
+    {( "cleanup", [_2] )}
 | _1 = KW_ATTR_FASTCALL
-    {  ( "fastcall", [] )}
+    {( "fastcall", [] )}
 | _1 = KW_ATTR_OPTIMIZE _2 = TK_LBRACK _3 = numeric_literal _4 = TK_COMMA _5 = string_literal _6 = TK_RBRACK
-    {  ( "optimize", [_3; _5] )}
+    {( "optimize", [_3; _5] )}
 | _1 = KW_ATTR_TARGET _2 = paren_string_literal_
-    {  ( "target", [_2] )}
+    {( "target", [_2] )}
 | _1 = KW_ATTR_ALLOC_SIZE _2 = paren_numeric_literal_
-    {  ( "alloc_size", [_2] )}
+    {( "alloc_size", [_2] )}
 | _1 = KW_ATTR_ALTIVEC
-    {  ( "altivec", [] )}
+    {( "altivec", [] )}
 | _1 = KW_ATTR_BACK_SWITCH
-    {  ( "back_switch", [] )}
+    {( "back_switch", [] )}
 | _1 = KW_ATTR_BASED
-    {  ( "based", [] )}
+    {( "based", [] )}
 | _1 = KW_ATTR_BELOW100
-    {  ( "below100", [] )}
+    {( "below100", [] )}
 | _1 = KW_ATTR_CB
-    {  ( "cb", [] )}
+    {( "cb", [] )}
 | _1 = KW_ATTR_CONSTRUCTOR
-    {  ( "constructor", [] )}
+    {( "constructor", [] )}
 | _1 = KW_ATTR_DESTRUCTOR
-    {  ( "destructor", [] )}
+    {( "destructor", [] )}
 | _1 = KW_ATTR_DISINTERRUPT
-    {  ( "disinterrupt", [] )}
+    {( "disinterrupt", [] )}
 | _1 = KW_ATTR_EIGHTBIT_DATA
-    {  ( "eightbit_data", [] )}
+    {( "eightbit_data", [] )}
 | _1 = KW_ATTR_EXCEPTION_HANDLER
-    {  ( "exception_handler", [] )}
+    {( "exception_handler", [] )}
 | _1 = KW_ATTR_FAR
-    {  ( "far", [] )}
+    {( "far", [] )}
 | _1 = KW_ATTR_FAST_INTERRUPT
-    {  ( "fast_interrupt", [] )}
+    {( "fast_interrupt", [] )}
 | _1 = KW_ATTR_FLATTEN
-    {  ( "flatten", [] )}
+    {( "flatten", [] )}
 | _1 = KW_ATTR_FUNCTION_VECTOR
-    {  ( "function_vector", [] )}
+    {( "function_vector", [] )}
 | _1 = KW_ATTR_GCC_STRUCT
-    {  ( "gcc_struct", [] )}
+    {( "gcc_struct", [] )}
 | _1 = KW_ATTR_IFUNC
-    {  ( "ifunc", [] )}
+    {( "ifunc", [] )}
 | _1 = KW_ATTR_INTERRUPT_HANDLER
-    {  ( "interrupt_handler", [] )}
+    {( "interrupt_handler", [] )}
 | _1 = KW_ATTR_INTERRUPT_THREAD
-    {  ( "interrupt_thread", [] )}
+    {( "interrupt_thread", [] )}
 | _1 = KW_ATTR_IO
-    {  ( "io", [] )}
+    {( "io", [] )}
 | _1 = KW_ATTR_ISR
-    {  ( "isr", [] )}
+    {( "isr", [] )}
 | _1 = KW_ATTR_KSPISUSP
-    {  ( "kspisusp", [] )}
+    {( "kspisusp", [] )}
 | _1 = KW_ATTR_L1_DATA_A
-    {  ( "l1_data_a", [] )}
+    {( "l1_data_a", [] )}
 | _1 = KW_ATTR_L1_DATA_B
-    {  ( "l1_data_b", [] )}
+    {( "l1_data_b", [] )}
 | _1 = KW_ATTR_L1_DATA
-    {  ( "l1_data", [] )}
+    {( "l1_data", [] )}
 | _1 = KW_ATTR_L1_TEXT
-    {  ( "l1_text", [] )}
+    {( "l1_text", [] )}
 | _1 = KW_ATTR_L2
-    {  ( "l2", [] )}
+    {( "l2", [] )}
 | _1 = KW_ATTR_LEAF
-    {  ( "leaf", [] )}
+    {( "leaf", [] )}
 | _1 = KW_ATTR_LONG_CALL
-    {  ( "long_call", [] )}
+    {( "long_call", [] )}
 | _1 = KW_ATTR_LONGCALL
-    {  ( "longcall", [] )}
+    {( "longcall", [] )}
 | _1 = KW_ATTR_MODEL
-    {  ( "model", [] )}
+    {( "model", [] )}
 | _1 = KW_ATTR_MS_ABI
-    {  ( "ms_abi", [] )}
+    {( "ms_abi", [] )}
 | _1 = KW_ATTR_MS_HOOK_PROLOGUE
-    {  ( "ms_hook_prologue", [] )}
+    {( "ms_hook_prologue", [] )}
 | _1 = KW_ATTR_MS_STRUCT
-    {  ( "ms_struct", [] )}
+    {( "ms_struct", [] )}
 | _1 = KW_ATTR_NAKED
-    {  ( "naked", [] )}
+    {( "naked", [] )}
 | _1 = KW_ATTR_NEAR
-    {  ( "near", [] )}
+    {( "near", [] )}
 | _1 = KW_ATTR_NESTING
-    {  ( "nesting", [] )}
+    {( "nesting", [] )}
 | _1 = KW_ATTR_NMI_HANDLER
-    {  ( "nmi_handler", [] )}
+    {( "nmi_handler", [] )}
 | _1 = KW_ATTR_OS_MAIN
-    {  ( "os_main", [] )}
+    {( "os_main", [] )}
 | _1 = KW_ATTR_OS_TASK
-    {  ( "os_task", [] )}
+    {( "os_task", [] )}
 | _1 = KW_ATTR_PCS
-    {  ( "pcs", [] )}
+    {( "pcs", [] )}
 | _1 = KW_ATTR_PROGMEM
-    {  ( "progmem", [] )}
+    {( "progmem", [] )}
 | _1 = KW_ATTR_RESBANK
-    {  ( "resbank", [] )}
+    {( "resbank", [] )}
 | _1 = KW_ATTR_RETURNS_TWICE
-    {  ( "returns_twice", [] )}
+    {( "returns_twice", [] )}
 | _1 = KW_ATTR_SAVEALL
-    {  ( "saveall", [] )}
+    {( "saveall", [] )}
 | _1 = KW_ATTR_SAVE_VOLATILES
-    {  ( "save_volatiles", [] )}
+    {( "save_volatiles", [] )}
 | _1 = KW_ATTR_SELECTANY
-    {  ( "selectany", [] )}
+    {( "selectany", [] )}
 | _1 = KW_ATTR_SHARED
-    {  ( "shared", [] )}
+    {( "shared", [] )}
 | _1 = KW_ATTR_SHORT_CALL
-    {  ( "short_call", [] )}
+    {( "short_call", [] )}
 | _1 = KW_ATTR_SHORTCALL
-    {  ( "shortcall", [] )}
+    {( "shortcall", [] )}
 | _1 = KW_ATTR_SIGNAL
-    {  ( "signal", [] )}
+    {( "signal", [] )}
 | _1 = KW_ATTR_SP_SWITCH
-    {  ( "sp_switch", [] )}
+    {( "sp_switch", [] )}
 | _1 = KW_ATTR_SPU_VECTOR
-    {  ( "spu_vector", [] )}
+    {( "spu_vector", [] )}
 | _1 = KW_ATTR_SYSCALL_LINKAGE
-    {  ( "syscall_linkage", [] )}
+    {( "syscall_linkage", [] )}
 | _1 = KW_ATTR_SYSV_ABI
-    {  ( "sysv_abi", [] )}
+    {( "sysv_abi", [] )}
 | _1 = KW_ATTR_TINY_DATA
-    {  ( "tiny_data", [] )}
+    {( "tiny_data", [] )}
 | _1 = KW_ATTR_TINY
-    {  ( "tiny", [] )}
+    {( "tiny", [] )}
 | _1 = KW_ATTR_TLS_MODEL
-    {  ( "tls_model", [] )}
+    {( "tls_model", [] )}
 | _1 = KW_ATTR_TRAP_EXIT
-    {  ( "trap_exit", [] )}
+    {( "trap_exit", [] )}
 | _1 = KW_ATTR_VERSION_ID
-    {  ( "version_id", [] )}
+    {( "version_id", [] )}
 | _1 = KW_ATTR_VLIW
-    {  ( "vliw", [] )}
+    {( "vliw", [] )}
 | _1 = KW_ATTR_WEAKREF
-    {  ( "weakref", [] )}
+    {( "weakref", [] )}
 
 %%

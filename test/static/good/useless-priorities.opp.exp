@@ -10,18 +10,18 @@
 
 expression:
   i = INT
-    {                    ( i )}
+    {( i )}
 | e = expression o = op f = expression
-    {                                                                   ( o e f )}
+    {( o e f )}
 
 op:
   _1 = PLUS
-    {         ( ( + ) )}
+    {( ( + ) )}
 | _1 = TIMES
-    {                           ( ( * ) )}
+    {( ( * ) )}
 
 main:
   e = expression _2 = EOF
-    {                         ( e )}
+    {( e )}
 
 %%

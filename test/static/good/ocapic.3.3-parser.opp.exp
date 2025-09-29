@@ -252,30 +252,30 @@
 
 main:
   _1 = components _2 = Eof
-    {                     ( _1 )}
+    {( _1 )}
 
 components:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = Newline _2 = components
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = component _2 = components
-    {                         ( match _1 with Some c -> c :: _2 | None -> _2 )}
+    {( match _1 with Some c -> c :: _2 | None -> _2 )}
 
 component:
   _1 = Name _2 = options _3 = Newline
-    {                                  ( parse_component _1 _2 )}
+    {( parse_component _1 _2 )}
 
 options:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = Name _2 = Equal _3 = name_string _4 = options
-    {                                   ( (_1, _3) :: _4 )}
+    {( (_1, _3) :: _4 )}
 
 name_string:
   _1 = Name
-    {         ( _1 )}
+    {( _1 )}
 | _1 = String
-    {           ( _1 )}
+    {( _1 )}
 
 %%

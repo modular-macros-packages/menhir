@@ -8,6 +8,6 @@
 
 main [@main ()] [@cost 0]:
   _1 = A _2 = B [@producer true] _3 = C
-    {                         ()}
+    {()}
 
 %%

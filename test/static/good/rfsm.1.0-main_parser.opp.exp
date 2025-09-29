@@ -74,182 +74,182 @@ let mk_action p desc = { Syntax.act_desc = desc; Syntax.act_loc = mk_location p 
 
 option_int_range_:
   
-    {    ( None )} [@name none_int_range]
+    {( None )} [@name none_int_range]
 | x = int_range
-    {    ( Some x )} [@name some_int_range]
+    {( Some x )} [@name some_int_range]
 
 loption_separated_nonempty_list_COMMA_INT__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_INT_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_INT_]
 | x = separated_nonempty_list_COMMA_INT_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_INT_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_INT_]
 
 loption_separated_nonempty_list_COMMA_id__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_id_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_id_]
 | x = separated_nonempty_list_COMMA_id_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_id_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_id_]
 
 loption_separated_nonempty_list_COMMA_value_change__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_value_change_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_value_change_]
 | x = separated_nonempty_list_COMMA_value_change_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_value_change_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_value_change_]
 
 loption_separated_nonempty_list_COMMA_var__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_var_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_var_]
 | x = separated_nonempty_list_COMMA_var_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_var_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_var_]
 
 separated_nonempty_list_COMMA_INT_:
   x = INT
-    {    ( [ x ] )} [@name one_COMMA_INT]
+    {( [ x ] )} [@name one_COMMA_INT]
 | x = INT _2 = COMMA xs = separated_nonempty_list_COMMA_INT_
-    {    ( x :: xs )} [@name more_COMMA_INT]
+    {( x :: xs )} [@name more_COMMA_INT]
 
 separated_nonempty_list_COMMA_id_:
   x = id
-    {    ( [ x ] )} [@name one_COMMA_id]
+    {( [ x ] )} [@name one_COMMA_id]
 | x = id _2 = COMMA xs = separated_nonempty_list_COMMA_id_
-    {    ( x :: xs )} [@name more_COMMA_id]
+    {( x :: xs )} [@name more_COMMA_id]
 
 separated_nonempty_list_COMMA_value_change_:
   x = value_change
-    {    ( [ x ] )} [@name one_COMMA_value_change]
+    {( [ x ] )} [@name one_COMMA_value_change]
 | x = value_change _2 = COMMA xs = separated_nonempty_list_COMMA_value_change_
-    {    ( x :: xs )} [@name more_COMMA_value_change]
+    {( x :: xs )} [@name more_COMMA_value_change]
 
 separated_nonempty_list_COMMA_var_:
   x = var
-    {    ( [ x ] )} [@name one_COMMA_var]
+    {( [ x ] )} [@name one_COMMA_var]
 | x = var _2 = COMMA xs = separated_nonempty_list_COMMA_var_
-    {    ( x :: xs )} [@name more_COMMA_var]
+    {( x :: xs )} [@name more_COMMA_var]
 
 separated_nonempty_list_DOT_guard_:
   x = guard
-    {    ( [ x ] )} [@name one_DOT_guard]
+    {( [ x ] )} [@name one_DOT_guard]
 | x = guard _2 = DOT xs = separated_nonempty_list_DOT_guard_
-    {    ( x :: xs )} [@name more_DOT_guard]
+    {( x :: xs )} [@name more_DOT_guard]
 
 separated_nonempty_list_SEMICOLON_action_:
   x = action
-    {    ( [ x ] )} [@name one_SEMICOLON_action]
+    {( [ x ] )} [@name one_SEMICOLON_action]
 | x = action _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_action_
-    {    ( x :: xs )} [@name more_SEMICOLON_action]
+    {( x :: xs )} [@name more_SEMICOLON_action]
 
 braced_my_separated_list_COMMA_UID__:
   _1 = LBRACE x = my_separated_list_COMMA_UID_ _3 = RBRACE
-    {                      ( x )}
+    {( x )}
 
 paren_separated_list_COMMA_INT__:
   _1 = LPAREN xs = loption_separated_nonempty_list_COMMA_INT__ _3 = RPAREN
-    {let x =     ( xs ) in
-                      ( x )}
+    {let x = ( xs ) in
+( x )}
 
 paren_separated_list_COMMA_id__:
   _1 = LPAREN xs = loption_separated_nonempty_list_COMMA_id__ _3 = RPAREN
-    {let x =     ( xs ) in
-                      ( x )}
+    {let x = ( xs ) in
+( x )}
 
 paren_separated_list_COMMA_value_change__:
   _1 = LPAREN xs = loption_separated_nonempty_list_COMMA_value_change__ _3 = RPAREN
-    {let x =     ( xs ) in
-                      ( x )}
+    {let x = ( xs ) in
+( x )}
 
 optional_actions_:
   
-    {                  ( [] )}
+    {( [] )}
 | x = actions
-    {        ( x )}
+    {( x )}
 
 optional_params_:
   
-    {                  ( [] )}
+    {( [] )}
 | x = params
-    {        ( x )}
+    {( x )}
 
 optional_vars_:
   
-    {                  ( [] )}
+    {( [] )}
 | x = vars
-    {        ( x )}
+    {( x )}
 
 my_list_type_decl_:
   
-    {    ( [] )}
+    {( [] )}
 | x = type_decl xs = my_list_type_decl_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_nonempty_list_fsm_inst_:
   x = fsm_inst
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = fsm_inst xs = my_nonempty_list_fsm_inst_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_nonempty_list_fsm_model_:
   x = fsm_model
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = fsm_model xs = my_nonempty_list_fsm_model_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_nonempty_list_global_:
   x = global
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = global xs = my_nonempty_list_global_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_separated_nonempty_list_COMMA_UID_:
   x = UID
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = UID _2 = COMMA xs = my_separated_nonempty_list_COMMA_UID_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_separated_nonempty_list_COMMA_io_:
   x = io
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = io _2 = COMMA xs = my_separated_nonempty_list_COMMA_io_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_separated_nonempty_list_COMMA_param_:
   x = param
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = param _2 = COMMA xs = my_separated_nonempty_list_COMMA_param_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_separated_nonempty_list_COMMA_transition_:
   x = transition
-    {    ( [ x ] )}
+    {( [ x ] )}
 | x = transition _2 = COMMA xs = my_separated_nonempty_list_COMMA_transition_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 my_separated_list_COMMA_UID_:
   
-    {    ( [] )}
+    {( [] )}
 | x = my_separated_nonempty_list_COMMA_UID_
-    {    ( x )}
+    {( x )}
 
 my_separated_list_COMMA_io_:
   
-    {    ( [] )}
+    {( [] )}
 | x = my_separated_nonempty_list_COMMA_io_
-    {    ( x )}
+    {( x )}
 
 my_separated_list_COMMA_param_:
   
-    {    ( [] )}
+    {( [] )}
 | x = my_separated_nonempty_list_COMMA_param_
-    {    ( x )}
+    {( x )}
 
 my_separated_list_COMMA_transition_:
   
-    {    ( [] )}
+    {( [] )}
 | x = my_separated_nonempty_list_COMMA_transition_
-    {    ( x )}
+    {( x )}
 
 program:
   tydecls = my_list_type_decl_ models = my_nonempty_list_fsm_model_ globals = my_nonempty_list_global_ fsms = my_nonempty_list_fsm_inst_ _5 = EOF
-    {    ( { Syntax.p_type_decls = tydecls;
+    {( { Syntax.p_type_decls = tydecls;
         Syntax.p_fsm_models = models;
         Syntax.p_globals = globals;
         Syntax.p_fsm_insts = fsms; }
@@ -261,30 +261,30 @@ type_decl:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_type_decl (_symbolstartofs,_endofs) (Syntax.TD_Alias (id,t)) )}
+( mk_type_decl (_symbolstartofs,_endofs) (Syntax.TD_Alias (id,t)) )}
 | _1 = TYPE id = LID _3 = EQUAL cs = braced_my_separated_list_COMMA_UID__
     {let _endpos = _endpos_cs_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_type_decl (_symbolstartofs,_endofs) (Syntax.TD_Enum (id,cs)) )}
+( mk_type_decl (_symbolstartofs,_endofs) (Syntax.TD_Enum (id,cs)) )}
 
 fsm_model:
   _1 = FSM _2 = MODEL name = id params = optional_params_ _5 = LPAREN ios = my_separated_list_COMMA_io_ _7 = RPAREN _8 = LBRACE _9 = STATES _10 = COLON x = my_separated_list_COMMA_UID_ _2_inlined1 = SEMICOLON vars = optional_vars_ _13 = TRANS _14 = COLON x_inlined1 = my_separated_list_COMMA_transition_ _2_inlined2 = SEMICOLON _16 = ITRANS _17 = COLON x_inlined2 = itransition _2_inlined3 = SEMICOLON _19 = RBRACE
     {let itrans =
   let x = x_inlined2 in
-      ( x )
+  ( x )
 in
 let trans =
   let x = x_inlined1 in
-      ( x )
+  ( x )
 in
-let states =     ( x ) in
+let states = ( x ) in
 let _endpos = _endpos__19_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-             (
+(
         mk_fsm_decl
           (_symbolstartofs,_endofs)
           { Syntax.fd_name=name;
@@ -297,7 +297,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 
 params:
   _1 = LT params = my_separated_list_COMMA_param_ _3 = GT
-    {                                                 ( params )}
+    {( params )}
 
 param:
   id = LID _2 = COLON ty = typ
@@ -305,15 +305,15 @@ param:
 let _symbolstartpos = _startpos_id_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                        ( (id, mk_type_expression (_symbolstartofs,_endofs) ty) )}
+( (id, mk_type_expression (_symbolstartofs,_endofs) ty) )}
 
 io:
   _1 = IN d = io_desc
-    {                 ( (Types.IO_In, d) )}
+    {( (Types.IO_In, d) )}
 | _1 = OUT d = io_desc
-    {                  ( (Types.IO_Out, d) )}
+    {( (Types.IO_Out, d) )}
 | _1 = INOUT d = io_desc
-    {                    ( (Types.IO_Inout, d) )}
+    {( (Types.IO_Inout, d) )}
 
 io_desc:
   id = LID _2 = COLON ty = typ
@@ -321,15 +321,15 @@ io_desc:
 let _symbolstartpos = _startpos_id_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                        ( (id, mk_type_expression (_symbolstartofs,_endofs) ty) )}
+( (id, mk_type_expression (_symbolstartofs,_endofs) ty) )}
 
 vars:
   _1 = VARS _2 = COLON xs = loption_separated_nonempty_list_COMMA_var__ _2_inlined1 = SEMICOLON
     {let vars =
-  let x =     ( xs ) in
-      ( x )
+  let x = ( xs ) in
+  ( x )
 in
-                                                                     ( vars )}
+( vars )}
 
 var:
   id = LID _2 = COLON ty = typ
@@ -337,7 +337,7 @@ var:
 let _symbolstartpos = _startpos_id_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                        ( (id, mk_type_expression (_symbolstartofs,_endofs) ty) )}
+( (id, mk_type_expression (_symbolstartofs,_endofs) ty) )}
 
 transition:
   prio = prio src = UID _3 = ARROW_START cond = condition actions = optional_actions_ _6 = ARROW_END dst = UID
@@ -348,31 +348,31 @@ else
   _startpos_src_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( src, mk_condition (_symbolstartofs,_endofs) cond, actions, dst, prio )}
+( src, mk_condition (_symbolstartofs,_endofs) cond, actions, dst, prio )}
 
 prio:
   
-    {                    ( false )}
+    {( false )}
 | _1 = TIMES
-    {            ( true )}
+    {( true )}
 
 itransition:
   actions = optional_actions_ _2 = ARROW_END dst = UID
-    {                                                ( dst, actions )}
+    {( dst, actions )}
 
 condition:
   ev = LID
-    {           ( ([ev],[]) )}
+    {( ([ev],[]) )}
 | ev = LID _2 = DOT guards = separated_nonempty_list_DOT_guard_
-    {                                                          ( ([ev], guards) )}
+    {( ([ev], guards) )}
 
 guard:
   e = guard_expr
-    {                 ( e )}
+    {( e )}
 
 actions:
   _1 = BAR actions = separated_nonempty_list_SEMICOLON_action_
-    {                                                           ( actions )}
+    {( actions )}
 
 action:
   i = LID
@@ -380,13 +380,13 @@ action:
 let _symbolstartpos = _startpos_i_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                        ( mk_action (_symbolstartofs,_endofs) (Action.Emit i) )}
+( mk_action (_symbolstartofs,_endofs) (Action.Emit i) )}
 | i = LID _2 = COLEQ e = expr
     {let _endpos = _endpos_e_ in
 let _symbolstartpos = _startpos_i_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                        ( mk_action (_symbolstartofs,_endofs) (Action.Assign (i,e)) )}
+( mk_action (_symbolstartofs,_endofs) (Action.Assign (i,e)) )}
 
 global:
   _1 = INPUT id = id _3 = COLON ty = typ _5 = EQUAL st = stimuli
@@ -394,7 +394,7 @@ global:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_global_decl
+( mk_global_decl
          (_symbolstartofs,_endofs)
          { Syntax.gd_name = id;
            Syntax.gd_type = mk_type_expression (_symbolstartofs,_endofs) ty;
@@ -404,7 +404,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_global_decl
+( mk_global_decl
          (_symbolstartofs,_endofs)
          { Syntax.gd_name = id;
            Syntax.gd_type = mk_type_expression (_symbolstartofs,_endofs) ty;
@@ -414,7 +414,7 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_global_decl
+( mk_global_decl
          (_symbolstartofs,_endofs)
          { Syntax.gd_name = id;
            Syntax.gd_type = mk_type_expression (_symbolstartofs,_endofs) ty;
@@ -426,23 +426,23 @@ stimuli:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_stim_decl (_symbolstartofs,_endofs) (Syntax.Periodic(p,s,d)) )}
+( mk_stim_decl (_symbolstartofs,_endofs) (Syntax.Periodic(p,s,d)) )}
 | _1 = SPORADIC ts = paren_separated_list_COMMA_INT__
     {let _endpos = _endpos_ts_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_stim_decl (_symbolstartofs,_endofs) (Syntax.Sporadic(ts)) )}
+( mk_stim_decl (_symbolstartofs,_endofs) (Syntax.Sporadic(ts)) )}
 | _1 = VALUE_CHANGES vcs = paren_separated_list_COMMA_value_change__
     {let _endpos = _endpos_vcs_ in
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_stim_decl (_symbolstartofs,_endofs) (Syntax.ValueChange(vcs)) )}
+( mk_stim_decl (_symbolstartofs,_endofs) (Syntax.ValueChange(vcs)) )}
 
 value_change:
   t = INT _2 = COLON v = const
-    {                        ( (t,v) )}
+    {( (t,v) )}
 
 fsm_inst:
   _1 = FSM name = id _3 = EQUAL model = id pvs = opt_inst_params args = paren_separated_list_COMMA_id__
@@ -450,7 +450,7 @@ fsm_inst:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-      ( mk_fsm_inst
+( mk_fsm_inst
           (_symbolstartofs,_endofs)
           { Syntax.fi_name = name;
             Syntax.fi_model = model;
@@ -459,19 +459,19 @@ let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
 
 opt_inst_params:
   
-    {                  ( [] )}
+    {( [] )}
 | _1 = LT params = separated_nonempty_list_COMMA_INT_ _3 = GT
-    {                                                      ( List.map (function v -> Expr.Val_int v) params )}
+    {( List.map (function v -> Expr.Val_int v) params )}
 
 typ:
   _1 = TYEVENT
-    {            ( Syntax.TEEvent )}
+    {( Syntax.TEEvent )}
 | _1 = TYINT r = option_int_range_
-    {                              ( Syntax.TEInt r )}
+    {( Syntax.TEInt r )}
 | _1 = TYBOOL
-    {           ( Syntax.TEBool )}
+    {( Syntax.TEBool )}
 | i = LID
-    {          ( Syntax.TEName i )}
+    {( Syntax.TEName i )}
 
 int_range:
   _1 = LT lo = type_index_expr _3 = DOTDOT hi = type_index_expr _5 = GT
@@ -479,95 +479,95 @@ int_range:
 let _symbolstartpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-        ( (mk_type_index_expression (_symbolstartofs,_endofs) lo,
+( (mk_type_index_expression (_symbolstartofs,_endofs) lo,
            mk_type_index_expression (_symbolstartofs,_endofs) hi) )}
 
 type_index_expr:
   c = INT
-    {      ( Syntax.TEConst c )}
+    {( Syntax.TEConst c )}
 | i = LID
-    {      ( Syntax.TEVar i )}
+    {( Syntax.TEVar i )}
 | _1 = LPAREN e = type_index_expr _3 = RPAREN
-    {      ( e )}
+    {( e )}
 | e1 = type_index_expr _2 = PLUS e2 = type_index_expr
-    {      ( Syntax.TEBinop ("+", e1, e2) )}
+    {( Syntax.TEBinop ("+", e1, e2) )}
 | e1 = type_index_expr _2 = MINUS e2 = type_index_expr
-    {      ( Syntax.TEBinop ("-", e1, e2) )}
+    {( Syntax.TEBinop ("-", e1, e2) )}
 | e1 = type_index_expr _2 = TIMES e2 = type_index_expr
-    {      ( Syntax.TEBinop ("*", e1, e2) )}
+    {( Syntax.TEBinop ("*", e1, e2) )}
 | e1 = type_index_expr _2 = DIV e2 = type_index_expr
-    {      ( Syntax.TEBinop ("/", e1, e2) )}
+    {( Syntax.TEBinop ("/", e1, e2) )}
 | e1 = type_index_expr _2 = MOD e2 = type_index_expr
-    {      ( Syntax.TEBinop ("mod", e1, e2) )}
+    {( Syntax.TEBinop ("mod", e1, e2) )}
 
 guard_expr:
   e1 = expr _2 = EQUAL e2 = expr
-    {      ( (e1, "=", e2) )}
+    {( (e1, "=", e2) )}
 | e1 = expr _2 = NOTEQUAL e2 = expr
-    {      ( (e1, "!=", e2) )}
+    {( (e1, "!=", e2) )}
 | e1 = expr _2 = GT e2 = expr
-    {      ( (e1, ">", e2) )}
+    {( (e1, ">", e2) )}
 | e1 = expr _2 = LT e2 = expr
-    {      ( (e1, "<", e2) )}
+    {( (e1, "<", e2) )}
 | e1 = expr _2 = GTE e2 = expr
-    {      ( (e1, ">=", e2) )}
+    {( (e1, ">=", e2) )}
 | e1 = expr _2 = LTE e2 = expr
-    {      ( (e1, "<=", e2) )}
+    {( (e1, "<=", e2) )}
 
 expr:
   c = INT
-    {      ( Expr.EInt c )}
+    {( Expr.EInt c )}
 | c = bool
-    {      ( Expr.EBool c )}
+    {( Expr.EBool c )}
 | v = LID
-    {      ( Expr.EVar v )}
+    {( Expr.EVar v )}
 | c = UID
-    {      ( Expr.EEnum c )}
+    {( Expr.EEnum c )}
 | _1 = LPAREN e = expr _3 = RPAREN
-    {      ( e )}
+    {( e )}
 | e1 = expr _2 = PLUS e2 = expr
-    {      ( Expr.EBinop ("+", e1, e2) )}
+    {( Expr.EBinop ("+", e1, e2) )}
 | e1 = expr _2 = MINUS e2 = expr
-    {      ( Expr.EBinop ("-", e1, e2) )}
+    {( Expr.EBinop ("-", e1, e2) )}
 | e1 = expr _2 = TIMES e2 = expr
-    {      ( Expr.EBinop ("*", e1, e2) )}
+    {( Expr.EBinop ("*", e1, e2) )}
 | e1 = expr _2 = DIV e2 = expr
-    {      ( Expr.EBinop ("/", e1, e2) )}
+    {( Expr.EBinop ("/", e1, e2) )}
 | e1 = expr _2 = MOD e2 = expr
-    {      ( Expr.EBinop ("mod", e1, e2) )}
+    {( Expr.EBinop ("mod", e1, e2) )}
 | e1 = expr _2 = EQUAL e2 = expr
-    {      ( Expr.EBinop ("=", e1, e2) )}
+    {( Expr.EBinop ("=", e1, e2) )}
 | e1 = expr _2 = NOTEQUAL e2 = expr
-    {      ( Expr.EBinop ("!=", e1, e2) )}
+    {( Expr.EBinop ("!=", e1, e2) )}
 | e1 = expr _2 = GT e2 = expr
-    {      ( Expr.EBinop (">", e1, e2) )}
+    {( Expr.EBinop (">", e1, e2) )}
 | e1 = expr _2 = LT e2 = expr
-    {      ( Expr.EBinop ("<", e1, e2) )}
+    {( Expr.EBinop ("<", e1, e2) )}
 | e1 = expr _2 = GTE e2 = expr
-    {      ( Expr.EBinop (">=", e1, e2) )}
+    {( Expr.EBinop (">=", e1, e2) )}
 | e1 = expr _2 = LTE e2 = expr
-    {      ( Expr.EBinop ("<=", e1, e2) )}
+    {( Expr.EBinop ("<=", e1, e2) )}
 | e1 = expr _2 = QMARK e2 = expr _4 = COLON e3 = expr
-    {      ( Expr.ECond (e1, e2, e3) )}
+    {( Expr.ECond (e1, e2, e3) )}
 
 const:
   v = INT
-    {            ( Expr.Val_int v )}
+    {( Expr.Val_int v )}
 | v = bool
-    {             ( Expr.Val_bool v )}
+    {( Expr.Val_bool v )}
 | c = UID
-    {            ( Expr.Val_enum c )}
+    {( Expr.Val_enum c )}
 
 bool:
   _1 = TRUE
-    {         ( true )}
+    {( true )}
 | _1 = FALSE
-    {          ( false )}
+    {( false )}
 
 id:
   i = LID
-    {            ( i )}
+    {( i )}
 | i = UID
-    {            ( i )}
+    {( i )}
 
 %%

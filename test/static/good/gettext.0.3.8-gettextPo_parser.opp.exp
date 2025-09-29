@@ -87,19 +87,19 @@ let check_singular id str =
 
 msgfmt:
   _1 = msgfmt _2 = domain
-    {                        ( let (d,l) = _2 in List.fold_left (add_po_translation_domain d) _1 l )}
+    {( let (d,l) = _2 in List.fold_left (add_po_translation_domain d) _1 l )}
 | _1 = domain
-    {                        ( let (d,l) = _1 in List.fold_left (add_po_translation_domain d) empty_po l )}
+    {( let (d,l) = _1 in List.fold_left (add_po_translation_domain d) empty_po l )}
 | _1 = msgfmt _2 = message_list
-    {                        ( List.fold_left add_po_translation_no_domain _1 _2 )}
+    {( List.fold_left add_po_translation_no_domain _1 _2 )}
 | _1 = message_list
-    {                        ( List.fold_left add_po_translation_no_domain empty_po _1 )}
+    {( List.fold_left add_po_translation_no_domain empty_po _1 )}
 | _1 = EOF
-    {                        ( empty_po )}
+    {( empty_po )}
 
 comment:
   _1 = COMMENT_FILEPOS
-    {  (
+    {(
     let lexbuf =
       Lexing.from_string _1
     in
@@ -111,7 +111,7 @@ comment:
       CommentFilePos lst
   )}
 | _1 = COMMENT_SPECIAL
-    {  (   
+    {(   
     let lexbuf =
       Lexing.from_string _1
     in
@@ -125,50 +125,50 @@ comment:
 
 comment_list:
   _1 = comment_list _2 = comment
-    {                       ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = comment
-    {                       ( [_1] )}
+    {( [_1] )}
 
 domain:
   _1 = DOMAIN _2 = STRING _3 = message_list
-    {                             ( (_2,_3) )}
+    {( (_2,_3) )}
 | _1 = DOMAIN _2 = STRING
-    {                             ( (_2,[]) )}
+    {( (_2,[]) )}
 
 message_list:
   _1 = message_list _2 = message
-    {                       ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = message
-    {                       ( [_1] )}
+    {( [_1] )}
 
 message:
   _1 = comment_list _2 = MSGID _3 = string_list _4 = MSGSTR _5 = string_list
-    {    ( add_comment _1 (check_singular  (List.rev _3) (List.rev _5)) )}
+    {( add_comment _1 (check_singular  (List.rev _3) (List.rev _5)) )}
 | _1 = MSGID _2 = string_list _3 = MSGSTR _4 = string_list
-    {    ( (check_singular (List.rev _2) (List.rev _4)) )}
+    {( (check_singular (List.rev _2) (List.rev _4)) )}
 | _1 = comment_list _2 = MSGID _3 = string_list _4 = msgid_pluralform _5 = pluralform_list
-    {    ( add_comment _1 (check_plural (List.rev _3) _4 (List.rev _5)) )}
+    {( add_comment _1 (check_plural (List.rev _3) _4 (List.rev _5)) )}
 | _1 = MSGID _2 = string_list _3 = msgid_pluralform _4 = pluralform_list
-    {    ( (check_plural (List.rev _2) _3 (List.rev _4)) )}
+    {( (check_plural (List.rev _2) _3 (List.rev _4)) )}
 
 msgid_pluralform:
   _1 = MSGID_PLURAL _2 = string_list
-    {                           ( (List.rev _2) )}
+    {( (List.rev _2) )}
 
 pluralform_list:
   _1 = pluralform_list _2 = pluralform
-    {                              ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = pluralform
-    {                              ( [_1] )}
+    {( [_1] )}
 
 pluralform:
   _1 = MSGSTR _2 = LBRACKET _3 = NUMBER _4 = RBRACKET _5 = string_list
-    {                                              ( (_3,(List.rev _5)) )}
+    {( (_3,(List.rev _5)) )}
 
 string_list:
   _1 = string_list _2 = STRING
-    {                     ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = STRING
-    {                     ( [_1] )}
+    {( [_1] )}
 
 %%

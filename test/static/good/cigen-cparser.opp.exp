@@ -229,243 +229,243 @@ Warning: the token String_raw is unused.
 
 nothing:
   _1 = Endofstream
-    {              ( () )}
+    {( () )}
 
 translation_unit:
   _1 = declaration _2 = Endofstream
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = declaration _2 = translation_unit
-    {      ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 declaration:
   _1 = declaration_specifiers _2 = init_declarator_list _3 = KW_semicolon
-    {      ( let d = {d_specs=_1; d_decl=_2} in
+    {( let d = {d_specs=_1; d_decl=_2} in
           check_for_typedefs d;
           d
       )}
 | _1 = declaration_specifiers _2 = KW_semicolon
-    {      ( let d = {d_specs=_1; d_decl=[]} in
+    {( let d = {d_specs=_1; d_decl=[]} in
           check_for_typedefs d;
           d
       )}
 
 declaration_specifiers:
   _1 = storage_class_specifier _2 = declaration_specifiers
-    {      ( (_1::(fst _2), snd _2) )}
+    {( (_1::(fst _2), snd _2) )}
 | _1 = storage_class_specifier
-    {      ( ([_1], ([],[])) )}
+    {( ([_1], ([],[])) )}
 | _1 = type_specifier _2 = declaration_specifiers
-    {      ( (fst _2, (_1::fst(snd _2),snd (snd _2)) ) )}
+    {( (fst _2, (_1::fst(snd _2),snd (snd _2)) ) )}
 | _1 = type_specifier
-    {      ( ([],([_1],[])) )}
+    {( ([],([_1],[])) )}
 | _1 = type_qualifier _2 = declaration_specifiers
-    {      ( (fst _2, (fst(snd _2), _1::snd(snd _2))) )}
+    {( (fst _2, (fst(snd _2), _1::snd(snd _2))) )}
 | _1 = type_qualifier
-    {      ( ([],([],[_1])) )}
+    {( ([],([],[_1])) )}
 
 storage_class_specifier:
   _1 = KW_auto
-    {                ( S_auto )}
+    {( S_auto )}
 | _1 = KW_register
-    {                ( S_register )}
+    {( S_register )}
 | _1 = KW_static
-    {                ( S_static )}
+    {( S_static )}
 | _1 = KW_extern
-    {                ( S_extern )}
+    {( S_extern )}
 | _1 = KW_typedef
-    {                ( S_typedef )}
+    {( S_typedef )}
 
 type_specifier:
   _1 = KW_void
-    {                                ( T_void )}
+    {( T_void )}
 | _1 = KW_char
-    {              ( T_char )}
+    {( T_char )}
 | _1 = KW_short
-    {               ( T_short )}
+    {( T_short )}
 | _1 = KW_int
-    {             ( T_int )}
+    {( T_int )}
 | _1 = KW_long
-    {              ( T_long )}
+    {( T_long )}
 | _1 = KW_float
-    {               ( T_float )}
+    {( T_float )}
 | _1 = KW_double
-    {                ( T_double )}
+    {( T_double )}
 | _1 = KW_signed
-    {                ( T_signed )}
+    {( T_signed )}
 | _1 = KW_unsigned
-    {                  ( T_unsigned )}
+    {( T_unsigned )}
 | _1 = struct_or_union_specifier
-    {                              ( T_struct _1 )}
+    {( T_struct _1 )}
 | _1 = enum_specifier
-    {                    ( T_enum _1 )}
+    {( T_enum _1 )}
 | _1 = typedef_name
-    {                  ( T_typedef _1 )}
+    {( T_typedef _1 )}
 
 type_qualifier:
   _1 = KW_const
-    {                ( Q_const )}
+    {( Q_const )}
 | _1 = KW_volatile
-    {                ( Q_volatile )}
+    {( Q_volatile )}
 
 struct_or_union_specifier:
   _1 = struct_or_union _2 = Ident _3 = KW_obrace _4 = struct_declaration_list _5 = KW_cbrace
-    {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = _4 })}
+    {( {struct_su = _1; struct_tag = Some _2; struct_lst = _4 })}
 | _1 = struct_or_union _2 = Typedef_ident _3 = KW_obrace _4 = struct_declaration_list _5 = KW_cbrace
-    {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = _4 })}
+    {( {struct_su = _1; struct_tag = Some _2; struct_lst = _4 })}
 | _1 = struct_or_union _2 = KW_obrace _3 = struct_declaration_list _4 = KW_cbrace
-    {      ( {struct_su = _1; struct_tag = None; struct_lst = _3 })}
+    {( {struct_su = _1; struct_tag = None; struct_lst = _3 })}
 | _1 = struct_or_union _2 = Ident
-    {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = [] })}
+    {( {struct_su = _1; struct_tag = Some _2; struct_lst = [] })}
 | _1 = struct_or_union _2 = Typedef_ident
-    {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = [] })}
+    {( {struct_su = _1; struct_tag = Some _2; struct_lst = [] })}
 
 struct_or_union:
   _1 = KW_struct
-    {              ( Is_struct )}
+    {( Is_struct )}
 | _1 = KW_union
-    {              ( Is_union )}
+    {( Is_union )}
 
 struct_declaration_list:
   _1 = struct_declaration
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = struct_declaration _2 = struct_declaration_list
-    {      ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 init_declarator_list:
   _1 = declarator
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = declarator _2 = KW_comma _3 = init_declarator_list
-    {      ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 struct_declaration:
   _1 = specifier_qualifier_list _2 = struct_declarator_list _3 = KW_semicolon
-    {      ( {s_specs = _1; s_decl = _2} )}
+    {( {s_specs = _1; s_decl = _2} )}
 
 specifier_qualifier_list:
   _1 = type_specifier
-    {      ( ([_1],[]) )}
+    {( ([_1],[]) )}
 | _1 = type_specifier _2 = specifier_qualifier_list
-    {      ( (_1::(fst _2),snd _2) )}
+    {( (_1::(fst _2),snd _2) )}
 | _1 = type_qualifier
-    {      ( ([],[_1]) )}
+    {( ([],[_1]) )}
 | _1 = type_qualifier _2 = specifier_qualifier_list
-    {     ( (fst _2,_1::(snd _2)) )}
+    {( (fst _2,_1::(snd _2)) )}
 
 struct_declarator_list:
   _1 = declarator
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = declarator _2 = KW_comma _3 = struct_declarator_list
-    {      ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 enum_specifier:
   _1 = KW_enum _2 = Ident _3 = KW_obrace _4 = enumerator_list _5 = KW_cbrace
-    {      ( {enum_tag = Some _2; enum_labels =_4 })}
+    {( {enum_tag = Some _2; enum_labels =_4 })}
 | _1 = KW_enum _2 = Typedef_ident _3 = KW_obrace _4 = enumerator_list _5 = KW_cbrace
-    {      ( {enum_tag = Some _2; enum_labels =_4 })}
+    {( {enum_tag = Some _2; enum_labels =_4 })}
 | _1 = KW_enum _2 = KW_obrace _3 = enumerator_list _4 = KW_cbrace
-    {      ( {enum_tag = None; enum_labels = _3} )}
+    {( {enum_tag = None; enum_labels = _3} )}
 | _1 = KW_enum _2 = Ident
-    {      ( {enum_tag = Some _2; enum_labels = [] } )}
+    {( {enum_tag = Some _2; enum_labels = [] } )}
 | _1 = KW_enum _2 = Typedef_ident
-    {      ( {enum_tag = Some _2; enum_labels = [] } )}
+    {( {enum_tag = Some _2; enum_labels = [] } )}
 
 enumerator_list:
   _1 = enumerator
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = enumerator _2 = KW_comma _3 = enumerator_list
-    {      ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 enumerator:
   _1 = Ident
-    {      ( (_1,None) )}
+    {( (_1,None) )}
 | _1 = Ident _2 = KW_assign _3 = Integer_unsuffixed
-    {      ( (_1,Some _3) )}
+    {( (_1,Some _3) )}
 
 declarator:
   _1 = direct_declarator
-    {      ( _1 )}
+    {( _1 )}
 | _1 = pointer _2 = direct_declarator
-    {      ( D_pointer (_2,_1) )}
+    {( D_pointer (_2,_1) )}
 
 direct_declarator:
   _1 = Ident
-    {      ( D_name _1 )}
+    {( D_name _1 )}
 | _1 = KW_oparen _2 = declarator _3 = KW_cparen
-    {      ( _2 )}
+    {( _2 )}
 | _1 = direct_declarator _2 = KW_obracket _3 = KW_cbracket
-    {      ( D_openarray _1 )}
+    {( D_openarray _1 )}
 | _1 = direct_declarator _2 = KW_obracket _3 = Integer_unsuffixed _4 = KW_cbracket
-    {      ( D_array (_1,_3) )}
+    {( D_array (_1,_3) )}
 | _1 = direct_declarator _2 = KW_oparen _3 = parameter_type_list _4 = KW_cparen
-    {      ( D_function (_1,_3) )}
+    {( D_function (_1,_3) )}
 
 pointer:
   _1 = KW_times _2 = type_qualifier_list
-    {      ( [_2] )}
+    {( [_2] )}
 | _1 = KW_times
-    {      ( [[]] )}
+    {( [[]] )}
 | _1 = KW_times _2 = type_qualifier_list _3 = pointer
-    {      ( _2 :: _3 )}
+    {( _2 :: _3 )}
 | _1 = KW_times _2 = pointer
-    {      ( [] :: _2 )}
+    {( [] :: _2 )}
 
 type_qualifier_list:
   _1 = type_qualifier
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = type_qualifier _2 = type_qualifier_list
-    {      ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 parameter_type_list:
   _1 = parameter_list
-    {      ( _1 )}
+    {( _1 )}
 | _1 = parameter_list _2 = KW_comma _3 = KW_andsoon
-    {      ( _1 @ [P_var] )}
+    {( _1 @ [P_var] )}
 
 parameter_list:
   _1 = parameter_declaration
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = parameter_list _2 = KW_comma _3 = parameter_declaration
-    {      ( _1 @  [_3] )}
+    {( _1 @  [_3] )}
 
 parameter_declaration:
   _1 = declaration_specifiers _2 = declarator
-    {      ( P_decl (_1,_2) )}
+    {( P_decl (_1,_2) )}
 | _1 = declaration_specifiers _2 = abstract_declarator
-    {      ( P_abs (_1,_2) )}
+    {( P_abs (_1,_2) )}
 | _1 = declaration_specifiers
-    {      ( P_null _1 )}
+    {( P_null _1 )}
 
 abstract_declarator:
   _1 = pointer
-    {      ( D_abspointer _1 )}
+    {( D_abspointer _1 )}
 | _1 = pointer _2 = direct_abstract_declarator
-    {      ( D_pointer (_2,_1) )}
+    {( D_pointer (_2,_1) )}
 | _1 = direct_abstract_declarator
-    {      ( _1 )}
+    {( _1 )}
 
 direct_abstract_declarator:
   _1 = KW_oparen _2 = abstract_declarator _3 = KW_cparen
-    {      ( _2 )}
+    {( _2 )}
 | _1 = direct_abstract_declarator _2 = KW_obracket _3 = KW_cbracket
-    {      ( D_openarray _1 )}
+    {( D_openarray _1 )}
 | _1 = direct_abstract_declarator _2 = KW_obracket _3 = Integer_unsuffixed _4 = KW_cbracket
-    {      ( D_array (_1,_3) )}
+    {( D_array (_1,_3) )}
 | _1 = KW_obracket _2 = KW_cbracket
-    {      ( D_absopenarray )}
+    {( D_absopenarray )}
 | _1 = KW_obracket _2 = Integer_unsuffixed _3 = KW_cbracket
-    {      ( D_absarray _2 )}
+    {( D_absarray _2 )}
 | _1 = direct_abstract_declarator _2 = KW_oparen _3 = parameter_type_list _4 = KW_cparen
-    {      ( D_function (_1,_3) )}
+    {( D_function (_1,_3) )}
 | _1 = direct_abstract_declarator _2 = KW_oparen _3 = KW_cparen
-    {      ( D_function (_1,[]) )}
+    {( D_function (_1,[]) )}
 | _1 = KW_oparen _2 = parameter_type_list _3 = KW_cparen
-    {      ( D_absfunction _2 )}
+    {( D_absfunction _2 )}
 | _1 = KW_oparen _2 = KW_cparen
-    {      ( D_absfunction [] )}
+    {( D_absfunction [] )}
 
 typedef_name:
   _1 = Typedef_ident
-    {       ( _1 )}
+    {( _1 )}
 
 %%
 

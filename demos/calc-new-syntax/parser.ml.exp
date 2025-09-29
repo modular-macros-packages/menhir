@@ -13,11 +13,11 @@ module MenhirBasics = struct
     | PLUS
     | MINUS
     | LPAREN
-    | INT of (
+    | INT of 
 # 1 "demos/calc-new-syntax/parser.mly"
        (int)
 # 20 "demos/calc-new-syntax/parser.ml"
-  )
+  
     | EOL
     | DIV
   

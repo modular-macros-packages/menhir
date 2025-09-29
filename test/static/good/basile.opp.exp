@@ -15,49 +15,49 @@
 
 option___anonymous_0_:
   
-    {    ( None )} [@name none___anonymous_0]
+    {( None )} [@name none___anonymous_0]
 | _1 = T_PAAMAYIM_NEKUDOTAYIM i = mkloc_IDENT_
-    {let x =                                                        ( i ) in
-    ( Some x )} [@name some___anonymous_0]
+    {let x = ( i ) in
+( Some x )} [@name some___anonymous_0]
 
 file:
   d = decl _2 = EOF
-    {                     ( [d] )}
+    {( [d] )}
 
 decl_desc:
   _1 = STRUCT ps = separated_SEMI_param_ _3 = END
-    {    ( PDstruct ({txt="f";loc=(Lexing.dummy_pos, Lexing.dummy_pos)}, ps, false) )}
+    {( PDstruct ({txt="f";loc=(Lexing.dummy_pos, Lexing.dummy_pos)}, ps, false) )}
 
 decl:
   d = mkloc_decl_desc_
-    {                        ( d )}
+    {( d )}
 
 separated_SEMI_param_:
   
-    {              ( [] )}
+    {( [] )}
 | _1 = SEMI ps = separated_SEMI_param_
-    {                                  ( ps )}
+    {( ps )}
 | p = param
-    {            ( [p] )}
+    {( [p] )}
 | hd = param _2 = SEMI tl = separated_SEMI_param_
-    {                                             ( hd :: tl )}
+    {( hd :: tl )}
 
 param:
   p = mkloc_IDENT_ t = option___anonymous_0_
-    {                                                               ( (p, t) )}
+    {( (p, t) )}
 
 mkloc_IDENT_:
   txt = IDENT
     {let _endpos = _endpos_txt_ in
 let _symbolstartpos = _startpos_txt_ in
 let _sloc = (_symbolstartpos, _endpos) in
-              ( { txt; loc= _sloc } )}
+( { txt; loc= _sloc } )}
 
 mkloc_decl_desc_:
   txt = decl_desc
     {let _endpos = _endpos_txt_ in
 let _symbolstartpos = _startpos_txt_ in
 let _sloc = (_symbolstartpos, _endpos) in
-              ( { txt; loc= _sloc } )}
+( { txt; loc= _sloc } )}
 
 %%

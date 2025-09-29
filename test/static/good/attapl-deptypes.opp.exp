@@ -115,83 +115,83 @@ let rec addbinders tyT l = match l with
 
 toplevel:
   _1 = EOF
-    {      ( fun ctx -> [],ctx )}
+    {( fun ctx -> [],ctx )}
 | _1 = Command _2 = SEMI _3 = toplevel
-    {      ( fun ctx ->
+    {( fun ctx ->
           let cmd,ctx = _1 ctx in
           let cmds,ctx = _3 ctx in
           cmd::cmds,ctx )}
 
 Command:
   _1 = IMPORT _2 = STRINGV
-    {                   ( fun ctx -> (Import(_2.v)),ctx )}
+    {( fun ctx -> (Import(_2.v)),ctx )}
 | _1 = Term
-    {      ( fun ctx -> (let t = _1 ctx in Whred(tmInfo t,t)),ctx )}
+    {( fun ctx -> (let t = _1 ctx in Whred(tmInfo t,t)),ctx )}
 | _1 = LPAREN _2 = NORMAL _3 = Term _4 = RPAREN
-    {      ( fun ctx -> (let t = _3 ctx in Eval(tmInfo t,t)),ctx )}
+    {( fun ctx -> (let t = _3 ctx in Eval(tmInfo t,t)),ctx )}
 | _1 = UCID _2 = TyBinder
-    {      ( fun ctx -> ((Bind(_1.i, _1.v, _2 ctx)), addname ctx _1.v) )}
+    {( fun ctx -> ((Bind(_1.i, _1.v, _2 ctx)), addname ctx _1.v) )}
 | _1 = LCID _2 = Binder
-    {      ( fun ctx -> ((Bind(_1.i,_1.v,_2 ctx)), addname ctx _1.v) )}
+    {( fun ctx -> ((Bind(_1.i,_1.v,_2 ctx)), addname ctx _1.v) )}
 
 Binder:
   _1 = COLON _2 = Type
-    {      ( fun ctx -> VarBind (_2 ctx))}
+    {( fun ctx -> VarBind (_2 ctx))}
 | _1 = EQ _2 = Term
-    {      ( fun ctx -> TmAbbBind(_2 ctx, None) )}
+    {( fun ctx -> TmAbbBind(_2 ctx, None) )}
 | _1 = EQ _2 = Term _3 = COLON _4 = Type
-    {      (fun ctx -> TmAbbBind(_2 ctx, Some(_4 ctx)) )}
+    {(fun ctx -> TmAbbBind(_2 ctx, Some(_4 ctx)) )}
 
 Kind:
   _1 = PI _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Kind
-    {                                  (fun ctx -> let ctx1 = addname ctx _2.v in
+    {(fun ctx -> let ctx1 = addname ctx _2.v in
           KnPi(_2.v,_4 ctx,_6 ctx1))}
 | _1 = ArrowKind
-    {              (_1)}
+    {(_1)}
 
 ArrowKind:
   _1 = AppType _2 = ARROW _3 = ArrowKind
-    {                            ( fun ctx -> KnPi("_",_1 ctx, _3 ctx) )}
+    {( fun ctx -> KnPi("_",_1 ctx, _3 ctx) )}
 | _1 = AKind
-    {        (_1 )}
+    {(_1 )}
 
 AKind:
   _1 = STAR
-    {         ( fun ctx -> KnStar )}
+    {( fun ctx -> KnStar )}
 | _1 = LPAREN _2 = Kind _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 
 Type:
   _1 = AppType
-    {            ( _1 )}
+    {( _1 )}
 | _1 = AppType _2 = ARROW _3 = Type
-    {                             ( fun ctx ->
+    {( fun ctx ->
           let ctx1 = addname ctx "_" in
           TyPi("_",_1 ctx,_3 ctx1) )}
 | _1 = PI _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Type
-    {      ( fun ctx ->
+    {( fun ctx ->
           let ctx1 = addname ctx _2.v in
           TyPi(_2.v,_4 ctx,_6 ctx1) )}
 | _1 = SIGMA _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Type
-    {      ( fun ctx ->
+    {( fun ctx ->
           let ctx1 = addname ctx _2.v in
           TySigma(_2.v,_4 ctx,_6 ctx1) )}
 
 AppType:
   _1 = AppType _2 = ATerm
-    {                  ( fun ctx -> TyApp(_1 ctx,_2 ctx) )}
+    {( fun ctx -> TyApp(_1 ctx,_2 ctx) )}
 | _1 = AType
-    {          ( _1 )}
+    {( _1 )}
 
 AType:
   _1 = LPAREN _2 = Type _3 = RPAREN
-    {           ( _2 )}
+    {( _2 )}
 | _1 = PROP
-    {         (fun ctx -> TyProp)}
+    {(fun ctx -> TyProp)}
 | _1 = PRF _2 = LPAREN _3 = Term _4 = RPAREN
-    {                           (fun ctx -> TyPrf(_3 ctx))}
+    {(fun ctx -> TyPrf(_3 ctx))}
 | _1 = UCID
-    {      ( fun ctx ->
+    {( fun ctx ->
           if isnamebound ctx _1.v then
             TyVar(name2index _1.i ctx _1.v, ctxlength ctx)
           else
@@ -199,59 +199,59 @@ AType:
 
 Term:
   _1 = AppTerm
-    {      ( _1 )}
+    {( _1 )}
 | _1 = LAMBDA _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Term
-    {      ( fun ctx ->
+    {( fun ctx ->
           let ctx1 = addname ctx _2.v in
           TmAbs(_1, _2.v, _4 ctx, _6 ctx1) )}
 | _1 = ALL _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Term
-    {      ( fun ctx ->
+    {( fun ctx ->
           let ctx1 = addname ctx _2.v in
           TmAll(_1, _2.v, _4 ctx, _6 ctx1) )}
 | _1 = LAMBDA _2 = USCORE _3 = COLON _4 = Type _5 = DOT _6 = Term
-    {      ( fun ctx ->
+    {( fun ctx ->
           let ctx1 = addname ctx "_" in
           TmAbs(_1, "_", _4 ctx, _6 ctx1) )}
 
 PathTerm:
   _1 = PathTerm _2 = DOT _3 = TWO
-    {      ( fun ctx ->
+    {( fun ctx ->
           TmProj2(_2, _1 ctx) )}
 | _1 = PathTerm _2 = DOT _3 = ONE
-    {      ( fun ctx ->
+    {( fun ctx ->
           TmProj1(_2, _1 ctx) )}
 | _1 = ATerm
-    {          ( _1 )}
+    {( _1 )}
 
 AppTerm:
   _1 = PathTerm
-    {             (_1)}
+    {(_1)}
 | _1 = AppTerm _2 = ATerm
-    {      ( fun ctx ->
+    {( fun ctx ->
           let e1 = _1 ctx in
           let e2 = _2 ctx in
           TmApp(tmInfo e1,e1,e2) )}
 
 ATerm:
   _1 = LPAREN _2 = Term _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = Term _3 = COMMA _4 = TermList _5 = COLON _6 = Type _7 = RPAREN
-    {                                                 ( fun ctx ->
+    {( fun ctx ->
           TmList(_1,_2 ctx :: _4 ctx ,_6 ctx))}
 | _1 = LCID
-    {      ( fun ctx ->
+    {( fun ctx ->
           TmVar(_1.i, name2index _1.i ctx _1.v, ctxlength ctx) )}
 
 TermList:
   _1 = Term
-    {        ( fun ctx -> [_1 ctx] )}
+    {( fun ctx -> [_1 ctx] )}
 | _1 = Term _2 = COMMA _3 = TermList
-    {                       ( fun ctx -> _1 ctx :: _3 ctx)}
+    {( fun ctx -> _1 ctx :: _3 ctx)}
 
 TyBinder:
   _1 = COLON _2 = Kind
-    {      ( fun ctx -> TyVarBind(_2 ctx) )}
+    {( fun ctx -> TyVarBind(_2 ctx) )}
 | _1 = EQ _2 = Type
-    {      ( fun ctx -> TyAbbBind(_2 ctx, None) )}
+    {( fun ctx -> TyAbbBind(_2 ctx, None) )}
 
 %%

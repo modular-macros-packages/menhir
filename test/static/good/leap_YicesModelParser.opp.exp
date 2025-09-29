@@ -125,9 +125,9 @@ let record_add (fields:(GM.id * GM.vals) list) (i:int) : string =
 
 generic_model:
   
-    {    ( GM.new_model() )}
+    {( GM.new_model() )}
 | _1 = assertion_list
-    {    (
+    {(
       Hashtbl.iter (fun fields id ->
         GM.decl_const model id (GM.Record("mk-record", fields))
       ) record_tbl;
@@ -139,116 +139,116 @@ generic_model:
 
 assertion_list:
   _1 = assertion
-    {    ( () )}
+    {( () )}
 | _1 = assertion _2 = assertion_list
-    {    ( () )}
+    {( () )}
 
 assertion:
   _1 = OPEN_PAREN _2 = EQUAL _3 = record _4 = NUMBER _5 = CLOSE_PAREN
-    {    (
+    {(
       let fields = snd _3 in
       let _ = record_add fields _4 in
       ()
     )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = var _4 = var _5 = CLOSE_PAREN
-    {    (
+    {(
       GM.unify model _3 _4
     )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = var _4 = value _5 = CLOSE_PAREN
-    {    (
+    {(
       match _3 with
       | GM.Var v               -> GM.decl_const model v _4
       | GM.Function (f,params) -> GM.decl_fun model f params _4
     )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = value _4 = var _5 = CLOSE_PAREN
-    {    (
+    {(
       match _4 with
       | GM.Var v               -> GM.decl_const model v _3
       | GM.Function (f,params) -> GM.decl_fun model f params _3
     )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = NUMBER _6 = IDENT _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = NUMBER _6 = NUMBER _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = sel _6 = IDENT _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 | _1 = OPEN_PAREN _2 = EQUAL _3 = OPEN_PAREN _4 = SELECT _5 = sel _6 = NUMBER _7 = CLOSE_PAREN _8 = value _9 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 
 sel:
   _1 = var
-    {    ( () )}
+    {( () )}
 | _1 = record
-    {    ( () )}
+    {( () )}
 
 var:
   _1 = ERROR
-    {    ( GM.Var "error" )}
+    {( GM.Var "error" )}
 | _1 = IDENT
-    {    ( GM.Var (get_name _1) )}
+    {( GM.Var (get_name _1) )}
 | _1 = OPEN_PAREN _2 = fun_name _3 = param_list _4 = CLOSE_PAREN
-    {    ( GM.Function (_2, _3) )}
+    {( GM.Function (_2, _3) )}
 | _1 = OPEN_PAREN _2 = fun_name _3 = record _4 = CLOSE_PAREN
-    {    (
+    {(
       let record_id = record_lookup (snd _3) in
       GM.Function (_2, [Some record_id])
     )}
 
 fun_name:
   _1 = IDENT
-    {    ( get_name _1 )}
+    {( get_name _1 )}
 | _1 = constant
-    {    ( _1 )}
+    {( _1 )}
 
 param_list:
   _1 = constant
-    {    ( [Some _1] )}
+    {( [Some _1] )}
 | _1 = constant _2 = param_list
-    {    ( Some _1 :: _2 )}
+    {( Some _1 :: _2 )}
 
 value:
   _1 = constant
-    {    ( GM.Single _1 )}
+    {( GM.Single _1 )}
 | _1 = record
-    {    ( GM.Record _1 )}
+    {( GM.Record _1 )}
 
 constant:
   _1 = BOOL
-    {    ( if _1 then "true" else "false" )}
+    {( if _1 then "true" else "false" )}
 | _1 = TID_ELEM
-    {    ( _1 )}
+    {( _1 )}
 | _1 = ADDR_ELEM
-    {    ( _1 )}
+    {( _1 )}
 | _1 = ELEM_ELEM
-    {    ( _1 )}
+    {( _1 )}
 | _1 = number
-    {    ( (string_of_int _1) )}
+    {( (string_of_int _1) )}
 | _1 = NO_THREAD
-    {    ( "NoThread" )}
+    {( "NoThread" )}
 | _1 = NULL
-    {    ( "null" )}
+    {( "null" )}
 
 number:
   _1 = NUMBER
-    {    ( _1 )}
+    {( _1 )}
 | _1 = MINUS _2 = NUMBER
-    {    ( - _2 )}
+    {( - _2 )}
 
 record:
   _1 = OPEN_PAREN _2 = MK_RECORD _3 = field_list _4 = CLOSE_PAREN
-    {    (
+    {(
       ignore (record_lookup _3);
       ("mk-record", _3)
     )}
 
 field_list:
   _1 = field
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = field _2 = field_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 field:
   _1 = IDENT _2 = DOUBLE_COLON _3 = constant
-    {    ( (get_name _1, _3) )}
+    {( (get_name _1, _3) )}
 
 %%

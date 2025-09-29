@@ -5,11 +5,11 @@
 
 main:
   o = option2_option
-    {             ( o )}
+    {( o )}
 
 option2_option:
   _1 = FOO
-    {      ( () )}
+    {( () )}
 
 %%
 Note: the nonterminal symbol option (from option2.mly) is renamed option2_option.

@@ -170,71 +170,71 @@ let decode_variable v_str =
 
 decode_data_rad:
   _1 = datalist_rad _2 = EOF
-    {      ( List.rev _1 )}
+    {( List.rev _1 )}
 
 datalist_rad:
   _1 = datalist_rad _2 = datagroup_rad
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | 
-    {      ( [] )}
+    {( [] )}
 
 datagroup_rad:
   _1 = data_rad
-    {      ( _1 )}
+    {( _1 )}
 
 data_rad:
   _1 = INTEGER
-    {      ( decode_integer _1 )}
+    {( decode_integer _1 )}
 | _1 = VARIABLE
-    {      ( decode_variable _1)}
+    {( decode_variable _1)}
 | _1 = FLOAT _2 = UNITS
-    {      ( decode_float_units _1 _2 )}
+    {( decode_float_units _1 _2 )}
 | _1 = FLOAT
-    {      ( decode_float_units _1 "_" )}
+    {( decode_float_units _1 "_" )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = SEPARATOR _4 = FLOAT _5 = ENDCOMPLEX _6 = UNITS
-    {      ( decode_complex_rect_units _2 _4 _6 )}
+    {( decode_complex_rect_units _2 _4 _6 )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = SEPARATOR _4 = FLOAT _5 = ENDCOMPLEX
-    {      ( decode_complex_rect_units _2 _4 "_" )}
+    {( decode_complex_rect_units _2 _4 "_" )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = ANGLE _4 = FLOAT _5 = ENDCOMPLEX _6 = UNITS
-    {      ( decode_complex_polar_rad_units _2 _4 _6 )}
+    {( decode_complex_polar_rad_units _2 _4 _6 )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = ANGLE _4 = FLOAT _5 = ENDCOMPLEX
-    {      ( decode_complex_polar_rad_units _2 _4 "_" )}
+    {( decode_complex_polar_rad_units _2 _4 "_" )}
 | _1 = BEGINMATRIX _2 = matrix_rows_rad _3 = ENDMATRIX _4 = UNITS
-    {      ( decode_matrix_units _2 _4 )}
+    {( decode_matrix_units _2 _4 )}
 | _1 = BEGINMATRIX _2 = matrix_rows_rad _3 = ENDMATRIX
-    {      ( decode_matrix_units _2 "_" )}
+    {( decode_matrix_units _2 "_" )}
 
 matrix_rows_rad:
   _1 = matrix_rows_rad _2 = BEGINMATRIX _3 = matrix_row_elements_rad _4 = ENDMATRIX
-    {      (_3 :: _1)}
+    {(_3 :: _1)}
 | 
-    {      ([])}
+    {([])}
 
 matrix_row_elements_rad:
   _1 = matrix_row_elements_rad _2 = SEPARATOR _3 = FLOAT
-    {      ( (F (float_of_string _3)) :: _1 )}
+    {( (F (float_of_string _3)) :: _1 )}
 | _1 = matrix_row_elements_rad _2 = SEPARATOR _3 = BEGINCOMPLEX _4 = FLOAT _5 = SEPARATOR _6 = FLOAT _7 = ENDCOMPLEX
-    {      ( 
+    {( 
          let f1 = float_of_string _4
          and f2 = float_of_string _6 in
          (C {Complex.re = f1; Complex.im = f2}) :: _1
       )}
 | _1 = matrix_row_elements_rad _2 = SEPARATOR _3 = BEGINCOMPLEX _4 = FLOAT _5 = ANGLE _6 = FLOAT _7 = ENDCOMPLEX
-    {      ( 
+    {( 
          let r  = float_of_string _4
          and th = float_of_string _6 in
          (C (rect_of_polar_rad r th)) :: _1
       )}
 | _1 = FLOAT
-    {      ( (F (float_of_string _1)) :: [] )}
+    {( (F (float_of_string _1)) :: [] )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = SEPARATOR _4 = FLOAT _5 = ENDCOMPLEX
-    {      (
+    {(
          let f1 = float_of_string _2
          and f2 = float_of_string _4 in
          (C {Complex.re = f1; Complex.im = f2}) :: []
       )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = ANGLE _4 = FLOAT _5 = ENDCOMPLEX
-    {      (
+    {(
          let r  = float_of_string _2
          and th = float_of_string _4 in
          (C (rect_of_polar_rad r th)) :: []
@@ -242,71 +242,71 @@ matrix_row_elements_rad:
 
 decode_data_deg:
   _1 = datalist_deg _2 = EOF
-    {      ( List.rev _1 )}
+    {( List.rev _1 )}
 
 datalist_deg:
   _1 = datalist_deg _2 = datagroup_deg
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | 
-    {      ( [] )}
+    {( [] )}
 
 datagroup_deg:
   _1 = data_deg
-    {      ( _1 )}
+    {( _1 )}
 
 data_deg:
   _1 = INTEGER
-    {      ( decode_integer _1 )}
+    {( decode_integer _1 )}
 | _1 = VARIABLE
-    {      ( decode_variable _1)}
+    {( decode_variable _1)}
 | _1 = FLOAT _2 = UNITS
-    {      ( decode_float_units _1 _2 )}
+    {( decode_float_units _1 _2 )}
 | _1 = FLOAT
-    {      ( decode_float_units _1 "_" )}
+    {( decode_float_units _1 "_" )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = SEPARATOR _4 = FLOAT _5 = ENDCOMPLEX _6 = UNITS
-    {      ( decode_complex_rect_units _2 _4 _6 )}
+    {( decode_complex_rect_units _2 _4 _6 )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = SEPARATOR _4 = FLOAT _5 = ENDCOMPLEX
-    {      ( decode_complex_rect_units _2 _4 "_" )}
+    {( decode_complex_rect_units _2 _4 "_" )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = ANGLE _4 = FLOAT _5 = ENDCOMPLEX _6 = UNITS
-    {      ( decode_complex_polar_deg_units _2 _4 _6 )}
+    {( decode_complex_polar_deg_units _2 _4 _6 )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = ANGLE _4 = FLOAT _5 = ENDCOMPLEX
-    {      ( decode_complex_polar_deg_units _2 _4 "_" )}
+    {( decode_complex_polar_deg_units _2 _4 "_" )}
 | _1 = BEGINMATRIX _2 = matrix_rows_deg _3 = ENDMATRIX _4 = UNITS
-    {      ( decode_matrix_units _2 _4 )}
+    {( decode_matrix_units _2 _4 )}
 | _1 = BEGINMATRIX _2 = matrix_rows_deg _3 = ENDMATRIX
-    {      ( decode_matrix_units _2 "_" )}
+    {( decode_matrix_units _2 "_" )}
 
 matrix_rows_deg:
   _1 = matrix_rows_deg _2 = BEGINMATRIX _3 = matrix_row_elements_deg _4 = ENDMATRIX
-    {      (_3 :: _1)}
+    {(_3 :: _1)}
 | 
-    {      ([])}
+    {([])}
 
 matrix_row_elements_deg:
   _1 = matrix_row_elements_deg _2 = SEPARATOR _3 = FLOAT
-    {      ( (F (float_of_string _3)) :: _1 )}
+    {( (F (float_of_string _3)) :: _1 )}
 | _1 = matrix_row_elements_deg _2 = SEPARATOR _3 = BEGINCOMPLEX _4 = FLOAT _5 = SEPARATOR _6 = FLOAT _7 = ENDCOMPLEX
-    {      ( 
+    {( 
          let f1 = float_of_string _4
          and f2 = float_of_string _6 in
          (C {Complex.re = f1; Complex.im = f2}) :: _1
       )}
 | _1 = matrix_row_elements_deg _2 = SEPARATOR _3 = BEGINCOMPLEX _4 = FLOAT _5 = ANGLE _6 = FLOAT _7 = ENDCOMPLEX
-    {      ( 
+    {( 
          let r  = float_of_string _4
          and th = float_of_string _6 in
          (C (rect_of_polar_deg r th)) :: _1
       )}
 | _1 = FLOAT
-    {      ( (F (float_of_string _1)) :: [] )}
+    {( (F (float_of_string _1)) :: [] )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = SEPARATOR _4 = FLOAT _5 = ENDCOMPLEX
-    {      (
+    {(
          let f1 = float_of_string _2
          and f2 = float_of_string _4 in
          (C {Complex.re = f1; Complex.im = f2}) :: []
       )}
 | _1 = BEGINCOMPLEX _2 = FLOAT _3 = ANGLE _4 = FLOAT _5 = ENDCOMPLEX
-    {      (
+    {(
          let r  = float_of_string _2
          and th = float_of_string _4 in
          (C (rect_of_polar_deg r th)) :: []

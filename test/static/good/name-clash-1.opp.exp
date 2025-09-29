@@ -8,19 +8,19 @@
 
 name_clash_1_a:
   _1 = name_clash_1_a1
-    {    ( () )}
+    {( () )}
 
 name_clash_1_a1:
   _1 = FOO
-    {      ( () )}
+    {( () )}
 
 b:
   _1 = name_clash_2_a
-    {    ( _1 )}
+    {( _1 )}
 
 name_clash_2_a:
   _1 = BAR
-    {      ( () )}
+    {( () )}
 
 %%
 Note: the nonterminal symbol a (from name-clash-1.mly) is renamed name_clash_1_a1.

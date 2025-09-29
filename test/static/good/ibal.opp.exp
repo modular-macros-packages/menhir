@@ -162,607 +162,607 @@ Warning: the token NOTEQUAL is unused.
 
 top:
   _1 = expr
-    {                                        ( Code _1 )}
+    {( Code _1 )}
 | _1 = decl
-    {                                        ( Decl _1 )}
+    {( Decl _1 )}
 
 expr:
   _1 = expr1
-    {            ( _1 )}
+    {( _1 )}
 | _1 = expr2
-    {            ( _1 )}
+    {( _1 )}
 | _1 = expr3
-    {            ( _1 )}
+    {( _1 )}
 | _1 = expr4
-    {            ( _1 )}
+    {( _1 )}
 
 expr1:
   _1 = integer
-    {                                       ( make_code (Integer _1) )}
+    {( make_code (Integer _1) )}
 
 expr_nonint:
   _1 = expr2
-    {            ( _1 )}
+    {( _1 )}
 | _1 = expr3
-    {            ( _1 )}
+    {( _1 )}
 | _1 = expr_nonint4
-    {                   ( _1 )}
+    {( _1 )}
 
 expr2:
   _1 = longvar
-    {                                        ( make_code (Var _1) )}
+    {( make_code (Var _1) )}
 | _1 = LPAREN _2 = expr _3 = RPAREN
-    {                                        ( _2 )}
+    {( _2 )}
 | _1 = expr2 _2 = LPAREN _3 = RPAREN
-    {                                            ( make_code (Appl (_1, [])) )}
+    {( make_code (Appl (_1, [])) )}
 | _1 = expr2 _2 = LPAREN _3 = expr _4 = RPAREN
-    {                                            ( make_code (Appl (_1, [_3])) )}
+    {( make_code (Appl (_1, [_3])) )}
 | _1 = expr2 _2 = LPAREN _3 = expr _4 = COMMA _5 = exprs _6 = RPAREN
-    {                                            ( make_code (Appl (_1, _3 :: _5)) )}
+    {( make_code (Appl (_1, _3 :: _5)) )}
 
 expr3:
   _1 = string
-    {                                        ( make_code (Con _1) )}
+    {( make_code (Con _1) )}
 | _1 = MINUS _2 = expr_nonint
-    {                                       ( make_prim (int_unary_minus, [_2]) )}
+    {( make_prim (int_unary_minus, [_2]) )}
 | _1 = TRUE
-    {                                        ( make_code True )}
+    {( make_code True )}
 | _1 = FALSE
-    {                                        ( make_code False )}
+    {( make_code False )}
 | _1 = ulongvar _2 = opt_paren_exprs
-    {                                          ( make_code (Cons (_1,_2)) )}
+    {( make_code (Cons (_1,_2)) )}
 | _1 = IF _2 = expr _3 = THEN _4 = expr _5 = ELSE _6 = expr
-    {                                   ( make_code (If (_2,_4,_6)) )}
+    {( make_code (If (_2,_4,_6)) )}
 | _1 = CASE _2 = expr _3 = OF _4 = clauses
-    {                                   ( make_code (Case (_2, _4)) )}
+    {( make_code (Case (_2, _4)) )}
 | _1 = DIST _2 = LSQUARE _3 = weighted_exprs _4 = RSQUARE
-    {                                           ( make_code (Dist _3) )}
+    {( make_code (Dist _3) )}
 | _1 = UNIFORM _2 = NATURAL
-    {                                           ( uniform_int _2 )}
+    {( uniform_int _2 )}
 | _1 = FLIP _2 = POSFLOAT
-    {                     ( make_code (Dist [ (_2, make_code (True));
+    {( make_code (Dist [ (_2, make_code (True));
 				      (1.0 -. _2, make_code (False)) ]) )}
 | _1 = LET _2 = pat _3 = EQUALS _4 = expr _5 = IN _6 = expr
-    {                                      ( make_code (Let (_2,_4,_6)) )}
+    {( make_code (Let (_2,_4,_6)) )}
 | _1 = LET _2 = pat _3 = COLON _4 = type_expr _5 = EQUALS _6 = expr _7 = IN _8 = expr
-    {  ( make_code (Let (_2, make_code (Typed (_6,quantify _4)), _8)) )}
+    {( make_code (Let (_2, make_code (Typed (_6,quantify _4)), _8)) )}
 | _1 = LET _2 = LIDENT _3 = LPAREN _4 = opt_vars _5 = RPAREN _6 = EQUALS _7 = expr _8 = IN _9 = expr
-    {  ( make_code (Let (Bind _2, make_code (Fix (_2, _4, _7)), _9)) )}
+    {( make_code (Let (Bind _2, make_code (Fix (_2, _4, _7)), _9)) )}
 | _1 = LET _2 = LIDENT _3 = LPAREN _4 = opt_vars _5 = RPAREN _6 = COLON _7 = type_expr _8 = EQUALS _9 = expr _10 = IN _11 = expr
-    {  ( make_code (Let (Bind _2,
+    {( make_code (Let (Bind _2,
 			   make_code (Typed (make_code (Fix (_2, _4, _9)),
 					     quantify _7)), _11)) )}
 | _1 = LAMBDA _2 = LPAREN _3 = opt_vars _4 = RPAREN _5 = MAPSTO _6 = expr
-    {                                                  ( make_code (Lambda (_3,_6)) )}
+    {( make_code (Lambda (_3,_6)) )}
 | _1 = LAMBDA _2 = LIDENT _3 = MAPSTO _4 = expr
-    {                                  ( make_code (Lambda ([_2],_4)) )}
+    {( make_code (Lambda ([_2],_4)) )}
 | _1 = FIX _2 = LIDENT _3 = LPAREN _4 = opt_vars _5 = RPAREN _6 = MAPSTO _7 = expr
-    {                                                     ( make_code (Fix (_2, _4, _7)) )}
+    {( make_code (Fix (_2, _4, _7)) )}
 | _1 = FIX _2 = LIDENT _3 = LIDENT _4 = MAPSTO _5 = expr
-    {                                     ( make_code (Fix (_2, [_3], _5)) )}
+    {( make_code (Fix (_2, [_3], _5)) )}
 | _1 = LTUP _2 = opt_named_exprs _3 = RTUP
-    {                                        ( make_code (Tuple _2) )}
+    {( make_code (Tuple _2) )}
 | _1 = LTUP _2 = exprs _3 = RTUP
-    {                                    ( make_code (AnonTuple _2) )}
+    {( make_code (AnonTuple _2) )}
 | _1 = LBRACE _2 = opt_decls _3 = RBRACE
-    {                                            ( make_code (Block _2) )}
+    {( make_code (Block _2) )}
 | _1 = OBSERVE _2 = obs _3 = IN _4 = expr
-    {                                 ( make_code (Observe (fst _2, snd _2,_4)) )}
+    {( make_code (Observe (fst _2, snd _2,_4)) )}
 | _1 = PARAMS _2 = param_decls _3 = IN _4 = expr
-    {                                       ( make_code (Params (_2, _4)) )}
+    {( make_code (Params (_2, _4)) )}
 | _1 = PDIST _2 = ident _3 = LSQUARE _4 = exprs _5 = RSQUARE
-    {                                         ( make_code (PDist (_2, _4)) )}
+    {( make_code (PDist (_2, _4)) )}
 | _1 = REWARD _2 = float _3 = IN _4 = expr
-    {                                       ( make_code (Reward (make_code True, [(Any, _2)], _4)) )}
+    {( make_code (Reward (make_code True, [(Any, _2)], _4)) )}
 | _1 = REWARD _2 = CASE _3 = expr _4 = OF _5 = rew_clauses _6 = IN _7 = expr
-    {  ( make_code (Reward (_3, _5, _7)) )}
+    {( make_code (Reward (_3, _5, _7)) )}
 | _1 = DISCOUNT _2 = POSFLOAT _3 = IN _4 = expr
-    {                                          ( make_code (Discount (_2, _4)) )}
+    {( make_code (Discount (_2, _4)) )}
 | _1 = DECIDE _2 = LIDENT _3 = values _4 = GIVEN _5 = longvars _6 = IN _7 = expr
-    {  ( make_code (Decision (_2, _3, _5, _7)) )}
+    {( make_code (Decision (_2, _3, _5, _7)) )}
 | _1 = DECIDE _2 = LIDENT _3 = values _4 = IN _5 = expr
-    {  ( make_code (Decision (_2, _3, [], _5)) )}
+    {( make_code (Decision (_2, _3, [], _5)) )}
 | _1 = ETYPE _2 = UIDENT _3 = opt_paren_type_args _4 = EQUALS _5 = type_expr _6 = IN _7 = expr
-    {  ( clear_tyvars (); make_code (Deftype (_2, _3, _5, _7)) )}
+    {( clear_tyvars (); make_code (Deftype (_2, _3, _5, _7)) )}
 | _1 = EDATA _2 = UIDENT _3 = opt_paren_type_args _4 = EQUALS _5 = tycon_expr _6 = IN _7 = expr
-    {         ( clear_tyvars (); make_code (Deftycon (new_name _2, _3, _5, _7)) )}
+    {( clear_tyvars (); make_code (Deftycon (new_name _2, _3, _5, _7)) )}
 | _1 = OP _2 = NOT
-    {                          ( make_code (Prim bool_not) )}
+    {( make_code (Prim bool_not) )}
 | _1 = OP _2 = AND
-    {                          ( make_code (Prim bool_and) )}
+    {( make_code (Prim bool_and) )}
 | _1 = OP _2 = BAR
-    {                          ( make_code (Prim bool_or) )}
+    {( make_code (Prim bool_or) )}
 | _1 = OP _2 = PLUS
-    {                          ( make_code (Prim int_plus) )}
+    {( make_code (Prim int_plus) )}
 | _1 = OP _2 = MINUS
-    {                          ( make_code (Prim int_minus) )}
+    {( make_code (Prim int_minus) )}
 | _1 = OP _2 = ANY
-    {                          ( make_code (Prim int_unary_minus) )}
+    {( make_code (Prim int_unary_minus) )}
 | _1 = OP _2 = TIMES
-    {                          ( make_code (Prim int_times) )}
+    {( make_code (Prim int_times) )}
 | _1 = OP _2 = DIVIDE
-    {                          ( make_code (Prim int_div) )}
+    {( make_code (Prim int_div) )}
 | _1 = OP _2 = MOD
-    {                          ( make_code (Prim int_mod) )}
+    {( make_code (Prim int_mod) )}
 | _1 = OP _2 = PLUSPLUS
-    {                          ( make_code (Prim int_succ) )}
+    {( make_code (Prim int_succ) )}
 | _1 = OP _2 = MINUSMINUS
-    {                          ( make_code (Prim int_pred) )}
+    {( make_code (Prim int_pred) )}
 | _1 = OP _2 = CONCAT
-    {                          ( make_code (Prim string_concat) )}
+    {( make_code (Prim string_concat) )}
 | _1 = NOT _2 = expr
-    {                                   ( make_code (Not _2) )}
+    {( make_code (Not _2) )}
 | _1 = ERROR _2 = string
-    {                           ( make_code (Error _2) )}
+    {( make_code (Error _2) )}
 | _1 = ERROR
-    {                           ( make_code (Error "") )}
+    {( make_code (Error "") )}
 | _1 = PRAGMA _2 = string _3 = IN _4 = expr
-    {                             ( make_code (LetPragma (_2,_4)) )}
+    {( make_code (LetPragma (_2,_4)) )}
 
 expr4:
   _1 = expr _2 = PLUS _3 = expr
-    {                                        ( make_prim (int_plus, [_1;_3]) )}
+    {( make_prim (int_plus, [_1;_3]) )}
 | _1 = expr _2 = MINUS _3 = expr
-    {                                         ( make_prim (int_minus, [_1;_3]) )}
+    {( make_prim (int_minus, [_1;_3]) )}
 | _1 = expr _2 = TIMES _3 = expr
-    {                                         ( make_prim (int_times, [_1;_3]) )}
+    {( make_prim (int_times, [_1;_3]) )}
 | _1 = expr _2 = DIVIDE _3 = expr
-    {                                          ( make_prim (int_div, [_1;_3]) )}
+    {( make_prim (int_div, [_1;_3]) )}
 | _1 = expr _2 = MOD _3 = expr
-    {                                       ( make_prim (int_mod, [_1;_3]) )}
+    {( make_prim (int_mod, [_1;_3]) )}
 | _1 = expr _2 = CONCAT _3 = expr
-    {                                       ( make_prim (string_concat, [_1;_3]) )}
+    {( make_prim (string_concat, [_1;_3]) )}
 | _1 = expr _2 = PLUSPLUS
-    {                                          ( make_prim (int_succ, [_1]) )}
+    {( make_prim (int_succ, [_1]) )}
 | _1 = expr _2 = MINUSMINUS
-    {                                            ( make_prim (int_pred, [_1]) )}
+    {( make_prim (int_pred, [_1]) )}
 | _1 = expr _2 = EQUALSEQUALS _3 = expr
-    {                                        ( make_code (Eq (_1, _3)) )}
+    {( make_code (Eq (_1, _3)) )}
 | _1 = expr _2 = AND _3 = expr
-    {                                   ( make_code (And (_1,_3)) )}
+    {( make_code (And (_1,_3)) )}
 | _1 = expr _2 = BAR _3 = expr
-    {                                    ( make_code (Or (_1,_3)) )}
+    {( make_code (Or (_1,_3)) )}
 | _1 = expr _2 = DOT _3 = LIDENT
-    {                                    ( make_code (Dot (_1,_3)) )}
+    {( make_code (Dot (_1,_3)) )}
 | _1 = expr _2 = COLON _3 = type_expr
-    {                            ( clear_tyvars (); make_code (Typed (_1, quantify _3)) )}
+    {( clear_tyvars (); make_code (Typed (_1, quantify _3)) )}
 
 expr_nonint4:
   _1 = expr_nonint _2 = PLUS _3 = expr
-    {                                               ( make_prim (int_plus, [_1;_3]) )}
+    {( make_prim (int_plus, [_1;_3]) )}
 | _1 = expr_nonint _2 = MINUS _3 = expr
-    {                                                ( make_prim (int_minus, [_1;_3]) )}
+    {( make_prim (int_minus, [_1;_3]) )}
 | _1 = expr_nonint _2 = TIMES _3 = expr
-    {                                                ( make_prim (int_times, [_1;_3]) )}
+    {( make_prim (int_times, [_1;_3]) )}
 | _1 = expr_nonint _2 = DIVIDE _3 = expr
-    {                                                 ( make_prim (int_div, [_1;_3]) )}
+    {( make_prim (int_div, [_1;_3]) )}
 | _1 = expr_nonint _2 = MOD _3 = expr
-    {                                              ( make_prim (int_mod, [_1;_3]) )}
+    {( make_prim (int_mod, [_1;_3]) )}
 | _1 = expr_nonint _2 = CONCAT _3 = expr
-    {                                              ( make_prim (string_concat, [_1;_3]) )}
+    {( make_prim (string_concat, [_1;_3]) )}
 | _1 = expr_nonint _2 = PLUSPLUS
-    {                                                 ( make_prim (int_succ, [_1]) )}
+    {( make_prim (int_succ, [_1]) )}
 | _1 = expr_nonint _2 = MINUSMINUS
-    {                                                   ( make_prim (int_pred, [_1]) )}
+    {( make_prim (int_pred, [_1]) )}
 | _1 = expr_nonint _2 = EQUALSEQUALS _3 = expr
-    {                                               ( make_code (Eq (_1, _3)) )}
+    {( make_code (Eq (_1, _3)) )}
 | _1 = expr_nonint _2 = AND _3 = expr
-    {                                          ( make_code (And (_1,_3)) )}
+    {( make_code (And (_1,_3)) )}
 | _1 = expr_nonint _2 = BAR _3 = expr
-    {                                           ( make_code (Or (_1,_3)) )}
+    {( make_code (Or (_1,_3)) )}
 | _1 = expr_nonint _2 = DOT _3 = LIDENT
-    {                                           ( make_code (Dot (_1,_3)) )}
+    {( make_code (Dot (_1,_3)) )}
 | _1 = expr_nonint _2 = COLON _3 = type_expr
-    {                                   ( clear_tyvars (); make_code (Typed (_1, quantify _3)) )}
+    {( clear_tyvars (); make_code (Typed (_1, quantify _3)) )}
 
 opt_decls:
   
-    {                ( [] )}
+    {( [] )}
 | _1 = decls
-    {                                                ( _1 )}
+    {( _1 )}
 
 decls:
   _1 = decl _2 = opt_semicolon
-    {                                           ( [_1] )}
+    {( [_1] )}
 | _1 = decl _2 = opt_semicolon _3 = decls
-    {                                           ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 let_decl:
   _1 = LIDENT _2 = EQUALS _3 = expr
-    {                                                 ( (_1,_3) )}
+    {( (_1,_3) )}
 | _1 = LIDENT _2 = COLON _3 = type_expr _4 = EQUALS _5 = expr
-    {                                                 ( (_1, make_code (Typed (_5, quantify _3))) )}
+    {( (_1, make_code (Typed (_5, quantify _3))) )}
 | _1 = LIDENT _2 = LPAREN _3 = opt_vars _4 = RPAREN _5 = EQUALS _6 = expr
-    {                                                 ( (_1, make_code (Fix (_1,_3,_6))) )}
+    {( (_1, make_code (Fix (_1,_3,_6))) )}
 | _1 = LIDENT _2 = LPAREN _3 = opt_vars _4 = RPAREN _5 = COLON _6 = type_expr _7 = EQUALS _8 = expr
-    {  ( (_1, make_code (Typed (make_code (Fix (_1,_3,_8)), quantify _6))) )}
+    {( (_1, make_code (Typed (make_code (Fix (_1,_3,_8)), quantify _6))) )}
 | _1 = LIDENT _2 = LIDENT _3 = EQUALS _4 = expr
-    {                                                 ( (_1, make_code (Fix (_1,[_2],_4))) )}
+    {( (_1, make_code (Fix (_1,[_2],_4))) )}
 | _1 = LIDENT _2 = LIDENT _3 = COLON _4 = type_expr _5 = EQUALS _6 = expr
-    {  ( (_1, make_code (Typed (make_code (Fix (_1,[_2],_6)), quantify _4))) )}
+    {( (_1, make_code (Typed (make_code (Fix (_1,[_2],_6)), quantify _4))) )}
 
 opt_given:
   
-    {                      ( [] )}
+    {( [] )}
 | _1 = GIVEN _2 = longvars
-    {                      ( _2 )}
+    {( _2 )}
 
 decide_decl:
   _1 = DECIDE _2 = LIDENT _3 = values _4 = opt_given
-    {                                      ( (_2, (_3, _4)) )}
+    {( (_2, (_3, _4)) )}
 
 decl:
   _1 = let_decl
-    {                                         ( make_decl (Vardef (fst _1, snd _1, true)) )}
+    {( make_decl (Vardef (fst _1, snd _1, true)) )}
 | _1 = PRIVATE _2 = let_decl
-    {                                         ( make_decl (Vardef (fst _2, snd _2, false)) )}
+    {( make_decl (Vardef (fst _2, snd _2, false)) )}
 | _1 = OBSERVE _2 = obs
-    {                              ( make_decl (Obs (fst _2, snd _2)) )}
+    {( make_decl (Obs (fst _2, snd _2)) )}
 | _1 = RETRACT _2 = longvar
-    {                                       ( make_decl (Retract _2) )}
+    {( make_decl (Retract _2) )}
 | _1 = PRAGMA _2 = string
-    {                                       ( make_decl (Pragma _2) )}
+    {( make_decl (Pragma _2) )}
 | _1 = REWARD _2 = float
-    {                                        ( make_decl (Rew (make_code True, [(Any, _2)])) )}
+    {( make_decl (Rew (make_code True, [(Any, _2)])) )}
 | _1 = REWARD _2 = CASE _3 = expr _4 = OF _5 = rew_clauses
-    {  ( make_decl (Rew (_3, _5)) )}
+    {( make_decl (Rew (_3, _5)) )}
 | _1 = PARAM _2 = param_decl
-    {                                        ( make_decl (make_param _2) )}
+    {( make_decl (make_param _2) )}
 | _1 = decide_decl
-    {                           ( make_decl (Dec (fst _1, fst (snd _1), snd (snd _1), true)) )}
+    {( make_decl (Dec (fst _1, fst (snd _1), snd (snd _1), true)) )}
 | _1 = PRIVATE _2 = decide_decl
-    {                           ( make_decl (Dec (fst _2, fst (snd _2), snd (snd _2), false)) )}
+    {( make_decl (Dec (fst _2, fst (snd _2), snd (snd _2), false)) )}
 | _1 = TYPE _2 = UIDENT _3 = opt_paren_type_args _4 = EQUALS _5 = type_expr
-    {  ( clear_tyvars (); make_decl (Tydef (_2, _3, _5)) )}
+    {( clear_tyvars (); make_decl (Tydef (_2, _3, _5)) )}
 | _1 = DATA _2 = UIDENT _3 = opt_paren_type_args _4 = EQUALS _5 = tycon_expr
-    {  ( clear_tyvars (); make_decl (Tycondef (new_name _2, _3, _5)) )}
+    {( clear_tyvars (); make_decl (Tycondef (new_name _2, _3, _5)) )}
 
 obs:
   _1 = longvar
-    {               ( (_1, BVal true) )}
+    {( (_1, BVal true) )}
 | _1 = NOT _2 = longvar
-    {                   ( (_2, BVal false) )}
+    {( (_2, BVal false) )}
 | _1 = longvar _2 = EQUALS _3 = pat
-    {                          ( (_1, _3) )}
+    {( (_1, _3) )}
 
 values:
   
-    {                                    ( [ Bool false; Bool true ] )}
+    {( [ Bool false; Bool true ] )}
 | _1 = FROM _2 = strings
-    {                                    ( map (fun x -> Symbol x) _2 )}
+    {( map (fun x -> Symbol x) _2 )}
 | _1 = FROM _2 = integer _3 = DOTDOT _4 = integer
-    {                                    ( map (fun x -> Int x) (list_of_ints _2 _4) )}
+    {( map (fun x -> Int x) (list_of_ints _2 _4) )}
 
 opt_paren_type_args:
   _1 = opt_type_args
-    {                                    ( _1 )}
+    {( _1 )}
 | _1 = LSQUARE _2 = opt_type_args _3 = RSQUARE
-    {                                     ( _2 )}
+    {( _2 )}
 
 opt_type_args:
   
-    {                ( [] )}
+    {( [] )}
 | _1 = type_args
-    {                 ( _1 )}
+    {( _1 )}
 
 type_args:
   _1 = new_type_var
-    {                         ( [_1] )}
+    {( [_1] )}
 | _1 = new_type_var _2 = COMMA _3 = type_args
-    {                                    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 param_decl:
   _1 = ident _2 = EQUALS _3 = LSQUARE _4 = params _5 = RSQUARE
-    {                                             ( (_1, _4) )}
+    {( (_1, _4) )}
 | _1 = ident _2 = NATURAL
-    {                      ( (_1, make_list _2 0.0) )}
+    {( (_1, make_list _2 0.0) )}
 
 param_decls:
   _1 = param_decl
-    {                           ( [_1] )}
+    {( [_1] )}
 | _1 = param_decl _2 = SEMICOLON _3 = param_decls
-    {                                        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 type_expr:
   _1 = arrow_type_expr
-    {                            ( _1 )}
+    {( _1 )}
 | _1 = other_type_expr
-    {                       ( _1 )}
+    {( _1 )}
 
 arrow_type_expr:
   _1 = arrow_type_exprs _2 = MAPSTO _3 = type_expr
-    {                                         ( Arrow (_1,_3,[]) )}
+    {( Arrow (_1,_3,[]) )}
 
 other_type_expr:
   _1 = SYMBOL
-    {              ( Types.Symbol )}
+    {( Types.Symbol )}
 | _1 = BOOL
-    {            ( Types.Bool )}
+    {( Types.Bool )}
 | _1 = INT
-    {           ( Types.Int )}
+    {( Types.Int )}
 | _1 = LTUP _2 = opt_named_type_exprs _3 = RTUP
-    {                                      ( Compound _2 )}
+    {( Compound _2 )}
 | _1 = LTUP _2 = type_exprs _3 = RTUP
-    {                            ( make_anon_compound _2 )}
+    {( make_anon_compound _2 )}
 | _1 = LIDENT
-    {              ( Tyvar (tyvar_of_name _1) )}
+    {( Tyvar (tyvar_of_name _1) )}
 | _1 = FORALL _2 = new_type_var _3 = DOT _4 = type_expr
-    {                                          ( Forall (_2, _4) )}
+    {( Forall (_2, _4) )}
 | _1 = ulongvar _2 = opt_sqparen_type_exprs
-    {                                       ( Tycon (_1,_2) )}
+    {( Tycon (_1,_2) )}
 | _1 = LPAREN _2 = type_expr _3 = RPAREN
-    {                               ( _2 )}
+    {( _2 )}
 
 arrow_type_exprs:
   _1 = LPAREN _2 = RPAREN
-    {                     ( [] )}
+    {( [] )}
 | _1 = LPAREN _2 = type_expr _3 = RPAREN
-    {                               ( [_2] )}
+    {( [_2] )}
 | _1 = LPAREN _2 = type_expr _3 = COMMA _4 = type_exprs _5 = RPAREN
-    {                                                ( _2 :: _4 )}
+    {( _2 :: _4 )}
 
 tycon_expr:
   _1 = tycon_item
-    {                        ( [_1] )}
+    {( [_1] )}
 | _1 = tycon_item _2 = BAR _3 = tycon_expr
-    {                                 ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 tycon_item:
   _1 = UIDENT _2 = opt_paren_type_exprs
-    {                                         ( (_1, _2) )}
+    {( (_1, _2) )}
 
 opt_paren_type_exprs:
   
-    {       ( [] )}
+    {( [] )}
 | _1 = type_expr
-    {                 ( [_1] )}
+    {( [_1] )}
 | _1 = LPAREN _2 = type_expr _3 = COMMA _4 = type_exprs _5 = RPAREN
-    {                                                ( _2 :: _4 )}
+    {( _2 :: _4 )}
 
 opt_sqparen_type_exprs:
   _1 = opt_type_exprs
-    {                                        ( _1 )}
+    {( _1 )}
 | _1 = LSQUARE _2 = opt_type_exprs _3 = RSQUARE
-    {                                      ( _2 )}
+    {( _2 )}
 
 opt_paren_exprs:
   
-    {                  ( [] )}
+    {( [] )}
 | _1 = expr
-    {            ( [_1] )}
+    {( [_1] )}
 | _1 = LPAREN _2 = expr _3 = COMMA _4 = exprs _5 = RPAREN
-    {                                      ( _2 :: _4 )}
+    {( _2 :: _4 )}
 
 new_type_var:
   _1 = LIDENT
-    {                      ( new_tyvar_for_name _1 )}
+    {( new_tyvar_for_name _1 )}
 
 opt_type_exprs:
   
-    {                 ( [] )}
+    {( [] )}
 | _1 = type_exprs
-    {                  ( _1 )}
+    {( _1 )}
 
 type_exprs:
   _1 = type_expr
-    {                       ( [_1] )}
+    {( [_1] )}
 | _1 = type_expr _2 = COMMA _3 = type_exprs
-    {                                  ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 named_type_expr:
   _1 = LIDENT _2 = COLON _3 = type_expr
-    {                                         ( (_1, _3) )}
+    {( (_1, _3) )}
 
 opt_named_type_exprs:
   
-    {                       ( [] )}
+    {( [] )}
 | _1 = named_type_exprs
-    {                         ( _1 )}
+    {( _1 )}
 
 named_type_exprs:
   _1 = named_type_expr
-    {                                   ( [_1] )}
+    {( [_1] )}
 | _1 = named_type_expr _2 = COMMA _3 = named_type_exprs
-    {                                              ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 clauses:
   _1 = clauses1
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = HASH _2 = clauses1
-    {                      ( _2 )}
+    {( _2 )}
 
 clauses1:
   _1 = clause
-    {                                         ( [_1] )}
+    {( [_1] )}
 | _1 = clause _2 = HASH _3 = clauses1
-    {                                          ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 clause:
   _1 = pat _2 = COLON _3 = expr
-    {                                       ( (_1, _3) )}
+    {( (_1, _3) )}
 
 rew_clauses:
   _1 = rew_clauses1
-    {                           ( _1 )}
+    {( _1 )}
 | _1 = HASH _2 = rew_clauses1
-    {                         ( _2 )}
+    {( _2 )}
 
 rew_clauses1:
   _1 = rew_clause
-    {                                        ( [_1] )}
+    {( [_1] )}
 | _1 = rew_clause _2 = HASH _3 = rew_clauses1
-    {                                        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 rew_clause:
   _1 = pat _2 = COLON _3 = float
-    {                                        ( (_1, _3) )}
+    {( (_1, _3) )}
 
 pat:
   _1 = ANY
-    {                                        ( Any )}
+    {( Any )}
 | _1 = LIDENT
-    {                                         ( Bind (_1) )}
+    {( Bind (_1) )}
 | _1 = string
-    {                                        ( SVals [_1] )}
+    {( SVals [_1] )}
 | _1 = LBRACE _2 = string_choices _3 = RBRACE
-    {                                        ( SVals _2 )}
+    {( SVals _2 )}
 | _1 = integer
-    {                                        ( IRange (_1,_1) )}
+    {( IRange (_1,_1) )}
 | _1 = integer _2 = DOTDOT _3 = integer
-    {                                        ( IRange (_1,_3) )}
+    {( IRange (_1,_3) )}
 | _1 = TRUE
-    {                                        ( BVal true )}
+    {( BVal true )}
 | _1 = FALSE
-    {                                        ( BVal false )}
+    {( BVal false )}
 | _1 = LTUP _2 = opt_named_pats _3 = RTUP
-    {                                            ( Tup _2 )}
+    {( Tup _2 )}
 | _1 = LTUP _2 = pats _3 = RTUP
-    {                                        ( AnonTup _2 )}
+    {( AnonTup _2 )}
 | _1 = ulongvar _2 = opt_paren_pats
-    {                                          ( Conspat (_1,_2) )}
+    {( Conspat (_1,_2) )}
 
 integer:
   _1 = NATURAL
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = MINUS _2 = NATURAL
-    {                     ( -_2 )}
+    {( -_2 )}
 
 string_choices:
   _1 = string
-    {                           ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = string _2 = BAR _3 = string_choices
-    {                                 ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 opt_paren_pats:
   
-    {                 ( [] )}
+    {( [] )}
 | _1 = pat
-    {           ( [_1] )}
+    {( [_1] )}
 | _1 = LPAREN _2 = pat _3 = COMMA _4 = pats _5 = RPAREN
-    {                                    ( _2 :: _4 )}
+    {( _2 :: _4 )}
 
 opt_named_pats:
   
-    {                 ( [] )}
+    {( [] )}
 | _1 = named_pats
-    {                  ( _1 )}
+    {( _1 )}
 
 pats:
   _1 = pat
-    {                                        ( [_1] )}
+    {( [_1] )}
 | _1 = pat _2 = COMMA _3 = pats
-    {                                        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 named_pats:
   _1 = named_pat
-    {                                        ( [_1] )}
+    {( [_1] )}
 | _1 = named_pat _2 = COMMA _3 = named_pats
-    {                                        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 named_pat:
   _1 = LIDENT _2 = COLON _3 = pat
-    {                                         ( (_1, _3) )}
+    {( (_1, _3) )}
 
 exprs:
   _1 = expr
-    {                                       ( [_1] )}
+    {( [_1] )}
 | _1 = expr _2 = COMMA _3 = exprs
-    {                                       ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 opt_named_exprs:
   
-    {                                            ( [] )}
+    {( [] )}
 | _1 = named_exprs
-    {                                       ( _1 )}
+    {( _1 )}
 
 named_exprs:
   _1 = named_expr
-    {                                       ( [_1] )}
+    {( [_1] )}
 | _1 = named_expr _2 = COMMA _3 = named_exprs
-    {                                       ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 named_expr:
   _1 = LIDENT _2 = COLON _3 = expr
-    {                                         ( (_1, _3) )}
+    {( (_1, _3) )}
 
 weighted_exprs:
   _1 = weighted_expr
-    {                                       ( [_1] )}
+    {( [_1] )}
 | _1 = weighted_expr _2 = COMMA _3 = weighted_exprs
-    {                                          ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 weighted_expr:
   _1 = POSFLOAT _2 = COLON _3 = expr
-    {                                             ( (_1,_3) )}
+    {( (_1,_3) )}
 
 params:
   _1 = POSFLOAT
-    {                                           ( [_1] )}
+    {( [_1] )}
 | _1 = POSFLOAT _2 = COMMA _3 = params
-    {                                           ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 opt_vars:
   
-    {                                            ( [] )}
+    {( [] )}
 | _1 = vars
-    {                                       ( _1 )}
+    {( _1 )}
 
 vars:
   _1 = LIDENT
-    {                                        ( [_1] )}
+    {( [_1] )}
 | _1 = LIDENT _2 = COMMA _3 = vars
-    {                                    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 ulongvar:
   _1 = UIDENT
-    {                  ( [_1] )}
+    {( [_1] )}
 | _1 = LIDENT _2 = DOT _3 = ulongvar
-    {                           ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = UIDENT _2 = DOT _3 = ulongvar
-    {                           ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 longvar:
   _1 = LIDENT
-    {                 ( [_1] )}
+    {( [_1] )}
 | _1 = LIDENT _2 = DOT _3 = longvar
-    {                          ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = UIDENT _2 = DOT _3 = longvar
-    {                          ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 longvars:
   _1 = longvar
-    {                                      ( [_1] )}
+    {( [_1] )}
 | _1 = longvar _2 = COMMA _3 = longvars
-    {                                      ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 string:
   _1 = QUOTE _2 = ident
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = STRING
-    {              ( _1 )}
+    {( _1 )}
 
 strings:
   _1 = string
-    {                 ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = string _2 = COMMA _3 = strings
-    {                            ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 opt_semicolon:
   
-    {                   ()}
+    {()}
 | _1 = SEMICOLON
-    {                   ()}
+    {()}
 
 float:
   _1 = POSFLOAT
-    {                 ( _1 )}
+    {( _1 )}
 | _1 = MINUS _2 = POSFLOAT
-    {                      ( -. _2 )}
+    {( -. _2 )}
 
 ident:
   _1 = LIDENT
-    {               (_1)}
+    {(_1)}
 | _1 = UIDENT
-    {              (_1)}
+    {(_1)}
 
 %%

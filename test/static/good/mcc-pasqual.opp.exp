@@ -459,225 +459,225 @@ let string_of_int_array ia =
 
 console:
   _1 = statement
-    {                  ( Some [_1] )}
+    {( Some [_1] )}
 | _1 = program
-    {                 ( Some _1 )}
+    {( Some _1 )}
 | _1 = unit_body
-    {                  ( Some _1 )}
+    {( Some _1 )}
 | _1 = TokEof
-    {                ( None )}
+    {( None )}
 
 program:
   _1 = program_header _2 = uses_clause _3 = program_body
-    {    ( [_2] @ _3 )}
+    {( [_2] @ _3 )}
 | _1 = program_header _2 = program_body
-    {    ( _2 )}
+    {( _2 )}
 
 bootstrap:
   _1 = block_list _2 = TokEof
-    {                         ( let exns = pop_exceptions (snd _1) in
+    {( let exns = pop_exceptions (snd _1) in
 				  let _ = Fc_parse_state.pop_tenv() in
 				    exns :: fst _1
 				)}
 | _1 = program_body
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = TokEof
-    {                ( [] )}
+    {( [] )}
 
 unit_body:
   _1 = unit_header _2 = uses_clause _3 = interface_body _4 = implementation_body _5 = statements _6 = TokDot
-    {        ( (([_2] @ _3) @ _4) @ (fst _5) )}
+    {( (([_2] @ _3) @ _4) @ (fst _5) )}
 | _1 = unit_header _2 = interface_body _3 = implementation_body _4 = statements _5 = TokDot
-    {    ( (_2 @ _3) @ (fst _4) )}
+    {( (_2 @ _3) @ (fst _4) )}
 | _1 = unit_header _2 = uses_clause _3 = interface_body _4 = implementation_body _5 = TokEnd _6 = TokDot
-    {    ( [_2] @ _3 @ _4 )}
+    {( [_2] @ _3 @ _4 )}
 | _1 = unit_header _2 = interface_body _3 = implementation_body _4 = TokEnd _5 = TokDot
-    {    ( _2 @ _3 )}
+    {( _2 @ _3 )}
 
 uses_clause:
   _1 = TokUses _2 = plain_identifier_list _3 = TokSemi
-    {    ( void_expr (union_pos _1 _3) )}
+    {( void_expr (union_pos _1 _3) )}
 
 unit_header:
   _1 = TokUnit _2 = identifier _3 = TokSemi
-    {        ( _2 )}
+    {( _2 )}
 
 function_declaration:
   _1 = function_heading _2 = TokSemi _3 = TokForward _4 = TokSemi
-    {    ( make_function_decl _1 None _4 )}
+    {( make_function_decl _1 None _4 )}
 | _1 = function_heading _2 = TokSemi _3 = TokExternal _4 = TokEq _5 = TokString _6 = TokSemi
-    {    ( make_function_decl _1 (Some _5) _6 )}
+    {( make_function_decl _1 (Some _5) _6 )}
 
 function_definition:
   _1 = function_heading _2 = TokSemi _3 = function_body _4 = TokSemi
-    {        ( make_function_definition _1 _3 _4 )}
+    {( make_function_definition _1 _3 _4 )}
 | _1 = function_heading _2 = TokEq _3 = expression _4 = TokSemi
-    {    ( let pos = pos_of_expr _3 in
+    {( let pos = pos_of_expr _3 in
 				    make_function_definition _1 ([ReturnExpr (pos, _3)], pos) _4
 				)}
 | _1 = operator_heading _2 = TokSemi _3 = function_body _4 = TokSemi
-    {    ( make_function_definition _1 _3 _4 )}
+    {( make_function_definition _1 _3 _4 )}
 | _1 = operator_heading _2 = TokEq _3 = expression _4 = TokSemi
-    {    ( let pos = pos_of_expr _3 in
+    {( let pos = pos_of_expr _3 in
 				    make_function_definition _1 ([ReturnExpr (pos, _3)], pos) _4
 				)}
 
 procedure_declaration:
   _1 = procedure_heading _2 = TokSemi _3 = TokForward _4 = TokSemi
-    {    ( make_proc_decl _1 None _4 )}
+    {( make_proc_decl _1 None _4 )}
 | _1 = procedure_heading _2 = TokSemi _3 = TokExternal _4 = TokEq _5 = TokString _6 = TokSemi
-    {    ( make_proc_decl _1 (Some _5) _6 )}
+    {( make_proc_decl _1 (Some _5) _6 )}
 
 procedure_definition:
   _1 = procedure_heading _2 = TokSemi _3 = procedure_body _4 = TokSemi
-    {    ( make_proc_definition _1 _3 _4 )}
+    {( make_proc_definition _1 _3 _4 )}
 | _1 = procedure_heading _2 = TokEq _3 = statement _4 = TokSemi
-    {    ( make_proc_definition _1 ([_3], pos_of_expr _3) _4 )}
+    {( make_proc_definition _1 ([_3], pos_of_expr _3) _4 )}
 
 interface_body:
   _1 = interface_body _2 = interface_body_element
-    {        ( _1 @ _2 )}
+    {( _1 @ _2 )}
 | _1 = interface_body_element
-    {                             ( _1 )}
+    {( _1 )}
 
 interface_body_element:
   _1 = function_declaration
-    {                           ( [fst _1] )}
+    {( [fst _1] )}
 | _1 = procedure_declaration
-    {                            ( [fst _1] )}
+    {( [fst _1] )}
 | _1 = type_def
-    {                  ( fst _1 )}
+    {( fst _1 )}
 | _1 = variable_decl
-    {                     ( [_1] )}
+    {( [_1] )}
 
 implementation_body:
   _1 = TokImplementation _2 = block_list
-    {        ( fst _2 )}
+    {( fst _2 )}
 
 program_header:
   _1 = TokProgram _2 = identifier _3 = TokSemi
-    {    ( _2, [], union_pos _1 _3 )}
+    {( _2, [], union_pos _1 _3 )}
 | _1 = TokProgram _2 = identifier _3 = TokLeftParen _4 = plain_identifier_list _5 = TokRightParen _6 = TokSemi
-    {    ( _2, _4, union_pos _1 _6 )}
+    {( _2, _4, union_pos _1 _6 )}
 
 identifier:
   _1 = TokId
-    {               ( _1 )}
+    {( _1 )}
 
 plain_identifier_list:
   _1 = plain_identifier_list _2 = TokComma _3 = identifier
-    {    ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 | _1 = identifier
-    {                  ( [_1] )}
+    {( [_1] )}
 
 identifier_and_expr:
   _1 = identifier _2 = TokEq _3 = expression
-    {        ( _1, Some _3 )}
+    {( _1, Some _3 )}
 | _1 = identifier
-    {                  ( _1, None )}
+    {( _1, None )}
 
 identifier_and_expr_list:
   _1 = identifier_and_expr_list _2 = TokComma _3 = identifier_and_expr
-    {    ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 | _1 = identifier_and_expr
-    {                          ( [_1] )}
+    {( [_1] )}
 
 var_pattern_list:
   _1 = var_pattern_list _2 = TokComma _3 = var_pattern
-    {    ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 | _1 = var_pattern
-    {                   ( [_1] )}
+    {( [_1] )}
 
 var_pattern:
   _1 = identifier
-    {                  ( VarPattern(snd _1, fst _1, fst _1, None), snd _1 )}
+    {( VarPattern(snd _1, fst _1, fst _1, None), snd _1 )}
 | _1 = TokLeftParen _2 = plain_identifier_list _3 = TokRightParen
-    {    ( let fields = List.map (fun (sym, pos) ->
+    {( let fields = List.map (fun (sym, pos) ->
 				    None, VarPattern(pos, sym, sym, None)) _2 in
 				    StructPattern(union_pos _1 _3, fields), union_pos _1 _3
 				)}
 
 block_list:
   _1 = block_list _2 = block
-    {                        ( fst _1 @ fst _2, union_pos (snd _1) (snd _2) )}
+    {( fst _1 @ fst _2, union_pos (snd _1) (snd _2) )}
 | _1 = block
-    {              ( _1 )}
+    {( _1 )}
 
 block:
   _1 = type_def
-    {                 ( _1 )}
+    {( _1 )}
 | _1 = exception_declaration
-    {                            ( [_1], pos_of_expr _1 )}
+    {( [_1], pos_of_expr _1 )}
 | _1 = variable_decl
-    {                     ( [_1], pos_of_expr _1 )}
+    {( [_1], pos_of_expr _1 )}
 | _1 = constant_declaration
-    {                           ( [_1], pos_of_expr _1 )}
+    {( [_1], pos_of_expr _1 )}
 | _1 = function_declaration
-    {                            ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 | _1 = function_definition
-    {                          ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 | _1 = procedure_declaration
-    {                            ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 | _1 = procedure_definition
-    {                           ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 | _1 = label_declaration
-    {                         ( [_1], pos_of_expr _1 )}
+    {( [_1], pos_of_expr _1 )}
 
 label_declaration:
   _1 = TokLabel _2 = label_list _3 = TokSemi
-    {    ( void_expr (union_pos _1 _3) )}
+    {( void_expr (union_pos _1 _3) )}
 
 label_list:
   _1 = label_list _2 = TokComma _3 = label
-    {                                ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 | _1 = label
-    {              ( [_1] )}
+    {( [_1] )}
 
 label:
   _1 = identifier
-    {                  ( snd _1 )}
+    {( snd _1 )}
 | _1 = TokInt
-    {               ( snd _1 )}
+    {( snd _1 )}
 
 program_body:
   _1 = block_list _2 = statements _3 = TokDot
-    {        ( make_program (fst _1) (union_pos (snd _1) _3) _2 type_void )}
+    {( make_program (fst _1) (union_pos (snd _1) _3) _2 type_void )}
 | _1 = block_list _2 = statements _3 = TokAnd _4 = TokReturn _5 = TokDot
-    {    ( warn_if_not_pasqual (union_pos (snd _1) _5) "\"and return\"";
+    {( warn_if_not_pasqual (union_pos (snd _1) _5) "\"and return\"";
 				  make_program (fst _1) (union_pos (snd _1) _5) _2 type_int32
 				)}
 | _1 = block_list _2 = TokDot
-    {                         ( make_program_without_body (fst _1) (union_pos (snd _1) _2) )}
+    {( make_program_without_body (fst _1) (union_pos (snd _1) _2) )}
 | _1 = statements _2 = TokDot
-    {                         ( make_program [] (union_pos (snd _1) _2) _1 type_void )}
+    {( make_program [] (union_pos (snd _1) _2) _1 type_void )}
 | _1 = statements _2 = TokAnd _3 = TokReturn _4 = TokDot
-    {    ( warn_if_not_pasqual (union_pos (snd _1) _4) "\"and return\"";
+    {( warn_if_not_pasqual (union_pos (snd _1) _4) "\"and return\"";
 				  make_program [] (union_pos (snd _1) _4) _1 type_int32
 				)}
 
 body:
   _1 = block_list _2 = statements
-    {                             ( (fst _1) @ (wrap_expr_list (snd _2) (fst _2)), union_pos (snd _1) (snd _2) )}
+    {( (fst _1) @ (wrap_expr_list (snd _2) (fst _2)), union_pos (snd _1) (snd _2) )}
 | _1 = statements
-    {                  ( wrap_expr_list (snd _1) (fst _1), snd _1 )}
+    {( wrap_expr_list (snd _1) (fst _1), snd _1 )}
 
 type_def:
   _1 = TokType _2 = type_definition_list
-    {        ( make_type_definition (union_pos _1 (snd _2)) _2 )}
+    {( make_type_definition (union_pos _1 (snd _2)) _2 )}
 
 type_definition_list:
   _1 = type_definition_list_rev
-    {                               ( List.rev (fst _1), snd _1 )}
+    {( List.rev (fst _1), snd _1 )}
 
 type_definition_list_rev:
   _1 = type_definition_list_rev _2 = type_definition
-    {        ( (fst _2) :: (fst _1), union_pos (snd _2) (snd _1) )}
+    {( (fst _2) :: (fst _1), union_pos (snd _2) (snd _1) )}
 | _1 = type_definition
-    {                       ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 
 type_definition:
   _1 = identifier _2 = TokEq _3 = type_denoter _4 = TokSemi
-    {    (
+    {(
 				  let sym, p1 = _1 in
 				  let pos = union_pos p1 _4 in
 				    (p1, sym, TypeLambda(snd _3, StatusNormal, [], fst _3), None), pos
@@ -685,245 +685,245 @@ type_definition:
 
 type_list:
   _1 = type_list _2 = TokSemi _3 = type_denoter
-    {        ( (fst _1) @ [fst _3], union_pos (snd _1) (snd _3) )}
+    {( (fst _1) @ [fst _3], union_pos (snd _1) (snd _3) )}
 | _1 = type_denoter
-    {                     ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 
 type_list_with_comma:
   _1 = type_list_with_comma _2 = TokComma _3 = type_denoter
-    {        ( (fst _1) @ [fst _3], union_pos (snd _1) (snd _3) )}
+    {( (fst _1) @ [fst _3], union_pos (snd _1) (snd _3) )}
 | _1 = type_denoter
-    {                     ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 
 type_denoter:
   _1 = ref_or_basic_type
-    {                         ( _1 )}
+    {( _1 )}
 
 parameter_type_denoter:
   _1 = ref_or_basic_parameter_type
-    {        ( _1 )}
+    {( _1 )}
 
 ref_or_basic_type:
   _1 = TokRef _2 = basic_type
-    {                         ( let pos = union_pos _1 (snd _2) in
+    {( let pos = union_pos _1 (snd _2) in
     				  warn_if_not_pasqual pos "\"ref\"";
 				    type_pointer pos (fst _2), pos
 				)}
 | _1 = TokMutable _2 = basic_type
-    {                            ( let pos = union_pos _1 (snd _2) in
+    {( let pos = union_pos _1 (snd _2) in
     				  warn_if_not_pasqual pos "\"mutable\"";
 				  type_mutable pos (fst _2), pos
 				)}
 | _1 = TokHat _2 = basic_type
-    {                         ( let pos = union_pos _1 (snd _2) in
+    {( let pos = union_pos _1 (snd _2) in
 				    type_pointer pos (fst _2), pos
 				)}
 | _1 = basic_type
-    {                  ( _1 )}
+    {( _1 )}
 
 ref_or_basic_parameter_type:
   _1 = TokRef _2 = basic_type
-    {                         ( let pos = union_pos _1 (snd _2) in
+    {( let pos = union_pos _1 (snd _2) in
     				  warn_if_not_pasqual pos "\"ref\"";
 				    type_pointer pos (fst _2), pos
 				)}
 | _1 = TokMutable _2 = basic_type
-    {                            ( let pos = union_pos _1 (snd _2) in
+    {( let pos = union_pos _1 (snd _2) in
     				  warn_if_not_pasqual pos "\"mutable\"";
 				  type_mutable pos (fst _2), pos
 				)}
 | _1 = TokHat _2 = basic_type
-    {                         ( let pos = union_pos _1 (snd _2) in
+    {( let pos = union_pos _1 (snd _2) in
 				    type_pointer pos (fst _2), pos
 				)}
 | _1 = basic_parameter_type
-    {                           ( _1 )}
+    {( _1 )}
 
 type_identifier:
   _1 = TokTypeChar
-    {                   ( type_char _1, _1 )}
+    {( type_char _1, _1 )}
 | _1 = TokTypeByte
-    {                   ( type_int _1 Rawint.Int8 true, _1)}
+    {( type_int _1 Rawint.Int8 true, _1)}
 | _1 = TokTypeShort
-    {                    ( type_int _1 Rawint.Int16 true, _1 )}
+    {( type_int _1 Rawint.Int16 true, _1 )}
 | _1 = TokTypeWord
-    {                   ( type_int _1 Rawint.Int16 false, _1 )}
+    {( type_int _1 Rawint.Int16 false, _1 )}
 | _1 = TokTypeInteger
-    {                      ( type_int _1 Rawint.Int32 true, _1 )}
+    {( type_int _1 Rawint.Int32 true, _1 )}
 | _1 = TokTypeDWord
-    {                    ( type_int _1 Rawint.Int32 false, _1 )}
+    {( type_int _1 Rawint.Int32 false, _1 )}
 | _1 = TokTypeInt64
-    {                    ( type_int _1 Rawint.Int64 true, _1 )}
+    {( type_int _1 Rawint.Int64 true, _1 )}
 | _1 = TokTypeUInt64
-    {                     ( type_int _1 Rawint.Int64 false, _1 )}
+    {( type_int _1 Rawint.Int64 false, _1 )}
 | _1 = TokTypeReal
-    {                   ( type_float _1 Rawfloat.Single, _1 )}
+    {( type_float _1 Rawfloat.Single, _1 )}
 | _1 = TokTypeDouble
-    {                     ( type_float _1 Rawfloat.Double, _1 )}
+    {( type_float _1 Rawfloat.Double, _1 )}
 | _1 = TokTypeLongDouble
-    {                         ( type_float _1 Rawfloat.LongDouble, _1 )}
+    {( type_float _1 Rawfloat.LongDouble, _1 )}
 | _1 = TokTypeBoolean
-    {                      ( type_boolean _1, _1 )}
+    {( type_boolean _1, _1 )}
 | _1 = TokTypeCString
-    {                      ( type_cstring _1, _1 )}
+    {( type_cstring _1, _1 )}
 
 tuple_type:
   _1 = TokTuple _2 = TokOf _3 = TokLeftParen _4 = type_list_with_comma _5 = TokRightParen
-    {        ( TypeProduct (union_pos _1 _5, StatusNormal, fst _4), union_pos _1 _5 )}
+    {( TypeProduct (union_pos _1 _5, StatusNormal, fst _4), union_pos _1 _5 )}
 
 basic_type:
   _1 = tuple_type
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = type_identifier
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = identifier
-    {                  ( type_apply (snd _1) [] (fst _1), snd _1 )}
+    {( type_apply (snd _1) [] (fst _1), snd _1 )}
 | _1 = TokPoly _2 = identifier
-    {                         ( warn_if_not_pasqual (union_pos _1 (snd _2)) "polymorphic types";
+    {( warn_if_not_pasqual (union_pos _1 (snd _2)) "polymorphic types";
 				  type_var (union_pos _1 (snd _2)) (fst _2), union_pos _1 (snd _2)
 				)}
 | _1 = enum_type
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = function_type
-    {                      ( halt_if_not_pasqual (snd _1) "function-type"; _1 )}
+    {( halt_if_not_pasqual (snd _1) "function-type"; _1 )}
 | _1 = procedure_type
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = new_structured_type
-    {                           ( _1 )}
+    {( _1 )}
 
 basic_parameter_type:
   _1 = tuple_type
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = type_identifier
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = identifier
-    {                  ( type_apply (snd _1) [] (fst _1), snd _1 )}
+    {( type_apply (snd _1) [] (fst _1), snd _1 )}
 | _1 = TokPoly _2 = identifier
-    {                         ( warn_if_not_pasqual (union_pos _1 (snd _2)) "polymorphic types";
+    {( warn_if_not_pasqual (union_pos _1 (snd _2)) "polymorphic types";
 				  type_var (union_pos _1 (snd _2)) (fst _2), union_pos _1 (snd _2)
 				)}
 | _1 = function_type
-    {                      ( halt_if_not_pasqual (snd _1) "function-type"; _1 )}
+    {( halt_if_not_pasqual (snd _1) "function-type"; _1 )}
 | _1 = procedure_type
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = new_parameter_structured_type
-    {    ( _1 )}
+    {( _1 )}
 
 new_structured_type:
   _1 = array_type
-    {                   ( _1 )}
+    {( _1 )}
 | _1 = record_type
-    {                    ( _1 )}
+    {( _1 )}
 
 new_parameter_structured_type:
   _1 = conformant_array_type
-    {                            ( _1 )}
+    {( _1 )}
 | _1 = record_type
-    {                   ( _1 )}
+    {( _1 )}
 
 enum_type:
   _1 = TokLeftParen _2 = identifier_and_expr_list _3 = TokRightParen
-    {        ( make_enum_type (union_pos _1 _3) _2, union_pos _1 _3 )}
+    {( make_enum_type (union_pos _1 _3) _2, union_pos _1 _3 )}
 
 array_type:
   _1 = TokArray _2 = TokLeftBrack _3 = index_list _4 = TokRightBrack _5 = TokOf _6 = type_denoter
-    {    ( make_array_type (union_pos _1 (snd _6)) false _3 (fst _6), union_pos _1 (snd _6) )}
+    {( make_array_type (union_pos _1 (snd _6)) false _3 (fst _6), union_pos _1 (snd _6) )}
 
 conformant_array_type:
   _1 = TokArray _2 = TokLeftBrack _3 = conf_index_list _4 = TokRightBrack _5 = TokOf _6 = parameter_type_denoter
-    {        ( make_array_type (union_pos _1 (snd _6)) true _3 (fst _6), union_pos _1 (snd _6) )}
+    {( make_array_type (union_pos _1 (snd _6)) true _3 (fst _6), union_pos _1 (snd _6) )}
 
 exception_declaration:
   _1 = TokException _2 = identifier _3 = TokColon _4 = type_identifier _5 = TokSemi
-    {    ( let _ = add_exception (snd _2, fst _2, Some (fst _4)) in
+    {( let _ = add_exception (snd _2, fst _2, Some (fst _4)) in
 				    void_expr (union_pos _1 _5)
 				)}
 | _1 = TokException _2 = identifier _3 = TokSemi
-    {    ( let _ = add_exception (snd _2, fst _2, None) in
+    {( let _ = add_exception (snd _2, fst _2, None) in
 				    void_expr (union_pos _1 _3)
 				)}
 
 index_list:
   _1 = index_list _2 = TokComma _3 = index
-    {                                ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 | _1 = index
-    {               ( [_1] )}
+    {( [_1] )}
 
 index:
   _1 = index_prim _2 = TokTwoDots _3 = index_prim
-    {        ( _1, _3 )}
+    {( _1, _3 )}
 
 index_prim:
   _1 = TokInt
-    {               ( IntExpr (snd _1, fst _1) )}
+    {( IntExpr (snd _1, fst _1) )}
 | _1 = identifier
-    {                  ( VarExpr (snd _1, fst _1, fst _1) )}
+    {( VarExpr (snd _1, fst _1, fst _1) )}
 
 conf_index_list:
   _1 = conf_index_list _2 = TokComma _3 = conf_index
-    {        ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 | _1 = conf_index
-    {                  ( [_1] )}
+    {( [_1] )}
 
 conf_index:
   _1 = identifier _2 = TokTwoDots _3 = identifier
-    {    ( VarExpr (snd _1, fst _1, fst _1), VarExpr (snd _3, fst _3, fst _3) )}
+    {( VarExpr (snd _1, fst _1, fst _1), VarExpr (snd _3, fst _3, fst _3) )}
 
 record_type:
   _1 = TokRecord _2 = record_section_list _3 = TokSemi _4 = TokEnd
-    {    ( let fields = List.map (fun (pos, sym, ty) -> pos, sym, ty, None) _2 in
+    {( let fields = List.map (fun (pos, sym, ty) -> pos, sym, ty, None) _2 in
 			          let pos = union_pos _1 _4 in
 			             TypeStruct(pos, StatusNormal, Fields fields), pos
 				)}
 
 record_section_list:
   _1 = record_section_list _2 = TokSemi _3 = record_section
-    {        ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = record_section
-    {                       ( _1 )}
+    {( _1 )}
 
 record_section:
   _1 = plain_identifier_list _2 = TokColon _3 = type_denoter
-    {    ( List.map (fun (sym, pos) -> pos, sym, fst _3) _1 )}
+    {( List.map (fun (sym, pos) -> pos, sym, fst _3) _1 )}
 
 constant_declaration:
   _1 = TokConst _2 = constant_declaration_list _3 = TokSemi
-    {    ( let vars = List.map (fun (pos, patt, ty, ie) ->
+    {( let vars = List.map (fun (pos, patt, ty, ie) ->
 				    pos, StoreAuto, patt, ty, ie) _2 in
 					VarDefs (union_pos _1 _3, vars)
 				)}
 
 constant_declaration_list:
   _1 = constant_declaration_list _2 = TokSemi _3 = constant_decl_prim
-    {        ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = constant_decl_prim
-    {                         ( _1 )}
+    {( _1 )}
 
 constant_decl_prim:
   _1 = plain_identifier_list _2 = TokEq _3 = TokInt
-    {        ( List.map (fun (sym, pos) ->
+    {( List.map (fun (sym, pos) ->
 				    pos, VarPattern (pos, sym, sym, None), ctype_int pos,
 					InitExpr (pos, IntExpr (snd _3, fst _3))) _1
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokMinus _4 = TokInt
-    {        ( List.map (fun (sym, pos) ->
+    {( List.map (fun (sym, pos) ->
 				    pos, VarPattern (pos, sym, sym, None), ctype_int pos,
 					InitExpr (pos,
 					    make_unop uMinusOp_sym (IntExpr (snd _4, fst _4)))) _1
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokFloat
-    {        ( List.map (fun (sym, pos) ->
+    {( List.map (fun (sym, pos) ->
 				    pos, VarPattern (pos, sym, sym, None), ctype_float pos,
 					InitExpr (pos, FloatExpr (snd _3, fst _3))) _1
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokMinus _4 = TokFloat
-    {        ( List.map (fun (sym, pos) ->
+    {( List.map (fun (sym, pos) ->
 				    pos, VarPattern (pos, sym, sym, None), ctype_float pos,
 					InitExpr (pos,
 					    make_unop uMinusOp_sym (FloatExpr (snd _4, fst _4)))) _1
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokString
-    {    ( let sprec, sia, spos = _3 in
+    {( let sprec, sia, spos = _3 in
     				  List.map (fun (sym, pos) ->
 				    pos, VarPattern (pos, sym, sym, None), ctype_cstring pos,
 					InitExpr (pos, StringExpr (spos, sprec, sia))) _1
@@ -931,313 +931,313 @@ constant_decl_prim:
 
 variable_decl:
   _1 = TokVar _2 = variable_declaration_list _3 = TokSemi
-    {    ( let vars = List.map (fun (pos, patt, ty, ie) ->
+    {( let vars = List.map (fun (pos, patt, ty, ie) ->
 				    pos, StoreAuto, patt, ty, ie) _2 in
 					VarDefs(union_pos _1 _3, vars)
 				)}
 
 variable_declaration_list:
   _1 = variable_declaration_list _2 = TokSemi _3 = variable_declaration
-    {        ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = variable_declaration_list _2 = TokSemi _3 = variable_init_declaration
-    {        ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = variable_declaration
-    {                           ( _1 )}
+    {( _1 )}
 | _1 = variable_init_declaration
-    {                                ( _1 )}
+    {( _1 )}
 
 variable_declaration:
   _1 = var_pattern_list _2 = TokColon _3 = type_denoter
-    {    ( List.map (fun (patt, pos) -> pos, patt, fst _3, InitNone) _1 )}
+    {( List.map (fun (patt, pos) -> pos, patt, fst _3, InitNone) _1 )}
 
 variable_init_declaration:
   _1 = var_pattern_list _2 = TokEq _3 = TokInt
-    {    ( List.map (fun (patt, pos) -> pos, patt, type_int32 pos, InitExpr (snd _3, IntExpr (pos, fst _3))) _1 )}
+    {( List.map (fun (patt, pos) -> pos, patt, type_int32 pos, InitExpr (snd _3, IntExpr (pos, fst _3))) _1 )}
 | _1 = var_pattern_list _2 = TokEq _3 = TokFloat
-    {    ( List.map (fun (patt, pos) -> pos, patt, type_float32 pos, InitExpr (snd _3, FloatExpr (pos, fst _3))) _1 )}
+    {( List.map (fun (patt, pos) -> pos, patt, type_float32 pos, InitExpr (snd _3, FloatExpr (pos, fst _3))) _1 )}
 | _1 = var_pattern_list _2 = TokEq _3 = TokString
-    {    ( let prec, ia, spos = _3 in
+    {( let prec, ia, spos = _3 in
 				    List.map (fun (patt, pos) -> pos, patt, type_cstring pos, InitExpr (spos, StringExpr (pos, prec, ia))) _1
 				)}
 | _1 = var_pattern_list _2 = TokColon _3 = type_denoter _4 = TokEq _5 = expression
-    {    ( List.map (fun (patt, pos) -> pos, patt, fst _3, InitExpr (pos_of_expr _5, _5)) _1 )}
+    {( List.map (fun (patt, pos) -> pos, patt, fst _3, InitExpr (pos_of_expr _5, _5)) _1 )}
 | _1 = var_pattern_list _2 = TokColon _3 = type_denoter _4 = TokEq _5 = array_init_expression
-    {    ( List.map (fun (patt, pos) -> pos, patt, fst _3, InitArray(pos, _5)) _1 )}
+    {( List.map (fun (patt, pos) -> pos, patt, fst _3, InitArray(pos, _5)) _1 )}
 
 operator_symbol:
   _1 = TokBrackets
-    {                   ( subscript_sym, _1 )}
+    {( subscript_sym, _1 )}
 | _1 = TokEq
-    {              ( eqOp_sym, _1 )}
+    {( eqOp_sym, _1 )}
 | _1 = TokAssignEq
-    {                   ( assign_sym, _1 )}
+    {( assign_sym, _1 )}
 | _1 = TokPlus
-    {                ( plusOp_sym, _1 )}
+    {( plusOp_sym, _1 )}
 | _1 = TokMinus
-    {                 ( minusOp_sym, _1 )}
+    {( minusOp_sym, _1 )}
 | _1 = TokDiv
-    {               ( divOp_sym, _1 )}
+    {( divOp_sym, _1 )}
 | _1 = TokSlash
-    {                 ( intDivideOp_sym, _1 )}
+    {( intDivideOp_sym, _1 )}
 | _1 = TokStar
-    {                ( timesOp_sym, _1 )}
+    {( timesOp_sym, _1 )}
 | _1 = TokMod
-    {               ( modOp_sym, _1 )}
+    {( modOp_sym, _1 )}
 | _1 = TokLe
-    {              ( leOp_sym, _1 )}
+    {( leOp_sym, _1 )}
 | _1 = TokLt
-    {              ( ltOp_sym, _1 )}
+    {( ltOp_sym, _1 )}
 | _1 = TokGe
-    {              ( geOp_sym, _1 )}
+    {( geOp_sym, _1 )}
 | _1 = TokGt
-    {              ( gtOp_sym, _1 )}
+    {( gtOp_sym, _1 )}
 | _1 = TokAnd
-    {               ( andOp_sym, _1 )}
+    {( andOp_sym, _1 )}
 | _1 = TokOr
-    {              ( orOp_sym, _1 )}
+    {( orOp_sym, _1 )}
 | _1 = TokXor
-    {               ( xorOp_sym, _1 )}
+    {( xorOp_sym, _1 )}
 | _1 = TokShl
-    {               ( lShiftOp_sym, _1 )}
+    {( lShiftOp_sym, _1 )}
 | _1 = TokShr
-    {               ( rShiftOp_sym, _1 )}
+    {( rShiftOp_sym, _1 )}
 
 function_type:
   _1 = TokFunction _2 = TokLeftParen _3 = TokRightParen _4 = TokArrow _5 = type_denoter
-    {        ( let pos = union_pos _1 (snd _5) in
+    {( let pos = union_pos _1 (snd _5) in
 				  halt_if_not_pasqual pos "function-type";
     				    type_pointer pos (type_fun pos [] (fst _5)), pos
 				)}
 | _1 = TokFunction _2 = TokLeftParen _3 = type_list _4 = TokRightParen _5 = TokArrow _6 = type_denoter
-    {    ( let pos = union_pos _1 (snd _6) in
+    {( let pos = union_pos _1 (snd _6) in
 				  halt_if_not_pasqual pos "function-type";
 				    type_pointer pos (type_fun pos (fst _3) (fst _6)), pos
 				)}
 
 function_heading:
   _1 = TokFunction _2 = identifier _3 = TokLeftParen _4 = TokRightParen _5 = TokColon _6 = type_denoter
-    {        ( _2, [], _6 )}
+    {( _2, [], _6 )}
 | _1 = TokFunction _2 = identifier _3 = TokColon _4 = type_denoter
-    {    ( warn_if_not_pascal (union_pos _1 (snd _4)) "Pascal-style function declaration";
+    {( warn_if_not_pascal (union_pos _1 (snd _4)) "Pascal-style function declaration";
 				  _2, [], _4
 				)}
 | _1 = TokFunction _2 = identifier _3 = TokLeftParen _4 = formal_parameters _5 = TokRightParen _6 = TokColon _7 = type_denoter
-    {    ( _2, _4, _7 )}
+    {( _2, _4, _7 )}
 
 operator_heading:
   _1 = TokOperator _2 = operator_symbol _3 = TokLeftParen _4 = formal_parameters _5 = TokRightParen _6 = TokColon _7 = type_denoter
-    {        ( _2, _4, _7 )}
+    {( _2, _4, _7 )}
 | _1 = TokOperator _2 = operator_symbol _3 = TokLeftParen _4 = formal_parameters _5 = TokRightParen
-    {    ( let pos = union_pos _1 _5 in
+    {( let pos = union_pos _1 _5 in
 				    _2, _4, (type_void pos, pos)
 				)}
 
 formal_parameters:
   _1 = formal_parameters _2 = TokSemi _3 = value_parameter_set
-    {        ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = formal_parameters _2 = TokSemi _3 = var_parameter_set
-    {    ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = value_parameter_set
-    {                          ( _1 )}
+    {( _1 )}
 | _1 = var_parameter_set
-    {                         ( _1 )}
+    {( _1 )}
 
 value_parameter_set:
   _1 = var_pattern_list _2 = TokColon _3 = parameter_type_denoter
-    {        ( List.map (fun (patt, pos) -> pos, patt, fst _3) _1 )}
+    {( List.map (fun (patt, pos) -> pos, patt, fst _3) _1 )}
 
 var_parameter_set:
   _1 = TokVar _2 = value_parameter_set
-    {        ( List.map (fun (pos, patt, ty) -> pos, patt, type_mutable pos ty) _2 )}
+    {( List.map (fun (pos, patt, ty) -> pos, patt, type_mutable pos ty) _2 )}
 | _1 = TokMutable _2 = value_parameter_set
-    {    ( List.map (fun (pos, patt, ty) -> pos, patt, type_mutable pos ty) _2 )}
+    {( List.map (fun (pos, patt, ty) -> pos, patt, type_mutable pos ty) _2 )}
 
 function_body:
   _1 = body
-    {             ( _1 )}
+    {( _1 )}
 
 procedure_type:
   _1 = TokProcedure _2 = TokLeftParen _3 = TokRightParen
-    {        ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
 				  halt_if_not_pasqual pos "procedure-type";
     				    type_pointer pos (type_fun pos [] (type_void pos)), pos
 				)}
 | _1 = TokProcedure _2 = TokLeftParen _3 = type_list _4 = TokRightParen
-    {    ( let pos = union_pos _1 _4 in
+    {( let pos = union_pos _1 _4 in
 				  halt_if_not_pasqual pos "procedure-type";
     				    type_pointer pos (type_fun pos (fst _3) (type_void pos)), pos
 				)}
 
 procedure_heading:
   _1 = TokProcedure _2 = identifier _3 = TokLeftParen _4 = TokRightParen
-    {        ( _2, [] )}
+    {( _2, [] )}
 | _1 = TokProcedure _2 = identifier
-    {                              ( warn_if_not_pascal (union_pos _1 (snd _2)) "warning: Pascal-style function declaration, use -pascal-compat\n";
+    {( warn_if_not_pascal (union_pos _1 (snd _2)) "warning: Pascal-style function declaration, use -pascal-compat\n";
 				  _2, []
 				)}
 | _1 = TokProcedure _2 = identifier _3 = TokLeftParen _4 = formal_parameters _5 = TokRightParen
-    {    ( _2, _4 )}
+    {( _2, _4 )}
 
 procedure_body:
   _1 = body
-    {             ( _1 )}
+    {( _1 )}
 
 statement_body:
   _1 = statement
-    {                  ( wrap_expr _1 )}
+    {( wrap_expr _1 )}
 | _1 = statements
-    {                  ( SeqExpr (snd _1, wrap_expr_list (snd _1) (fst _1)) )}
+    {( SeqExpr (snd _1, wrap_expr_list (snd _1) (fst _1)) )}
 
 statements:
   _1 = TokBegin _2 = statement_list _3 = TokEnd
-    {        ( fst _2, union_pos _1 _3 )}
+    {( fst _2, union_pos _1 _3 )}
 | _1 = TokBegin _2 = statement_list _3 = TokSemi _4 = TokEnd
-    {        ( fst _2, union_pos _1 _4 )}
+    {( fst _2, union_pos _1 _4 )}
 | _1 = TokBegin _2 = TokEnd
-    {                       ( [], union_pos _1 _2 )}
+    {( [], union_pos _1 _2 )}
 
 statement_list:
   _1 = statement_list _2 = TokSemi _3 = statement
-    {        ( (fst _1) @ [_3], union_pos (snd _1) (pos_of_expr _3) )}
+    {( (fst _1) @ [_3], union_pos (snd _1) (pos_of_expr _3) )}
 | _1 = statement
-    {                  ( [_1], pos_of_expr _1 )}
+    {( [_1], pos_of_expr _1 )}
 
 statement:
   _1 = unsigned_constant
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = case_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = repeat_statement
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = if_statement
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = try_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = raise_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = while_statement
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = for_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = break_statement
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = continue_statement
-    {                          ( _1 )}
+    {( _1 )}
 | _1 = goto_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = return_statement
-    {                        ( halt_if_not_pasqual (pos_of_expr _1) "\"return\""; _1 )}
+    {( halt_if_not_pasqual (pos_of_expr _1) "\"return\""; _1 )}
 | _1 = label_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = with_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = assignment_statement
-    {                           ( _1 )}
+    {( _1 )}
 | _1 = TokSemi
-    {                ( void_expr _1 )}
+    {( void_expr _1 )}
 
 assignment_statement:
   _1 = primary _2 = TokAssignEq _3 = expression
-    {    ( make_assign_expr (union_pos (pos_of_expr _1) (pos_of_expr _3)) _1 _3 )}
+    {( make_assign_expr (union_pos (pos_of_expr _1) (pos_of_expr _3)) _1 _3 )}
 
 nonempty_statement:
   _1 = unsigned_constant
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = case_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = repeat_statement
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = if_statement
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = try_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = raise_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = while_statement
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = for_statement
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = break_statement
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = continue_statement
-    {                          ( _1 )}
+    {( _1 )}
 | _1 = goto_statement
-    {                       ( _1 )}
+    {( _1 )}
 | _1 = primary _2 = TokAssignEq _3 = expression
-    {    ( make_assign_expr (union_pos (pos_of_expr _1) (pos_of_expr _3)) _1 _3 )}
+    {( make_assign_expr (union_pos (pos_of_expr _1) (pos_of_expr _3)) _1 _3 )}
 | _1 = return_statement
-    {                        ( halt_if_not_pasqual (pos_of_expr _1) "\"return\""; _1 )}
+    {( halt_if_not_pasqual (pos_of_expr _1) "\"return\""; _1 )}
 | _1 = label_statement
-    {                       ( _1 )}
+    {( _1 )}
 
 label_statement:
   _1 = identifier _2 = TokColon
-    {                          ( LabelExpr (union_pos (snd _1) _2, fst _1) )}
+    {( LabelExpr (union_pos (snd _1) _2, fst _1) )}
 | _1 = TokInt _2 = TokColon
-    {                       ( LabelExpr (union_pos (snd _1) _2, goto_symbol_of_int _1) )}
+    {( LabelExpr (union_pos (snd _1) _2, goto_symbol_of_int _1) )}
 | _1 = identifier _2 = TokColon _3 = nonempty_statement
-    {    ( SeqExpr (union_pos (snd _1) (pos_of_expr _3),
+    {( SeqExpr (union_pos (snd _1) (pos_of_expr _3),
 				    LabelExpr (union_pos (snd _1) _2, fst _1)
 				    :: [_3])
 				)}
 | _1 = TokInt _2 = TokColon _3 = nonempty_statement
-    {    ( SeqExpr (union_pos (snd _1) (pos_of_expr _3),
+    {( SeqExpr (union_pos (snd _1) (pos_of_expr _3),
 				    LabelExpr (union_pos (snd _1) _2, goto_symbol_of_int _1)
 				    :: [_3])
 				)}
 
 case_statement:
   _1 = TokCase _2 = expression _3 = TokOf _4 = case_element_list _5 = TokEnd
-    {    ( make_case (union_pos _1 _5) _2 _4 None )}
+    {( make_case (union_pos _1 _5) _2 _4 None )}
 | _1 = TokCase _2 = expression _3 = TokOf _4 = case_element_list _5 = TokElse _6 = statement_body _7 = TokEnd
-    {    ( make_case (union_pos _1 _7) _2 _4 (Some _6) )}
+    {( make_case (union_pos _1 _7) _2 _4 (Some _6) )}
 
 case_element_list:
   _1 = case_element_list_rev
-    {                            ( List.rev _1 )}
+    {( List.rev _1 )}
 
 case_element_list_rev:
   _1 = case_element_list_rev _2 = case_element
-    {        ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = case_element
-    {                    ( [_1] )}
+    {( [_1] )}
 
 case_element:
   _1 = constant_expression _2 = TokColon _3 = statement_body _4 = TokSemi
-    {        ( _1, _3 )}
+    {( _1, _3 )}
 
 pattern_element_list:
   _1 = pattern_element _2 = pattern_element_list
-    {        ( (fst _1) :: (fst _2), union_pos (snd _1) (snd _2) )}
+    {( (fst _1) :: (fst _2), union_pos (snd _1) (snd _2) )}
 | _1 = pattern_element
-    {                       ( [fst _1], snd _1 )}
+    {( [fst _1], snd _1 )}
 
 pattern_element:
   _1 = pattern _2 = TokColon _3 = statement_body _4 = TokSemi
-    {    ( (fst _1, _3), union_pos (snd _1) _4 )}
+    {( (fst _1, _3), union_pos (snd _1) _4 )}
 
 pattern:
   _1 = TokChar
-    {                 ( CharPattern(snd _1, rawint_of_int (Char.code (fst _1))), snd _1 )}
+    {( CharPattern(snd _1, rawint_of_int (Char.code (fst _1))), snd _1 )}
 | _1 = TokInt
-    {               ( IntPattern(snd _1, fst _1), snd _1 )}
+    {( IntPattern(snd _1, fst _1), snd _1 )}
 | _1 = TokFloat
-    {                 ( FloatPattern(snd _1, fst _1), snd _1 )}
+    {( FloatPattern(snd _1, fst _1), snd _1 )}
 | _1 = TokString
-    {                  ( let prec, s, pos = _1 in StringPattern(pos, prec, s), pos )}
+    {( let prec, s, pos = _1 in StringPattern(pos, prec, s), pos )}
 | _1 = TokId
-    {              ( VarPattern(snd _1, fst _1, fst _1, None), snd _1 )}
+    {( VarPattern(snd _1, fst _1, fst _1, None), snd _1 )}
 | _1 = TokId _2 = TokLeftParen _3 = plain_identifier_list _4 = TokRightParen
-    {    ( let ids = _1 :: _3 in make_enum_pattern ids, union_pos (snd _1) _4 )}
+    {( let ids = _1 :: _3 in make_enum_pattern ids, union_pos (snd _1) _4 )}
 
 try_statement:
   _1 = TokTry _2 = statement_body _3 = TokExcept _4 = pattern_element_list _5 = TokEnd
-    {    ( warn_if_not_pasqual (union_pos _1 _5) "\"try\"";
+    {( warn_if_not_pasqual (union_pos _1 _5) "\"try\"";
     				  let e_list = List.map (fun (patt, exp) -> patt, [exp] @ [BreakExpr (union_pos _1 _5)]) (fst _4) in
 				    TryExpr (union_pos _1 _5, _2, e_list, None)
 				)}
 | _1 = TokTry _2 = statement_body _3 = TokExcept _4 = pattern_element_list _5 = TokFinally _6 = statement_body
-    {    ( warn_if_not_pasqual (union_pos _1 (pos_of_expr _6)) "\"try\"";
+    {( warn_if_not_pasqual (union_pos _1 (pos_of_expr _6)) "\"try\"";
 				  let e_list = List.map (fun (patt, exp) ->
 				    patt, [exp] @ [BreakExpr (snd _4)]) (fst _4)
 				  in
@@ -1246,348 +1246,348 @@ try_statement:
 
 raise_statement:
   _1 = TokRaise _2 = expression
-    {                          ( warn_if_not_pasqual (union_pos _1 (pos_of_expr _2)) "\"raise\"";
+    {( warn_if_not_pasqual (union_pos _1 (pos_of_expr _2)) "\"raise\"";
     				  RaiseExpr (union_pos _1 (pos_of_expr _2), _2)
 				)}
 
 repeat_statement:
   _1 = TokRepeat _2 = statement_list _3 = TokUntil _4 = boolean_expression
-    {        ( let pos = union_pos _1 (pos_of_expr _4) in
+    {( let pos = union_pos _1 (pos_of_expr _4) in
 				  let stmts = wrap_expr_list (snd _2) (fst _2) in
     				    DoExpr (pos, SeqExpr (snd _2, stmts), _4)
 				)}
 
 if_statement:
   _1 = TokIf _2 = boolean_expression _3 = TokThen _4 = statement_body %prec prec_ifthen
-    {    ( let pos = union_pos _1 (pos_of_expr _4) in
+    {( let pos = union_pos _1 (pos_of_expr _4) in
     				    IfExpr (pos, _2, _4, None)
 				)}
 | _1 = TokIf _2 = boolean_expression _3 = TokThen _4 = statement_body _5 = TokElse _6 = statement_body %prec prec_ifthenelse
-    {    ( let pos = union_pos _1 (pos_of_expr _6) in
+    {( let pos = union_pos _1 (pos_of_expr _6) in
 				    IfExpr (pos, _2, _4, Some _6)
 				)}
 
 while_statement:
   _1 = TokWhile _2 = boolean_expression _3 = TokDo _4 = statement_body
-    {    ( let pos = union_pos _1 (pos_of_expr _4) in
+    {( let pos = union_pos _1 (pos_of_expr _4) in
     				    WhileExpr (pos, _2, _4)
 				)}
 
 for_statement:
   _1 = TokFor _2 = identifier _3 = TokAssignEq _4 = expression _5 = TokTo _6 = expression _7 = TokDo _8 = statement_body
-    {    ( make_for (union_pos _1 (pos_of_expr _8))
+    {( make_for (union_pos _1 (pos_of_expr _8))
 				    _2 _4 leOp_sym _6 plusOp_sym _8
 				)}
 | _1 = TokFor _2 = identifier _3 = TokAssignEq _4 = expression _5 = TokDownTo _6 = expression _7 = TokDo _8 = statement_body
-    {    ( make_for (union_pos _1 (pos_of_expr _8))
+    {( make_for (union_pos _1 (pos_of_expr _8))
 				    _2 _4 geOp_sym _6 minusOp_sym _8
 				)}
 
 return_statement:
   _1 = TokReturn _2 = expression
-    {                           ( ReturnExpr (union_pos _1 (pos_of_expr _2), _2) )}
+    {( ReturnExpr (union_pos _1 (pos_of_expr _2), _2) )}
 | _1 = TokReturn
-    {                  ( ReturnExpr (_1, UnitExpr (_1, 1, 0)) )}
+    {( ReturnExpr (_1, UnitExpr (_1, 1, 0)) )}
 
 break_statement:
   _1 = TokBreak
-    {                 ( BreakExpr (_1) )}
+    {( BreakExpr (_1) )}
 
 continue_statement:
   _1 = TokContinue
-    {                    ( ContinueExpr (_1) )}
+    {( ContinueExpr (_1) )}
 
 goto_statement:
   _1 = TokGoto _2 = identifier
-    {                         ( GotoExpr (union_pos _1 (snd _2), fst _2) )}
+    {( GotoExpr (union_pos _1 (snd _2), fst _2) )}
 | _1 = TokGoto _2 = TokInt
-    {                      ( GotoExpr (union_pos _1 (snd _2), goto_symbol_of_int _2) )}
+    {( GotoExpr (union_pos _1 (snd _2), goto_symbol_of_int _2) )}
 
 with_statement:
   _1 = TokWith _2 = expression _3 = TokDo _4 = statement_body
-    {        ( let pos = union_pos _1 (pos_of_expr _4) in
+    {( let pos = union_pos _1 (pos_of_expr _4) in
 				    WithExpr (pos, _2, _4)
 				)}
 
 array_init_expression:
   _1 = TokLeftParen _2 = relop_expression_list_as_list _3 = TokRightParen
-    {    ( List.map (fun e -> None, InitExpr (pos_of_expr e, e)) _2 )}
+    {( List.map (fun e -> None, InitExpr (pos_of_expr e, e)) _2 )}
 
 constant_expression:
   _1 = TokLeftTuple _2 = constant_relop_expression_list _3 = TokRightTuple
-    {        ( _2 )}
+    {( _2 )}
 | _1 = constant_relop_expression
-    {                                ( _1 )}
+    {( _1 )}
 
 constant_relop_expression_list:
   _1 = constant_relop_expression _2 = TokComma _3 = constant_relop_expression_list
-    {        ( make_binop _1 commaOp_sym _3 )}
+    {( make_binop _1 commaOp_sym _3 )}
 | _1 = constant_relop_expression _2 = TokComma _3 = constant_relop_expression
-    {    ( make_binop _1 commaOp_sym _3 )}
+    {( make_binop _1 commaOp_sym _3 )}
 
 constant_relop_expression:
   _1 = constant_simple_expression _2 = relop _3 = constant_simple_expression
-    {    ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 | _1 = constant_simple_expression
-    {    ( _1 )}
+    {( _1 )}
 
 constant_simple_expression:
   _1 = constant_add_term
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = constant_simple_expression _2 = logop _3 = constant_add_term
-    {    ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 
 constant_add_term:
   _1 = constant_term
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = constant_add_term _2 = addop _3 = constant_term
-    {    ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 
 constant_term:
   _1 = constant_factor
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = constant_term _2 = mulop _3 = constant_factor
-    {    ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 
 constant_factor:
   _1 = TokMinus _2 = constant_factor
-    {                               ( make_unop uMinusOp_sym _2 )}
+    {( make_unop uMinusOp_sym _2 )}
 | _1 = constant_exponentiation
-    {                              ( _1 )}
+    {( _1 )}
 
 constant_exponentiation:
   _1 = constant_primary
-    {                        ( _1 )}
+    {( _1 )}
 
 constant_primary:
   _1 = TokLeftParen _2 = constant_expression _3 = TokRightParen
-    {        ( _2 )}
+    {( _2 )}
 | _1 = constant_unsigned_constant
-    {    ( _1 )}
+    {( _1 )}
 | _1 = TokNot _2 = constant_primary
-    {                              ( make_unop uNotOp_sym _2 )}
+    {( make_unop uNotOp_sym _2 )}
 
 constant_unsigned_constant:
   _1 = TokInt
-    {               ( IntExpr (snd _1, fst _1) )}
+    {( IntExpr (snd _1, fst _1) )}
 | _1 = character_string
-    {                        ( let char_list, pos = _1 in
+    {( let char_list, pos = _1 in
 				    StringExpr (pos, NormalPrecision,
 					make_string_out_of_char_list char_list)
     				)}
 | _1 = TokChar
-    {                ( CharExpr (snd _1, rawint_of_int (Char.code (fst _1))) )}
+    {( CharExpr (snd _1, rawint_of_int (Char.code (fst _1))) )}
 | _1 = TokFloat
-    {                  ( FloatExpr (snd _1, fst _1) )}
+    {( FloatExpr (snd _1, fst _1) )}
 | _1 = TokString
-    {                  ( let prec, s, pos = _1 in StringExpr (pos, prec, s) )}
+    {( let prec, s, pos = _1 in StringExpr (pos, prec, s) )}
 | _1 = TokNil
-    {               ( UnitExpr (_1, 1, 0) )}
+    {( UnitExpr (_1, 1, 0) )}
 | _1 = boolean_value
-    {                     ( _1 )}
+    {( _1 )}
 
 boolean_value:
   _1 = TokTrue
-    {                 ( UnitExpr (_1, 2, 1) )}
+    {( UnitExpr (_1, 2, 1) )}
 | _1 = TokFalse
-    {                  ( UnitExpr (_1, 2, 0) )}
+    {( UnitExpr (_1, 2, 0) )}
 
 relop:
   _1 = TokLe
-    {               ( leOp_sym, _1 )}
+    {( leOp_sym, _1 )}
 | _1 = TokLt
-    {               ( ltOp_sym, _1 )}
+    {( ltOp_sym, _1 )}
 | _1 = TokGe
-    {               ( geOp_sym, _1 )}
+    {( geOp_sym, _1 )}
 | _1 = TokGt
-    {               ( gtOp_sym, _1 )}
+    {( gtOp_sym, _1 )}
 | _1 = TokEq
-    {               ( eqOp_sym, _1 )}
+    {( eqOp_sym, _1 )}
 | _1 = TokNotEq
-    {                  ( notEqOp_sym, _1 )}
+    {( notEqOp_sym, _1 )}
 
 logop:
   _1 = TokAnd
-    {                ( andOp_sym, _1 )}
+    {( andOp_sym, _1 )}
 | _1 = TokOr
-    {               ( orOp_sym, _1 )}
+    {( orOp_sym, _1 )}
 | _1 = TokXor
-    {                ( xorOp_sym, _1 )}
+    {( xorOp_sym, _1 )}
 | _1 = TokShl
-    {                ( lShiftOp_sym, _1 )}
+    {( lShiftOp_sym, _1 )}
 | _1 = TokShr
-    {                ( rShiftOp_sym, _1 )}
+    {( rShiftOp_sym, _1 )}
 
 addop:
   _1 = TokPlus
-    {                 ( plusOp_sym, _1 )}
+    {( plusOp_sym, _1 )}
 | _1 = TokMinus
-    {                  ( minusOp_sym, _1 )}
+    {( minusOp_sym, _1 )}
 
 mulop:
   _1 = TokStar
-    {                 ( timesOp_sym, _1 )}
+    {( timesOp_sym, _1 )}
 | _1 = TokSlash
-    {                  ( divOp_sym, _1 )}
+    {( divOp_sym, _1 )}
 | _1 = TokMod
-    {                ( modOp_sym, _1 )}
+    {( modOp_sym, _1 )}
 | _1 = TokDiv
-    {                ( intDivideOp_sym, _1 )}
+    {( intDivideOp_sym, _1 )}
 
 boolean_expression:
   _1 = expression
-    {                   ( _1 )}
+    {( _1 )}
 
 expression_list:
   _1 = expression_list_rev
-    {                           ( List.rev _1 )}
+    {( List.rev _1 )}
 
 expression_list_rev:
   _1 = expression_list_rev _2 = TokComma _3 = expression
-    {        ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | _1 = expression
-    {                   ( [_1] )}
+    {( [_1] )}
 
 expression:
   _1 = TokLeftTuple _2 = relop_expression_list _3 = TokRightTuple
-    {        ( _2 )}
+    {( _2 )}
 | _1 = relop_expression
-    {                        ( _1 )}
+    {( _1 )}
 
 relop_expression_list_as_list:
   _1 = relop_expression _2 = TokComma _3 = relop_expression_list_as_list
-    {        ( [_1] @ _3 )}
+    {( [_1] @ _3 )}
 | _1 = relop_expression _2 = TokComma _3 = relop_expression
-    {    ( [_1] @ [_3] )}
+    {( [_1] @ [_3] )}
 
 relop_expression_list:
   _1 = relop_expression _2 = TokComma _3 = relop_expression_list
-    {        ( make_binop _1 commaOp_sym _3 )}
+    {( make_binop _1 commaOp_sym _3 )}
 | _1 = relop_expression _2 = TokComma _3 = relop_expression
-    {    ( make_binop _1 commaOp_sym _3 )}
+    {( make_binop _1 commaOp_sym _3 )}
 
 relop_expression:
   _1 = simple_expression _2 = relop _3 = simple_expression
-    {        ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 | _1 = simple_expression
-    {                         ( _1 )}
+    {( _1 )}
 
 simple_expression:
   _1 = add_term
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = simple_expression _2 = logop _3 = add_term
-    {    ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 
 add_term:
   _1 = term
-    {              ( _1 )}
+    {( _1 )}
 | _1 = add_term _2 = addop _3 = term
-    {                           ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 
 term:
   _1 = factor
-    {                ( _1 )}
+    {( _1 )}
 | _1 = term _2 = mulop _3 = factor
-    {                         ( make_binop _1 (fst _2) _3 )}
+    {( make_binop _1 (fst _2) _3 )}
 
 factor:
   _1 = TokMinus _2 = factor
-    {                        ( make_unop uMinusOp_sym _2 )}
+    {( make_unop uMinusOp_sym _2 )}
 | _1 = exponentiation
-    {                       ( _1 )}
+    {( _1 )}
 
 exponentiation:
   _1 = primary
-    {                 ( _1 )}
+    {( _1 )}
 
 primary:
   _1 = unsigned_constant
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = TokNot _2 = primary
-    {                       ( make_unop uNotOp_sym _2 )}
+    {( make_unop uNotOp_sym _2 )}
 | _1 = TokDeref _2 = primary
-    {                        ( warn_if_not_pasqual (union_pos _1 (pos_of_expr _2)) "\"deref\"";
+    {( warn_if_not_pasqual (union_pos _1 (pos_of_expr _2)) "\"deref\"";
 				    make_unop uDerefOp_sym _2
 				)}
 | _1 = TokRef _2 = primary
-    {                       ( warn_if_not_pasqual (union_pos _1 (pos_of_expr _2)) "\"ref\"";
+    {( warn_if_not_pasqual (union_pos _1 (pos_of_expr _2)) "\"ref\"";
 				    make_unop uAddrOfOp_sym _2
 				)}
 | _1 = TokAt _2 = primary
-    {                      ( make_unop uAddrOfOp_sym _2 )}
+    {( make_unop uAddrOfOp_sym _2 )}
 
 unsigned_constant:
   _1 = TokInt
-    {                ( IntExpr (snd _1, fst _1) )}
+    {( IntExpr (snd _1, fst _1) )}
 | _1 = TokLeftParen _2 = expression _3 = TokRightParen
-    {    ( _2 )}
+    {( _2 )}
 | _1 = character_string
-    {                         ( let char_list, pos = _1 in
+    {( let char_list, pos = _1 in
 				    StringExpr (pos, NormalPrecision, make_string_out_of_char_list char_list)
 				)}
 | _1 = TokChar
-    {                 ( CharExpr (snd _1, rawint_of_int (Char.code (fst _1))) )}
+    {( CharExpr (snd _1, rawint_of_int (Char.code (fst _1))) )}
 | _1 = TokFloat
-    {                  ( FloatExpr (snd _1, fst _1) )}
+    {( FloatExpr (snd _1, fst _1) )}
 | _1 = TokString
-    {                  ( let prec, s, pos = _1 in StringExpr (pos, prec, s) )}
+    {( let prec, s, pos = _1 in StringExpr (pos, prec, s) )}
 | _1 = boolean_value
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = function_call
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = lvalue
-    {               ( _1 )}
+    {( _1 )}
 
 lvalue:
   _1 = identifier
-    {                   ( VarExpr (snd _1, fst _1, fst _1) )}
+    {( VarExpr (snd _1, fst _1, fst _1) )}
 | _1 = component_variable
-    {                         ( _1 )}
+    {( _1 )}
 | _1 = identified_variable
-    {                          ( _1 )}
+    {( _1 )}
 
 component_variable:
   _1 = indexed_variable
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = field_designator
-    {                        ( _1 )}
+    {( _1 )}
 
 indexed_variable:
   _1 = lvalue _2 = TokLeftBrack _3 = expression_list _4 = TokRightBrack
-    {    ( make_subscript_expr _1 _3 (union_pos _2 _4)  )}
+    {( make_subscript_expr _1 _3 (union_pos _2 _4)  )}
 
 field_designator:
   _1 = lvalue _2 = TokDot _3 = identifier
-    {                               ( let pos = union_pos (pos_of_expr _1) (snd _3) in
+    {( let pos = union_pos (pos_of_expr _1) (snd _3) in
 				    ProjectExpr (pos, OpExpr (pos, PreOp, uAddrOfOp_sym, uAddrOfOp_sym, [_1]), fst _3)
 				)}
 
 identified_variable:
   _1 = lvalue _2 = TokHat
-    {                     ( make_unop uDerefOp_sym _1 )}
+    {( make_unop uDerefOp_sym _1 )}
 
 character_string:
   _1 = character_string_rev
-    {                           ( List.rev (fst _1), (snd _1) )}
+    {( List.rev (fst _1), (snd _1) )}
 
 character_string_rev:
   _1 = character_string_rev _2 = TokChar
-    {                                ( let chars, pos1 = _1 in
+    {( let chars, pos1 = _1 in
 				  let ch, pos2 = _2 in
     				     ch :: chars, union_pos pos1 pos2
 				)}
 
 function_call:
   _1 = unsigned_constant _2 = TokLeftParen _3 = expression_list _4 = TokRightParen
-    {        ( make_apply_expr (union_pos (pos_of_expr _1) _4) _1 _3 )}
+    {( make_apply_expr (union_pos (pos_of_expr _1) _4) _1 _3 )}
 | _1 = type_identifier _2 = TokLeftParen _3 = expression _4 = TokRightParen
-    {    ( CastExpr (union_pos (snd _1) _4, fst _1, _3) )}
+    {( CastExpr (union_pos (snd _1) _4, fst _1, _3) )}
 | _1 = TokSizeOf _2 = TokLeftParen _3 = expression _4 = TokRightParen
-    {    ( SizeofExpr (union_pos _1 _4, _3) )}
+    {( SizeofExpr (union_pos _1 _4, _3) )}
 | _1 = TokSizeOf _2 = TokLeftParen _3 = type_identifier _4 = TokRightParen
-    {    ( SizeofType(union_pos _1 _4, fst _3) )}
+    {( SizeofType(union_pos _1 _4, fst _3) )}
 | _1 = unsigned_constant _2 = TokLeftParen _3 = TokRightParen
-    {    ( warn_if_not_pasqual (union_pos (pos_of_expr _1) _3) "calling function with no parameters";
+    {( warn_if_not_pasqual (union_pos (pos_of_expr _1) _3) "calling function with no parameters";
 				  make_apply_expr (union_pos (pos_of_expr _1) _3) _1 []
 				)}
 

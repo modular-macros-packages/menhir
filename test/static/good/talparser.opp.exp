@@ -744,363 +744,363 @@ let fpbinop_to_pop op =
 
 tal_int:
   _1 = int_items _2 = Teof
-    {                 (process_int_items _1)}
+    {(process_int_items _1)}
 
 int_items:
   
-    {   ([])}
+    {([])}
 | _1 = int_item _2 = int_items
-    {                     (_1::_2)}
+    {(_1::_2)}
 | _1 = Teol _2 = int_items
-    {                 (_2)}
+    {(_2)}
 
 int_item:
   _1 = Ttype _2 = Tlab _3 = tvar _4 = Tequal _5 = con _6 = Trab _7 = Teol
-    {                                       (INTabbrev (_3,_5))}
+    {(INTabbrev (_3,_5))}
 | _1 = Ttype _2 = Tlab _3 = label _4 = Tcolon _5 = kind _6 = Trab _7 = Teol
-    {                                         (INTcon (_3,_5,AbsCon))}
+    {(INTcon (_3,_5,AbsCon))}
 | _1 = Ttype _2 = Tlab _3 = label _4 = Tcolon _5 = kind _6 = Tequal _7 = con _8 = Trab _9 = Teol
-    {                                                    (INTcon (_3,_5,ConcCon _7))}
+    {(INTcon (_3,_5,ConcCon _7))}
 | _1 = Ttype _2 = Tlab _3 = label _4 = Tcolon _5 = kind _6 = Tleq _7 = con _8 = Trab _9 = Teol
-    {                                                  (INTcon (_3,_5,BoundCon _7))}
+    {(INTcon (_3,_5,BoundCon _7))}
 | _1 = Tval _2 = label _3 = Tcomma _4 = econ _5 = Teol
-    {                              (INTval (_2,_4))}
+    {(INTval (_2,_4))}
 | _1 = Tkind _2 = Tlab _3 = kvar _4 = Tequal _5 = kind _6 = Trab _7 = Teol
-    {                                        (INTkindabbrev (_3,_5))}
+    {(INTkindabbrev (_3,_5))}
 | _1 = Tkindrec _2 = Tlab _3 = kvar _4 = Tequal _5 = kind _6 = Trab _7 = Teol _8 = andkinds
-    {     (INTkmuabbrev (MU((_3, _5)::_8)) )}
+    {(INTkmuabbrev (MU((_3, _5)::_8)) )}
 | _1 = Tconrec _2 = prcon _3 = andcons
-    {     (INTkmuabbrev (PR(_2::_3)) )}
+    {(INTkmuabbrev (PR(_2::_3)) )}
 
 prcon:
   _1 = Tlab _2 = tvar _3 = Tcolon _4 = kvar _5 = Tarrow _6 = kind _7 = Tequal _8 = Tfn _9 = tvar _10 = Tcolon _11 = kind _12 = Tdot _13 = con _14 = Trab _15 = Teol
-    {    ( (_4, _9, _11, _2, _6, _13) )}
+    {( (_4, _9, _11, _2, _6, _13) )}
 
 andkinds:
   
-    {          ([])}
+    {([])}
 | _1 = andkind _2 = andkinds
-    {                                   ( _1::_2 )}
+    {( _1::_2 )}
 
 andkind:
   _1 = Tandkind _2 = Tlab _3 = kvar _4 = Tequal _5 = kind _6 = Trab _7 = Teol
-    {                                                  ( (_3, _5) )}
+    {( (_3, _5) )}
 
 andcons:
   
-    {         ([])}
+    {([])}
 | _1 = Tandcon _2 = prcon _3 = andcons
-    {                                      ( _2::_3 )}
+    {( _2::_3 )}
 
 tal_pre_mod:
   _1 = prolog _2 = imp_items _3 = epilog
-    {                          (process_mod_items _2)}
+    {(process_mod_items _2)}
 
 prolog:
   _1 = eols _2 = Tinclude _3 = Teol _4 = eols _5 = T_begin_TAL _6 = Teol
-    {       (if (String.lowercase _2)<>"tal.inc" then err "invalid prolog")}
+    {(if (String.lowercase _2)<>"tal.inc" then err "invalid prolog")}
 | _1 = eols _2 = Tinclude _3 = Teol _4 = eols _5 = Tinclude _6 = Teol _7 = eols _8 = T_begin_TAL _9 = Teol _10 = eols _11 = T_begin_CYCLONE _12 = Teol
-    {   ( if (String.lowercase _2)<>"tal.inc" then failwith "invalid prolog";
+    {( if (String.lowercase _2)<>"tal.inc" then failwith "invalid prolog";
      if (String.lowercase _5)<>"cyclone.inc" then failwith "invalid prolog" )}
 
 epilog:
   _1 = T_end_TAL _2 = Teol _3 = eols _4 = Tend _5 = eols _6 = Teof
-    {                                     (())}
+    {(())}
 
 eols:
   
-    {      (())}
+    {(())}
 | _1 = Teol _2 = eols
-    {                       (())}
+    {(())}
 
 imp_items:
   
-    {   ([])}
+    {([])}
 | _1 = imp_item _2 = imp_items
-    {                     (_1::_2)}
+    {(_1::_2)}
 | _1 = Teol _2 = imp_items
-    {                 (_2)}
+    {(_2)}
 
 imp_item:
   _1 = Ttal_import _2 = Teol
-    {                   (IMPimport _1)}
+    {(IMPimport _1)}
 | _1 = Ttal_export _2 = Teol
-    {                   (IMPexport _1)}
+    {(IMPexport _1)}
 | _1 = Ttype _2 = Tlab _3 = tvar _4 = Tequal _5 = con _6 = Trab _7 = Teol
-    {                                       (IMPabbrev (_3,_5))}
+    {(IMPabbrev (_3,_5))}
 | _1 = Ttype _2 = Tlab _3 = label _4 = Tcolon _5 = kind _6 = Tequal _7 = con _8 = Trab _9 = Teol
-    {                                                    (IMPconblock (_3,_5,_7))}
+    {(IMPconblock (_3,_5,_7))}
 | _1 = Tcode _2 = Teol
-    {             (IMPcode)}
+    {(IMPcode)}
 | _1 = Tdata _2 = Teol
-    {             (IMPdata)}
+    {(IMPdata)}
 | _1 = label _2 = Tcolon
-    {               (IMPlabel _1)}
+    {(IMPlabel _1)}
 | _1 = Tlabeltype _2 = econ _3 = Teol
-    {                       (IMPlabeltype _2)}
+    {(IMPlabeltype _2)}
 | _1 = instruction _2 = Teol
-    {                   (IMPinst _1)}
+    {(IMPinst _1)}
 | _1 = Tcoerce _2 = coerce1 _3 = Teol
-    {                       (process_coerce 2 _2)}
+    {(process_coerce 2 _2)}
 | _1 = Talign _2 = Tnumber _3 = Teol
-    {                      (IMPalign _2)}
+    {(IMPalign _2)}
 | _1 = data_item _2 = Teol
-    {                 (IMPdi _1)}
+    {(IMPdi _1)}
 | _1 = Ttemplate_start _2 = label _3 = Tcomma _4 = econ
-    {                                    (IMPtemplate_start(_2,_4))}
+    {(IMPtemplate_start(_2,_4))}
 | _1 = Ttemplate_end
-    {                (IMPtemplate_end)}
+    {(IMPtemplate_end)}
 | _1 = Tkind _2 = Tlab _3 = kvar _4 = Tequal _5 = kind _6 = Trab _7 = Teol
-    {                                        (IMPkindabbrev (_3,_5))}
+    {(IMPkindabbrev (_3,_5))}
 | _1 = Tkindrec _2 = Tlab _3 = kvar _4 = Tequal _5 = kind _6 = Trab _7 = Teol _8 = andkinds
-    {     (IMPkmuabbrev (MU((_3, _5)::_8)) )}
+    {(IMPkmuabbrev (MU((_3, _5)::_8)) )}
 | _1 = Tconrec _2 = prcon _3 = andcons
-    {     (IMPkmuabbrev (PR(_2::_3)) )}
+    {(IMPkmuabbrev (PR(_2::_3)) )}
 
 instructionlist:
   _1 = instruction
-    {              ( [_1] )}
+    {( [_1] )}
 | _1 = instruction _2 = instructionlist
-    {                              ( _1::_2 )}
+    {( _1::_2 )}
 | _1 = Tcoerce _2 = coerce1
-    {                  ( [process_coerce_in_list _2] )}
+    {( [process_coerce_in_list _2] )}
 | _1 = Tcoerce _2 = coerce1 _3 = instructionlist
-    {                                  ( (process_coerce_in_list _2)::_3 )}
+    {( (process_coerce_in_list _2)::_3 )}
 
 instruction:
   _1 = Tadc _2 = binop
-    {             (ArithBin (Adc,fst _2,snd _2))}
+    {(ArithBin (Adc,fst _2,snd _2))}
 | _1 = Tadd _2 = binop
-    {             (ArithBin (Add,fst _2,snd _2))}
+    {(ArithBin (Add,fst _2,snd _2))}
 | _1 = Tand _2 = binop
-    {             (ArithBin (And,fst _2,snd _2))}
+    {(ArithBin (And,fst _2,snd _2))}
 | _1 = Tbswap _2 = reg
-    {             (Bswap _2)}
+    {(Bswap _2)}
 | _1 = Tcall _2 = unary_op_coerce
-    {                        (Call _2)}
+    {(Call _2)}
 | _1 = Tcbw
-    {       (Conv Cbw)}
+    {(Conv Cbw)}
 | _1 = Tcdq
-    {       (Conv Cdq)}
+    {(Conv Cdq)}
 | _1 = Tclc
-    {       (Clc)}
+    {(Clc)}
 | _1 = Tcmc
-    {       (Cmc)}
+    {(Cmc)}
 | _1 = Tcmov _2 = reg _3 = Tcomma _4 = anop_coerce
-    {                               (Cmovcc (_1,_2,_4))}
+    {(Cmovcc (_1,_2,_4))}
 | _1 = Tcmp _2 = binop3
-    {              (Cmp (fst _2,snd _2))}
+    {(Cmp (fst _2,snd _2))}
 | _1 = Tcwd
-    {       (Conv Cwd)}
+    {(Conv Cwd)}
 | _1 = Tcwde
-    {        (Conv Cwde)}
+    {(Conv Cwde)}
 | _1 = Tdec _2 = unary_op
-    {                (ArithUn (Dec,_2))}
+    {(ArithUn (Dec,_2))}
 | _1 = Tdiv _2 = unary_op
-    {                (ArithMD (Div,_2))}
+    {(ArithMD (Div,_2))}
 | _1 = Tidiv _2 = unary_op
-    {                 (ArithMD (Idiv,_2))}
+    {(ArithMD (Idiv,_2))}
 | _1 = imul
-    {       (_1)}
+    {(_1)}
 | _1 = Tinc _2 = unary_op
-    {                (ArithUn (Inc,_2))}
+    {(ArithUn (Inc,_2))}
 | _1 = Tint _2 = Tnumber
-    {               (Int (int32_to_int8 _2))}
+    {(Int (int32_to_int8 _2))}
 | _1 = Tinto
-    {        (Into)}
+    {(Into)}
 | _1 = Tj _2 = coerce
-    {            (Jcc (_1,mk_label_coerce 2 _2,None))}
+    {(Jcc (_1,mk_label_coerce 2 _2,None))}
 | _1 = Tj _2 = coerce _3 = Tvirtual _4 = Tlab _5 = instructionlist _6 = Trab
-    {    (Jcc (_1, mk_label_coerce 2 _2, Some _5))}
+    {(Jcc (_1, mk_label_coerce 2 _2, Some _5))}
 | _1 = Tjecxz _2 = coerce
-    {                (Jecxz (mk_label_coerce 2 _2,None))}
+    {(Jecxz (mk_label_coerce 2 _2,None))}
 | _1 = Tjecxz _2 = coerce _3 = Tvirtual _4 = Tlab _5 = instructionlist _6 = Trab
-    {    (Jecxz (mk_label_coerce 2 _2, Some _5))}
+    {(Jecxz (mk_label_coerce 2 _2, Some _5))}
 | _1 = Tjmp _2 = anop_coerce
-    {                   (Jmp _2)}
+    {(Jmp _2)}
 | _1 = Tlahf
-    {        (Lahf)}
+    {(Lahf)}
 | _1 = Tlea _2 = reg _3 = Tcomma _4 = anop
-    {                       (Lea (_2,_4))}
+    {(Lea (_2,_4))}
 | _1 = Tloopd _2 = coerce
-    {                (Loopd (mk_label_coerce 2 _2,None))}
+    {(Loopd (mk_label_coerce 2 _2,None))}
 | _1 = Tlooped _2 = coerce
-    {                 (Loopd (mk_label_coerce 2 _2,Some true))}
+    {(Loopd (mk_label_coerce 2 _2,Some true))}
 | _1 = Tloopned _2 = coerce
-    {                  (Loopd (mk_label_coerce 2 _2,Some false))}
+    {(Loopd (mk_label_coerce 2 _2,Some false))}
 | _1 = Tmov _2 = binop2
-    {              (Mov (fst _2,snd _2))}
+    {(Mov (fst _2,snd _2))}
 | _1 = Tmov _2 = binop_part
-    {    ( let ((g1,p1),(g2,p2)) = _2 in
+    {( let ((g1,p1),(g2,p2)) = _2 in
     if p1<>p2 then err "Mov requires operands to have the same size.";
     Movpart(false,g1,p1,g2,p2)
     )}
 | _1 = Tmovsx _2 = binop_part
-    {                    (let ((g1,p1),(g2,p2)) = _2 in Movpart(false,g1,p1,g2,p2) )}
+    {(let ((g1,p1),(g2,p2)) = _2 in Movpart(false,g1,p1,g2,p2) )}
 | _1 = Tmovzx _2 = binop_part
-    {                    (let ((g1,p1),(g2,p2)) = _2 in Movpart(true ,g1,p1,g2,p2) )}
+    {(let ((g1,p1),(g2,p2)) = _2 in Movpart(true ,g1,p1,g2,p2) )}
 | _1 = Tmul _2 = unary_op
-    {                (ArithMD (Mul,_2))}
+    {(ArithMD (Mul,_2))}
 | _1 = Tneg _2 = unary_op
-    {                (ArithUn (Neg,_2))}
+    {(ArithUn (Neg,_2))}
 | _1 = Tnop
-    {       (Nop)}
+    {(Nop)}
 | _1 = Tnot _2 = unary_op
-    {                (ArithUn (Not,_2))}
+    {(ArithUn (Not,_2))}
 | _1 = Tor _2 = binop
-    {            (ArithBin (Or,fst _2,snd _2))}
+    {(ArithBin (Or,fst _2,snd _2))}
 | _1 = Tpop _2 = unary_op
-    {                (Pop _2)}
+    {(Pop _2)}
 | _1 = Tpopad
-    {         (Popad)}
+    {(Popad)}
 | _1 = Tpopfd
-    {         (Popfd)}
+    {(Popfd)}
 | _1 = Tpush _2 = unary_op_coerce
-    {                        (Push _2)}
+    {(Push _2)}
 | _1 = Tpushad
-    {          (Pushad)}
+    {(Pushad)}
 | _1 = Tpushfd
-    {          (Pushfd)}
+    {(Pushfd)}
 | _1 = Trcl _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Rcl,_2,_4))}
+    {(ArithSR (Rcl,_2,_4))}
 | _1 = Trcr _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Rcr,_2,_4))}
+    {(ArithSR (Rcr,_2,_4))}
 | _1 = Trdtsc
-    {         ( Rdtsc )}
+    {( Rdtsc )}
 | _1 = Tretn
-    {        (Retn None)}
+    {(Retn None)}
 | _1 = Tretn _2 = Tnumber
-    {                (Retn (Some _2))}
+    {(Retn (Some _2))}
 | _1 = Trol _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Rol,_2,_4))}
+    {(ArithSR (Rol,_2,_4))}
 | _1 = Tror _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Ror,_2,_4))}
+    {(ArithSR (Ror,_2,_4))}
 | _1 = Tsahf
-    {        (Sahf)}
+    {(Sahf)}
 | _1 = Tsal _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Sal,_2,_4))}
+    {(ArithSR (Sal,_2,_4))}
 | _1 = Tsar _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Sar,_2,_4))}
+    {(ArithSR (Sar,_2,_4))}
 | _1 = Tsbb _2 = binop
-    {             (ArithBin (Sbb,fst _2,snd _2))}
+    {(ArithBin (Sbb,fst _2,snd _2))}
 | _1 = Tset _2 = regpart
-    {    (if snd _2 <> RPl then
+    {(if snd _2 <> RPl then
        (err "set requires low byte register"; raise Gcdfec.Exit)
      else Setcc (_1,Reg (fst _2)))}
 | _1 = Tshl _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Shl,_2,_4))}
+    {(ArithSR (Shl,_2,_4))}
 | _1 = Tshld _2 = anop _3 = Tcomma _4 = reg _5 = Tcomma _6 = shift_amount
-    {                                            (Shld (_2,_4,_6))}
+    {(Shld (_2,_4,_6))}
 | _1 = Tshr _2 = unary_op _3 = Tcomma _4 = shift_amount
-    {                                    (ArithSR (Shr,_2,_4))}
+    {(ArithSR (Shr,_2,_4))}
 | _1 = Tshrd _2 = anop _3 = Tcomma _4 = reg _5 = Tcomma _6 = shift_amount
-    {                                            (Shrd (_2,_4,_6))}
+    {(Shrd (_2,_4,_6))}
 | _1 = Tstc
-    {       (Stc)}
+    {(Stc)}
 | _1 = Tsub _2 = binop
-    {             (ArithBin (Sub,fst _2,snd _2))}
+    {(ArithBin (Sub,fst _2,snd _2))}
 | _1 = Ttest _2 = binop
-    {              (Test (fst _2,snd _2))}
+    {(Test (fst _2,snd _2))}
 | _1 = Txchg _2 = anop _3 = Tcomma _4 = reg
-    {                        (Xchg (_2,_4))}
+    {(Xchg (_2,_4))}
 | _1 = Txor _2 = binop
-    {             (ArithBin (Xor,fst _2,snd _2))}
+    {(ArithBin (Xor,fst _2,snd _2))}
 | _1 = Tfallthru
-    {            (Fallthru [])}
+    {(Fallthru [])}
 | _1 = Tfallthru _2 = Tlab _3 = Trab
-    {                      (Fallthru [])}
+    {(Fallthru [])}
 | _1 = Tfallthru _2 = econlist
-    {                     (Fallthru _2)}
+    {(Fallthru _2)}
 | _1 = Tmalloc _2 = tvar _3 = Tcomma _4 = Tnumber _5 = Tcomma _6 = mallocarg
-    {                                               (Malloc (_2,_4,Some _6))}
+    {(Malloc (_2,_4,Some _6))}
 | _1 = Tmalloc _2 = tvar _3 = Tcomma _4 = Tnumber
-    {                              (Malloc (_2,_4,None))}
+    {(Malloc (_2,_4,None))}
 | _1 = Tproof _2 = Tlab _3 = proofop _4 = Trab
-    {                           (Proof _3)}
+    {(Proof _3)}
 | _1 = Tunpack _2 = tvar _3 = Tcomma _4 = reg _5 = Tcomma _6 = anop_coerce
-    {                                             (Unpack (_2,_4,_6))}
+    {(Unpack (_2,_4,_6))}
 | _1 = Tsunpack _2 = tvar _3 = Tcomma _4 = genop
-    {                             (Sunpack (_2,_4))}
+    {(Sunpack (_2,_4))}
 | _1 = Tnameobj _2 = tvar _3 = Tcomma _4 = anop
-    {                            (Nameobj(_2,_4))}
+    {(Nameobj(_2,_4))}
 | _1 = Tforgetunique _2 = tvar
-    {                     (ForgetUnique(_2))}
+    {(ForgetUnique(_2))}
 | _1 = Tremovename _2 = tvar
-    {                   (RemoveName(_2))}
+    {(RemoveName(_2))}
 | _1 = Tfp
-    {                (FPnoargs _1)}
+    {(FPnoargs _1)}
 | _1 = Tfpbin
-    {                (FPsomeargs (fpbinop_to_pop _1,FPstack2 (false,1)))}
+    {(FPsomeargs (fpbinop_to_pop _1,FPstack2 (false,1)))}
 | _1 = Tfpbin _2 = fpregs
-    {                (let (b,i) = _2 in FPsomeargs (_1,FPstack2 (b,i)))}
+    {(let (b,i) = _2 in FPsomeargs (_1,FPstack2 (b,i)))}
 | _1 = Tfpbin _2 = fpmem
-    {                (FPsomeargs (_1,_2))}
+    {(FPsomeargs (_1,_2))}
 | _1 = Tfpmem _2 = fpmem
-    {                (FPsomeargs (_1,_2))}
+    {(FPsomeargs (_1,_2))}
 | _1 = Tfpsst _2 = fpregs
-    {    (let (b,i) = _2 in
+    {(let (b,i) = _2 in
      if b then (errn 3 "floating point operation requires 2nd arg ST"; Nop)
      else FPsomeargs (_1,FPstack2(b,i)))}
 | _1 = Tfcom
-    {        (FPsomeargs (_1,FPstack2 (false,1)))}
+    {(FPsomeargs (_1,FPstack2 (false,1)))}
 | _1 = Tfcom _2 = fpreg
-    {              (FPsomeargs (_1,FPstack2 (false, _2)))}
+    {(FPsomeargs (_1,FPstack2 (false, _2)))}
 | _1 = Tfcom _2 = fpmem
-    {              (FPsomeargs (_1,_2))}
+    {(FPsomeargs (_1,_2))}
 | _1 = Tfpnone_or_reg
-    {                 (FPsomeargs (_1,FPstack 1))}
+    {(FPsomeargs (_1,FPstack 1))}
 | _1 = Tfpnone_or_reg _2 = fpreg
-    {                       (FPsomeargs (_1,FPstack _2))}
+    {(FPsomeargs (_1,FPstack _2))}
 | _1 = Tfpunary _2 = fpreg
-    {                 (FPsomeargs (_1,FPstack _2))}
+    {(FPsomeargs (_1,FPstack _2))}
 | _1 = Tfpunary _2 = fpmem
-    {                 (FPsomeargs (_1,_2))}
+    {(FPsomeargs (_1,_2))}
 | _1 = Tffree _2 = fpreg
-    {               (FPsomeargs (Ffree, FPstack _2))}
+    {(FPsomeargs (Ffree, FPstack _2))}
 | _1 = Tfpregs _2 = fpregs
-    {                 (let (b,i) = _2 in FPsomeargs (_1,FPstack2 (b,i)))}
+    {(let (b,i) = _2 in FPsomeargs (_1,FPstack2 (b,i)))}
 | _1 = Tfstsw _2 = Tax
-    {             (FPsomeargs (_1,FPgenop (Byte2,Reg Eax)))}
+    {(FPsomeargs (_1,FPgenop (Byte2,Reg Eax)))}
 | _1 = Tfstsw _2 = fpmem
-    {               (FPsomeargs (_1,_2))}
+    {(FPsomeargs (_1,_2))}
 | _1 = Tcgstart _2 = Tlab _3 = tvar _4 = Tcomma _5 = con _6 = Trab
-    {                                     (CgStart (_3,_5))}
+    {(CgStart (_3,_5))}
 | _1 = Tcgdump _2 = reg _3 = Tcomma _4 = tvar _5 = Tcomma _6 = reg _7 = Tcomma _8 = label
-    {                                                  (CgDump (_2, _4, _6, _8))}
+    {(CgDump (_2, _4, _6, _8))}
 | _1 = Tcgfill _2 = reg _3 = Tcomma _4 = reg _5 = Tcomma _6 = label _7 = Tcomma _8 = label _9 = Tcomma _10 = reg
-    {                                                              (CgFill (_2, _4, _6, _8, _10))}
+    {(CgFill (_2, _4, _6, _8, _10))}
 | _1 = Tcgfilljmp _2 = reg _3 = Tcomma _4 = reg _5 = Tcomma _6 = label _7 = Tcomma _8 = label _9 = Tcomma _10 = reg _11 = Tcomma _12 = label _13 = Tcomma _14 = label
-    {   ( CgFillJmp(_2,_4,_6,_8,_10,_12,_14) )}
+    {( CgFillJmp(_2,_4,_6,_8,_10,_12,_14) )}
 | _1 = Tcgfilljcc _2 = reg _3 = Tcomma _4 = reg _5 = Tcomma _6 = label _7 = Tcomma _8 = label _9 = Tcomma _10 = reg _11 = Tcomma _12 = label _13 = Tcomma _14 = label
-    {   ( CgFillJcc(_2,_4,_6,_8,_10,_12,_14) )}
+    {( CgFillJcc(_2,_4,_6,_8,_10,_12,_14) )}
 | _1 = Tcgforget _2 = tvar _3 = Tcomma _4 = tvar
-    {                             (CgForget (_2,_4))}
+    {(CgForget (_2,_4))}
 | _1 = Tcgend _2 = reg
-    {             (CgEnd (_2))}
+    {(CgEnd (_2))}
 | _1 = Tcghole _2 = reg _3 = Tcomma _4 = label _5 = Tcomma _6 = label
-    {                                        (CgHole(_2,_4,_6))}
+    {(CgHole(_2,_4,_6))}
 | _1 = Tcgholejmp _2 = label _3 = Tcomma _4 = coerce
-    {                                 (CgHoleJmp(_2,mk_label_coerce 4 _4))}
+    {(CgHoleJmp(_2,mk_label_coerce 4 _4))}
 | _1 = Tcgholejcc _2 = Tident _3 = Tcomma _4 = label _5 = Tcomma _6 = coerce
-    {    (CgHoleJcc(mk_cc 2 _2,_4,mk_label_coerce 4 _6,None))}
+    {(CgHoleJcc(mk_cc 2 _2,_4,mk_label_coerce 4 _6,None))}
 | _1 = Tcgholejcc _2 = Tident _3 = Tcomma _4 = label _5 = Tcomma _6 = coerce _7 = Tvirtual _8 = Tlab _9 = instructionlist _10 = Trab
-    {    (CgHoleJcc(mk_cc 2 _2,_4,mk_label_coerce 4 _6,Some _9))}
+    {(CgHoleJcc(mk_cc 2 _2,_4,mk_label_coerce 4 _6,Some _9))}
 | _1 = Tletprod _2 = Tlsb _3 = tvars _4 = Trsb _5 = Tcomma _6 = con
-    {                                      ( Letprod(_3,_6) )}
+    {( Letprod(_3,_6) )}
 | _1 = Tletroll _2 = tvar _3 = Tcomma _4 = con
-    {                           ( Letroll(_2,_4) )}
+    {( Letroll(_2,_4) )}
 | _1 = Tvcase _2 = Tnumber _3 = Tcomma _4 = tvar _5 = Tcomma _6 = con _7 = Tcomma _8 = coerce
-    {                                                      ( Vcase(_2,_6,_4,_8) )}
+    {( Vcase(_2,_6,_4,_8) )}
 
 imul:
   _1 = Timul _2 = ptr_opt _3 = genop
-    {                      (ck_dword_lr _2 3 _3; ArithMD (Imul1,_3))}
+    {(ck_dword_lr _2 3 _3; ArithMD (Imul1,_3))}
 | _1 = Timul _2 = ptr_opt _3 = genop _4 = Tcomma _5 = ptr_opt _6 = genop
-    {    (ck_dword_b _2 _3 _6;
+    {(ck_dword_b _2 _3 _6;
      ck_dword_b _5 _6 _3;
      ArithBin (Imul2,_3,_6))}
 | _1 = Timul _2 = ptr_opt _3 = genop _4 = Tcomma _5 = ptr_opt _6 = genop _7 = Tcomma _8 = Tnumber
-    {    ((match _2 with
+    {((match _2 with
      Some _ -> errn 2 "imul register has ptr";
     | None  -> ());
      ck_dword_l _5 6 _6;
@@ -1108,121 +1108,121 @@ imul:
 
 mallocarg:
   _1 = Tlab _2 = mallocarg_aux _3 = Trab
-    {                          (_2)}
+    {(_2)}
 
 mallocarg_aux:
   _1 = Tlsb _2 = mallocarg_auxs0 _3 = Trsb
-    {                            (Mprod _2)}
+    {(Mprod _2)}
 | _1 = Tcolon _2 = Tnumber
-    {                 (Mbytes (mk_scale _2))}
+    {(Mbytes (mk_scale _2))}
 | _1 = Tarray _2 = Tlb _3 = Tnumber _4 = Tcomma _5 = TB _6 = Trb
-    {                                   (Mbytearray (_5,_3))}
+    {(Mbytearray (_5,_3))}
 
 mallocarg_auxs0:
   
-    {    ([])}
+    {([])}
 | _1 = mallocarg_auxs
-    {                 (_1)}
+    {(_1)}
 
 mallocarg_auxs:
   _1 = mallocarg_aux
-    {                 ([_1])}
+    {([_1])}
 | _1 = mallocarg_aux _2 = Tcomma _3 = mallocarg_auxs
-    {                                      (_1::_3)}
+    {(_1::_3)}
 
 shift_amount:
   _1 = Tnumber
-    {          (Some _1)}
+    {(Some _1)}
 | _1 = Tcl
-    {      (None)}
+    {(None)}
 
 anop:
   _1 = ptr_opt _2 = genop
-    {                    (ck_dword_l _1 2 _2; _2)}
+    {(ck_dword_l _1 2 _2; _2)}
 
 anop_coerce:
   _1 = ptr_opt _2 = coerce
-    {                            (ck_dword_l _1 2 (fst _2); _2)}
+    {(ck_dword_l _1 2 (fst _2); _2)}
 
 unary_op:
   _1 = ptr_opt _2 = genop
-    {                        (ck_dword_lr _1 2 _2; _2)}
+    {(ck_dword_lr _1 2 _2; _2)}
 
 unary_op_coerce:
   _1 = ptr_opt _2 = coerce
-    {                                (ck_dword_lr _1 2 (fst _2); _2)}
+    {(ck_dword_lr _1 2 (fst _2); _2)}
 
 binop:
   _1 = ptr_opt _2 = genop _3 = Tcomma _4 = ptr_opt _5 = genop
-    {    (ck_dword_b _1 _2 _5;
+    {(ck_dword_b _1 _2 _5;
      ck_dword_b _4 _5 _2;
      (_2,_5))}
 
 binop3:
   _1 = ptr_opt _2 = coerce _3 = Tcomma _4 = ptr_opt _5 = coerce
-    {    ( ck_dword_b _1 (fst _2) (fst _5);
+    {( ck_dword_b _1 (fst _2) (fst _5);
       ck_dword_b _4 (fst _5) (fst _2);
       (_2,_5))}
 
 binop2:
   _1 = ptr_opt _2 = genop _3 = Tcomma _4 = ptr_opt _5 = coerce
-    {    (ck_dword_b _1 _2 (fst _5);
+    {(ck_dword_b _1 _2 (fst _5);
      ck_dword_b _4 (fst _5) _2;
      (_2,_5))}
 
 binop_part:
   _1 = ptr_opt _2 = genop _3 = Tcomma _4 = binop_part_side
-    {                                       ( ((_2, get_part _1 _2 (snd _4)),_4) )}
+    {( ((_2, get_part _1 _2 (snd _4)),_4) )}
 | _1 = binop_part_side _2 = Tcomma _3 = ptr_opt _4 = genop
-    {                                       ( (_1,(_4, get_part _3 _4 (snd _1))) )}
+    {( (_1,(_4, get_part _3 _4 (snd _1))) )}
 | _1 = binop_part_side _2 = Tcomma _3 = binop_part_side
-    {                                         ( (_1,_3) )}
+    {( (_1,_3) )}
 
 binop_part_side:
   _1 = Tbyte _2 = Tptr _3 = genop
-    {                   ( (_3, RPl) )}
+    {( (_3, RPl) )}
 | _1 = genop_part
-    {                   ( _1 )}
+    {( _1 )}
 
 ptr_opt:
   
-    {   (None)}
+    {(None)}
 | _1 = Tdword _2 = Tptr
-    {              (Some RPe)}
+    {(Some RPe)}
 
 genop:
   _1 = Tnumber
-    {          (Immed _1)}
+    {(Immed _1)}
 | _1 = reg
-    {      (Reg _1)}
+    {(Reg _1)}
 | _1 = label
-    {        (Addr _1)}
+    {(Addr _1)}
 | _1 = Tlsb _2 = coerce _3 = Trsb
-    {                   (process_prj _2 i32_0 None)}
+    {(process_prj _2 i32_0 None)}
 | _1 = Tlsb _2 = coerce _3 = Tplus _4 = Tnumber _5 = Trsb
-    {                                 (process_prj _2 _4 None)}
+    {(process_prj _2 _4 None)}
 | _1 = Tlsb _2 = coerce _3 = Tplus _4 = Tnumber _5 = Tstar _6 = reg _7 = Trsb
-    {    (process_prj _2 i32_0 (Some (mk_scale _4,_6)))}
+    {(process_prj _2 i32_0 (Some (mk_scale _4,_6)))}
 | _1 = Tlsb _2 = coerce _3 = Tplus _4 = Tnumber _5 = Tstar _6 = reg _7 = Tplus _8 = Tnumber _9 = Trsb
-    {    (process_prj _2 _8 (Some (mk_scale _4,_6)))}
+    {(process_prj _2 _8 (Some (mk_scale _4,_6)))}
 | _1 = Tlsb _2 = coerce _3 = Tplus _4 = reg _5 = Trsb
-    {    (process_prj _2 i32_0 (Some (Byte1,_4)))}
+    {(process_prj _2 i32_0 (Some (Byte1,_4)))}
 | _1 = Tlsb _2 = coerce _3 = Tplus _4 = reg _5 = Tplus _6 = Tnumber _7 = Trsb
-    {    (process_prj _2 _6 (Some (Byte1,_4)))}
+    {(process_prj _2 _6 (Some (Byte1,_4)))}
 
 genop_part:
   _1 = part
-    {       ( ( Reg (fst _1),snd _1) )}
+    {( ( Reg (fst _1),snd _1) )}
 
 proofop:
   _1 = Tident _2 = Tlab _3 = conlist0 _4 = Trab
-    {                            ( [(mk_id _1, _3)] )}
+    {( [(mk_id _1, _3)] )}
 | _1 = Tident _2 = Tlab _3 = conlist0 _4 = Trab _5 = proofop
-    {                                    ( (mk_id _1, _3) :: _5 )}
+    {( (mk_id _1, _3) :: _5 )}
 
 coerce:
   _1 = coerce1
-    {    (let (go,clist) = _1 in
+    {(let (go,clist) = _1 in
     match go with
       CAnone -> err "bad coercion"; raise Gcdfec.Exit
     | CAgc g -> (g,clist)
@@ -1230,554 +1230,554 @@ coerce:
 
 coerce1:
   _1 = genop
-    {        ((CAgc _1,[]))}
+    {((CAgc _1,[]))}
 | _1 = Tquestion
-    {            ((CAnone,[]))}
+    {((CAnone,[]))}
 | _1 = Tname _2 = Tlb _3 = Tident _4 = Trb
-    {                       ((CAnc (mk_id _3),[]))}
+    {((CAnc (mk_id _3),[]))}
 | _1 = Tpack _2 = Tlb _3 = econ _4 = Tcomma _5 = coerce1 _6 = Tcomma _7 = econ _8 = Trb
-    {    (let (o,cs) = _5 in (o,Pack (_3,_7)::cs))}
+    {(let (o,cs) = _5 in (o,Pack (_3,_7)::cs))}
 | _1 = Ttapp _2 = Tlb _3 = coerce1 _4 = Tcomma _5 = eannotation_list _6 = Trb
-    {                                                (make_tapps _3 _5)}
+    {(make_tapps _3 _5)}
 | _1 = Troll _2 = Tlb _3 = econ _4 = Tcomma _5 = coerce1 _6 = Trb
-    {    (let (o,cs) = _5 in (o,Roll _3::cs))}
+    {(let (o,cs) = _5 in (o,Roll _3::cs))}
 | _1 = Tunroll _2 = Tlb _3 = coerce1 _4 = Trb
-    {    (let (o,cs) = _3 in (o,Unroll ::cs))}
+    {(let (o,cs) = _3 in (o,Unroll ::cs))}
 | _1 = Tsum _2 = Tlb _3 = econ _4 = Tcomma _5 = coerce1 _6 = Trb
-    {    (let (o,cs) = _5 in (o,Tosum _3::cs))}
+    {(let (o,cs) = _5 in (o,Tosum _3::cs))}
 | _1 = Trollsum _2 = Tlb _3 = econ _4 = Tcomma _5 = coerce1 _6 = Trb
-    {    (let (o,cs) = _5 in (o,RollTosum _3::cs))}
+    {(let (o,cs) = _5 in (o,RollTosum _3::cs))}
 | _1 = Trec _2 = Tlb _3 = coerce1 _4 = Trb
-    {    (let (o,cs) = _3 in (o,Fromsum ::cs))}
+    {(let (o,cs) = _3 in (o,Fromsum ::cs))}
 | _1 = Tarray _2 = Tlb _3 = Tnumber _4 = Tcomma _5 = Tnumber _6 = Tcomma _7 = econ _8 = Tcomma _9 = coerce1 _10 = Trb
-    {    (let (o,cs) = _9 in (o,Toarray (_3,int32_to_int _5,_7)::cs))}
+    {(let (o,cs) = _9 in (o,Toarray (_3,int32_to_int _5,_7)::cs))}
 | _1 = Tslot _2 = Tlb _3 = Tnumber _4 = Tcomma _5 = Tnumber _6 = Tcomma _7 = coerce1 _8 = Trb
-    {    (let (o,cs) = _7 in (o,Slot (_3,_5)::cs))}
+    {(let (o,cs) = _7 in (o,Slot (_3,_5)::cs))}
 | _1 = Tsubsume _2 = Tlb _3 = econ _4 = Tcomma _5 = coerce1 _6 = Trb
-    {    (let (o,cs) = _5 in (o,Subsume _3::cs))}
+    {(let (o,cs) = _5 in (o,Subsume _3::cs))}
 | _1 = Tforgetname _2 = Tlb _3 = coerce1 _4 = Trb
-    {    (let (o,cs) = _3 in (o,Forgetname::cs))}
+    {(let (o,cs) = _3 in (o,Forgetname::cs))}
 | _1 = Tprove _2 = Tlb _3 = coerce1 _4 = Trb
-    {    (let (o,cs) = _3 in (o,Prove::cs))}
+    {(let (o,cs) = _3 in (o,Prove::cs))}
 
 reg:
   _1 = Treg
-    {       (_1)}
+    {(_1)}
 | _1 = TR _2 = Tlb _3 = Tident _4 = Trb
-    {                    (Virt (mk_id _3))}
+    {(Virt (mk_id _3))}
 
 regpart:
   _1 = Treg
-    {       ((_1,RPe))}
+    {((_1,RPe))}
 | _1 = TR _2 = Tlb _3 = Tident _4 = Trb
-    {                    ((Virt (mk_id _3),RPe))}
+    {((Virt (mk_id _3),RPe))}
 | _1 = part
-    {       ( _1 )}
+    {( _1 )}
 
 part:
   _1 = Tax
-    {       ((Eax,RPx))}
+    {((Eax,RPx))}
 | _1 = Tbx
-    {                          ((Ebx,RPx))}
+    {((Ebx,RPx))}
 | _1 = Tcx
-    {                                             ((Ecx,RPx))}
+    {((Ecx,RPx))}
 | _1 = Tdx
-    {                                                                ((Edx,RPx))}
+    {((Edx,RPx))}
 | _1 = Tsi
-    {       ((Esi,RPx))}
+    {((Esi,RPx))}
 | _1 = Tdi
-    {                          ((Edi,RPx))}
+    {((Edi,RPx))}
 | _1 = Tbp
-    {                                             ((Ebp,RPx))}
+    {((Ebp,RPx))}
 | _1 = Tsp
-    {                                                                ((Esp,RPx))}
+    {((Esp,RPx))}
 | _1 = Tal
-    {       ((Eax,RPl))}
+    {((Eax,RPl))}
 | _1 = Tbl
-    {                          ((Ebx,RPl))}
+    {((Ebx,RPl))}
 | _1 = Tcl
-    {                                             ((Ecx,RPl))}
+    {((Ecx,RPl))}
 | _1 = Tdl
-    {                                                                ((Edx,RPl))}
+    {((Edx,RPl))}
 | _1 = Tah
-    {       ((Eax,RPh))}
+    {((Eax,RPh))}
 | _1 = Tbh
-    {                          ((Ebx,RPh))}
+    {((Ebx,RPh))}
 | _1 = Tch
-    {                                             ((Ecx,RPh))}
+    {((Ecx,RPh))}
 | _1 = Tdh
-    {                                                                ((Edx,RPh))}
+    {((Edx,RPh))}
 | _1 = TR16 _2 = Tlb _3 = Tident _4 = Trb
-    {                      ((Virt (mk_id _3),RPx))}
+    {((Virt (mk_id _3),RPx))}
 | _1 = TRL _2 = Tlb _3 = Tident _4 = Trb
-    {                     ((Virt (mk_id _3),RPl))}
+    {((Virt (mk_id _3),RPl))}
 | _1 = TRH _2 = Tlb _3 = Tident _4 = Trb
-    {                     ((Virt (mk_id _3),RPh))}
+    {((Virt (mk_id _3),RPh))}
 
 fpreg:
   _1 = Tst
-    {      (0)}
+    {(0)}
 | _1 = Tst _2 = Tlb _3 = Tnumber _4 = Trb
-    {                      (int32_to_int _3)}
+    {(int32_to_int _3)}
 
 fpregs:
   _1 = Tst _2 = Tcomma _3 = fpreg
-    {                   ((true,_3))}
+    {((true,_3))}
 | _1 = Tst _2 = Tlb _3 = Tnumber _4 = Trb _5 = Tcomma _6 = Tst
-    {                                 ((false,int32_to_int _3))}
+    {((false,int32_to_int _3))}
 
 fpmem:
   _1 = Tword _2 = Tptr _3 = genop
-    {                    (FPgenop (Byte2,_3))}
+    {(FPgenop (Byte2,_3))}
 | _1 = Tdword _2 = Tptr _3 = genop
-    {                    (FPgenop (Byte4,_3))}
+    {(FPgenop (Byte4,_3))}
 | _1 = Tqword _2 = Tptr _3 = genop
-    {                    (FPgenop (Byte8,_3))}
+    {(FPgenop (Byte8,_3))}
 
 data_item:
   _1 = Tdb _2 = byte_list
-    {                (process_byte_list _2)}
+    {(process_byte_list _2)}
 | _1 = Tdw _2 = Tnumber
-    {              (D2bytes (int32_to_int16 _2))}
+    {(D2bytes (int32_to_int16 _2))}
 | _1 = Tdd _2 = coerce1
-    {              (process_dd_coerce _2)}
+    {(process_dd_coerce _2)}
 | _1 = Tdr _2 = rep_item
-    {               (let x = do_rep _2 in Drep (fst x, snd x))}
+    {(let x = do_rep _2 in Drep (fst x, snd x))}
 | _1 = Tdfloat32 _2 = Tliteral
-    {                     (Dfloat32 (process_f32 _2))}
+    {(Dfloat32 (process_f32 _2))}
 | _1 = Tdfloat64 _2 = Tliteral
-    {                     (Dfloat64 (process_f64 _2))}
+    {(Dfloat64 (process_f64 _2))}
 | _1 = Tdfloat32 _2 = Tfloat
-    {                   (Dfloat32 (dec_to_f32 _2))}
+    {(Dfloat32 (dec_to_f32 _2))}
 | _1 = Tdfloat64 _2 = Tfloat
-    {                   (Dfloat64 (dec_to_f64 _2))}
+    {(Dfloat64 (dec_to_f64 _2))}
 | _1 = Ttal_struct
-    {              (Dup)}
+    {(Dup)}
 | _1 = Ttal_ends
-    {            (Ddown)}
+    {(Ddown)}
 
 rep_item:
   _1 = Ttype _2 = con
-    {            ((RCon _2))}
+    {((RCon _2))}
 | _1 = Tkind _2 = kind
-    {             ((RKind _2))}
+    {((RKind _2))}
 | _1 = Tlabel _2 = label
-    {               ((RLabel _2))}
+    {((RLabel _2))}
 
 byte_list:
   _1 = byte_item _2 = byte_list_rest
-    {                           (_1::_2)}
+    {(_1::_2)}
 
 byte_list_rest:
   
-    {   ([])}
+    {([])}
 | _1 = Tcomma _2 = byte_item _3 = byte_list_rest
-    {                                  (_2::_3)}
+    {(_2::_3)}
 
 byte_item:
   _1 = Tnumber
-    {          (BInum _1)}
+    {(BInum _1)}
 | _1 = Tstring
-    {          (BIstr _1)}
+    {(BIstr _1)}
 
 econ:
   _1 = Tlab _2 = con _3 = Trab
-    {                (_2)}
+    {(_2)}
 
 econlist:
   _1 = Tlab _2 = conlist _3 = Trab
-    {                    (_2)}
+    {(_2)}
 
 eannotation_list:
   _1 = Tlab _2 = annotation_list _3 = Trab
-    {                            (_2 (* Dan added for annotations *))}
+    {(_2 (* Dan added for annotations *))}
 
 annotation_list:
   _1 = annotation
-    {             ([_1])}
+    {([_1])}
 | _1 = annotation _2 = Tcomma _3 = annotation_list
-    {                                    (_1::_3)}
+    {(_1::_3)}
 
 annotation:
   _1 = con
-    {                          (Con       _1)}
+    {(Con       _1)}
 | _1 = reg
-    {                          (AReg      _1)}
+    {(AReg      _1)}
 | _1 = reg _2 = Tnumber
-    {                          (StackTail (_1 ,int32_to_int _2))}
+    {(StackTail (_1 ,int32_to_int _2))}
 | _1 = reg _2 = Tnumber _3 = Tnumber _4 = con
-    {                          (StackSlice(_1, int32_to_int _2, int32_to_int _3, _4))}
+    {(StackSlice(_1, int32_to_int _2, int32_to_int _3, _4))}
 
 conlist0:
   
-    {   ([])}
+    {([])}
 | _1 = conlist
-    {          (_1)}
+    {(_1)}
 
 conlist:
   _1 = con
-    {      ([_1])}
+    {([_1])}
 | _1 = con _2 = Tcomma _3 = conlist
-    {                     (_1::_3)}
+    {(_1::_3)}
 
 con:
   _1 = con1
-    {          (_1)}
+    {(_1)}
 
 con1:
   _1 = con2
-    {       (_1)}
+    {(_1)}
 | _1 = Tfn _2 = vck _3 = vcks _4 = Tdot _5 = con1
-    {    (List.fold_right (fun (v,k) c -> defcon(Clam (v,k,c))) (_2::_3) _5)}
+    {(List.fold_right (fun (v,k) c -> defcon(Clam (v,k,c))) (_2::_3) _5)}
 
 con2:
   _1 = con3
-    {       (_1)}
+    {(_1)}
 | _1 = con2 _2 = con3
-    {            (defcon (Capp (_1,_2)))}
+    {(defcon (Capp (_1,_2)))}
 | _1 = Tsptr _2 = con3
-    {             (defcon (Csptr _2))}
+    {(defcon (Csptr _2))}
 | _1 = Ttptr _2 = tvar
-    {             (defcon (Ctptr _2))}
+    {(defcon (Ctptr _2))}
 
 con3:
   _1 = con4
-    {       (_1)}
+    {(_1)}
 | _1 = con4 _2 = Tdot _3 = Tnumber
-    {                    (defcon(Cproj (int32_to_int _3,_1)))}
+    {(defcon(Cproj (int32_to_int _3,_1)))}
 | _1 = Tinj _2 = Tnumber _3 = con4 _4 = Tlsb _5 = kind _6 = Trsb
-    {                                   ( defcon(Cinj (int32_to_int _2, _3, _5)))}
+    {( defcon(Cinj (int32_to_int _2, _3, _5)))}
 | _1 = Troll _2 = Tlsb _3 = kind _4 = Trsb _5 = con4
-    {                            ( defcon (Cfold(_3, _5)) )}
+    {( defcon (Cfold(_3, _5)) )}
 
 con4:
   _1 = con5
-    {       (_1)}
+    {(_1)}
 | _1 = TAll _2 = Tlsb _3 = vck _4 = vcks _5 = Trsb _6 = Tdot _7 = con4
-    {    (List.fold_right (fun (v,k) c -> defcon(Cforall (v,k,c))) (_3::_4) _7)}
+    {(List.fold_right (fun (v,k) c -> defcon(Cforall (v,k,c))) (_3::_4) _7)}
 | _1 = TAll _2 = Tlsb _3 = vck _4 = vcks _5 = Tbar _6 = con4 _7 = Trsb _8 = Tdot _9 = con4
-    {    (match List.rev (_3::_4) with
+    {(match List.rev (_3::_4) with
       (v,k)::vks ->
 	List.fold_left (fun c (v,k) -> cforall v k c)
 	  (cforall v k (cif _6 _9)) vks
     | [] -> failwith "impossible")}
 | _1 = TExist _2 = Tlsb _3 = vck _4 = vcks _5 = Trsb _6 = Tdot _7 = con4
-    {    (List.fold_right (fun (v,k) c -> cexist v k c) (_3::_4) _7)}
+    {(List.fold_right (fun (v,k) c -> cexist v k c) (_3::_4) _7)}
 | _1 = TExist _2 = Tlsb _3 = vck _4 = vcks _5 = Tbar _6 = con4 _7 = Trsb _8 = Tdot _9 = con4
-    {    (match List.rev (_3::_4) with
+    {(match List.rev (_3::_4) with
       (v,k)::vks ->
 	List.fold_left (fun c (v,k) -> cexist v k c)
 	  (cexistp v k _6 _9) vks
     | [] -> failwith "impossible")}
 | _1 = Tcode _2 = con4
-    {                 (defcon(Ccode _2))}
+    {(defcon(Ccode _2))}
 | _1 = Tcaret _2 = TT _3 = Tlsb _4 = tags _5 = Trsb
-    {                           (chptr _4 None None)}
+    {(chptr _4 None None)}
 | _1 = Tcaret _2 = opt_tags _3 = con4
-    {                       (chptr _2 (Some _3) None)}
+    {(chptr _2 (Some _3) None)}
 | _1 = Tcaret _2 = TT _3 = Tvar _4 = Tlb _5 = con _6 = Trb _7 = con4
-    {                                  (chptr [] (Some _7) (Some (_5,_3)))}
+    {(chptr [] (Some _7) (Some (_5,_3)))}
 | _1 = Tcaret _2 = TT _3 = Tvar _4 = Tlb _5 = con _6 = Tcomma _7 = tags _8 = Trb _9 = con4
-    {    (chptr _7 (Some _9) (Some (_5,_3)))}
+    {(chptr _7 (Some _9) (Some (_5,_3)))}
 
 con5:
   _1 = con6
-    {       (_1)}
+    {(_1)}
 | _1 = con6 _2 = Tciff _3 = con5
-    {                  (ciff _1 _3)}
+    {(ciff _1 _3)}
 | _1 = con6 _2 = Tcimplies _3 = con5
-    {                      (cimplies _1 _3)}
+    {(cimplies _1 _3)}
 
 con6:
   _1 = con7
-    {                (_1)}
+    {(_1)}
 | _1 = con7 _2 = Tamper _3 = con8
-    {                   (defcon(Cmsjoin(_1,_3)))}
+    {(defcon(Cmsjoin(_1,_3)))}
 | _1 = con7 _2 = Thash _3 = con6
-    {                  (defcon(Cappend (_1,_3)))}
+    {(defcon(Cappend (_1,_3)))}
 | _1 = con7 _2 = Tcand _3 = con6
-    {                  (cand [_1; _3])}
+    {(cand [_1; _3])}
 
 con7:
   _1 = con8
-    {       (_1)}
+    {(_1)}
 | _1 = con8 _2 = Tcons _3 = con7
-    {                  (defcon(Ccons (_1,_3)))}
+    {(defcon(Ccons (_1,_3)))}
 | _1 = con8 _2 = Tbar _3 = con7
-    {                 (cor [_1; _3])}
+    {(cor [_1; _3])}
 
 con8:
   _1 = con9
-    {       (_1)}
+    {(_1)}
 | _1 = con8 _2 = Tvar
-    {            (defcon (Cfield (_1,_2)))}
+    {(defcon (Cfield (_1,_2)))}
 
 con9:
   _1 = con10
-    {        (_1)}
+    {(_1)}
 | _1 = con10 _2 = Tlts _3 = con9
-    {                  (clts _1 _3)}
+    {(clts _1 _3)}
 | _1 = con10 _2 = Tlab _3 = con9
-    {                  (cltu _1 _3)}
+    {(cltu _1 _3)}
 | _1 = con10 _2 = Tltes _3 = con9
-    {                   (cltes _1 _3)}
+    {(cltes _1 _3)}
 | _1 = con10 _2 = Tleq _3 = con9
-    {                  (clteu _1 _3)}
+    {(clteu _1 _3)}
 | _1 = con10 _2 = Tequal _3 = con9
-    {                    (ceq _1 _3)}
+    {(ceq _1 _3)}
 | _1 = con10 _2 = Tnot _3 = Tequal _4 = con9
-    {                         (cne _1 _4)}
+    {(cne _1 _4)}
 
 con10:
   _1 = con11
-    {        (_1)}
+    {(_1)}
 | _1 = con11 _2 = Tplusplus _3 = con10
-    {                        (cadd [_1; _3])}
+    {(cadd [_1; _3])}
 | _1 = con11 _2 = Tminus _3 = con10
-    {                     (csub _1 _3)}
+    {(csub _1 _3)}
 
 con11:
   _1 = con12
-    {        (_1)}
+    {(_1)}
 | _1 = Tnumber _2 = Tmuls _3 = con11
-    {                      (cmuls _1 _3)}
+    {(cmuls _1 _3)}
 | _1 = Tnumber _2 = Tmulu _3 = con11
-    {                      (cmulu _1 _3)}
+    {(cmulu _1 _3)}
 
 con12:
   _1 = con100
-    {         (_1)}
+    {(_1)}
 | _1 = Tcnot _2 = con12
-    {              (cnot  _2)}
+    {(cnot  _2)}
 
 con100:
   _1 = tvar
-    {       (defcon(Cvar _1))}
+    {(defcon(Cvar _1))}
 | _1 = Tlsb _2 = conlist0 _3 = Trsb
-    {                     (defcon(Ctuple _2))}
+    {(defcon(Ctuple _2))}
 | _1 = Tbackquote _2 = label
-    {                   (defcon(Clab _2))}
+    {(defcon(Clab _2))}
 | _1 = Ttypeof _2 = label
-    {                (defcon (Ctypeof _2) )}
+    {(defcon (Ctypeof _2) )}
 | _1 = pcon
-    {       (defcon(Cprim _1))}
+    {(defcon(Cprim _1))}
 | _1 = Trec _2 = Tlb _3 = reclist _4 = Trb
-    {                       (defcon(Crec _3))}
+    {(defcon(Crec _3))}
 | _1 = machine_state
-    {                (defcon(Cms _1))}
+    {(defcon(Cms _1))}
 | _1 = Tstar _2 = Tlsb _3 = conlist0 _4 = Trsb
-    {                           (defcon(Cprod _3))}
+    {(defcon(Cprod _3))}
 | _1 = Tplus _2 = Tlsb _3 = conlist0 _4 = Trsb
-    {                           (defcon(Csum _3))}
+    {(defcon(Csum _3))}
 | _1 = Tarray _2 = Tlb _3 = con _4 = Tcomma _5 = con _6 = Trb
-    {                                (defcon (Carray (_3,_5)))}
+    {(defcon (Carray (_3,_5)))}
 | _1 = TS _2 = Tlb _3 = con _4 = Trb
-    {                 (defcon (Csing _3))}
+    {(defcon (Csing _3))}
 | _1 = Trep _2 = Tlb _3 = rep_item _4 = Trb
-    {                        (defcon (Cr (_3)))}
+    {(defcon (Cr (_3)))}
 | _1 = TNm _2 = Tlb _3 = con _4 = Trb
-    {                  (defcon (Cname _3))}
+    {(defcon (Cname _3))}
 | _1 = Ttagof _2 = Tlb _3 = con _4 = Trb
-    {                     (defcon (Ctagof _3))}
+    {(defcon (Ctagof _3))}
 | _1 = Tamperlsb _2 = conlist0 _3 = Trsb
-    {                          (defcon(Cjoin _2))}
+    {(defcon(Cjoin _2))}
 | _1 = Tcap _2 = Tlsb _3 = caplist _4 = Trsb
-    {    (defcon(Ccap (Dict.inserts (Dict.empty id_compare) _3)))}
+    {(defcon(Ccap (Dict.inserts (Dict.empty id_compare) _3)))}
 | _1 = Tse
-    {      (defcon(Cempty))}
+    {(defcon(Cempty))}
 | _1 = Tlb _2 = con _3 = Trb
-    {              (_2)}
+    {(_2)}
 | _1 = Ttmpl _2 = Tlb _3 = con _4 = Tcomma _5 = con_opt _6 = Tcomma _7 = lab_con_list _8 = Tcomma _9 = lab_con_list _10 = Trb
-    {                      (defcon (Ctmpl (_3,_5,_7,_9)))}
+    {(defcon (Ctmpl (_3,_5,_7,_9)))}
 | _1 = Tcgregion _2 = Tlb _3 = con _4 = Tcomma _5 = con_opt _6 = Tcomma _7 = lab_hole_list _8 = Trb
-    {         (defcon (Ctrgn (_3,_5,_7)))}
+    {(defcon (Ctrgn (_3,_5,_7)))}
 | _1 = Tvoid _2 = Tlsb _3 = kind _4 = Trsb
-    {                       (defcon(Cvoid _3))}
+    {(defcon(Cvoid _3))}
 | _1 = Tcase _2 = Tlb _3 = con _4 = Trb _5 = tvar _6 = Tlsb _7 = conlist _8 = Trsb
-    {                                           (defcon(Ccase (_3,_5,_7)))}
+    {(defcon(Ccase (_3,_5,_7)))}
 
 caplist:
   
-    {           ( [] )}
+    {( [] )}
 | _1 = caplist0
-    {           ( _1 )}
+    {( _1 )}
 
 caplist0:
   _1 = capentry
-    {           ( [_1] )}
+    {( [_1] )}
 | _1 = capentry _2 = Tcomma _3 = caplist0
-    {                           ( _1::_3 )}
+    {( _1::_3 )}
 
 capentry:
   _1 = tvar _2 = Tcolon _3 = con
-    {                  ( (_1,(MayAlias,_3)) )}
+    {( (_1,(MayAlias,_3)) )}
 | _1 = tvar _2 = Tbang _3 = con
-    {                  ( (_1,(Unique,_3)) )}
+    {( (_1,(Unique,_3)) )}
 
 con_opt:
   _1 = Tstar
-    {        (None)}
+    {(None)}
 | _1 = con
-    {        (Some _1)}
+    {(Some _1)}
 
 lab_con_list:
   _1 = Tlcb _2 = Trcb
-    {            ([])}
+    {([])}
 | _1 = Tlcb _2 = lab_con_list0 _3 = Trcb
-    {                          (_2)}
+    {(_2)}
 
 lab_con_list0:
   _1 = label _2 = Tcolon _3 = con
-    {                   ([(_1,_3)])}
+    {([(_1,_3)])}
 | _1 = label _2 = Tcolon _3 = con _4 = Tcomma _5 = lab_con_list0
-    {                                        ((_1,_3)::(_5))}
+    {((_1,_3)::(_5))}
 
 labels_and_holes:
   _1 = Tlb _2 = tvar _3 = Tcomma _4 = lab_con_list _5 = Tcomma _6 = lab_con_list _7 = Trb
-    {    ( (_2,_4,_6) )}
+    {( (_2,_4,_6) )}
 
 lab_hole_list:
   _1 = Tlcb _2 = Trcb
-    {            ([])}
+    {([])}
 | _1 = Tlcb _2 = lab_hole_list0 _3 = Trcb
-    {                           (_2)}
+    {(_2)}
 
 lab_hole_list0:
   _1 = labels_and_holes
-    {                   ([_1])}
+    {([_1])}
 | _1 = labels_and_holes _2 = Tcomma _3 = lab_hole_list0
-    {                                         ((_1)::(_3))}
+    {((_1)::(_3))}
 
 vcks:
   
-    {   ([])}
+    {([])}
 | _1 = vck _2 = vcks
-    {           (_1::_2)}
+    {(_1::_2)}
 
 vck:
   _1 = tvar _2 = Tcolon _3 = kind
-    {                   ((_1,_3))}
+    {((_1,_3))}
 
 opt_tags:
   
-    {   ([])}
+    {([])}
 | _1 = TT _2 = Tlb _3 = tags _4 = Trb
-    {                  (_3)}
+    {(_3)}
 
 tags:
   _1 = Tnumber
-    {          ([_1])}
+    {([_1])}
 | _1 = Tnumber _2 = Tcomma _3 = tags
-    {                      (_1::_3)}
+    {(_1::_3)}
 
 pcon:
   _1 = TB
-    {     (PCbytes _1)}
+    {(PCbytes _1)}
 | _1 = Tfloat32
-    {           (PCfloat32)}
+    {(PCfloat32)}
 | _1 = Tfloat64
-    {           (PCfloat64)}
+    {(PCfloat64)}
 | _1 = Tjunk _2 = Tnumber
-    {                (PCjunk _2)}
+    {(PCjunk _2)}
 | _1 = TJB
-    {      (PCjunkbytes _1)}
+    {(PCjunkbytes _1)}
 | _1 = Tnumber
-    {          (PCint _1)}
+    {(PCint _1)}
 | _1 = Ttrue
-    {        (PCtrue)}
+    {(PCtrue)}
 | _1 = Tfalse
-    {         (PCfalse)}
+    {(PCfalse)}
 
 reclist:
   _1 = recitem
-    {          ([_1])}
+    {([_1])}
 | _1 = recitem _2 = Tcomma _3 = reclist
-    {                         (_1::_3)}
+    {(_1::_3)}
 
 recitem:
   _1 = tvar _2 = Tcolon _3 = kind _4 = Tdot _5 = con
-    {                            ((_1,_3,_5))}
+    {((_1,_3,_5))}
 
 machine_state:
   _1 = Tlcb _2 = rccs _3 = Trcb
-    {                 (_2)}
+    {(_2)}
 
 rccs:
   
-    {   (ms_empty)}
+    {(ms_empty)}
 | _1 = rccs1
-    {        (_1)}
+    {(_1)}
 
 rccs1:
   _1 = reg _2 = Tcolon _3 = con
-    {                 (ms_set_reg ms_empty _1 _3)}
+    {(ms_set_reg ms_empty _1 _3)}
 | _1 = Tcap _2 = Tcolon _3 = con
-    {                  (ms_set_cap ms_empty _3)}
+    {(ms_set_cap ms_empty _3)}
 | _1 = Tfpreg
-    {          (ms_set_fpstack ms_empty (fpstack_init_reg fpstack_empty _1))}
+    {(ms_set_fpstack ms_empty (fpstack_init_reg fpstack_empty _1))}
 | _1 = Tfpregq
-    {          (ms_set_fpstack ms_empty (fpstack_hide_reg fpstack_empty _1))}
+    {(ms_set_fpstack ms_empty (fpstack_hide_reg fpstack_empty _1))}
 | _1 = Tfpreg _2 = Tquestion
-    {                   (ms_set_fpstack ms_empty (fpstack_hide_reg fpstack_empty _1))}
+    {(ms_set_fpstack ms_empty (fpstack_hide_reg fpstack_empty _1))}
 | _1 = rccs1 _2 = Tcomma _3 = reg _4 = Tcolon _5 = con
-    {                              (ms_set_reg _1 _3 _5)}
+    {(ms_set_reg _1 _3 _5)}
 | _1 = rccs1 _2 = Tcomma _3 = Tcap _4 = Tcolon _5 = con
-    {                               (ms_set_cap _1 _5)}
+    {(ms_set_cap _1 _5)}
 | _1 = rccs1 _2 = Tcomma _3 = Tfpreg
-    {    (ms_set_fpstack _1 (fpstack_init_reg (ms_get_fpstack _1) _3))}
+    {(ms_set_fpstack _1 (fpstack_init_reg (ms_get_fpstack _1) _3))}
 | _1 = rccs1 _2 = Tcomma _3 = Tfpregq
-    {    (ms_set_fpstack _1 (fpstack_hide_reg (ms_get_fpstack _1) _3))}
+    {(ms_set_fpstack _1 (fpstack_hide_reg (ms_get_fpstack _1) _3))}
 | _1 = rccs1 _2 = Tcomma _3 = Tfpreg _4 = Tquestion
-    {    (ms_set_fpstack _1 (fpstack_hide_reg (ms_get_fpstack _1) _3))}
+    {(ms_set_fpstack _1 (fpstack_hide_reg (ms_get_fpstack _1) _3))}
 
 kind:
   _1 = Tlb _2 = kind _3 = Trb
-    {               (_2)}
+    {(_2)}
 | _1 = Tbk
-    {      (_1)}
+    {(_1)}
 | _1 = TT
-    {      (ktype)}
+    {(ktype)}
 | _1 = TTm
-    {      (kmem)}
+    {(kmem)}
 | _1 = TTm _2 = Tnumber
-    {              (kmemi _2)}
+    {(kmemi _2)}
 | _1 = kind _2 = Tarrow _3 = kind
-    {                   (karrow _1 _3)}
+    {(karrow _1 _3)}
 | _1 = Tstar _2 = Tlsb _3 = kind_list _4 = Trsb
-    {                            (kprod _3)}
+    {(kprod _3)}
 | _1 = Tplus _2 = Tlsb _3 = kind_list _4 = Trsb
-    {                            (ksum _3)}
+    {(ksum _3)}
 | _1 = kvar
-    {       (kvar _1)}
+    {(kvar _1)}
 
 kind_list:
   
-    {   ([])}
+    {([])}
 | _1 = kind _2 = kind_list_rest
-    {                      (_1::_2)}
+    {(_1::_2)}
 
 kind_list_rest:
   
-    {   ([])}
+    {([])}
 | _1 = Tcomma _2 = kind _3 = kind_list_rest
-    {                             (_2::_3)}
+    {(_2::_3)}
 
 label:
   _1 = Tident
-    {         (mk_id _1)}
+    {(mk_id _1)}
 
 tvar:
   _1 = Tident
-    {         (mk_id _1)}
+    {(mk_id _1)}
 
 tvars:
   _1 = tvar
-    {       ([ _1 ] )}
+    {([ _1 ] )}
 | _1 = tvar _2 = Tcomma _3 = tvars
-    {                    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 kvar:
   _1 = Tident
-    {         (mk_id _1)}
+    {(mk_id _1)}
 
 %%

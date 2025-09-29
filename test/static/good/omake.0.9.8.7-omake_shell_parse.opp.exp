@@ -132,57 +132,57 @@ let set_stdout pipe file stderr append =
 
 prog:
   _1 = pipe _2 = TokEof
-    {          ( let pipe, _ = _1 in
+    {( let pipe, _ = _1 in
                pipe
           )}
 | _1 = TokEof
-    {          ( let loc = _1 in
+    {( let loc = _1 in
                PipeCommand (loc, null_command loc)
           )}
 
 pipe:
   _1 = command
-    {          ( let command, loc = _1 in
+    {( let command, loc = _1 in
                PipeCommand (loc, command), loc
           )}
 | _1 = pipe _2 = TokSemiColon _3 = pipe
-    {          ( let pipe1, loc1 = _1 in
+    {( let pipe1, loc1 = _1 in
             let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCond (loc, PipeSequence, pipe1, pipe2), loc
           )}
 | _1 = pipe _2 = TokAnd _3 = pipe
-    {          ( let pipe1, loc1 = _1 in
+    {( let pipe1, loc1 = _1 in
             let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCond (loc, PipeAnd, pipe1, pipe2), loc
           )}
 | _1 = pipe _2 = TokOr _3 = pipe
-    {          ( let pipe1, loc1 = _1 in
+    {( let pipe1, loc1 = _1 in
             let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCond (loc, PipeOr, pipe1, pipe2), loc
           )}
 | _1 = pipe _2 = TokPipe _3 = pipe
-    {          ( let pipe1, loc1 = _1 in
+    {( let pipe1, loc1 = _1 in
             let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCompose (loc, false, pipe1, pipe2), loc
           )}
 | _1 = pipe _2 = TokPipe _3 = TokAmp _4 = pipe %prec TokPipe
-    {          ( let pipe1, loc1 = _1 in
+    {( let pipe1, loc1 = _1 in
             let pipe2, loc2 = _4 in
             let loc = union_loc loc1 loc2 in
                PipeCompose (loc, true, pipe1, pipe2), loc
           )}
 | _1 = pipe _2 = TokAmp
-    {          ( let pipe, loc1 = _1 in
+    {( let pipe, loc1 = _1 in
             let _, loc2 = _2 in
             let loc = union_loc loc1 loc2 in
                PipeBackground (loc, pipe), loc
           )}
 | _1 = TokLeftParen _2 = pipe _3 = TokRightParen
-    {          ( let _, loc1 = _1 in
+    {( let _, loc1 = _1 in
             let _, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe, _ = _2 in
@@ -197,35 +197,35 @@ pipe:
                PipeGroup (loc, group), loc
           )}
 | _1 = pipe _2 = TokLessThan _3 = word
-    {          ( let pipe, loc1 = _1 in
+    {( let pipe, loc1 = _1 in
             let file, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdin pipe file in
                pipe, loc
           )}
 | _1 = pipe _2 = TokGreaterThan _3 = word
-    {          ( let pipe, loc1 = _1 in
+    {( let pipe, loc1 = _1 in
             let file, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file false false in
                pipe, loc
           )}
 | _1 = pipe _2 = TokGreaterGreaterThan _3 = word
-    {          ( let pipe, loc1 = _1 in
+    {( let pipe, loc1 = _1 in
             let file, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file false true in
                pipe, loc
           )}
 | _1 = pipe _2 = TokGreaterThan _3 = TokAmp _4 = word %prec TokGreaterThan
-    {          ( let pipe, loc1 = _1 in
+    {( let pipe, loc1 = _1 in
             let file, loc2 = _4 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file true false in
                pipe, loc
           )}
 | _1 = pipe _2 = TokGreaterGreaterThan _3 = TokAmp _4 = word %prec TokGreaterGreaterThan
-    {          ( let pipe, loc1 = _1 in
+    {( let pipe, loc1 = _1 in
             let file, loc2 = _4 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file true true in
@@ -234,24 +234,24 @@ pipe:
 
 command:
   _1 = rev_command
-    {          ( let rev_argv, loc = _1 in
+    {( let rev_argv, loc = _1 in
             let command = command_of_values (List.rev rev_argv) loc in
                command, loc
           )}
 
 rev_command:
   _1 = word
-    {          ( let values, loc = _1 in
+    {( let values, loc = _1 in
                [values], loc
           )}
 | _1 = rev_command _2 = word
-    {          ( let values1, loc1 = _1 in
+    {( let values1, loc1 = _1 in
             let values2, loc2 = _2 in
                values2 :: values1, union_loc loc1 loc2
           )}
 
 word:
   _1 = TokValues
-    {   ( _1 )}
+    {( _1 )}
 
 %%

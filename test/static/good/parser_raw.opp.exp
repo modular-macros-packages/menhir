@@ -693,32 +693,32 @@ implementation:
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-                                ( extra_str _startpos _endpos _1 )
+  ( extra_str _startpos _endpos _1 )
 in
-                             ( _1 )}
+( _1 )}
 
 interface:
   _1 = signature _2 = EOF
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-                                ( extra_sig _startpos _endpos _1 )
+  ( extra_sig _startpos _endpos _1 )
 in
-                             ( _1 )}
+( _1 )}
 
 parse_expression:
   _1 = seq_expr _2 = EOF
-    {                 ( _1 )}
+    {( _1 )}
 
 functor_arg:
   _1 = LPAREN _2 = RPAREN
-    {      ( (mkrhs "*" (make_loc _startpos__2_ _endpos__2_)), None )}
+    {( (mkrhs "*" (make_loc _startpos__2_ _endpos__2_)), None )}
 | _1 = LPAREN _1_inlined1 = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN
     {let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -728,26 +728,26 @@ functor_arg:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( _2, Some _4 )}
+( _2, Some _4 )}
 
 functor_arg_name:
   _1 = UIDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = UNDERSCORE
-    {               ( "_" )}
+    {( "_" )}
 
 functor_args [@recovery []]:
   _1 = functor_args _2 = functor_arg
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = functor_arg
-    {      ( [ _1 ] )}
+    {( [ _1 ] )}
 
 module_expr [@recovery default_module_expr ()]:
   _1 = mod_longident
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -759,21 +759,21 @@ module_expr [@recovery default_module_expr ()]:
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_ident _1) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_ident _1) )}
 | _1 = STRUCT _2 = attributes _1_inlined1 = structure _4 = END
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-                                ( extra_str _startpos _endpos _1 )
+  ( extra_str _startpos _endpos _1 )
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pmod_structure(_3)) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pmod_structure(_3)) )}
 | _1 = FUNCTOR _2 = attributes _3 = functor_args _4 = MINUSGREATER _5 = module_expr
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let modexp =
+( let modexp =
           List.fold_left
             (fun acc (n, t) -> (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_functor(n, t, acc)))
             _5 _3
@@ -781,148 +781,148 @@ let _symbolstartpos = _startpos__1_ in
 | _1 = module_expr _2 = paren_module_expr
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_apply(_1, _2)) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_apply(_1, _2)) )}
 | _1 = module_expr _2 = LPAREN _3 = RPAREN
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_apply(_1, (mkmod ~loc:(make_loc _symbolstartpos _endpos)) (Pmod_structure []))) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_apply(_1, (mkmod ~loc:(make_loc _symbolstartpos _endpos)) (Pmod_structure []))) )}
 | _1 = paren_module_expr
-    {      ( _1 )}
+    {( _1 )}
 | _1 = module_expr _2 = attribute
-    {      ( Mod.attr _1 _2 )}
+    {( Mod.attr _1 _2 )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_extension _1) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_extension _1) )}
 
 paren_module_expr:
   _1 = LPAREN _2 = module_expr _3 = COLON _4 = module_type _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_constraint(_2, _4)) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_constraint(_2, _4)) )}
 | _1 = LPAREN _2 = module_expr _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = VAL _3 = attributes _4 = expr _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack _4) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack _4) )}
 | _1 = LPAREN _2 = VAL _3 = attributes _4 = expr _5 = COLON _6 = package_type _7 = RPAREN
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack(
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack(
               (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_constraint(_4, (ghtyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_package _6))))) )}
 | _1 = LPAREN _2 = VAL _3 = attributes _4 = expr _5 = COLON _6 = package_type _7 = COLONGREATER _8 = package_type _9 = RPAREN
     {let _endpos = _endpos__9_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack(
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack(
               (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_coerce(_4, Some((ghtyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_package _6)),
                                     (ghtyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_package _8))))) )}
 | _1 = LPAREN _2 = VAL _3 = attributes _4 = expr _5 = COLONGREATER _6 = package_type _7 = RPAREN
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack(
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_3 (Pmod_unpack(
               (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_coerce(_4, None, (ghtyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_package _6))))) )}
 
 structure [@recovery []]:
   _1 = seq_expr _2 = post_item_attributes _3 = structure_tail
-    {      ( (mark_rhs_docs _startpos__1_ _endpos__2_);
+    {( (mark_rhs_docs _startpos__1_ _endpos__2_);
         ((text_str _startpos__1_)) @ mkstrexp _1 _2 :: _3 )}
 | _1 = toplevel_directive _2 = structure
-    {                                 ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | _1 = structure_tail
-    {                   ( _1 )}
+    {( _1 )}
 
 structure_tail:
   
-    {                         ( [] )}
+    {( [] )}
 | _1 = SEMISEMI _2 = structure
-    {                       ( ((text_str _startpos__1_)) @ _2 )}
+    {( ((text_str _startpos__1_)) @ _2 )}
 | _1 = structure_item _2 = structure_tail
-    {                                  ( ((text_str _startpos__1_)) @ _1 :: _2 )}
+    {( ((text_str _startpos__1_)) @ _1 :: _2 )}
 
 structure_item:
   _1 = let_bindings
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (val_of_let_bindings ~loc:(make_loc _symbolstartpos _endpos)) _1 )}
+( (val_of_let_bindings ~loc:(make_loc _symbolstartpos _endpos)) _1 )}
 | _1 = primitive_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_primitive body) ext )}
+( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_primitive body) ext )}
 | _1 = value_description
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_primitive body) ext )}
+( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_primitive body) ext )}
 | _1 = type_declarations
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (nr, l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_type (nr, List.rev l)) ext )}
+( let (nr, l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_type (nr, List.rev l)) ext )}
 | _1 = str_type_extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_typext l) ext )}
+( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_typext l) ext )}
 | _1 = str_exception_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_exception l) ext )}
+( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_exception l) ext )}
 | _1 = module_binding
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_module body) ext )}
+( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_module body) ext )}
 | _1 = rec_module_bindings
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_recmodule(List.rev l)) ext )}
+( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_recmodule(List.rev l)) ext )}
 | _1 = module_type_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_modtype body) ext )}
+( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_modtype body) ext )}
 | _1 = open_statement
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_open body) ext )}
+( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_open body) ext )}
 | _1 = class_declarations
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_class (List.rev l)) ext )}
+( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_class (List.rev l)) ext )}
 | _1 = class_type_declarations
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_class_type (List.rev l)) ext )}
+( let (l, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_class_type (List.rev l)) ext )}
 | _1 = str_include_statement
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_include body) ext )}
+( let (body, ext) = _1 in (mkstr_ext ~loc:(make_loc _symbolstartpos _endpos)) (Pstr_include body) ext )}
 | _1 = item_extension _2 = post_item_attributes
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkstr ~loc:(make_loc _symbolstartpos _endpos))(Pstr_extension (_1, (add_docs_attrs ((symbol_docs _symbolstartpos _endpos)) _2))) )}
+( (mkstr ~loc:(make_loc _symbolstartpos _endpos))(Pstr_extension (_1, (add_docs_attrs ((symbol_docs _symbolstartpos _endpos)) _2))) )}
 | _1 = floating_attribute
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mark_symbol_docs _symbolstartpos _endpos);
+( (mark_symbol_docs _symbolstartpos _endpos);
         (mkstr ~loc:(make_loc _symbolstartpos _endpos))(Pstr_attribute _1) )}
 
 str_include_statement:
   _1 = INCLUDE _2 = ext_attributes _3 = module_expr _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Incl.mk _3 ~attrs:(attrs@_4)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
 
 module_binding_body:
   _1 = EQUAL _2 = module_expr
-    {      ( _2 )}
+    {( _2 )}
 | _1 = COLON _2 = module_type _3 = EQUAL _4 = module_expr
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_constraint(_4, _2)) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_constraint(_4, _2)) )}
 | _1 = functor_arg _2 = module_binding_body
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_functor(fst _1, snd _1, _2)) )}
+( (mkmod ~loc:(make_loc _symbolstartpos _endpos))(Pmod_functor(fst _1, snd _1, _2)) )}
 
 module_binding:
   _1 = MODULE _2 = ext_attributes _1_inlined1 = UIDENT _4 = module_binding_body _5 = post_item_attributes
@@ -930,7 +930,7 @@ module_binding:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -942,16 +942,16 @@ module_binding:
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Mb.mk _3 _4 ~attrs:(attrs@_5)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
 
 rec_module_bindings:
   _1 = rec_module_binding
-    {                       ( let (b, ext) = _1 in ([b], ext) )}
+    {( let (b, ext) = _1 in ([b], ext) )}
 | _1 = rec_module_bindings _2 = and_module_binding
-    {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
+    {( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 rec_module_binding:
   _1 = MODULE _2 = ext_attributes _3 = REC _1_inlined1 = UIDENT _5 = module_binding_body _6 = post_item_attributes
@@ -959,7 +959,7 @@ rec_module_binding:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -971,7 +971,7 @@ rec_module_binding:
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Mb.mk _4 _5 ~attrs:(attrs@_6)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
@@ -982,7 +982,7 @@ and_module_binding:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -995,7 +995,7 @@ in
 let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Mb.mk _3 _4 ~attrs:(_2@_5) ~loc:(((make_loc _symbolstartpos _endpos)))
+( Mb.mk _3 _4 ~attrs:(_2@_5) ~loc:(((make_loc _symbolstartpos _endpos)))
                ~text:((symbol_text _startpos)) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 
 module_type [@recovery default_module_type ()]:
@@ -1003,7 +1003,7 @@ module_type [@recovery default_module_type ()]:
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1015,21 +1015,21 @@ module_type [@recovery default_module_type ()]:
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_ident _1) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_ident _1) )}
 | _1 = SIG _2 = attributes _1_inlined1 = signature _4 = END
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-                                ( extra_sig _startpos _endpos _1 )
+  ( extra_sig _startpos _endpos _1 )
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pmty_signature _3) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pmty_signature _3) )}
 | _1 = FUNCTOR _2 = attributes _3 = functor_args _4 = MINUSGREATER _5 = module_type %prec below_WITH
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let mty =
+( let mty =
           List.fold_left
             (fun acc (n, t) -> (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor(n, t, acc)))
             _5 _3
@@ -1037,93 +1037,93 @@ let _symbolstartpos = _startpos__1_ in
 | _1 = module_type _2 = MINUSGREATER _3 = module_type %prec below_WITH
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor(mknoloc "_", Some _1, _3)) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor(mknoloc "_", Some _1, _3)) )}
 | _1 = module_type _2 = WITH _3 = with_constraints
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_with(_1, List.rev _3)) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_with(_1, List.rev _3)) )}
 | _1 = MODULE _2 = TYPE _3 = OF _4 = attributes _5 = module_expr %prec below_LBRACKETAT
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_4 (Pmty_typeof _5) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_4 (Pmty_typeof _5) )}
 | _1 = LPAREN _2 = module_type _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_extension _1) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_extension _1) )}
 | _1 = module_type _2 = attribute
-    {      ( Mty.attr _1 _2 )}
+    {( Mty.attr _1 _2 )}
 
 signature:
   
-    {                         ( [] )}
+    {( [] )}
 | _1 = SEMISEMI _2 = signature
-    {                       ( ((text_sig _startpos__1_)) @ _2 )}
+    {( ((text_sig _startpos__1_)) @ _2 )}
 | _1 = signature_item _2 = signature
-    {                             ( ((text_sig _startpos__1_)) @ _1 :: _2 )}
+    {( ((text_sig _startpos__1_)) @ _1 :: _2 )}
 
 signature_item:
   _1 = value_description
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_value body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_value body) ext )}
 | _1 = primitive_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_value body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_value body) ext )}
 | _1 = type_declarations
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (nr, l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_type (nr, List.rev l)) ext )}
+( let (nr, l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_type (nr, List.rev l)) ext )}
 | _1 = sig_type_extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_typext l) ext )}
+( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_typext l) ext )}
 | _1 = sig_exception_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_exception l) ext )}
+( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_exception l) ext )}
 | _1 = module_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_module body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_module body) ext )}
 | _1 = module_alias
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_module body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_module body) ext )}
 | _1 = rec_module_declarations
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_recmodule (List.rev l)) ext )}
+( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_recmodule (List.rev l)) ext )}
 | _1 = module_type_declaration
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_modtype body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_modtype body) ext )}
 | _1 = open_statement
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_open body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_open body) ext )}
 | _1 = sig_include_statement
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_include body) ext )}
+( let (body, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_include body) ext )}
 | _1 = class_descriptions
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_class (List.rev l)) ext )}
+( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_class (List.rev l)) ext )}
 | _1 = class_type_declarations
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_class_type (List.rev l)) ext )}
+( let (l, ext) = _1 in (mksig_ext ~loc:(make_loc _symbolstartpos _endpos)) (Psig_class_type (List.rev l)) ext )}
 | _1 = item_extension _2 = post_item_attributes
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mksig ~loc:(make_loc _symbolstartpos _endpos))(Psig_extension (_1, (add_docs_attrs ((symbol_docs _symbolstartpos _endpos)) _2))) )}
+( (mksig ~loc:(make_loc _symbolstartpos _endpos))(Psig_extension (_1, (add_docs_attrs ((symbol_docs _symbolstartpos _endpos)) _2))) )}
 | _1 = floating_attribute
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mark_symbol_docs _symbolstartpos _endpos);
+( (mark_symbol_docs _symbolstartpos _endpos);
         (mksig ~loc:(make_loc _symbolstartpos _endpos))(Psig_attribute _1) )}
 
 open_statement:
@@ -1132,7 +1132,7 @@ open_statement:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1144,7 +1144,7 @@ open_statement:
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _3 in
+( let (ext, attrs) = _3 in
         Opn.mk _4 ~override:_2 ~attrs:(attrs@_5)
           ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
@@ -1153,20 +1153,20 @@ sig_include_statement:
   _1 = INCLUDE _2 = ext_attributes _3 = module_type _4 = post_item_attributes %prec below_WITH
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Incl.mk _3 ~attrs:(attrs@_4)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
 
 module_declaration_body:
   _1 = COLON _2 = module_type
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _1_inlined1 = UIDENT _3 = COLON _4 = module_type _5 = RPAREN _6 = module_declaration_body
     {let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1178,11 +1178,11 @@ module_declaration_body:
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor(_2, Some _4, _6)) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor(_2, Some _4, _6)) )}
 | _1 = LPAREN _2 = RPAREN _3 = module_declaration_body
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor((mkrhs "*" (make_loc _startpos__1_ _endpos__1_)), None, _3)) )}
+( (mkmty ~loc:(make_loc _symbolstartpos _endpos))(Pmty_functor((mkrhs "*" (make_loc _startpos__1_ _endpos__1_)), None, _3)) )}
 
 module_declaration:
   _1 = MODULE _2 = ext_attributes _1_inlined1 = UIDENT _4 = module_declaration_body _5 = post_item_attributes
@@ -1190,7 +1190,7 @@ module_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1202,7 +1202,7 @@ module_declaration:
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Md.mk _3 _4 ~attrs:(attrs@_5)
           ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
@@ -1213,7 +1213,7 @@ module_alias:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1227,7 +1227,7 @@ let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1239,7 +1239,7 @@ let _3 =
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Md.mk _3
           (Mty.alias ~loc:_5.Location.loc _5) ~attrs:(attrs@_6)
              ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
@@ -1247,9 +1247,9 @@ let _symbolstartpos = _startpos__1_ in
 
 rec_module_declarations:
   _1 = rec_module_declaration
-    {      ( let (body, ext) = _1 in ([body], ext) )}
+    {( let (body, ext) = _1 in ([body], ext) )}
 | _1 = rec_module_declarations _2 = and_module_declaration
-    {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
+    {( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 rec_module_declaration:
   _1 = MODULE _2 = ext_attributes _3 = REC _1_inlined1 = UIDENT _5 = COLON _6 = module_type _7 = post_item_attributes
@@ -1257,7 +1257,7 @@ rec_module_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1269,7 +1269,7 @@ rec_module_declaration:
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Md.mk _4 _6 ~attrs:(attrs@_7)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
@@ -1280,7 +1280,7 @@ and_module_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1293,14 +1293,14 @@ in
 let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Md.mk _3 _5 ~attrs:(_2@_6) ~loc:(((make_loc _symbolstartpos _endpos)))
+( Md.mk _3 _5 ~attrs:(_2@_6) ~loc:(((make_loc _symbolstartpos _endpos)))
               ~text:((symbol_text _startpos)) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 
 module_type_declaration_body:
   
-    {                              ( None )}
+    {( None )}
 | _1 = EQUAL _2 = module_type
-    {                      ( Some _2 )}
+    {( Some _2 )}
 
 module_type_declaration:
   _1 = MODULE _2 = TYPE _3 = ext_attributes _1_inlined1 = ident _5 = module_type_declaration_body _6 = post_item_attributes
@@ -1308,7 +1308,7 @@ module_type_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1320,16 +1320,16 @@ module_type_declaration:
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _3 in
+( let (ext, attrs) = _3 in
         Mtd.mk _4 ?typ:_5 ~attrs:(attrs@_6)
           ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
 
 class_declarations:
   _1 = class_declaration
-    {      ( let (body, ext) = _1 in ([body], ext) )}
+    {( let (body, ext) = _1 in ([body], ext) )}
 | _1 = class_declarations _2 = and_class_declaration
-    {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
+    {( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 class_declaration:
   _1 = CLASS _2 = ext_attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = class_fun_binding _7 = post_item_attributes
@@ -1337,7 +1337,7 @@ class_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1349,7 +1349,7 @@ class_declaration:
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Ci.mk _5 _6 ~virt:_3 ~params:_4 ~attrs:(attrs@_7)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
@@ -1360,7 +1360,7 @@ and_class_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1373,68 +1373,68 @@ in
 let _endpos = _endpos__7_ in
 let _startpos = _startpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Ci.mk _5 _6 ~virt:_3 ~params:_4
+( Ci.mk _5 _6 ~virt:_3 ~params:_4
          ~attrs:(_2@_7) ~loc:(((make_loc _symbolstartpos _endpos)))
          ~text:((symbol_text _startpos)) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 
 class_fun_binding:
   _1 = EQUAL _2 = class_expr
-    {      ( _2 )}
+    {( _2 )}
 | _1 = COLON _2 = class_type _3 = EQUAL _4 = class_expr
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constraint(_4, _2)) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constraint(_4, _2)) )}
 | _1 = labeled_simple_pattern _2 = class_fun_binding
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l,o,p) = _1 in (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_fun(l, o, p, _2)) )}
+( let (l,o,p) = _1 in (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_fun(l, o, p, _2)) )}
 
 class_type_parameters:
   
-    {                                                ( [] )}
+    {( [] )}
 | _1 = LBRACKET _2 = type_parameter_list _3 = RBRACKET
-    {                                          ( List.rev _2 )}
+    {( List.rev _2 )}
 
 class_fun_def:
   _1 = labeled_simple_pattern _2 = MINUSGREATER _3 = class_expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l,o,p) = _1 in (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_fun(l, o, p, _3)) )}
+( let (l,o,p) = _1 in (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_fun(l, o, p, _3)) )}
 | _1 = labeled_simple_pattern _2 = class_fun_def
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l,o,p) = _1 in (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_fun(l, o, p, _2)) )}
+( let (l,o,p) = _1 in (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_fun(l, o, p, _2)) )}
 
 class_expr:
   _1 = class_simple_expr
-    {      ( _1 )}
+    {( _1 )}
 | _1 = FUN _2 = attributes _3 = class_fun_def
-    {      ( wrap_class_attrs _3 _2 )}
+    {( wrap_class_attrs _3 _2 )}
 | _1 = class_simple_expr _2 = simple_labeled_expr_list
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_apply(_1, List.rev _2)) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_apply(_1, List.rev _2)) )}
 | _1 = let_bindings _2 = IN _3 = class_expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (class_of_let_bindings ~loc:(make_loc _symbolstartpos _endpos)) _1 _3 )}
+( (class_of_let_bindings ~loc:(make_loc _symbolstartpos _endpos)) _1 _3 )}
 | _1 = class_expr _2 = attribute
-    {      ( Cl.attr _1 _2 )}
+    {( Cl.attr _1 _2 )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_extension _1) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_extension _1) )}
 
 class_simple_expr:
   _1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = class_longident
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constr(mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), List.rev _2)) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constr(mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), List.rev _2)) )}
 | _1 = class_longident
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1446,17 +1446,17 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constr(_1, [])) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constr(_1, [])) )}
 | _1 = OBJECT _2 = attributes _3 = class_structure _4 = END
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pcl_structure(_3)) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pcl_structure(_3)) )}
 | _1 = LPAREN _2 = class_expr _3 = COLON _4 = class_type _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constraint(_2, _4)) )}
+( (mkclass ~loc:(make_loc _symbolstartpos _endpos))(Pcl_constraint(_2, _4)) )}
 | _1 = LPAREN _2 = class_expr _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 
 class_structure:
   _1 = class_self_pattern _1_inlined1 = class_fields
@@ -1464,61 +1464,61 @@ class_structure:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-                                 ( extra_cstr _startpos _endpos _1 )
+  ( extra_cstr _startpos _endpos _1 )
 in
-       ( Cstr.mk _1 (List.rev _2) )}
+( Cstr.mk _1 (List.rev _2) )}
 
 class_self_pattern:
   _1 = LPAREN _2 = pattern _3 = RPAREN
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (reloc_pat ~loc:(make_loc _symbolstartpos _endpos)) _2 )}
+( (reloc_pat ~loc:(make_loc _symbolstartpos _endpos)) _2 )}
 | _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_2, _4)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_2, _4)) )}
 | 
     {let _endpos = _endpos__0_ in
 let _symbolstartpos = _endpos in
-      ( (ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_any) )}
+( (ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_any) )}
 
 class_fields:
   
-    {      ( [] )}
+    {( [] )}
 | _1 = class_fields _2 = class_field
-    {      ( _2 :: ((text_cstr _startpos__2_)) @ _1 )}
+    {( _2 :: ((text_cstr _startpos__2_)) @ _1 )}
 
 class_field:
   _1 = INHERIT _2 = override_flag _3 = attributes _4 = class_expr _5 = parent_binder _6 = post_item_attributes
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_inherit (_2, _4, _5)) ~attrs:(_3@_6) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_inherit (_2, _4, _5)) ~attrs:(_3@_6) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = VAL _2 = value _3 = post_item_attributes
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let v, attrs = _2 in
+( let v, attrs = _2 in
         (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_val v) ~attrs:(attrs@_3) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = METHOD _2 = method_ _3 = post_item_attributes
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let meth, attrs = _2 in
+( let meth, attrs = _2 in
         (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_method meth) ~attrs:(attrs@_3) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = CONSTRAINT _2 = attributes _3 = constrain_field _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_constraint _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_constraint _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = INITIALIZER _2 = attributes _3 = seq_expr _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_initializer _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_initializer _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = item_extension _2 = post_item_attributes
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_extension _1) ~attrs:_2 ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_extension _1) ~attrs:_2 ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = floating_attribute
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mark_symbol_docs _symbolstartpos _endpos);
+( (mark_symbol_docs _symbolstartpos _endpos);
         (mkcf ~loc:(make_loc _symbolstartpos _endpos)) (Pcf_attribute _1) )}
 
 parent_binder:
@@ -1527,7 +1527,7 @@ parent_binder:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1537,20 +1537,20 @@ parent_binder:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-          ( Some _2 )}
+( Some _2 )}
 | 
-    {          ( None )}
+    {( None )}
 
 value:
   _1 = override_flag _2 = attributes _3 = MUTABLE _4 = VIRTUAL _5 = label _6 = COLON _7 = core_type
-    {      ( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
+    {( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
         (mkloc _5 ((make_loc _startpos__5_ _endpos__5_)), Mutable, Cfk_virtual _7), _2 )}
 | _1 = override_flag _2 = attributes _3 = VIRTUAL _4 = mutable_flag _1_inlined1 = label _6 = COLON _7 = core_type
     {let _5 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1560,14 +1560,14 @@ value:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
+( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
         (_5, _4, Cfk_virtual _7), _2 )}
 | _1 = override_flag _2 = attributes _3 = mutable_flag _1_inlined1 = label _5 = EQUAL _6 = seq_expr
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1577,13 +1577,13 @@ in
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( (_4, _3, Cfk_concrete (_1, _6)), _2 )}
+( (_4, _3, Cfk_concrete (_1, _6)), _2 )}
 | _1 = override_flag _2 = attributes _3 = mutable_flag _1_inlined1 = label _5 = type_constraint _6 = EQUAL _7 = seq_expr
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1605,17 +1605,17 @@ else
       _startpos__3_
     else
       _startpos__4_ in
-      (
+(
        let e = (mkexp_constraint ~loc:(make_loc _symbolstartpos _endpos)) _7 _5 in
        (_4, _3, Cfk_concrete (_1, e)), _2
       )}
 
 method_:
   _1 = override_flag _2 = attributes _3 = PRIVATE _4 = VIRTUAL _5 = label _6 = COLON _7 = poly_type
-    {      ( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
+    {( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
         (mkloc _5 ((make_loc _startpos__5_ _endpos__5_)), Private, Cfk_virtual _7), _2 )}
 | _1 = override_flag _2 = attributes _3 = VIRTUAL _4 = private_flag _5 = label _6 = COLON _7 = poly_type
-    {      ( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
+    {( if _1 = Override then (syntax_error (make_loc _startpos__1_ _endpos__1_));
         (mkloc _5 ((make_loc _startpos__5_ _endpos__5_)), _4, Cfk_virtual _7), _2 )}
 | _1 = override_flag _2 = attributes _3 = private_flag _4 = label _5 = strict_binding
     {let _endpos = _endpos__5_ in
@@ -1629,7 +1629,7 @@ else
       _startpos__3_
     else
       _startpos__4_ in
-      ( (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), _3,
+( (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), _3,
          Cfk_concrete (_1, (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_poly (_5, None)))), _2 )}
 | _1 = override_flag _2 = attributes _3 = private_flag _4 = label _5 = COLON _6 = poly_type _7 = EQUAL _8 = seq_expr
     {let _endpos = _endpos__8_ in
@@ -1643,7 +1643,7 @@ else
       _startpos__3_
     else
       _startpos__4_ in
-      ( (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), _3,
+( (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), _3,
         Cfk_concrete (_1, (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_poly(_8, Some _6)))), _2 )}
 | _1 = override_flag _2 = attributes _3 = private_flag _4 = label _5 = COLON _6 = TYPE _7 = lident_list _8 = DOT _9 = core_type _10 = EQUAL _11 = seq_expr
     {let _endpos = _endpos__11_ in
@@ -1657,40 +1657,40 @@ else
       _startpos__3_
     else
       _startpos__4_ in
-      ( let exp, poly = (wrap_type_annotation ~loc:(make_loc _symbolstartpos _endpos)) _7 _9 _11 in
+( let exp, poly = (wrap_type_annotation ~loc:(make_loc _symbolstartpos _endpos)) _7 _9 _11 in
         (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), _3,
          Cfk_concrete (_1, (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_poly(exp, Some poly)))), _2 )}
 
 class_type:
   _1 = class_signature
-    {      ( _1 )}
+    {( _1 )}
 | _1 = QUESTION _2 = LIDENT _3 = COLON _4 = simple_core_type_or_tuple _5 = MINUSGREATER _6 = class_type
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Optional _2 , _4, _6)) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Optional _2 , _4, _6)) )}
 | _1 = OPTLABEL _2 = simple_core_type_or_tuple _3 = MINUSGREATER _4 = class_type
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Optional _1, _2, _4)) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Optional _1, _2, _4)) )}
 | _1 = LIDENT _2 = COLON _3 = simple_core_type_or_tuple _4 = MINUSGREATER _5 = class_type
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Labelled _1, _3, _5)) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Labelled _1, _3, _5)) )}
 | _1 = simple_core_type_or_tuple _2 = MINUSGREATER _3 = class_type
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Nolabel, _1, _3)) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_arrow(Nolabel, _1, _3)) )}
 
 class_signature:
   _1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = clty_longident
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_constr (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), List.rev _2)) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_constr (mkloc _4 ((make_loc _startpos__4_ _endpos__4_)), List.rev _2)) )}
 | _1 = clty_longident
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1702,17 +1702,17 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_constr (_1, [])) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_constr (_1, [])) )}
 | _1 = OBJECT _2 = attributes _3 = class_sig_body _4 = END
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pcty_signature _3) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos)) ~attrs:_2 (Pcty_signature _3) )}
 | _1 = class_signature _2 = attribute
-    {      ( Cty.attr _1 _2 )}
+    {( Cty.attr _1 _2 )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_extension _1) )}
+( (mkcty ~loc:(make_loc _symbolstartpos _endpos))(Pcty_extension _1) )}
 
 class_sig_body:
   _1 = class_self_type _1_inlined1 = class_sig_fields
@@ -1720,39 +1720,39 @@ class_sig_body:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-                                 ( extra_csig _startpos _endpos _1 )
+  ( extra_csig _startpos _endpos _1 )
 in
-      ( Csig.mk _1 (List.rev _2) )}
+( Csig.mk _1 (List.rev _2) )}
 
 class_self_type:
   _1 = LPAREN _2 = core_type _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | 
     {let _endpos = _endpos__0_ in
 let _symbolstartpos = _endpos in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
 
 class_sig_fields:
   
-    {                                                ( [] )}
+    {( [] )}
 | _1 = class_sig_fields _2 = class_sig_field
-    {                                   ( _2 :: ((text_csig _startpos__2_)) @ _1 )}
+    {( _2 :: ((text_csig _startpos__2_)) @ _1 )}
 
 class_sig_field:
   _1 = INHERIT _2 = attributes _3 = class_signature _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_inherit _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_inherit _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = VAL _2 = attributes _3 = value_type _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_val _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_val _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = METHOD _2 = attributes _3 = private_virtual_flags _1_inlined1 = label _5 = COLON _6 = poly_type _7 = post_item_attributes
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1764,22 +1764,22 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      (
+(
        let (p, v) = _3 in
        (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_method (_4, p, v, _6)) ~attrs:(_2@_7) ~docs:((symbol_docs _symbolstartpos _endpos))
       )}
 | _1 = CONSTRAINT _2 = attributes _3 = constrain_field _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_constraint _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_constraint _3) ~attrs:(_2@_4) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = item_extension _2 = post_item_attributes
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_extension _1) ~attrs:_2 ~docs:((symbol_docs _symbolstartpos _endpos)) )}
+( (mkctf ~loc:(make_loc _symbolstartpos _endpos)) (Pctf_extension _1) ~attrs:_2 ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 | _1 = floating_attribute
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mark_symbol_docs _symbolstartpos _endpos);
+( (mark_symbol_docs _symbolstartpos _endpos);
         (mkctf ~loc:(make_loc _symbolstartpos _endpos))(Pctf_attribute _1) )}
 
 value_type:
@@ -1788,7 +1788,7 @@ value_type:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1798,13 +1798,13 @@ value_type:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( _3, _2, Virtual, _5 )}
+( _3, _2, Virtual, _5 )}
 | _1 = MUTABLE _2 = virtual_flag _1_inlined1 = label _4 = COLON _5 = core_type
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1814,12 +1814,12 @@ in
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( _3, Mutable, _2, _5 )}
+( _3, Mutable, _2, _5 )}
 | _1 = label _2 = COLON _3 = core_type
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1829,23 +1829,23 @@ in
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( _1, Immutable, Concrete, _3 )}
+( _1, Immutable, Concrete, _3 )}
 
 constrain:
   _1 = core_type _2 = EQUAL _3 = core_type
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-                                  ( _1, _3, (make_loc _symbolstartpos _endpos) )}
+( _1, _3, (make_loc _symbolstartpos _endpos) )}
 
 constrain_field:
   _1 = core_type _2 = EQUAL _3 = core_type
-    {                                  ( _1, _3 )}
+    {( _1, _3 )}
 
 class_descriptions:
   _1 = class_description
-    {      ( let (body, ext) = _1 in ([body],ext) )}
+    {( let (body, ext) = _1 in ([body],ext) )}
 | _1 = class_descriptions _2 = and_class_description
-    {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
+    {( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 class_description:
   _1 = CLASS _2 = ext_attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = COLON _7 = class_type _8 = post_item_attributes
@@ -1853,7 +1853,7 @@ class_description:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1865,7 +1865,7 @@ class_description:
 in
 let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Ci.mk _5 _7 ~virt:_3 ~params:_4 ~attrs:(attrs@_8)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
      , ext )}
@@ -1876,7 +1876,7 @@ and_class_description:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1889,15 +1889,15 @@ in
 let _endpos = _endpos__8_ in
 let _startpos = _startpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Ci.mk _5 _7 ~virt:_3 ~params:_4
+( Ci.mk _5 _7 ~virt:_3 ~params:_4
               ~attrs:(_2@_8) ~loc:(((make_loc _symbolstartpos _endpos)))
               ~text:((symbol_text _startpos)) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 
 class_type_declarations:
   _1 = class_type_declaration
-    {      ( let (body, ext) = _1 in ([body],ext) )}
+    {( let (body, ext) = _1 in ([body],ext) )}
 | _1 = class_type_declarations _2 = and_class_type_declaration
-    {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
+    {( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 class_type_declaration:
   _1 = CLASS _2 = TYPE _3 = ext_attributes _4 = virtual_flag _5 = class_type_parameters _1_inlined1 = LIDENT _7 = EQUAL _8 = class_signature _9 = post_item_attributes
@@ -1905,7 +1905,7 @@ class_type_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1917,7 +1917,7 @@ class_type_declaration:
 in
 let _endpos = _endpos__9_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _3 in
+( let (ext, attrs) = _3 in
         Ci.mk _6 _8 ~virt:_4 ~params:_5 ~attrs:(attrs@_9)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext)}
@@ -1928,7 +1928,7 @@ and_class_type_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1941,52 +1941,52 @@ in
 let _endpos = _endpos__8_ in
 let _startpos = _startpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Ci.mk _5 _7 ~virt:_3 ~params:_4
+( Ci.mk _5 _7 ~virt:_3 ~params:_4
          ~attrs:(_2@_8) ~loc:(((make_loc _symbolstartpos _endpos)))
          ~text:((symbol_text _startpos)) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 
 seq_expr:
   _1 = expr %prec below_SEMI
-    {                          ( _1 )}
+    {( _1 )}
 | _1 = expr _2 = SEMI
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-              ( (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) _1 )}
+( (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) _1 )}
 | _1 = expr _2 = SEMI _3 = seq_expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-                       ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_sequence(_1, _3)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_sequence(_1, _3)) )}
 | _1 = expr _2 = SEMI _3 = PERCENT _4 = attr_id _5 = seq_expr
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let seq = (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_sequence (_1, _5)) in
+( let seq = (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_sequence (_1, _5)) in
         let payload = PStr [mkstrexp seq []] in
         (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_extension (_4, payload)) )}
 
 labeled_simple_pattern:
   _1 = QUESTION _2 = LPAREN _3 = label_let_pattern _4 = opt_default _5 = RPAREN
-    {      ( (Optional (fst _3), _4, snd _3) )}
+    {( (Optional (fst _3), _4, snd _3) )}
 | _1 = QUESTION _2 = label_var
-    {      ( (Optional (fst _2), None, snd _2) )}
+    {( (Optional (fst _2), None, snd _2) )}
 | _1 = OPTLABEL _2 = LPAREN _3 = let_pattern _4 = opt_default _5 = RPAREN
-    {      ( (Optional _1, _4, _3) )}
+    {( (Optional _1, _4, _3) )}
 | _1 = OPTLABEL _2 = pattern_var
-    {      ( (Optional _1, None, _2) )}
+    {( (Optional _1, None, _2) )}
 | _1 = TILDE _2 = LPAREN _3 = label_let_pattern _4 = RPAREN
-    {      ( (Labelled (fst _3), None, snd _3) )}
+    {( (Labelled (fst _3), None, snd _3) )}
 | _1 = TILDE _2 = label_var
-    {      ( (Labelled (fst _2), None, snd _2) )}
+    {( (Labelled (fst _2), None, snd _2) )}
 | _1 = LABEL _2 = simple_pattern
-    {      ( (Labelled _1, None, _2) )}
+    {( (Labelled _1, None, _2) )}
 | _1 = simple_pattern
-    {      ( (Nolabel, None, _1) )}
+    {( (Nolabel, None, _1) )}
 
 pattern_var:
   _1 = LIDENT
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -1998,32 +1998,32 @@ pattern_var:
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-                  ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_var _1) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_var _1) )}
 | _1 = UNDERSCORE
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-               ( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) Ppat_any )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) Ppat_any )}
 
 opt_default:
   
-    {                                        ( None )}
+    {( None )}
 | _1 = EQUAL _2 = seq_expr
-    {                   ( Some _2 )}
+    {( Some _2 )}
 
 label_let_pattern:
   _1 = label_var
-    {      ( _1 )}
+    {( _1 )}
 | _1 = label_var _2 = COLON _3 = core_type
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (lab, pat) = _1 in (lab, (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(pat, _3))) )}
+( let (lab, pat) = _1 in (lab, (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(pat, _3))) )}
 
 label_var:
   _1 = LIDENT
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2035,33 +2035,33 @@ label_var:
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-                  ( (_1.Location.txt, (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_var _1)) )}
+( (_1.Location.txt, (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_var _1)) )}
 
 let_pattern [@recovery default_pattern ()]:
   _1 = pattern
-    {      ( _1 )}
+    {( _1 )}
 | _1 = pattern _2 = COLON _3 = core_type
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_1, _3)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_1, _3)) )}
 
 expr [@recovery default_expr ()]:
   _1 = simple_expr %prec below_SHARP
-    {      ( _1 )}
+    {( _1 )}
 | _1 = simple_expr _2 = simple_labeled_expr_list
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply(_1, List.rev _2)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply(_1, List.rev _2)) )}
 | _1 = let_bindings _2 = IN _3 = seq_expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (expr_of_let_bindings ~loc:(make_loc _symbolstartpos _endpos)) _1 (merloc _endpos__2_ _3) )}
+( (expr_of_let_bindings ~loc:(make_loc _symbolstartpos _endpos)) _1 (merloc _endpos__2_ _3) )}
 | _1 = LET _2 = MODULE _3 = ext_attributes _1_inlined1 = UIDENT _5 = module_binding_body _6 = IN _7 = seq_expr
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2073,17 +2073,17 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_letmodule(_4, _5, (merloc _endpos__6_ _7))) _3 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_letmodule(_4, _5, (merloc _endpos__6_ _7))) _3 )}
 | _1 = LET _2 = EXCEPTION _3 = ext_attributes _4 = let_exception_declaration _5 = IN _6 = seq_expr
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_letexception(_4, _6)) _3 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_letexception(_4, _6)) _3 )}
 | _1 = LET _2 = OPEN _3 = override_flag _4 = ext_attributes _1_inlined1 = mod_longident _6 = IN _7 = seq_expr
     {let _5 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2095,37 +2095,37 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_open(_3, _5, (merloc _endpos__6_ _7))) _4 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_open(_3, _5, (merloc _endpos__6_ _7))) _4 )}
 | _1 = FUNCTION _2 = ext_attributes _3 = opt_bar _4 = match_cases
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_function(List.rev _4)) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_function(List.rev _4)) _2 )}
 | _1 = FUN _2 = ext_attributes _3 = labeled_simple_pattern _4 = fun_def
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l,o,p) = _3 in
+( let (l,o,p) = _3 in
         (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_fun(l, o, p, _4)) _2 )}
 | _1 = FUN _2 = ext_attributes _3 = LPAREN _4 = TYPE _5 = lident_list _6 = RPAREN _7 = fun_def
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) ((mk_newtypes ~loc:(make_loc _symbolstartpos _endpos)) _5 _7).pexp_desc _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) ((mk_newtypes ~loc:(make_loc _symbolstartpos _endpos)) _5 _7).pexp_desc _2 )}
 | _1 = MATCH _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = opt_bar _6 = match_cases
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_match(_3, List.rev _6)) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_match(_3, List.rev _6)) _2 )}
 | _1 = TRY _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = opt_bar _6 = match_cases
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_try(_3, List.rev _6)) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_try(_3, List.rev _6)) _2 )}
 | _1 = expr_comma_list %prec below_COMMA
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_tuple(List.rev _1)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_tuple(List.rev _1)) )}
 | _1 = constr_longident _2 = simple_expr %prec below_SHARP
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2137,129 +2137,129 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_construct(_1, Some _2)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_construct(_1, Some _2)) )}
 | _1 = name_tag _2 = simple_expr %prec below_SHARP
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_variant(_1, Some _2)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_variant(_1, Some _2)) )}
 | _1 = IF _2 = ext_attributes _3 = seq_expr _4 = THEN _5 = expr _6 = ELSE _7 = expr
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ifthenelse(_3, (merloc _endpos__4_ _5), Some (merloc _endpos__6_ _7))) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ifthenelse(_3, (merloc _endpos__4_ _5), Some (merloc _endpos__6_ _7))) _2 )}
 | _1 = IF _2 = ext_attributes _3 = seq_expr _4 = THEN _5 = expr
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_ifthenelse(_3, (merloc _endpos__4_ _5), None)) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_ifthenelse(_3, (merloc _endpos__4_ _5), None)) _2 )}
 | _1 = WHILE _2 = ext_attributes _3 = seq_expr _4 = DO _5 = seq_expr _6 = DONE
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_while(_3, (merloc _endpos__4_ _5))) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_while(_3, (merloc _endpos__4_ _5))) _2 )}
 | _1 = FOR _2 = ext_attributes _3 = pattern _4 = EQUAL _5 = seq_expr _6 = direction_flag _7 = seq_expr _8 = DO _9 = seq_expr _10 = DONE
     {let _endpos = _endpos__10_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos))(Pexp_for(_3, (merloc _endpos__4_ _5), (merloc _endpos__6_ _7), _6, (merloc _endpos__8_ _9))) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos))(Pexp_for(_3, (merloc _endpos__4_ _5), (merloc _endpos__6_ _7), _6, (merloc _endpos__8_ _9))) _2 )}
 | _1 = expr _2 = COLONCOLON _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( mkexp_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_tuple[_1;(merloc _endpos__2_ _3)])) ((make_loc _symbolstartpos _endpos)) )}
+( mkexp_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_tuple[_1;(merloc _endpos__2_ _3)])) ((make_loc _symbolstartpos _endpos)) )}
 | _1 = LPAREN _2 = COLONCOLON _3 = RPAREN _4 = LPAREN _5 = expr _6 = COMMA _7 = expr _8 = RPAREN
     {let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
-      ( mkexp_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_tuple[_5;_7])) ((make_loc _symbolstartpos _endpos)) )}
+( mkexp_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_tuple[_5;_7])) ((make_loc _symbolstartpos _endpos)) )}
 | _1 = expr _2 = INFIXOP0 _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
 | _1 = expr _2 = INFIXOP1 _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
 | _1 = expr _2 = INFIXOP2 _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
 | _1 = expr _2 = INFIXOP3 _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
 | _1 = expr _2 = INFIXOP4 _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
 | _1 = expr _2 = PLUS _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "+" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "+" _3 )}
 | _1 = expr _2 = PLUSDOT _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "+." _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "+." _3 )}
 | _1 = expr _2 = PLUSEQ _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "+=" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "+=" _3 )}
 | _1 = expr _2 = MINUS _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "-" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "-" _3 )}
 | _1 = expr _2 = MINUSDOT _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "-." _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "-." _3 )}
 | _1 = expr _2 = STAR _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "*" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "*" _3 )}
 | _1 = expr _2 = PERCENT _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "%" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "%" _3 )}
 | _1 = expr _2 = EQUAL _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "=" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "=" _3 )}
 | _1 = expr _2 = LESS _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "<" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "<" _3 )}
 | _1 = expr _2 = GREATER _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 ">" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 ">" _3 )}
 | _1 = expr _2 = OR _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "or" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "or" _3 )}
 | _1 = expr _2 = BARBAR _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "||" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "||" _3 )}
 | _1 = expr _2 = AMPERSAND _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "&" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "&" _3 )}
 | _1 = expr _2 = AMPERAMPER _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "&&" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 "&&" _3 )}
 | _1 = expr _2 = COLONEQUAL _3 = expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 ":=" _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 ":=" _3 )}
 | _1 = subtractive _2 = expr %prec prec_unary_minus
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkuminus ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__1_ _endpos__1_)) _1 _2 )}
+( (mkuminus ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__1_ _endpos__1_)) _1 _2 )}
 | _1 = additive _2 = expr %prec prec_unary_plus
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkuplus ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__1_ _endpos__1_)) _1 _2 )}
+( (mkuplus ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__1_ _endpos__1_)) _1 _2 )}
 | _1 = simple_expr _2 = DOT _1_inlined1 = label_longident _4 = LESSMINUS _5 = expr
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2271,26 +2271,26 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_setfield(_1, _3, _5)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_setfield(_1, _3, _5)) )}
 | _1 = simple_expr _2 = DOT _3 = LPAREN _4 = seq_expr _5 = RPAREN _6 = LESSMINUS _7 = expr
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "Array" "set")),
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "Array" "set")),
                          [Nolabel,_1; Nolabel,_4; Nolabel,_7])) )}
 | _1 = simple_expr _2 = DOT _3 = LBRACKET _4 = seq_expr _5 = RBRACKET _6 = LESSMINUS _7 = expr
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "String" "set")),
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "String" "set")),
                          [Nolabel,_1; Nolabel,_4; Nolabel,_7])) )}
 | _1 = simple_expr _2 = DOT _3 = LBRACE _4 = expr _5 = RBRACE _6 = LESSMINUS _7 = expr
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (bigarray_set ~loc:(make_loc _symbolstartpos _endpos)) _1 _4 _7 )}
+( (bigarray_set ~loc:(make_loc _symbolstartpos _endpos)) _1 _4 _7 )}
 | _1 = label _2 = LESSMINUS _3 = expr
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2302,28 +2302,28 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_setinstvar(_1, _3)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_setinstvar(_1, _3)) )}
 | _1 = ASSERT _2 = ext_attributes _3 = simple_expr %prec below_SHARP
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_assert _3) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_assert _3) _2 )}
 | _1 = LAZY _2 = ext_attributes _3 = simple_expr %prec below_SHARP
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_lazy _3) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_lazy _3) _2 )}
 | _1 = OBJECT _2 = ext_attributes _3 = class_structure _4 = END
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_object _3) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_object _3) _2 )}
 | _1 = expr _2 = attribute
-    {      ( Exp.attr _1 _2 )}
+    {( Exp.attr _1 _2 )}
 
 simple_expr:
   _1 = val_longident
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2335,16 +2335,16 @@ simple_expr:
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident _1) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident _1) )}
 | _1 = constant
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_constant _1) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_constant _1) )}
 | _1 = constr_longident %prec prec_constant_constructor
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2356,34 +2356,34 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_construct(_1, None)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_construct(_1, None)) )}
 | _1 = name_tag %prec prec_constant_constructor
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_variant(_1, None)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_variant(_1, None)) )}
 | _1 = LPAREN _2 = seq_expr _3 = RPAREN
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) _2 )}
+( (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) _2 )}
 | _1 = BEGIN _2 = ext_attributes _3 = seq_expr _4 = END
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (wrap_exp_attrs ~loc:(make_loc _symbolstartpos _endpos)) ((reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) _3) _2 (* check location *) )}
+( (wrap_exp_attrs ~loc:(make_loc _symbolstartpos _endpos)) ((reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) _3) _2 (* check location *) )}
 | _1 = BEGIN _2 = ext_attributes _3 = END
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_construct (mkloc (Lident "()") ((make_loc _symbolstartpos _endpos)),
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_construct (mkloc (Lident "()") ((make_loc _symbolstartpos _endpos)),
                                None)) _2 )}
 | _1 = LPAREN _2 = seq_expr _3 = type_constraint _4 = RPAREN
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_constraint ~loc:(make_loc _symbolstartpos _endpos)) _2 _3 )}
+( (mkexp_constraint ~loc:(make_loc _symbolstartpos _endpos)) _2 _3 )}
 | _1 = simple_expr _2 = DOT _1_inlined1 = label_longident
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2396,12 +2396,12 @@ in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_field(_1, _3)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_field(_1, _3)) )}
 | _1 = mod_longident _2 = DOT _3 = LPAREN _4 = seq_expr _5 = RPAREN
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2413,12 +2413,12 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, _4)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, _4)) )}
 | _1 = mod_longident _2 = DOT _3 = LPAREN _4 = RPAREN
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2430,31 +2430,31 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1,
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1,
                         (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_construct((mkrhs (Lident "()") (make_loc _startpos__1_ _endpos__1_)), None)))) )}
 | _1 = simple_expr _2 = DOT _3 = LPAREN _4 = seq_expr _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "Array" "get")),
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "Array" "get")),
                          [Nolabel,_1; Nolabel,_4])) )}
 | _1 = simple_expr _2 = DOT _3 = LBRACKET _4 = seq_expr _5 = RBRACKET
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "String" "get")),
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((array_function ~loc:(make_loc _symbolstartpos _endpos)) "String" "get")),
                          [Nolabel,_1; Nolabel,_4])) )}
 | _1 = simple_expr _2 = DOT _3 = LBRACE _4 = expr _5 = RBRACE
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (bigarray_get ~loc:(make_loc _symbolstartpos _endpos)) _1 _4 )}
+( (bigarray_get ~loc:(make_loc _symbolstartpos _endpos)) _1 _4 )}
 | _1 = LBRACE _2 = record_expr _3 = RBRACE
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (exten, fields) = _2 in (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_record(fields, exten)) )}
+( let (exten, fields) = _2 in (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_record(fields, exten)) )}
 | _1 = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = RBRACE
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2466,22 +2466,22 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (exten, fields) = _4 in
+( let (exten, fields) = _4 in
         let rec_exp = (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_record(fields, exten)) in
         (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, rec_exp)) )}
 | _1 = LBRACKETBAR _2 = expr_semi_list _3 = opt_semi _4 = BARRBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_array(List.rev _2)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_array(List.rev _2)) )}
 | _1 = LBRACKETBAR _2 = BARRBRACKET
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_array []) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_array []) )}
 | _1 = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_semi_list _5 = opt_semi _6 = BARRBRACKET
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2493,12 +2493,12 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_array(List.rev _4)))) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_array(List.rev _4)))) )}
 | _1 = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = BARRBRACKET
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2510,16 +2510,16 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_array []))) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_array []))) )}
 | _1 = LBRACKET _2 = expr_semi_list _3 = opt_semi _4 = RBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) (mktailexp ((make_loc _startpos__4_ _endpos__4_)) (List.rev _2)) )}
+( (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) (mktailexp ((make_loc _startpos__4_ _endpos__4_)) (List.rev _2)) )}
 | _1 = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_semi_list _5 = opt_semi _6 = RBRACKET
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2531,13 +2531,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let list_exp = (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) (mktailexp ((make_loc _startpos__6_ _endpos__6_)) (List.rev _4)) in
+( let list_exp = (reloc_exp ~loc:(make_loc _symbolstartpos _endpos)) (mktailexp ((make_loc _startpos__6_ _endpos__6_)) (List.rev _4)) in
         (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, list_exp)) )}
 | _1 = mod_longident _2 = DOT _3 = LBRACKET _4 = RBRACKET
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2549,22 +2549,22 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1,
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1,
                         (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_construct((mkrhs (Lident "[]") (make_loc _startpos__1_ _endpos__1_)), None)))) )}
 | _1 = PREFIXOP _2 = simple_expr
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((mkoperator _1 (make_loc _startpos__1_ _endpos__1_)), [Nolabel,_2])) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((mkoperator _1 (make_loc _startpos__1_ _endpos__1_)), [Nolabel,_2])) )}
 | _1 = BANG _2 = simple_expr
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((mkoperator "!" (make_loc _startpos__1_ _endpos__1_)), [Nolabel,_2])) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_apply((mkoperator "!" (make_loc _startpos__1_ _endpos__1_)), [Nolabel,_2])) )}
 | _1 = NEW _2 = ext_attributes _1_inlined1 = class_longident
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2577,20 +2577,20 @@ in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_new _3) _2 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_new _3) _2 )}
 | _1 = LBRACELESS _2 = field_expr_list _3 = GREATERRBRACE
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_override _2) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_override _2) )}
 | _1 = LBRACELESS _2 = GREATERRBRACE
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_override []))}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_override []))}
 | _1 = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = GREATERRBRACE
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2602,13 +2602,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_override _4))))}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_open(Fresh, _1, (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_override _4))))}
 | _1 = simple_expr _2 = SHARP _1_inlined1 = label
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2621,26 +2621,26 @@ in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_send(_1, _3)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_send(_1, _3)) )}
 | _1 = simple_expr _2 = SHARPOP _3 = simple_expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
+( (mkinfix ~loc:(make_loc _symbolstartpos _endpos) ~oploc:(make_loc _startpos__2_ _endpos__2_)) _1 _2 _3 )}
 | _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_pack _4) _3 )}
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_pack _4) _3 )}
 | _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = COLON _6 = package_type _7 = RPAREN
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_constraint ((ghexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_pack _4),
+( (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_constraint ((ghexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_pack _4),
                                       (ghtyp ~loc:(make_loc _symbolstartpos _endpos)) (Ptyp_package _6)))
                     _3 )}
 | _1 = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = ext_attributes _6 = module_expr _7 = COLON _8 = package_type _9 = RPAREN
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2652,54 +2652,54 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__9_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_open(Fresh, _1,
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_open(Fresh, _1,
         (mkexp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_constraint ((ghexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_pack _6),
                                 (ghtyp ~loc:(make_loc _symbolstartpos _endpos)) (Ptyp_package _8)))
                     _5 )) )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_extension _1) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_extension _1) )}
 | _1 = QUESTIONQUESTION
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let id = mkloc "merlin.hole" ((make_loc _symbolstartpos _endpos)) in
+( let id = mkloc "merlin.hole" ((make_loc _symbolstartpos _endpos)) in
         (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_extension (id, PStr [])) )}
 
 simple_labeled_expr_list:
   _1 = labeled_simple_expr
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = simple_labeled_expr_list _2 = labeled_simple_expr
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 labeled_simple_expr:
   _1 = simple_expr %prec below_SHARP
-    {      ( (Nolabel, _1) )}
+    {( (Nolabel, _1) )}
 | _1 = label_expr
-    {      ( _1 )}
+    {( _1 )}
 
 label_expr:
   _1 = LABEL _2 = simple_expr %prec below_SHARP
-    {      ( (Labelled _1, _2) )}
+    {( (Labelled _1, _2) )}
 | _1 = TILDE _2 = label_ident
-    {      ( (Labelled (fst _2), snd _2) )}
+    {( (Labelled (fst _2), snd _2) )}
 | _1 = QUESTION _2 = label_ident
-    {      ( (Optional (fst _2), snd _2) )}
+    {( (Optional (fst _2), snd _2) )}
 | _1 = OPTLABEL _2 = simple_expr %prec below_SHARP
-    {      ( (Optional _1, _2) )}
+    {( (Optional _1, _2) )}
 
 label_ident:
   _1 = LIDENT
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-           ( (_1, (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((mkrhs (Lident _1) (make_loc _startpos__1_ _endpos__1_))))) )}
+( (_1, (mkexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_ident((mkrhs (Lident _1) (make_loc _startpos__1_ _endpos__1_))))) )}
 
 lident_list:
   _1 = LIDENT
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2709,12 +2709,12 @@ lident_list:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-                  ( [_1] )}
+( [_1] )}
 | _1 = LIDENT _2 = lident_list
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2724,128 +2724,128 @@ in
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-                              ( _1 :: _2 )}
+( _1 :: _2 )}
 
 let_binding_body:
   _1 = val_ident _2 = fun_binding
-    {      ( ((mkpatvar _1 (make_loc _startpos__1_ _endpos__1_)), _2) )}
+    {( ((mkpatvar _1 (make_loc _startpos__1_ _endpos__1_)), _2) )}
 | _1 = val_ident _2 = COLON _3 = typevar_list _4 = DOT _5 = core_type _6 = EQUAL _7 = seq_expr
     {let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint((mkpatvar _1 (make_loc _startpos__1_ _endpos__1_)),
+( ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint((mkpatvar _1 (make_loc _startpos__1_ _endpos__1_)),
                                (ghtyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_poly(List.rev _3,_5)))),
          _7) )}
 | _1 = val_ident _2 = COLON _3 = TYPE _4 = lident_list _5 = DOT _6 = core_type _7 = EQUAL _8 = seq_expr
     {let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let exp, poly = (wrap_type_annotation ~loc:(make_loc _symbolstartpos _endpos)) _4 _6 _8 in
+( let exp, poly = (wrap_type_annotation ~loc:(make_loc _symbolstartpos _endpos)) _4 _6 _8 in
         ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint((mkpatvar _1 (make_loc _startpos__1_ _endpos__1_)), poly)), exp) )}
 | _1 = pattern_no_exn _2 = EQUAL _3 = seq_expr
-    {      ( (_1, _3) )}
+    {( (_1, _3) )}
 | _1 = simple_pattern_not_ident _2 = COLON _3 = core_type _4 = EQUAL _5 = seq_expr
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_1, _3)), _5) )}
+( ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_1, _3)), _5) )}
 
 let_bindings:
   _1 = let_binding
-    {                ( _1 )}
+    {( _1 )}
 | _1 = let_bindings _2 = and_let_binding
-    {                                 ( addlb _1 _2 )}
+    {( addlb _1 _2 )}
 
 let_binding:
   _1 = LET _2 = ext_attributes _3 = rec_flag _4 = let_binding_body _5 = post_item_attributes
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attr) = _2 in
+( let (ext, attr) = _2 in
         (mklbs ~loc:(make_loc _symbolstartpos _endpos)) ext _3 ((mklb ~loc:(make_loc _symbolstartpos _endpos)) true _4 (attr@_5)) )}
 
 and_let_binding:
   _1 = AND _2 = attributes _3 = let_binding_body _4 = post_item_attributes
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mklb ~loc:(make_loc _symbolstartpos _endpos)) false _3 (_2@_4) )}
+( (mklb ~loc:(make_loc _symbolstartpos _endpos)) false _3 (_2@_4) )}
 
 fun_binding:
   _1 = strict_binding
-    {      ( _1 )}
+    {( _1 )}
 | _1 = type_constraint _2 = EQUAL _3 = seq_expr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp_constraint ~loc:(make_loc _symbolstartpos _endpos)) _3 _1 )}
+( (mkexp_constraint ~loc:(make_loc _symbolstartpos _endpos)) _3 _1 )}
 
 strict_binding:
   _1 = EQUAL _2 = seq_expr
-    {      ( _2 )}
+    {( _2 )}
 | _1 = labeled_simple_pattern _2 = fun_binding
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (l, o, p) = _1 in (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_fun(l, o, p, _2)) )}
+( let (l, o, p) = _1 in (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_fun(l, o, p, _2)) )}
 | _1 = LPAREN _2 = TYPE _3 = lident_list _4 = RPAREN _5 = fun_binding
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mk_newtypes ~loc:(make_loc _symbolstartpos _endpos)) _3 _5 )}
+( (mk_newtypes ~loc:(make_loc _symbolstartpos _endpos)) _3 _5 )}
 
 match_cases [@recovery []]:
   _1 = match_case
-    {               ( [_1] )}
+    {( [_1] )}
 | _1 = match_cases _2 = BAR _3 = match_case
-    {                               ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 match_case:
   _1 = pattern _2 = MINUSGREATER _3 = seq_expr
-    {      ( Exp.case _1 (merloc _endpos__2_ _3) )}
+    {( Exp.case _1 (merloc _endpos__2_ _3) )}
 | _1 = pattern _2 = WHEN _3 = seq_expr _4 = MINUSGREATER _5 = seq_expr
-    {      ( Exp.case _1 ~guard:(merloc _endpos__2_ _3) (merloc _endpos__4_ _5) )}
+    {( Exp.case _1 ~guard:(merloc _endpos__2_ _3) (merloc _endpos__4_ _5) )}
 | _1 = pattern _2 = MINUSGREATER _3 = DOT [@cost infinity]
-    {      ( Exp.case _1 (merloc _endpos__2_
+    {( Exp.case _1 (merloc _endpos__2_
                        (Exp.unreachable ~loc:((make_loc _startpos__3_ _endpos__3_)) ())) )}
 
 fun_def:
   _1 = MINUSGREATER _2 = seq_expr
-    {      ( (merloc _endpos__1_ _2) )}
+    {( (merloc _endpos__1_ _2) )}
 | _1 = COLON _2 = simple_core_type _3 = MINUSGREATER _4 = seq_expr
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_constraint ((merloc _endpos__3_ _4), _2)) )}
+( (mkexp ~loc:(make_loc _symbolstartpos _endpos)) (Pexp_constraint ((merloc _endpos__3_ _4), _2)) )}
 | _1 = labeled_simple_pattern _2 = fun_def
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      (
+(
        let (l,o,p) = _1 in
        (ghexp ~loc:(make_loc _symbolstartpos _endpos))(Pexp_fun(l, o, p, _2))
       )}
 | _1 = LPAREN _2 = TYPE _3 = lident_list _4 = RPAREN _5 = fun_def
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mk_newtypes ~loc:(make_loc _symbolstartpos _endpos)) _3 _5 )}
+( (mk_newtypes ~loc:(make_loc _symbolstartpos _endpos)) _3 _5 )}
 
 expr_comma_list:
   _1 = expr_comma_list _2 = COMMA _3 = expr
-    {                               ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | _1 = expr _2 = COMMA _3 = expr
-    {                    ( [_3; _1] )}
+    {( [_3; _1] )}
 
 record_expr:
   _1 = simple_expr _2 = WITH _3 = lbl_expr_list
-    {                                   ( (Some _1, _3) )}
+    {( (Some _1, _3) )}
 | _1 = lbl_expr_list
-    {                  ( (None, _1) )}
+    {( (None, _1) )}
 
 lbl_expr_list:
   _1 = lbl_expr
-    {              ( [_1] )}
+    {( [_1] )}
 | _1 = lbl_expr _2 = SEMI _3 = lbl_expr_list
-    {                                ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = lbl_expr _2 = SEMI
-    {                  ( [_1] )}
+    {( [_1] )}
 
 lbl_expr:
   _1 = label_longident _2 = opt_type_constraint _3 = EQUAL _4 = expr
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2857,12 +2857,12 @@ lbl_expr:
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (_1, (mkexp_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) _4 _2) )}
+( (_1, (mkexp_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) _4 _2) )}
 | _1 = label_longident _2 = opt_type_constraint
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2874,20 +2874,20 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (_1, (mkexp_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) ((exp_of_label ~loc:(make_loc _symbolstartpos _endpos) _1.Location.txt (make_loc _startpos__1_ _endpos__1_))) _2) )}
+( (_1, (mkexp_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) ((exp_of_label ~loc:(make_loc _symbolstartpos _endpos) _1.Location.txt (make_loc _startpos__1_ _endpos__1_))) _2) )}
 
 field_expr_list:
   _1 = field_expr _2 = opt_semi
-    {                        ( [_1] )}
+    {( [_1] )}
 | _1 = field_expr _2 = SEMI _3 = field_expr_list
-    {                                    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 field_expr:
   _1 = label _2 = EQUAL _3 = expr
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2897,12 +2897,12 @@ field_expr:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( (_1, _3) )}
+( (_1, _3) )}
 | _1 = label
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2914,27 +2914,27 @@ in
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (_1, (exp_of_label ~loc:(make_loc _symbolstartpos _endpos) (Lident _1.Location.txt) (make_loc _startpos__1_ _endpos__1_))) )}
+( (_1, (exp_of_label ~loc:(make_loc _symbolstartpos _endpos) (Lident _1.Location.txt) (make_loc _startpos__1_ _endpos__1_))) )}
 
 expr_semi_list:
   _1 = expr
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = expr_semi_list _2 = SEMI _3 = expr
-    {                             ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 type_constraint:
   _1 = COLON _2 = core_type
-    {                    ( (Some _2, None) )}
+    {( (Some _2, None) )}
 | _1 = COLON _2 = core_type _3 = COLONGREATER _4 = core_type
-    {                                           ( (Some _2, Some _4) )}
+    {( (Some _2, Some _4) )}
 | _1 = COLONGREATER _2 = core_type
-    {                           ( (None, Some _2) )}
+    {( (None, Some _2) )}
 
 opt_type_constraint:
   _1 = type_constraint
-    {                    ( Some _1 )}
+    {( Some _1 )}
 | 
-    {    ( None )}
+    {( None )}
 
 pattern [@recovery default_pattern ()]:
   _1 = pattern _2 = AS _1_inlined1 = val_ident
@@ -2942,7 +2942,7 @@ pattern [@recovery default_pattern ()]:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2955,27 +2955,27 @@ in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_alias(_1, _3)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_alias(_1, _3)) )}
 | _1 = pattern_comma_list %prec below_COMMA
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple(List.rev _1)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple(List.rev _1)) )}
 | _1 = pattern _2 = COLONCOLON _3 = pattern
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( mkpat_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple[_1;_3])) ((make_loc _symbolstartpos _endpos)) )}
+( mkpat_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple[_1;_3])) ((make_loc _symbolstartpos _endpos)) )}
 | _1 = pattern _2 = BAR _3 = pattern
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_or(_1, _3)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_or(_1, _3)) )}
 | _1 = EXCEPTION _2 = ext_attributes _3 = pattern %prec prec_constr_appl
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ppat_exception _3) _2 )}
+( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ppat_exception _3) _2 )}
 | _1 = pattern _2 = attribute
-    {      ( Pat.attr _1 _2 )}
+    {( Pat.attr _1 _2 )}
 | _1 = pattern_gen
-    {                ( _1 )}
+    {( _1 )}
 
 pattern_no_exn:
   _1 = pattern_no_exn _2 = AS _1_inlined1 = val_ident
@@ -2983,7 +2983,7 @@ pattern_no_exn:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -2996,32 +2996,32 @@ in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_alias(_1, _3)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_alias(_1, _3)) )}
 | _1 = pattern_no_exn_comma_list %prec below_COMMA
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple(List.rev _1)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple(List.rev _1)) )}
 | _1 = pattern_no_exn _2 = COLONCOLON _3 = pattern
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( mkpat_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple[_1;_3])) ((make_loc _symbolstartpos _endpos)) )}
+( mkpat_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple[_1;_3])) ((make_loc _symbolstartpos _endpos)) )}
 | _1 = pattern_no_exn _2 = BAR _3 = pattern
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_or(_1, _3)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_or(_1, _3)) )}
 | _1 = pattern_no_exn _2 = attribute
-    {      ( Pat.attr _1 _2 )}
+    {( Pat.attr _1 _2 )}
 | _1 = pattern_gen
-    {                ( _1 )}
+    {( _1 )}
 
 pattern_gen:
   _1 = simple_pattern
-    {      ( _1 )}
+    {( _1 )}
 | _1 = constr_longident _2 = pattern %prec prec_constr_appl
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3033,26 +3033,26 @@ pattern_gen:
 in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_construct(_1, Some _2)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_construct(_1, Some _2)) )}
 | _1 = name_tag _2 = pattern %prec prec_constr_appl
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_variant(_1, Some _2)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_variant(_1, Some _2)) )}
 | _1 = LPAREN _2 = COLONCOLON _3 = RPAREN _4 = LPAREN _5 = pattern _6 = COMMA _7 = pattern _8 = RPAREN
     {let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
-      ( mkpat_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple[_5;_7])) ((make_loc _symbolstartpos _endpos)) )}
+( mkpat_cons ((make_loc _startpos__2_ _endpos__2_)) ((ghpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_tuple[_5;_7])) ((make_loc _symbolstartpos _endpos)) )}
 | _1 = LAZY _2 = ext_attributes _3 = simple_pattern
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ppat_lazy _3) _2)}
+( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ppat_lazy _3) _2)}
 
 simple_pattern:
   _1 = val_ident %prec below_EQUAL
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3064,28 +3064,28 @@ simple_pattern:
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_var _1) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_var _1) )}
 | _1 = simple_pattern_not_ident
-    {                             ( _1 )}
+    {( _1 )}
 
 simple_pattern_not_ident:
   _1 = UNDERSCORE
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_any) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_any) )}
 | _1 = signed_constant
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constant _1) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constant _1) )}
 | _1 = signed_constant _2 = DOTDOT _3 = signed_constant
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_interval (_1, _3)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_interval (_1, _3)) )}
 | _1 = constr_longident
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3097,17 +3097,17 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_construct(_1, None)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_construct(_1, None)) )}
 | _1 = name_tag
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_variant(_1, None)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_variant(_1, None)) )}
 | _1 = SHARP _1_inlined1 = type_longident
     {let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3120,14 +3120,14 @@ in
 let _endpos__2_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_type _2) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_type _2) )}
 | _1 = simple_delimited_pattern
-    {      ( _1 )}
+    {( _1 )}
 | _1 = mod_longident _2 = DOT _3 = simple_delimited_pattern
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3139,12 +3139,12 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open(_1, _3) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open(_1, _3) )}
 | _1 = mod_longident _2 = DOT _3 = LBRACKET _4 = RBRACKET
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3156,13 +3156,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open(_1, (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open(_1, (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@
                Ppat_construct ((mkrhs (Lident "[]") (make_loc _startpos__4_ _endpos__4_)), None)) )}
 | _1 = mod_longident _2 = DOT _3 = LPAREN _4 = RPAREN
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3174,13 +3174,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open(_1, (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open(_1, (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@
                  Ppat_construct ((mkrhs (Lident "()") (make_loc _startpos__4_ _endpos__4_)), None) ) )}
 | _1 = mod_longident _2 = DOT _3 = LPAREN _4 = pattern _5 = RPAREN
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3192,21 +3192,21 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open (_1, _4) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos)) @@ Ppat_open (_1, _4) )}
 | _1 = LPAREN _2 = pattern _3 = RPAREN
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (reloc_pat ~loc:(make_loc _symbolstartpos _endpos)) _2 )}
+( (reloc_pat ~loc:(make_loc _symbolstartpos _endpos)) _2 )}
 | _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_2, _4)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_constraint(_2, _4)) )}
 | _1 = LPAREN _2 = MODULE _3 = ext_attributes _1_inlined1 = UIDENT _5 = RPAREN
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3218,13 +3218,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ppat_unpack _4) _3 )}
+( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ppat_unpack _4) _3 )}
 | _1 = LPAREN _2 = MODULE _3 = ext_attributes _1_inlined1 = UIDENT _5 = COLON _6 = package_type _7 = RPAREN
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3236,67 +3236,67 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos))
+( (mkpat_attrs ~loc:(make_loc _symbolstartpos _endpos))
           (Ppat_constraint((mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_unpack _4),
                            (ghtyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_package _6)))
           _3 )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_extension _1) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_extension _1) )}
 
 simple_delimited_pattern:
   _1 = LBRACE _2 = lbl_pattern_list _3 = RBRACE
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let (fields, closed) = _2 in (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_record(fields, closed)) )}
+( let (fields, closed) = _2 in (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_record(fields, closed)) )}
 | _1 = LBRACKET _2 = pattern_semi_list _3 = opt_semi _4 = RBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-    ( (reloc_pat ~loc:(make_loc _symbolstartpos _endpos)) (mktailpat ((make_loc _startpos__4_ _endpos__4_)) (List.rev _2)) )}
+( (reloc_pat ~loc:(make_loc _symbolstartpos _endpos)) (mktailpat ((make_loc _startpos__4_ _endpos__4_)) (List.rev _2)) )}
 | _1 = LBRACKETBAR _2 = pattern_semi_list _3 = opt_semi _4 = BARRBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-    ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_array(List.rev _2)) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_array(List.rev _2)) )}
 | _1 = LBRACKETBAR _2 = BARRBRACKET
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-    ( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_array []) )}
+( (mkpat ~loc:(make_loc _symbolstartpos _endpos))(Ppat_array []) )}
 
 pattern_comma_list:
   _1 = pattern_comma_list _2 = COMMA _3 = pattern
-    {                                     ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | _1 = pattern _2 = COMMA _3 = pattern
-    {                          ( [_3; _1] )}
+    {( [_3; _1] )}
 
 pattern_semi_list:
   _1 = pattern
-    {            ( [_1] )}
+    {( [_1] )}
 | _1 = pattern_semi_list _2 = SEMI _3 = pattern
-    {                                   ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 pattern_no_exn_comma_list:
   _1 = pattern_no_exn_comma_list _2 = COMMA _3 = pattern
-    {                                            ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | _1 = pattern_no_exn _2 = COMMA _3 = pattern
-    {                                 ( [_3; _1] )}
+    {( [_3; _1] )}
 
 lbl_pattern_list:
   _1 = lbl_pattern
-    {                ( [_1], Closed )}
+    {( [_1], Closed )}
 | _1 = lbl_pattern _2 = SEMI
-    {                     ( [_1], Closed )}
+    {( [_1], Closed )}
 | _1 = lbl_pattern _2 = SEMI _3 = UNDERSCORE _4 = opt_semi
-    {                                         ( [_1], Open )}
+    {( [_1], Open )}
 | _1 = lbl_pattern _2 = SEMI _3 = lbl_pattern_list
-    {      ( let (fields, closed) = _3 in _1 :: fields, closed )}
+    {( let (fields, closed) = _3 in _1 :: fields, closed )}
 
 lbl_pattern:
   _1 = label_longident _2 = opt_pattern_type_constraint _3 = EQUAL _4 = pattern
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3308,12 +3308,12 @@ lbl_pattern:
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (_1, (mkpat_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) _4 _2) )}
+( (_1, (mkpat_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) _4 _2) )}
 | _1 = label_longident _2 = opt_pattern_type_constraint
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3325,13 +3325,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (_1, (mkpat_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) ((pat_of_label ~loc:(make_loc _symbolstartpos _endpos) _1.Location.txt (make_loc _startpos__1_ _endpos__1_))) _2) )}
+( (_1, (mkpat_opt_constraint ~loc:(make_loc _symbolstartpos _endpos)) ((pat_of_label ~loc:(make_loc _symbolstartpos _endpos) _1.Location.txt (make_loc _startpos__1_ _endpos__1_))) _2) )}
 
 opt_pattern_type_constraint:
   _1 = COLON _2 = core_type
-    {                    ( Some _2 )}
+    {( Some _2 )}
 | 
-    {    ( None )}
+    {( None )}
 
 value_description:
   _1 = VAL _2 = ext_attributes _1_inlined1 = val_ident _4 = COLON _5 = core_type _6 = post_item_attributes
@@ -3339,7 +3339,7 @@ value_description:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3351,16 +3351,16 @@ value_description:
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Val.mk _3 _5 ~attrs:(attrs@_6)
                ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
 
 primitive_declaration_body:
   _1 = STRING
-    {           ( [fst _1] )}
+    {( [fst _1] )}
 | _1 = STRING _2 = primitive_declaration_body
-    {                                      ( fst _1 :: _2 )}
+    {( fst _1 :: _2 )}
 
 primitive_declaration:
   _1 = EXTERNAL _2 = ext_attributes _1_inlined1 = val_ident _4 = COLON _5 = core_type _6 = EQUAL _7 = primitive_declaration_body _8 = post_item_attributes
@@ -3368,7 +3368,7 @@ primitive_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3380,16 +3380,16 @@ primitive_declaration:
 in
 let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Val.mk _3 _5 ~prim:_7 ~attrs:(attrs@_8)
                ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
       , ext )}
 
 type_declarations:
   _1 = type_declaration
-    {      ( let (nonrec_flag, ty, ext) = _1 in (nonrec_flag, [ty], ext) )}
+    {( let (nonrec_flag, ty, ext) = _1 in (nonrec_flag, [ty], ext) )}
 | _1 = type_declarations _2 = and_type_declaration
-    {      ( let (nonrec_flag, tys, ext) = _1 in (nonrec_flag, _2 :: tys, ext) )}
+    {( let (nonrec_flag, tys, ext) = _1 in (nonrec_flag, _2 :: tys, ext) )}
 
 type_declaration:
   _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1_inlined1 = LIDENT _6 = type_kind _7 = constraints _8 = post_item_attributes
@@ -3397,7 +3397,7 @@ type_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3409,7 +3409,7 @@ type_declaration:
 in
 let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (kind, priv, manifest) = _6 in
+( let (kind, priv, manifest) = _6 in
         let (ext, attrs) = _2 in
         let ty =
           Type.mk _5 ~params:_4 ~cstrs:(List.rev _7) ~kind
@@ -3424,7 +3424,7 @@ and_type_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3437,113 +3437,113 @@ in
 let _endpos = _endpos__7_ in
 let _startpos = _startpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (kind, priv, manifest) = _5 in
+( let (kind, priv, manifest) = _5 in
           Type.mk _4 ~params:_3 ~cstrs:(List.rev _6)
             ~kind ~priv ?manifest ~attrs:(_2@_7) ~loc:(((make_loc _symbolstartpos _endpos)))
             ~text:((symbol_text _startpos)) ~docs:((symbol_docs _symbolstartpos _endpos)) )}
 
 constraints:
   _1 = constraints _2 = CONSTRAINT _3 = constrain
-    {                                         ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | 
-    {        ( [] )}
+    {( [] )}
 
 type_kind:
   
-    {      ( (Ptype_abstract, Public, None) )}
+    {( (Ptype_abstract, Public, None) )}
 | _1 = EQUAL _2 = core_type
-    {      ( (Ptype_abstract, Public, Some _2) )}
+    {( (Ptype_abstract, Public, Some _2) )}
 | _1 = EQUAL _2 = PRIVATE _3 = core_type
-    {      ( (Ptype_abstract, Private, Some _3) )}
+    {( (Ptype_abstract, Private, Some _3) )}
 | _1 = EQUAL _2 = constructor_declarations
-    {      ( (Ptype_variant(List.rev _2), Public, None) )}
+    {( (Ptype_variant(List.rev _2), Public, None) )}
 | _1 = EQUAL _2 = PRIVATE _3 = constructor_declarations
-    {      ( (Ptype_variant(List.rev _3), Private, None) )}
+    {( (Ptype_variant(List.rev _3), Private, None) )}
 | _1 = EQUAL _2 = DOTDOT
-    {      ( (Ptype_open, Public, None) )}
+    {( (Ptype_open, Public, None) )}
 | _1 = EQUAL _2 = private_flag _3 = LBRACE _4 = label_declarations _5 = RBRACE
-    {      ( (Ptype_record _4, _2, None) )}
+    {( (Ptype_record _4, _2, None) )}
 | _1 = EQUAL _2 = core_type _3 = EQUAL _4 = private_flag _5 = constructor_declarations
-    {      ( (Ptype_variant(List.rev _5), _4, Some _2) )}
+    {( (Ptype_variant(List.rev _5), _4, Some _2) )}
 | _1 = EQUAL _2 = core_type _3 = EQUAL _4 = DOTDOT
-    {      ( (Ptype_open, Public, Some _2) )}
+    {( (Ptype_open, Public, Some _2) )}
 | _1 = EQUAL _2 = core_type _3 = EQUAL _4 = private_flag _5 = LBRACE _6 = label_declarations _7 = RBRACE
-    {      ( (Ptype_record _6, _4, Some _2) )}
+    {( (Ptype_record _6, _4, Some _2) )}
 
 optional_type_parameters:
   
-    {                                                ( [] )}
+    {( [] )}
 | _1 = optional_type_parameter
-    {                            ( [_1] )}
+    {( [_1] )}
 | _1 = LPAREN _2 = optional_type_parameter_list _3 = RPAREN
-    {                                               ( List.rev _2 )}
+    {( List.rev _2 )}
 
 optional_type_parameter:
   _1 = type_variance _2 = optional_type_variable
-    {                                         ( _2, _1 )}
+    {( _2, _1 )}
 
 optional_type_parameter_list:
   _1 = optional_type_parameter
-    {                            ( [_1] )}
+    {( [_1] )}
 | _1 = optional_type_parameter_list _2 = COMMA _3 = optional_type_parameter
-    {                                                               ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 optional_type_variable:
   _1 = QUOTE _2 = ident
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-                ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_var _2) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_var _2) )}
 | _1 = UNDERSCORE
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-               ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
 
 type_parameters:
   
-    {                                                ( [] )}
+    {( [] )}
 | _1 = type_parameter
-    {                   ( [_1] )}
+    {( [_1] )}
 | _1 = LPAREN _2 = type_parameter_list _3 = RPAREN
-    {                                      ( List.rev _2 )}
+    {( List.rev _2 )}
 
 type_parameter:
   _1 = type_variance _2 = type_variable
-    {                                ( _2, _1 )}
+    {( _2, _1 )}
 
 type_variance:
   
-    {                                                ( Invariant )}
+    {( Invariant )}
 | _1 = PLUS
-    {         ( Covariant )}
+    {( Covariant )}
 | _1 = MINUS
-    {          ( Contravariant )}
+    {( Contravariant )}
 
 type_variable:
   _1 = QUOTE _2 = ident
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-                ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_var _2) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_var _2) )}
 
 type_parameter_list:
   _1 = type_parameter
-    {                   ( [_1] )}
+    {( [_1] )}
 | _1 = type_parameter_list _2 = COMMA _3 = type_parameter
-    {                                             ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 constructor_declarations:
   _1 = constructor_declaration
-    {                            ( [_1] )}
+    {( [_1] )}
 | _1 = bar_constructor_declaration
-    {                                ( [_1] )}
+    {( [_1] )}
 | _1 = constructor_declarations _2 = bar_constructor_declaration
-    {                                                         ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 constructor_declaration:
   _1 = constr_ident _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3555,7 +3555,7 @@ constructor_declaration:
 in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      (
+(
        let args,res = _2 in
        Type.constructor _1 ~args ?res ~attrs:_3
          ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos))
@@ -3567,7 +3567,7 @@ bar_constructor_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3579,7 +3579,7 @@ bar_constructor_declaration:
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      (
+(
        let args,res = _3 in
        Type.constructor _2 ~args ?res ~attrs:_4
          ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos))
@@ -3587,13 +3587,13 @@ let _symbolstartpos = _startpos__1_ in
 
 str_exception_declaration:
   _1 = sig_exception_declaration
-    {                              ( _1 )}
+    {( _1 )}
 | _1 = EXCEPTION _2 = ext_attributes _1_inlined1 = constr_ident _4 = EQUAL _1_inlined2 = constr_longident _6 = attributes _7 = post_item_attributes
     {let _5 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3607,7 +3607,7 @@ let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3619,7 +3619,7 @@ let _3 =
 in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         Te.rebind _3 _5 ~attrs:(attrs @ _6 @ _7)
           ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
         , ext )}
@@ -3630,7 +3630,7 @@ sig_exception_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3642,7 +3642,7 @@ sig_exception_declaration:
 in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let args, res = _4 in
+( let args, res = _4 in
         let (ext,attrs) = _2 in
           Te.decl _3 ~args ?res ~attrs:(attrs @ _5 @ _6)
             ~loc:(((make_loc _symbolstartpos _endpos))) ~docs:((symbol_docs _symbolstartpos _endpos))
@@ -3653,7 +3653,7 @@ let_exception_declaration:
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3665,32 +3665,32 @@ let_exception_declaration:
 in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let args, res = _2 in
+( let args, res = _2 in
         Te.decl _1 ~args ?res ~attrs:_3 ~loc:(((make_loc _symbolstartpos _endpos))) )}
 
 generalized_constructor_arguments:
   
-    {                                  ( (Pcstr_tuple [],None) )}
+    {( (Pcstr_tuple [],None) )}
 | _1 = OF _2 = constructor_arguments
-    {                             ( (_2,None) )}
+    {( (_2,None) )}
 | _1 = COLON _2 = constructor_arguments _3 = MINUSGREATER _4 = simple_core_type
-    {                                  ( (_2,Some _4) )}
+    {( (_2,Some _4) )}
 | _1 = COLON _2 = simple_core_type
-    {                                  ( (Pcstr_tuple [],Some _2) )}
+    {( (Pcstr_tuple [],Some _2) )}
 
 constructor_arguments:
   _1 = core_type_list
-    {                   ( Pcstr_tuple (List.rev _1) )}
+    {( Pcstr_tuple (List.rev _1) )}
 | _1 = LBRACE _2 = label_declarations _3 = RBRACE
-    {                                     ( Pcstr_record _2 )}
+    {( Pcstr_record _2 )}
 
 label_declarations:
   _1 = label_declaration
-    {                      ( [_1] )}
+    {( [_1] )}
 | _1 = label_declaration_semi
-    {                           ( [_1] )}
+    {( [_1] )}
 | _1 = label_declaration_semi _2 = label_declarations
-    {                                              ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 label_declaration:
   _1 = mutable_flag _1_inlined1 = label _3 = COLON _4 = poly_type_no_attr _5 = attributes
@@ -3698,7 +3698,7 @@ label_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3714,7 +3714,7 @@ let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
 else
   _startpos__2_ in
-      (
+(
        Type.field _2 _4 ~mut:_1 ~attrs:_5
          ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos))
       )}
@@ -3725,7 +3725,7 @@ label_declaration_semi:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3741,7 +3741,7 @@ let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
 else
   _startpos__2_ in
-      (
+(
        let info =
          match (rhs_info _endpos__5_) with
          | Some _ as info_before_semi -> info_before_semi
@@ -3757,7 +3757,7 @@ str_type_extension:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3769,7 +3769,7 @@ str_type_extension:
 in
 let _endpos = _endpos__9_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         if _3 <> Recursive then (not_expecting (make_loc _startpos__3_ _endpos__3_) "nonrec flag");
         Te.mk _5 (List.rev _8) ~params:_4 ~priv:_7
           ~attrs:(attrs@_9) ~docs:((symbol_docs _symbolstartpos _endpos))
@@ -3781,7 +3781,7 @@ sig_type_extension:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3793,7 +3793,7 @@ sig_type_extension:
 in
 let _endpos = _endpos__9_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (ext, attrs) = _2 in
+( let (ext, attrs) = _2 in
         if _3 <> Recursive then (not_expecting (make_loc _startpos__3_ _endpos__3_) "nonrec flag");
         Te.mk _5 (List.rev _8) ~params:_4 ~priv:_7
           ~attrs:(attrs @ _9) ~docs:((symbol_docs _symbolstartpos _endpos))
@@ -3801,32 +3801,32 @@ let _symbolstartpos = _startpos__1_ in
 
 str_extension_constructors:
   _1 = extension_constructor_declaration
-    {                                      ( [_1] )}
+    {( [_1] )}
 | _1 = bar_extension_constructor_declaration
-    {                                          ( [_1] )}
+    {( [_1] )}
 | _1 = extension_constructor_rebind
-    {                                 ( [_1] )}
+    {( [_1] )}
 | _1 = bar_extension_constructor_rebind
-    {                                     ( [_1] )}
+    {( [_1] )}
 | _1 = str_extension_constructors _2 = bar_extension_constructor_declaration
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = str_extension_constructors _2 = bar_extension_constructor_rebind
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 sig_extension_constructors:
   _1 = extension_constructor_declaration
-    {                                      ( [_1] )}
+    {( [_1] )}
 | _1 = bar_extension_constructor_declaration
-    {                                          ( [_1] )}
+    {( [_1] )}
 | _1 = sig_extension_constructors _2 = bar_extension_constructor_declaration
-    {      ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 extension_constructor_declaration:
   _1 = constr_ident _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3838,7 +3838,7 @@ extension_constructor_declaration:
 in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let args, res = _2 in
+( let args, res = _2 in
         Te.decl _1 ~args ?res ~attrs:_3
           ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos)) )}
 
@@ -3848,7 +3848,7 @@ bar_extension_constructor_declaration:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3860,7 +3860,7 @@ bar_extension_constructor_declaration:
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let args, res = _3 in
+( let args, res = _3 in
         Te.decl _2 ~args ?res ~attrs:_4
            ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos)) )}
 
@@ -3870,7 +3870,7 @@ extension_constructor_rebind:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3883,7 +3883,7 @@ in
 let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3895,7 +3895,7 @@ let _1 =
 in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Te.rebind _1 _3 ~attrs:_4
+( Te.rebind _1 _3 ~attrs:_4
           ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos)) )}
 
 bar_extension_constructor_rebind:
@@ -3904,7 +3904,7 @@ bar_extension_constructor_rebind:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3918,7 +3918,7 @@ let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3930,20 +3930,20 @@ let _2 =
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Te.rebind _2 _4 ~attrs:_5
+( Te.rebind _2 _4 ~attrs:_5
           ~loc:(((make_loc _symbolstartpos _endpos))) ~info:((symbol_info _endpos)) )}
 
 with_constraints:
   _1 = with_constraint
-    {                    ( [_1] )}
+    {( [_1] )}
 | _1 = with_constraints _2 = AND _3 = with_constraint
-    {                                         ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 with_constraint:
   _1 = TYPE _2 = type_parameters _3 = label_longident _4 = with_type_binder _5 = core_type_no_attr _6 = constraints
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Pwith_type
+( Pwith_type
           ((mkrhs _3 (make_loc _startpos__3_ _endpos__3_)),
            (Type.mk ((mkrhs (Longident.last _3) (make_loc _startpos__3_ _endpos__3_)))
               ~params:_2
@@ -3956,7 +3956,7 @@ let _symbolstartpos = _startpos__1_ in
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3968,7 +3968,7 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( Pwith_typesubst
+( Pwith_typesubst
           (Type.mk _3
              ~params:_2
              ~manifest:_5
@@ -3978,7 +3978,7 @@ let _symbolstartpos = _startpos__1_ in
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -3992,7 +3992,7 @@ let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4002,13 +4002,13 @@ let _2 =
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( Pwith_module (_2, _4) )}
+( Pwith_module (_2, _4) )}
 | _1 = MODULE _1_inlined1 = UIDENT _3 = COLONEQUAL _1_inlined2 = mod_ext_longident
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4022,7 +4022,7 @@ let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4032,13 +4032,13 @@ let _2 =
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-      ( Pwith_modsubst (_2, _4) )}
+( Pwith_modsubst (_2, _4) )}
 
 with_type_binder:
   _1 = EQUAL
-    {          ( Public )}
+    {( Public )}
 | _1 = EQUAL _2 = PRIVATE
-    {                  ( Private )}
+    {( Private )}
 
 typevar_list:
   _1 = QUOTE _1_inlined1 = ident
@@ -4046,7 +4046,7 @@ typevar_list:
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4056,13 +4056,13 @@ typevar_list:
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-                           ( [_2] )}
+( [_2] )}
 | _1 = typevar_list _2 = QUOTE _1_inlined1 = ident
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4072,69 +4072,69 @@ in
          and $symbolpos do not coincide. *)
       mkrhs _1 (make_loc _startpos _endpos) )
 in
-                                        ( _3 :: _1 )}
+( _3 :: _1 )}
 
 poly_type:
   _1 = core_type
-    {          ( _1 )}
+    {( _1 )}
 | _1 = typevar_list _2 = DOT _3 = core_type
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-          ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_poly(List.rev _1, _3)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_poly(List.rev _1, _3)) )}
 
 poly_type_no_attr:
   _1 = core_type_no_attr
-    {          ( _1 )}
+    {( _1 )}
 | _1 = typevar_list _2 = DOT _3 = core_type_no_attr
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-          ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_poly(List.rev _1, _3)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_poly(List.rev _1, _3)) )}
 
 core_type:
   _1 = core_type_no_attr
-    {      ( _1 )}
+    {( _1 )}
 | _1 = core_type _2 = attribute
-    {      ( Typ.attr _1 _2 )}
+    {( Typ.attr _1 _2 )}
 
 core_type_no_attr:
   _1 = core_type2 %prec MINUSGREATER
-    {      ( _1 )}
+    {( _1 )}
 | _1 = core_type2 _2 = AS _3 = QUOTE _4 = ident
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_alias(_1, _4)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_alias(_1, _4)) )}
 
 core_type2:
   _1 = simple_core_type_or_tuple
-    {      ( _1 )}
+    {( _1 )}
 | _1 = QUESTION _2 = LIDENT _3 = COLON _4 = core_type2 _5 = MINUSGREATER _6 = core_type2
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let param = (extra_rhs_core_type _4 _endpos__4_) in
+( let param = (extra_rhs_core_type _4 _endpos__4_) in
         (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_arrow(Optional _2, param, _6)) )}
 | _1 = OPTLABEL _2 = core_type2 _3 = MINUSGREATER _4 = core_type2
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let param = (extra_rhs_core_type _2 _endpos__2_) in
+( let param = (extra_rhs_core_type _2 _endpos__2_) in
         (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_arrow(Optional _1, param, _4)) )}
 | _1 = LIDENT _2 = COLON _3 = core_type2 _4 = MINUSGREATER _5 = core_type2
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let param = (extra_rhs_core_type _3 _endpos__3_) in
+( let param = (extra_rhs_core_type _3 _endpos__3_) in
         (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_arrow(Labelled _1, param, _5)) )}
 | _1 = core_type2 _2 = MINUSGREATER _3 = core_type2
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let param = (extra_rhs_core_type _1 _endpos__1_) in
+( let param = (extra_rhs_core_type _1 _endpos__1_) in
         (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_arrow(Nolabel, param, _3)) )}
 
 simple_core_type:
   _1 = simple_core_type2 %prec below_SHARP
-    {      ( _1 )}
+    {( _1 )}
 | _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN %prec below_SHARP
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( match _2 with [sty] -> sty | _ ->
+( match _2 with [sty] -> sty | _ ->
         raise_error (Syntaxerr.Error(Syntaxerr.Other (make_loc _symbolstartpos _endpos)));
         (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
 
@@ -4142,16 +4142,16 @@ simple_core_type2:
   _1 = QUOTE _2 = ident
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_var _2) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_var _2) )}
 | _1 = UNDERSCORE
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_any) )}
 | _1 = type_longident
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4163,13 +4163,13 @@ let _symbolstartpos = _startpos__1_ in
 in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_constr(_1, [])) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_constr(_1, [])) )}
 | _1 = simple_core_type2 _1_inlined1 = type_longident
     {let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4182,13 +4182,13 @@ in
 let _endpos__2_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_constr(_2, [_1])) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_constr(_2, [_1])) )}
 | _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN _1_inlined1 = type_longident
     {let _4 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4201,21 +4201,21 @@ in
 let _endpos__4_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_constr(_4, List.rev _2)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_constr(_4, List.rev _2)) )}
 | _1 = LESS _2 = meth_list _3 = GREATER
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( let (f, c) = _2 in (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_object (f, c)) )}
+( let (f, c) = _2 in (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_object (f, c)) )}
 | _1 = LESS _2 = GREATER
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_object ([], Closed)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_object ([], Closed)) )}
 | _1 = SHARP _1_inlined1 = class_longident
     {let _2 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4228,13 +4228,13 @@ in
 let _endpos__2_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_class(_2, [])) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_class(_2, [])) )}
 | _1 = simple_core_type2 _2 = SHARP _1_inlined1 = class_longident
     {let _3 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4247,13 +4247,13 @@ in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_class(_3, [_1])) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_class(_3, [_1])) )}
 | _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN _4 = SHARP _1_inlined1 = class_longident
     {let _5 =
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4266,122 +4266,122 @@ in
 let _endpos__5_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_class(_5, List.rev _2)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_class(_5, List.rev _2)) )}
 | _1 = LBRACKET _2 = tag_field _3 = RBRACKET
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant([_2], Closed, None)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant([_2], Closed, None)) )}
 | _1 = LBRACKET _2 = BAR _3 = row_field_list _4 = RBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Closed, None)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Closed, None)) )}
 | _1 = LBRACKET _2 = row_field _3 = BAR _4 = row_field_list _5 = RBRACKET
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(_2 :: List.rev _4, Closed, None)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(_2 :: List.rev _4, Closed, None)) )}
 | _1 = LBRACKETGREATER _2 = opt_bar _3 = row_field_list _4 = RBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Open, None)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Open, None)) )}
 | _1 = LBRACKETGREATER _2 = RBRACKET
     {let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant([], Open, None)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant([], Open, None)) )}
 | _1 = LBRACKETLESS _2 = opt_bar _3 = row_field_list _4 = RBRACKET
     {let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Closed, Some [])) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Closed, Some [])) )}
 | _1 = LBRACKETLESS _2 = opt_bar _3 = row_field_list _4 = GREATER _5 = name_tag_list _6 = RBRACKET
     {let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Closed, Some (List.rev _5))) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_variant(List.rev _3, Closed, Some (List.rev _5))) )}
 | _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = package_type _5 = RPAREN
     {let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ptyp_package _4) _3 )}
+( (mktyp_attrs ~loc:(make_loc _symbolstartpos _endpos)) (Ptyp_package _4) _3 )}
 | _1 = extension
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos)) (Ptyp_extension _1) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos)) (Ptyp_extension _1) )}
 
 package_type:
   _1 = module_type
-    {                ( package_type_of_module_type _1 )}
+    {( package_type_of_module_type _1 )}
 
 row_field_list:
   _1 = row_field
-    {              ( [_1] )}
+    {( [_1] )}
 | _1 = row_field_list _2 = BAR _3 = row_field
-    {                                 ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 row_field:
   _1 = tag_field
-    {              ( _1 )}
+    {( _1 )}
 | _1 = simple_core_type
-    {                     ( Rinherit _1 )}
+    {( Rinherit _1 )}
 
 tag_field:
   _1 = name_tag _2 = OF _3 = opt_ampersand _4 = amper_type_list _5 = attributes
     {let _endpos = _endpos__5_ in
-      ( Rtag (_1, add_info_attrs ((symbol_info _endpos)) _5, _3, List.rev _4) )}
+( Rtag (_1, add_info_attrs ((symbol_info _endpos)) _5, _3, List.rev _4) )}
 | _1 = name_tag _2 = attributes
     {let _endpos = _endpos__2_ in
-      ( Rtag (_1, add_info_attrs ((symbol_info _endpos)) _2, true, []) )}
+( Rtag (_1, add_info_attrs ((symbol_info _endpos)) _2, true, []) )}
 
 opt_ampersand:
   _1 = AMPERSAND
-    {              ( true )}
+    {( true )}
 | 
-    {    ( false )}
+    {( false )}
 
 amper_type_list:
   _1 = core_type_no_attr
-    {                      ( [_1] )}
+    {( [_1] )}
 | _1 = amper_type_list _2 = AMPERSAND _3 = core_type_no_attr
-    {                                                ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 name_tag_list:
   _1 = name_tag
-    {             ( [_1] )}
+    {( [_1] )}
 | _1 = name_tag_list _2 = name_tag
-    {                           ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 simple_core_type_or_tuple:
   _1 = simple_core_type
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = simple_core_type _2 = STAR _3 = core_type_list
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-      ( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_tuple(_1 :: List.rev _3)) )}
+( (mktyp ~loc:(make_loc _symbolstartpos _endpos))(Ptyp_tuple(_1 :: List.rev _3)) )}
 
 core_type_comma_list:
   _1 = core_type
-    {              ( [_1] )}
+    {( [_1] )}
 | _1 = core_type_comma_list _2 = COMMA _3 = core_type
-    {                                         ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 core_type_list:
   _1 = simple_core_type
-    {                     ( [_1] )}
+    {( [_1] )}
 | _1 = core_type_list _2 = STAR _3 = simple_core_type
-    {                                         ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 meth_list:
   _1 = field_semi _2 = meth_list
-    {                         ( let (f, c) = _2 in (_1 :: f, c) )}
+    {( let (f, c) = _2 in (_1 :: f, c) )}
 | _1 = field_semi
-    {               ( [_1], Closed )}
+    {( [_1], Closed )}
 | _1 = field
-    {          ( [_1], Closed )}
+    {( [_1], Closed )}
 | _1 = DOTDOT
-    {           ( [], Open )}
+    {( [], Open )}
 
 field:
   _1 = label _2 = COLON _3 = poly_type_no_attr _4 = attributes
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4392,14 +4392,14 @@ field:
       mkrhs _1 (make_loc _startpos _endpos) )
 in
 let _endpos = _endpos__4_ in
-    ( (_1, add_info_attrs ((symbol_info _endpos)) _4, _3) )}
+( (_1, add_info_attrs ((symbol_info _endpos)) _4, _3) )}
 
 field_semi:
   _1 = label _2 = COLON _3 = poly_type_no_attr _4 = attributes _5 = SEMI _6 = attributes
     {let _1 =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-      (
+  (
       (* Semantically we could use $symbolstartpos instead of $startpos
          here, but the code comes from calls to (Parsing.rhs_loc p) for
          some position p, which rather corresponds to
@@ -4410,7 +4410,7 @@ field_semi:
       mkrhs _1 (make_loc _startpos _endpos) )
 in
 let _endpos = _endpos__6_ in
-    ( let info =
+( let info =
         match (rhs_info _endpos__4_) with
         | Some _ as info_before_semi -> info_before_semi
         | None -> (symbol_info _endpos)
@@ -4419,173 +4419,173 @@ let _endpos = _endpos__6_ in
 
 label:
   _1 = LIDENT
-    {           ( _1 )}
+    {( _1 )}
 
 constant:
   _1 = INT
-    {        ( let (n, m) = _1 in Pconst_integer (n, m) )}
+    {( let (n, m) = _1 in Pconst_integer (n, m) )}
 | _1 = CHAR
-    {         ( Pconst_char _1 )}
+    {( Pconst_char _1 )}
 | _1 = STRING
-    {           ( let (s, d) = _1 in Pconst_string (s, d) )}
+    {( let (s, d) = _1 in Pconst_string (s, d) )}
 | _1 = FLOAT
-    {          ( let (f, m) = _1 in Pconst_float (f, m) )}
+    {( let (f, m) = _1 in Pconst_float (f, m) )}
 
 signed_constant:
   _1 = constant
-    {             ( _1 )}
+    {( _1 )}
 | _1 = MINUS _2 = INT
-    {              ( let (n, m) = _2 in Pconst_integer("-" ^ n, m) )}
+    {( let (n, m) = _2 in Pconst_integer("-" ^ n, m) )}
 | _1 = MINUS _2 = FLOAT
-    {                ( let (f, m) = _2 in Pconst_float("-" ^ f, m) )}
+    {( let (f, m) = _2 in Pconst_float("-" ^ f, m) )}
 | _1 = PLUS _2 = INT
-    {             ( let (n, m) = _2 in Pconst_integer (n, m) )}
+    {( let (n, m) = _2 in Pconst_integer (n, m) )}
 | _1 = PLUS _2 = FLOAT
-    {               ( let (f, m) = _2 in Pconst_float(f, m) )}
+    {( let (f, m) = _2 in Pconst_float(f, m) )}
 
 ident:
   _1 = UIDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = LIDENT
-    {           ( _1 )}
+    {( _1 )}
 
 val_ident:
   _1 = LIDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = LPAREN _2 = operator _3 = RPAREN
-    {                           ( _2 )}
+    {( _2 )}
 
 operator:
   _1 = PREFIXOP
-    {             ( _1 )}
+    {( _1 )}
 | _1 = INFIXOP0
-    {             ( _1 )}
+    {( _1 )}
 | _1 = INFIXOP1
-    {             ( _1 )}
+    {( _1 )}
 | _1 = INFIXOP2
-    {             ( _1 )}
+    {( _1 )}
 | _1 = INFIXOP3
-    {             ( _1 )}
+    {( _1 )}
 | _1 = INFIXOP4
-    {             ( _1 )}
+    {( _1 )}
 | _1 = SHARPOP
-    {            ( _1 )}
+    {( _1 )}
 | _1 = BANG
-    {         ( "!" )}
+    {( "!" )}
 | _1 = PLUS
-    {         ( "+" )}
+    {( "+" )}
 | _1 = PLUSDOT
-    {            ( "+." )}
+    {( "+." )}
 | _1 = MINUS
-    {          ( "-" )}
+    {( "-" )}
 | _1 = MINUSDOT
-    {             ( "-." )}
+    {( "-." )}
 | _1 = STAR
-    {         ( "*" )}
+    {( "*" )}
 | _1 = EQUAL
-    {          ( "=" )}
+    {( "=" )}
 | _1 = LESS
-    {         ( "<" )}
+    {( "<" )}
 | _1 = GREATER
-    {            ( ">" )}
+    {( ">" )}
 | _1 = OR
-    {       ( "or" )}
+    {( "or" )}
 | _1 = BARBAR
-    {           ( "||" )}
+    {( "||" )}
 | _1 = AMPERSAND
-    {              ( "&" )}
+    {( "&" )}
 | _1 = AMPERAMPER
-    {               ( "&&" )}
+    {( "&&" )}
 | _1 = COLONEQUAL
-    {               ( ":=" )}
+    {( ":=" )}
 | _1 = PLUSEQ
-    {           ( "+=" )}
+    {( "+=" )}
 | _1 = PERCENT
-    {            ( "%" )}
+    {( "%" )}
 
 constr_ident:
   _1 = UIDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = LBRACKET _2 = RBRACKET
-    {                      ( "[]" )}
+    {( "[]" )}
 | _1 = LPAREN _2 = RPAREN
-    {                  ( "()" )}
+    {( "()" )}
 | _1 = LPAREN _2 = COLONCOLON _3 = RPAREN
-    {                             ( "::" )}
+    {( "::" )}
 | _1 = FALSE
-    {          ( "false" )}
+    {( "false" )}
 | _1 = TRUE
-    {         ( "true" )}
+    {( "true" )}
 
 val_longident:
   _1 = val_ident
-    {              ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = val_ident
-    {                                ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 constr_longident:
   _1 = mod_longident %prec below_DOT
-    {                                  ( _1 )}
+    {( _1 )}
 | _1 = LBRACKET _2 = RBRACKET
-    {                      ( Lident "[]" )}
+    {( Lident "[]" )}
 | _1 = LPAREN _2 = RPAREN
-    {                  ( Lident "()" )}
+    {( Lident "()" )}
 | _1 = FALSE
-    {          ( Lident "false" )}
+    {( Lident "false" )}
 | _1 = TRUE
-    {         ( Lident "true" )}
+    {( Lident "true" )}
 
 label_longident:
   _1 = LIDENT
-    {           ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = LIDENT
-    {                             ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 type_longident:
   _1 = LIDENT
-    {           ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = LIDENT
-    {                                 ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 mod_longident:
   _1 = UIDENT
-    {           ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = UIDENT
-    {                             ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 mod_ext_longident:
   _1 = UIDENT
-    {           ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = UIDENT
-    {                                 ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 | _1 = mod_ext_longident _2 = LPAREN _3 = mod_ext_longident _4 = RPAREN
-    {                                                      ( lapply _1 _3 )}
+    {( lapply _1 _3 )}
 
 mty_longident:
   _1 = ident
-    {          ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = ident
-    {                                ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 clty_longident:
   _1 = LIDENT
-    {           ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = LIDENT
-    {                                 ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 class_longident:
   _1 = LIDENT
-    {           ( Lident _1 )}
+    {( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = LIDENT
-    {                             ( Ldot(_1, _3) )}
+    {( Ldot(_1, _3) )}
 
 toplevel_directive:
   _1 = SHARP _2 = ident
-    {let _3 =                 ( None ) in
+    {let _3 = ( None ) in
 let _endpos__3_ = _endpos__2_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4596,13 +4596,13 @@ let _symbolstartpos = _startpos__1_ in
 | _1 = SHARP _2 = ident _1_inlined1 = STRING
     {let _3 =
   let _1 = _1_inlined1 in
-             ( let (s, d) = _1 in
+  ( let (s, d) = _1 in
                   Some (Exp.constant (Pconst_string (s, d) )) )
 in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4613,13 +4613,13 @@ let _symbolstartpos = _startpos__1_ in
 | _1 = SHARP _2 = ident _1_inlined1 = INT
     {let _3 =
   let _1 = _1_inlined1 in
-          ( let (n, m) = _1 in
+  ( let (n, m) = _1 in
                   Some (Exp.constant (Pconst_integer (n, m))) )
 in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4632,12 +4632,12 @@ let _symbolstartpos = _startpos__1_ in
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
-                                    ( Some (Exp.ident (mkloc _1 ((make_loc _symbolstartpos _endpos)))) )
+  ( Some (Exp.ident (mkloc _1 ((make_loc _symbolstartpos _endpos)))) )
 in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4650,12 +4650,12 @@ let _symbolstartpos = _startpos__1_ in
   let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
-                                    ( Some (Exp.ident (mkloc _1 ((make_loc _symbolstartpos _endpos)))) )
+  ( Some (Exp.ident (mkloc _1 ((make_loc _symbolstartpos _endpos)))) )
 in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4668,12 +4668,12 @@ let _symbolstartpos = _startpos__1_ in
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
-            ( Some (Exp.construct (mkloc (Longident.Lident "false") ((make_loc _symbolstartpos _endpos))) None) )
+  ( Some (Exp.construct (mkloc (Longident.Lident "false") ((make_loc _symbolstartpos _endpos))) None) )
 in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4686,12 +4686,12 @@ let _symbolstartpos = _startpos__1_ in
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
-           ( Some (Exp.construct (mkloc (Longident.Lident "true") ((make_loc _symbolstartpos _endpos))) None) )
+  ( Some (Exp.construct (mkloc (Longident.Lident "true") ((make_loc _symbolstartpos _endpos))) None) )
 in
 let _endpos__3_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-    ( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
+( let id = mkloc ("merlin.directive." ^ _2) ((make_loc _startpos__2_ _endpos__2_)) in
       let payload =
         match _3 with
         | None -> PStr []
@@ -4702,251 +4702,251 @@ let _symbolstartpos = _startpos__1_ in
 
 name_tag:
   _1 = BACKQUOTE _2 = ident
-    {                    ( _2 )}
+    {( _2 )}
 
 rec_flag:
   
-    {                                                ( Nonrecursive )}
+    {( Nonrecursive )}
 | _1 = REC
-    {        ( Recursive )}
+    {( Recursive )}
 
 nonrec_flag:
   
-    {                                                ( Recursive )}
+    {( Recursive )}
 | _1 = NONREC
-    {           ( Nonrecursive )}
+    {( Nonrecursive )}
 
 direction_flag:
   _1 = TO
-    {       ( Upto )}
+    {( Upto )}
 | _1 = DOWNTO
-    {           ( Downto )}
+    {( Downto )}
 
 private_flag:
   
-    {                                                ( Public )}
+    {( Public )}
 | _1 = PRIVATE
-    {            ( Private )}
+    {( Private )}
 
 mutable_flag:
   
-    {                                                ( Immutable )}
+    {( Immutable )}
 | _1 = MUTABLE
-    {            ( Mutable )}
+    {( Mutable )}
 
 virtual_flag:
   
-    {                                                ( Concrete )}
+    {( Concrete )}
 | _1 = VIRTUAL
-    {            ( Virtual )}
+    {( Virtual )}
 
 private_virtual_flags:
   
-    {                 ( Public, Concrete )}
+    {( Public, Concrete )}
 | _1 = PRIVATE
-    {            ( Private, Concrete )}
+    {( Private, Concrete )}
 | _1 = VIRTUAL
-    {            ( Public, Virtual )}
+    {( Public, Virtual )}
 | _1 = PRIVATE _2 = VIRTUAL
-    {                    ( Private, Virtual )}
+    {( Private, Virtual )}
 | _1 = VIRTUAL _2 = PRIVATE
-    {                    ( Private, Virtual )}
+    {( Private, Virtual )}
 
 override_flag:
   
-    {                                                ( Fresh )}
+    {( Fresh )}
 | _1 = BANG
-    {         ( Override )}
+    {( Override )}
 
 opt_bar:
   
-    {                                                ( () )}
+    {( () )}
 | _1 = BAR
-    {        ( () )}
+    {( () )}
 
 opt_semi:
   
-    {    ( () )}
+    {( () )}
 | _1 = SEMI
-    {         ( () )}
+    {( () )}
 
 subtractive:
   _1 = MINUS
-    {          ( "-" )}
+    {( "-" )}
 | _1 = MINUSDOT
-    {             ( "-." )}
+    {( "-." )}
 
 additive:
   _1 = PLUS
-    {         ( "+" )}
+    {( "+" )}
 | _1 = PLUSDOT
-    {            ( "+." )}
+    {( "+." )}
 
 single_attr_id:
   _1 = LIDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = UIDENT
-    {           ( _1 )}
+    {( _1 )}
 | _1 = AND
-    {        ( "and" )}
+    {( "and" )}
 | _1 = AS
-    {       ( "as" )}
+    {( "as" )}
 | _1 = ASSERT
-    {           ( "assert" )}
+    {( "assert" )}
 | _1 = BEGIN
-    {          ( "begin" )}
+    {( "begin" )}
 | _1 = CLASS
-    {          ( "class" )}
+    {( "class" )}
 | _1 = CONSTRAINT
-    {               ( "constraint" )}
+    {( "constraint" )}
 | _1 = DO
-    {       ( "do" )}
+    {( "do" )}
 | _1 = DONE
-    {         ( "done" )}
+    {( "done" )}
 | _1 = DOWNTO
-    {           ( "downto" )}
+    {( "downto" )}
 | _1 = ELSE
-    {         ( "else" )}
+    {( "else" )}
 | _1 = END
-    {        ( "end" )}
+    {( "end" )}
 | _1 = EXCEPTION
-    {              ( "exception" )}
+    {( "exception" )}
 | _1 = EXTERNAL
-    {             ( "external" )}
+    {( "external" )}
 | _1 = FALSE
-    {          ( "false" )}
+    {( "false" )}
 | _1 = FOR
-    {        ( "for" )}
+    {( "for" )}
 | _1 = FUN
-    {        ( "fun" )}
+    {( "fun" )}
 | _1 = FUNCTION
-    {             ( "function" )}
+    {( "function" )}
 | _1 = FUNCTOR
-    {            ( "functor" )}
+    {( "functor" )}
 | _1 = IF
-    {       ( "if" )}
+    {( "if" )}
 | _1 = IN
-    {       ( "in" )}
+    {( "in" )}
 | _1 = INCLUDE
-    {            ( "include" )}
+    {( "include" )}
 | _1 = INHERIT
-    {            ( "inherit" )}
+    {( "inherit" )}
 | _1 = INITIALIZER
-    {                ( "initializer" )}
+    {( "initializer" )}
 | _1 = LAZY
-    {         ( "lazy" )}
+    {( "lazy" )}
 | _1 = LET
-    {        ( "let" )}
+    {( "let" )}
 | _1 = MATCH
-    {          ( "match" )}
+    {( "match" )}
 | _1 = METHOD
-    {           ( "method" )}
+    {( "method" )}
 | _1 = MODULE
-    {           ( "module" )}
+    {( "module" )}
 | _1 = MUTABLE
-    {            ( "mutable" )}
+    {( "mutable" )}
 | _1 = NEW
-    {        ( "new" )}
+    {( "new" )}
 | _1 = NONREC
-    {           ( "nonrec" )}
+    {( "nonrec" )}
 | _1 = OBJECT
-    {           ( "object" )}
+    {( "object" )}
 | _1 = OF
-    {       ( "of" )}
+    {( "of" )}
 | _1 = OPEN
-    {         ( "open" )}
+    {( "open" )}
 | _1 = OR
-    {       ( "or" )}
+    {( "or" )}
 | _1 = PRIVATE
-    {            ( "private" )}
+    {( "private" )}
 | _1 = REC
-    {        ( "rec" )}
+    {( "rec" )}
 | _1 = SIG
-    {        ( "sig" )}
+    {( "sig" )}
 | _1 = STRUCT
-    {           ( "struct" )}
+    {( "struct" )}
 | _1 = THEN
-    {         ( "then" )}
+    {( "then" )}
 | _1 = TO
-    {       ( "to" )}
+    {( "to" )}
 | _1 = TRUE
-    {         ( "true" )}
+    {( "true" )}
 | _1 = TRY
-    {        ( "try" )}
+    {( "try" )}
 | _1 = TYPE
-    {         ( "type" )}
+    {( "type" )}
 | _1 = VAL
-    {        ( "val" )}
+    {( "val" )}
 | _1 = VIRTUAL
-    {            ( "virtual" )}
+    {( "virtual" )}
 | _1 = WHEN
-    {         ( "when" )}
+    {( "when" )}
 | _1 = WHILE
-    {          ( "while" )}
+    {( "while" )}
 | _1 = WITH
-    {         ( "with" )}
+    {( "with" )}
 
 attr_id:
   _1 = single_attr_id
     {let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
-                   ( mkloc _1 ((make_loc _symbolstartpos _endpos)) )}
+( mkloc _1 ((make_loc _symbolstartpos _endpos)) )}
 | _1 = single_attr_id _2 = DOT _3 = attr_id
     {let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
-                               ( mkloc (_1 ^ "." ^ _3.txt) ((make_loc _symbolstartpos _endpos)))}
+( mkloc (_1 ^ "." ^ _3.txt) ((make_loc _symbolstartpos _endpos)))}
 
 attribute:
   _1 = LBRACKETAT _2 = attr_id _3 = payload _4 = RBRACKET
-    {                                      ( (_2, _3) )}
+    {( (_2, _3) )}
 
 post_item_attribute:
   _1 = LBRACKETATAT _2 = attr_id _3 = payload _4 = RBRACKET
-    {                                        ( (_2, _3) )}
+    {( (_2, _3) )}
 
 floating_attribute:
   _1 = LBRACKETATATAT _2 = attr_id _3 = payload _4 = RBRACKET
-    {                                          ( (_2, _3) )}
+    {( (_2, _3) )}
 
 post_item_attributes:
   
-    {                 ( [] )}
+    {( [] )}
 | _1 = post_item_attribute _2 = post_item_attributes
-    {                                             ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 attributes:
   
-    {               ( [] )}
+    {( [] )}
 | _1 = attribute _2 = attributes
-    {                         ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 ext_attributes:
   
-    {                 ( None, [] )}
+    {( None, [] )}
 | _1 = attribute _2 = attributes
-    {                         ( None, _1 :: _2 )}
+    {( None, _1 :: _2 )}
 | _1 = PERCENT _2 = attr_id _3 = attributes
-    {                               ( Some _2, _3 )}
+    {( Some _2, _3 )}
 
 extension:
   _1 = LBRACKETPERCENT _2 = attr_id _3 = payload _4 = RBRACKET
-    {                                           ( (_2, _3) )}
+    {( (_2, _3) )}
 
 item_extension:
   _1 = LBRACKETPERCENTPERCENT _2 = attr_id _3 = payload _4 = RBRACKET
-    {                                                  ( (_2, _3) )}
+    {( (_2, _3) )}
 
 payload:
   _1 = structure
-    {              ( PStr _1 )}
+    {( PStr _1 )}
 | _1 = COLON _2 = signature
-    {                    ( PSig _2 )}
+    {( PSig _2 )}
 | _1 = COLON _2 = core_type
-    {                    ( PTyp _2 )}
+    {( PTyp _2 )}
 | _1 = QUESTION _2 = pattern
-    {                     ( PPat (_2, None) )}
+    {( PPat (_2, None) )}
 | _1 = QUESTION _2 = pattern _3 = WHEN _4 = seq_expr
-    {                                   ( PPat (_2, Some _4) )}
+    {( PPat (_2, Some _4) )}
 
 %%
 

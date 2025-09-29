@@ -15,55 +15,55 @@
 
 list_NEWLINE_:
   
-    {    ( [] )} [@name nil_NEWLINE]
+    {( [] )} [@name nil_NEWLINE]
 | x = NEWLINE xs = list_NEWLINE_
-    {    ( x :: xs )} [@name cons_NEWLINE]
+    {( x :: xs )} [@name cons_NEWLINE]
 
 nonempty_list_atom_:
   x = atom
-    {    ( [ x ] )} [@name one_atom]
+    {( [ x ] )} [@name one_atom]
 | x = atom xs = nonempty_list_atom_
-    {    ( x :: xs )} [@name more_atom]
+    {( x :: xs )} [@name more_atom]
 
 input:
   _1 = NEWLINE i = input
-    {    ( i )}
+    {( i )}
 | p = start
-    {    ( Some p )}
+    {( Some p )}
 | c = clause
-    {    ( Some c )}
+    {( Some c )}
 | _1 = EOF
-    {    ( None )}
+    {( None )}
 
 file:
   _1 = list_NEWLINE_ h = start l = cnf
-    {    ( h :: l )}
+    {( h :: l )}
 
 start:
   _1 = P _2 = CNF nbvar = INT nbclause = INT _5 = NEWLINE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
-    ( let loc = L.mk_pos _startpos _endpos in
+( let loc = L.mk_pos _startpos _endpos in
       S.p_cnf ~loc nbvar nbclause )}
 
 cnf:
   _1 = EOF
-    {    ( [] )}
+    {( [] )}
 | _1 = NEWLINE l = cnf
-    {    ( l )}
+    {( l )}
 | c = clause l = cnf
-    {    ( c :: l )}
+    {( c :: l )}
 
 clause:
   c = nonempty_list_atom_ _2 = ZERO _3 = NEWLINE
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos_c_ in
-    ( let loc = L.mk_pos _startpos _endpos in S.clause ~loc c )}
+( let loc = L.mk_pos _startpos _endpos in S.clause ~loc c )}
 
 atom:
   i = INT
     {let _endpos = _endpos_i_ in
 let _startpos = _startpos_i_ in
-    ( let loc = L.mk_pos _startpos _endpos in T.atom ~loc i )}
+( let loc = L.mk_pos _startpos _endpos in T.atom ~loc i )}
 
 %%

@@ -45,43 +45,43 @@ Warning: the token RIGHT_BRA is unused.
 
 poly_interp_entry:
   _1 = interp _2 = EOF
-    {             ( _1 )}
+    {( _1 )}
 
 interp:
   
-    {                           ( SymbolMap.empty )}
+    {( SymbolMap.empty )}
 | _1 = symbol_interp _2 = EQUAL _3 = poly _4 = SEMICOLON _5 = interp
-    {                           ( SymbolMap.add _1 _3 _5 )}
+    {( SymbolMap.add _1 _3 _5 )}
 
 symbol_interp:
   _1 = INTERP
-    {                            ( current_poly_vars := []; _1 )}
+    {( current_poly_vars := []; _1 )}
 | _1 = INTERP _2 = LEFT_PAR _3 = vars
-    {                           ( current_poly_vars := _3; _1 )}
+    {( current_poly_vars := _3; _1 )}
 
 vars:
   _1 = VAR _2 = RIGHT_PAR
-    {                           ( [_1] )}
+    {( [_1] )}
 | _1 = VAR _2 = COMMA _3 = vars
-    {                           ( _1::_3 )}
+    {( _1::_3 )}
 
 poly:
   _1 = VAR
-    {                           ( var _1 )}
+    {( var _1 )}
 | _1 = INT
-    {                           ( IntPolynomials.cte _1 )}
+    {( IntPolynomials.cte _1 )}
 | _1 = LEFT_PAR _2 = poly _3 = RIGHT_PAR
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = poly _2 = PLUS _3 = poly
-    {                           ( IntPolynomials.add _1 _3 )}
+    {( IntPolynomials.add _1 _3 )}
 | _1 = poly _2 = MINUS _3 = poly
-    {                           ( IntPolynomials.sub _1 _3 )}
+    {( IntPolynomials.sub _1 _3 )}
 | _1 = MINUS _2 = poly %prec UMINUS
-    {                           ( IntPolynomials.minus _2 )}
+    {( IntPolynomials.minus _2 )}
 | _1 = poly _2 = MULT _3 = poly
-    {                           ( IntPolynomials.mult _1 _3 )}
+    {( IntPolynomials.mult _1 _3 )}
 | _1 = poly _2 = EXP _3 = INT
-    {    ( try
+    {( try
 	IntPolynomials.power _1 (Numbers.to_int _3)
       with
 	Failure("int_of_big_int") ->
@@ -90,12 +90,12 @@ poly:
 
 weight_entry:
   _1 = weight _2 = EOF
-    {             ( _1 )}
+    {( _1 )}
 
 weight:
   
-    {                             ( SymbolMap.empty )}
+    {( SymbolMap.empty )}
 | _1 = INTERP _2 = EQUAL _3 = INT _4 = SEMICOLON _5 = weight
-    {                                    ( SymbolMap.add _1 (Numbers.to_int _3) _5 )}
+    {( SymbolMap.add _1 (Numbers.to_int _3) _5 )}
 
 %%

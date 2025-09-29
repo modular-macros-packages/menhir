@@ -31,119 +31,119 @@ open Parser_utils
 
 loption_separated_nonempty_list_COMMA_key_value_pair__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_key_value_pair_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_key_value_pair_]
 | x = separated_nonempty_list_COMMA_key_value_pair_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_key_value_pair_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_key_value_pair_]
 
 list_NEWLINE_:
   
-    {    ( [] )} [@name nil_NEWLINE]
+    {( [] )} [@name nil_NEWLINE]
 | x = NEWLINE xs = list_NEWLINE_
-    {    ( x :: xs )} [@name cons_NEWLINE]
+    {( x :: xs )} [@name cons_NEWLINE]
 
 nonempty_list_NEWLINE_:
   x = NEWLINE
-    {    ( [ x ] )} [@name one_NEWLINE]
+    {( [ x ] )} [@name one_NEWLINE]
 | x = NEWLINE xs = nonempty_list_NEWLINE_
-    {    ( x :: xs )} [@name more_NEWLINE]
+    {( x :: xs )} [@name more_NEWLINE]
 
 separated_nonempty_list_COMMA_key_value_pair_:
   x = key_value_pair
-    {    ( [ x ] )} [@name one_COMMA_key_value_pair]
+    {( [ x ] )} [@name one_COMMA_key_value_pair]
 | x = key_value_pair _2 = COMMA xs = separated_nonempty_list_COMMA_key_value_pair_
-    {    ( x :: xs )} [@name more_COMMA_key_value_pair]
+    {( x :: xs )} [@name more_COMMA_key_value_pair]
 
 separated_nonempty_list_DOT_key_:
   x = key
-    {    ( [ x ] )} [@name one_DOT_key]
+    {( [ x ] )} [@name one_DOT_key]
 | x = key _2 = DOT xs = separated_nonempty_list_DOT_key_
-    {    ( x :: xs )} [@name more_DOT_key]
+    {( x :: xs )} [@name more_DOT_key]
 
 key:
   s = KEY
-    {            ( s )}
+    {( s )}
 
 value:
   b = BOOLEAN
-    {    ( NodeBoolean b )}
+    {( NodeBoolean b )}
 | i = INTEGER
-    {    ( NodeInteger i )}
+    {( NodeInteger i )}
 | f = FLOAT
-    {    ( NodeFloat f )}
+    {( NodeFloat f )}
 | s = STRING
-    {    ( NodeString s )}
+    {( NodeString s )}
 | s = MULTILINE_STRING
-    {    ( NodeString s )}
+    {( NodeString s )}
 | t = LOCAL_TIME
-    {    ( NodeLocalTime t )}
+    {( NodeLocalTime t )}
 | d = LOCAL_DATE
-    {    ( NodeLocalDate d )}
+    {( NodeLocalDate d )}
 | dt = LOCAL_DATETIME
-    {    ( NodeLocalDateTime dt )}
+    {( NodeLocalDateTime dt )}
 | dt = OFFSET_DATETIME
-    {    ( NodeOffsetDateTime dt )}
+    {( NodeOffsetDateTime dt )}
 | a = array
-    {    ( NodeArray a )}
+    {( NodeArray a )}
 | i = inline_table
-    {    ( NodeInlineTable i )}
+    {( NodeInlineTable i )}
 
 item_sequence_COMMA_value_:
   
-    {    ( [] )}
+    {( [] )}
 | x = value
-    {    ( [x] )}
+    {( [x] )}
 | x = value _2 = COMMA xs = item_sequence_COMMA_value_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 array:
   _1 = ARRAY_START _2 = ARRAY_END
-    {                           ( [] )}
+    {( [] )}
 | _1 = ARRAY_START vs = item_sequence_COMMA_value_ _3 = ARRAY_END
-    {                                                             ( vs )}
+    {( vs )}
 
 table_path:
   ks = separated_nonempty_list_DOT_key_
-    {                                           ( ks )}
+    {( ks )}
 
 key_value_pair:
   k = table_path _2 = EQ v = value
-    {                                   ( (k, v) )}
+    {( (k, v) )}
 
 inline_table:
   _1 = LEFT_BRACE xs = loption_separated_nonempty_list_COMMA_key_value_pair__ _3 = RIGHT_BRACE
-    {let kvs =     ( xs ) in
-                                                                         ( kvs )}
+    {let kvs = ( xs ) in
+( kvs )}
 
 table_header:
   _1 = TABLE_HEADER_START ks = table_path _3 = TABLE_HEADER_END
-    {                                                          ( ks )}
+    {( ks )}
 
 table_array_header:
   _1 = TABLE_ARRAY_HEADER_START ks = table_path _3 = TABLE_ARRAY_HEADER_END
-    {                                                                      ( ks )}
+    {( ks )}
 
 table_entry:
   kv = key_value_pair
-    {    ( let (k, v) = kv in Pair (k, v) )}
+    {( let (k, v) = kv in Pair (k, v) )}
 | ks = table_header
-    {    ( TableHeader ks )}
+    {( TableHeader ks )}
 | ks = table_array_header
-    {    ( TableArrayHeader ks )}
+    {( TableArrayHeader ks )}
 
 items_on_lines_table_entry_:
   
-    {                ( [] )}
+    {( [] )}
 | x = table_entry
-    {    ( [x] )}
+    {( [x] )}
 | x = table_entry _2 = nonempty_list_NEWLINE_ xs = items_on_lines_table_entry_
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 table:
   es = items_on_lines_table_entry_
-    {                                    ( es )}
+    {( es )}
 
 toml_ast:
   _1 = list_NEWLINE_ t = table _3 = EOF
-    {                             ( t )}
+    {( t )}
 
 %%

@@ -57,11 +57,11 @@ entry_point:
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                    (
+(
   c
 )}
 
@@ -71,7 +71,7 @@ program:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -79,29 +79,29 @@ let c =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let l1 =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                   (
+(
   Program_LineBreak_CompleteCommands_LineBreak (l1, c, l2)
 )}
 | x = linebreak
     {let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                       (
+(
   Program_LineBreak l
 )}
 
@@ -111,7 +111,7 @@ complete_commands:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -119,29 +119,29 @@ let nl =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cs =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                                      (
+(
   CompleteCommands_CompleteCommands_NewlineList_CompleteCommand (cs, nl, c)
 )}
 | x = complete_command
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                              (
+(
   CompleteCommands_CompleteCommand c
 )}
 
@@ -151,29 +151,29 @@ complete_command:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                            (
+(
   CompleteCommand_CList_SeparatorOp (l, s)
 )}
 | x = clist
     {let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                   (
+(
   CompleteCommand_CList l
 )}
 
@@ -183,7 +183,7 @@ clist:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -191,29 +191,29 @@ let s =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                             (
+(
   CList_CList_SeparatorOp_AndOr (l, s, a)
 )}
 | x = and_or
     {let a =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                    (
+(
   CList_AndOr a
 )}
 
@@ -222,11 +222,11 @@ and_or:
     {let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                            (
+(
   AndOr_Pipeline p
 )}
 | x = and_or _2 = AND_IF x_inlined1 = linebreak x_inlined2 = pipeline
@@ -234,7 +234,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -242,18 +242,18 @@ let l =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let a =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                    (
+(
   AndOr_AndOr_AndIf_LineBreak_Pipeline (a, l , p)
 )}
 | x = and_or _2 = OR_IF x_inlined1 = linebreak x_inlined2 = pipeline
@@ -261,7 +261,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -269,18 +269,18 @@ let l =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let a =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                    (
+(
   AndOr_AndOr_OrIf_LineBreak_Pipeline (a, l, p)
 )}
 
@@ -289,22 +289,22 @@ pipeline:
     {let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                   (
+(
   Pipeline_PipeSequence p
 )}
 | _1 = Bang x = pipe_sequence
     {let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   Pipeline_Bang_PipeSequence p
 )}
 
@@ -313,11 +313,11 @@ pipe_sequence:
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                     (
+(
   PipeSequence_Command c
 )}
 | x = pipe_sequence _2 = Pipe x_inlined1 = linebreak x_inlined2 = command
@@ -325,7 +325,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -333,18 +333,18 @@ let l =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                        (
+(
   PipeSequence_PipeSequence_Pipe_LineBreak_Command (p, l, c)
 )}
 
@@ -353,22 +353,22 @@ command:
     {let s =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                            (
+(
   Command_SimpleCommand s
 )}
 | x = compound_command
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                              (
+(
   Command_CompoundCommand c
 )}
 | x = compound_command x_inlined1 = redirect_list
@@ -376,29 +376,29 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                       (
+(
   Command_CompoundCommand_RedirectList (c, r)
 )}
 | x = function_definition
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                 (
+(
   Command_FunctionDefinition f
 )}
 
@@ -407,77 +407,77 @@ compound_command:
     {let b =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                          (
+(
   CompoundCommand_BraceGroup b
 )}
 | x = subshell
     {let s =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                      (
+(
   CompoundCommand_Subshell s
 )}
 | x = for_clause
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                        (
+(
   CompoundCommand_ForClause f
 )}
 | x = case_clause
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                         (
+(
   CompoundCommand_CaseClause c
 )}
 | x = if_clause
     {let i =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                       (
+(
   CompoundCommand_IfClause i
 )}
 | x = while_clause
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                          (
+(
   CompoundCommand_WhileClause w
 )}
 | x = until_clause
     {let u =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                          (
+(
   CompoundCommand_UntilClause u
 )}
 
@@ -486,11 +486,11 @@ subshell:
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                          (
+(
   Subshell_Lparen_CompoundList_Rparen c
 )}
 
@@ -500,18 +500,18 @@ compound_list:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                        (
+(
   CompoundList_LineBreak_Term (l, t)
 )}
 | x = linebreak x_inlined1 = term x_inlined2 = separator
@@ -519,7 +519,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -527,18 +527,18 @@ let t =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                            (
+(
   CompoundList_LineBreak_Term_Separator (l, t, s)
 )}
 
@@ -548,7 +548,7 @@ term:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -556,29 +556,29 @@ let s =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let t =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                          (
+(
   Term_Term_Separator_AndOr (t, s, a)
 )}
 | x = and_or
     {let a =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                   (
+(
   Term_AndOr a
 )}
 
@@ -588,18 +588,18 @@ for_clause:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                    (
+(
   ForClause_For_Name_DoGroup (n, d)
 )}
 | _1 = For x = name x_inlined1 = sequential_sep x_inlined2 = do_group
@@ -607,7 +607,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -615,18 +615,18 @@ let s =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                    (
+(
   ForClause_For_Name_SequentialSep_DoGroup (n, s, d)
 )}
 | _1 = For x = name x_inlined1 = linebreak _4 = cin x_inlined2 = sequential_sep x_inlined3 = do_group
@@ -634,7 +634,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined3_, _startpos_x_inlined3_, x_inlined3) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -642,7 +642,7 @@ let s =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -650,18 +650,18 @@ let l =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                         (
+(
   ForClause_For_Name_LineBreak_In_SequentialSep_DoGroup (n, l, s, d)
 )}
 | _1 = For x = name x_inlined1 = linebreak _4 = cin x_inlined2 = wordlist x_inlined3 = sequential_sep x_inlined4 = do_group
@@ -669,7 +669,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined4_, _startpos_x_inlined4_, x_inlined4) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -677,7 +677,7 @@ let s =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined3_, _startpos_x_inlined3_, x_inlined3) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -685,7 +685,7 @@ let w =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -693,30 +693,30 @@ let l =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                    (
+(
   ForClause_For_Name_LineBreak_In_WordList_SequentialSep_DoGroup (n, l, w, s, d)
 )}
 
 name:
   n = NAME
-    {                                                   (
+    {(
   n
 )}
 
 cin:
   _1 = In
-    {                                                               (
+    {(
   ()
 )}
 
@@ -726,29 +726,29 @@ wordlist:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let wl =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                        (
+(
   WordList_WordList_Word (wl, w)
 )}
 | x = word
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                           (
+(
   WordList_Word w
 )}
 
@@ -758,7 +758,7 @@ case_clause:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined3_, _startpos_x_inlined3_, x_inlined3) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -766,7 +766,7 @@ let l2 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -774,18 +774,18 @@ let l1 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                                            (
+(
   CaseClause_Case_Word_LineBreak_In_LineBreak_CaseList_Esac (w, l1, l2, c)
 )}
 | _1 = Case x = word x_inlined1 = linebreak _4 = cin x_inlined2 = linebreak x_inlined3 = case_list_ns _7 = Esac
@@ -793,7 +793,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined3_, _startpos_x_inlined3_, x_inlined3) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -801,7 +801,7 @@ let l2 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -809,18 +809,18 @@ let l1 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                                    (
+(
   CaseClause_Case_Word_LineBreak_In_LineBreak_CaseListNS_Esac (w, l1, l2, c)
 )}
 | _1 = Case x = word x_inlined1 = linebreak _4 = cin x_inlined2 = linebreak _6 = Esac
@@ -828,7 +828,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -836,18 +836,18 @@ let l1 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                            (
+(
   CaseClause_Case_Word_LineBreak_In_LineBreak_Esac (w, l1, l2)
 )}
 
@@ -857,29 +857,29 @@ case_list_ns:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                 (
+(
   CaseListNS_CaseList_CaseItemNS (c, ci)
 )}
 | x = case_item_ns
     {let ci =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                     (
+(
   CaseListNS_CaseItemNS ci
 )}
 
@@ -889,29 +889,29 @@ case_list:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                              (
+(
   CaseList_CaseList_CaseItem (c, ci)
 )}
 | x = case_item
     {let ci =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                  (
+(
   CaseList_CaseItem ci
 )}
 
@@ -921,18 +921,18 @@ case_item_ns:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                  (
+(
   CaseItemNS_Pattern_Rparen_LineBreak (p, l)
 )}
 | x = pattern _2 = Rparen x_inlined1 = compound_list
@@ -940,18 +940,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                     (
+(
   CaseItemNS_Pattern_Rparen_CompoundList (p, c)
 )}
 | _1 = Lparen x = pattern _3 = Rparen x_inlined1 = linebreak
@@ -959,18 +959,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                        (
+(
   CaseItemNS_Lparen_Pattern_Rparen_LineBreak (p, l)
 )}
 | _1 = Lparen x = pattern _3 = Rparen x_inlined1 = compound_list
@@ -978,18 +978,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                            (
+(
   CaseItemNS_Lparen_Pattern_Rparen_CompoundList (p, c)
 )}
 
@@ -999,7 +999,7 @@ case_item:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1007,18 +1007,18 @@ let l1 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                               (
+(
   CaseItem_Pattern_Rparen_LineBreak_Dsemi_LineBreak (p, l1, l2)
 )}
 | x = pattern _2 = Rparen x_inlined1 = compound_list _4 = DSEMI x_inlined2 = linebreak
@@ -1026,7 +1026,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1034,18 +1034,18 @@ let c =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                (
+(
   CaseItem_Pattern_Rparen_CompoundList_Dsemi_LineBreak (p, c, l)
 )}
 | _1 = Lparen x = pattern _3 = Rparen x_inlined1 = linebreak _5 = DSEMI x_inlined2 = linebreak
@@ -1053,7 +1053,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1061,18 +1061,18 @@ let l1 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                     (
+(
   CaseItem_Lparen_Pattern_Rparen_LineBreak_Dsemi_LineBreak (p, l1, l2)
 )}
 | _1 = Lparen x = pattern _3 = Rparen x_inlined1 = compound_list _5 = DSEMI x_inlined2 = linebreak
@@ -1080,7 +1080,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1088,18 +1088,18 @@ let c =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                       (
+(
   CaseItem_Lparen_Pattern_Rparen_CompoundList_Dsemi_LineBreak (p, c, l)
 )}
 
@@ -1108,11 +1108,11 @@ pattern:
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                            (
+(
   Pattern_Word w
 )}
 | x = pattern _2 = Pipe x_inlined1 = word
@@ -1120,18 +1120,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let p =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                            (
+(
   Pattern_Pattern_Pipe_Word (p, w)
 )}
 
@@ -1141,7 +1141,7 @@ if_clause:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1149,18 +1149,18 @@ let c2 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c1 =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                                       (
+(
   IfClause_If_CompoundList_Then_CompoundList_ElsePart_Fi (c1, c2, e)
 )}
 | _1 = If x = compound_list _3 = Then x_inlined1 = compound_list _5 = Fi
@@ -1168,18 +1168,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c1 =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                 (
+(
   IfClause_If_CompoundList_Then_CompoundList_Fi (c1, c2)
 )}
 
@@ -1189,18 +1189,18 @@ else_part:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c1 =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                 (
+(
   ElsePart_Elif_CompoundList_Then_CompoundList (c1, c2)
 )}
 | _1 = Elif x = compound_list _3 = Then x_inlined1 = compound_list x_inlined2 = else_part
@@ -1208,7 +1208,7 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1216,29 +1216,29 @@ let c2 =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c1 =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                     (
+(
   ElsePart_Elif_CompoundList_Then_CompoundList_ElsePart (c1, c2, e)
 )}
 | _1 = Else x = compound_list
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   ElsePart_Else_CompoundList c
 )}
 
@@ -1248,18 +1248,18 @@ while_clause:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                      (
+(
   WhileClause_While_CompoundList_DoGroup (c, d)
 )}
 
@@ -1269,18 +1269,18 @@ until_clause:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                      (
+(
   UntilClause_Until_CompoundList_DoGroup (c, d)
 )}
 
@@ -1290,7 +1290,7 @@ function_definition:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1298,18 +1298,18 @@ let l =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                                    (
+(
   FunctionDefinition_Fname_Lparen_Rparen_LineBreak_FunctionBody (f, l, fb)
 )}
 
@@ -1318,11 +1318,11 @@ function_body:
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                 (
+(
   FunctionBody_CompoundCommand c
 )}
 | x = compound_command x_inlined1 = redirect_list
@@ -1330,24 +1330,24 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                         (
+(
   FunctionBody_CompoundCommand_RedirectList (c, r)
 )}
 
 fname:
   n = NAME
-    {                                                                        (
+    {(
   Fname_Name n
 )}
 
@@ -1356,11 +1356,11 @@ brace_group:
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                          (
+(
   BraceGroup_LBrace_CompoundList_RBrace c
 )}
 
@@ -1369,11 +1369,11 @@ do_group:
     {let c =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                 (
+(
   DoGroup_Do_CompoundList_Done c
 )}
 
@@ -1383,7 +1383,7 @@ simple_command:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined2_, _startpos_x_inlined2_, x_inlined2) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
@@ -1391,18 +1391,18 @@ let cw =
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cp =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                                      (
+(
   SimpleCommand_CmdPrefix_CmdWord_CmdSuffix (cp, cw, cs)
 )}
 | x = cmd_prefix x_inlined1 = cmd_word
@@ -1410,29 +1410,29 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cp =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                              (
+(
   SimpleCommand_CmdPrefix_CmdWord (cp, cw)
 )}
 | x = cmd_prefix
     {let cp =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                         (
+(
   SimpleCommand_CmdPrefix cp
 )}
 | x = cmd_name x_inlined1 = cmd_suffix
@@ -1440,29 +1440,29 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cn =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                              (
+(
   SimpleCommand_CmdName_CmdSuffix (cn, cs)
 )}
 | x = cmd_name
     {let cn =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                       (
+(
   SimpleCommand_CmdName cn
 )}
 
@@ -1471,11 +1471,11 @@ cmd_name:
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                         (
+(
   CmdName_Word w
 )}
 
@@ -1484,11 +1484,11 @@ cmd_word:
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                         (
+(
   CmdWord_Word w
 )}
 
@@ -1497,11 +1497,11 @@ cmd_prefix:
     {let i =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                          (
+(
   CmdPrefix_IoRedirect i
 )}
 | x = cmd_prefix x_inlined1 = io_redirect
@@ -1509,29 +1509,29 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cp =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                (
+(
   CmdPrefix_CmdPrefix_IoRedirect (cp, i)
 )}
 | x = ASSIGNMENT_WORD
     {let a =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                             (
+(
   CmdPrefix_AssignmentWord a
 )}
 | x = cmd_prefix x_inlined1 = ASSIGNMENT_WORD
@@ -1539,18 +1539,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cp =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                    (
+(
   CmdPrefix_CmdPrefix_AssignmentWord (cp, a)
 )}
 
@@ -1559,11 +1559,11 @@ cmd_suffix:
     {let i =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                          (
+(
   CmdSuffix_IoRedirect i
 )}
 | x = cmd_suffix x_inlined1 = io_redirect
@@ -1571,29 +1571,29 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cs =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                (
+(
   CmdSuffix_CmdSuffix_IoRedirect (cs, i)
 )}
 | x = word
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                  (
+(
   CmdSuffix_Word w
 )}
 | x = cmd_suffix x_inlined1 = word
@@ -1601,18 +1601,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let cs =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                         (
+(
   CmdSuffix_CmdSuffix_Word (cs, w)
 )}
 
@@ -1621,11 +1621,11 @@ redirect_list:
     {let i =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                          (
+(
   RedirectList_IoRedirect i
 )}
 | x = redirect_list x_inlined1 = io_redirect
@@ -1633,18 +1633,18 @@ in
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let r =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                  (
+(
   RedirectList_RedirectList_IoRedirect (r, i)
 )}
 
@@ -1653,44 +1653,44 @@ io_redirect:
     {let i =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                      (
+(
   IoRedirect_IoFile i
 )}
 | ion = IO_NUMBER x = io_file
     {let i =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                   (
+(
   IoRedirect_IoNumber_IoFile (ion, i)
 )}
 | x = io_here
     {let ioh =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                       (
+(
   IoRedirect_IoHere ioh
 )}
 | ion = IO_NUMBER x = io_here
     {let ioh =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                     (
+(
   IoRedirect_IoNumber_IoHere (ion, ioh)
 )}
 
@@ -1699,77 +1699,77 @@ io_file:
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                            (
+(
   IoFile_Less_FileName f
 )}
 | _1 = LESSAND x = filename
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   IoFile_LessAnd_FileName f
 )}
 | _1 = GREAT x = filename
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   IoFile_Great_FileName f
 )}
 | _1 = GREATAND x = filename
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   IoFile_GreatAnd_FileName f
 )}
 | _1 = DGREAT x = filename
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   IoFile_DGreat_FileName f
 )}
 | _1 = LESSGREAT x = filename
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
  IoFile_LessGreat_FileName f
 )}
 | _1 = CLOBBER x = filename
     {let f =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                (
+(
   IoFile_Clobber_FileName f
 )}
 
@@ -1778,11 +1778,11 @@ filename:
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                           (
+(
   Filename_Word w
 )}
 
@@ -1791,22 +1791,22 @@ io_here:
     {let he =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                       (
+(
   IoHere_DLess_HereEnd (he, heredocument_placeholder)
 )}
 | heredocument_placeholder = DLESSDASH x = here_end
     {let he =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                          (
+(
   IoHere_DLessDash_HereEnd (he, heredocument_placeholder)
 )}
 
@@ -1815,28 +1815,28 @@ here_end:
     {let w =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                                           (
+(
   HereEnd_Word w
 )}
 
 newline_list:
   _1 = NEWLINE
-    {          (
+    {(
   NewLineList_NewLine
 )}
 | x = newline_list _2 = NEWLINE
     {let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                  (
+(
   NewLineList_NewLineList_NewLine l
 )}
 
@@ -1845,25 +1845,25 @@ linebreak:
     {let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                   (
+(
   LineBreak_NewLineList n
 )}
 | 
-    {              (
+    {(
   LineBreak_Empty
 )}
 
 separator_op:
   _1 = Uppersand
-    {                         (
+    {(
   SeparatorOp_Uppersand
 )}
 | _1 = Semicolon
-    {            (
+    {(
   SeparatorOp_Semicolon
 )}
 
@@ -1873,29 +1873,29 @@ separator:
   let (_endpos_x_, _startpos_x_, x) = (_endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined1) in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
 let s =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                         (
+(
   Separator_SeparatorOp_LineBreak (s, l)
 )}
 | x = newline_list
     {let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                          (
+(
   Separator_NewLineList n
 )}
 
@@ -1904,38 +1904,38 @@ sequential_sep:
     {let l =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                                                (
+(
   SequentialSep_Semicolon_LineBreak l
 )}
 | x = newline_list
     {let n =
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
-                          (
+  (
   CSTHelpers.with_poss _startpos _endpos x
 )
 in
-                          (
+(
   SequentialSep_NewLineList n
 )}
 
 word:
   w = WORD
-    {             (
+    {(
   w
 )}
 | n = NAME
-    {         (
+    {(
   CSTHelpers.word_of_name n
 )}
 
 intended_error:
   _1 = INTENDED_ERROR
-    {                               (
+    {(
   ()
 )}
 

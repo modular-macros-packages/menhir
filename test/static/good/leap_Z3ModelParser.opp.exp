@@ -209,9 +209,9 @@ let fill_model () : unit =
 
 generic_model:
   
-    {    ( GM.new_model() )}
+    {( GM.new_model() )}
 | _1 = OPEN_PAREN _2 = MODEL _3 = assertion_list _4 = CLOSE_PAREN
-    {    ( let _ = fill_model () in
+    {( let _ = fill_model () in
       let m = GM.copy_model model in
       let _ = GM.clear_model model in
       let _ = Hashtbl.clear var_array_map in
@@ -223,123 +223,123 @@ generic_model:
 
 assertion_list:
   _1 = assertion
-    {    ( () )}
+    {( () )}
 | _1 = assertion _2 = assertion_list
-    {    ( () )}
+    {( () )}
 
 assertion:
   _1 = universe_decl
-    {    ( () )}
+    {( () )}
 | _1 = cardinality_constraint
-    {    ( () )}
+    {( () )}
 | _1 = define_fun
-    {    ( () )}
+    {( () )}
 
 universe_decl:
   _1 = OPEN_PAREN _2 = DECLARE_FUN _3 = IDENT _4 = params _5 = type_decl _6 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 
 cardinality_constraint:
   _1 = OPEN_PAREN _2 = FORALL _3 = params _4 = conds _5 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 
 conds:
   _1 = cond_elem
-    {    ( () )}
+    {( () )}
 | _1 = OPEN_PAREN _2 = OR _3 = cond_list _4 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 
 cond_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = cond_elem _2 = cond_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 cond_elem:
   _1 = OPEN_PAREN _2 = EQUAL _3 = IDENT _4 = constant _5 = CLOSE_PAREN
-    {    ( _4 )}
+    {( _4 )}
 
 cond_elem_as_arguments:
   _1 = cond_elem
-    {    ( [Some _1] )}
+    {( [Some _1] )}
 | _1 = OPEN_PAREN _2 = AND _3 = cond_list _4 = CLOSE_PAREN
-    {    ( List.map (fun c -> Some c) _3 )}
+    {( List.map (fun c -> Some c) _3 )}
 
 define_fun:
   _1 = OPEN_PAREN _2 = DEFINE_FUN _3 = var _4 = params _5 = type_decl _6 = as_array _7 = CLOSE_PAREN
-    {    (
+    {(
       Hashtbl.add var_array_map _3 _6
     )}
 | _1 = OPEN_PAREN _2 = DEFINE_FUN _3 = var _4 = params _5 = type_decl _6 = value _7 = CLOSE_PAREN
-    {    (
+    {(
       Hashtbl.add var_value_map _3 _6
     )}
 | _1 = OPEN_PAREN _2 = DEFINE_FUN _3 = ARRAY_ID _4 = params _5 = type_decl _6 = value _7 = CLOSE_PAREN
-    {    (
+    {(
       Hashtbl.add array_value_map _3 _6;
     )}
 
 var:
   _1 = ERROR
-    {    ( "error" )}
+    {( "error" )}
 | _1 = IDENT
-    {    ( get_name _1 )}
+    {( get_name _1 )}
 
 params:
   _1 = OPEN_PAREN _2 = param_list _3 = CLOSE_PAREN
-    {    ( () )}
+    {( () )}
 
 param_list:
   
-    {    ( () )}
+    {( () )}
 | _1 = OPEN_PAREN _2 = IDENT _3 = type_decl _4 = CLOSE_PAREN _5 = param_list
-    {    ( () )}
+    {( () )}
 
 as_array:
   _1 = OPEN_PAREN _2 = UNDERSCORE _3 = AS_ARRAY _4 = ARRAY_ID _5 = CLOSE_PAREN
-    {    ( _4 )}
+    {( _4 )}
 
 abs_value:
   _1 = value
-    {    ( Concrete _1 )}
+    {( Concrete _1 )}
 | _1 = as_array
-    {    ( AsArray _1 )}
+    {( AsArray _1 )}
 
 value:
   _1 = constant
-    {    ( Constant _1 )}
+    {( Constant _1 )}
 | _1 = record
-    {    ( Record _1 )}
+    {( Record _1 )}
 | _1 = ite
-    {    ( FunMap _1 )}
+    {( FunMap _1 )}
 | _1 = const_array
-    {    ( _1 )}
+    {( _1 )}
 | _1 = store
-    {    ( Store _1 )}
+    {( Store _1 )}
 
 constant:
   _1 = BOOL
-    {    ( if _1 then "true" else "false" )}
+    {( if _1 then "true" else "false" )}
 | _1 = TID_ELEM
-    {    ( _1 )}
+    {( _1 )}
 | _1 = ADDR_ELEM
-    {    ( _1 )}
+    {( _1 )}
 | _1 = ELEM_ELEM
-    {    ( _1 )}
+    {( _1 )}
 | _1 = NUMBER
-    {    ( string_of_int _1 )}
+    {( string_of_int _1 )}
 | _1 = NO_THREAD
-    {    ( "NoThread" )}
+    {( "NoThread" )}
 | _1 = IDENT
-    {    ( get_name _1 )}
+    {( get_name _1 )}
 
 record:
   _1 = OPEN_PAREN _2 = IDENT _3 = abs_value_list _4 = CLOSE_PAREN
-    {    ( (get_name _2, _3) )}
+    {( (get_name _2, _3) )}
 
 ite:
   _1 = OPEN_PAREN _2 = ITE _3 = cond_elem_as_arguments _4 = abs_value _5 = else_ite _6 = CLOSE_PAREN
-    {    (
+    {(
       let conds = _3 in
       let cte = _4 in
       let tbl = _5 in
@@ -350,41 +350,41 @@ ite:
 
 else_ite:
   _1 = constant
-    {    ( (*(Some (Concrete (Constant $1)), Hashtbl.create 10)*)
+    {( (*(Some (Concrete (Constant $1)), Hashtbl.create 10)*)
       let tbl = Hashtbl.create 10 in
       (Hashtbl.add tbl [None] (Concrete (Constant _1)); tbl)
     )}
 | _1 = record
-    {    ( (*(Some (Concrete (Record $1)), Hashtbl.create 10)*)
+    {( (*(Some (Concrete (Record $1)), Hashtbl.create 10)*)
       let tbl = Hashtbl.create 10 in
       (Hashtbl.add tbl [None] (Concrete (Record _1)); tbl)
     )}
 | _1 = as_array
-    {    ( (*(Some (AsArray $1), Hashtbl.create 10)*)
+    {( (*(Some (AsArray $1), Hashtbl.create 10)*)
       let tbl = Hashtbl.create 10 in
       (Hashtbl.add tbl [None] (AsArray _1); tbl)
     )}
 | _1 = ite
-    {    ( _1 )}
+    {( _1 )}
 
 const_array:
   _1 = OPEN_PAREN _2 = OPEN_PAREN _3 = AS _4 = CONST _5 = type_decl _6 = CLOSE_PAREN _7 = value _8 = CLOSE_PAREN
-    {    ( _7 )}
+    {( _7 )}
 
 store:
   _1 = OPEN_PAREN _2 = STORE _3 = abs_value _4 = constant _5 = value _6 = CLOSE_PAREN
-    {    ( (_3, _4, _5) )}
+    {( (_3, _4, _5) )}
 
 abs_value_list:
   _1 = abs_value
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = abs_value _2 = abs_value_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 type_decl:
   _1 = IDENT
-    {    ( () (*GM.Const (get_name $1)*) )}
+    {( () (*GM.Const (get_name $1)*) )}
 | _1 = OPEN_PAREN _2 = ARRAY _3 = type_decl _4 = type_decl _5 = CLOSE_PAREN
-    {    ( () (*GM.Fun ([get_name $3], [get_name $4])*) )}
+    {( () (*GM.Fun ([get_name $3], [get_name $4])*) )}
 
 %%

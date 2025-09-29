@@ -45,63 +45,63 @@ Warning: the token SEMICOLON is unused.
 
 constraint_entry:
   _1 = formula _2 = EOF
-    {              ( _1 )}
+    {( _1 )}
 
 formula:
   _1 = formula _2 = AND _3 = formula
-    {    ( conj _1 _3 )}
+    {( conj _1 _3 )}
 | _1 = formula _2 = OR _3 = formula
-    {    ( disj _1 _3 )}
+    {( disj _1 _3 )}
 | _1 = NOT _2 = formula
-    {    ( Neg(_2) )}
+    {( Neg(_2) )}
 | _1 = formula _2 = IMPLIES _3 = formula
-    {    ( Implies(_1,_3) )}
+    {( Implies(_1,_3) )}
 | _1 = formula _2 = EQUIV _3 = formula
-    {    ( Equiv(_1,_3) )}
+    {( Equiv(_1,_3) )}
 | _1 = EXISTS _2 = id_list _3 = COMMA _4 = formula
-    {    ( Exists(_2,_4) )}
+    {( Exists(_2,_4) )}
 | _1 = FORALL _2 = id_list _3 = COMMA _4 = formula
-    {    ( Forall(_2,_4) )}
+    {( Forall(_2,_4) )}
 | _1 = expr _2 = COMP _3 = expr
-    {    ( Comp(_1,_2,_3) )}
+    {( Comp(_1,_2,_3) )}
 | _1 = expr _2 = VERTICALBAR _3 = expr
-    {    ( Comp(_1,"|",_3) )}
+    {( Comp(_1,"|",_3) )}
 | _1 = expr _2 = COMP _3 = expr _4 = COMP _5 = expr
-    {    ( conj (Comp(_1,_2,_3)) (Comp(_3,_4,_5)) )}
+    {( conj (Comp(_1,_2,_3)) (Comp(_3,_4,_5)) )}
 | _1 = expr _2 = COMP _3 = expr _4 = COMP _5 = expr _6 = COMP _7 = expr
-    {    ( conj (conj (Comp(_1,_2,_3)) (Comp(_3,_4,_5))) (Comp(_5,_6,_7)) )}
+    {( conj (conj (Comp(_1,_2,_3)) (Comp(_3,_4,_5))) (Comp(_5,_6,_7)) )}
 | _1 = PARGAUCHE _2 = formula _3 = PARDROITE
-    {    ( _2 )}
+    {( _2 )}
 | _1 = TRUE
-    {    ( True )}
+    {( True )}
 | _1 = FALSE
-    {    ( False )}
+    {( False )}
 
 id_list:
   _1 = IDENT
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = IDENT _2 = id_list
-    {    ( _1::_2 )}
+    {( _1::_2 )}
 
 expr:
   _1 = IDENT
-    {    ( Var(_1) )}
+    {( Var(_1) )}
 | _1 = INT
-    {    ( Cte(_1) )}
+    {( Cte(_1) )}
 | _1 = PARGAUCHE _2 = expr _3 = PARDROITE
-    {    ( _2 )}
+    {( _2 )}
 | _1 = expr _2 = PLUS _3 = expr
-    {    ( Plus(_1,_3) )}
+    {( Plus(_1,_3) )}
 | _1 = expr _2 = MINUS _3 = expr
-    {    ( Sub(_1,_3) )}
+    {( Sub(_1,_3) )}
 | _1 = MINUS _2 = expr %prec UMINUS
-    {    ( Minus(_2) )}
+    {( Minus(_2) )}
 | _1 = expr _2 = MULT _3 = expr
-    {    ( Mult(_1,_3) )}
+    {( Mult(_1,_3) )}
 | _1 = expr _2 = DIV _3 = expr
-    {    ( Quotient(_1,_3) )}
+    {( Quotient(_1,_3) )}
 | _1 = expr _2 = EXP _3 = INT
-    {    ( try
+    {( try
 	power _1 (Numbers.to_int _3)
       with
 	Invalid_argument("Numbers.to_int") ->

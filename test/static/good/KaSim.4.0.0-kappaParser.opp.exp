@@ -106,23 +106,23 @@
 
 newline:
   _1 = NEWLINE _2 = start_rule
-    {                         (_2)}
+    {(_2)}
 | _1 = EOF
-    {          (fun c -> c)}
+    {(fun c -> c)}
 
 start_rule:
   _1 = newline
-    {              (_1)}
+    {(_1)}
 | _1 = LABEL _2 = rule_expression _3 = newline
-    {        (let out = (Some (_1, rhs_pos 1),_2) in
+    {(let out = (Some (_1, rhs_pos 1),_2) in
 	fun c -> let r = _3 c in {r with Ast.rules = out::r.Ast.rules})}
 | _1 = rule_expression _2 = newline
-    {        (fun c -> let r = _2 c in {r with Ast.rules = (None,_1)::r.Ast.rules})}
+    {(fun c -> let r = _2 c in {r with Ast.rules = (None,_1)::r.Ast.rules})}
 | _1 = LABEL _2 = EQUAL _3 = alg_expr _4 = newline
-    {        (let out = ((_1,rhs_pos 1),_3) in
+    {(let out = ((_1,rhs_pos 1),_3) in
 	fun c -> let r = _4 c in {r with Ast.variables = out::r.Ast.variables})}
 | _1 = instruction _2 = newline
-    {    ( fun c -> let r = _2 c in
+    {( fun c -> let r = _2 c in
 		      match _1 with
 		      | Ast.RULE ru ->
 			 {r with Ast.rules = ru::r.Ast.rules}
@@ -153,64 +153,64 @@ start_rule:
 			  Ast.configurations = (param_name,value_list)::r.Ast.configurations}
 		  )}
 | _1 = error
-    { (raise (ExceptionDefn.Syntax_Error (add_pos "Syntax error")))}
+    {(raise (ExceptionDefn.Syntax_Error (add_pos "Syntax error")))}
 
 instruction:
   _1 = SIGNATURE _2 = agent_expression
-    {                                 (Ast.SIG _2)}
+    {(Ast.SIG _2)}
 | _1 = TOKEN _2 = ID
-    {               (Ast.TOKENSIG (_2,rhs_pos 2))}
+    {(Ast.TOKENSIG (_2,rhs_pos 2))}
 | _1 = SIGNATURE _2 = error
-    {                      (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
 				(add_pos "Malformed agent signature, I was expecting something of the form '%agent: A(x,y~u~v,z)'")))}
 | _1 = INIT _2 = init_declaration
-    {                            (Ast.INIT _2)}
+    {(Ast.INIT _2)}
 | _1 = INIT _2 = error
-    { ( raise (ExceptionDefn.Syntax_Error
+    {( raise (ExceptionDefn.Syntax_Error
 		   (add_pos "Malformed initial condition")))}
 | _1 = LET _2 = variable_declaration
-    {                               (Ast.DECLARE _2)}
+    {(Ast.DECLARE _2)}
 | _1 = OBS _2 = variable_declaration
-    {                               (Ast.OBS _2)}
+    {(Ast.OBS _2)}
 | _1 = PLOT _2 = alg_expr
-    {                    (Ast.PLOT _2)}
+    {(Ast.PLOT _2)}
 | _1 = PLOT _2 = error
-    {                 (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
 			   (add_pos "Malformed plot instruction, an algebraic expression is expected")))}
 | _1 = PERT _2 = perturbation_declaration
-    {                                    (Ast.PERT (add_pos _2))}
+    {(Ast.PERT (add_pos _2))}
 | _1 = CONFIG _2 = STRING _3 = value_list
-    {      (Ast.CONFIG ((_2,rhs_pos 2),_3))}
+    {(Ast.CONFIG ((_2,rhs_pos 2),_3))}
 
 init_declaration:
   _1 = alg_expr _2 = non_empty_mixture
-    {    ( (_1,Ast.INIT_MIX (_2,rhs_pos 2)) )}
+    {( (_1,Ast.INIT_MIX (_2,rhs_pos 2)) )}
 | _1 = alg_expr _2 = OP_PAR _3 = non_empty_mixture _4 = CL_PAR
-    {    ( (_1,Ast.INIT_MIX (_3, rhs_pos 3)) )}
+    {( (_1,Ast.INIT_MIX (_3, rhs_pos 3)) )}
 | _1 = ID _2 = LAR _3 = alg_expr
-    {                      ((_3,Ast.INIT_TOK [_1,rhs_pos 1]))}
+    {((_3,Ast.INIT_TOK [_1,rhs_pos 1]))}
 | _1 = alg_expr _2 = ID
-    {                  ((_1,Ast.INIT_TOK [_2,rhs_pos 2]))}
+    {((_1,Ast.INIT_TOK [_2,rhs_pos 2]))}
 
 value_list:
   _1 = STRING
-    {             ([_1, rhs_pos 1])}
+    {([_1, rhs_pos 1])}
 | _1 = STRING _2 = value_list
-    {                        ((_1,rhs_pos 1)::_2)}
+    {((_1,rhs_pos 1)::_2)}
 
 perturbation_alarm:
   
-    {  (None)}
+    {(None)}
 | _1 = ALARM _2 = nbr
-    {              (Some _2)}
+    {(Some _2)}
 
 perturbation_post:
   
-    {  (None)}
+    {(None)}
 | _1 = REPEAT _2 = bool_expr
-    {                     (Some _2)}
+    {(Some _2)}
 | _1 = UNTIL _2 = bool_expr
-    {  (ExceptionDefn.deprecated
+    {(ExceptionDefn.deprecated
 	      ~pos:(Locality.of_pos (Parsing.symbol_start_pos ())
 				    (Parsing.symbol_end_pos ()))
 	      "perturbation"
@@ -220,11 +220,11 @@ perturbation_post:
 
 perturbation_declaration:
   _1 = perturbation_alarm _2 = bool_expr _3 = DO _4 = effect_list _5 = perturbation_post
-    {    ( (_1,Some _2,_4,_5) )}
+    {( (_1,Some _2,_4,_5) )}
 | _1 = perturbation_alarm _2 = DO _3 = effect_list _4 = perturbation_post
-    {    ( (_1,None,_3,_4) )}
+    {( (_1,None,_3,_4) )}
 | _1 = REPEAT _2 = bool_expr _3 = DO _4 = effect_list _5 = UNTIL _6 = bool_expr
-    {    (ExceptionDefn.deprecated
+    {(ExceptionDefn.deprecated
 	      ~pos:(Locality.of_pos (Parsing.symbol_start_pos ())
 				    (Parsing.symbol_end_pos ()))
 	      "perturbation"
@@ -249,7 +249,7 @@ perturbation_declaration:
 			    f "Perturbation need not be applied repeatedly") in
 	    (None,Some _2,_4,Some (add_pos (Alg_expr.UN_BOOL_OP (Operator.NOT,_6)))))}
 | _1 = perturbation_alarm _2 = bool_expr _3 = SET _4 = effect_list
-    {  (ExceptionDefn.deprecated
+    {(ExceptionDefn.deprecated
 		   ~pos:(Locality.of_pos (Parsing.symbol_start_pos ())
 					 (Parsing.symbol_end_pos ()))
 		   "perturbation"
@@ -259,36 +259,36 @@ perturbation_declaration:
 
 standalone_effect_list:
   _1 = effect_list _2 = EOF
-    {                                        (_1)}
+    {(_1)}
 
 effect_list:
   _1 = OP_PAR _2 = effect_list _3 = CL_PAR
-    {                                (_2)}
+    {(_2)}
 | _1 = effect
-    {             ([_1])}
+    {([_1])}
 | _1 = effect _2 = SEMICOLON _3 = effect_list
-    {                                   (_1::_3)}
+    {(_1::_3)}
 
 effect:
   _1 = ASSIGN _2 = ID _3 = alg_expr
-    {            (Ast.UPDATE ((_2,rhs_pos 2),_3))}
+    {(Ast.UPDATE ((_2,rhs_pos 2),_3))}
 | _1 = ASSIGN _2 = LABEL _3 = alg_expr
-    {            (Ast.UPDATE ((_2,rhs_pos 2),_3))}
+    {(Ast.UPDATE ((_2,rhs_pos 2),_3))}
 | _1 = TRACK _2 = LABEL _3 = boolean
-    {     (Ast.CFLOWLABEL (_3,(_2,rhs_pos 2)))}
+    {(Ast.CFLOWLABEL (_3,(_2,rhs_pos 2)))}
 | _1 = TRACK _2 = pattern _3 = boolean
-    {     (Ast.CFLOWMIX (_3,(_2,rhs_pos 2)))}
+    {(Ast.CFLOWMIX (_3,(_2,rhs_pos 2)))}
 | _1 = FLUX _2 = nonempty_print_expr _3 = boolean
-    {    (if _3 then Ast.DIN (Primitives.RELATIVE,_2) else Ast.DINOFF _2)}
+    {(if _3 then Ast.DIN (Primitives.RELATIVE,_2) else Ast.DINOFF _2)}
 | _1 = FLUX _2 = nonempty_print_expr _3 = STRING _4 = boolean
-    {    (if _4 && _3 = "absolute" then Ast.DIN (Primitives.ABSOLUTE,_2)
+    {(if _4 && _3 = "absolute" then Ast.DIN (Primitives.ABSOLUTE,_2)
 	   else if _4 && _3 = "probability" then
 	     Ast.DIN (Primitives.PROBABILITY,_2)
 	   else if _4 && _3 = "relative" then Ast.DIN (Primitives.RELATIVE,_2)
 	     else raise (ExceptionDefn.Syntax_Error
 	       ("Incorrect DIN expression",rhs_pos 3)))}
 | _1 = APPLY _2 = small_alg_expr _3 = rule_content
-    {   ( Ast.APPLY(
+    {( Ast.APPLY(
 		   _2,
 		   ({ Ast.rewrite = fst _3;
 		      Ast.bidirectional = false;
@@ -296,7 +296,7 @@ effect:
 		      Ast.k_op=None; Ast.k_op_un=None},rhs_pos 3))
 		 )}
 | _1 = INTRO _2 = alg_expr _3 = non_empty_mixture
-    {        ( Ast.APPLY(_2,
+    {( Ast.APPLY(_2,
                 ({Ast.rewrite =
 		  Ast.Arrow {Ast.lhs=[]; Ast.rm_token = [];
                   Ast.rhs=_3; Ast.add_token = [];};
@@ -305,10 +305,10 @@ effect:
                   Ast.k_op=None; Ast.k_op_un=None},rhs_pos 3))
         )}
 | _1 = INTRO _2 = error
-    {       (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
                  (add_pos "Malformed perturbation instruction, I was expecting '$ADD alg_expression kappa_expression'")))}
 | _1 = DELETE _2 = alg_expr _3 = non_empty_mixture
-    {       ( Ast.APPLY(_2,
+    {( Ast.APPLY(_2,
                ({Ast.rewrite =
 		 Ast.Arrow {Ast.lhs=_3; Ast.rm_token = [];
                  Ast.rhs=[]; Ast.add_token = [];};
@@ -317,10 +317,10 @@ effect:
                  Ast.k_op=None; Ast.k_op_un=None},rhs_pos 3))
        )}
 | _1 = DELETE _2 = error
-    {       (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
                  (add_pos "Malformed perturbation instruction, I was expecting '$DEL alg_expression kappa_expression'")))}
 | _1 = ID _2 = LAR _3 = alg_expr
-    {       (
+    {(
        let tk = (_1,rhs_pos 1) in
         Ast.APPLY(Alg_expr.const Nbr.one,
            add_pos
@@ -335,41 +335,41 @@ effect:
                  Ast.k_op=None; Ast.k_op_un=None}))
        )}
 | _1 = SNAPSHOT _2 = print_expr
-    {                          (Ast.SNAPSHOT _2)}
+    {(Ast.SNAPSHOT _2)}
 | _1 = STOP _2 = print_expr
-    {                      (Ast.STOP _2)}
+    {(Ast.STOP _2)}
 | _1 = PRINTF _2 = print_expr _3 = SMALLER _4 = print_expr _5 = GREATER
-    {                                                   ( Ast.PRINT (_2,_4) )}
+    {( Ast.PRINT (_2,_4) )}
 | _1 = PLOTENTRY
-    {                ( Ast.PLOTENTRY )}
+    {( Ast.PLOTENTRY )}
 | _1 = SPECIES_OF _2 = nonempty_print_expr _3 = non_empty_mixture _4 = boolean
-    {                                                               ( Ast.SPECIES_OF (_4,_2,(_3, rhs_pos 3)))}
+    {( Ast.SPECIES_OF (_4,_2,(_3, rhs_pos 3)))}
 
 nonempty_print_expr:
   _1 = STRING
-    {             ([Primitives.Str_pexpr (add_pos _1)])}
+    {([Primitives.Str_pexpr (add_pos _1)])}
 | _1 = mid_alg_expr
-    {                   ([Primitives.Alg_pexpr _1])}
+    {([Primitives.Alg_pexpr _1])}
 | _1 = STRING _2 = DOT _3 = nonempty_print_expr
-    {                                     (Primitives.Str_pexpr (_1, rhs_pos 1)::_3)}
+    {(Primitives.Str_pexpr (_1, rhs_pos 1)::_3)}
 | _1 = mid_alg_expr _2 = DOT _3 = nonempty_print_expr
-    {                                           (Primitives.Alg_pexpr _1::_3)}
+    {(Primitives.Alg_pexpr _1::_3)}
 
 print_expr:
   
-    {              ([])}
+    {([])}
 | _1 = nonempty_print_expr
-    {                          (_1)}
+    {(_1)}
 
 boolean:
   _1 = TRUE
-    {           (true)}
+    {(true)}
 | _1 = FALSE
-    {            (false)}
+    {(false)}
 
 variable_declaration:
   _1 = LABEL _2 = non_empty_mixture
-    {     (let () =
+    {(let () =
 	       ExceptionDefn.deprecated
 		~pos:(Locality.of_pos (Parsing.symbol_start_pos ())
 				      (Parsing.symbol_end_pos ()))
@@ -379,87 +379,87 @@ variable_declaration:
 	      in
 	      ((_1,rhs_pos 1),(Alg_expr.KAPPA_INSTANCE _2,rhs_pos 2)))}
 | _1 = LABEL _2 = alg_expr
-    {                     (((_1,rhs_pos 1),_2))}
+    {(((_1,rhs_pos 1),_2))}
 | _1 = ID _2 = alg_expr
-    {                  (((_1,rhs_pos 1),_2))}
+    {(((_1,rhs_pos 1),_2))}
 | _1 = LABEL _2 = error
-    {     (raise
+    {(raise
 	       (ExceptionDefn.Syntax_Error
 		  (add_pos ("Illegal definition of variable '"^_1^"'")))
 	    )}
 
 small_bool_expr:
   _1 = OP_PAR _2 = bool_expr _3 = CL_PAR
-    {                              (_2)}
+    {(_2)}
 | _1 = TRUE
-    {           (add_pos Alg_expr.TRUE)}
+    {(add_pos Alg_expr.TRUE)}
 | _1 = FALSE
-    {            (add_pos Alg_expr.FALSE)}
+    {(add_pos Alg_expr.FALSE)}
 
 bool_expr:
   _1 = small_bool_expr
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = NOT _2 = small_bool_expr
-    {                          (add_pos (Alg_expr.UN_BOOL_OP(Operator.NOT,_2)))}
+    {(add_pos (Alg_expr.UN_BOOL_OP(Operator.NOT,_2)))}
 | _1 = bool_expr _2 = AND _3 = bool_expr
-    {                              (add_pos (Alg_expr.BIN_BOOL_OP(Operator.AND,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_BOOL_OP(Operator.AND,_1,_3)))}
 | _1 = bool_expr _2 = OR _3 = bool_expr
-    {                             (add_pos (Alg_expr.BIN_BOOL_OP(Operator.OR,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_BOOL_OP(Operator.OR,_1,_3)))}
 | _1 = alg_expr _2 = GREATER _3 = alg_expr
-    {      (add_pos (Alg_expr.COMPARE_OP(Operator.GREATER,_1,_3)))}
+    {(add_pos (Alg_expr.COMPARE_OP(Operator.GREATER,_1,_3)))}
 | _1 = alg_expr _2 = SMALLER _3 = alg_expr
-    {      (add_pos (Alg_expr.COMPARE_OP(Operator.SMALLER,_1,_3)))}
+    {(add_pos (Alg_expr.COMPARE_OP(Operator.SMALLER,_1,_3)))}
 | _1 = alg_expr _2 = EQUAL _3 = alg_expr
-    {      (add_pos (Alg_expr.COMPARE_OP(Operator.EQUAL,_1,_3)))}
+    {(add_pos (Alg_expr.COMPARE_OP(Operator.EQUAL,_1,_3)))}
 | _1 = alg_expr _2 = DIFF _3 = alg_expr
-    {      (add_pos (Alg_expr.COMPARE_OP(Operator.DIFF,_1,_3)))}
+    {(add_pos (Alg_expr.COMPARE_OP(Operator.DIFF,_1,_3)))}
 
 standalone_bool_expr:
   _1 = bool_expr _2 = EOF
-    {                                    (_1)}
+    {(_1)}
 
 token_expr:
   
-    {            ([])}
+    {([])}
 | _1 = PIPE _2 = sum_token
-    {                     (_2)}
+    {(_2)}
 | _1 = PIPE _2 = error
-    { (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
 		  (add_pos  "Malformed token expression, I was expecting a_0 t_0 + ... + a_n t_n, where t_i are tokens and a_i any algebraic formula")))}
 
 sum_token:
   _1 = OP_PAR _2 = sum_token _3 = CL_PAR
-    {                              (_2)}
+    {(_2)}
 | _1 = alg_expr _2 = ID
-    {                  ([(_1,(_2,rhs_pos 2))])}
+    {([(_1,(_2,rhs_pos 2))])}
 | _1 = alg_expr _2 = ID _3 = PLUS _4 = sum_token
-    {                                 (let l = _4 in (_1,(_2,rhs_pos 2))::l)}
+    {(let l = _4 in (_1,(_2,rhs_pos 2))::l)}
 | _1 = alg_expr _2 = TYPE _3 = ID
-    {                       ([(_1,(_3,rhs_pos 3))])}
+    {([(_1,(_3,rhs_pos 3))])}
 | _1 = alg_expr _2 = TYPE _3 = ID _4 = PLUS _5 = sum_token
-    {                                      (let l = _5 in (_1,(_3,rhs_pos 3))::l)}
+    {(let l = _5 in (_1,(_3,rhs_pos 3))::l)}
 
 rule_content:
   _1 = pattern _2 = token_expr _3 = arrow _4 = pattern _5 = token_expr
-    {    (Ast.Arrow {Ast.lhs=_1; Ast.rm_token = _2; Ast.rhs=_4; Ast.add_token = _5},
+    {(Ast.Arrow {Ast.lhs=_1; Ast.rm_token = _2; Ast.rhs=_4; Ast.add_token = _5},
      _3)}
 | _1 = pattern _2 = token_expr _3 = arrow _4 = token_expr
-    {    (Ast.Arrow {Ast.lhs=_1; Ast.rm_token = _2; Ast.rhs=[]; Ast.add_token = _4},
+    {(Ast.Arrow {Ast.lhs=_1; Ast.rm_token = _2; Ast.rhs=[]; Ast.add_token = _4},
      _3)}
 | _1 = token_expr _2 = arrow _3 = pattern _4 = token_expr
-    {    (Ast.Arrow {Ast.lhs=[]; Ast.rm_token = _1; Ast.rhs=_3; Ast.add_token = _4},
+    {(Ast.Arrow {Ast.lhs=[]; Ast.rm_token = _1; Ast.rhs=_3; Ast.add_token = _4},
      _2)}
 | _1 = token_expr _2 = arrow _3 = token_expr
-    {    (Ast.Arrow {Ast.lhs=[]; Ast.rm_token = _1; Ast.rhs=[]; Ast.add_token = _3},
+    {(Ast.Arrow {Ast.lhs=[]; Ast.rm_token = _1; Ast.rhs=[]; Ast.add_token = _3},
      _2)}
 | _1 = pattern _2 = token_expr
-    {    ( Ast.Edit {Ast.mix = _1; Ast.delta_token = _2},false )}
+    {( Ast.Edit {Ast.mix = _1; Ast.delta_token = _2},false )}
 | _1 = PIPE _2 = sum_token
-    {    ( Ast.Edit {Ast.mix = []; Ast.delta_token = _2},false )}
+    {( Ast.Edit {Ast.mix = []; Ast.delta_token = _2},false )}
 
 rule_expression:
   _1 = rule_content _2 = birate
-    {    ( let (k_def,k_un,k_op,k_op_un) = _2 in
+    {( let (k_def,k_un,k_op,k_op_un) = _2 in
       let rewrite,bidirectional = _1 in
       add_pos {
         Ast.rewrite;Ast.bidirectional;
@@ -468,109 +468,109 @@ rule_expression:
 
 arrow:
   _1 = KAPPA_RAR
-    {                (false)}
+    {(false)}
 | _1 = KAPPA_LRAR
-    {                 (true)}
+    {(true)}
 
 nbr:
   _1 = INFINITY
-    {               ( Nbr.F infinity )}
+    {( Nbr.F infinity )}
 | _1 = FLOAT
-    {            ( Nbr.F _1 )}
+    {( Nbr.F _1 )}
 | _1 = INT
-    {          ( Nbr.I _1 )}
+    {( Nbr.I _1 )}
 
 constant:
   _1 = nbr
-    {          (add_pos (Alg_expr.CONST _1))}
+    {(add_pos (Alg_expr.CONST _1))}
 | _1 = EMAX
-    {           (add_pos (Alg_expr.STATE_ALG_OP (Operator.EMAX_VAR)))}
+    {(add_pos (Alg_expr.STATE_ALG_OP (Operator.EMAX_VAR)))}
 | _1 = TMAX
-    {           (add_pos (Alg_expr.STATE_ALG_OP (Operator.TMAX_VAR)))}
+    {(add_pos (Alg_expr.STATE_ALG_OP (Operator.TMAX_VAR)))}
 | _1 = CPUTIME
-    {              (add_pos (Alg_expr.STATE_ALG_OP (Operator.CPUTIME)))}
+    {(add_pos (Alg_expr.STATE_ALG_OP (Operator.CPUTIME)))}
 
 variable:
   _1 = PIPE _2 = ID _3 = PIPE
-    {                   (add_pos (Alg_expr.TOKEN_ID (_2)))}
+    {(add_pos (Alg_expr.TOKEN_ID (_2)))}
 | _1 = PIPE _2 = non_empty_mixture _3 = PIPE
-    {                                  ( add_pos (Alg_expr.KAPPA_INSTANCE _2) )}
+    {( add_pos (Alg_expr.KAPPA_INSTANCE _2) )}
 | _1 = ID
-    {         (add_pos (Alg_expr.ALG_VAR (_1)))}
+    {(add_pos (Alg_expr.ALG_VAR (_1)))}
 | _1 = LABEL
-    {            (add_pos (Alg_expr.ALG_VAR (_1)))}
+    {(add_pos (Alg_expr.ALG_VAR (_1)))}
 | _1 = TIME
-    {           (add_pos (Alg_expr.STATE_ALG_OP (Operator.TIME_VAR)))}
+    {(add_pos (Alg_expr.STATE_ALG_OP (Operator.TIME_VAR)))}
 | _1 = EVENT
-    {            (add_pos (Alg_expr.STATE_ALG_OP (Operator.EVENT_VAR)))}
+    {(add_pos (Alg_expr.STATE_ALG_OP (Operator.EVENT_VAR)))}
 | _1 = NULL_EVENT
-    {                 (add_pos (Alg_expr.STATE_ALG_OP (Operator.NULL_EVENT_VAR)))}
+    {(add_pos (Alg_expr.STATE_ALG_OP (Operator.NULL_EVENT_VAR)))}
 
 small_alg_expr:
   _1 = OP_PAR _2 = alg_expr _3 = CL_PAR
-    {                             (_2)}
+    {(_2)}
 | _1 = constant
-    {               (_1)}
+    {(_1)}
 | _1 = variable
-    {               (_1)}
+    {(_1)}
 | _1 = MAX _2 = small_alg_expr _3 = small_alg_expr
-    {   (add_pos (Alg_expr.BIN_ALG_OP(Operator.MAX,_2,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.MAX,_2,_3)))}
 | _1 = MIN _2 = small_alg_expr _3 = small_alg_expr
-    {   (add_pos (Alg_expr.BIN_ALG_OP(Operator.MIN,_2,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.MIN,_2,_3)))}
 | _1 = EXPONENT _2 = mid_alg_expr
-    {                            (add_pos (Alg_expr.UN_ALG_OP(Operator.EXP,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.EXP,_2)))}
 | _1 = SINUS _2 = mid_alg_expr
-    {                         (add_pos (Alg_expr.UN_ALG_OP(Operator.SINUS,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.SINUS,_2)))}
 | _1 = COSINUS _2 = mid_alg_expr
-    {                           (add_pos (Alg_expr.UN_ALG_OP(Operator.COSINUS,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.COSINUS,_2)))}
 | _1 = TAN _2 = mid_alg_expr
-    {                       (add_pos (Alg_expr.UN_ALG_OP(Operator.TAN,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.TAN,_2)))}
 | _1 = ABS _2 = mid_alg_expr
-    {                       (add_pos (Alg_expr.UN_ALG_OP(Operator.INT,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.INT,_2)))}
 | _1 = SQRT _2 = mid_alg_expr
-    {                        (add_pos (Alg_expr.UN_ALG_OP(Operator.SQRT,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.SQRT,_2)))}
 | _1 = LOG _2 = mid_alg_expr
-    {                       (add_pos (Alg_expr.UN_ALG_OP(Operator.LOG,_2)))}
+    {(add_pos (Alg_expr.UN_ALG_OP(Operator.LOG,_2)))}
 
 mid_alg_expr:
   _1 = MINUS _2 = mid_alg_expr
-    {                         ( add_pos (Alg_expr.UN_ALG_OP(Operator.UMINUS,_2)) )}
+    {( add_pos (Alg_expr.UN_ALG_OP(Operator.UMINUS,_2)) )}
 | _1 = small_alg_expr
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = mid_alg_expr _2 = MULT _3 = mid_alg_expr
-    {                                     (add_pos (Alg_expr.BIN_ALG_OP(Operator.MULT,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.MULT,_1,_3)))}
 | _1 = mid_alg_expr _2 = PLUS _3 = mid_alg_expr
-    {                                     (add_pos (Alg_expr.BIN_ALG_OP(Operator.SUM,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.SUM,_1,_3)))}
 | _1 = mid_alg_expr _2 = DIV _3 = mid_alg_expr
-    {                                    (add_pos (Alg_expr.BIN_ALG_OP(Operator.DIV,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.DIV,_1,_3)))}
 | _1 = mid_alg_expr _2 = MINUS _3 = mid_alg_expr
-    {                                      (add_pos (Alg_expr.BIN_ALG_OP(Operator.MINUS,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.MINUS,_1,_3)))}
 | _1 = mid_alg_expr _2 = POW _3 = mid_alg_expr
-    {                                    (add_pos (Alg_expr.BIN_ALG_OP(Operator.POW,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.POW,_1,_3)))}
 | _1 = mid_alg_expr _2 = MODULO _3 = mid_alg_expr
-    {                                       (add_pos (Alg_expr.BIN_ALG_OP(Operator.MODULO,_1,_3)))}
+    {(add_pos (Alg_expr.BIN_ALG_OP(Operator.MODULO,_1,_3)))}
 
 alg_expr:
   _1 = mid_alg_expr
-    {                   (_1)}
+    {(_1)}
 | _1 = bool_expr _2 = THEN _3 = alg_expr _4 = ELSE _5 = small_alg_expr
-    {                                                  (add_pos (Alg_expr.IF(_1,_3,_5)))}
+    {(add_pos (Alg_expr.IF(_1,_3,_5)))}
 
 birate:
   _1 = AT _2 = rate
-    {              (let (k2,k1) = _2 in (k2,k1,None,None))}
+    {(let (k2,k1) = _2 in (k2,k1,None,None))}
 | _1 = AT _2 = rate _3 = COMMA _4 = rate
-    {                         (let (k2,k1) = _2 in
+    {(let (k2,k1) = _2 in
 			  let (kback,kback1) = _4 in
 			  (k2,k1,Some kback,kback1))}
 | _1 = error
-    {            (raise (ExceptionDefn.Syntax_Error (add_pos "rule rate expected")))}
+    {(raise (ExceptionDefn.Syntax_Error (add_pos "rule rate expected")))}
 
 rate:
   _1 = alg_expr _2 = OP_CUR _3 = alg_with_radius _4 = CL_CUR
-    {                                             ((_1,Some _3))}
+    {((_1,Some _3))}
 | _1 = alg_expr _2 = OP_PAR _3 = alg_with_radius _4 = CL_PAR
-    {                                             (
+    {(
       ExceptionDefn.deprecated
          ~pos:(Locality.of_pos (Parsing.rhs_start_pos 2)
 			       (Parsing.rhs_end_pos 4))
@@ -580,161 +580,161 @@ rate:
 			  (_1,Some _3)
     )}
 | _1 = alg_expr
-    {               ((_1,None))}
+    {((_1,None))}
 | _1 = OP_CUR _2 = alg_with_radius _3 = CL_CUR
-    {      ((Locality.dummy_annot (Alg_expr.CONST Nbr.zero),Some _2))}
+    {((Locality.dummy_annot (Alg_expr.CONST Nbr.zero),Some _2))}
 | _1 = alg_expr _2 = OP_CUR _3 = CL_CUR
-    {      ((_1,Some (Locality.dummy_annot (Alg_expr.CONST Nbr.zero),None)))}
+    {((_1,Some (Locality.dummy_annot (Alg_expr.CONST Nbr.zero),None)))}
 | 
-    {      (raise (ExceptionDefn.Syntax_Error (add_pos "missing rule rate")))}
+    {(raise (ExceptionDefn.Syntax_Error (add_pos "missing rule rate")))}
 
 alg_with_radius:
   _1 = alg_expr
-    {               ((_1,None))}
+    {((_1,None))}
 | _1 = alg_expr _2 = TYPE _3 = alg_expr
-    {                             ((_1, Some _3))}
+    {((_1, Some _3))}
 
 pattern:
   _1 = OP_PAR _2 = pattern _3 = CL_PAR
-    {                            (_2)}
+    {(_2)}
 | _1 = agent_expression _2 = COMMA _3 = pattern
-    {                                     (_1 :: _3)}
+    {(_1 :: _3)}
 | _1 = agent_expression
-    {                       ([_1])}
+    {([_1])}
 
 non_empty_mixture:
   _1 = ID _2 = OP_PAR _3 = interface_expression _4 = CL_PAR
-    {    ( [Ast.Present ((_1,rhs_pos 1), _3, None)] )}
+    {( [Ast.Present ((_1,rhs_pos 1), _3, None)] )}
 | _1 = ID _2 = OP_PAR _3 = interface_expression _4 = CL_PAR _5 = COMMA _6 = pattern
-    {    ( Ast.Present ((_1,rhs_pos 1), _3, None) :: _6)}
+    {( Ast.Present ((_1,rhs_pos 1), _3, None) :: _6)}
 
 mod_agent:
   
-    {   ( None )}
+    {( None )}
 | _1 = PLUS
-    {        ( Some Ast.Create )}
+    {( Some Ast.Create )}
 | _1 = MINUS
-    {         ( Some Ast.Erase )}
+    {( Some Ast.Erase )}
 
 agent_expression:
   _1 = mod_agent _2 = ID _3 = OP_PAR _4 = interface_expression _5 = CL_PAR
-    {  (Ast.Present ((_2,rhs_pos 2), _4, _1))}
+    {(Ast.Present ((_2,rhs_pos 2), _4, _1))}
 | _1 = mod_agent _2 = ID _3 = error
-    {  ( raise (ExceptionDefn.Syntax_Error
+    {( raise (ExceptionDefn.Syntax_Error
 		    (add_pos ("Malformed agent '"^_2^"'"))))}
 
 interface_expression:
   
-    {            ([])}
+    {([])}
 | _1 = port_expression _2 = COMMA _3 = interface_expression
-    {                                                 (_1::_3)}
+    {(_1::_3)}
 | _1 = port_expression
-    {                      ([_1])}
+    {([_1])}
 
 counter_test:
   _1 = TYPE _2 = INT
-    {              ( Some (Ast.CEQ _2,rhs_pos 2))}
+    {( Some (Ast.CEQ _2,rhs_pos 2))}
 | _1 = TYPE _2 = GREATER _3 = INT
-    {                      ( Some (Ast.CGTE _3,rhs_pos 3))}
+    {( Some (Ast.CGTE _3,rhs_pos 3))}
 | _1 = TYPE _2 = ID
-    {             ( Some (Ast.CVAR _2,rhs_pos 2))}
+    {( Some (Ast.CVAR _2,rhs_pos 2))}
 
 port_expression:
   _1 = ID _2 = internal_state _3 = link_state_mod
-    {  ( Ast.Port
+    {( Ast.Port
 	   {Ast.port_nme=(_1,rhs_pos 1); Ast.port_int=_2; Ast.port_lnk=[];
 	    Ast.port_int_mod = None; Ast.port_lnk_mod = _3; } )}
 | _1 = ID _2 = internal_state _3 = link_state _4 = link_state_mod
-    {  ( Ast.Port
+    {( Ast.Port
 	   {Ast.port_nme=(_1,rhs_pos 1); Ast.port_int=_2; Ast.port_lnk=_3;
 	    Ast.port_int_mod = None; Ast.port_lnk_mod = _4; } )}
 | _1 = ID _2 = internal_state _3 = DIV _4 = KAPPA_MRK _5 = link_state_mod
-    {  ( Ast.Port
+    {( Ast.Port
 	   {Ast.port_nme=(_1,rhs_pos 1); Ast.port_int=_2; Ast.port_lnk=[];
 	    Ast.port_int_mod = Some(_4,rhs_pos 4); Ast.port_lnk_mod = _5; } )}
 | _1 = ID _2 = internal_state _3 = DIV _4 = KAPPA_MRK _5 = link_state _6 = link_state_mod
-    {  ( Ast.Port
+    {( Ast.Port
 	   {Ast.port_nme=(_1,rhs_pos 1); Ast.port_int=_2; Ast.port_lnk=_5;
 	    Ast.port_int_mod = Some(_4,rhs_pos 4); Ast.port_lnk_mod = _6; } )}
 | _1 = ID _2 = PLUS _3 = EQUAL _4 = INT
-    {         ( Ast.Counter
+    {( Ast.Counter
 	   { Ast.count_nme = (_1,rhs_pos 1);
 	   Ast.count_test = None;
 	   Ast.count_delta = (_4,rhs_pos 4)} )}
 | _1 = ID _2 = PLUS _3 = EQUAL _4 = MINUS _5 = INT
-    {         ( Ast.Counter
+    {( Ast.Counter
 	   { Ast.count_nme = (_1,rhs_pos 1);
 	   Ast.count_test = None;
 	   Ast.count_delta = (-_5,rhs_pos 5)} )}
 | _1 = ID _2 = counter_test _3 = PLUS _4 = EQUAL _5 = INT
-    {         ( Ast.Counter
+    {( Ast.Counter
 	   { Ast.count_nme = (_1,rhs_pos 1);
 	   Ast.count_test = _2;
 	   Ast.count_delta = (_5,rhs_pos 5)} )}
 | _1 = ID _2 = counter_test _3 = PLUS _4 = EQUAL _5 = MINUS _6 = INT
-    {         ( Ast.Counter
+    {( Ast.Counter
 	   { Ast.count_nme = (_1,rhs_pos 1);
 	   Ast.count_test = _2;
 	   Ast.count_delta = (- _6,rhs_pos 6)} )}
 | _1 = ID _2 = counter_test
-    {         ( Ast.Counter
+    {( Ast.Counter
 	   { Ast.count_nme = (_1,rhs_pos 1);
 	   Ast.count_test = _2;
 	   Ast.count_delta = Locality.dummy_annot 0} )}
 
 internal_state:
   
-    {            ([])}
+    {([])}
 | _1 = KAPPA_MRK _2 = internal_state
-    {                               ((Some _1,rhs_pos 1)::_2)}
+    {((Some _1,rhs_pos 1)::_2)}
 | _1 = error
-    {       (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
        (add_pos "Issue after internal state")))}
 
 link_state_mod:
   
-    {   (None)}
+    {(None)}
 | _1 = DIV _2 = KAPPA_LNK _3 = DOT
-    {                     (Some None)}
+    {(Some None)}
 | _1 = DIV _2 = KAPPA_LNK _3 = INT
-    {                     (Some (Some (_3,rhs_pos 3)))}
+    {(Some (Some (_3,rhs_pos 3)))}
 | _1 = DIV _2 = error
-    { (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
 	  (add_pos "Incorrect link modification")))}
 
 a_link_state:
   _1 = KAPPA_LNK _2 = DOT
-    {                    ((Ast.LNK_FREE,rhs_pos 2))}
+    {((Ast.LNK_FREE,rhs_pos 2))}
 | _1 = KAPPA_LNK _2 = INT
-    {                    ((Ast.LNK_VALUE (_2,()),rhs_pos 2))}
+    {((Ast.LNK_VALUE (_2,()),rhs_pos 2))}
 | _1 = KAPPA_LNK _2 = KAPPA_SEMI
-    {                           ((Ast.LNK_SOME,rhs_pos 2))}
+    {((Ast.LNK_SOME,rhs_pos 2))}
 | _1 = KAPPA_LNK _2 = ID _3 = DOT _4 = ID
-    {                          (add_pos (Ast.LNK_TYPE
+    {(add_pos (Ast.LNK_TYPE
 				      ((_2,rhs_pos 2),(_4,rhs_pos 4))))}
 | _1 = KAPPA_WLD
-    {                (add_pos Ast.LNK_ANY)}
+    {(add_pos Ast.LNK_ANY)}
 | _1 = KAPPA_LNK _2 = error
-    { (raise (ExceptionDefn.Syntax_Error
+    {(raise (ExceptionDefn.Syntax_Error
 		  (add_pos "Invalid link state")))}
 
 link_state:
   _1 = a_link_state _2 = link_state
-    {                           (_1::_2)}
+    {(_1::_2)}
 | _1 = a_link_state
-    {                ([_1])}
+    {([_1])}
 
 interactive_command:
   _1 = RUN _2 = NEWLINE
-    {               (Ast.RUN (Locality.dummy_annot Alg_expr.FALSE))}
+    {(Ast.RUN (Locality.dummy_annot Alg_expr.FALSE))}
 | _1 = RUN _2 = bool_expr _3 = NEWLINE
-    {                         (Ast.RUN _2)}
+    {(Ast.RUN _2)}
 | _1 = effect_list _2 = NEWLINE
-    {                       (Ast.MODIFY _1)}
+    {(Ast.MODIFY _1)}
 | _1 = EOF
-    {       (Ast.QUIT)}
+    {(Ast.QUIT)}
 | _1 = error
-    { (raise (ExceptionDefn.Syntax_Error (add_pos "Unrecognized command")))}
+    {(raise (ExceptionDefn.Syntax_Error (add_pos "Unrecognized command")))}
 
 %%
 

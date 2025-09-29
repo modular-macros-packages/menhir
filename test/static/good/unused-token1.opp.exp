@@ -8,6 +8,6 @@ Warning: the token B is unused.
 
 a:
   _1 = A
-    {     ()}
+    {()}
 
 %%

@@ -8,12 +8,12 @@
 
 listA:
    %prec empty_list
-    {                           ()}
+    {()}
 | _1 = A _2 = listA
-    {          ()}
+    {()}
 
 main:
   _1 = listA _2 = A _3 = EOF
-    {              ()}
+    {()}
 
 %%

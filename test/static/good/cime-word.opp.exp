@@ -30,27 +30,27 @@
 
 word_eof:
   _1 = word _2 = EOF
-    {           ( _1 )}
+    {( _1 )}
 
 word:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = factor _2 = word
-    {    ( _1 @ _2 )}
+    {( _1 @ _2 )}
 
 factor:
   _1 = IDENT
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = factor _2 = POWER _3 = expo
-    {    ( word_power _1 _3 )}
+    {( word_power _1 _3 )}
 | _1 = LPAR _2 = word _3 = RPAR
-    {    ( _2 )}
+    {( _2 )}
 
 expo:
   _1 = INT
-    {       ( _1 )}
+    {( _1 )}
 | _1 = IDENT
-    {      (
+    {(
 	try
 	  int_of_string(!current_signature#string_of_symbol _1)
 	with
@@ -60,23 +60,23 @@ expo:
 
 rule_set_eof:
   _1 = rule_set _2 = EOF
-    {                           ( _1 )}
+    {( _1 )}
 
 rule_set:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = rule
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = rule _2 = SEMICOLON _3 = rule_set
-    {    ( _1::_3 )}
+    {( _1::_3 )}
 
 rule:
   _1 = word _2 = ARROW _3 = word
-    {                          ( (_1,_3) )}
+    {( (_1,_3) )}
 
 precedence_eof:
   _1 = precedence _2 = EOF
-    {  (
+    {(
     let order = identity_ordering (Pervasives.compare : symbol_id -> symbol_id -> int)
     in
     let order = List.fold_left add_list order _1
@@ -85,20 +85,20 @@ precedence_eof:
 
 precedence:
   
-    {                                ( [] )}
+    {( [] )}
 | _1 = ordered_list
-    {                  ( [_1] )}
+    {( [_1] )}
 | _1 = ordered_list _2 = COMMA _3 = precedence
-    {                                ( _1::_3 )}
+    {( _1::_3 )}
 
 ordered_list:
   _1 = IDENT
-    {            ( One(_1) )}
+    {( One(_1) )}
 | _1 = IDENT _2 = EQ _3 = ordered_list
-    {                         ( Eq(_1,_3) )}
+    {( Eq(_1,_3) )}
 | _1 = IDENT _2 = GT _3 = ordered_list
-    {                         ( Gt(_1,_3) )}
+    {( Gt(_1,_3) )}
 | _1 = IDENT _2 = LT _3 = ordered_list
-    {                         ( Lt(_1,_3) )}
+    {( Lt(_1,_3) )}
 
 %%

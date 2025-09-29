@@ -110,17 +110,17 @@ open Stat
 
 nonempty_list_dot_or_ellipsis_:
   _1 = DOT
-    {let x =            ( 1 ) in
-    ( [ x ] )} [@name one_dot_or_ellipsis]
+    {let x = ( 1 ) in
+( [ x ] )} [@name one_dot_or_ellipsis]
 | _1 = ELLIPSIS
-    {let x =            ( 3 ) in
-    ( [ x ] )} [@name one_dot_or_ellipsis]
+    {let x = ( 3 ) in
+( [ x ] )} [@name one_dot_or_ellipsis]
 | _1 = DOT xs = nonempty_list_dot_or_ellipsis_
-    {let x =            ( 1 ) in
-    ( x :: xs )} [@name more_dot_or_ellipsis]
+    {let x = ( 1 ) in
+( x :: xs )} [@name more_dot_or_ellipsis]
 | _1 = ELLIPSIS xs = nonempty_list_dot_or_ellipsis_
-    {let x =            ( 3 ) in
-    ( x :: xs )} [@name more_dot_or_ellipsis]
+    {let x = ( 3 ) in
+( x :: xs )} [@name more_dot_or_ellipsis]
 
 main:
   _1 = file_input _2 = EOF
@@ -128,75 +128,75 @@ main:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( Fileinput(get_loc _startofs _endofs, _1) )}
+( Fileinput(get_loc _startofs _endofs, _1) )}
 | _1 = EOF
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( Fileinput(get_loc _startofs _endofs, []) )}
+( Fileinput(get_loc _startofs _endofs, []) )}
 
 file_input:
   _1 = file_input_
-    {              ( List.rev _1 )}
+    {( List.rev _1 )}
 
 file_input_:
   _1 = NEWLINE
-    {                      ( [] )}
+    {( [] )}
 | _1 = stmt
-    {                   ( [_1] )}
+    {( [_1] )}
 | _1 = file_input_ _2 = NEWLINE
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = file_input_ _2 = stmt
-    {                   ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 decorator:
   _1 = AT _2 = dotted_name _3 = NEWLINE
     {let _startpos = _startpos__1_ in
 let _endofs__2_ = _endpos__2_.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                               ( get_loc _startofs _endofs__2_, _2, emptyarglist )}
+( get_loc _startofs _endofs__2_, _2, emptyarglist )}
 | _1 = AT _2 = dotted_name _3 = LPAREN _4 = RPAREN _5 = NEWLINE
     {let _startpos = _startpos__1_ in
 let _endofs__4_ = _endpos__4_.Lexing.pos_cnum in
 let _startofs__3_ = _startpos__3_.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( get_loc _startofs _endofs__4_, _2, (get_loc _startofs__3_ _endofs__4_, []) )}
+( get_loc _startofs _endofs__4_, _2, (get_loc _startofs__3_ _endofs__4_, []) )}
 | _1 = AT _2 = dotted_name _3 = LPAREN _4 = arglist _5 = RPAREN _6 = NEWLINE
     {let _startpos = _startpos__1_ in
 let _endofs__5_ = _endpos__5_.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                               ( get_loc _startofs _endofs__5_, _2, _4 )}
+( get_loc _startofs _endofs__5_, _2, _4 )}
 
 decorators:
   _1 = decorator
-    {                       ( [_1] )}
+    {( [_1] )}
 | _1 = decorator _2 = decorators
-    {                       ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 decorated:
   _1 = decorators _2 = classdef
-    {                      ( match _2 with Sclassdef(_, n, t, s) -> Sclassdef(_1, n, t, s) | _ -> assert false )}
+    {( match _2 with Sclassdef(_, n, t, s) -> Sclassdef(_1, n, t, s) | _ -> assert false )}
 | _1 = decorators _2 = funcdef
-    {                      ( match _2 with Sfuncdef(_, n, p, a, s) -> Sfuncdef(_1, n, p, a, s) | _ -> assert false )}
+    {( match _2 with Sfuncdef(_, n, p, a, s) -> Sfuncdef(_1, n, p, a, s) | _ -> assert false )}
 | _1 = decorators _2 = async_funcdef
-    {    ( match _2 with Sasync_funcdef(_, n, p, a, s) -> Sasync_funcdef(_1, n, p, a, s) | _ -> assert false )}
+    {( match _2 with Sasync_funcdef(_, n, p, a, s) -> Sasync_funcdef(_1, n, p, a, s) | _ -> assert false )}
 
 async_funcdef:
   _1 = ASYNC _2 = DEF _3 = name _4 = parameters _5 = COLON _6 = suite
-    {                                                  ( Sasync_funcdef([], _3, _4, None, _6) )}
+    {( Sasync_funcdef([], _3, _4, None, _6) )}
 | _1 = ASYNC _2 = DEF _3 = name _4 = parameters _5 = ret_annot _6 = COLON _7 = suite
-    {                                                  ( Sasync_funcdef([], _3, _4, Some _5, _7) )}
+    {( Sasync_funcdef([], _3, _4, Some _5, _7) )}
 
 funcdef:
   _1 = DEF _2 = name _3 = parameters _4 = COLON _5 = suite
-    {                                            ( Sfuncdef([], _2, _3, None, _5) )}
+    {( Sfuncdef([], _2, _3, None, _5) )}
 | _1 = DEF _2 = name _3 = parameters _4 = ret_annot _5 = COLON _6 = suite
-    {                                            ( Sfuncdef([], _2, _3, Some _4, _6) )}
+    {( Sfuncdef([], _2, _3, Some _4, _6) )}
 
 ret_annot:
   _1 = MINUS_GT _2 = test
-    {                ( _2 )}
+    {( _2 )}
 
 name:
   _1 = NAMEx
@@ -204,13 +204,13 @@ name:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-        ( get_loc _startofs _endofs, _1 )}
+( get_loc _startofs _endofs, _1 )}
 
 parameters:
   _1 = LPAREN _2 = RPAREN
-    {                              ( emptytypedargslist )}
+    {( emptytypedargslist )}
 | _1 = LPAREN _2 = typedargslist _3 = RPAREN
-    {                              ( _2 )}
+    {( _2 )}
 
 typedargslist:
   v = typedargs_
@@ -218,43 +218,43 @@ typedargslist:
 let _startpos = _startpos_v_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                     ( get_loc _startofs _endofs, v )}
+( get_loc _startofs _endofs, v )}
 | v = typedargs_ _2 = COMMA
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos_v_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                     ( get_loc _startofs _endofs, v )}
+( get_loc _startofs _endofs, v )}
 
 typedargs_:
   _1 = typedarg
-    {                          (      [_1] )}
+    {(      [_1] )}
 | _1 = typedargs_ _2 = COMMA _3 = typedarg
-    {                            ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 
 typedarg:
   _1 = tfpdef
-    {                  ( VAarg (_1, None) )}
+    {( VAarg (_1, None) )}
 | _1 = tfpdef _2 = EQ _3 = test
-    {                  ( VAarg (_1, Some _3) )}
+    {( VAarg (_1, Some _3) )}
 | _1 = STAR
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( VAargs(get_loc _startofs _endofs, None) )}
+( VAargs(get_loc _startofs _endofs, None) )}
 | _1 = STAR _2 = name
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( VAargs(get_loc _startofs _endofs, (Some _2)) )}
+( VAargs(get_loc _startofs _endofs, (Some _2)) )}
 | _1 = STAR_STAR _2 = name
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( VAkwargs(get_loc _startofs _endofs, _2) )}
+( VAkwargs(get_loc _startofs _endofs, _2) )}
 
 varargslist:
   v = varargs_
@@ -262,85 +262,85 @@ varargslist:
 let _startpos = _startpos_v_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                   ( get_loc _startofs _endofs, v )}
+( get_loc _startofs _endofs, v )}
 | v = varargs_ _2 = COMMA
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos_v_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                   ( get_loc _startofs _endofs, v )}
+( get_loc _startofs _endofs, v )}
 
 varargs_:
   _1 = vararg
-    {                        (      [_1] )}
+    {(      [_1] )}
 | _1 = varargs_ _2 = COMMA _3 = vararg
-    {                        ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 
 vararg:
   _1 = fpdef
-    {                 ( VAarg (_1, None) )}
+    {( VAarg (_1, None) )}
 | _1 = fpdef _2 = EQ _3 = test
-    {                 ( VAarg (_1, Some _3) )}
+    {( VAarg (_1, Some _3) )}
 | _1 = STAR
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( VAargs(get_loc _startofs _endofs, None) )}
+( VAargs(get_loc _startofs _endofs, None) )}
 | _1 = STAR _2 = name
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( VAargs(get_loc _startofs _endofs, (Some _2)) )}
+( VAargs(get_loc _startofs _endofs, (Some _2)) )}
 | _1 = STAR_STAR _2 = name
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( VAkwargs(get_loc _startofs _endofs, _2) )}
+( VAkwargs(get_loc _startofs _endofs, _2) )}
 
 tfpdef:
   _1 = fpdef
-    {        ( _1 )}
+    {( _1 )}
 | _1 = name _2 = COLON _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( Ftyped(get_loc _startofs _endofs, _1, _3) )}
+( Ftyped(get_loc _startofs _endofs, _1, _3) )}
 
 fpdef:
   _1 = name
-    {                       ( Fname _1 )}
+    {( Fname _1 )}
 | _1 = LPAREN _2 = fplist _3 = RPAREN
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                       ( Flist(get_loc _startofs _endofs, _2) )}
+( Flist(get_loc _startofs _endofs, _2) )}
 
 fplist:
   _1 = fpdefs
-    {               ( List.rev _1 )}
+    {( List.rev _1 )}
 | _1 = fpdefs _2 = COMMA
-    {               ( List.rev _1 )}
+    {( List.rev _1 )}
 
 fpdefs:
   _1 = fpdef
-    {                     ( [_1] )}
+    {( [_1] )}
 | _1 = fpdefs _2 = COMMA _3 = fpdef
-    {                     ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 stmt:
   _1 = simple_stmt
-    {              ( _1 )}
+    {( _1 )}
 | _1 = compound_stmt
-    {                ( _1 )}
+    {( _1 )}
 
 simple_stmt:
   _1 = simple_stmt_ _2 = NEWLINE
-    {                       ( _1 )}
+    {( _1 )}
 
 simple_stmt_:
   _1 = small_stmts
@@ -348,19 +348,19 @@ simple_stmt_:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( mkstmt _startofs _endofs (Ssimple (List.rev _1)) )}
+( mkstmt _startofs _endofs (Ssimple (List.rev _1)) )}
 | _1 = small_stmts _2 = SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( mkstmt _startofs _endofs (Ssimple (List.rev _1)) )}
+( mkstmt _startofs _endofs (Ssimple (List.rev _1)) )}
 
 small_stmts:
   _1 = small_stmt
-    {                                   ( [_1] )}
+    {( [_1] )}
 | _1 = small_stmts _2 = SEMICOLON _3 = small_stmt
-    {                                   ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 small_stmt:
   _1 = small_stmt_
@@ -368,49 +368,49 @@ small_stmt:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-              ( mksstmt _startofs _endofs _1 )}
+( mksstmt _startofs _endofs _1 )}
 
 small_stmt_:
   _1 = expr_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = print_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = del_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = pass_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = flow_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = import_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = global_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = nonlocal_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = exec_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = assert_stmt
-    {                ( _1 )}
+    {( _1 )}
 
 annassign:
   _1 = COLON _2 = test
-    {                                       ( _2, None )}
+    {( _2, None )}
 | _1 = COLON _2 = test _3 = EQ _4 = testlist_or_yield_expr
-    {                                       ( _2, Some _4 )}
+    {( _2, Some _4 )}
 
 expr_stmt:
   _1 = testlist_star_expr
-    {                     ( SSexpr _1.list )}
+    {( SSexpr _1.list )}
 | _1 = testlist_star_expr _2 = annassign
-    {                               ( SSannassign(_1.list, fst _2, snd _2) )}
+    {( SSannassign(_1.list, fst _2, snd _2) )}
 | _1 = testlist_star_expr _2 = augassign _3 = testlist_or_yield_expr
-    {                                                      ( SSaugassign(_1.list, _2, _3) )}
+    {( SSaugassign(_1.list, _2, _3) )}
 | _1 = testlist_star_expr _2 = eq_testlists
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    (
+(
      match _2 with
      | last :: a -> SSassign(_1 :: (List.rev a), last)
      | _ -> parse_error _startofs _endofs "syntax error"
@@ -418,53 +418,53 @@ let _startofs = _startpos.Lexing.pos_cnum in
 
 eq_testlists:
   _1 = EQ _2 = testlist_or_yield_expr
-    {                                         ( [_2] )}
+    {( [_2] )}
 | _1 = eq_testlists _2 = EQ _3 = testlist_or_yield_expr
-    {                                         ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 testlist_or_yield_expr:
   _1 = testlist_star_expr
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = yield_expr
-    {             ( _1 )}
+    {( _1 )}
 
 augassign:
   _1 = PLUS_EQ
-    {                 ( AaddEq )}
+    {( AaddEq )}
 | _1 = MINUS_EQ
-    {                 ( AsubEq )}
+    {( AsubEq )}
 | _1 = STAR_EQ
-    {                 ( AmulEq )}
+    {( AmulEq )}
 | _1 = SLASH_EQ
-    {                 ( AdivEq )}
+    {( AdivEq )}
 | _1 = PERCENT_EQ
-    {                 ( AmodEq )}
+    {( AmodEq )}
 | _1 = AMP_EQ
-    {                 ( AandEq )}
+    {( AandEq )}
 | _1 = PIPE_EQ
-    {                 ( AorEq )}
+    {( AorEq )}
 | _1 = HAT_EQ
-    {                 ( AxorEq )}
+    {( AxorEq )}
 | _1 = LT_LT_EQ
-    {                 ( AshiftLEq )}
+    {( AshiftLEq )}
 | _1 = GT_GT_EQ
-    {                 ( AshiftREq )}
+    {( AshiftREq )}
 | _1 = STAR_STAR_EQ
-    {                 ( ApowEq )}
+    {( ApowEq )}
 | _1 = SLASH_SLASH_EQ
-    {                 ( AfdivEq )}
+    {( AfdivEq )}
 
 print_stmt:
   _1 = PRINT
-    {                       ( SSprint [] )}
+    {( SSprint [] )}
 | _1 = PRINT _2 = testlist
-    {                       ( SSprint _2.list )}
+    {( SSprint _2.list )}
 | _1 = PRINT _2 = GT_GT _3 = testlist
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( 
+( 
       match _3.list with
 	h :: t -> SSprintchevron(h, t) 
       | _ -> parse_error _startofs _endofs "syntax error"
@@ -472,67 +472,67 @@ let _startofs = _startpos.Lexing.pos_cnum in
 
 del_stmt:
   _1 = DEL _2 = exprlist
-    {               ( SSdel _2 )}
+    {( SSdel _2 )}
 
 pass_stmt:
   _1 = PASS
-    {       ( SSpass )}
+    {( SSpass )}
 
 flow_stmt:
   _1 = break_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = continue_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = return_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = raise_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = yield_stmt
-    {                ( _1 )}
+    {( _1 )}
 
 break_stmt:
   _1 = BREAK
-    {        ( SSbreak )}
+    {( SSbreak )}
 
 continue_stmt:
   _1 = CONTINUE
-    {           ( SScontinue )}
+    {( SScontinue )}
 
 return_stmt:
   _1 = RETURN
-    {                            ( SSreturn [] )}
+    {( SSreturn [] )}
 | _1 = RETURN _2 = testlist_star_expr
-    {                            ( SSreturn _2.list )}
+    {( SSreturn _2.list )}
 
 yield_stmt:
   _1 = yield_expr
-    {             ( SSyield _1.list )}
+    {( SSyield _1.list )}
 
 raise_stmt:
   _1 = RAISE
-    {                                   ( SSraise )}
+    {( SSraise )}
 | _1 = RAISE _2 = test
-    {                                   ( SSraise1 _2 )}
+    {( SSraise1 _2 )}
 | _1 = RAISE _2 = test _3 = COMMA _4 = test
-    {                                   ( SSraise2(_2, _4) )}
+    {( SSraise2(_2, _4) )}
 | _1 = RAISE _2 = test _3 = COMMA _4 = test _5 = COMMA _6 = test
-    {                                   ( SSraise3(_2, _4, _6) )}
+    {( SSraise3(_2, _4, _6) )}
 | _1 = RAISE _2 = test _3 = FROM _4 = test
-    {                                   ( SSraisefrom(_2, _4) )}
+    {( SSraisefrom(_2, _4) )}
 
 import_stmt:
   _1 = import_name
-    {              ( _1 )}
+    {( _1 )}
 | _1 = import_from
-    {              ( _1 )}
+    {( _1 )}
 
 import_name:
   _1 = IMPORT _2 = dotted_as_names
-    {                         ( SSimport _2 )}
+    {( SSimport _2 )}
 
 import_from:
   _1 = FROM _2 = dotted_name _3 = IMPORT _4 = imports
-    {    (
+    {(
      (*begin
        match $2, $4 with
 	 [_, "__future__"], [(_, "with_statement"), None] ->
@@ -542,9 +542,9 @@ import_from:
      SSfrom(None, Some _2, _4)
    )}
 | _1 = FROM _2 = dot_or_ellipsis_seq _3 = dotted_name _4 = IMPORT _5 = imports
-    {                                                      ( SSfrom(Some _2, Some _3, _5) )}
+    {( SSfrom(Some _2, Some _3, _5) )}
 | _1 = FROM _2 = dot_or_ellipsis_seq _3 = IMPORT _4 = imports
-    {                                                      ( SSfrom(Some _2, None, _4) )}
+    {( SSfrom(Some _2, None, _4) )}
 
 dot_or_ellipsis_seq:
   _1 = nonempty_list_dot_or_ellipsis_
@@ -552,85 +552,85 @@ dot_or_ellipsis_seq:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                   ( get_loc _startofs _endofs, (List.fold_left (fun s x -> s + x) 0 _1) )}
+( get_loc _startofs _endofs, (List.fold_left (fun s x -> s + x) 0 _1) )}
 
 imports:
   _1 = STAR
-    {       ( [] )}
+    {( [] )}
 | _1 = LPAREN _2 = import_as_names_list _3 = RPAREN
-    {                                     ( _2 )}
+    {( _2 )}
 | _1 = import_as_names_list
-    {                       ( _1 )}
+    {( _1 )}
 
 import_as_names_list:
   _1 = import_as_names
-    {                        ( List.rev _1 )}
+    {( List.rev _1 )}
 | _1 = import_as_names _2 = COMMA
-    {                        ( List.rev _1 )}
+    {( List.rev _1 )}
 
 import_as_name:
   _1 = name
-    {               ( _1, None )}
+    {( _1, None )}
 | _1 = name _2 = AS _3 = name
-    {               ( _1, Some _3 )}
+    {( _1, Some _3 )}
 
 dotted_as_name:
   _1 = dotted_name
-    {                        ( _1, None )}
+    {( _1, None )}
 | _1 = dotted_name _2 = name _3 = name
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( if (snd _2) = "as" then _1, Some _3 else parse_error _startofs _endofs "syntax error" )}
+( if (snd _2) = "as" then _1, Some _3 else parse_error _startofs _endofs "syntax error" )}
 | _1 = dotted_name _2 = AS _3 = name
-    {                        ( _1, Some _3 )}
+    {( _1, Some _3 )}
 
 import_as_names:
   _1 = import_as_name
-    {                                       ( [_1] )}
+    {( [_1] )}
 | _1 = import_as_names _2 = COMMA _3 = import_as_name
-    {                                       ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 dotted_as_names:
   _1 = dotted_as_name
-    {                                       ( [_1] )}
+    {( [_1] )}
 | _1 = dotted_as_name _2 = COMMA _3 = dotted_as_names
-    {                                       ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 dotted_name:
   _1 = name
-    {                       ( [_1] )}
+    {( [_1] )}
 | _1 = name _2 = DOT _3 = dotted_name
-    {                       ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 global_stmt:
   _1 = GLOBAL _2 = names
-    {               ( SSglobal _2 )}
+    {( SSglobal _2 )}
 
 nonlocal_stmt:
   _1 = NONLOCAL _2 = names
-    {                 ( SSnonlocal _2 )}
+    {( SSnonlocal _2 )}
 
 names:
   _1 = name
-    {                   ( [_1] )}
+    {( [_1] )}
 | _1 = name _2 = COMMA _3 = names
-    {                   ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 exec_stmt:
   _1 = EXEC _2 = expr
-    {                               ( SSexec _2 )}
+    {( SSexec _2 )}
 | _1 = EXEC _2 = expr _3 = IN _4 = test
-    {                               ( SSexec2(_2, _4) )}
+    {( SSexec2(_2, _4) )}
 | _1 = EXEC _2 = expr _3 = IN _4 = test _5 = COMMA _6 = test
-    {                               ( SSexec3(_2, _4, _6) )}
+    {( SSexec3(_2, _4, _6) )}
 
 assert_stmt:
   _1 = ASSERT _2 = test
-    {                         ( SSassert _2 )}
+    {( SSassert _2 )}
 | _1 = ASSERT _2 = test _3 = COMMA _4 = test
-    {                         ( SSassert2(_2, _4) )}
+    {( SSassert2(_2, _4) )}
 
 compound_stmt:
   _1 = compound_stmt_
@@ -638,55 +638,55 @@ compound_stmt:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( mkstmt _startofs _endofs _1 )}
+( mkstmt _startofs _endofs _1 )}
 
 compound_stmt_:
   _1 = if_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = while_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = for_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = try_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = with_stmt
-    {                ( _1 )}
+    {( _1 )}
 | _1 = async_funcdef
-    {                ( _1 )}
+    {( _1 )}
 | _1 = funcdef
-    {                ( _1 )}
+    {( _1 )}
 | _1 = classdef
-    {                ( _1 )}
+    {( _1 )}
 | _1 = decorated
-    {                ( _1 )}
+    {( _1 )}
 | _1 = async_stmt
-    {                ( _1 )}
+    {( _1 )}
 
 async_stmt:
   _1 = ASYNC _2 = with_stmt
     {let _endofs__2_ = _endpos__2_.Lexing.pos_cnum in
 let _startofs__2_ = _startpos__2_.Lexing.pos_cnum in
-                  ( Sasync (mkstmt _startofs__2_ _endofs__2_ _2) )}
+( Sasync (mkstmt _startofs__2_ _endofs__2_ _2) )}
 | _1 = ASYNC _2 = for_stmt
     {let _endofs__2_ = _endpos__2_.Lexing.pos_cnum in
 let _startofs__2_ = _startpos__2_.Lexing.pos_cnum in
-                  ( Sasync (mkstmt _startofs__2_ _endofs__2_ _2) )}
+( Sasync (mkstmt _startofs__2_ _endofs__2_ _2) )}
 
 if_stmt:
   _1 = IF _2 = test _3 = COLON _4 = suite
-    {                                ( Sif(_2, _4, [], None) )}
+    {( Sif(_2, _4, [], None) )}
 | _1 = IF _2 = test _3 = COLON _4 = suite _5 = elifs
-    {                                ( Sif(_2, _4, _5, None) )}
+    {( Sif(_2, _4, _5, None) )}
 | _1 = IF _2 = test _3 = COLON _4 = suite _5 = els
-    {                                ( Sif(_2, _4, [], Some _5) )}
+    {( Sif(_2, _4, [], Some _5) )}
 | _1 = IF _2 = test _3 = COLON _4 = suite _5 = elifs _6 = els
-    {                                ( Sif(_2, _4, _5, Some _6) )}
+    {( Sif(_2, _4, _5, Some _6) )}
 
 elifs:
   _1 = elif
-    {             ( [_1] )}
+    {( [_1] )}
 | _1 = elif _2 = elifs
-    {             ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 elif:
   _1 = ELIF _2 = test _3 = COLON _4 = suite
@@ -694,7 +694,7 @@ elif:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( get_loc _startofs _endofs, _2, _4 )}
+( get_loc _startofs _endofs, _2, _4 )}
 
 els:
   _1 = ELSE _2 = COLON _3 = suite
@@ -702,35 +702,35 @@ els:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                   ( get_loc _startofs _endofs, _3 )}
+( get_loc _startofs _endofs, _3 )}
 
 while_stmt:
   _1 = WHILE _2 = test _3 = COLON _4 = suite
-    {                             ( Swhile(_2, _4, None) )}
+    {( Swhile(_2, _4, None) )}
 | _1 = WHILE _2 = test _3 = COLON _4 = suite _5 = els
-    {                             ( Swhile(_2, _4, Some _5) )}
+    {( Swhile(_2, _4, Some _5) )}
 
 for_stmt:
   _1 = FOR _2 = exprlist _3 = IN _4 = testlist _5 = COLON _6 = suite
-    {                                           ( Sfor(_2, _4.list, _6, None) )}
+    {( Sfor(_2, _4.list, _6, None) )}
 | _1 = FOR _2 = exprlist _3 = IN _4 = testlist _5 = COLON _6 = suite _7 = els
-    {                                           ( Sfor(_2, _4.list, _6, Some _7) )}
+    {( Sfor(_2, _4.list, _6, Some _7) )}
 
 try_stmt:
   _1 = try_except
-    {                          ( let t, e = _1 in Stry(t, e, None, None) )}
+    {( let t, e = _1 in Stry(t, e, None, None) )}
 | _1 = try_except _2 = els
-    {                          ( let t, e = _1 in Stry(t, e, Some _2, None) )}
+    {( let t, e = _1 in Stry(t, e, Some _2, None) )}
 | _1 = try_except _2 = finally
-    {                          ( let t, e = _1 in Stry(t, e, None, Some _2) )}
+    {( let t, e = _1 in Stry(t, e, None, Some _2) )}
 | _1 = try_except _2 = els _3 = finally
-    {                          ( let t, e = _1 in Stry(t, e, Some _2, Some _3) )}
+    {( let t, e = _1 in Stry(t, e, Some _2, Some _3) )}
 | _1 = TRY _2 = COLON _3 = suite _4 = finally
-    {                          ( Stryfin(_3, _4) )}
+    {( Stryfin(_3, _4) )}
 
 try_except:
   _1 = TRY _2 = COLON _3 = suite _4 = except_clause_suites
-    {                                       ( _3, _4 )}
+    {( _3, _4 )}
 
 finally:
   _1 = FINALLY _2 = COLON _3 = suite
@@ -738,29 +738,29 @@ finally:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                      ( get_loc _startofs _endofs, _3 )}
+( get_loc _startofs _endofs, _3 )}
 
 except_clause_suites:
   _1 = except_clause _2 = COLON _3 = suite
-    {                                                 ( [_1, _3] )}
+    {( [_1, _3] )}
 | _1 = except_clause _2 = COLON _3 = suite _4 = except_clause_suites
-    {                                                 ( (_1, _3) :: _4 )}
+    {( (_1, _3) :: _4 )}
 
 with_stmt:
   _1 = WITHx _2 = with_item_list _3 = COLON _4 = suite
-    {                                   ( Swith(List.rev _2, _4) )}
+    {( Swith(List.rev _2, _4) )}
 
 with_item:
   _1 = test
-    {               ( _1, None )}
+    {( _1, None )}
 | _1 = test _2 = AS _3 = expr
-    {               ( _1, Some _3 )}
+    {( _1, Some _3 )}
 
 with_item_list:
   _1 = with_item
-    {                                 ( [_1] )}
+    {( [_1] )}
 | _1 = with_item_list _2 = COMMA _3 = with_item
-    {                                 ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 except_clause:
   _1 = EXCEPT
@@ -768,25 +768,25 @@ except_clause:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                         ( EX(get_loc _startofs _endofs) )}
+( EX(get_loc _startofs _endofs) )}
 | _1 = EXCEPT _2 = test
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                         ( EX1(get_loc _startofs _endofs, _2) )}
+( EX1(get_loc _startofs _endofs, _2) )}
 | _1 = EXCEPT _2 = test _3 = COMMA _4 = test
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                         ( EX2(get_loc _startofs _endofs, _2, _4) )}
+( EX2(get_loc _startofs _endofs, _2, _4) )}
 | _1 = EXCEPT _2 = test _3 = AS _4 = test
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                         ( EX2(get_loc _startofs _endofs, _2, _4) )}
+( EX2(get_loc _startofs _endofs, _2, _4) )}
 
 suite:
   _1 = simple_stmt
@@ -794,129 +794,129 @@ suite:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-              ( get_loc _startofs _endofs, [_1] )}
+( get_loc _startofs _endofs, [_1] )}
 | _1 = NEWLINE _2 = INDENT _3 = stmts _4 = DEDENT
     {let _endofs__3_ = _endpos__3_.Lexing.pos_cnum in
 let _startofs__3_ = _startpos__3_.Lexing.pos_cnum in
-                              ( get_loc _startofs__3_ _endofs__3_, _3 )}
+( get_loc _startofs__3_ _endofs__3_, _3 )}
 
 stmts:
   _1 = stmt
-    {             ( [_1] )}
+    {( [_1] )}
 | _1 = stmt _2 = stmts
-    {             ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 old_test:
   _1 = or_test
-    {          ( _1 )}
+    {( _1 )}
 | _1 = old_lambdef
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-              ( mkexpr _startofs _endofs _1 )}
+( mkexpr _startofs _endofs _1 )}
 
 old_lambdef:
   _1 = LAMBDA _2 = COLON _3 = old_test
-    {                                    ( Elambda(emptyvarargslist, _3) )}
+    {( Elambda(emptyvarargslist, _3) )}
 | _1 = LAMBDA _2 = varargslist _3 = COLON _4 = old_test
-    {                                    ( Elambda(_2, _4) )}
+    {( Elambda(_2, _4) )}
 
 namedexpr_test:
   _1 = test
-    {       ( _1 )}
+    {( _1 )}
 | _1 = test _2 = COLON_EQ _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                     ( mkexpr _startofs _endofs (Enamed(_1, _3)) )}
+( mkexpr _startofs _endofs (Enamed(_1, _3)) )}
 | _1 = test _2 = EQ _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-               ( mkexpr _startofs _endofs (Enamed(_1, _3)) )}
+( mkexpr _startofs _endofs (Enamed(_1, _3)) )}
 
 test:
   _1 = or_test
-    {          ( _1 )}
+    {( _1 )}
 | _1 = or_test _2 = IF _3 = or_test _4 = ELSE _5 = test
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                               ( mkexpr _startofs _endofs (Econd(_1, _3, _5)) )}
+( mkexpr _startofs _endofs (Econd(_1, _3, _5)) )}
 | _1 = lambdef
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-          ( mkexpr _startofs _endofs _1 )}
+( mkexpr _startofs _endofs _1 )}
 
 or_test:
   _1 = and_test
-    {                      ( _1 )}
+    {( _1 )}
 | _1 = or_test _2 = OR _3 = and_test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                      ( mkexpr _startofs _endofs (Ebop(_1, Bor, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, Bor, _3)) )}
 
 and_test:
   _1 = not_test
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = and_test _2 = AND _3 = not_test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( mkexpr _startofs _endofs (Ebop(_1, Band, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, Band, _3)) )}
 
 not_test:
   _1 = comparison
-    {             ( _1 )}
+    {( _1 )}
 | _1 = NOT _2 = not_test
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-               ( mkexpr _startofs _endofs (Euop(Unot, _2)) )}
+( mkexpr _startofs _endofs (Euop(Unot, _2)) )}
 
 comparison:
   _1 = expr
-    {       ( _1 )}
+    {( _1 )}
 | _1 = comparison _2 = comp_op _3 = expr
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                          ( mkexpr _startofs _endofs (Ebop(_1, _2, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, _2, _3)) )}
 
 comp_op:
   _1 = LT
-    {            ( Blt )}
+    {( Blt )}
 | _1 = GT
-    {            ( Bgt )}
+    {( Bgt )}
 | _1 = EQ_EQ
-    {            ( Beq )}
+    {( Beq )}
 | _1 = GT_EQ
-    {            ( Bge )}
+    {( Bge )}
 | _1 = LT_EQ
-    {            ( Ble )}
+    {( Ble )}
 | _1 = LT_GT
-    {            ( Bneq )}
+    {( Bneq )}
 | _1 = EXCLAM_EQ
-    {            ( Bneq )}
+    {( Bneq )}
 | _1 = IN
-    {            ( Bin )}
+    {( Bin )}
 | _1 = NOT _2 = IN
-    {            ( BnotIn )}
+    {( BnotIn )}
 | _1 = IS
-    {            ( Bis )}
+    {( Bis )}
 | _1 = IS _2 = NOT
-    {            ( BisNot )}
+    {( BisNot )}
 
 star_expr:
   _1 = STAR _2 = expr
@@ -924,89 +924,89 @@ star_expr:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-            ( mkexpr _startofs _endofs (Estar _2) )}
+( mkexpr _startofs _endofs (Estar _2) )}
 
 expr:
   _1 = xor_expr
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = xor_expr _2 = PIPE _3 = expr
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                     ( mkexpr _startofs _endofs (Ebop(_1, BbitOr, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, BbitOr, _3)) )}
 
 xor_expr:
   _1 = and_expr
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = xor_expr _2 = HAT _3 = and_expr
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( mkexpr _startofs _endofs (Ebop(_1, BbitXor, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, BbitXor, _3)) )}
 
 and_expr:
   _1 = shift_expr
-    {                          ( _1 )}
+    {( _1 )}
 | _1 = and_expr _2 = AMP _3 = shift_expr
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                          ( mkexpr _startofs _endofs (Ebop(_1, BbitAnd, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, BbitAnd, _3)) )}
 
 shift_expr:
   _1 = arith_expr
-    {                              ( _1 )}
+    {( _1 )}
 | _1 = shift_expr _2 = LT_LT _3 = arith_expr
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                              ( mkexpr _startofs _endofs (Ebop(_1, BshiftL, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, BshiftL, _3)) )}
 | _1 = shift_expr _2 = GT_GT _3 = arith_expr
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                              ( mkexpr _startofs _endofs (Ebop(_1, BshiftR, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, BshiftR, _3)) )}
 
 arith_expr:
   _1 = term
-    {                        ( _1 )}
+    {( _1 )}
 | _1 = arith_expr _2 = PLUS _3 = term
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( mkexpr _startofs _endofs (Ebop(_1, Badd, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, Badd, _3)) )}
 | _1 = arith_expr _2 = MINUS _3 = term
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( mkexpr _startofs _endofs (Ebop(_1, Bsub, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, Bsub, _3)) )}
 
 term:
   _1 = factor
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = term _2 = mop _3 = factor
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( mkexpr _startofs _endofs (Ebop(_1, _2, _3)) )}
+( mkexpr _startofs _endofs (Ebop(_1, _2, _3)) )}
 
 mop:
   _1 = STAR
-    {              ( Bmul )}
+    {( Bmul )}
 | _1 = SLASH
-    {              ( Bdiv )}
+    {( Bdiv )}
 | _1 = PERCENT
-    {              ( Bmod )}
+    {( Bmod )}
 | _1 = SLASH_SLASH
-    {              ( Bfdiv )}
+    {( Bfdiv )}
 
 factor:
   _1 = PLUS _2 = factor
@@ -1014,21 +1014,21 @@ factor:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-               ( mkexpr _startofs _endofs (Euop(Upositive, _2)) )}
+( mkexpr _startofs _endofs (Euop(Upositive, _2)) )}
 | _1 = MINUS _2 = factor
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-               ( mkexpr _startofs _endofs (Euop(Unegative, _2)) )}
+( mkexpr _startofs _endofs (Euop(Unegative, _2)) )}
 | _1 = TILDE _2 = factor
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-               ( mkexpr _startofs _endofs (Euop(Ucomplement, _2)) )}
+( mkexpr _startofs _endofs (Euop(Ucomplement, _2)) )}
 | _1 = power
-    {        ( _1 )}
+    {( _1 )}
 
 power:
   _1 = primary
@@ -1036,23 +1036,23 @@ power:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                           ( mkexpr _startofs _endofs (Eprimary _1) )}
+( mkexpr _startofs _endofs (Eprimary _1) )}
 | _1 = primary _2 = STAR_STAR _3 = factor
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                           ( mkexpr _startofs _endofs (Epower(_1, _3)) )}
+( mkexpr _startofs _endofs (Epower(_1, _3)) )}
 
 primary:
   _1 = _primary
-    {                 ( _1 )}
+    {( _1 )}
 | _1 = AWAIT _2 = _primary
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                 ( mkprim _startofs _endofs (Pawait _2) )}
+( mkprim _startofs _endofs (Pawait _2) )}
 
 _primary:
   _1 = atom
@@ -1060,13 +1060,13 @@ _primary:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-       ( mkprim _startofs _endofs _1 )}
+( mkprim _startofs _endofs _1 )}
 | _1 = _primary _2 = trailer
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( 
+( 
       let p = 
 	match _2 with
         | TRattrref n    -> Pattrref(_1, n)
@@ -1079,19 +1079,19 @@ let _startofs = _startpos.Lexing.pos_cnum in
 
 atom:
   _1 = LPAREN _2 = RPAREN
-    {                              ( Ptuple [] )}
+    {( Ptuple [] )}
 | _1 = LPAREN _2 = yield_expr _3 = RPAREN
     {let _endofs__2_ = _endpos__2_.Lexing.pos_cnum in
 let _startofs__2_ = _startpos__2_.Lexing.pos_cnum in
-                              ( Pparen (mkprimexpr _startofs__2_ _endofs__2_ (Pyield _2.list)) )}
+( Pparen (mkprimexpr _startofs__2_ _endofs__2_ (Pyield _2.list)) )}
 | _1 = LPAREN _2 = testlist_comp _3 = RPAREN
     {let _endofs__2_ = _endpos__2_.Lexing.pos_cnum in
 let _startofs__2_ = _startpos__2_.Lexing.pos_cnum in
-                              ( Pparen (mkprimexpr _startofs__2_ _endofs__2_ _2) )}
+( Pparen (mkprimexpr _startofs__2_ _endofs__2_ _2) )}
 | _1 = LBRACKET _2 = RBRACKET
-    {                                  ( Plistnull )}
+    {( Plistnull )}
 | _1 = LBRACKET _2 = testlist_comp _3 = RBRACKET
-    {    ( 
+    {( 
       match _2 with
       | Pparen t -> Plist [t]
       | Ptuple l -> Plist l
@@ -1099,33 +1099,33 @@ let _startofs__2_ = _startpos__2_.Lexing.pos_cnum in
       | _ -> assert false
     )}
 | _1 = LBRACE _2 = RBRACE
-    {                               ( Pdictnull )}
+    {( Pdictnull )}
 | _1 = LBRACE _2 = dictorsetmaker _3 = RBRACE
-    {                               ( Pdictorset _2 )}
+    {( Pdictorset _2 )}
 | _1 = BACKQUOTE _2 = testlist1 _3 = BACKQUOTE
-    {                                ( Pstrconv _2 )}
+    {( Pstrconv _2 )}
 | _1 = name
-    {       ( Pname _1 )}
+    {( Pname _1 )}
 | _1 = literal
-    {          ( Pliteral _1 )}
+    {( Pliteral _1 )}
 
 literal:
   _1 = INTEGER
-    {              ( Linteger _1 )}
+    {( Linteger _1 )}
 | _1 = LONGINTEGER
-    {              ( Llonginteger _1 )}
+    {( Llonginteger _1 )}
 | _1 = FLOATNUMBER
-    {              ( Lfloatnumber _1 )}
+    {( Lfloatnumber _1 )}
 | _1 = IMAGNUMBER
-    {              ( Limagnumber _1 )}
+    {( Limagnumber _1 )}
 | _1 = strings
-    {              ( Lstring _1 )}
+    {( Lstring _1 )}
 
 strings:
   _1 = stringliteral
-    {                ( [_1] )}
+    {( [_1] )}
 | _1 = stringliteral _2 = strings
-    {                        ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 stringliteral:
   _1 = SHORTSTRING
@@ -1133,29 +1133,29 @@ stringliteral:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                     ( PSshort(get_loc _startofs _endofs, _1) )}
+( PSshort(get_loc _startofs _endofs, _1) )}
 | _1 = LONGSTRING_BEGIN_S _2 = LONGSTRING_REST
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                     ( PSlong(get_loc _startofs _endofs, _1 ^ _2) )}
+( PSlong(get_loc _startofs _endofs, _1 ^ _2) )}
 | _1 = LONGSTRING_BEGIN_D _2 = LONGSTRING_REST
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                                     ( PSlong(get_loc _startofs _endofs, _1 ^ _2) )}
+( PSlong(get_loc _startofs _endofs, _1 ^ _2) )}
 
 testlist_comp:
   _1 = namedexpr_test _2 = comp_for
-    {let _1 =                  ( _1 ) in
-                 ( PcompT(_1, _2) )}
+    {let _1 = ( _1 ) in
+( PcompT(_1, _2) )}
 | _1 = star_expr _2 = comp_for
-    {let _1 =             ( _1 ) in
-                 ( PcompT(_1, _2) )}
+    {let _1 = ( _1 ) in
+( PcompT(_1, _2) )}
 | _1 = testlist_
-    {    ( 
+    {( 
       if _1.yield then 
 	Pyield _1.list
       else
@@ -1167,23 +1167,23 @@ testlist_comp:
 
 lambdef:
   _1 = LAMBDA _2 = COLON _3 = test
-    {                                ( Elambda(emptyvarargslist, _3) )}
+    {( Elambda(emptyvarargslist, _3) )}
 | _1 = LAMBDA _2 = varargslist _3 = COLON _4 = test
-    {                                ( Elambda(_2, _4) )}
+    {( Elambda(_2, _4) )}
 
 trailer:
   _1 = LPAREN _2 = RPAREN
-    {                        ( TRcall emptyarglist )}
+    {( TRcall emptyarglist )}
 | _1 = LPAREN _2 = arglist _3 = RPAREN
-    {                        ( TRcall _2 )}
+    {( TRcall _2 )}
 | _1 = LBRACKET _2 = RBRACKET
-    {                                  ( TRsubscript [] )}
+    {( TRsubscript [] )}
 | _1 = LBRACKET _2 = subscriptlist _3 = RBRACKET
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-    ( 
+( 
       if (List.for_all (function SIexpr _ -> true | _ -> false) _2) then
 	TRsubscript 
 	  (List.map 
@@ -1191,19 +1191,19 @@ let _startofs = _startpos.Lexing.pos_cnum in
       else TRslice _2
     )}
 | _1 = DOT _2 = name
-    {           ( TRattrref _2 )}
+    {( TRattrref _2 )}
 
 subscriptlist:
   _1 = subscripts
-    {                   ( List.rev _1 )}
+    {( List.rev _1 )}
 | _1 = subscripts _2 = COMMA
-    {                   ( List.rev _1 )}
+    {( List.rev _1 )}
 
 subscripts:
   _1 = subscript
-    {                             ( [_1] )}
+    {( [_1] )}
 | _1 = subscripts _2 = COMMA _3 = subscript
-    {                             ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 subscript:
   _1 = ELLIPSIS
@@ -1211,131 +1211,131 @@ subscript:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-           ( SIellipsis(get_loc _startofs _endofs) )}
+( SIellipsis(get_loc _startofs _endofs) )}
 | _1 = test
-    {       ( SIexpr _1 )}
+    {( SIexpr _1 )}
 | _1 = COLON
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( SI2(get_loc _startofs _endofs, None, None) )}
+( SI2(get_loc _startofs _endofs, None, None) )}
 | _1 = test _2 = COLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( SI2(get_loc _startofs _endofs, Some _1, None) )}
+( SI2(get_loc _startofs _endofs, Some _1, None) )}
 | _1 = COLON _2 = test
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( SI2(get_loc _startofs _endofs, None, Some _2) )}
+( SI2(get_loc _startofs _endofs, None, Some _2) )}
 | _1 = test _2 = COLON _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( SI2(get_loc _startofs _endofs, Some _1, Some _3) )}
+( SI2(get_loc _startofs _endofs, Some _1, Some _3) )}
 | _1 = COLON _2 = sliceop
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                          ( SI3(get_loc _startofs _endofs, None, None, _2) )}
+( SI3(get_loc _startofs _endofs, None, None, _2) )}
 | _1 = test _2 = COLON _3 = sliceop
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                          ( SI3(get_loc _startofs _endofs, Some _1, None, _3) )}
+( SI3(get_loc _startofs _endofs, Some _1, None, _3) )}
 | _1 = COLON _2 = test _3 = sliceop
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                          ( SI3(get_loc _startofs _endofs, None, Some _2, _3) )}
+( SI3(get_loc _startofs _endofs, None, Some _2, _3) )}
 | _1 = test _2 = COLON _3 = test _4 = sliceop
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                          ( SI3(get_loc _startofs _endofs, Some _1, Some _3, _4) )}
+( SI3(get_loc _startofs _endofs, Some _1, Some _3, _4) )}
 
 sliceop:
   _1 = COLON
-    {             ( None )}
+    {( None )}
 | _1 = COLON _2 = test
-    {             ( Some _2 )}
+    {( Some _2 )}
 
 exprlist:
   _1 = exprs
-    {              ( _1 )}
+    {( _1 )}
 | _1 = exprs _2 = COMMA
-    {              ( _1 )}
+    {( _1 )}
 
 exprs:
   _1 = expr
-    {let _1 =        ( _1 ) in
-                    ( [_1] )}
+    {let _1 = ( _1 ) in
+( [_1] )}
 | _1 = star_expr
-    {let _1 =             ( _1 ) in
-                    ( [_1] )}
+    {let _1 = ( _1 ) in
+( [_1] )}
 | _1 = exprs _2 = COMMA _1_inlined1 = expr
     {let _3 =
   let _1 = _1_inlined1 in
-         ( _1 )
+  ( _1 )
 in
-                    ( _1 @ [_3] )}
+( _1 @ [_3] )}
 | _1 = exprs _2 = COMMA _1_inlined1 = star_expr
     {let _3 =
   let _1 = _1_inlined1 in
-              ( _1 )
+  ( _1 )
 in
-                    ( _1 @ [_3] )}
+( _1 @ [_3] )}
 
 testlist:
   _1 = testlist1
-    {                  ( mktestlist _1 false false )}
+    {( mktestlist _1 false false )}
 | _1 = testlist1 _2 = COMMA
-    {                  ( mktestlist _1 true false )}
+    {( mktestlist _1 true false )}
 
 testlist_star_expr:
   _1 = testlist1_star_expr
-    {                            ( mktestlist _1 false false )}
+    {( mktestlist _1 false false )}
 | _1 = testlist1_star_expr _2 = COMMA
-    {                            ( mktestlist _1 true false )}
+    {( mktestlist _1 true false )}
 
 testlist_:
   _1 = testlist1_
-    {                   ( mktestlist _1 false false )}
+    {( mktestlist _1 false false )}
 | _1 = testlist1_ _2 = COMMA
-    {                   ( mktestlist _1 true false )}
+    {( mktestlist _1 true false )}
 
 dictorsetmaker:
   _1 = dictelem _2 = comp_for
-    {                    ( DSMdictC(_1, _2) )}
+    {( DSMdictC(_1, _2) )}
 | _1 = dictelems
-    {                    ( DSMdict(List.rev _1) )}
+    {( DSMdict(List.rev _1) )}
 | _1 = dictelems _2 = COMMA
-    {                    ( DSMdict(List.rev _1) )}
+    {( DSMdict(List.rev _1) )}
 | _1 = namedexpr_test _2 = comp_for
-    {let _1 =                  ( _1 ) in
-                            ( DSMsetC(_1, _2) )}
+    {let _1 = ( _1 ) in
+( DSMsetC(_1, _2) )}
 | _1 = star_expr _2 = comp_for
-    {let _1 =             ( _1 ) in
-                            ( DSMsetC(_1, _2) )}
+    {let _1 = ( _1 ) in
+( DSMsetC(_1, _2) )}
 | _1 = testlist1_star_expr
-    {                            ( DSMset _1 )}
+    {( DSMset _1 )}
 | _1 = testlist1_star_expr _2 = COMMA
-    {                            ( DSMset _1 )}
+    {( DSMset _1 )}
 
 dictelems:
   _1 = dictelem
-    {                           ( [_1] )}
+    {( [_1] )}
 | _1 = dictelems _2 = COMMA _3 = dictelem
-    {                           ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 dictelem:
   _1 = test _2 = COLON _3 = test
@@ -1343,25 +1343,25 @@ dictelem:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( mkde _startofs _endofs (DEkeyValue(_1, _3)) )}
+( mkde _startofs _endofs (DEkeyValue(_1, _3)) )}
 | _1 = STAR_STAR _2 = expr
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                  ( mkde _startofs _endofs (DEstarStar _2) )}
+( mkde _startofs _endofs (DEstarStar _2) )}
 
 classdef:
   _1 = CLASS _2 = name _3 = COLON _4 = suite
-    {                                               ( Sclassdef([], _2, emptyarglist, _4) )}
+    {( Sclassdef([], _2, emptyarglist, _4) )}
 | _1 = CLASS _2 = name _3 = LPAREN _4 = RPAREN _5 = COLON _6 = suite
     {let _endofs__4_ = _endpos__4_.Lexing.pos_cnum in
 let _startofs__3_ = _startpos__3_.Lexing.pos_cnum in
-                                               ( Sclassdef([], _2, (get_loc _startofs__3_ _endofs__4_, []), _6) )}
+( Sclassdef([], _2, (get_loc _startofs__3_ _endofs__4_, []), _6) )}
 | _1 = CLASS _2 = name _3 = LPAREN _4 = arglist _5 = RPAREN _6 = COLON _7 = suite
     {let _endofs__5_ = _endpos__5_.Lexing.pos_cnum in
 let _startofs__3_ = _startpos__3_.Lexing.pos_cnum in
-    ( 
+( 
       let _, l = _4 in
       let loc = get_loc _startofs__3_ _endofs__5_ in
       Sclassdef([], _2, (loc, l), _7)
@@ -1369,7 +1369,7 @@ let _startofs__3_ = _startpos__3_.Lexing.pos_cnum in
 
 arglist:
   a = argument
-    {let al =                     ( [] ) in
+    {let al = ( [] ) in
 let (_endpos_al_, _startpos_al_) = (_endpos__0_, _endpos__0_) in
 let _endpos = _endpos_a_ in
 let _symbolstartpos = if _startpos_al_ != _endpos_al_ then
@@ -1378,11 +1378,11 @@ else
   _startpos_a_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                     ( get_loc _symbolstartofs _endofs, al @ [a] )}
+( get_loc _symbolstartofs _endofs, al @ [a] )}
 | a_inlined1 = arg_comma_list_ a = argument
     {let al =
   let a = a_inlined1 in
-                      ( a )
+  ( a )
 in
 let (_endpos_al_, _startpos_al_) = (_endpos_a_inlined1_, _startpos_a_inlined1_) in
 let _endpos = _endpos_a_ in
@@ -1392,9 +1392,9 @@ else
   _startpos_a_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                     ( get_loc _symbolstartofs _endofs, al @ [a] )}
+( get_loc _symbolstartofs _endofs, al @ [a] )}
 | a = argument _3 = COMMA
-    {let al =                     ( [] ) in
+    {let al = ( [] ) in
 let (_endpos_al_, _startpos_al_) = (_endpos__0_, _endpos__0_) in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = if _startpos_al_ != _endpos_al_ then
@@ -1403,11 +1403,11 @@ else
   _startpos_a_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                     ( get_loc _symbolstartofs _endofs, al @ [a] )}
+( get_loc _symbolstartofs _endofs, al @ [a] )}
 | a_inlined1 = arg_comma_list_ a = argument _3 = COMMA
     {let al =
   let a = a_inlined1 in
-                      ( a )
+  ( a )
 in
 let (_endpos_al_, _startpos_al_) = (_endpos_a_inlined1_, _startpos_a_inlined1_) in
 let _endpos = _endpos__3_ in
@@ -1417,13 +1417,13 @@ else
   _startpos_a_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-                                     ( get_loc _symbolstartofs _endofs, al @ [a] )}
+( get_loc _symbolstartofs _endofs, al @ [a] )}
 
 arg_comma_list_:
   _1 = argument _2 = COMMA
-    {                                 ( [_1] )}
+    {( [_1] )}
 | _1 = arg_comma_list_ _2 = argument _3 = COMMA
-    {                                 ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 argument:
   _1 = test
@@ -1431,43 +1431,43 @@ argument:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( Aarg(get_loc _startofs _endofs, _1, None) )}
+( Aarg(get_loc _startofs _endofs, _1, None) )}
 | _1 = test _2 = EQ _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( Aarg(get_loc _startofs _endofs, _1, Some _3) )}
+( Aarg(get_loc _startofs _endofs, _1, Some _3) )}
 | _1 = test _2 = comp_for
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( Acomp(get_loc _startofs _endofs, _1, _2) )}
+( Acomp(get_loc _startofs _endofs, _1, _2) )}
 | _1 = test _2 = COLON_EQ _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( Aassign(get_loc _startofs _endofs, _1, _3) )}
+( Aassign(get_loc _startofs _endofs, _1, _3) )}
 | _1 = STAR _2 = test
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( Aargs(get_loc _startofs _endofs, _2) )}
+( Aargs(get_loc _startofs _endofs, _2) )}
 | _1 = STAR_STAR _2 = test
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( Akwargs(get_loc _startofs _endofs, _2) )}
+( Akwargs(get_loc _startofs _endofs, _2) )}
 
 comp_iter:
   _1 = comp_for
-    {           ( Cfor _1 )}
+    {( Cfor _1 )}
 | _1 = comp_if
-    {           ( Cif _1 )}
+    {( Cif _1 )}
 
 comp_for:
   _1 = sync_comp_for
@@ -1475,19 +1475,19 @@ comp_for:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                      ( get_loc _startofs _endofs, _1, false )}
+( get_loc _startofs _endofs, _1, false )}
 | _1 = ASYNC _2 = sync_comp_for
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                      ( get_loc _startofs _endofs, _2, true )}
+( get_loc _startofs _endofs, _2, true )}
 
 sync_comp_for:
   _1 = FOR _2 = exprlist _3 = IN _4 = or_test
-    {                                    ( _2, _4, None )}
+    {( _2, _4, None )}
 | _1 = FOR _2 = exprlist _3 = IN _4 = or_test _5 = comp_iter
-    {                                    ( _2, _4, Some _5 )}
+    {( _2, _4, Some _5 )}
 
 comp_if:
   _1 = IF _2 = old_test
@@ -1495,71 +1495,71 @@ comp_if:
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( get_loc _startofs _endofs, _2, None )}
+( get_loc _startofs _endofs, _2, None )}
 | _1 = IF _2 = old_test _3 = comp_iter
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                        ( get_loc _startofs _endofs, _2, Some _3 )}
+( get_loc _startofs _endofs, _2, Some _3 )}
 
 testlist1:
   _1 = test
-    {                       ( [_1] )}
+    {( [_1] )}
 | _1 = testlist1 _2 = COMMA _3 = test
-    {                       ( _1 @ [_3] )}
+    {( _1 @ [_3] )}
 
 testlist1_star_expr:
   _1 = test
-    {let _1 =        ( _1 ) in
-                                           ( [_1] )}
+    {let _1 = ( _1 ) in
+( [_1] )}
 | _1 = star_expr
-    {let _1 =             ( _1 ) in
-                                           ( [_1] )}
+    {let _1 = ( _1 ) in
+( [_1] )}
 | _1 = testlist1_star_expr _2 = COMMA _1_inlined1 = test
     {let _3 =
   let _1 = _1_inlined1 in
-         ( _1 )
+  ( _1 )
 in
-                                           ( _1 @ [_3] )}
+( _1 @ [_3] )}
 | _1 = testlist1_star_expr _2 = COMMA _1_inlined1 = star_expr
     {let _3 =
   let _1 = _1_inlined1 in
-              ( _1 )
+  ( _1 )
 in
-                                           ( _1 @ [_3] )}
+( _1 @ [_3] )}
 
 testlist1_:
   _1 = namedexpr_test
-    {let _1 =                  ( _1 ) in
-                         ( [_1] )}
+    {let _1 = ( _1 ) in
+( [_1] )}
 | _1 = star_expr
-    {let _1 =             ( _1 ) in
-                         ( [_1] )}
+    {let _1 = ( _1 ) in
+( [_1] )}
 | _1 = testlist1_ _2 = COMMA _1_inlined1 = namedexpr_test
     {let _3 =
   let _1 = _1_inlined1 in
-                   ( _1 )
+  ( _1 )
 in
-                         ( _1 @ [_3] )}
+( _1 @ [_3] )}
 | _1 = testlist1_ _2 = COMMA _1_inlined1 = star_expr
     {let _3 =
   let _1 = _1_inlined1 in
-              ( _1 )
+  ( _1 )
 in
-                         ( _1 @ [_3] )}
+( _1 @ [_3] )}
 
 yield_expr:
   _1 = YIELD
-    {                           ( mktestlist [] false true )}
+    {( mktestlist [] false true )}
 | _1 = YIELD _2 = testlist_star_expr
-    {                           ( _2.yield<-true; _2 )}
+    {( _2.yield<-true; _2 )}
 | _1 = YIELD _2 = FROM _3 = test
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
 let _endofs = _endpos.Lexing.pos_cnum in
 let _startofs = _startpos.Lexing.pos_cnum in
-                           ( mktestlist [mkexpr _startofs _endofs (Efrom _3)] false true )}
+( mktestlist [mkexpr _startofs _endofs (Efrom _3)] false true )}
 
 %%
 

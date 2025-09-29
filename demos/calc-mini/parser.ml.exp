@@ -12,11 +12,11 @@ module MenhirBasics = struct
     | RPAREN
     | PLUS
     | LPAREN
-    | INT of (
+    | INT of 
 # 1 "demos/calc-mini/parser.mly"
        (int)
 # 19 "demos/calc-mini/parser.ml"
-  )
+  
     | EOL
   
 end

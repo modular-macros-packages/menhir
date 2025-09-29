@@ -26,42 +26,42 @@
 
 condition_start:
   _1 = condition _2 = EOF
-    {                             ( _1 )}
+    {( _1 )}
 
 condition:
   _1 = condition _2 = OR _3 = condition
-    {                             ( Or(_1,_3) )}
+    {( Or(_1,_3) )}
 | _1 = condition _2 = AND _3 = condition
-    {                             ( And(_1,_3) )}
+    {( And(_1,_3) )}
 | _1 = NOT _2 = condition
-    {                             ( Not(_2) )}
+    {( Not(_2) )}
 | _1 = LPAR _2 = condition _3 = RPAR
-    {                             ( _2 )}
+    {( _2 )}
 | _1 = atom
-    {                             ( _1 )}
+    {( _1 )}
 
 atom:
   _1 = cte _2 = COLON _3 = STRING
-    {    ( let s = Latex_accents.normalize true _3 in
+    {( let s = Latex_accents.normalize true _3 in
     (*i
       Printf.printf "regexp = %s\n" s;
       i*)
     Match(_1, Str.regexp_case_fold s) )}
 | _1 = cte _2 = COMP _3 = cte
-    {    ( Comp(_1,_2,_3) )}
+    {( Comp(_1,_2,_3) )}
 | _1 = EXISTS _2 = IDENT
-    {    ( Exists(String.uppercase _2) )}
+    {( Exists(String.uppercase _2) )}
 
 cte:
   _1 = IDENT
-    {                             ( Field(String.uppercase _1) )}
+    {( Field(String.uppercase _1) )}
 | _1 = INT
-    {                             ( Cte(_1) )}
+    {( Cte(_1) )}
 | _1 = STRING
-    {                             ( Cte(_1) )}
+    {( Cte(_1) )}
 | _1 = DOLLAR_KEY
-    {                             ( Key )}
+    {( Key )}
 | _1 = DOLLAR_TYPE
-    {                             ( Entrytype )}
+    {( Entrytype )}
 
 %%

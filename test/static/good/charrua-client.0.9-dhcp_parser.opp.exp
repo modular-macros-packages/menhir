@@ -39,7 +39,7 @@
 
 main:
   s = statement ss = statements sub = subnet subs = subnets _5 = EOF
-    {                                                                      (
+    {(
   let statements = s :: ss in
   let subnets = sub :: subs in
   (* Now extract the options from the statements *)
@@ -77,47 +77,47 @@ main:
 
 ips:
   ip = IP
-    {            ( [ip] )}
+    {( [ip] )}
 | ip = IP _2 = COMMA ips = ips
-    {                              ( ip :: ips )}
+    {( ip :: ips )}
 
 statements:
   
-    {                ( [] )}
+    {( [] )}
 | s = statement ss = statements
-    {                                   ( s :: (List.rev ss) )}
+    {( s :: (List.rev ss) )}
 
 statement:
   _1 = OPTION _2 = DOMAINNAME v = STRING _4 = SCOLON
-    {                                           ( Dhcp_option (Dhcp_wire.Domain_name v))}
+    {( Dhcp_option (Dhcp_wire.Domain_name v))}
 | _1 = OPTION _2 = DOMAINNAMESERVERS ips = ips _4 = SCOLON
-    {                                                 ( Dhcp_option (Dhcp_wire.Dns_servers ips) )}
+    {( Dhcp_option (Dhcp_wire.Dns_servers ips) )}
 | _1 = OPTION _2 = ROUTERS ips = ips _4 = SCOLON
-    {                                       ( Dhcp_option (Dhcp_wire.Routers ips) )}
+    {( Dhcp_option (Dhcp_wire.Routers ips) )}
 | _1 = RANGE v1 = IP v2 = IP _4 = SCOLON
-    {                                    (
+    {(
   if Int32.compare (Ipaddr.V4.to_int32 v1) (Ipaddr.V4.to_int32 v2) >= 0 then
     choke "Invalid `range` statement, must be `low high`";
   Range (v1, v2)
   )}
 | _1 = HARDWARE _2 = ETHERNET mac = MACADDR _4 = SCOLON
-    {                                              ( Hw_eth mac )}
+    {( Hw_eth mac )}
 | _1 = FIXEDADDRESS v = IP _3 = SCOLON
-    {                                 ( Fixed_addr v )}
+    {( Fixed_addr v )}
 | _1 = DEFAULTLEASETIME v = INTEGER _3 = SCOLON
-    {                                          ( Default_lease_time (Int32.of_int v) )}
+    {( Default_lease_time (Int32.of_int v) )}
 | _1 = MAXLEASETIME v = INTEGER _3 = SCOLON
-    {                                      ( Max_lease_time (Int32.of_int v) )}
+    {( Max_lease_time (Int32.of_int v) )}
 
 subnets:
   
-    {                ( [] )}
+    {( [] )}
 | sub = subnet subs = subnets
-    {                                 ( sub :: (List.rev subs) )}
+    {( sub :: (List.rev subs) )}
 
 subnet:
   _1 = SUBNET ip = IP _3 = NETMASK mask = IP _5 = LBRACKET statements = statements hosts = hosts _8 = RBRACKET
-    {                                                   (
+    {(
   let network = Ipaddr.V4.Prefix.of_netmask mask ip in
   (* Catch statements that don't make sense in a subnet *)
   let () = List.iter (function
@@ -153,13 +153,13 @@ subnet:
 
 hosts:
   
-    {                ( [] )}
+    {( [] )}
 | host = host hosts = hosts
-    {                               ( host :: hosts )}
+    {( host :: hosts )}
 
 host:
   _1 = HOST hostname = WORD _3 = LBRACKET statements = statements _5 = RBRACKET
-    {                                                                       (
+    {(
   let () = List.iter (function
       | Range _ -> choke "Range is invalid in host context"
       | _ -> ())

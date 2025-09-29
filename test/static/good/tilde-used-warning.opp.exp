@@ -22,27 +22,27 @@ Perhaps a wildcard pattern _ should be used instead.
 
 fst_paire_A_B__:
   x = A y = B
-    {let _1 =                 ( x, y ) in
+    {let _1 = ( x, y ) in
 let (_1_1, _) = _1 in
 _1_1}
 
 snd_paire_A_B__:
   x = A y = B
-    {let _1 =                 ( x, y ) in
+    {let _1 = ( x, y ) in
 let (_, _1_1) = _1 in
 _1_1}
 
 bizarre_fst_paire_A_B__:
   x = A y = B
-    {let _1 =                 ( x, y ) in
+    {let _1 = ( x, y ) in
 let (x, _1_1) = _1 in
-              (x)}
+(x)}
 
 hop_paire_A_B__:
   x = A y = B
-    {let _1 =                 ( x, y ) in
+    {let _1 = ( x, y ) in
 let (_1_1, _1_2) = _1 in
-              (())}
+(())}
 
 a:
   _1 = A
@@ -58,10 +58,10 @@ odd:
 
 main:
   _1 = hop_paire_A_B__ x = A y = B c = fst_paire_A_B__ _4 = bizarre_fst_paire_A_B__ d = snd_paire_A_B__ _6 = odd _7 = C _8 = D _9 = EOF
-    {let _2 =                 ( x, y ) in
+    {let _2 = ( x, y ) in
 let (a, b) = _2 in
 let _7_1 = _7 in
 _9;
-    ( a + b + c + d )}
+( a + b + c + d )}
 
 %%

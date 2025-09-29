@@ -369,1106 +369,1106 @@ let rec foldlist l s r =
 
 main:
   _1 = timecomment _2 = comment _3 = main_h
-    {                             ( PARSE_RETURN(_1,_2,_3) )}
+    {( PARSE_RETURN(_1,_2,_3) )}
 
 main_h:
   _1 = netcall _2 = SC
-    {             ( _1 )}
+    {( _1 )}
 | _1 = lib _2 = SC
-    {            ( _1 )}
+    {( _1 )}
 | _1 = trace _2 = SC
-    {            ( _1 )}
+    {( _1 )}
 | _1 = epsilon _2 = SC
-    {             ( _1 )}
+    {( _1 )}
 | _1 = abstime _2 = COMMENT
-    {                  ( _1 )}
+    {( _1 )}
 
 spec3main:
   _1 = timecomment _2 = comment _3 = spec3main_h
-    {                                  ( SPEC3_PARSE_RETURN(_1,_2,_3) )}
+    {( SPEC3_PARSE_RETURN(_1,_2,_3) )}
 
 spec3main_h:
   _1 = ln1host _2 = SC
-    {             ( _1 )}
+    {( _1 )}
 | _1 = ln1epsilon _2 = SC
-    {                ( _1 )}
+    {( _1 )}
 | _1 = ln1abstime _2 = COMMENT
-    {                     ( _1 )}
+    {( _1 )}
 
 ln1host:
   _1 = LN1_HOST _2 = LPAREN _3 = STRING _4 = COMMA _5 = ln1host_h _6 = RPAREN
-    {                                                ( HOLLN1_HOST(_3,_5) )}
+    {( HOLLN1_HOST(_3,_5) )}
 
 ln1host_h:
   _1 = netcall
-    {          ( _1)}
+    {( _1)}
 | _1 = lib
-    {      ( _1 )}
+    {( _1 )}
 | _1 = trace
-    {        ( _1 )}
+    {( _1 )}
 
 ln1epsilon:
   _1 = LN1_EPSILON _2 = LPAREN _3 = T_DURATION _4 = intr _5 = intr _6 = RPAREN
-    {                                                 ( HOLLN1_EPSILON(DURATION(_4,_5)) )}
+    {( HOLLN1_EPSILON(DURATION(_4,_5)) )}
 
 ln1abstime:
   _1 = T_ABSTIME _2 = intr _3 = intr
-    {                      ( HOLLN1_ABSTIME(_2, _3) )}
+    {( HOLLN1_ABSTIME(_2, _3) )}
 
 netcall:
   _1 = LHSEND _2 = LPAREN _3 = netparam _4 = RPAREN
-    {                                ( HOLSNDMSG _3 )}
+    {( HOLSNDMSG _3 )}
 | _1 = LHLOOP _2 = LPAREN _3 = netparam _4 = RPAREN
-    {                                ( HOLLOOPMSG _3 )}
+    {( HOLLOOPMSG _3 )}
 | _1 = LHRECV _2 = LPAREN _3 = netparam _4 = RPAREN
-    {                                ( HOLRCVMSG _3 )}
+    {( HOLRCVMSG _3 )}
 
 netparam:
   _1 = TCP _2 = LPAREN _3 = RECSTART _4 = tcpdetail _5 = RECEND _6 = RPAREN
-    {    ( let p = foldlist _4 clear_tcp_status clear_tcp_hol in
+    {( let p = foldlist _4 clear_tcp_status clear_tcp_hol in
       let _ = chk_missing_tcp (fst p) in
       let m = TCPMSG (snd p) in m )}
 | _1 = UDP _2 = LPAREN _3 = RECSTART _4 = udpdetail _5 = RECEND _6 = RPAREN
-    {    ( let p = foldlist _4 clear_udp_status clear_udp_hol in
+    {( let p = foldlist _4 clear_udp_status clear_udp_hol in
       let _ = chk_missing_udp (fst p) in
       let m = UDPMSG (snd p) in m )}
 | _1 = ICMP _2 = LPAREN _3 = RECSTART _4 = icmpdetail _5 = RECEND _6 = RPAREN
-    {    ( let p = foldlist _4 clear_icmp_status clear_icmp_hol in
+    {( let p = foldlist _4 clear_icmp_status clear_icmp_hol in
       let _ = chk_missing_icmp (fst p) in
       let m = ICMPMSG (snd p) in m )}
 
 tcpdetail:
   _1 = tcpval
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = tcpval _2 = SC _3 = tcpdetail
-    {                      ( _1::_3 )}
+    {( _1::_3 )}
 
 icmpdetail:
   _1 = icmpval
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = icmpval _2 = SC _3 = icmpdetail
-    {                        ( _1::_3 )}
+    {( _1::_3 )}
 
 udpdetail:
   _1 = udpval
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = udpval _2 = SC _3 = udpdetail
-    {                      ( _1::_3 )}
+    {( _1::_3 )}
 
 tcpval:
   _1 = IS1 _2 = ASSIGN _3 = ipoption
-    {                      ( update_tcp (HOL_TCP_IS1 _3) )}
+    {( update_tcp (HOL_TCP_IS1 _3) )}
 | _1 = IS2 _2 = ASSIGN _3 = ipoption
-    {                      ( update_tcp (HOL_TCP_IS2 _3) )}
+    {( update_tcp (HOL_TCP_IS2 _3) )}
 | _1 = PS1 _2 = ASSIGN _3 = portoption
-    {                        ( update_tcp (HOL_TCP_PS1 _3) )}
+    {( update_tcp (HOL_TCP_PS1 _3) )}
 | _1 = PS2 _2 = ASSIGN _3 = portoption
-    {                        ( update_tcp (HOL_TCP_PS2 _3) )}
+    {( update_tcp (HOL_TCP_PS2 _3) )}
 | _1 = SEQNO _2 = ASSIGN _3 = seqlocal
-    {                        ( update_tcp (HOL_TCP_SEQ _3) )}
+    {( update_tcp (HOL_TCP_SEQ _3) )}
 | _1 = ACKNO _2 = ASSIGN _3 = seqforeign
-    {                          ( update_tcp (HOL_TCP_ACK _3)  )}
+    {( update_tcp (HOL_TCP_ACK _3)  )}
 | _1 = URG _2 = ASSIGN _3 = bool
-    {                  ( update_tcp (HOL_TCP_URG _3) )}
+    {( update_tcp (HOL_TCP_URG _3) )}
 | _1 = ACK _2 = ASSIGN _3 = bool
-    {                  ( update_tcp (HOL_TCP_ACKF _3) )}
+    {( update_tcp (HOL_TCP_ACKF _3) )}
 | _1 = PSH _2 = ASSIGN _3 = bool
-    {                  ( update_tcp (HOL_TCP_PSH _3) )}
+    {( update_tcp (HOL_TCP_PSH _3) )}
 | _1 = RST _2 = ASSIGN _3 = bool
-    {                  ( update_tcp (HOL_TCP_RST _3) )}
+    {( update_tcp (HOL_TCP_RST _3) )}
 | _1 = SYN _2 = ASSIGN _3 = bool
-    {                  ( update_tcp (HOL_TCP_SYN _3) )}
+    {( update_tcp (HOL_TCP_SYN _3) )}
 | _1 = FIN _2 = ASSIGN _3 = bool
-    {                  ( update_tcp (HOL_TCP_FIN _3) )}
+    {( update_tcp (HOL_TCP_FIN _3) )}
 | _1 = WIN _2 = ASSIGN _3 = word16
-    {                    ( update_tcp (HOL_TCP_WIN _3) )}
+    {( update_tcp (HOL_TCP_WIN _3) )}
 | _1 = URP _2 = ASSIGN _3 = word16
-    {                    ( update_tcp (HOL_TCP_URP _3) )}
+    {( update_tcp (HOL_TCP_URP _3) )}
 | _1 = MSS _2 = ASSIGN _3 = word16option
-    {                          ( update_tcp (HOL_TCP_MSS _3) )}
+    {( update_tcp (HOL_TCP_MSS _3) )}
 | _1 = WS _2 = ASSIGN _3 = byteoption
-    {                       ( update_tcp (HOL_TCP_SCALE _3) )}
+    {( update_tcp (HOL_TCP_SCALE _3) )}
 | _1 = TS _2 = ASSIGN _3 = tsseqoption
-    {                        ( update_tcp (HOL_TCP_TS _3) )}
+    {( update_tcp (HOL_TCP_TS _3) )}
 | _1 = DATA _2 = ASSIGN _3 = datalist _4 = comment
-    {                               ( update_tcp (HOL_TCP_DATA _3) )}
+    {( update_tcp (HOL_TCP_DATA _3) )}
 
 icmpval:
   _1 = IS1 _2 = ASSIGN _3 = ipoption
-    {                      ( update_icmp (HOL_ICMP_IS1 _3) )}
+    {( update_icmp (HOL_ICMP_IS1 _3) )}
 | _1 = IS2 _2 = ASSIGN _3 = ipoption
-    {                      ( update_icmp (HOL_ICMP_IS2 _3) )}
+    {( update_icmp (HOL_ICMP_IS2 _3) )}
 | _1 = IS3 _2 = ASSIGN _3 = ipoption
-    {                      ( update_icmp (HOL_ICMP_IS3 _3) )}
+    {( update_icmp (HOL_ICMP_IS3 _3) )}
 | _1 = IS4 _2 = ASSIGN _3 = ipoption
-    {                      ( update_icmp (HOL_ICMP_IS4 _3) )}
+    {( update_icmp (HOL_ICMP_IS4 _3) )}
 | _1 = PS3 _2 = ASSIGN _3 = portoption
-    {                        ( update_icmp (HOL_ICMP_PS3 _3) )}
+    {( update_icmp (HOL_ICMP_PS3 _3) )}
 | _1 = PS4 _2 = ASSIGN _3 = portoption
-    {                        ( update_icmp (HOL_ICMP_PS4 _3) )}
+    {( update_icmp (HOL_ICMP_PS4 _3) )}
 | _1 = PROTO _2 = ASSIGN _3 = protocol
-    {                        ( update_icmp (HOL_ICMP_PROTO _3) )}
+    {( update_icmp (HOL_ICMP_PROTO _3) )}
 | _1 = SEQNO _2 = ASSIGN _3 = NONE
-    {                    ( update_icmp (HOL_ICMP_SEQ None) )}
+    {( update_icmp (HOL_ICMP_SEQ None) )}
 | _1 = TYPE _2 = ASSIGN _3 = icmptype
-    {                       ( update_icmp (HOL_ICMP_TYPE _3) )}
+    {( update_icmp (HOL_ICMP_TYPE _3) )}
 
 protocol:
   _1 = PROTO_TCP
-    {            ( PROTO_TCP )}
+    {( PROTO_TCP )}
 | _1 = PROTO_UDP
-    {            ( PROTO_UDP )}
+    {( PROTO_UDP )}
 
 icmptype:
   _1 = ICMP_UNREACH _2 = icmp_unreach
-    {                            ( ICMP_UNREACH _2 )}
+    {( ICMP_UNREACH _2 )}
 | _1 = ICMP_PARAMPROB _2 = icmp_paramprob
-    {                                ( ICMP_PARAMPROB _2 )}
+    {( ICMP_PARAMPROB _2 )}
 | _1 = ICMP_SOURCE_QUENCH _2 = icmp_source_quench
-    {                                        ( ICMP_SOURCE_QUENCH _2 )}
+    {( ICMP_SOURCE_QUENCH _2 )}
 | _1 = ICMP_TIME_EXCEEDED _2 = icmp_time_exceeded
-    {                                        ( ICMP_TIME_EXCEEDED _2 )}
+    {( ICMP_TIME_EXCEEDED _2 )}
 
 icmp_unreach:
   _1 = ICMP_NET
-    {           ( NET )}
+    {( NET )}
 | _1 = ICMP_HOST
-    {            ( HOST )}
+    {( HOST )}
 | _1 = ICMP_PROTOCOL
-    {                ( PROTOCOL )}
+    {( PROTOCOL )}
 | _1 = ICMP_PORT
-    {            ( PORT )}
+    {( PORT )}
 | _1 = ICMP_SRCFAIL
-    {               ( SRCFAIL )}
+    {( SRCFAIL )}
 | _1 = ICMP_NEEDFRAG _2 = word16option
-    {                             ( NEEDFRAG _2 )}
+    {( NEEDFRAG _2 )}
 | _1 = ICMP_NET_UNKNOWN
-    {                   ( NET_UNKNOWN )}
+    {( NET_UNKNOWN )}
 | _1 = ICMP_HOST_UNKNOWN
-    {                    ( HOST_UNKNOWN )}
+    {( HOST_UNKNOWN )}
 | _1 = ICMP_ISOLATED
-    {                ( ISOLATED )}
+    {( ISOLATED )}
 | _1 = ICMP_NET_PROHIB
-    {                  ( NET_PROHIB )}
+    {( NET_PROHIB )}
 | _1 = ICMP_HOST_PROHIB
-    {                   ( HOST_PROHIB )}
+    {( HOST_PROHIB )}
 | _1 = ICMP_TOSNET
-    {              ( TOSNET )}
+    {( TOSNET )}
 | _1 = ICMP_TOSHOST
-    {               ( TOSHOST )}
+    {( TOSHOST )}
 | _1 = ICMP_FILTER_PROHIB
-    {                     ( FILTER_PROHIB )}
+    {( FILTER_PROHIB )}
 | _1 = ICMP_PREC_VIOLATION
-    {                      ( PREC_VIOLATION )}
+    {( PREC_VIOLATION )}
 | _1 = ICMP_PREC_CUTOFF
-    {                   ( PREC_CUTOFF )}
+    {( PREC_CUTOFF )}
 
 icmp_paramprob:
   _1 = ICMP_BADHDR
-    {              ( BADHDR )}
+    {( BADHDR )}
 | _1 = ICMP_NEEDOPT
-    {               ( NEEDOPT )}
+    {( NEEDOPT )}
 
 icmp_source_quench:
   _1 = ICMP_QUENCH
-    {              ( QUENCH )}
+    {( QUENCH )}
 
 icmp_time_exceeded:
   _1 = ICMP_INTRANS
-    {               ( INTRANS )}
+    {( INTRANS )}
 | _1 = ICMP_REASS
-    {             ( REASS )}
+    {( REASS )}
 
 udpval:
   _1 = IS1 _2 = ASSIGN _3 = ipoption
-    {                      ( update_udp (HOL_UDP_IS1 _3) )}
+    {( update_udp (HOL_UDP_IS1 _3) )}
 | _1 = IS2 _2 = ASSIGN _3 = ipoption
-    {                      ( update_udp (HOL_UDP_IS2 _3) )}
+    {( update_udp (HOL_UDP_IS2 _3) )}
 | _1 = PS1 _2 = ASSIGN _3 = portoption
-    {                        ( update_udp (HOL_UDP_PS1 _3) )}
+    {( update_udp (HOL_UDP_PS1 _3) )}
 | _1 = PS2 _2 = ASSIGN _3 = portoption
-    {                        ( update_udp (HOL_UDP_PS2 _3) )}
+    {( update_udp (HOL_UDP_PS2 _3) )}
 | _1 = DATA _2 = ASSIGN _3 = datalist _4 = comment
-    {                               ( update_udp (HOL_UDP_DATA _3) )}
+    {( update_udp (HOL_UDP_DATA _3) )}
 
 seqlocal:
   _1 = LPAREN _2 = seqlocal _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = SEQLOCAL _2 = word16
-    {                  ( _2 )}
+    {( _2 )}
 
 seqforeign:
   _1 = LPAREN _2 = seqforeign _3 = RPAREN
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = SEQFOREIGN _2 = word16
-    {                    ( _2 )}
+    {( _2 )}
 
 tsseqoption:
   _1 = LPAREN _2 = tsseqoption _3 = RPAREN
-    {                            ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = LPAREN _3 = TSSEQ _4 = word16 _5 = COMMA _6 = TSSEQ _7 = word16 _8 = RPAREN
-    {                                                     ( Some(_4, _7) )}
+    {( Some(_4, _7) )}
 
 datalist:
   _1 = LPAREN _2 = datalist _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
-    {                  ( [] )}
+    {( [] )}
 | _1 = LSQBRKT _2 = datalist2 _3 = RSQBRKT
-    {                            ( _2 )}
+    {( _2 )}
 
 datalist2:
   _1 = BYTE _2 = intr
-    {            ( [_2] )}
+    {( [_2] )}
 | _1 = BYTE _2 = intr _3 = SC _4 = datalist2
-    {                         ( _2::_4 )}
+    {( _2::_4 )}
 
 lib:
   _1 = LHCALL _2 = LPAREN _3 = tid _4 = COMMA _5 = call _6 = RPAREN
-    {                                      ( LIBCALL (_3, _5) )}
+    {( LIBCALL (_3, _5) )}
 | _1 = LHRETURN _2 = LPAREN _3 = tid _4 = COMMA _5 = return _6 = RPAREN
-    {                                          ( LIBRETURN (_3, _5) )}
+    {( LIBRETURN (_3, _5) )}
 
 return:
   _1 = LPAREN _2 = return _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 | _1 = returnok
-    {           ( _1 )}
+    {( _1 )}
 | _1 = returnfail
-    {             ( _1 )}
+    {( _1 )}
 
 returnok:
   _1 = LHOK _2 = returnok_inner
-    {                      ( _2 )}
+    {( _2 )}
 
 returnok_inner:
   _1 = UNIT
-    {       ( OK_UNIT () )}
+    {( OK_UNIT () )}
 | _1 = LPAREN _2 = fd _3 = RPAREN
-    {                   ( OK_FD (fd_of_int_private (Int64.to_int _2)) )}
+    {( OK_FD (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = LPAREN _2 = bool _3 = RPAREN
-    {                     ( OK_BOOL _2 )}
+    {( OK_BOOL _2 )}
 | _1 = LPAREN _2 = intr _3 = RPAREN
-    {                     ( OK_INT (Int64.to_int _2) )}
+    {( OK_INT (Int64.to_int _2) )}
 | _1 = LPAREN _2 = ip _3 = COMMA _4 = port _5 = RPAREN
-    {    ( OK_IP_PORT (uint_ip_to_ip _2, uint_port_to_port _4) )}
+    {( OK_IP_PORT (uint_ip_to_ip _2, uint_port_to_port _4) )}
 | _1 = LPAREN _2 = filebflaglist _3 = RPAREN
-    {                              ( OK_FILEFLAGLIST (_2) )}
+    {( OK_FILEFLAGLIST (_2) )}
 | _1 = LPAREN _2 = fdlisttriple _3 = RPAREN
-    {                             ( OK_FDLISTTRIPLE _2 )}
+    {( OK_FDLISTTRIPLE _2 )}
 | _1 = LPAREN _2 = stringr _3 = RPAREN
-    {                        ( OK_STRING _2 )}
+    {( OK_STRING _2 )}
 | _1 = LPAREN _2 = fdipport _3 = RPAREN
-    {                         ( OK_FD_IP_PORT _2 )}
+    {( OK_FD_IP_PORT _2 )}
 | _1 = LPAREN _2 = NONE _3 = COMMA _4 = portoption _5 = RPAREN
-    {                                      ( OK_IPOPT_PORTOPT (None, uint_portopt_to_portopt _4) )}
+    {( OK_IPOPT_PORTOPT (None, uint_portopt_to_portopt _4) )}
 | _1 = LPAREN _2 = SOME _3 = ip _4 = COMMA _5 = portoption _6 = RPAREN
-    {                                         ( OK_IPOPT_PORTOPT (uint_ipopt_to_ipopt (Some _3),
+    {( OK_IPOPT_PORTOPT (uint_ipopt_to_ipopt (Some _3),
 						uint_portopt_to_portopt _5) )}
 | _1 = LPAREN _2 = NONE _3 = RPAREN
-    {                     ( OK_INT_INT_OPTION None )}
+    {( OK_INT_INT_OPTION None )}
 | _1 = LPAREN _2 = SOME _3 = intpair _4 = RPAREN
-    {                             ( OK_INT_INT_OPTION (Some (uint_pair_to_int_pair _3)) )}
+    {( OK_INT_INT_OPTION (Some (uint_pair_to_int_pair _3)) )}
 | _1 = LPAREN _2 = stringr _3 = COMMA _4 = ipportboolop _5 = RPAREN
-    {                                          ( OK_STRING_IP_PORT_BOOL (_2, _4) )}
+    {( OK_STRING_IP_PORT_BOOL (_2, _4) )}
 | _1 = LPAREN _2 = interfacelist _3 = RPAREN
-    {                              ( OK_INTERFACE_LIST _2 )}
+    {( OK_INTERFACE_LIST _2 )}
 
 returnfail:
   _1 = LHFAIL _2 = LPAREN _3 = unixerror _4 = RPAREN
-    {                                 ( FAIL _3 )}
+    {( FAIL _3 )}
 
 call:
   _1 = LPAREN _2 = call _3 = RPAREN
-    {                      ( _2 )}
+    {( _2 )}
 | _1 = ACCEPT _2 = fd
-    {    ( ACCEPT (fd_of_int_private (Int64.to_int _2)) )}
+    {( ACCEPT (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = BIND _2 = LPAREN _3 = fd _4 = COMMA _5 = ipoption _6 = COMMA _7 = portoption _8 = RPAREN
-    {    ( BIND (fd_of_int_private (Int64.to_int _3),
+    {( BIND (fd_of_int_private (Int64.to_int _3),
 	    uint_ipopt_to_ipopt _5,
 	    uint_portopt_to_portopt _7) )}
 | _1 = CLOSE _2 = fd
-    {           ( CLOSE (fd_of_int_private (Int64.to_int _2)) )}
+    {( CLOSE (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = CONNECT _2 = LPAREN _3 = fd _4 = COMMA _5 = ip _6 = COMMA _7 = portoption _8 = RPAREN
-    {    ( CONNECT (fd_of_int_private (Int64.to_int _3),
+    {( CONNECT (fd_of_int_private (Int64.to_int _3),
 	       uint_ip_to_ip _5 ,
 	       uint_portopt_to_portopt _7) )}
 | _1 = DISCONNECT _2 = fd
-    {                ( DISCONNECT (fd_of_int_private (Int64.to_int _2)) )}
+    {( DISCONNECT (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = DUP _2 = fd
-    {    ( DUP (fd_of_int_private (Int64.to_int _2)) )}
+    {( DUP (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = DUPFD _2 = LPAREN _3 = fd _4 = COMMA _5 = INT _6 = RPAREN
-    {    ( DUPFD (fd_of_int_private (Int64.to_int _3),
+    {( DUPFD (fd_of_int_private (Int64.to_int _3),
 	     Int64.to_int _5) )}
 | _1 = GETFILEFLAGS _2 = fd
-    {    ( GETFILEFLAGS (fd_of_int_private (Int64.to_int _2))  )}
+    {( GETFILEFLAGS (fd_of_int_private (Int64.to_int _2))  )}
 | _1 = SETFILEFLAGS _2 = LPAREN _3 = fd _4 = COMMA _5 = filebflaglist _6 = RPAREN
-    {    ( SETFILEFLAGS (fd_of_int_private (Int64.to_int _3), _5) )}
+    {( SETFILEFLAGS (fd_of_int_private (Int64.to_int _3), _5) )}
 | _1 = GETIFADDRS _2 = UNIT
-    {                  ( GETIFADDRS () )}
+    {( GETIFADDRS () )}
 | _1 = GETSOCKNAME _2 = fd
-    {    ( GETSOCKNAME (fd_of_int_private (Int64.to_int _2)) )}
+    {( GETSOCKNAME (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = GETPEERNAME _2 = fd
-    {    ( GETPEERNAME (fd_of_int_private (Int64.to_int _2)) )}
+    {( GETPEERNAME (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = GETSOCKBOPT _2 = LPAREN _3 = fd _4 = COMMA _5 = sockbflag _6 = RPAREN
-    {    ( GETSOCKBOPT (fd_of_int_private (Int64.to_int _3), _5) )}
+    {( GETSOCKBOPT (fd_of_int_private (Int64.to_int _3), _5) )}
 | _1 = GETSOCKNOPT _2 = LPAREN _3 = fd _4 = COMMA _5 = socknflag _6 = RPAREN
-    {    ( GETSOCKNOPT (fd_of_int_private (Int64.to_int _3), _5) )}
+    {( GETSOCKNOPT (fd_of_int_private (Int64.to_int _3), _5) )}
 | _1 = GETSOCKTOPT _2 = LPAREN _3 = fd _4 = COMMA _5 = socktflag _6 = RPAREN
-    {    ( GETSOCKTOPT (fd_of_int_private (Int64.to_int _3), _5) )}
+    {( GETSOCKTOPT (fd_of_int_private (Int64.to_int _3), _5) )}
 | _1 = SETSOCKBOPT _2 = LPAREN _3 = fd _4 = COMMA _5 = sockbflag _6 = COMMA _7 = bool _8 = RPAREN
-    {    ( SETSOCKBOPT (fd_of_int_private (Int64.to_int _3), _5, _7) )}
+    {( SETSOCKBOPT (fd_of_int_private (Int64.to_int _3), _5, _7) )}
 | _1 = SETSOCKNOPT _2 = LPAREN _3 = fd _4 = COMMA _5 = socknflag _6 = COMMA _7 = intr _8 = RPAREN
-    {    ( SETSOCKNOPT (fd_of_int_private (Int64.to_int _3), _5,
+    {( SETSOCKNOPT (fd_of_int_private (Int64.to_int _3), _5,
 		   Int64.to_int _7) )}
 | _1 = SETSOCKTOPT _2 = LPAREN _3 = fd _4 = COMMA _5 = socktflag _6 = COMMA _7 = topt _8 = RPAREN
-    {    ( SETSOCKTOPT (fd_of_int_private (Int64.to_int _3), _5,
+    {( SETSOCKTOPT (fd_of_int_private (Int64.to_int _3), _5,
 		   uint_pairopt_to_int_pairopt _7 ) )}
 | _1 = LISTEN _2 = LPAREN _3 = fd _4 = COMMA _5 = intr _6 = RPAREN
-    {    ( LISTEN (fd_of_int_private (Int64.to_int _3), Int64.to_int _5) )}
+    {( LISTEN (fd_of_int_private (Int64.to_int _3), Int64.to_int _5) )}
 | _1 = PSELECT _2 = pselectopts
-    {                      ( _2 )}
+    {( _2 )}
 | _1 = RECV _2 = LPAREN _3 = fd _4 = COMMA _5 = intr _6 = COMMA _7 = msgbflaglist _8 = RPAREN
-    {    ( RECV (fd_of_int_private (Int64.to_int _3), Int64.to_int _5, _7) )}
+    {( RECV (fd_of_int_private (Int64.to_int _3), Int64.to_int _5, _7) )}
 | _1 = SEND _2 = LPAREN _3 = fd _4 = COMMA _5 = addrop _6 = COMMA _7 = stringr _8 = COMMA _9 = msgbflaglist _10 = RPAREN
-    {    ( SEND (fd_of_int_private (Int64.to_int _3), _5, _7, _9) )}
+    {( SEND (fd_of_int_private (Int64.to_int _3), _5, _7, _9) )}
 | _1 = SHUTDOWN _2 = LPAREN _3 = fd _4 = COMMA _5 = bool _6 = COMMA _7 = bool _8 = RPAREN
-    {    ( SHUTDOWN (fd_of_int_private (Int64.to_int _3), _5, _7) )}
+    {( SHUTDOWN (fd_of_int_private (Int64.to_int _3), _5, _7) )}
 | _1 = SOCKATMARK _2 = fd
-    {                ( SOCKATMARK (fd_of_int_private (Int64.to_int _2)) )}
+    {( SOCKATMARK (fd_of_int_private (Int64.to_int _2)) )}
 | _1 = SOCKET _2 = LPAREN _3 = socktype _4 = RPAREN
-    {                                ( SOCKET (_3) )}
+    {( SOCKET (_3) )}
 | _1 = GETSOCKERR _2 = fd
-    {    ( GETSOCKERR (fd_of_int_private (Int64.to_int _2))  )}
+    {( GETSOCKERR (fd_of_int_private (Int64.to_int _2))  )}
 | _1 = GETSOCKLISTENING _2 = fd
-    {    ( GETSOCKLISTENING (fd_of_int_private (Int64.to_int _2)) )}
+    {( GETSOCKLISTENING (fd_of_int_private (Int64.to_int _2)) )}
 
 tid:
   _1 = LPAREN _2 = tid _3 = RPAREN
-    {                    ( _2 )}
+    {( _2 )}
 | _1 = TID _2 = intr
-    {           ( Ocamllib.tid_of_int_private (Int64.to_int _2) )}
+    {( Ocamllib.tid_of_int_private (Int64.to_int _2) )}
 
 filebflag:
   _1 = LPAREN _2 = filebflag _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = TO_NONBLOCK
-    {              ( O_NONBLOCK )}
+    {( O_NONBLOCK )}
 | _1 = TO_ASYNC
-    {           ( O_ASYNC  )}
+    {( O_ASYNC  )}
 
 sockbflag:
   _1 = LPAREN _2 = sockbflag _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = TSO_BSDCOMPAT
-    {                ( SO_BSDCOMPAT )}
+    {( SO_BSDCOMPAT )}
 | _1 = TSO_REUSEADDR
-    {                ( SO_REUSEADDR )}
+    {( SO_REUSEADDR )}
 | _1 = TSO_KEEPALIVE
-    {                ( SO_KEEPALIVE )}
+    {( SO_KEEPALIVE )}
 | _1 = TSO_OOBINLINE
-    {                ( SO_OOBINLINE )}
+    {( SO_OOBINLINE )}
 | _1 = TSO_DONTROUTE
-    {                ( SO_DONTROUTE )}
+    {( SO_DONTROUTE )}
 | _1 = TSO_BROADCAST
-    {                ( SO_BROADCAST )}
+    {( SO_BROADCAST )}
 
 socknflag:
   _1 = LPAREN _2 = socknflag _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = TSO_SNDBUF
-    {             ( SO_SNDBUF )}
+    {( SO_SNDBUF )}
 | _1 = TSO_RCVBUF
-    {             ( SO_RCVBUF )}
+    {( SO_RCVBUF )}
 | _1 = TSO_SNDLOWAT
-    {               ( SO_SNDLOWAT )}
+    {( SO_SNDLOWAT )}
 | _1 = TSO_RCVLOWAT
-    {               ( SO_RCVLOWAT )}
+    {( SO_RCVLOWAT )}
 
 socktflag:
   _1 = LPAREN _2 = socktflag _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = TSO_LINGER
-    {             ( SO_LINGER )}
+    {( SO_LINGER )}
 | _1 = TSO_SNDTIMEO
-    {               ( SO_SNDTIMEO )}
+    {( SO_SNDTIMEO )}
 | _1 = TSO_RCVTIMEO
-    {               ( SO_RCVTIMEO )}
+    {( SO_RCVTIMEO )}
 
 msgbflag:
   _1 = LPAREN _2 = msgbflag _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = TMSG_PEEK
-    {            ( MSG_PEEK )}
+    {( MSG_PEEK )}
 | _1 = TMSG_OOB
-    {           ( MSG_OOB )}
+    {( MSG_OOB )}
 | _1 = TMSG_WAITALL
-    {               ( MSG_WAITALL )}
+    {( MSG_WAITALL )}
 | _1 = TMSG_DONTWAIT
-    {                ( MSG_DONTWAIT )}
+    {( MSG_DONTWAIT )}
 
 signal:
   _1 = LPAREN _2 = signal _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = TSIGABRT
-    {           ( SIGABRT )}
+    {( SIGABRT )}
 | _1 = TSIGALRM
-    {           ( SIGALRM  )}
+    {( SIGALRM  )}
 | _1 = TSIGBUS
-    {           ( SIGBUS )}
+    {( SIGBUS )}
 | _1 = TSIGCHLD
-    {           ( SIGCHLD )}
+    {( SIGCHLD )}
 | _1 = TSIGCONT
-    {           ( SIGCONT )}
+    {( SIGCONT )}
 | _1 = TSIGFPE
-    {           ( SIGFPE )}
+    {( SIGFPE )}
 | _1 = TSIGHUP
-    {           ( SIGHUP )}
+    {( SIGHUP )}
 | _1 = TSIGILL
-    {           ( SIGILL )}
+    {( SIGILL )}
 | _1 = TSIGINT
-    {           ( SIGINT )}
+    {( SIGINT )}
 | _1 = TSIGKILL
-    {           ( SIGKILL )}
+    {( SIGKILL )}
 | _1 = TSIGPIPE
-    {           ( SIGPIPE )}
+    {( SIGPIPE )}
 | _1 = TSIGQUIT
-    {           ( SIGQUIT )}
+    {( SIGQUIT )}
 | _1 = TSIGSEGV
-    {           ( SIGSEGV )}
+    {( SIGSEGV )}
 | _1 = TSIGSTOP
-    {           ( SIGSTOP )}
+    {( SIGSTOP )}
 | _1 = TSIGTERM
-    {           ( SIGTERM )}
+    {( SIGTERM )}
 | _1 = TSIGTSTP
-    {           ( SIGTSTP )}
+    {( SIGTSTP )}
 | _1 = TSIGTTIN
-    {           ( SIGTTIN )}
+    {( SIGTTIN )}
 | _1 = TSIGTTOU
-    {           ( SIGTTOU )}
+    {( SIGTTOU )}
 | _1 = TSIGUSR1
-    {           ( SIGUSR1 )}
+    {( SIGUSR1 )}
 | _1 = TSIGUSR2
-    {           ( SIGUSR2 )}
+    {( SIGUSR2 )}
 | _1 = TSIGPOLL
-    {           ( SIGPOLL )}
+    {( SIGPOLL )}
 | _1 = TSIGPROF
-    {           ( SIGPROF )}
+    {( SIGPROF )}
 | _1 = TSIGSYS
-    {           ( SIGSYS )}
+    {( SIGSYS )}
 | _1 = TSIGTRAP
-    {           ( SIGTRAP )}
+    {( SIGTRAP )}
 | _1 = TSIGURG
-    {           ( SIGURG )}
+    {( SIGURG )}
 | _1 = TSIGVTALRM
-    {              ( SIGVTALRM )}
+    {( SIGVTALRM )}
 | _1 = TSIGXCPU
-    {           ( SIGXCPU )}
+    {( SIGXCPU )}
 | _1 = TSIGXFSZ
-    {           ( SIGXFSZ )}
+    {( SIGXFSZ )}
 
 topt:
   _1 = LPAREN _2 = topt _3 = RPAREN
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = intpair
-    {               ( Some _2 )}
+    {( Some _2 )}
 
 filebflaglist:
   _1 = LPAREN _2 = filebflaglist _3 = RPAREN
-    {                              ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = filebflaglisth _3 = RSQBRKT
-    {                                  ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
-    {                  ( [] )}
+    {( [] )}
 
 filebflaglisth:
   _1 = filebflag
-    {            ( [_1] )}
+    {( [_1] )}
 | _1 = filebflaglisth _2 = SC _3 = filebflag
-    {                              ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 msgbflaglist:
   _1 = LPAREN _2 = msgbflaglist _3 = RPAREN
-    {                             ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = msgbflaglisth _3 = RSQBRKT
-    {                                ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
-    {                  ( [] )}
+    {( [] )}
 
 msgbflaglisth:
   _1 = msgbflag
-    {           ( [_1] )}
+    {( [_1] )}
 | _1 = msgbflaglisth _2 = SC _3 = msgbflag
-    {                            ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 fdlist:
   _1 = LSQBRKT _2 = fdlisth _3 = RSQBRKT
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
-    {                  ( [] )}
+    {( [] )}
 
 fdlisth:
   _1 = fd
-    {     ( [fd_of_int_private (Int64.to_int _1)] )}
+    {( [fd_of_int_private (Int64.to_int _1)] )}
 | _1 = fdlisth _2 = SC _3 = fd
-    {                ( (fd_of_int_private (Int64.to_int _3))::_1 )}
+    {( (fd_of_int_private (Int64.to_int _3))::_1 )}
 
 siglistopt:
   _1 = LPAREN _2 = siglistopt _3 = RPAREN
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {        ( None )}
+    {( None )}
 | _1 = SOME _2 = siglist
-    {               ( Some _2 )}
+    {( Some _2 )}
 
 siglist:
   _1 = LPAREN _2 = siglist _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = siglisth _3 = RSQBRKT
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
-    {                  ( [] )}
+    {( [] )}
 
 siglisth:
   _1 = signal
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = siglisth _2 = SC _3 = signal
-    {                     ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 pselectopts:
   _1 = LPAREN _2 = pselectopts _3 = RPAREN
-    {                            ( _2 )}
+    {( _2 )}
 | _1 = fdlist _2 = COMMA _3 = fdlist _4 = COMMA _5 = fdlist _6 = COMMA _7 = topt _8 = COMMA _9 = siglistopt
-    {    ( PSELECT (_1, _3, _5, uint_pairopt_to_int_pairopt _7, _9) )}
+    {( PSELECT (_1, _3, _5, uint_pairopt_to_int_pairopt _7, _9) )}
 
 fdlisttriple:
   _1 = LPAREN _2 = fdlisttriple _3 = RPAREN
-    {                             ( _2 )}
+    {( _2 )}
 | _1 = fdlist _2 = COMMA _3 = LPAREN _4 = fdlist _5 = COMMA _6 = fdlist _7 = RPAREN
-    {                                                 ( (_1, (_4, _6)) )}
+    {( (_1, (_4, _6)) )}
 
 fdipport:
   _1 = LPAREN _2 = fdipport _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = fd _2 = COMMA _3 = LPAREN _4 = ip _5 = COMMA _6 = port _7 = RPAREN
-    {    ( (fd_of_int_private(Int64.to_int _1), (uint_ip_to_ip _4, uint_port_to_port _6)) )}
+    {( (fd_of_int_private(Int64.to_int _1), (uint_ip_to_ip _4, uint_port_to_port _6)) )}
 
 interfacelist:
   _1 = LPAREN _2 = interfacelist _3 = RPAREN
-    {                              ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = interfacelisth _3 = RSQBRKT
-    {                                 ( _2 )}
+    {( _2 )}
 
 interfacelisth:
   _1 = interface
-    {            ( [_1] )}
+    {( [_1] )}
 | _1 = interfacelisth _2 = SC _3 = interface
-    {                              ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 interface:
   _1 = LPAREN _2 = ifid _3 = COMMA _4 = ip _5 = COMMA _6 = iplist _7 = COMMA _8 = netmask _9 = RPAREN
-    {                                                         ( (_2, uint_ip_to_ip _4, _6, uint_netmask_to_netmask _8) )}
+    {( (_2, uint_ip_to_ip _4, _6, uint_netmask_to_netmask _8) )}
 
 ifid:
   _1 = LPAREN _2 = ifid _3 = RPAREN
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = IFID _2 = IDENT
-    {             ( ifid_of_string _2 )}
+    {( ifid_of_string _2 )}
 
 netmask:
   _1 = LPAREN _2 = netmask _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 | _1 = NETMASK _2 = netmaskaddr
-    {                        ( _2 )}
+    {( _2 )}
 
 netmaskaddr:
   _1 = LPAREN _2 = netmaskaddr _3 = RPAREN
-    {                            ( _2 )}
+    {( _2 )}
 | _1 = INT
-    {       ( _1 )}
+    {( _1 )}
 
 trace:
   _1 = TRACE _2 = LPAREN _3 = traceaction _4 = COMMA _5 = tracesid _6 = COMMA _7 = traceaddr _8 = COMMA _9 = tracest _10 = COMMA _11 = RECSTART _12 = tcpcbdetail _13 = RECEND _14 = RPAREN
-    {    ( let p = foldlist _12 clear_tcpcb_status clear_tcpcb in
+    {( let p = foldlist _12 clear_tcpcb_status clear_tcpcb in
       let _ = chk_missing_tcpcb (fst p) in
       let m = TCPTRACE(_3, _5, _7, _9, (snd p)) in m )}
 
 traceaction:
   _1 = LPAREN _2 = traceaction _3 = RPAREN
-    {                            ( _2 )}
+    {( _2 )}
 | _1 = T_TA_OUTPUT
-    {              ( TA_OUTPUT )}
+    {( TA_OUTPUT )}
 | _1 = T_TA_INPUT
-    {             ( TA_INPUT )}
+    {( TA_INPUT )}
 | _1 = T_TA_USER
-    {            ( TA_USER )}
+    {( TA_USER )}
 | _1 = T_TA_RESPOND
-    {               ( TA_RESPOND )}
+    {( TA_RESPOND )}
 | _1 = T_TA_DROP
-    {            ( TA_DROP )}
+    {( TA_DROP )}
 
 tracesid:
   _1 = LPAREN _2 = tracesid _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = SID _2 = INT
-    {          ( _2 )}
+    {( _2 )}
 
 traceaddr:
   _1 = LPAREN _2 = traceaddr _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = SOME _2 = traceaddr_h
-    {                   ( TRACEADDR(Some(_2)) )}
+    {( TRACEADDR(Some(_2)) )}
 | _1 = NONE
-    {       ( TRACEADDR(None) )}
+    {( TRACEADDR(None) )}
 
 traceaddr_h:
   _1 = LPAREN _2 = traceaddr_h _3 = RPAREN
-    {                            ( _2 )}
+    {( _2 )}
 | _1 = ipoption _2 = COMMA _3 = portoption _4 = COMMA _5 = ipoption _6 = COMMA _7 = portoption
-    {    ( (_1, _3, _5, _7) )}
+    {( (_1, _3, _5, _7) )}
 
 tracest:
   _1 = T_CLOSED
-    {           ( TCPCB_CLOSED )}
+    {( TCPCB_CLOSED )}
 | _1 = T_LISTEN
-    {           ( TCPCB_LISTEN )}
+    {( TCPCB_LISTEN )}
 | _1 = T_SYN_SENT
-    {             ( TCPCB_SYN_SENT )}
+    {( TCPCB_SYN_SENT )}
 | _1 = T_SYN_RECEIVED
-    {                 ( TCPCB_SYN_RCVD )}
+    {( TCPCB_SYN_RCVD )}
 | _1 = T_ESTABLISHED
-    {                ( TCPCB_ESTABLISHED )}
+    {( TCPCB_ESTABLISHED )}
 | _1 = T_CLOSE_WAIT
-    {               ( TCPCB_CLOSE_WAIT )}
+    {( TCPCB_CLOSE_WAIT )}
 | _1 = T_FIN_WAIT_1
-    {               ( TCPCB_FIN_WAIT_1 )}
+    {( TCPCB_FIN_WAIT_1 )}
 | _1 = T_CLOSING
-    {            ( TCPCB_CLOSING )}
+    {( TCPCB_CLOSING )}
 | _1 = T_LAST_ACK
-    {             ( TCPCB_LAST_ACK )}
+    {( TCPCB_LAST_ACK )}
 | _1 = T_FIN_WAIT_2
-    {               ( TCPCB_FIN_WAIT_2 )}
+    {( TCPCB_FIN_WAIT_2 )}
 | _1 = T_TIME_WAIT
-    {              ( TCPCB_TIME_WAIT )}
+    {( TCPCB_TIME_WAIT )}
 
 tcpcbdetail:
   _1 = tcpcb
-    {        ( [_1] )}
+    {( [_1] )}
 | _1 = tcpcb _2 = SC _3 = tcpcbdetail
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 timepair:
   _1 = LPAREN _2 = timepair _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = TSSEQ _2 = word16 _3 = COMMA _4 = NEVERTIMER
-    {                                ( (_2, NEVER_TIMER) )}
+    {( (_2, NEVER_TIMER) )}
 
 tsrecent:
   _1 = LPAREN _2 = tsrecent _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = TIMEWINDOWCLOSED
-    {                   ( TimeWindowClosed )}
+    {( TimeWindowClosed )}
 | _1 = TIMEWINDOW _2 = timepair
-    {                      ( TimeWindow (fst _2, snd _2) )}
+    {( TimeWindow (fst _2, snd _2) )}
 
 tcpcb:
   _1 = T_SND_UNA _2 = ASSIGN _3 = seqlocal
-    {                            ( update_tcpcb (TCPCB_SND_UNA _3) )}
+    {( update_tcpcb (TCPCB_SND_UNA _3) )}
 | _1 = T_SND_MAX _2 = ASSIGN _3 = seqlocal
-    {                            ( update_tcpcb (TCPCB_SND_MAX _3) )}
+    {( update_tcpcb (TCPCB_SND_MAX _3) )}
 | _1 = T_SND_NXT _2 = ASSIGN _3 = seqlocal
-    {                            ( update_tcpcb (TCPCB_SND_NXT _3) )}
+    {( update_tcpcb (TCPCB_SND_NXT _3) )}
 | _1 = T_SND_WL1 _2 = ASSIGN _3 = seqforeign
-    {                              ( update_tcpcb (TCPCB_SND_WL1 _3) )}
+    {( update_tcpcb (TCPCB_SND_WL1 _3) )}
 | _1 = T_SND_WL2 _2 = ASSIGN _3 = seqlocal
-    {                            ( update_tcpcb (TCPCB_SND_WL2 _3) )}
+    {( update_tcpcb (TCPCB_SND_WL2 _3) )}
 | _1 = T_ISS _2 = ASSIGN _3 = seqlocal
-    {                        ( update_tcpcb (TCPCB_ISS _3) )}
+    {( update_tcpcb (TCPCB_ISS _3) )}
 | _1 = T_SND_WND _2 = ASSIGN _3 = intr
-    {                        ( update_tcpcb (TCPCB_SND_WND _3) )}
+    {( update_tcpcb (TCPCB_SND_WND _3) )}
 | _1 = T_SND_CWND _2 = ASSIGN _3 = intr
-    {                         ( update_tcpcb (TCPCB_SND_CWND _3) )}
+    {( update_tcpcb (TCPCB_SND_CWND _3) )}
 | _1 = T_SND_SSTHRESH _2 = ASSIGN _3 = intr
-    {                             ( update_tcpcb (TCPCB_SND_SSTHRESH _3) )}
+    {( update_tcpcb (TCPCB_SND_SSTHRESH _3) )}
 | _1 = T_RCV_WND _2 = ASSIGN _3 = intr
-    {                        ( update_tcpcb (TCPCB_RCV_WND _3) )}
+    {( update_tcpcb (TCPCB_RCV_WND _3) )}
 | _1 = T_RCV_NXT _2 = ASSIGN _3 = seqforeign
-    {                              ( update_tcpcb (TCPCB_RCV_NXT _3) )}
+    {( update_tcpcb (TCPCB_RCV_NXT _3) )}
 | _1 = T_RCV_UP _2 = ASSIGN _3 = seqforeign
-    {                             ( update_tcpcb (TCPCB_RCV_UP _3) )}
+    {( update_tcpcb (TCPCB_RCV_UP _3) )}
 | _1 = T_IRS _2 = ASSIGN _3 = seqforeign
-    {                          ( update_tcpcb (TCPCB_IRS _3) )}
+    {( update_tcpcb (TCPCB_IRS _3) )}
 | _1 = T_RCV_ADV _2 = ASSIGN _3 = seqforeign
-    {                              ( update_tcpcb (TCPCB_RCV_ADV _3) )}
+    {( update_tcpcb (TCPCB_RCV_ADV _3) )}
 | _1 = T_SND_RECOVER _2 = ASSIGN _3 = seqlocal
-    {                                ( update_tcpcb (TCPCB_SND_RECOVER _3) )}
+    {( update_tcpcb (TCPCB_SND_RECOVER _3) )}
 | _1 = T_T_MAXSEG _2 = ASSIGN _3 = intr
-    {                         ( update_tcpcb (TCPCB_T_MAXSEG _3) )}
+    {( update_tcpcb (TCPCB_T_MAXSEG _3) )}
 | _1 = T_T_DUPACKS _2 = ASSIGN _3 = intr
-    {                          ( update_tcpcb (TCPCB_T_DUPACKS _3) )}
+    {( update_tcpcb (TCPCB_T_DUPACKS _3) )}
 | _1 = T_T_RTTSEG _2 = ASSIGN _3 = rttsegopt
-    {                              ( update_tcpcb (TCPCB_T_RTTSEG _3) )}
+    {( update_tcpcb (TCPCB_T_RTTSEG _3) )}
 | _1 = T_SND_SCALE _2 = ASSIGN _3 = intr
-    {                          ( update_tcpcb (TCPCB_SND_SCALE _3) )}
+    {( update_tcpcb (TCPCB_SND_SCALE _3) )}
 | _1 = T_RCV_SCALE _2 = ASSIGN _3 = intr
-    {                          ( update_tcpcb (TCPCB_RCV_SCALE _3) )}
+    {( update_tcpcb (TCPCB_RCV_SCALE _3) )}
 | _1 = T_TS_RECENT _2 = ASSIGN _3 = tsrecent
-    {                              ( update_tcpcb (TCPCB_TS_RECENT _3) )}
+    {( update_tcpcb (TCPCB_TS_RECENT _3) )}
 | _1 = T_LAST_ACK_SENT _2 = ASSIGN _3 = seqforeign
-    {                                    ( update_tcpcb (TCPCB_LAST_ACK_SENT _3) )}
+    {( update_tcpcb (TCPCB_LAST_ACK_SENT _3) )}
 
 rttsegopt:
   _1 = LPAREN _2 = rttsegopt _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = rttseg
-    {              ( Some(_2) )}
+    {( Some(_2) )}
 
 rttseg:
   _1 = LPAREN _2 = rttseg _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = tsseq _2 = COMMA _3 = seqlocal
-    {                       ( (_1, _3) )}
+    {( (_1, _3) )}
 
 tsseq:
   _1 = LPAREN _2 = tsseq _3 = RPAREN
-    {                      ( _2 )}
+    {( _2 )}
 | _1 = TSSEQ _2 = word16
-    {               ( _2 )}
+    {( _2 )}
 
 epsilon:
   _1 = T_LH_EPSILON _2 = LPAREN _3 = T_DURATION _4 = intr _5 = intr _6 = RPAREN
-    {                                                  ( HOLEPSILON (DURATION(_4, _5)) )}
+    {( HOLEPSILON (DURATION(_4, _5)) )}
 
 abstime:
   _1 = LPAREN _2 = abstime _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 | _1 = T_ABSTIME _2 = intr _3 = intr
-    {                      ( HOLABSTIME(_2, _3) )}
+    {( HOLABSTIME(_2, _3) )}
 
 bool:
   _1 = LPAREN _2 = bool _3 = RPAREN
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = TRUE
-    {       ( true )}
+    {( true )}
 | _1 = FALSE
-    {        ( false )}
+    {( false )}
 
 intr:
   _1 = LPAREN _2 = intr _3 = RPAREN
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = INT
-    {      ( _1 )}
+    {( _1 )}
 | _1 = MINUS _2 = INT
-    {            ( Int64.neg(_2) )}
+    {( Int64.neg(_2) )}
 
 intpair:
   _1 = LPAREN _2 = intpair _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 | _1 = intr _2 = COMMA _3 = intr
-    {                  ( (_1, _3) )}
+    {( (_1, _3) )}
 
 ip:
   _1 = LPAREN _2 = ip _3 = RPAREN
-    {                   ( _2 )}
+    {( _2 )}
 | _1 = IP _2 = ipaddr
-    {            ( _2 )}
+    {( _2 )}
 
 ipaddr:
   _1 = LPAREN _2 = ipaddr _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = INT _2 = INT _3 = INT _4 = INT
-    {                  ( (_1 << 24) |. (_2 << 16) |. (_3 << 8) |. _4 )}
+    {( (_1 << 24) |. (_2 << 16) |. (_3 << 8) |. _4 )}
 
 ipoption:
   _1 = LPAREN _2 = ipoption _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = ip
-    {          ( ip_option_of_uint _2 )}
+    {( ip_option_of_uint _2 )}
 
 iplist:
   _1 = LSQBRKT _2 = ips _3 = RSQBRKT
-    {                      ( _2 )}
+    {( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
-    {                      ( [] )}
+    {( [] )}
 
 ips:
   _1 = ip
-    {     ( [uint_ip_to_ip _1] )}
+    {( [uint_ip_to_ip _1] )}
 | _1 = ip _2 = SC _3 = ips
-    {            ( (uint_ip_to_ip _1)::_3 )}
+    {( (uint_ip_to_ip _1)::_3 )}
 
 port:
   _1 = LPAREN _2 = port _3 = RPAREN
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = PORT _2 = intr
-    {            ( _2 )}
+    {( _2 )}
 
 portoption:
   _1 = LPAREN _2 = portoption _3 = RPAREN
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = port
-    {            ( port_option_of_uint _2 )}
+    {( port_option_of_uint _2 )}
 
 word16:
   _1 = LPAREN _2 = word16 _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = WORD16 _2 = intr
-    {              ( _2 )}
+    {( _2 )}
 
 word16option:
   _1 = LPAREN _2 = word16option _3 = RPAREN
-    {                             ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = word16
-    {              ( Some _2 )}
+    {( Some _2 )}
 
 byte:
   _1 = LPAREN _2 = byte _3 = RPAREN
-    {                     ( _2 )}
+    {( _2 )}
 | _1 = BYTE _2 = intr
-    {            ( _2 )}
+    {( _2 )}
 
 byteoption:
   _1 = LPAREN _2 = byteoption _3 = RPAREN
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = SOME _2 = byte
-    {            ( Some _2 )}
+    {( Some _2 )}
 
 stringr:
   _1 = LPAREN _2 = stringr _3 = RPAREN
-    {                        ( _2 )}
+    {( _2 )}
 | _1 = STRING
-    {         ( _1 )}
+    {( _1 )}
 
 fd:
   _1 = LPAREN _2 = fd _3 = RPAREN
-    {                   ( _2 )}
+    {( _2 )}
 | _1 = FD _2 = intr
-    {          ( _2 )}
+    {( _2 )}
 
 addrop:
   _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = LPAREN _2 = addrop _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = SOME _2 = LPAREN _3 = ip _4 = COMMA _5 = port _6 = RPAREN
-    {                                   ( Some(uint_ip_to_ip _3, uint_port_to_port _5) )}
+    {( Some(uint_ip_to_ip _3, uint_port_to_port _5) )}
 
 ipportboolop:
   _1 = NONE
-    {       ( None )}
+    {( None )}
 | _1 = LPAREN _2 = ipportboolop _3 = RPAREN
-    {                             ( _2 )}
+    {( _2 )}
 | _1 = SOME _2 = LPAREN _3 = ipport _4 = COMMA _5 = bool _6 = RPAREN
-    {                                       ( Some(_3, _5) )}
+    {( Some(_3, _5) )}
 
 ipport:
   _1 = LPAREN _2 = ipport _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = ipoption _3 = COMMA _4 = portoption _5 = RPAREN
-    {                                          ( (uint_ipopt_to_ipopt _2, uint_portopt_to_portopt _4) )}
+    {( (uint_ipopt_to_ipopt _2, uint_portopt_to_portopt _4) )}
 
 socktype:
   _1 = SOCK_DGRAM
-    {             ( SOCK_DGRAM )}
+    {( SOCK_DGRAM )}
 | _1 = SOCK_STREAM
-    {              ( SOCK_STREAM )}
+    {( SOCK_STREAM )}
 
 timecomment:
   _1 = SCOMMENTSTART _2 = intr _3 = DOT _4 = intr _5 = stringr _6 = SCOMMENTEND
-    {    ( Some(TIMECOMMENT(_2*.(uint 1000000)+._4, _5)) )}
+    {( Some(TIMECOMMENT(_2*.(uint 1000000)+._4, _5)) )}
 | 
-    {  ( None )}
+    {( None )}
 
 comment_h:
   _1 = COMMENT
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = comment_h _2 = COMMENT
-    {                    ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 comment:
   _1 = comment_h
-    {            ( Some _1 )}
+    {( Some _1 )}
 | 
-    {  ( None )}
+    {( None )}
 
 unixerror:
   _1 = T_ERR_E2BIG
-    {              ( E2BIG )}
+    {( E2BIG )}
 | _1 = T_ERR_EACCES
-    {               ( EACCES )}
+    {( EACCES )}
 | _1 = T_ERR_EADDRINUSE
-    {                   ( EADDRINUSE )}
+    {( EADDRINUSE )}
 | _1 = T_ERR_EADDRNOTAVAIL
-    {                      ( EADDRNOTAVAIL )}
+    {( EADDRNOTAVAIL )}
 | _1 = T_ERR_EAFNOSUPPORT
-    {                     ( EAFNOSUPPORT )}
+    {( EAFNOSUPPORT )}
 | _1 = T_ERR_EAGAIN
-    {               ( EAGAIN )}
+    {( EAGAIN )}
 | _1 = T_ERR_EWOULDBLOCK
-    {                    ( EWOULDBLOCK )}
+    {( EWOULDBLOCK )}
 | _1 = T_ERR_EALREADY
-    {                 ( EALREADY )}
+    {( EALREADY )}
 | _1 = T_ERR_EBADF
-    {              ( EBADF )}
+    {( EBADF )}
 | _1 = T_ERR_EBADMSG
-    {                ( EBADMSG )}
+    {( EBADMSG )}
 | _1 = T_ERR_EBUSY
-    {              ( EBUSY )}
+    {( EBUSY )}
 | _1 = T_ERR_ECANCELED
-    {                  ( ECANCELED )}
+    {( ECANCELED )}
 | _1 = T_ERR_ECHILD
-    {               ( ECHILD )}
+    {( ECHILD )}
 | _1 = T_ERR_ECONNABORTED
-    {                     ( ECONNABORTED )}
+    {( ECONNABORTED )}
 | _1 = T_ERR_ECONNREFUSED
-    {                     ( ECONNREFUSED )}
+    {( ECONNREFUSED )}
 | _1 = T_ERR_ECONNRESET
-    {                   ( ECONNRESET )}
+    {( ECONNRESET )}
 | _1 = T_ERR_EDEADLK
-    {                ( EDEADLK )}
+    {( EDEADLK )}
 | _1 = T_ERR_EDESTADDRREQ
-    {                     ( EDESTADDRREQ )}
+    {( EDESTADDRREQ )}
 | _1 = T_ERR_EDOM
-    {             ( EDOM )}
+    {( EDOM )}
 | _1 = T_ERR_EDQUOT
-    {               ( EDQUOT )}
+    {( EDQUOT )}
 | _1 = T_ERR_EEXIST
-    {               ( EEXIST )}
+    {( EEXIST )}
 | _1 = T_ERR_EFAULT
-    {               ( EFAULT )}
+    {( EFAULT )}
 | _1 = T_ERR_EFBIG
-    {              ( EFBIG )}
+    {( EFBIG )}
 | _1 = T_ERR_EHOSTUNREACH
-    {                     ( EHOSTUNREACH )}
+    {( EHOSTUNREACH )}
 | _1 = T_ERR_EIDRM
-    {              ( EIDRM )}
+    {( EIDRM )}
 | _1 = T_ERR_EILSEQ
-    {               ( EILSEQ )}
+    {( EILSEQ )}
 | _1 = T_ERR_EINPROGRESS
-    {                    ( EINPROGRESS )}
+    {( EINPROGRESS )}
 | _1 = T_ERR_EINTR
-    {              ( EINTR )}
+    {( EINTR )}
 | _1 = T_ERR_EINVAL
-    {               ( EINVAL )}
+    {( EINVAL )}
 | _1 = T_ERR_EIO
-    {            ( EIO )}
+    {( EIO )}
 | _1 = T_ERR_EISCONN
-    {                ( EISCONN )}
+    {( EISCONN )}
 | _1 = T_ERR_EISDIR
-    {               ( EISDIR )}
+    {( EISDIR )}
 | _1 = T_ERR_ELOOP
-    {              ( ELOOP )}
+    {( ELOOP )}
 | _1 = T_ERR_EMFILE
-    {               ( EMFILE )}
+    {( EMFILE )}
 | _1 = T_ERR_EMLINK
-    {               ( EMLINK )}
+    {( EMLINK )}
 | _1 = T_ERR_EMSGSIZE
-    {                 ( EMSGSIZE )}
+    {( EMSGSIZE )}
 | _1 = T_ERR_EMULTIHOP
-    {                  ( EMULTIHOP )}
+    {( EMULTIHOP )}
 | _1 = T_ERR_ENAMETOOLONG
-    {                     ( ENAMETOOLONG )}
+    {( ENAMETOOLONG )}
 | _1 = T_ERR_ENETDOWN
-    {                 ( ENETDOWN )}
+    {( ENETDOWN )}
 | _1 = T_ERR_ENETRESET
-    {                  ( ENETRESET )}
+    {( ENETRESET )}
 | _1 = T_ERR_ENETUNREACH
-    {                    ( ENETUNREACH )}
+    {( ENETUNREACH )}
 | _1 = T_ERR_ENFILE
-    {               ( ENFILE )}
+    {( ENFILE )}
 | _1 = T_ERR_ENOBUFS
-    {                ( ENOBUFS )}
+    {( ENOBUFS )}
 | _1 = T_ERR_ENODATA
-    {                ( ENODATA )}
+    {( ENODATA )}
 | _1 = T_ERR_ENODEV
-    {               ( ENODEV )}
+    {( ENODEV )}
 | _1 = T_ERR_ENOENT
-    {               ( ENOENT )}
+    {( ENOENT )}
 | _1 = T_ERR_ENOEXEC
-    {                ( ENOEXEC )}
+    {( ENOEXEC )}
 | _1 = T_ERR_ENOLCK
-    {               ( ENOLCK )}
+    {( ENOLCK )}
 | _1 = T_ERR_ENOLINK
-    {                ( ENOLINK )}
+    {( ENOLINK )}
 | _1 = T_ERR_ENOMEM
-    {               ( ENOMEM )}
+    {( ENOMEM )}
 | _1 = T_ERR_ENOMSG
-    {               ( ENOMSG )}
+    {( ENOMSG )}
 | _1 = T_ERR_ENOPROTOOPT
-    {                    ( ENOPROTOOPT )}
+    {( ENOPROTOOPT )}
 | _1 = T_ERR_ENOSPC
-    {               ( ENOSPC )}
+    {( ENOSPC )}
 | _1 = T_ERR_ENOSR
-    {              ( ENOSR )}
+    {( ENOSR )}
 | _1 = T_ERR_ENOSTR
-    {               ( ENOSTR )}
+    {( ENOSTR )}
 | _1 = T_ERR_ENOSYS
-    {               ( ENOSYS )}
+    {( ENOSYS )}
 | _1 = T_ERR_ENOTCONN
-    {                 ( ENOTCONN )}
+    {( ENOTCONN )}
 | _1 = T_ERR_ENOTDIR
-    {                ( ENOTDIR )}
+    {( ENOTDIR )}
 | _1 = T_ERR_ENOTEMPTY
-    {                  ( ENOTEMPTY )}
+    {( ENOTEMPTY )}
 | _1 = T_ERR_ENOTSOCK
-    {                 ( ENOTSOCK )}
+    {( ENOTSOCK )}
 | _1 = T_ERR_ENOTSUP
-    {                ( ENOTSUP )}
+    {( ENOTSUP )}
 | _1 = T_ERR_ENOTTY
-    {               ( ENOTTY )}
+    {( ENOTTY )}
 | _1 = T_ERR_ENXIO
-    {              ( ENXIO )}
+    {( ENXIO )}
 | _1 = T_ERR_EOPNOTSUPP
-    {                   ( EOPNOTSUPP )}
+    {( EOPNOTSUPP )}
 | _1 = T_ERR_EOVERFLOW
-    {                  ( EOVERFLOW )}
+    {( EOVERFLOW )}
 | _1 = T_ERR_EPERM
-    {              ( EPERM )}
+    {( EPERM )}
 | _1 = T_ERR_EPIPE
-    {              ( EPIPE )}
+    {( EPIPE )}
 | _1 = T_ERR_EPROTO
-    {               ( EPROTO )}
+    {( EPROTO )}
 | _1 = T_ERR_EPROTONOSUPPORT
-    {                        ( EPROTONOSUPPORT )}
+    {( EPROTONOSUPPORT )}
 | _1 = T_ERR_EPROTOTYPE
-    {                   ( EPROTOTYPE )}
+    {( EPROTOTYPE )}
 | _1 = T_ERR_ERANGE
-    {               ( ERANGE )}
+    {( ERANGE )}
 | _1 = T_ERR_EROFS
-    {              ( EROFS )}
+    {( EROFS )}
 | _1 = T_ERR_ESPIPE
-    {               ( ESPIPE )}
+    {( ESPIPE )}
 | _1 = T_ERR_ESRCH
-    {              ( ESRCH )}
+    {( ESRCH )}
 | _1 = T_ERR_ESTALE
-    {               ( ESTALE )}
+    {( ESTALE )}
 | _1 = T_ERR_ETIME
-    {              ( ETIME )}
+    {( ETIME )}
 | _1 = T_ERR_ETIMEDOUT
-    {                  ( ETIMEDOUT )}
+    {( ETIMEDOUT )}
 | _1 = T_ERR_ETXTBSY
-    {                ( ETXTBSY )}
+    {( ETXTBSY )}
 | _1 = T_ERR_EXDEV
-    {              ( EXDEV )}
+    {( EXDEV )}
 | _1 = T_ERR_ESHUTDOWN
-    {                  ( ESHUTDOWN )}
+    {( ESHUTDOWN )}
 | _1 = T_ERR_EHOSTDOWN
-    {                  ( EHOSTDOWN )}
+    {( EHOSTDOWN )}
 | _1 = T_ERR_EUNKNOWN_UNIX_ERROR
-    {                            ( EUNKNOWN_UNIX_ERROR )}
+    {( EUNKNOWN_UNIX_ERROR )}
 
 %%

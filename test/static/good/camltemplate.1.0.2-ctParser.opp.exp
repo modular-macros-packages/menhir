@@ -116,53 +116,53 @@
 
 input:
   _1 = EOF
-    {        ( [] )}
+    {( [] )}
 | _1 = START _2 = stmts _3 = EOF
-    {                    ( _2 )}
+    {( _2 )}
 | _1 = START _2 = error
-    {                ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = stmts _2 = EOF
-    {              ( _1 )}
+    {( _1 )}
 
 stmts:
   _1 = stmt
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = stmt _2 = stmts
-    {               ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 stmt:
   _1 = EXPANSION _2 = expr
-    {                   ( as_statement (new expansion_statement ~expr:_2) )}
+    {( as_statement (new expansion_statement ~expr:_2) )}
 | _1 = EXPANSION _2 = error
-    {                    ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = IF _2 = if_chain _3 = else_part _4 = END
-    {      ( as_statement (new if_statement ~cond_branches:_2 ~else_statements:_3) )}
+    {( as_statement (new if_statement ~cond_branches:_2 ~else_statements:_3) )}
 | _1 = IF _2 = error
-    {             ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = FOREACH _2 = LPAREN _3 = ident _4 = IN _5 = expr _6 = RPAREN _7 = stmts _8 = END
-    {      ( as_statement (new for_each_statement ~index:_3 ~list_expr:_5 ~statements:_7) )}
+    {( as_statement (new for_each_statement ~index:_3 ~list_expr:_5 ~statements:_7) )}
 | _1 = FOREACH _2 = error
-    {                  ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = SET _2 = LPAREN _3 = ident _4 = EQUALS _5 = expr _6 = RPAREN
-    {      ( as_statement (new set_statement ~left:_3 ~right:_5) )}
+    {( as_statement (new set_statement ~left:_3 ~right:_5) )}
 | _1 = SET _2 = error
-    {              ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = VAR _2 = LPAREN _3 = ident _4 = EQUALS _5 = expr _6 = RPAREN
-    {      ( as_statement (new var_statement ~left:_3 ~right:(Some _5)) )}
+    {( as_statement (new var_statement ~left:_3 ~right:(Some _5)) )}
 | _1 = VAR _2 = LPAREN _3 = ident _4 = RPAREN
-    {      ( as_statement (new var_statement ~left:_3 ~right:None) )}
+    {( as_statement (new var_statement ~left:_3 ~right:None) )}
 | _1 = VAR _2 = error
-    {              ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = TEXT
-    {         ( as_statement (new text_statement ~text:(string_for_text _1)) )}
+    {( as_statement (new text_statement ~text:(string_for_text _1)) )}
 | _1 = TEXT _2 = error
-    {               ( parser_error_for_text _1 )}
+    {( parser_error_for_text _1 )}
 | _1 = INCLUDE _2 = LPAREN _3 = expr _4 = RPAREN
-    {      ( as_statement (new include_statement ~pos:_1 ~template_name:_3) )}
+    {( as_statement (new include_statement ~pos:_1 ~template_name:_3) )}
 | _1 = INCLUDE _2 = error
-    {                  ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = MACRO _2 = ident _3 = macro_arg_names _4 = stmts _5 = END
-    {      ( add_macro_for_current_template (new macro_impl
+    {( add_macro_for_current_template (new macro_impl
                                           ~template_name:(!current_template_name)
                                           ~pos:_1
                                           ~macro_name:_2#get_name
@@ -170,164 +170,164 @@ stmt:
                                           ~statements:_4);
         as_statement (new null_statement) )}
 | _1 = MACRO _2 = error
-    {                ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = OPEN _2 = LPAREN _3 = expr _4 = RPAREN
-    {      ( as_statement (new open_statement ~pos:_1 ~template_name:_3)  )}
+    {( as_statement (new open_statement ~pos:_1 ~template_name:_3)  )}
 | _1 = OPEN _2 = error
-    {               ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = ident _2 = function_args
-    {      ( as_statement (new macro_call_statement
+    {( as_statement (new macro_call_statement
                         ~pos:(_1#get_pos)
                         ~macro_name:_1#get_name
                         ~args:_2) )}
 | _1 = IDENT _2 = error
-    {                ( raise (ParserError (fst _1)) )}
+    {( raise (ParserError (fst _1)) )}
 
 if_chain:
   _1 = LPAREN _2 = expr _3 = RPAREN _4 = stmts
-    {                             ( [(_2, _4)] )}
+    {( [(_2, _4)] )}
 | _1 = LPAREN _2 = expr _3 = RPAREN _4 = stmts _5 = ELSEIF _6 = if_chain
-    {                                             ( (_2, _4) :: _6 )}
+    {( (_2, _4) :: _6 )}
 | _1 = LPAREN _2 = expr _3 = RPAREN _4 = stmts _5 = ELSEIF _6 = error
-    {                                          ( raise (ParserError _5) )}
+    {( raise (ParserError _5) )}
 
 else_part:
   
-    {              ( [] )}
+    {( [] )}
 | _1 = ELSE _2 = stmts
-    {               ( _2 )}
+    {( _2 )}
 | _1 = ELSE _2 = error
-    {               ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 
 macro_arg_names:
   _1 = LPAREN _2 = RPAREN
-    {                  ( [] )}
+    {( [] )}
 | _1 = LPAREN _2 = ident_list _3 = RPAREN
-    {                             ( _2 )}
+    {( _2 )}
 
 ident_list:
   _1 = ident
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = ident _2 = COMMA _3 = ident_list
-    {                           ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = ident _2 = COMMA _3 = error
-    {                      ( raise (ParserError _2) )}
+    {( raise (ParserError _2) )}
 
 ident:
   _1 = IDENT
-    {          ( new ident ~pos:(fst _1) ~name:(snd _1) )}
+    {( new ident ~pos:(fst _1) ~name:(snd _1) )}
 | _1 = IDENT _2 = error
-    {                ( raise (ParserError (fst _1)) )}
+    {( raise (ParserError (fst _1)) )}
 
 expr:
   _1 = ident
-    {          ( as_expression _1 )}
+    {( as_expression _1 )}
 | _1 = INT
-    {        ( as_expression (new literal ~pos:(fst _1) ~value:(Tint (snd _1))) )}
+    {( as_expression (new literal ~pos:(fst _1) ~value:(Tint (snd _1))) )}
 | _1 = STRING
-    {           ( as_expression (new literal ~pos:(fst _1) ~value:(Tstr (snd _1))) )}
+    {( as_expression (new literal ~pos:(fst _1) ~value:(Tstr (snd _1))) )}
 | _1 = FLOAT
-    {          ( as_expression (new literal ~pos:(fst _1) ~value:(Tfloat (snd _1))) )}
+    {( as_expression (new literal ~pos:(fst _1) ~value:(Tfloat (snd _1))) )}
 | _1 = TRUE
-    {         ( as_expression (new literal ~pos:_1 ~value:(Tbool true)) )}
+    {( as_expression (new literal ~pos:_1 ~value:(Tbool true)) )}
 | _1 = FALSE
-    {          ( as_expression (new literal ~pos:_1 ~value:(Tbool false)) )}
+    {( as_expression (new literal ~pos:_1 ~value:(Tbool false)) )}
 | _1 = NULL
-    {         ( as_expression (new literal ~pos:_1 ~value:(Tnull)) )}
+    {( as_expression (new literal ~pos:_1 ~value:(Tnull)) )}
 | _1 = function_call
-    {                  ( _1 )}
+    {( _1 )}
 | _1 = dot_lookup
-    {               ( _1 )}
+    {( _1 )}
 | _1 = bracket_lookup
-    {                   ( _1 )}
+    {( _1 )}
 | _1 = NOT _2 = expr
-    {             ( as_expression (new not_op ~pos:_1 ~arg:_2) )}
+    {( as_expression (new not_op ~pos:_1 ~arg:_2) )}
 | _1 = MINUS _2 = expr %prec UMINUS
-    {                            ( as_expression (new negative_op ~pos:_1 ~arg:_2) )}
+    {( as_expression (new negative_op ~pos:_1 ~arg:_2) )}
 | _1 = expr _2 = PLUS _3 = expr
-    {                   ( as_expression (new plus_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new plus_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = MINUS _3 = expr
-    {                    ( as_expression (new minus_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new minus_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = TIMES _3 = expr
-    {                    ( as_expression (new times_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new times_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = DIV _3 = expr
-    {                  ( as_expression (new div_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new div_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = MOD _3 = expr
-    {                  ( as_expression (new mod_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new mod_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = EQUALS_EQUALS _3 = expr
-    {                            ( as_expression (new equals_equals_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new equals_equals_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = NOT_EQUALS _3 = expr
-    {                         ( as_expression (new not_equals_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new not_equals_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = LESS _3 = expr
-    {                   ( as_expression (new less_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new less_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = GREATER _3 = expr
-    {                      ( as_expression (new greater_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new greater_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = LESS_OR_EQUAL _3 = expr
-    {                            ( as_expression (new less_or_equal_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new less_or_equal_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = GREATER_OR_EQUAL _3 = expr
-    {                               ( as_expression (new greater_or_equal_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new greater_or_equal_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = AND _3 = expr
-    {                  ( as_expression (new and_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new and_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = expr _2 = OR _3 = expr
-    {                 ( as_expression (new or_op ~pos:_2 ~left:_1 ~right:_3) )}
+    {( as_expression (new or_op ~pos:_2 ~left:_1 ~right:_3) )}
 | _1 = LPAREN _2 = expr _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = error
-    {                 ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 
 function_call:
   _1 = ident _2 = function_args
-    {                        ( as_expression (new function_call_op
+    {( as_expression (new function_call_op
                                            ~pos:(_1#get_pos)
                                            ~left:(as_expression _1)
                                            ~params:_2) )}
 | _1 = dot_lookup _2 = function_args
-    {                             ( as_expression (new function_call_op
+    {( as_expression (new function_call_op
                                                  ~pos:(_1#get_pos)
                                                  ~left:_1
                                                  ~params:_2) )}
 
 function_args:
   _1 = LPAREN _2 = RPAREN
-    {                  ( [] )}
+    {( [] )}
 | _1 = LPAREN _2 = error
-    {                 ( raise (ParserError _1) )}
+    {( raise (ParserError _1) )}
 | _1 = LPAREN _2 = expr_list _3 = RPAREN
-    {                            ( _2 )}
+    {( _2 )}
 
 expr_list:
   _1 = expr
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = expr _2 = COMMA _3 = expr_list
-    {                         ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = expr _2 = COMMA _3 = error
-    {                     ( raise (ParserError _2) )}
+    {( raise (ParserError _2) )}
 
 dot_lookup:
   _1 = ident _2 = DOT _3 = ident
-    {                    ( as_expression (new dot_op
+    {( as_expression (new dot_op
                                        ~pos:(_3#get_pos)
                                        ~left:(as_expression _1)
                                        ~key:_3) )}
 | _1 = function_call _2 = DOT _3 = ident
-    {                            ( as_expression (new dot_op
+    {( as_expression (new dot_op
                                              ~pos:(_3#get_pos)
                                              ~left:_1
                                              ~key:_3) )}
 
 bracket_lookup:
   _1 = ident _2 = LBRACKET _3 = expr _4 = RBRACKET
-    {                                 ( as_expression (new bracket_op
+    {( as_expression (new bracket_op
                                                     ~pos:_2
                                                     ~left:(as_expression _1)
                                                     ~key:_3) )}
 | _1 = bracket_lookup _2 = LBRACKET _3 = expr _4 = RBRACKET
-    {                                          ( as_expression (new bracket_op
+    {( as_expression (new bracket_op
                                                             ~pos:_2
                                                             ~left:_1
                                                             ~key:_3) )}
 | _1 = function_call _2 = LBRACKET _3 = expr _4 = RBRACKET
-    {                                         ( as_expression (new bracket_op
+    {( as_expression (new bracket_op
                                                             ~pos:_2
                                                             ~left:_1
                                                             ~key:_3) )}

@@ -262,150 +262,150 @@ Warning: the token PP_INCLUDE is unused.
 
 program:
   _1 = EOF
-    {        ( mk Unit )}
+    {( mk Unit )}
 | _1 = exprs _2 = EOF
-    {              ( _1 )}
+    {( _1 )}
 
 interactive:
   _1 = exprs _2 = SEQSEQ
-    {                 ( _1 )}
+    {( _1 )}
 | _1 = EOF
-    {        ( raise End_of_file )}
+    {( raise End_of_file )}
 
 s:
   
-    {     ()}
+    {()}
 | _1 = SEQ
-    {               ()}
+    {()}
 
 g:
   
-    {     ()}
+    {()}
 | _1 = GETS
-    {               ()}
+    {()}
 
 exprs:
   _1 = expr _2 = s
-    {                             ( _1 )}
+    {( _1 )}
 | _1 = expr _2 = cexprs
-    {                             ( mk (Seq (_1,_2)) )}
+    {( mk (Seq (_1,_2)) )}
 | _1 = expr _2 = SEQ _3 = exprs
-    {                             ( mk (Seq (_1,_3)) )}
+    {( mk (Seq (_1,_3)) )}
 | _1 = binding _2 = s
-    {                             ( let doc,name,def = _1 in
+    {( let doc,name,def = _1 in
                                  mk (Let { doc=doc ; var=name ;
                                            gen = [] ; def=def ;
                                            body = mk Unit }) )}
 | _1 = binding _2 = cexprs
-    {                             ( let doc,name,def = _1 in
+    {( let doc,name,def = _1 in
                                  mk (Let { doc=doc ; var=name ;
                                            gen = [] ; def=def ;
                                            body = _2 }) )}
 | _1 = binding _2 = SEQ _3 = exprs
-    {                             ( let doc,name,def = _1 in
+    {( let doc,name,def = _1 in
                                  mk (Let { doc=doc ; var=name ;
                                            gen = [] ; def=def ;
                                            body = _3 }) )}
 
 cexprs:
   _1 = cexpr _2 = s
-    {                             ( _1 )}
+    {( _1 )}
 | _1 = cexpr _2 = cexprs
-    {                             ( mk (Seq (_1,_2)) )}
+    {( mk (Seq (_1,_2)) )}
 | _1 = cexpr _2 = SEQ _3 = exprs
-    {                             ( mk (Seq (_1,_3)) )}
+    {( mk (Seq (_1,_3)) )}
 | _1 = binding _2 = s
-    {                             ( let doc,name,def = _1 in
+    {( let doc,name,def = _1 in
                                  mk (Let { doc=doc ; var=name ;
                                            gen = [] ; def=def ;
                                            body = mk Unit }) )}
 | _1 = binding _2 = cexprs
-    {                             ( let doc,name,def = _1 in
+    {( let doc,name,def = _1 in
                                  mk (Let { doc=doc ; var=name ;
                                            gen = [] ; def=def ;
                                            body = _2 }) )}
 | _1 = binding _2 = SEQ _3 = exprs
-    {                             ( let doc,name,def = _1 in
+    {( let doc,name,def = _1 in
                                  mk (Let { doc=doc ; var=name ;
                                            gen = [] ; def=def ;
                                            body = _3 }) )}
 
 expr:
   _1 = LPAR _2 = expr _3 = COLON _4 = ty _5 = RPAR
-    {                                     ( Lang_types.(<:) _2.Lang_values.t _4 ;
+    {( Lang_types.(<:) _2.Lang_values.t _4 ;
                                        _2 )}
 | _1 = MINUS _2 = FLOAT
-    {                                     ( mk (Float (-. _2)) )}
+    {( mk (Float (-. _2)) )}
 | _1 = MINUS _2 = INT
-    {                                     ( mk (Int (- _2)) )}
+    {( mk (Int (- _2)) )}
 | _1 = MINUS _2 = LPAR _3 = expr _4 = RPAR
-    {                                     ( mk (App (mk ~pos:(1,1) (Var "~-"),
+    {( mk (App (mk ~pos:(1,1) (Var "~-"),
                                                 ["", _3])) )}
 | _1 = LPAR _2 = expr _3 = RPAR
-    {                                     ( _2 )}
+    {( _2 )}
 | _1 = INT
-    {                                     ( mk (Int _1) )}
+    {( mk (Int _1) )}
 | _1 = NOT _2 = expr
-    {                                     ( mk (App (mk ~pos:(1,1) (Var "not"),
+    {( mk (App (mk ~pos:(1,1) (Var "not"),
                                                 ["", _2])) )}
 | _1 = BOOL
-    {                                     ( mk (Bool _1) )}
+    {( mk (Bool _1) )}
 | _1 = FLOAT
-    {                                     ( mk (Float  _1) )}
+    {( mk (Float  _1) )}
 | _1 = STRING
-    {                                     ( mk (String _1) )}
+    {( mk (String _1) )}
 | _1 = liquidsoap_1_3_4_lang_parser_list
-    {                                     ( mk (List _1) )}
+    {( mk (List _1) )}
 | _1 = REF _2 = expr
-    {                                     ( mk (Ref _2) )}
+    {( mk (Ref _2) )}
 | _1 = GET _2 = expr
-    {                                     ( mk (Get _2) )}
+    {( mk (Get _2) )}
 | _1 = expr _2 = SET _3 = expr
-    {                                     ( mk (Set (_1,_3)) )}
+    {( mk (Set (_1,_3)) )}
 | _1 = MP3 _2 = app_opt
-    {                                     ( mk_enc (Lang_mp3.make_cbr _2) )}
+    {( mk_enc (Lang_mp3.make_cbr _2) )}
 | _1 = MP3_VBR _2 = app_opt
-    {                                     ( mk_enc (Lang_mp3.make_vbr _2) )}
+    {( mk_enc (Lang_mp3.make_vbr _2) )}
 | _1 = MP3_ABR _2 = app_opt
-    {                                     ( mk_enc (Lang_mp3.make_abr _2) )}
+    {( mk_enc (Lang_mp3.make_abr _2) )}
 | _1 = SHINE _2 = app_opt
-    {                                     ( mk_enc (Lang_shine.make _2) )}
+    {( mk_enc (Lang_shine.make _2) )}
 | _1 = FDKAAC _2 = app_opt
-    {                                     ( mk_enc (Lang_fdkaac.make _2) )}
+    {( mk_enc (Lang_fdkaac.make _2) )}
 | _1 = FLAC _2 = app_opt
-    {                                     ( mk_enc (Lang_flac.make _2) )}
+    {( mk_enc (Lang_flac.make _2) )}
 | _1 = EXTERNAL _2 = app_opt
-    {                                     ( mk_enc (Lang_external_encoder.make _2) )}
+    {( mk_enc (Lang_external_encoder.make _2) )}
 | _1 = GSTREAMER _2 = app_opt
-    {                                     ( mk_enc (Lang_gstreamer.make ~pos:(curpos ()) _2) )}
+    {( mk_enc (Lang_gstreamer.make ~pos:(curpos ()) _2) )}
 | _1 = WAV _2 = app_opt
-    {                                     ( mk_enc (Lang_wav.make _2) )}
+    {( mk_enc (Lang_wav.make _2) )}
 | _1 = AVI _2 = app_opt
-    {                                     ( mk_enc (Lang_avi.make _2) )}
+    {( mk_enc (Lang_avi.make _2) )}
 | _1 = OGG _2 = LPAR _3 = ogg_items _4 = RPAR
-    {                                     ( mk (Encoder (Encoder.Ogg _3)) )}
+    {( mk (Encoder (Encoder.Ogg _3)) )}
 | _1 = top_level_ogg_item
-    {                                     ( mk (Encoder (Encoder.Ogg [_1])) )}
+    {( mk (Encoder (Encoder.Ogg [_1])) )}
 | _1 = LPAR _2 = RPAR
-    {                                     ( mk Unit )}
+    {( mk Unit )}
 | _1 = LPAR _2 = expr _3 = COMMA _4 = expr _5 = RPAR
-    {                                     ( mk (Product (_2,_4)) )}
+    {( mk (Product (_2,_4)) )}
 | _1 = VAR
-    {                                     ( mk (Var _1) )}
+    {( mk (Var _1) )}
 | _1 = VARLPAR _2 = app_list _3 = RPAR
-    {                                     ( mk (App (mk ~pos:(1,1) (Var _1),_2)) )}
+    {( mk (App (mk ~pos:(1,1) (Var _1),_2)) )}
 | _1 = VARLBRA _2 = expr _3 = RBRA
-    {                                     ( mk (App (mk ~pos:(1,1) (Var "_[_]"),
+    {( mk (App (mk ~pos:(1,1) (Var "_[_]"),
                                            ["",_2;
                                             "",mk ~pos:(1,1) (Var _1)])) )}
 | _1 = BEGIN _2 = exprs _3 = END
-    {                                     ( _2 )}
+    {( _2 )}
 | _1 = FUN _2 = LPAR _3 = arglist _4 = RPAR _5 = YIELDS _6 = expr
-    {                                     ( mk_fun _3 _6 )}
+    {( mk_fun _3 _6 )}
 | _1 = LCUR _2 = exprs _3 = RCUR
-    {                                     ( mk_fun [] _2 )}
+    {( mk_fun [] _2 )}
 | _1 = IF _2 = exprs _3 = THEN _4 = exprs _5 = if_elsif _6 = END
-    {                                     ( let cond = _2 in
+    {( let cond = _2 in
                                        let then_b =
                                          mk_fun ~pos:(3,4) [] _4
                                        in
@@ -415,21 +415,21 @@ expr:
                                                       "else",else_b;
                                                       "then",then_b])) )}
 | _1 = SERVER_WAIT _2 = exprs _3 = THEN _4 = exprs _5 = END
-    {                                     (  let condition = _2 in
+    {(  let condition = _2 in
                                         let op = mk ~pos:(1,1) (Var "server.wait") in
                                         let after =
                                           mk_fun ~pos:(2,3) [] _4
                                         in
                                           mk (App (op, ["",condition;"",after])) )}
 | _1 = SERVER_WRITE _2 = expr _3 = THEN _4 = exprs _5 = END
-    {                                     ( let data = _2 in
+    {( let data = _2 in
                                        let after =
                                          mk_fun ~pos:(3,4) [] _4
                                        in
                                        let op = mk ~pos:(1,1) (Var "server.write") in
                                          mk (App (op, ["",after;"",data])) )}
 | _1 = SERVER_READ _2 = expr _3 = COLON _4 = VAR _5 = THEN _6 = exprs _7 = END
-    {                                              (
+    {(
                                        let marker = _2 in
                                        let after =
                                          mk_fun ~pos:(5,6) ["",_4,mk_ty "string" [],None] _6
@@ -437,7 +437,7 @@ expr:
                                        let op = mk ~pos:(1,1) (Var "server.read") in
                                          mk (App (op, ["",after;"",marker])) )}
 | _1 = SERVER_READCHARS _2 = expr _3 = COLON _4 = VAR _5 = THEN _6 = exprs _7 = END
-    {                                                   (
+    {(
                                        let len = _2 in
                                        let after =
                                          mk_fun ~pos:(5,6) ["",_4,mk_ty "string" [],None] _6
@@ -445,154 +445,154 @@ expr:
                                        let op = mk ~pos:(1,1) (Var "server.readchars") in
                                          mk (App (op, ["",after;"",len])) )}
 | _1 = SERVER_READLINE _2 = VAR _3 = THEN _4 = exprs _5 = END
-    {                                       (
+    {(
                                        let after =
                                          mk_fun ~pos:(5,6) ["",_2,mk_ty "string" [],None] _4
                                        in
                                        let op = mk ~pos:(1,1) (Var "server.readline") in
                                          mk (App (op, ["",after])) )}
 | _1 = expr _2 = BIN0 _3 = expr
-    {                                   ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = expr _2 = BIN1 _3 = expr
-    {                                   ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = expr _2 = BIN2 _3 = expr
-    {                                   ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = expr _2 = BIN3 _3 = expr
-    {                                   ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = expr _2 = TIMES _3 = expr
-    {                                   ( mk (App (mk ~pos:(2,2) (Var "*"),
+    {( mk (App (mk ~pos:(2,2) (Var "*"),
                                                 ["",_1;"",_3])) )}
 | _1 = expr _2 = MINUS _3 = expr
-    {                                   ( mk (App (mk ~pos:(2,2) (Var "-"),
+    {( mk (App (mk ~pos:(2,2) (Var "-"),
                                                 ["",_1;"",_3])) )}
 | _1 = INTERVAL
-    {                                   ( mk_time_pred (between (fst _1) (snd _1)) )}
+    {( mk_time_pred (between (fst _1) (snd _1)) )}
 | _1 = TIME
-    {                                   ( mk_time_pred (during _1) )}
+    {( mk_time_pred (during _1) )}
 
 ty:
   _1 = VAR
-    {                              ( mk_ty _1 [] )}
+    {( mk_ty _1 [] )}
 | _1 = VARLPAR _2 = ty_args _3 = RPAR
-    {                              ( mk_ty _1 _2 )}
+    {( mk_ty _1 _2 )}
 | _1 = REF _2 = LPAR _3 = ty _4 = RPAR
-    {                              ( Lang_values.ref_t ~pos:(Some (curpos())) _3 )}
+    {( Lang_values.ref_t ~pos:(Some (curpos())) _3 )}
 | _1 = LBRA _2 = ty _3 = RBRA
-    {                              ( Lang_types.make (Lang_types.List _2) )}
+    {( Lang_types.make (Lang_types.List _2) )}
 | _1 = LPAR _2 = ty _3 = TIMES _4 = ty _5 = RPAR
-    {                              ( Lang_types.make (Lang_types.Product (_2,_4)) )}
+    {( Lang_types.make (Lang_types.Product (_2,_4)) )}
 | _1 = INT
-    {                              ( Lang_values.type_of_int _1 )}
+    {( Lang_values.type_of_int _1 )}
 | _1 = TIMES
-    {                              ( Lang_values.variable_t )}
+    {( Lang_values.variable_t )}
 | _1 = TIMES _2 = BIN2 _3 = INT
-    {                              ( mk_var_mult _2 _3 )}
+    {( mk_var_mult _2 _3 )}
 | _1 = INT _2 = BIN2 _3 = TIMES
-    {                              ( mk_var_mult _2 _1 )}
+    {( mk_var_mult _2 _1 )}
 | _1 = LPAR _2 = argsty _3 = RPAR _4 = YIELDS _5 = ty
-    {                              ( Lang_types.make (Lang_types.Arrow (_2,_5)) )}
+    {( Lang_types.make (Lang_types.Arrow (_2,_5)) )}
 
 ty_args:
   
-    {                         ( [] )}
+    {( [] )}
 | _1 = ty_arg
-    {                         ( [_1] )}
+    {( [_1] )}
 | _1 = ty_arg _2 = COMMA _3 = ty_args
-    {                         ( _1::_3 )}
+    {( _1::_3 )}
 
 ty_arg:
   _1 = ty
-    {       ( "",_1 )}
+    {( "",_1 )}
 | _1 = VAR _2 = GETS _3 = ty
-    {                ( _1,_3 )}
+    {( _1,_3 )}
 
 argty:
   _1 = ty
-    {                          ( false,"",_1 )}
+    {( false,"",_1 )}
 | _1 = VAR _2 = COLON _3 = ty
-    {                          ( false,_1,_3 )}
+    {( false,_1,_3 )}
 | _1 = QUESTION _2 = VAR _3 = COLON _4 = ty
-    {                          ( true,_2,_4 )}
+    {( true,_2,_4 )}
 
 argsty:
   
-    {                       ( [] )}
+    {( [] )}
 | _1 = argty
-    {                       ( [_1] )}
+    {( [_1] )}
 | _1 = argty _2 = COMMA _3 = argsty
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 cexpr:
   _1 = LPAR _2 = expr _3 = RPAR
-    {                                     ( _2 )}
+    {( _2 )}
 | _1 = LPAR _2 = expr _3 = COLON _4 = ty _5 = RPAR
-    {                                     ( Lang_types.(<:) _2.Lang_values.t _4 ;
+    {( Lang_types.(<:) _2.Lang_values.t _4 ;
                                        _2 )}
 | _1 = INT
-    {                                     ( mk (Int _1) )}
+    {( mk (Int _1) )}
 | _1 = NOT _2 = expr
-    {                                     ( mk (App (mk ~pos:(1,1) (Var "not"),
+    {( mk (App (mk ~pos:(1,1) (Var "not"),
                                                 ["", _2])) )}
 | _1 = BOOL
-    {                                     ( mk (Bool _1) )}
+    {( mk (Bool _1) )}
 | _1 = FLOAT
-    {                                     ( mk (Float  _1) )}
+    {( mk (Float  _1) )}
 | _1 = STRING
-    {                                     ( mk (String _1) )}
+    {( mk (String _1) )}
 | _1 = liquidsoap_1_3_4_lang_parser_list
-    {                                     ( mk (List _1) )}
+    {( mk (List _1) )}
 | _1 = REF _2 = expr
-    {                                     ( mk (Ref _2) )}
+    {( mk (Ref _2) )}
 | _1 = GET _2 = expr
-    {                                     ( mk (Get _2) )}
+    {( mk (Get _2) )}
 | _1 = cexpr _2 = SET _3 = expr
-    {                                     ( mk (Set (_1,_3)) )}
+    {( mk (Set (_1,_3)) )}
 | _1 = MP3 _2 = app_opt
-    {                                     ( mk_enc (Lang_mp3.make_cbr _2) )}
+    {( mk_enc (Lang_mp3.make_cbr _2) )}
 | _1 = MP3_VBR _2 = app_opt
-    {                                     ( mk_enc (Lang_mp3.make_vbr _2) )}
+    {( mk_enc (Lang_mp3.make_vbr _2) )}
 | _1 = MP3_ABR _2 = app_opt
-    {                                     ( mk_enc (Lang_mp3.make_abr _2) )}
+    {( mk_enc (Lang_mp3.make_abr _2) )}
 | _1 = SHINE _2 = app_opt
-    {                                     ( mk_enc (Lang_shine.make _2) )}
+    {( mk_enc (Lang_shine.make _2) )}
 | _1 = FLAC _2 = app_opt
-    {                                     ( mk_enc (Lang_flac.make _2) )}
+    {( mk_enc (Lang_flac.make _2) )}
 | _1 = FDKAAC _2 = app_opt
-    {                                     ( mk_enc (Lang_fdkaac.make _2) )}
+    {( mk_enc (Lang_fdkaac.make _2) )}
 | _1 = EXTERNAL _2 = app_opt
-    {                                     ( mk_enc (Lang_external_encoder.make _2) )}
+    {( mk_enc (Lang_external_encoder.make _2) )}
 | _1 = WAV _2 = app_opt
-    {                                     ( mk_enc (Lang_wav.make _2) )}
+    {( mk_enc (Lang_wav.make _2) )}
 | _1 = AVI _2 = app_opt
-    {                                     ( mk_enc (Lang_avi.make _2) )}
+    {( mk_enc (Lang_avi.make _2) )}
 | _1 = OGG _2 = LPAR _3 = ogg_items _4 = RPAR
-    {                                     ( mk (Encoder (Encoder.Ogg _3)) )}
+    {( mk (Encoder (Encoder.Ogg _3)) )}
 | _1 = top_level_ogg_item
-    {                                     ( mk (Encoder (Encoder.Ogg [_1])) )}
+    {( mk (Encoder (Encoder.Ogg [_1])) )}
 | _1 = LPAR _2 = RPAR
-    {                                     ( mk Unit )}
+    {( mk Unit )}
 | _1 = LPAR _2 = expr _3 = COMMA _4 = expr _5 = RPAR
-    {                                     ( mk (Product (_2,_4)) )}
+    {( mk (Product (_2,_4)) )}
 | _1 = VAR
-    {                                     ( mk (Var _1) )}
+    {( mk (Var _1) )}
 | _1 = VARLPAR _2 = app_list _3 = RPAR
-    {                                     ( mk (App (mk ~pos:(1,1) (Var _1),_2)) )}
+    {( mk (App (mk ~pos:(1,1) (Var _1),_2)) )}
 | _1 = VARLBRA _2 = expr _3 = RBRA
-    {                                     ( mk (App (mk ~pos:(1,1) (Var "_[_]"),
+    {( mk (App (mk ~pos:(1,1) (Var "_[_]"),
                                            ["",_2;
                                             "",mk ~pos:(1,1) (Var _1)])) )}
 | _1 = BEGIN _2 = exprs _3 = END
-    {                                     ( _2 )}
+    {( _2 )}
 | _1 = FUN _2 = LPAR _3 = arglist _4 = RPAR _5 = YIELDS _6 = expr
-    {                                     ( mk_fun _3 _6 )}
+    {( mk_fun _3 _6 )}
 | _1 = LCUR _2 = exprs _3 = RCUR
-    {                                     ( mk_fun [] _2 )}
+    {( mk_fun [] _2 )}
 | _1 = IF _2 = exprs _3 = THEN _4 = exprs _5 = if_elsif _6 = END
-    {                                     ( let cond = _2 in
+    {( let cond = _2 in
                                        let then_b =
                                          mk_fun ~pos:(3,4) [] _4
                                        in
@@ -602,21 +602,21 @@ cexpr:
                                                       "else",else_b;
                                                       "then",then_b])) )}
 | _1 = SERVER_WAIT _2 = exprs _3 = THEN _4 = exprs _5 = END
-    {                                     (  let condition = _2 in
+    {(  let condition = _2 in
                                         let op = mk ~pos:(1,1) (Var "server.wait") in
                                         let after =
                                           mk_fun ~pos:(2,3) [] _4
                                         in
                                           mk (App (op, ["",condition;"",after])) )}
 | _1 = SERVER_WRITE _2 = expr _3 = THEN _4 = exprs _5 = END
-    {                                     ( let data = _2 in
+    {( let data = _2 in
                                        let after =
                                          mk_fun ~pos:(3,4) [] _4
                                        in
                                        let op = mk ~pos:(1,1) (Var "server.write") in
                                          mk (App (op, ["",after;"",data])) )}
 | _1 = SERVER_READ _2 = expr _3 = COLON _4 = VAR _5 = THEN _6 = exprs _7 = END
-    {                                              (
+    {(
                                        let marker = _2 in
                                        let after =
                                          mk_fun ~pos:(5,6) ["",_4,mk_ty "string" [],None] _6
@@ -624,7 +624,7 @@ cexpr:
                                        let op = mk ~pos:(1,1) (Var "server.read") in
                                          mk (App (op, ["",after;"",marker])) )}
 | _1 = SERVER_READCHARS _2 = expr _3 = COLON _4 = VAR _5 = THEN _6 = exprs _7 = END
-    {                                                   (
+    {(
                                        let len = _2 in
                                        let after =
                                          mk_fun ~pos:(5,6) ["",_4,mk_ty "string" [],None] _6
@@ -632,80 +632,80 @@ cexpr:
                                        let op = mk ~pos:(1,1) (Var "server.readchars") in
                                          mk (App (op, ["",after;"",len])) )}
 | _1 = SERVER_READLINE _2 = VAR _3 = THEN _4 = exprs _5 = END
-    {                                       (
+    {(
                                        let after =
                                          mk_fun ~pos:(5,6) ["",_2,mk_ty "string" [],None] _4
                                        in
                                        let op = mk ~pos:(1,1) (Var "server.readline") in
                                          mk (App (op, ["",after])) )}
 | _1 = cexpr _2 = BIN0 _3 = expr
-    {                                    ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = cexpr _2 = BIN1 _3 = expr
-    {                                    ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = cexpr _2 = BIN2 _3 = expr
-    {                                    ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = cexpr _2 = BIN3 _3 = expr
-    {                                    ( mk (App (mk ~pos:(2,2) (Var _2),
+    {( mk (App (mk ~pos:(2,2) (Var _2),
                                                 ["",_1;"",_3])) )}
 | _1 = cexpr _2 = TIMES _3 = expr
-    {                                    ( mk (App (mk ~pos:(2,2) (Var "*"),
+    {( mk (App (mk ~pos:(2,2) (Var "*"),
                                                 ["",_1;"",_3])) )}
 | _1 = cexpr _2 = MINUS _3 = expr
-    {                                    ( mk (App (mk ~pos:(2,2) (Var "-"),
+    {( mk (App (mk ~pos:(2,2) (Var "-"),
                                                 ["",_1;"",_3])) )}
 | _1 = INTERVAL
-    {                                   ( mk_time_pred (between (fst _1) (snd _1)) )}
+    {( mk_time_pred (between (fst _1) (snd _1)) )}
 | _1 = TIME
-    {                                   ( mk_time_pred (during _1) )}
+    {( mk_time_pred (during _1) )}
 
 liquidsoap_1_3_4_lang_parser_list:
   _1 = LBRA _2 = inner_list _3 = RBRA
-    {                         ( _2 )}
+    {( _2 )}
 
 inner_list:
   _1 = expr _2 = COMMA _3 = inner_list
-    {                           ( _1::_3 )}
+    {( _1::_3 )}
 | _1 = expr
-    {                           ( [_1] )}
+    {( [_1] )}
 | 
-    {                           ( [] )}
+    {( [] )}
 
 app_list_elem:
   _1 = VAR _2 = GETS _3 = expr
-    {                  ( _1,_3 )}
+    {( _1,_3 )}
 | _1 = expr
-    {                  ( "",_1 )}
+    {( "",_1 )}
 
 app_list:
   
-    {                                 ( [] )}
+    {( [] )}
 | _1 = app_list_elem
-    {                                 ( [_1] )}
+    {( [_1] )}
 | _1 = app_list_elem _2 = COMMA _3 = app_list
-    {                                 ( _1::_3 )}
+    {( _1::_3 )}
 
 binding:
   _1 = VAR _2 = GETS _3 = expr
-    {                  (
+    {(
        let body = _3 in
          (Doc.none (),[]),_1,body
     )}
 | _1 = DEF _2 = VAR _3 = g _4 = exprs _5 = END
-    {                        (
+    {(
       let body = _4 in
         _1,_2,body
     )}
 | _1 = DEF _2 = VARLPAR _3 = arglist _4 = RPAR _5 = g _6 = exprs _7 = END
-    {                                         (
+    {(
       let arglist = _3 in
       let body = mk_fun arglist _6 in
         _1,_2,body
     )}
 | _1 = DEF _2 = REC _3 = VARLPAR _4 = arglist _5 = RPAR _6 = g _7 = exprs _8 = END
-    {                                             (
+    {(
       let doc = _1 in
       let name = _3 in
       let arglist = _4 in
@@ -715,31 +715,31 @@ binding:
 
 arglist:
   
-    {                      ( [] )}
+    {( [] )}
 | _1 = arg
-    {                      ( [_1] )}
+    {( [_1] )}
 | _1 = arg _2 = COMMA _3 = arglist
-    {                      ( _1::_3 )}
+    {( _1::_3 )}
 
 arg:
   _1 = TILD _2 = VAR _3 = opt
-    {                 ( _2,_2,
+    {( _2,_2,
                    T.fresh_evar ~level:(-1) ~pos:(Some (curpos ~pos:(2,2) ())),
                    _3 )}
 | _1 = VAR _2 = opt
-    {                 ( "",_1,
+    {( "",_1,
                    T.fresh_evar ~level:(-1) ~pos:(Some (curpos ~pos:(1,1) ())),
                    _2 )}
 
 opt:
   _1 = GETS _2 = expr
-    {              ( Some _2 )}
+    {( Some _2 )}
 | 
-    {              ( None )}
+    {( None )}
 
 if_elsif:
   _1 = ELSIF _2 = exprs _3 = THEN _4 = exprs _5 = if_elsif
-    {                                    ( let cond = _2 in
+    {( let cond = _2 in
                                       let then_b =
                                         mk_fun ~pos:(3,4) [] _4
                                       in
@@ -750,40 +750,40 @@ if_elsif:
                                                         "else",else_b;
                                                         "then",then_b]))) )}
 | _1 = ELSE _2 = exprs
-    {                                    ( mk_fun ~pos:(1,2) [] _2 )}
+    {( mk_fun ~pos:(1,2) [] _2 )}
 | 
-    {                                    ( mk_fun [] (mk Unit) )}
+    {( mk_fun [] (mk Unit) )}
 
 app_opt:
    %prec no_app
-    {                 ( [] )}
+    {( [] )}
 | _1 = LPAR _2 = app_list _3 = RPAR
-    {                       ( _2 )}
+    {( _2 )}
 
 ogg_items:
   _1 = ogg_item
-    {             ( [_1] )}
+    {( [_1] )}
 | _1 = ogg_item _2 = COMMA _3 = ogg_items
-    {                             ( _1::_3 )}
+    {( _1::_3 )}
 
 top_level_ogg_item:
   _1 = VORBIS _2 = app_opt
-    {                       ( Lang_vorbis.make _2 )}
+    {( Lang_vorbis.make _2 )}
 | _1 = VORBIS_CBR _2 = app_opt
-    {                       ( Lang_vorbis.make_cbr _2 )}
+    {( Lang_vorbis.make_cbr _2 )}
 | _1 = VORBIS_ABR _2 = app_opt
-    {                       ( Lang_vorbis.make_abr _2 )}
+    {( Lang_vorbis.make_abr _2 )}
 | _1 = THEORA _2 = app_opt
-    {                       ( Lang_theora.make _2 )}
+    {( Lang_theora.make _2 )}
 | _1 = SPEEX _2 = app_opt
-    {                       ( Lang_speex.make _2 )}
+    {( Lang_speex.make _2 )}
 | _1 = OPUS _2 = app_opt
-    {                       ( Lang_opus.make _2 )}
+    {( Lang_opus.make _2 )}
 
 ogg_item:
   _1 = FLAC _2 = app_opt
-    {                   ( Lang_flac.make_ogg _2 )}
+    {( Lang_flac.make_ogg _2 )}
 | _1 = top_level_ogg_item
-    {                       ( _1 )}
+    {( _1 )}
 
 %%

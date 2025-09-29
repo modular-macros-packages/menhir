@@ -24,13 +24,13 @@
 
 signature:
   _1 = EOF
-    {                            ( [] )}
+    {( [] )}
 | _1 = decl _2 = SEMICOLON _3 = signature
-    {                            ( _1::_3 )}
+    {( _1::_3 )}
 
 decl:
   _1 = op_list _2 = COLON _3 = fix _4 = arity
-    {  ( let t,a = _4
+    {( let t,a = _4
     in
       if _3=INFIX & a<>2
       then Errors.semantical_error "Infix symbols must be binary"
@@ -39,38 +39,38 @@ decl:
 
 fix:
   _1 = KW_PREFIX
-    {                ( PREFIX )}
+    {( PREFIX )}
 | _1 = KW_INFIX
-    {                ( INFIX  )}
+    {( INFIX  )}
 | _1 = KW_POSTFIX
-    {                ( POSTFIX )}
+    {( POSTFIX )}
 | 
-    {                ( DEFAULT )}
+    {( DEFAULT )}
 
 arity:
   _1 = KW_C
-    {               ( (C,2) )}
+    {( (C,2) )}
 | _1 = KW_AC
-    {               ( (AC,2) )}
+    {( (AC,2) )}
 | _1 = KW_CONSTANT
-    {               ( (FREE,0) )}
+    {( (FREE,0) )}
 | _1 = KW_UNARY
-    {               ( (FREE,1) )}
+    {( (FREE,1) )}
 | _1 = KW_BINARY
-    {               ( (FREE,2) )}
+    {( (FREE,2) )}
 | _1 = INT
-    {               ( (FREE,int_of_string _1) )}
+    {( (FREE,int_of_string _1) )}
 
 op_list:
   _1 = ident
-    {                       ( [_1] )}
+    {( [_1] )}
 | _1 = ident _2 = COMMA _3 = op_list
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 ident:
   _1 = IDENT
-    {        ( _1 )}
+    {( _1 )}
 | _1 = INT
-    {        ( _1 )}
+    {( _1 )}
 
 %%

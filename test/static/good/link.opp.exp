@@ -24,38 +24,38 @@
 
 main:
   _1 = sequent _2 = END
-    {              (`Sequent _1)}
+    {(`Sequent _1)}
 | _1 = DIRECTIVE _2 = VAR
-    {                (`Directive _2)}
+    {(`Directive _2)}
 
 formimp:
   _1 = VAR
-    {       (`Var _1)}
+    {(`Var _1)}
 | _1 = formimp _2 = PAR _3 = formimp
-    {                      (`Par(_1,_3))}
+    {(`Par(_1,_3))}
 | _1 = formimp _2 = TIMES _3 = formimp
-    {                        (`Times(_1,_3))}
+    {(`Times(_1,_3))}
 | _1 = formimp _2 = NEXT _3 = formimp
-    {                       (`Next(_1,_3))}
+    {(`Next(_1,_3))}
 | _1 = formimp _2 = SEQ _3 = formimp
-    {                      (`Seq(_1,_3))}
+    {(`Seq(_1,_3))}
 | _1 = formimp _2 = IMP _3 = formimp
-    {                      (`Imp(_1,_3))}
+    {(`Imp(_1,_3))}
 | _1 = formimp _2 = RIMP _3 = formimp
-    {                       (`RImp(_1,_3))}
+    {(`RImp(_1,_3))}
 | _1 = formimp _2 = LIMP _3 = formimp
-    {                       (`LImp(_1,_3))}
+    {(`LImp(_1,_3))}
 | _1 = OP _2 = formimp _3 = CP
-    {                (_2)}
+    {(_2)}
 | _1 = formimp _2 = NEG
-    {              (`Not(_1))}
+    {(`Not(_1))}
 
 sequent:
   _1 = formimp _2 = VDASH _3 = formimp
-    {                      (Sequent(_1, _3))}
+    {(Sequent(_1, _3))}
 | _1 = VDASH _2 = formimp
-    {                (Form(_2))}
+    {(Form(_2))}
 | _1 = formimp
-    {          (Form(_1))}
+    {(Form(_1))}
 
 %%

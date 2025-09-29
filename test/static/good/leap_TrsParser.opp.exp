@@ -89,13 +89,13 @@ let inv_table = Hashtbl.create 100
 
 exists_projector:
   _1 = ANSWER _2 = OPEN_PAREN _3 = conj_list _4 = CLOSE_PAREN
-    {    (
+    {(
       Expr.conj_list _3
     )}
 
 invariant_info:
   _1 = invariant_list
-    {    (
+    {(
       let copy = Hashtbl.copy inv_table in
       let _    = Hashtbl.clear inv_table
       in
@@ -104,9 +104,9 @@ invariant_info:
 
 invariant_list:
   
-    {    ( () )}
+    {( () )}
 | _1 = invariant _2 = invariant_list
-    {    (
+    {(
       let (loc,inv) = _1 in
       let _ = Hashtbl.add inv_table loc inv in
         ()
@@ -114,7 +114,7 @@ invariant_list:
 
 invariant:
   _1 = INVARIANT _2 = AT _3 = LOC _4 = UNDERSCORE _5 = pos_list _6 = OPEN_PAREN _7 = conj_list _8 = CLOSE_PAREN
-    {    (
+    {(
       let p_list = _5 in
       let expr  = _7 in
 
@@ -123,37 +123,37 @@ invariant:
 
 pos_list:
   _1 = NUMBER
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = NUMBER _2 = UNDERSCORE _3 = pos_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 conj_list:
   _1 = literal
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = literal _2 = LOGICAL_AND _3 = conj_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 literal:
   _1 = TRUE
-    {    ( Expr.True )}
+    {( Expr.True )}
 | _1 = FALSE
-    {    ( Expr.False )}
+    {( Expr.False )}
 | _1 = integer _2 = EQUALS _3 = integer
-    {    (
+    {(
       let n1 = _1 in
       let n2 = _3 in
 
       Expr.eq_int n1 n2
     )}
 | _1 = integer _2 = LESS_EQ _3 = integer
-    {    (
+    {(
       let n1 = _1 in
       let n2 = _3 in
 
       Expr.lesseq_form n1 n2
     )}
 | _1 = integer _2 = GREATER_EQ _3 = integer
-    {    (
+    {(
       let n1 = _1 in
       let n2 = _3 in
 
@@ -162,15 +162,15 @@ literal:
 
 th_param:
   
-    {    (
+    {(
       None
     )}
 | _1 = DOUBLE_UNDERSCORE _2 = NUMBER
-    {    (
+    {(
       Some (Expr.VarTh (Expr.build_num_tid_var _2))
     )}
 | _1 = DOUBLE_UNDERSCORE _2 = IDENT
-    {    (
+    {(
       let id = get_name _2
       in
         Some (Expr.VarTh (Expr.build_global_var id Expr.Tid))
@@ -178,17 +178,17 @@ th_param:
 
 primed:
   
-    {    ( false )}
+    {( false )}
 | _1 = PRIME
-    {    ( true )}
+    {( true )}
 
 integer:
   _1 = NUMBER
-    {    (
+    {(
       Expr.IntVal _1
     )}
 | _1 = IDENT _2 = th_param _3 = primed
-    {    (
+    {(
       let id         = get_name _1 in
       let pr         = _3 in
       let th         = _2 in
@@ -198,7 +198,7 @@ integer:
       Expr.VarInt (Expr.build_var id Expr.Int pr th proc_owner kind)
     )}
 | _1 = IDENT _2 = UNDERSCORE _3 = IDENT _4 = th_param _5 = primed
-    {    (
+    {(
       let id         = get_name _3 in
       let pr         = _5 in
       let th         = _4 in
@@ -208,23 +208,23 @@ integer:
       Expr.VarInt (Expr.build_var id Expr.Int pr th proc_owner kind)
     )}
 | _1 = MATH_MINUS _2 = integer %prec MATH_NEG
-    {    (
+    {(
       Expr.IntNeg _2
     )}
 | _1 = integer _2 = MATH_PLUS _3 = integer
-    {    (
+    {(
       Expr.IntAdd (_1, _3)
     )}
 | _1 = integer _2 = MATH_MINUS _3 = integer
-    {    (
+    {(
       Expr.IntSub (_1, _3)
     )}
 | _1 = integer _2 = MATH_MULT _3 = integer
-    {    (
+    {(
       Expr.IntMul (_1, _3)
     )}
 | _1 = integer _2 = MATH_DIV _3 = integer
-    {    (
+    {(
       Expr.IntDiv (_1, _3)
     )}
 

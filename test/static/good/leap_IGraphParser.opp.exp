@@ -116,15 +116,15 @@ let get_line id = snd id
 
 axioms:
   
-    {    ( Axioms.empty_axioms() )}
+    {( Axioms.empty_axioms() )}
 | _1 = axiom_rule_list
-    {    ( Axioms.new_axioms(_1) )}
+    {( Axioms.new_axioms(_1) )}
 
 axiom_rule_list:
   _1 = axiom_rule
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = axiom_rule _2 = axiom_rule_list
-    {    (
+    {(
       let r = _1 in
       let rs = _2
       in
@@ -133,7 +133,7 @@ axiom_rule_list:
 
 axiom_rule:
   _1 = inv _2 = axiom_cases
-    {    (
+    {(
       let i = _1 in
       let cs = _2 in
         Axioms.new_rule i cs
@@ -141,19 +141,19 @@ axiom_rule:
 
 axiom_cases:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = OPEN_BRACK _2 = axiom_case_list _3 = CLOSE_BRACK
-    {    ( _2 )}
+    {( _2 )}
 
 axiom_case_list:
   _1 = axiom_case
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = axiom_case _2 = SEMICOLON _3 = axiom_case_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 axiom_case:
   _1 = NUMBER _2 = COLON _3 = maybe_empty_axiom_tag_list
-    {    (
+    {(
       let pc = _1 in
       let axiom_list = _3
       in
@@ -162,21 +162,21 @@ axiom_case:
 
 maybe_empty_axiom_tag_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = axiom_list
-    {    ( _1 )}
+    {( _1 )}
 
 axiom_list:
   _1 = inv_group _2 = axiom_kind
-    {    (
+    {(
       let xs = _1 in
       let k = _2 in
       List.map (fun a -> (a,k)) xs
     )}
 | _1 = inv _2 = axiom_kind
-    {    ( [(_1, _2)] )}
+    {( [(_1, _2)] )}
 | _1 = inv_group _2 = axiom_kind _3 = COMMA _4 = axiom_list
-    {    (
+    {(
       let axs = _1 in
       let k = _2 in
       let is = _4 in
@@ -185,7 +185,7 @@ axiom_list:
       ) is axs
     )}
 | _1 = inv _2 = axiom_kind _3 = COMMA _4 = axiom_list
-    {    (
+    {(
       let i = _1 in
       let k = _2 in
       let is = _4
@@ -195,13 +195,13 @@ axiom_list:
 
 axiom_kind:
   _1 = OPEN_PAREN _2 = AXIOM_FORALL _3 = CLOSE_PAREN
-    {    ( Axioms.Forall )}
+    {( Axioms.Forall )}
 | 
-    {    ( Axioms.Instantiate )}
+    {( Axioms.Instantiate )}
 
 pvd_support:
   _1 = TACTICS _2 = COLON _3 = tactic_case_list _4 = FACTS _5 = COLON _6 = fact_list
-    {    (
+    {(
       let tactics = _3 in
       let facts = _6 in
       PVD.new_support tactics facts
@@ -209,45 +209,45 @@ pvd_support:
 
 tactic_case_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = tactic_case _2 = tactic_case_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 tactic_case:
   _1 = tactics _2 = SEMICOLON
-    {    ( (PVD.All, _1) )}
+    {( (PVD.All, _1) )}
 | _1 = NUMBER _2 = COLON _3 = tactics _4 = SEMICOLON
-    {    ( (PVD.Trans _1, _3) )}
+    {( (PVD.Trans _1, _3) )}
 | _1 = NUMBER _2 = COLON _3 = condition _4 = COLON _5 = tactics _6 = SEMICOLON
-    {    ( (PVD.TransSpec (_1,_3), _5) )}
+    {( (PVD.TransSpec (_1,_3), _5) )}
 | _1 = NUMBER _2 = COLON _3 = OPEN_BRACK _4 = ident_list _5 = BAR _6 = condition_list _7 = CLOSE_BRACK _8 = COLON _9 = tactics _10 = SEMICOLON
-    {    ( (PVD.TransNodeSpec (_1,_4,_6), _9) )}
+    {( (PVD.TransNodeSpec (_1,_4,_6), _9) )}
 
 fact_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = fact _2 = fact_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 fact:
   _1 = inv_list _2 = SEMICOLON
-    {    ( (PVD.All, _1) )}
+    {( (PVD.All, _1) )}
 | _1 = NUMBER _2 = COLON _3 = inv_list _4 = SEMICOLON
-    {    ( (PVD.Trans _1, _3) )}
+    {( (PVD.Trans _1, _3) )}
 | _1 = NUMBER _2 = COLON _3 = condition _4 = COLON _5 = inv_list _6 = SEMICOLON
-    {    ( (PVD.TransSpec (_1,_3), _5) )}
+    {( (PVD.TransSpec (_1,_3), _5) )}
 
 graph:
   
-    {    ( IGraph.empty_igraph() )}
+    {( IGraph.empty_igraph() )}
 | _1 = rule_list
-    {    ( IGraph.new_igraph(_1) )}
+    {( IGraph.new_igraph(_1) )}
 
 rule_list:
   _1 = rule
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = rule _2 = rule_list
-    {    (
+    {(
       let r = _1 in
       let rs = _2
       in
@@ -256,7 +256,7 @@ rule_list:
 
 rule:
   _1 = maybe_empty_tag_list _2 = CONC_ARROW _3 = inv _4 = cases _5 = tactics
-    {    (
+    {(
       let sup = _1 in
       let i = _3 in
       let cs = _4 in
@@ -265,7 +265,7 @@ rule:
         IGraph.new_rule IGraph.Concurrent sup i cs ts
     )}
 | _1 = maybe_empty_tag_list _2 = SEQ_ARROW _3 = inv _4 = seq_cases _5 = tactics
-    {    (
+    {(
       let sup = _1 in
       let i = _3 in
       let cs = _4 in
@@ -276,19 +276,19 @@ rule:
 
 maybe_empty_tag_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = inv_list
-    {    ( _1 )}
+    {( _1 )}
 
 inv_list:
   _1 = inv_group
-    {    ( _1 )}
+    {( _1 )}
 | _1 = inv
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = inv_group _2 = COMMA _3 = inv_list
-    {    ( _1 @ _3 )}
+    {( _1 @ _3 )}
 | _1 = inv _2 = COMMA _3 = inv_list
-    {    (
+    {(
       let i = _1 in
       let is = _3
       in
@@ -297,49 +297,49 @@ inv_list:
 
 inv_group:
   _1 = IDENT _2 = DOUBLECOLON _3 = OPEN_BRACE _4 = ident_list _5 = CLOSE_BRACE
-    {    ( List.map (fun st -> Tag.new_tag (get_name _1) st) _4 )}
+    {( List.map (fun st -> Tag.new_tag (get_name _1) st) _4 )}
 
 ident_list:
   _1 = IDENT
-    {    ( [(get_name _1)] )}
+    {( [(get_name _1)] )}
 | _1 = IDENT _2 = COMMA _3 = ident_list
-    {    ( (get_name _1) :: _3 )}
+    {( (get_name _1) :: _3 )}
 
 inv:
   _1 = IDENT
-    {    ( Tag.new_tag (get_name _1) "" )}
+    {( Tag.new_tag (get_name _1) "" )}
 | _1 = IDENT _2 = DOUBLECOLON _3 = IDENT
-    {    (
+    {(
       Tag.new_tag (get_name _1) (get_name _3)
     )}
 
 cases:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = OPEN_BRACK _2 = case_list _3 = CLOSE_BRACK
-    {    ( _2 )}
+    {( _2 )}
 
 seq_cases:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = OPEN_BRACK _2 = seq_case_list _3 = CLOSE_BRACK
-    {    ( _2 )}
+    {( _2 )}
 
 case_list:
   _1 = case
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = case _2 = SEMICOLON _3 = case_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 seq_case_list:
   _1 = seq_case
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = seq_case _2 = SEMICOLON _3 = seq_case_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 case:
   _1 = NUMBER _2 = COLON _3 = premise _4 = maybe_empty_tag_list _5 = tactics
-    {    (
+    {(
       let pc = _1 in
       let prem = _3 in
       let phi_list = _4 in
@@ -350,7 +350,7 @@ case:
 
 seq_case:
   _1 = NUMBER _2 = COLON _3 = maybe_empty_tag_list _4 = tactics
-    {    (
+    {(
       let pc = _1 in
       let phi_list = _3 in
       let tacs = _4
@@ -360,84 +360,84 @@ seq_case:
 
 premise:
   
-    {    ( [Premise.SelfConseq; Premise.OthersConseq] )}
+    {( [Premise.SelfConseq; Premise.OthersConseq] )}
 | _1 = SELF_PREMISE _2 = COLON
-    {    ( [Premise.SelfConseq] )}
+    {( [Premise.SelfConseq] )}
 | _1 = OTHERS_PREMISE _2 = COLON
-    {    ( [Premise.OthersConseq] )}
+    {( [Premise.OthersConseq] )}
 
 condition:
   _1 = COND_INITIATION
-    {    ( PVD.Initiation )}
+    {( PVD.Initiation )}
 | _1 = COND_CONSECUTION
-    {    ( PVD.Consecution )}
+    {( PVD.Consecution )}
 | _1 = COND_ACCEPTANCE
-    {    ( PVD.Acceptance )}
+    {( PVD.Acceptance )}
 | _1 = COND_FAIRNESS
-    {    ( PVD.Fairness )}
+    {( PVD.Fairness )}
 
 condition_list:
   _1 = condition
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = condition _2 = COMMA _3 = condition_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 tactics:
   
-    {    ( Tactics.new_proof_plan None [] [] [] [] )}
+    {( Tactics.new_proof_plan None [] [] [] [] )}
 | _1 = OPEN_BRACE _2 = smp_strategy _3 = support_split_tactic_list _4 = support_tactic_list _5 = formula_split_tactic_list _6 = formula_tactic_list _7 = CLOSE_BRACE
-    {    (
+    {(
       Tactics.new_proof_plan _2 _3 _4 _5 _6
     )}
 
 smp_strategy:
   
-    {    ( None )}
+    {( None )}
 | _1 = SMP_UNION _2 = COLON
-    {    ( Some Smp.Union )}
+    {( Some Smp.Union )}
 | _1 = SMP_PRUNING _2 = COLON
-    {    ( Some Smp.Pruning )}
+    {( Some Smp.Pruning )}
 | _1 = SMP_DNF _2 = COLON
-    {    ( Some Smp.Dnf )}
+    {( Some Smp.Dnf )}
 
 support_split_tactic_list:
   _1 = BAR
-    {    ( [] )}
+    {( [] )}
 | _1 = support_split_tactic _2 = support_split_tactic_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 support_tactic_list:
   _1 = BAR
-    {    ( [] )}
+    {( [] )}
 | _1 = support_tactic _2 = support_tactic_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 formula_split_tactic_list:
   _1 = BAR
-    {    ( [] )}
+    {( [] )}
 | _1 = formula_split_tactic _2 = formula_split_tactic_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 formula_tactic_list:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = formula_tactic _2 = formula_tactic_list
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 support_split_tactic:
   _1 = IDENT
-    {    ( Tactics.support_split_tactic_from_string (get_name _1) )}
+    {( Tactics.support_split_tactic_from_string (get_name _1) )}
 
 support_tactic:
   _1 = IDENT
-    {    ( Tactics.support_tactic_from_string (get_name _1) )}
+    {( Tactics.support_tactic_from_string (get_name _1) )}
 
 formula_split_tactic:
   _1 = IDENT
-    {    ( Tactics.formula_split_tactic_from_string (get_name _1) )}
+    {( Tactics.formula_split_tactic_from_string (get_name _1) )}
 
 formula_tactic:
   _1 = IDENT
-    {    ( Tactics.formula_tactic_from_string (get_name _1) )}
+    {( Tactics.formula_tactic_from_string (get_name _1) )}
 
 %%

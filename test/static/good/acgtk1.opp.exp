@@ -191,31 +191,31 @@
 
 option_SEMICOLON_:
   
-    {    ( None )} [@name none_SEMICOLON]
+    {( None )} [@name none_SEMICOLON]
 | x = SEMICOLON
-    {    ( Some x )} [@name some_SEMICOLON]
+    {( Some x )} [@name some_SEMICOLON]
 
 nonempty_list_sig_or_lex_:
   x = sig_or_lex
-    {    ( [ x ] )} [@name one_sig_or_lex]
+    {( [ x ] )} [@name one_sig_or_lex]
 | x = sig_or_lex xs = nonempty_list_sig_or_lex_
-    {    ( x :: xs )} [@name more_sig_or_lex]
+    {( x :: xs )} [@name more_sig_or_lex]
 
 separated_nonempty_list_COMMA_IDENT_:
   x = IDENT
-    {    ( [ x ] )} [@name one_COMMA_IDENT]
+    {( [ x ] )} [@name one_COMMA_IDENT]
 | x = IDENT _2 = COMMA xs = separated_nonempty_list_COMMA_IDENT_
-    {    ( x :: xs )} [@name more_COMMA_IDENT]
+    {( x :: xs )} [@name more_COMMA_IDENT]
 
 separated_nonempty_list_COMMA_id_or_sym_:
   x = id_or_sym
-    {    ( [ x ] )} [@name one_COMMA_id_or_sym]
+    {( [ x ] )} [@name one_COMMA_id_or_sym]
 | x = id_or_sym _2 = COMMA xs = separated_nonempty_list_COMMA_id_or_sym_
-    {    ( x :: xs )} [@name more_COMMA_id_or_sym]
+    {( x :: xs )} [@name more_COMMA_id_or_sym]
 
 separated_nonempty_list_COMMA_infix_option_value_:
   sym = SYMBOL id = SYMBOL
-    {let x =                            (
+    {let x = (
                                   fun spec sg ->
                                   let sym_id,sym_loc = sym in
                                   let op_id,op_loc = id in
@@ -227,9 +227,9 @@ separated_nonempty_list_COMMA_infix_option_value_:
                                   else
                                     raise Error.(Error (Parse_error (Syntax_error ("The less than symbol '<' is expected in a precedence specification."),sym_loc)))
                                 ) in
-    ( [ x ] )} [@name one_COMMA_infix_option_value]
+( [ x ] )} [@name one_COMMA_infix_option_value]
 | id = IDENT
-    {let x =               (
+    {let x = (
                      fun spec _sg ->
                      let assoc_id,assoc_loc = id in
                      let assoc_id = String.lowercase_ascii assoc_id in
@@ -245,9 +245,9 @@ separated_nonempty_list_COMMA_infix_option_value_:
                      else
                        raise Error.(Error (Parse_error (Syntax_error ("An associativity specification (one of the keywords 'Left', 'Right', or 'NonAssoc') is expected."),assoc_loc)))
                    ) in
-    ( [ x ] )} [@name one_COMMA_infix_option_value]
+( [ x ] )} [@name one_COMMA_infix_option_value]
 | sym = SYMBOL id = SYMBOL _2 = COMMA xs = separated_nonempty_list_COMMA_infix_option_value_
-    {let x =                            (
+    {let x = (
                                   fun spec sg ->
                                   let sym_id,sym_loc = sym in
                                   let op_id,op_loc = id in
@@ -259,9 +259,9 @@ separated_nonempty_list_COMMA_infix_option_value_:
                                   else
                                     raise Error.(Error (Parse_error (Syntax_error ("The less than symbol '<' is expected in a precedence specification."),sym_loc)))
                                 ) in
-    ( x :: xs )} [@name more_COMMA_infix_option_value]
+( x :: xs )} [@name more_COMMA_infix_option_value]
 | id = IDENT _2 = COMMA xs = separated_nonempty_list_COMMA_infix_option_value_
-    {let x =               (
+    {let x = (
                      fun spec _sg ->
                      let assoc_id,assoc_loc = id in
                      let assoc_id = String.lowercase_ascii assoc_id in
@@ -277,22 +277,22 @@ separated_nonempty_list_COMMA_infix_option_value_:
                      else
                        raise Error.(Error (Parse_error (Syntax_error ("An associativity specification (one of the keywords 'Left', 'Right', or 'NonAssoc') is expected."),assoc_loc)))
                    ) in
-    ( x :: xs )} [@name more_COMMA_infix_option_value]
+( x :: xs )} [@name more_COMMA_infix_option_value]
 
 main:
   dec = nonempty_list_sig_or_lex_ _2 = EOI
-    {                        ( fun ?(overwrite=false) e -> List.fold_left (fun acc d -> d ~overwrite acc) e dec
+    {( fun ?(overwrite=false) e -> List.fold_left (fun acc d -> d ~overwrite acc) e dec
 			)}
 
 sig_or_lex:
   s = signature
-    {                 ( fun ~overwrite e -> s ~overwrite e )}
+    {( fun ~overwrite e -> s ~overwrite e )}
 | l = lexicon
-    {               ( fun ~overwrite e -> l ~overwrite e )}
+    {( fun ~overwrite e -> l ~overwrite e )}
 
 signature:
   _1 = SIG_OPEN id = IDENT _3 = EQUAL entries = end_of_dec_sig_entry_
-    {    (
+    {(
       fun ~overwrite e ->
       let s,loc = id in
       if is_signature s e then
@@ -308,7 +308,7 @@ signature:
 
 lexicon:
   _1 = LEX_OPEN lex = IDENT _2 = LPAREN abs = IDENT _4 = RPAREN _5 = COLON obj = IDENT _7 = EQUAL entries = end_of_dec_lex_entry_
-    {let lex =     (fun ~overwrite ~non_linear e ->
+    {let lex = (fun ~overwrite ~non_linear e ->
      let lex_name,lex_loc = lex in
      let abs',obj'= get_sig abs e,get_sig obj e in
      if is_lexicon lex_name e then
@@ -321,9 +321,9 @@ lexicon:
        let () = Environment.Lexicon.check lex' in
        Environment.(insert ~overwrite (Lexicon lex') ~to_be_dumped:true e)
     ) in
-    (fun ~overwrite e -> lex ~overwrite ~non_linear:false e )}
+(fun ~overwrite e -> lex ~overwrite ~non_linear:false e )}
 | _1 = NL_LEX_OPEN lex = IDENT _2 = LPAREN abs = IDENT _4 = RPAREN _5 = COLON obj = IDENT _7 = EQUAL entries = end_of_dec_lex_entry_
-    {let lex =     (fun ~overwrite ~non_linear e ->
+    {let lex = (fun ~overwrite ~non_linear e ->
      let lex_name,lex_loc = lex in
      let abs',obj'= get_sig abs e,get_sig obj e in
      if is_lexicon lex_name e then
@@ -336,35 +336,35 @@ lexicon:
        let () = Environment.Lexicon.check lex' in
        Environment.(insert ~overwrite (Lexicon lex') ~to_be_dumped:true e)
     ) in
-    (fun ~overwrite e -> lex ~overwrite ~non_linear:true e )}
+(fun ~overwrite e -> lex ~overwrite ~non_linear:true e )}
 | _1 = LEX_OPEN lex = IDENT _3 = EQUAL exp = lexicon_exp
-    {                                             (fun ~overwrite e ->
+    {(fun ~overwrite e ->
                                               let new_lex = exp (Some lex) e in
                                               Environment.(insert ~overwrite (Lexicon new_lex) ~to_be_dumped:true e))}
 
 end_of_dec_lex_entry_:
   entry = lex_entry _2 = option_SEMICOLON_ _3 = END_OF_DEC
-    {                                             ( [entry] )}
+    {( [entry] )}
 | entry = lex_entry _2 = SEMICOLON entries = end_of_dec_lex_entry_
-    {                                                                  ( entry :: entries )}
+    {( entry :: entries )}
 
 end_of_dec_sig_entry_:
   entry = sig_entry _2 = option_SEMICOLON_ _3 = END_OF_DEC
-    {                                             ( [entry] )}
+    {( [entry] )}
 | entry = sig_entry _2 = SEMICOLON entries = end_of_dec_sig_entry_
-    {                                                                  ( entry :: entries )}
+    {( entry :: entries )}
 
 lexicon_exp0:
   lex = IDENT
-    {                ( fun _ e -> get_lex lex e )}
+    {( fun _ e -> get_lex lex e )}
 | _1 = LPAREN lex = lexicon_exp _3 = RPAREN
-    {                                    ( lex )}
+    {( lex )}
 
 lexicon_exp:
   lex = lexicon_exp0
-    {                       ( lex )}
+    {( lex )}
 | lex1 = lexicon_exp0 _2 = COMPOSE lex2 = lexicon_exp
-    {                                      (
+    {(
                                         fun name e ->
                                         let l1,l2 = (lex1 None e),(lex2 None e) in
                                         let new_name =
@@ -381,21 +381,21 @@ lexicon_exp:
 
 sig_entry_eoi:
   e = sig_entry _2 = EOI
-    {                    ( e )}
+    {( e )}
 
 sig_entry:
   decl = type_declaration
-    {                          ( decl )}
+    {( decl )}
 | def = type_definition
-    {                        ( def )}
+    {( def )}
 | decl = term_declaration
-    {                          ( decl )}
+    {( decl )}
 | def = term_definition
-    {                        ( def )}
+    {( def )}
 
 type_declaration:
   ids = separated_nonempty_list_COMMA_IDENT_ _2 = COLON _3 = TYPE
-    {                     (
+    {(
                        fun s _ ->
                        List.fold_left
 	                 (fun acc id ->
@@ -411,7 +411,7 @@ type_declaration:
 
 type_definition:
   id = IDENT _2 = EQUAL type_or_cst = type_or_term_COLON_ _4 = COLON _5 = TYPE
-    {                                              (
+    {(
     let type_or_cst = type_or_cst Type_ctx in
     fun sg _ ->
     let id_name,id_loc = id in
@@ -425,8 +425,8 @@ type_definition:
 
 term_declaration:
   ids = separated_nonempty_list_COMMA_IDENT_ _2 = COLON type_exp = type_or_term_SEMICOLON_
-    {let dec =                                              ( fun sg -> List.map (fun id -> (id,Abstract_syntax.Default)) ids,sg ) in
-   (
+    {let dec = ( fun sg -> List.map (fun id -> (id,Abstract_syntax.Default)) ids,sg ) in
+(
     let type_exp = type_exp Type_ctx in
      fun s _e ->
      let dec',s' = dec s in
@@ -442,8 +442,8 @@ term_declaration:
        dec'
    )}
 | _1 = PREFIX sym = SYMBOL _2 = COLON type_exp = type_or_term_SEMICOLON_
-    {let dec =                       ( fun sg -> [sym,Abstract_syntax.Prefix],sg ) in
-   (
+    {let dec = ( fun sg -> [sym,Abstract_syntax.Prefix],sg ) in
+(
     let type_exp = type_exp Type_ctx in
      fun s _e ->
      let dec',s' = dec s in
@@ -459,11 +459,11 @@ term_declaration:
        dec'
    )}
 | _1 = INFIX sym = SYMBOL _2 = COLON type_exp = type_or_term_SEMICOLON_
-    {let dec =                      ( fun sg ->
+    {let dec = ( fun sg ->
                        let sym_id,_ = sym in
                        let p,sg' = Environment.Signature1.new_precedence sym_id sg in
                        [sym,Abstract_syntax.(Infix (Left,p))],sg' ) in
-   (
+(
     let type_exp = type_exp Type_ctx in
      fun s _e ->
      let dec',s' = dec s in
@@ -480,19 +480,19 @@ term_declaration:
    )}
 | _1 = INFIX _1_inlined1 = LSQBRACKET v = separated_nonempty_list_COMMA_infix_option_value_ _3 = RSQBRACKET sym = SYMBOL _2 = COLON type_exp = type_or_term_SEMICOLON_
     {let dec =
-  let opt =                                                                               (
+  let opt = (
                                           fun spec sg ->
                                           List.fold_left
                                             (fun spec' value -> value spec' sg)
                                             spec
                                             v
                                         ) in
-                                           ( fun sg ->
+  ( fun sg ->
                                            let sym,fix,sg' = build_infix opt sym sg in
                                            [sym,fix],sg'
                                          )
 in
-   (
+(
     let type_exp = type_exp Type_ctx in
      fun s _e ->
      let dec',s' = dec s in
@@ -508,8 +508,8 @@ in
        dec'
    )}
 | _1 = BINDER id = IDENT _2 = COLON type_exp = type_or_term_SEMICOLON_
-    {let dec =                     ( fun sg -> [id,Abstract_syntax.Binder],sg ) in
-   (
+    {let dec = ( fun sg -> [id,Abstract_syntax.Binder],sg ) in
+(
     let type_exp = type_exp Type_ctx in
      fun s _e ->
      let dec',s' = dec s in
@@ -527,7 +527,7 @@ in
 
 term_definition:
   id = IDENT _2 = EQUAL t = type_or_term_COLON_ _4 = COLON ty = type_or_term_SEMICOLON_
-    {                                                                  (
+    {(
     let t = t Term_ctx in
     let ty = ty Type_ctx in
     fun s _ ->
@@ -541,8 +541,8 @@ term_definition:
     | Environment.Signature1.Duplicate_term_definition ->
        emit_parse_error (Error.Duplicated_term id') l)}
 | _1 = PREFIX sym = SYMBOL _2 = EQUAL t = type_or_term_COLON_ _4 = COLON ty = type_or_term_SEMICOLON_
-    {let def =                       (fun sg -> sym,Abstract_syntax.Prefix,sg) in
-                                                   (
+    {let def = (fun sg -> sym,Abstract_syntax.Prefix,sg) in
+(
     let t = t Term_ctx in
     let ty = ty Type_ctx in
     fun s _ ->
@@ -556,11 +556,11 @@ term_definition:
     | Environment.Signature1.Duplicate_term_definition ->
        emit_parse_error (Error.Duplicated_term id) l)}
 | _1 = INFIX sym = SYMBOL _2 = EQUAL t = type_or_term_COLON_ _4 = COLON ty = type_or_term_SEMICOLON_
-    {let def =                      (fun sg ->
+    {let def = (fun sg ->
                       let sym_id,_ = sym in
                       let p,sg' = Environment.Signature1.new_precedence sym_id sg in
                       sym,Abstract_syntax.Infix (Abstract_syntax.Left,p),sg') in
-                                                   (
+(
     let t = t Term_ctx in
     let ty = ty Type_ctx in
     fun s _ ->
@@ -575,16 +575,16 @@ term_definition:
        emit_parse_error (Error.Duplicated_term id) l)}
 | _1 = INFIX _1_inlined1 = LSQBRACKET v = separated_nonempty_list_COMMA_infix_option_value_ _3 = RSQBRACKET sym = SYMBOL _2 = EQUAL t = type_or_term_COLON_ _4 = COLON ty = type_or_term_SEMICOLON_
     {let def =
-  let opt =                                                                               (
+  let opt = (
                                           fun spec sg ->
                                           List.fold_left
                                             (fun spec' value -> value spec' sg)
                                             spec
                                             v
                                         ) in
-                                           (fun sg -> build_infix opt sym sg )
+  (fun sg -> build_infix opt sym sg )
 in
-                                                   (
+(
     let t = t Term_ctx in
     let ty = ty Type_ctx in
     fun s _ ->
@@ -598,8 +598,8 @@ in
     | Environment.Signature1.Duplicate_term_definition ->
        emit_parse_error (Error.Duplicated_term id) l)}
 | _1 = BINDER id = IDENT _2 = EQUAL t = type_or_term_COLON_ _4 = COLON ty = type_or_term_SEMICOLON_
-    {let def =                     (fun sg -> id,Abstract_syntax.Binder,sg) in
-                                                   (
+    {let def = (fun sg -> id,Abstract_syntax.Binder,sg) in
+(
     let t = t Term_ctx in
     let ty = ty Type_ctx in
     fun s _ ->
@@ -615,17 +615,17 @@ in
 
 id_or_sym:
   id = IDENT
-    {             ( id )}
+    {( id )}
 | sym = SYMBOL
-    {               ( sym )}
+    {( sym )}
 
 lex_entry_eoi:
   e = lex_entry _2 = EOI
-    {                    ( e )}
+    {( e )}
 
 lex_entry:
   cst = separated_nonempty_list_COMMA_id_or_sym_ _2 = COLON_EQUAL t = type_or_term_SEMICOLON_
-    {          (
+    {(
             fun lex _e ->
             let abs,obj = Environment.Lexicon.get_sig lex in
             let are_types,are_terms =
@@ -670,7 +670,7 @@ lex_entry:
 
 term_alone:
   t = type_or_term_COLON_ _2 = COLON ty = type_or_term_EOI_ _4 = EOI
-    {                                                           (
+    {(
                                              fun sg ->
                                              let t,_ = get_term (t Term_ctx false) Typing_env.empty sg [] in
                                              let ty,_ = get_type (ty Type_ctx false) sg [] in
@@ -679,7 +679,7 @@ term_alone:
 
 heterogenous_term_and_type:
   t = type_or_term_COLON_ _2 = COLON ty = type_or_term_EOI_ _4 = EOI
-    {                                      (
+    {(
                                         fun abs obj ->
                                         let t,_ = get_term (t Term_ctx false) Typing_env.empty obj [] in
                                         let ty,_ = get_type (ty Type_ctx false) abs [] in
@@ -688,10 +688,10 @@ heterogenous_term_and_type:
 
 type_or_term_COLON_:
   t = type_or_term0_COLON_
-    {                               ( fun k brackets -> term0_to_term (t k brackets) )}
+    {( fun k brackets -> term0_to_term (t k brackets) )}
 | t1 = type_or_term0_COLON_ l = ARROW t2 = type_or_term_COLON_
-    {let arrow =            ( Abstract_syntax.Non_linear,l ) in
-                     (
+    {let arrow = ( Abstract_syntax.Non_linear,l ) in
+(
                          let arrow,arrow_loc =
                            match arrow with
                            | Abstract_syntax.Linear,loc -> (fun ty1 ty2 l -> Abstract_syntax.Linear_arrow (ty1,ty2,l)),loc
@@ -728,8 +728,8 @@ type_or_term_COLON_:
                                   Type_or_term (type_builder,term_builder,new_loc))
                      )}
 | t1 = type_or_term0_COLON_ l = LIN_ARROW t2 = type_or_term_COLON_
-    {let arrow =                   ( Abstract_syntax.Linear,l ) in
-                     (
+    {let arrow = ( Abstract_syntax.Linear,l ) in
+(
                          let arrow,arrow_loc =
                            match arrow with
                            | Abstract_syntax.Linear,loc -> (fun ty1 ty2 l -> Abstract_syntax.Linear_arrow (ty1,ty2,l)),loc
@@ -766,14 +766,14 @@ type_or_term_COLON_:
                                   Type_or_term (type_builder,term_builder,new_loc))
                      )}
 | t = bound_term_COLON_
-    {                            ( t )}
+    {( t )}
 
 type_or_term_EOI_:
   t = type_or_term0_EOI_
-    {                               ( fun k brackets -> term0_to_term (t k brackets) )}
+    {( fun k brackets -> term0_to_term (t k brackets) )}
 | t1 = type_or_term0_EOI_ l = ARROW t2 = type_or_term_EOI_
-    {let arrow =            ( Abstract_syntax.Non_linear,l ) in
-                     (
+    {let arrow = ( Abstract_syntax.Non_linear,l ) in
+(
                          let arrow,arrow_loc =
                            match arrow with
                            | Abstract_syntax.Linear,loc -> (fun ty1 ty2 l -> Abstract_syntax.Linear_arrow (ty1,ty2,l)),loc
@@ -810,8 +810,8 @@ type_or_term_EOI_:
                                   Type_or_term (type_builder,term_builder,new_loc))
                      )}
 | t1 = type_or_term0_EOI_ l = LIN_ARROW t2 = type_or_term_EOI_
-    {let arrow =                   ( Abstract_syntax.Linear,l ) in
-                     (
+    {let arrow = ( Abstract_syntax.Linear,l ) in
+(
                          let arrow,arrow_loc =
                            match arrow with
                            | Abstract_syntax.Linear,loc -> (fun ty1 ty2 l -> Abstract_syntax.Linear_arrow (ty1,ty2,l)),loc
@@ -848,14 +848,14 @@ type_or_term_EOI_:
                                   Type_or_term (type_builder,term_builder,new_loc))
                      )}
 | t = bound_term_EOI_
-    {                            ( t )}
+    {( t )}
 
 type_or_term_SEMICOLON_:
   t = type_or_term0_SEMICOLON_
-    {                               ( fun k brackets -> term0_to_term (t k brackets) )}
+    {( fun k brackets -> term0_to_term (t k brackets) )}
 | t1 = type_or_term0_SEMICOLON_ l = ARROW t2 = type_or_term_SEMICOLON_
-    {let arrow =            ( Abstract_syntax.Non_linear,l ) in
-                     (
+    {let arrow = ( Abstract_syntax.Non_linear,l ) in
+(
                          let arrow,arrow_loc =
                            match arrow with
                            | Abstract_syntax.Linear,loc -> (fun ty1 ty2 l -> Abstract_syntax.Linear_arrow (ty1,ty2,l)),loc
@@ -892,8 +892,8 @@ type_or_term_SEMICOLON_:
                                   Type_or_term (type_builder,term_builder,new_loc))
                      )}
 | t1 = type_or_term0_SEMICOLON_ l = LIN_ARROW t2 = type_or_term_SEMICOLON_
-    {let arrow =                   ( Abstract_syntax.Linear,l ) in
-                     (
+    {let arrow = ( Abstract_syntax.Linear,l ) in
+(
                          let arrow,arrow_loc =
                            match arrow with
                            | Abstract_syntax.Linear,loc -> (fun ty1 ty2 l -> Abstract_syntax.Linear_arrow (ty1,ty2,l)),loc
@@ -930,11 +930,11 @@ type_or_term_SEMICOLON_:
                                   Type_or_term (type_builder,term_builder,new_loc))
                      )}
 | t = bound_term_SEMICOLON_
-    {                            ( t )}
+    {( t )}
 
 type_or_term0_COLON_:
   id = IDENT
-    {               (
+    {(
              fun _ _ -> 
              let id,loc = id in
              let type_builder sg warnings =
@@ -952,7 +952,7 @@ type_or_term0_COLON_:
              Type_or_token (type_builder,[token_builder,loc],loc)
            )}
 | id = SYMBOL
-    {              (
+    {(
            fun kind ->
            let name,loc = id in
            if kind = Type_ctx then
@@ -969,7 +969,7 @@ type_or_term0_COLON_:
              Type_or_token (type_builder,[token_builder,loc],loc)
          )}
 | _1 = LPAREN t = type_or_term_COLON_ _3 = RPAREN
-    {                                          (
+    {(
                            fun kind _ -> 
                            match t kind true with
                            | Type_or_term (type_builder,term_builder,l) ->
@@ -979,7 +979,7 @@ type_or_term0_COLON_:
                               Type_or_token (type_builder,[token_builder,l],l)
                          )}
 | id = IDENT t = type_or_term0_COLON_
-    {                                        (
+    {(
                                 fun kind ->
                                 match t kind false with
                                 | Type_or_token (_,token_builders,loc') ->
@@ -997,7 +997,7 @@ type_or_term0_COLON_:
                                      Type_or_token (type_builder,(token_builder,loc)::token_builders,new_loc loc loc')
                    )}
 | id = SYMBOL t = type_or_term0_COLON_
-    {                                         (
+    {(
                       let name,loc = id in
                       fun kind ->
                       if kind = Type_ctx then
@@ -1015,7 +1015,7 @@ type_or_term0_COLON_:
                            Type_or_token (type_builder,(token_builder,loc)::token_builders,new_loc loc loc')
                                )}
 | _1 = LPAREN t = type_or_term_COLON_ _3 = RPAREN t0 = type_or_term0_COLON_
-    {                                                                       (
+    {(
    fun kind ->
    match t0 kind false with
    | Type_or_token (_,token_builders,loc') ->
@@ -1038,7 +1038,7 @@ type_or_term0_COLON_:
 
 type_or_term0_EOI_:
   id = IDENT
-    {               (
+    {(
              fun _ _ -> 
              let id,loc = id in
              let type_builder sg warnings =
@@ -1056,7 +1056,7 @@ type_or_term0_EOI_:
              Type_or_token (type_builder,[token_builder,loc],loc)
            )}
 | id = SYMBOL
-    {              (
+    {(
            fun kind ->
            let name,loc = id in
            if kind = Type_ctx then
@@ -1073,7 +1073,7 @@ type_or_term0_EOI_:
              Type_or_token (type_builder,[token_builder,loc],loc)
          )}
 | _1 = LPAREN t = type_or_term_EOI_ _3 = RPAREN
-    {                                          (
+    {(
                            fun kind _ -> 
                            match t kind true with
                            | Type_or_term (type_builder,term_builder,l) ->
@@ -1083,7 +1083,7 @@ type_or_term0_EOI_:
                               Type_or_token (type_builder,[token_builder,l],l)
                          )}
 | id = IDENT t = type_or_term0_EOI_
-    {                                        (
+    {(
                                 fun kind ->
                                 match t kind false with
                                 | Type_or_token (_,token_builders,loc') ->
@@ -1101,7 +1101,7 @@ type_or_term0_EOI_:
                                      Type_or_token (type_builder,(token_builder,loc)::token_builders,new_loc loc loc')
                    )}
 | id = SYMBOL t = type_or_term0_EOI_
-    {                                         (
+    {(
                       let name,loc = id in
                       fun kind ->
                       if kind = Type_ctx then
@@ -1119,7 +1119,7 @@ type_or_term0_EOI_:
                            Type_or_token (type_builder,(token_builder,loc)::token_builders,new_loc loc loc')
                                )}
 | _1 = LPAREN t = type_or_term_EOI_ _3 = RPAREN t0 = type_or_term0_EOI_
-    {                                                                       (
+    {(
    fun kind ->
    match t0 kind false with
    | Type_or_token (_,token_builders,loc') ->
@@ -1142,7 +1142,7 @@ type_or_term0_EOI_:
 
 type_or_term0_SEMICOLON_:
   id = IDENT
-    {               (
+    {(
              fun _ _ -> 
              let id,loc = id in
              let type_builder sg warnings =
@@ -1160,7 +1160,7 @@ type_or_term0_SEMICOLON_:
              Type_or_token (type_builder,[token_builder,loc],loc)
            )}
 | id = SYMBOL
-    {              (
+    {(
            fun kind ->
            let name,loc = id in
            if kind = Type_ctx then
@@ -1177,7 +1177,7 @@ type_or_term0_SEMICOLON_:
              Type_or_token (type_builder,[token_builder,loc],loc)
          )}
 | _1 = LPAREN t = type_or_term_SEMICOLON_ _3 = RPAREN
-    {                                          (
+    {(
                            fun kind _ -> 
                            match t kind true with
                            | Type_or_term (type_builder,term_builder,l) ->
@@ -1187,7 +1187,7 @@ type_or_term0_SEMICOLON_:
                               Type_or_token (type_builder,[token_builder,l],l)
                          )}
 | id = IDENT t = type_or_term0_SEMICOLON_
-    {                                        (
+    {(
                                 fun kind ->
                                 match t kind false with
                                 | Type_or_token (_,token_builders,loc') ->
@@ -1205,7 +1205,7 @@ type_or_term0_SEMICOLON_:
                                      Type_or_token (type_builder,(token_builder,loc)::token_builders,new_loc loc loc')
                    )}
 | id = SYMBOL t = type_or_term0_SEMICOLON_
-    {                                         (
+    {(
                       let name,loc = id in
                       fun kind ->
                       if kind = Type_ctx then
@@ -1223,7 +1223,7 @@ type_or_term0_SEMICOLON_:
                            Type_or_token (type_builder,(token_builder,loc)::token_builders,new_loc loc loc')
                                )}
 | _1 = LPAREN t = type_or_term_SEMICOLON_ _3 = RPAREN t0 = type_or_term0_SEMICOLON_
-    {                                                                       (
+    {(
    fun kind ->
    match t0 kind false with
    | Type_or_token (_,token_builders,loc') ->
@@ -1246,7 +1246,7 @@ type_or_term0_SEMICOLON_:
 
 bound_term_COLON_:
   binder = LAMBDA vars_and_term = bound_term_ending_COLON_
-    {                                       ( fun kind _ -> 
+    {( fun kind _ -> 
                                          let vars,(bounded_term_builder,t_loc) = vars_and_term in
                                          let n_loc = new_loc binder t_loc in
                                          let type_builder _ _ =
@@ -1277,7 +1277,7 @@ bound_term_COLON_:
                                            Type_or_term (type_builder,term_builder,n_loc)
                                        )}
 | binder = LAMBDA0 vars_and_term = bound_term_ending_COLON_
-    {                                     ( fun kind _ -> 
+    {( fun kind _ -> 
                                          let vars,(bounded_term_builder,t_loc) = vars_and_term in
                                          let n_loc = new_loc binder t_loc in
                                          let type_builder _ _ =
@@ -1307,7 +1307,7 @@ bound_term_COLON_:
                                            ws in
                                          Type_or_term (type_builder,term_builder,n_loc) )}
 | binder = IDENT vars_and_term = bound_term_ending_COLON_
-    {                                    (fun kind _ -> 
+    {(fun kind _ -> 
                                       let binder,loc = binder  in
                                       let vars,(bounded_term_builder,t_loc) = vars_and_term  in
                                       let n_loc = new_loc loc t_loc in
@@ -1356,7 +1356,7 @@ bound_term_COLON_:
 
 bound_term_EOI_:
   binder = LAMBDA vars_and_term = bound_term_ending_EOI_
-    {                                       ( fun kind _ -> 
+    {( fun kind _ -> 
                                          let vars,(bounded_term_builder,t_loc) = vars_and_term in
                                          let n_loc = new_loc binder t_loc in
                                          let type_builder _ _ =
@@ -1387,7 +1387,7 @@ bound_term_EOI_:
                                            Type_or_term (type_builder,term_builder,n_loc)
                                        )}
 | binder = LAMBDA0 vars_and_term = bound_term_ending_EOI_
-    {                                     ( fun kind _ -> 
+    {( fun kind _ -> 
                                          let vars,(bounded_term_builder,t_loc) = vars_and_term in
                                          let n_loc = new_loc binder t_loc in
                                          let type_builder _ _ =
@@ -1417,7 +1417,7 @@ bound_term_EOI_:
                                            ws in
                                          Type_or_term (type_builder,term_builder,n_loc) )}
 | binder = IDENT vars_and_term = bound_term_ending_EOI_
-    {                                    (fun kind _ -> 
+    {(fun kind _ -> 
                                       let binder,loc = binder  in
                                       let vars,(bounded_term_builder,t_loc) = vars_and_term  in
                                       let n_loc = new_loc loc t_loc in
@@ -1466,7 +1466,7 @@ bound_term_EOI_:
 
 bound_term_SEMICOLON_:
   binder = LAMBDA vars_and_term = bound_term_ending_SEMICOLON_
-    {                                       ( fun kind _ -> 
+    {( fun kind _ -> 
                                          let vars,(bounded_term_builder,t_loc) = vars_and_term in
                                          let n_loc = new_loc binder t_loc in
                                          let type_builder _ _ =
@@ -1497,7 +1497,7 @@ bound_term_SEMICOLON_:
                                            Type_or_term (type_builder,term_builder,n_loc)
                                        )}
 | binder = LAMBDA0 vars_and_term = bound_term_ending_SEMICOLON_
-    {                                     ( fun kind _ -> 
+    {( fun kind _ -> 
                                          let vars,(bounded_term_builder,t_loc) = vars_and_term in
                                          let n_loc = new_loc binder t_loc in
                                          let type_builder _ _ =
@@ -1527,7 +1527,7 @@ bound_term_SEMICOLON_:
                                            ws in
                                          Type_or_term (type_builder,term_builder,n_loc) )}
 | binder = IDENT vars_and_term = bound_term_ending_SEMICOLON_
-    {                                    (fun kind _ -> 
+    {(fun kind _ -> 
                                       let binder,loc = binder  in
                                       let vars,(bounded_term_builder,t_loc) = vars_and_term  in
                                       let n_loc = new_loc loc t_loc in
@@ -1576,7 +1576,7 @@ bound_term_SEMICOLON_:
 
 bound_term_ending_COLON_:
   var = IDENT d = DOT t = type_or_term_COLON_
-    {                                              ([var],
+    {([var],
                                                let type_builder _ _ =
                                                  emit_parse_error
                                                    (Error.Syntax_error "An arrow ('->' or '=>') or a right parenthesis ')' are expected.") d in
@@ -1584,11 +1584,11 @@ bound_term_ending_COLON_:
                                                | Type_or_term (_,term_builder,loc) -> Type_or_term (type_builder,term_builder,loc),loc
                                               )}
 | var = IDENT vars_and_term = bound_term_ending_COLON_
-    {                                                         (let vars,t = vars_and_term in var::vars,t)}
+    {(let vars,t = vars_and_term in var::vars,t)}
 
 bound_term_ending_EOI_:
   var = IDENT d = DOT t = type_or_term_EOI_
-    {                                              ([var],
+    {([var],
                                                let type_builder _ _ =
                                                  emit_parse_error
                                                    (Error.Syntax_error "An arrow ('->' or '=>') or a right parenthesis ')' are expected.") d in
@@ -1596,11 +1596,11 @@ bound_term_ending_EOI_:
                                                | Type_or_term (_,term_builder,loc) -> Type_or_term (type_builder,term_builder,loc),loc
                                               )}
 | var = IDENT vars_and_term = bound_term_ending_EOI_
-    {                                                         (let vars,t = vars_and_term in var::vars,t)}
+    {(let vars,t = vars_and_term in var::vars,t)}
 
 bound_term_ending_SEMICOLON_:
   var = IDENT d = DOT t = type_or_term_SEMICOLON_
-    {                                              ([var],
+    {([var],
                                                let type_builder _ _ =
                                                  emit_parse_error
                                                    (Error.Syntax_error "An arrow ('->' or '=>') or a right parenthesis ')' are expected.") d in
@@ -1608,6 +1608,6 @@ bound_term_ending_SEMICOLON_:
                                                | Type_or_term (_,term_builder,loc) -> Type_or_term (type_builder,term_builder,loc),loc
                                               )}
 | var = IDENT vars_and_term = bound_term_ending_SEMICOLON_
-    {                                                         (let vars,t = vars_and_term in var::vars,t)}
+    {(let vars,t = vars_and_term in var::vars,t)}
 
 %%

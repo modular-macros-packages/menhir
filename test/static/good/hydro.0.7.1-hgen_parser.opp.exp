@@ -55,19 +55,19 @@
 
 start:
   _1 = defs _2 = EOF
-    {                ( _1 )}
+    {( _1 )}
 
 defs:
   _1 = global_meta_data _2 = defs
-    {    ( (`GMeta _1) :: _2 )}
+    {( (`GMeta _1) :: _2 )}
 | _1 = def _2 = SEMI _3 = defs
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 def:
   _1 = meta_data_opt _2 = K_MODULE _3 = IDENT _4 = LBRACE _5 = defs _6 = RBRACE
-    {    ( `Module
+    {( `Module
 	( object
 	    method name = fst _3
 	    method meta = _1
@@ -77,7 +77,7 @@ def:
 	)
     )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_CLASS _4 = IDENT _5 = class_def_opt
-    {    ( `Class
+    {( `Class
 	( object
 	    method name = fst _4
 	    method meta = _1
@@ -88,7 +88,7 @@ def:
 	)
     )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_INTERFACE _4 = IDENT _5 = intf_def_opt
-    {   ( `Intf 
+    {( `Intf 
        ( object
 	   method name = fst _4
 	   method meta = _1
@@ -99,7 +99,7 @@ def:
        )
    )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_EXCEPTION _4 = IDENT _5 = exn_def_opt
-    {   ( `Exn
+    {( `Exn
        ( object
 	   method name = fst _4
 	   method meta = _1
@@ -110,7 +110,7 @@ def:
        )
    )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_STRUCT _4 = IDENT _5 = struct_def_opt
-    {   ( `Struct
+    {( `Struct
        ( object
 	   method name = fst _4
 	   method meta = _1
@@ -121,7 +121,7 @@ def:
        )
    )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_SEQUENCE _4 = LANGLE _5 = typ _6 = RANGLE _7 = IDENT
-    {   ( let (arg_typ, arg_meta) = _5 in
+    {( let (arg_typ, arg_meta) = _5 in
      `Seq 
        ( object
 	   method name = fst _7
@@ -134,7 +134,7 @@ def:
        )
    )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_DICTIONARY _4 = LANGLE _5 = typ _6 = COMMA _7 = typ _8 = RANGLE _9 = IDENT
-    {  ( let (arg_typ1, arg_meta1) = _5 in
+    {( let (arg_typ1, arg_meta1) = _5 in
     let (arg_typ2, arg_meta2) = _7 in
     `Dict 
        ( object
@@ -150,7 +150,7 @@ def:
        )
   )}
 | _1 = meta_data_opt _2 = local_flag _3 = K_ENUM _4 = IDENT _5 = LBRACE _6 = enum_list _7 = RBRACE
-    {   ( `Enum 
+    {( `Enum 
        ( object
 	   method name = fst _4
 	   method meta = _1
@@ -161,7 +161,7 @@ def:
        )
    )}
 | _1 = meta_data_opt _2 = K_CONST _3 = typ _4 = IDENT _5 = EQUAL _6 = const_value
-    {   ( let (arg_typ, arg_meta) = _3 in
+    {( let (arg_typ, arg_meta) = _3 in
      `Const
        ( object
 	   method name = fst _4
@@ -176,7 +176,7 @@ def:
 
 class_def_opt:
   _1 = single_extends_clause_opt _2 = implements_clause_opt _3 = LBRACE _4 = class_members _5 = RBRACE
-    {   ( let members = _4 in
+    {( let members = _4 in
      let data_members =
        List.flatten
 	 (List.map
@@ -197,33 +197,33 @@ class_def_opt:
        )
    )}
 | 
-    {   ( None )}
+    {( None )}
 
 single_extends_clause_opt:
   _1 = K_EXTENDS _2 = name
-    {     ( Some _2 )}
+    {( Some _2 )}
 | 
-    {     ( None )}
+    {( None )}
 
 implements_clause_opt:
   _1 = K_IMPLEMENTS _2 = name_list
-    {     ( _2 )}
+    {( _2 )}
 | 
-    {     ( [] )}
+    {( [] )}
 
 class_members:
   _1 = class_member _2 = class_members
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 class_member:
   _1 = data_or_operation_member
-    {    ( _1 )}
+    {( _1 )}
 
 intf_def_opt:
   _1 = intf_extends_clause_opt _2 = LBRACE _3 = intf_members _4 = RBRACE
-    {    ( Some
+    {( Some
 	( object
 	    method extends = _1
 	    method operations = _3
@@ -231,23 +231,23 @@ intf_def_opt:
 	)
     )}
 | 
-    {    ( None )}
+    {( None )}
 
 intf_extends_clause_opt:
   _1 = K_EXTENDS _2 = name_list
-    {    ( _2 )}
+    {( _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 intf_members:
   _1 = operation_member _2 = intf_members
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 exn_def_opt:
   _1 = single_extends_clause_opt _2 = LBRACE _3 = exn_members _4 = RBRACE
-    {    ( Some
+    {( Some
 	( object
 	    method extends = _1
 	    method data_members = _3
@@ -255,40 +255,40 @@ exn_def_opt:
 	)
     )}
 | 
-    {    ( None )}
+    {( None )}
 
 exn_members:
   _1 = data_member _2 = exn_members
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 struct_def_opt:
   _1 = LBRACE _2 = struct_members _3 = RBRACE
-    {    ( Some
+    {( Some
 	( object
 	    method data_members = _2
 	  end : struct_term
 	)
     )}
 | 
-    {    ( None )}
+    {( None )}
 
 struct_members:
   _1 = data_member _2 = struct_members
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 enum_list:
   _1 = IDENT
-    {    ( [ fst _1 ] )}
+    {( [ fst _1 ] )}
 | _1 = IDENT _2 = COMMA _3 = enum_list
-    {    ( fst _1 :: _3 )}
+    {( fst _1 :: _3 )}
 
 data_member:
   _1 = typ _2 = IDENT _3 = SEMI
-    {    ( let (typ, meta) = _1 in
+    {( let (typ, meta) = _1 in
       ( object
 	  method name = fst _2
 	  method typ = typ
@@ -300,7 +300,7 @@ data_member:
 
 operation_member:
   _1 = op_typ _2 = IDENT _3 = LPAREN _4 = params _5 = RPAREN _6 = throws_clause_opt _7 = SEMI
-    {    ( let (typ, meta, idempotent) = _1 in
+    {( let (typ, meta, idempotent) = _1 in
       ( object
 	  method name = fst _2
 	  method typ = typ
@@ -315,7 +315,7 @@ operation_member:
 
 data_or_operation_member:
   _1 = op_typ _2 = IDENT _3 = data_or_operation_cont
-    {    ( let (typ, meta, idempotent) = _1 in
+    {( let (typ, meta, idempotent) = _1 in
       match _3 with
 	| None ->
 	    if idempotent then raise Parsing.Parse_error;
@@ -341,25 +341,25 @@ data_or_operation_member:
 
 data_or_operation_cont:
   _1 = SEMI
-    {    ( None )}
+    {( None )}
 | _1 = LPAREN _2 = params _3 = RPAREN _4 = throws_clause_opt _5 = SEMI
-    {    ( Some(_2, _4) )}
+    {( Some(_2, _4) )}
 
 params:
   _1 = params1
-    {    ( _1 )}
+    {( _1 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 params1:
   _1 = param _2 = COMMA _3 = params1
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = param
-    {    ( [ _1 ] )}
+    {( [ _1 ] )}
 
 param:
   _1 = out_flag _2 = typ _3 = IDENT
-    {    ( let (typ, meta) = _2 in
+    {( let (typ, meta) = _2 in
       ( object
 	  method name = fst _3
 	  method typ = typ
@@ -372,113 +372,113 @@ param:
 
 out_flag:
   _1 = K_OUT
-    {    ( true )}
+    {( true )}
 | 
-    {    ( false )}
+    {( false )}
 
 throws_clause_opt:
   _1 = K_THROWS _2 = name_list
-    {    ( _2 )}
+    {( _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 typ:
   _1 = meta_data_opt _2 = typ_name
-    {    ( ( _2, _1 ) )}
+    {( ( _2, _1 ) )}
 
 op_typ:
   _1 = meta_data_opt _2 = idempotent_flag _3 = typ_name
-    {    ( ( _3, _1, _2 ) )}
+    {( ( _3, _1, _2 ) )}
 
 typ_name:
   _1 = K_BYTE
-    {    ( `Byte )}
+    {( `Byte )}
 | _1 = K_BOOL
-    {    ( `Bool )}
+    {( `Bool )}
 | _1 = K_SHORT
-    {    ( `Short )}
+    {( `Short )}
 | _1 = K_INT
-    {    ( `Int )}
+    {( `Int )}
 | _1 = K_LONG
-    {    ( `Long )}
+    {( `Long )}
 | _1 = K_FLOAT
-    {    ( `Float )}
+    {( `Float )}
 | _1 = K_DOUBLE
-    {    ( `Double )}
+    {( `Double )}
 | _1 = K_STRING
-    {    ( `String )}
+    {( `String )}
 | _1 = K_VOID
-    {    ( `Void )}
+    {( `Void )}
 | _1 = name
-    {    ( `Name _1 )}
+    {( `Name _1 )}
 | _1 = name _2 = ASTERISK
-    {    ( `Proxy _1 )}
+    {( `Proxy _1 )}
 
 idempotent_flag:
   _1 = K_IDEMPOTENT
-    {    ( true )}
+    {( true )}
 | 
-    {    ( false )}
+    {( false )}
 
 meta_data_opt:
   _1 = LBRACK _2 = string_list _3 = RBRACK
-    {    ( List.map Hgen_parser_util.parse_meta_def _2 )}
+    {( List.map Hgen_parser_util.parse_meta_def _2 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 global_meta_data:
   _1 = LDBRACK _2 = string_list _3 = RDBRACK
-    {    ( List.map Hgen_parser_util.parse_meta_def _2 )}
+    {( List.map Hgen_parser_util.parse_meta_def _2 )}
 
 string_list:
   _1 = string_lit _2 = COMMA _3 = string_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = string_lit
-    {    ( [ _1 ] )}
+    {( [ _1 ] )}
 
 string_lit:
   _1 = STRING_LITERAL _2 = string_lit
-    {    ( let (s, _, _) = _1 in s ^ _2 )}
+    {( let (s, _, _) = _1 in s ^ _2 )}
 | _1 = STRING_LITERAL
-    {    ( let (s, _, _) = _1 in s )}
+    {( let (s, _, _) = _1 in s )}
 
 local_flag:
   _1 = K_LOCAL
-    {    ( true )}
+    {( true )}
 | 
-    {    ( false )}
+    {( false )}
 
 const_value:
   _1 = INT_LITERAL
-    {    ( `Int (fst _1) )}
+    {( `Int (fst _1) )}
 | _1 = FLOAT_LITERAL
-    {    ( `Float (fst _1) )}
+    {( `Float (fst _1) )}
 | _1 = STRING_LITERAL
-    {    ( let (s, _, _) = _1 in `String s )}
+    {( let (s, _, _) = _1 in `String s )}
 | _1 = K_FALSE
-    {    ( `Bool false )}
+    {( `Bool false )}
 | _1 = K_TRUE
-    {    ( `Bool true )}
+    {( `Bool true )}
 | _1 = name
-    {    ( `Name _1 )}
+    {( `Name _1 )}
 
 name:
   _1 = DCOLON _2 = rel_name
-    {    ( `Absolute _2 )}
+    {( `Absolute _2 )}
 | _1 = rel_name
-    {    ( `Relative _1 )}
+    {( `Relative _1 )}
 
 rel_name:
   _1 = IDENT
-    {    ( [ fst _1 ] )}
+    {( [ fst _1 ] )}
 | _1 = IDENT _2 = DCOLON _3 = rel_name
-    {    ( ( fst _1) :: _3 )}
+    {( ( fst _1) :: _3 )}
 
 name_list:
   _1 = name
-    {    ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = name _2 = COMMA _3 = name_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 %%
 

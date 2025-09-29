@@ -336,40 +336,40 @@
 
 option_ANNOTATION_COMMENT_:
   
-    {    ( None )} [@name none_ANNOTATION_COMMENT]
+    {( None )} [@name none_ANNOTATION_COMMENT]
 | x = ANNOTATION_COMMENT
-    {    ( Some x )} [@name some_ANNOTATION_COMMENT]
+    {( Some x )} [@name some_ANNOTATION_COMMENT]
 
 option_COMMA_:
   
-    {    ( None )} [@name none_COMMA]
+    {( None )} [@name none_COMMA]
 | x = COMMA
-    {    ( Some x )} [@name some_COMMA]
+    {( Some x )} [@name some_COMMA]
 
 option_FROM_:
   
-    {    ( None )} [@name none_FROM]
+    {( None )} [@name none_FROM]
 | x = FROM
-    {    ( Some x )} [@name some_FROM]
+    {( Some x )} [@name some_FROM]
 
 option_SIGNATURE_COMMENT_:
   
-    {    ( None )} [@name none_SIGNATURE_COMMENT]
+    {( None )} [@name none_SIGNATURE_COMMENT]
 | x = SIGNATURE_COMMENT
-    {    ( Some x )} [@name some_SIGNATURE_COMMENT]
+    {( Some x )} [@name some_SIGNATURE_COMMENT]
 
 option_annotation_:
   
-    {    ( None )} [@name none_annotation]
+    {( None )} [@name none_annotation]
 | _1 = COLON expression = expression
-    {let x =                                    ( expression ) in
-    ( Some x )} [@name some_annotation]
+    {let x = ( expression ) in
+( Some x )} [@name some_annotation]
 
 option_comment_annotation_:
   
-    {    ( None )} [@name none_comment_annotation]
+    {( None )} [@name none_comment_annotation]
 | annotation = ANNOTATION_COMMENT
-    {let x =                                     (
+    {let x = (
       let (start, stop), annotation = annotation in
       annotation
       |> String.strip ~drop:(function | '\'' | '"' -> true | _ -> false)
@@ -377,98 +377,98 @@ option_comment_annotation_:
       |> fun string -> Expression.String string
       |> Node.create ~location:(Location.create ~start ~stop)
     ) in
-    ( Some x )} [@name some_comment_annotation]
+( Some x )} [@name some_comment_annotation]
 
 option_raise_from_:
   
-    {    ( None )} [@name none_raise_from]
+    {( None )} [@name none_raise_from]
 | x = raise_from
-    {    ( Some x )} [@name some_raise_from]
+    {( Some x )} [@name some_raise_from]
 
 option_return_annotation_:
   
-    {    ( None )} [@name none_return_annotation]
+    {( None )} [@name none_return_annotation]
 | _1 = MINUS _2 = RIGHTANGLE expression = expression
-    {let x =                                                ( expression ) in
-    ( Some x )} [@name some_return_annotation]
+    {let x = ( expression ) in
+( Some x )} [@name some_return_annotation]
 
 option_test_:
   
-    {    ( None )} [@name none_test]
+    {( None )} [@name none_test]
 | x = test
-    {    ( Some x )} [@name some_test]
+    {( Some x )} [@name some_test]
 
 option_test_list_:
   
-    {    ( None )} [@name none_test_list]
+    {( None )} [@name none_test_list]
 | x = test_list
-    {    ( Some x )} [@name some_test_list]
+    {( Some x )} [@name some_test_list]
 
 list_NEWLINE_:
   
-    {    ( [] )} [@name nil_NEWLINE]
+    {( [] )} [@name nil_NEWLINE]
 | x = NEWLINE xs = list_NEWLINE_
-    {    ( x :: xs )} [@name cons_NEWLINE]
+    {( x :: xs )} [@name cons_NEWLINE]
 
 list_condition_:
   
-    {    ( [] )} [@name nil_condition]
+    {( [] )} [@name nil_condition]
 | x = condition xs = list_condition_
-    {    ( x :: xs )} [@name cons_condition]
+    {( x :: xs )} [@name cons_condition]
 
 list_handler_:
   
-    {    ( [] )} [@name nil_handler]
+    {( [] )} [@name nil_handler]
 | x = handler xs = list_handler_
-    {    ( x :: xs )} [@name cons_handler]
+    {( x :: xs )} [@name cons_handler]
 
 nonempty_list_BYTES_:
   x = BYTES
-    {    ( [ x ] )} [@name one_BYTES]
+    {( [ x ] )} [@name one_BYTES]
 | x = BYTES xs = nonempty_list_BYTES_
-    {    ( x :: xs )} [@name more_BYTES]
+    {( x :: xs )} [@name more_BYTES]
 
 nonempty_list_NEWLINE_:
   x = NEWLINE
-    {    ( [ x ] )} [@name one_NEWLINE]
+    {( [ x ] )} [@name one_NEWLINE]
 | x = NEWLINE xs = nonempty_list_NEWLINE_
-    {    ( x :: xs )} [@name more_NEWLINE]
+    {( x :: xs )} [@name more_NEWLINE]
 
 nonempty_list_comparison_operator_:
   x = comparison_operator
-    {    ( [ x ] )} [@name one_comparison_operator]
+    {( [ x ] )} [@name one_comparison_operator]
 | x = comparison_operator xs = nonempty_list_comparison_operator_
-    {    ( x :: xs )} [@name more_comparison_operator]
+    {( x :: xs )} [@name more_comparison_operator]
 
 nonempty_list_comprehension_:
   x = comprehension
-    {    ( [ x ] )} [@name one_comprehension]
+    {( [ x ] )} [@name one_comprehension]
 | x = comprehension xs = nonempty_list_comprehension_
-    {    ( x :: xs )} [@name more_comprehension]
+    {( x :: xs )} [@name more_comprehension]
 
 nonempty_list_decorator_:
   x = decorator
-    {    ( [ x ] )} [@name one_decorator]
+    {( [ x ] )} [@name one_decorator]
 | x = decorator xs = nonempty_list_decorator_
-    {    ( x :: xs )} [@name more_decorator]
+    {( x :: xs )} [@name more_decorator]
 
 nonempty_list_ellipsis_or_dot_:
   x = ellipsis_or_dot
-    {    ( [ x ] )} [@name one_ellipsis_or_dot]
+    {( [ x ] )} [@name one_ellipsis_or_dot]
 | x = ellipsis_or_dot xs = nonempty_list_ellipsis_or_dot_
-    {    ( x :: xs )} [@name more_ellipsis_or_dot]
+    {( x :: xs )} [@name more_ellipsis_or_dot]
 
 parse:
   statements = statements _2 = EOF
-    {                                 ( snd statements )}
+    {( snd statements )}
 
 statements:
   
-    {    ( Location.any, [] )}
+    {( Location.any, [] )}
 | _1 = NEWLINE statements = statements
-    {                                     ( statements )}
+    {( statements )}
 | statement = statement statements = statements
-    {                                                   (
+    {(
       (* The recursion always terminates in the empty statement case. This logic avoids
        * propagating the end location information from there. *)
       let location =
@@ -481,17 +481,17 @@ statements:
 
 statement:
   statements = simple_statement
-    {                                  ( statements )}
+    {( statements )}
 | statement = compound_statement
-    {                                   ( statement.Node.location, [statement] )}
+    {( statement.Node.location, [statement] )}
 | statement = decorated_statement
-    {                                    ( statement.Node.location, [statement] )}
+    {( statement.Node.location, [statement] )}
 | statement = async_statement
-    {                                ( statement.Node.location, [statement] )}
+    {( statement.Node.location, [statement] )}
 
 simple_statement:
   statements = parser_generator_separated_nonempty_list_of_lists_SEMICOLON_small_statement_ _2 = NEWLINE
-    {            (
+    {(
       let flattened_statements = List.concat statements in
       let head = List.hd_exn flattened_statements in
       let last = List.last_exn flattened_statements in
@@ -501,11 +501,11 @@ simple_statement:
 
 small_statement:
   head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = PLUSEQUALS value = value
-    {let compound =                ( Add ) in
-let subscript =                          (
+    {let compound = ( Add ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -516,11 +516,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = ATEQUALS value = value
-    {let compound =              ( At ) in
-let subscript =                          (
+    {let compound = ( At ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -531,11 +531,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = AMPERSANDEQUALS value = value
-    {let compound =                     ( BitAnd ) in
-let subscript =                          (
+    {let compound = ( BitAnd ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -546,11 +546,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = BAREQUALS value = value
-    {let compound =               ( BitOr ) in
-let subscript =                          (
+    {let compound = ( BitOr ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -561,11 +561,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = HATEQUALS value = value
-    {let compound =               ( BitXor ) in
-let subscript =                          (
+    {let compound = ( BitXor ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -576,11 +576,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = SLASHSLASHEQUALS value = value
-    {let compound =                      ( FloorDivide ) in
-let subscript =                          (
+    {let compound = ( FloorDivide ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -591,11 +591,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = SLASHEQUALS value = value
-    {let compound =                 ( Divide ) in
-let subscript =                          (
+    {let compound = ( Divide ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -606,11 +606,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = LEFTANGLELEFTANGLEEQUALS value = value
-    {let compound =                              ( LeftShift ) in
-let subscript =                          (
+    {let compound = ( LeftShift ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -621,11 +621,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = PERCENTEQUALS value = value
-    {let compound =                   ( Modulo ) in
-let subscript =                          (
+    {let compound = ( Modulo ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -636,11 +636,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = ASTERIKSASTERIKSEQUALS value = value
-    {let compound =                            ( Power ) in
-let subscript =                          (
+    {let compound = ( Power ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -651,11 +651,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = ASTERIKSEQUALS value = value
-    {let compound =                    ( Multiply ) in
-let subscript =                          (
+    {let compound = ( Multiply ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -666,11 +666,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = RIGHTANGLERIGHTANGLEEQUALS value = value
-    {let compound =                                ( RightShift ) in
-let subscript =                          (
+    {let compound = ( RightShift ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -681,11 +681,11 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _1 = MINUSEQUALS value = value
-    {let compound =                 ( Subtract ) in
-let subscript =                          (
+    {let compound = ( Subtract ) in
+let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                                                                       (
+(
       let value =
         binary_operator
           ~compound:true
@@ -696,8 +696,8 @@ let subscript =                          (
       [subscript_mutation ~subscript ~value ~annotation:None]
   )}
 | target = test_list _1 = PLUSEQUALS value = value
-    {let compound =                ( Add ) in
-                  (
+    {let compound = ( Add ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -713,8 +713,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = ATEQUALS value = value
-    {let compound =              ( At ) in
-                  (
+    {let compound = ( At ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -730,8 +730,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = AMPERSANDEQUALS value = value
-    {let compound =                     ( BitAnd ) in
-                  (
+    {let compound = ( BitAnd ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -747,8 +747,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = BAREQUALS value = value
-    {let compound =               ( BitOr ) in
-                  (
+    {let compound = ( BitOr ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -764,8 +764,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = HATEQUALS value = value
-    {let compound =               ( BitXor ) in
-                  (
+    {let compound = ( BitXor ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -781,8 +781,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = SLASHSLASHEQUALS value = value
-    {let compound =                      ( FloorDivide ) in
-                  (
+    {let compound = ( FloorDivide ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -798,8 +798,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = SLASHEQUALS value = value
-    {let compound =                 ( Divide ) in
-                  (
+    {let compound = ( Divide ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -815,8 +815,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = LEFTANGLELEFTANGLEEQUALS value = value
-    {let compound =                              ( LeftShift ) in
-                  (
+    {let compound = ( LeftShift ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -832,8 +832,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = PERCENTEQUALS value = value
-    {let compound =                   ( Modulo ) in
-                  (
+    {let compound = ( Modulo ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -849,8 +849,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = ASTERIKSASTERIKSEQUALS value = value
-    {let compound =                            ( Power ) in
-                  (
+    {let compound = ( Power ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -866,8 +866,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = ASTERIKSEQUALS value = value
-    {let compound =                    ( Multiply ) in
-                  (
+    {let compound = ( Multiply ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -883,8 +883,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = RIGHTANGLERIGHTANGLEEQUALS value = value
-    {let compound =                                ( RightShift ) in
-                  (
+    {let compound = ( RightShift ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -900,8 +900,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = MINUSEQUALS value = value
-    {let compound =                 ( Subtract ) in
-                  (
+    {let compound = ( Subtract ) in
+(
       let value = binary_operator ~compound:true ~left:target ~operator:compound ~right:value in
       [{
         Node.location = {
@@ -917,8 +917,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = COLON expression = expression
-    {let annotation =                                    ( expression ) in
-                            (
+    {let annotation = ( expression ) in
+(
       [{
         Node.location = {
           target.Node.location with Location.stop =
@@ -933,7 +933,7 @@ let subscript =                          (
       }]
     )}
 | target = test_list annotation = ANNOTATION_COMMENT
-    {let annotation =                                     (
+    {let annotation = (
       let (start, stop), annotation = annotation in
       annotation
       |> String.strip ~drop:(function | '\'' | '"' -> true | _ -> false)
@@ -941,7 +941,7 @@ let subscript =                          (
       |> fun string -> Expression.String string
       |> Node.create ~location:(Location.create ~start ~stop)
     ) in
-                                    (
+(
       [{
         Node.location = {
           target.Node.location with Location.stop =
@@ -956,8 +956,8 @@ let subscript =                          (
       }]
     )}
 | target = test_list _1 = COLON expression = expression _3 = EQUALS value = test_list
-    {let annotation =                                    ( expression ) in
-                      (
+    {let annotation = ( expression ) in
+(
       [{
         Node.location = {
           target.Node.location with Location.stop =
@@ -972,17 +972,17 @@ let subscript =                          (
       }]
     )}
 | targets = targets value = value annotation = option_comment_annotation_
-    {                                                                       (
+    {(
       List.map ~f:(fun target -> target ~value ~annotation) targets
   )}
 | targets = targets ellipsis = ELLIPSES
-    {                                           (
+    {(
       let value = create_ellipsis ellipsis in
       List.map ~f:(fun target -> target ~value ~annotation:None) targets
     )}
 | target = test_list _1 = COLON expression = expression _3 = EQUALS ellipsis = ELLIPSES
-    {let annotation =                                    ( expression ) in
-                        (
+    {let annotation = ( expression ) in
+(
       let ellipsis = create_ellipsis ellipsis in
       [{
         Node.location = {
@@ -998,14 +998,14 @@ let subscript =                          (
       }]
     )}
 | start = ASSERT test = test
-    {                                (
+    {(
       [{
         Node.location = location_create_with_stop ~start ~stop:(Node.stop test);
         value = Assert { Assert.test = convert test; message = None; origin = Assert.Origin.Assertion }
       }]
     )}
 | start = ASSERT test = test _3 = COMMA message = test
-    {                          (
+    {(
       [{
         Node.location = location_create_with_stop ~start ~stop:(Node.stop test);
         value = Assert {
@@ -1016,21 +1016,21 @@ let subscript =                          (
       }]
     )}
 | position = BREAK
-    {                     (
+    {(
       let start, stop = position in
       [{ Node.location = Location.create ~start ~stop; value = Break }]
     )}
 | position = CONTINUE
-    {                        (
+    {(
       let start, stop = position in
       [{ Node.location = Location.create ~start ~stop; value = Continue }]
     )}
 | test = test_list
-    {                     (
+    {(
       [{ Node.location = test.Node.location; value = Expression (convert test) }]
     )}
 | start = GLOBAL globals = parser_generator_separated_nonempty_list_COMMA_identifier_
-    {                                                                                          (
+    {(
       let last = List.last_exn globals in
       let stop = (fst last).Location.stop in
       [{
@@ -1039,14 +1039,14 @@ let subscript =                          (
       }]
     )}
 | start = IMPORT imports = imports
-    {                                       (
+    {(
       [{
         Node.location = location_create_with_stop ~start ~stop:((fst imports).Location.stop);
         value = Import { Import.from = None; imports = snd imports };
       }]
     )}
 | start = FROM from = from _3 = IMPORT imports = imports
-    {                                                         (
+    {(
       [{
         Node.location = location_create_with_stop ~start ~stop:((fst imports).Location.stop);
         value = Import {
@@ -1056,7 +1056,7 @@ let subscript =                          (
       }]
     )}
 | start = NONLOCAL nonlocals = parser_generator_separated_nonempty_list_COMMA_identifier_
-    {                                                                                              (
+    {(
       let stop = (fst (List.last_exn nonlocals)).Location.stop in
       [{
         Node.location = location_create_with_stop ~start ~stop;
@@ -1064,12 +1064,12 @@ let subscript =                          (
       }]
     )}
 | position = PASS
-    {                    (
+    {(
       let start, stop = position in
       [{ Node.location = Location.create ~start ~stop; value = Pass }]
     )}
 | position = RAISE test = option_test_list_ raise_from = option_raise_from_
-    {                                                                  (
+    {(
       let start, stop = position in
       let location =
         match (test, raise_from) with
@@ -1085,7 +1085,7 @@ let subscript =                          (
       }]
     )}
 | return = RETURN test = option_test_list_
-    {                                       (
+    {(
       let start, stop = return in
       let location =
         match test with
@@ -1098,7 +1098,7 @@ let subscript =                          (
       }]
     )}
 | delete = DELETE expression = expression_list
-    {                                 (
+    {(
       let stop = Node.stop expression in
       [{
         Node.location = location_create_with_stop ~start:delete ~stop;
@@ -1106,7 +1106,7 @@ let subscript =                          (
       }]
     )}
 | yield = yield
-    {                  (
+    {(
       let has_from, yield = yield in
       let location = Node.location yield in
       if has_from then
@@ -1139,11 +1139,11 @@ let subscript =                          (
 
 raise_from:
   _1 = FROM test_list = test_list
-    {                                ( test_list )}
+    {( test_list )}
 
 compound_statement:
   definition = CLASS name = reference bases = bases colon_position = COLON body = block_or_stub_body
-    {                              (
+    {(
       let location = Location.create ~start:definition ~stop:colon_position in
       let body_location, body = body in
       let location = { location with Location.stop = body_location.Location.stop } in
@@ -1193,7 +1193,7 @@ compound_statement:
       }
     )}
 | definition = DEFINE name = reference _3 = LEFTPARENS parameters = define_parameters _5 = RIGHTPARENS return_annotation = option_return_annotation_ _7 = COLON signature_comment = option_SIGNATURE_COMMENT_ body = block_or_stub_body
-    {                              (
+    {(
       let body_location, body = body in
       let location =
         location_create_with_stop ~start:definition ~stop:body_location.Location.stop
@@ -1275,7 +1275,7 @@ compound_statement:
       }
     )}
 | start = FOR target = expression_list _3 = IN iterator = test_list _5 = COLON _6 = option_ANNOTATION_COMMENT_ body = block orelse = named_optional_block_ELSE_
-    {                                                                           (
+    {(
       let stop = begin match orelse with
       | _, [] -> (fst body).Location.stop
       | location, _ -> location.Location.stop
@@ -1292,7 +1292,7 @@ compound_statement:
       }
     )}
 | start = IF value = conditional
-    {                                    (
+    {(
       let value_location, value = value in
       {
         Node.location = location_create_with_stop ~start ~stop:value_location.Location.stop;
@@ -1300,7 +1300,7 @@ compound_statement:
       }
     )}
 | start = TRY _2 = COLON body = block handlers = list_handler_ orelse = named_optional_block_ELSE_ finally = named_optional_block_FINALLY_
-    {                                            (
+    {(
       let stop =
         begin
           match handlers, snd orelse, snd finally with
@@ -1321,7 +1321,7 @@ compound_statement:
       }
     )}
 | start = WITH items = parser_generator_separated_nonempty_list_COMMA_with_item_ _3 = COLON _4 = option_ANNOTATION_COMMENT_ body = block
-    {                 (
+    {(
       let convert_item (expression, expression_option) =
         (convert expression, expression_option >>| convert)
       in
@@ -1335,7 +1335,7 @@ compound_statement:
       }
     )}
 | start = WHILE test = test_list _3 = COLON body = block orelse = named_optional_block_ELSE_
-    {                                                      (
+    {(
       let stop =
         match orelse with
         | _, [] -> (fst body).Location.stop
@@ -1348,17 +1348,17 @@ compound_statement:
 
 decorated_statement:
   decorators = nonempty_list_decorator_ statement = compound_statement
-    {                                                            (
+    {(
       with_decorators decorators statement
     )}
 | decorators = nonempty_list_decorator_ statement = async_statement
-    {                                                         (
+    {(
       with_decorators decorators statement
     )}
 
 async_statement:
   position = ASYNC statement = compound_statement
-    {                                                     (
+    {(
       let location = location_create_with_stop ~start:(fst position) ~stop:(Node.stop statement) in
       match statement with
       | { Node.value = Statement.Define value; _ } ->
@@ -1385,43 +1385,43 @@ async_statement:
 
 block_or_stub_body:
   ellipsis = ELLIPSES _2 = NEWLINE
-    {                                                                     (
+    {(
     let location = Location.create ~start:(fst ellipsis) ~stop:(snd ellipsis) in
     let body = [Node.create (Statement.Expression (Node.create AstExpression.Expression.Ellipsis ~location)) ~location] in
     location, body
    )}
 | _1 = nonempty_list_NEWLINE_ _2 = INDENT ellipsis = ELLIPSES _4 = NEWLINE _5 = DEDENT _6 = list_NEWLINE_
-    {                                                                     (
+    {(
     let location = Location.create ~start:(fst ellipsis) ~stop:(snd ellipsis) in
     let body = [Node.create (Statement.Expression (Node.create AstExpression.Expression.Ellipsis ~location)) ~location] in
     location, body
    )}
 | statements = block
-    {                       ( statements )}
+    {( statements )}
 
 block:
   simple_statement = simple_statement
-    {                                         ( simple_statement )}
+    {( simple_statement )}
 | _1 = nonempty_list_NEWLINE_ _2 = INDENT statements = statements _4 = DEDENT _5 = list_NEWLINE_
-    {                                                                (
+    {(
       statements
     )}
 
 named_optional_block_ELSE_:
   
-    {    ( Location.any, [] )}
+    {( Location.any, [] )}
 | _1 = ELSE _2 = COLON block = block
-    {                               ( block )}
+    {( block )}
 
 named_optional_block_FINALLY_:
   
-    {    ( Location.any, [] )}
+    {( Location.any, [] )}
 | _1 = FINALLY _2 = COLON block = block
-    {                               ( block )}
+    {( block )}
 
 conditional:
   test = test_list _2 = COLON body = block orelse = named_optional_block_ELSE_
-    {                                                      (
+    {(
       {
         test.Node.location with
         Location.stop =
@@ -1432,7 +1432,7 @@ conditional:
       If { If.test = convert test; body = snd body; orelse = snd orelse }
     )}
 | test = test_list _2 = COLON body = block else_start = ELSEIF value = conditional
-    {                                             (
+    {(
       let stop = (fst value).Location.stop in
       { test.Node.location with Location.stop },
       Statement.If {
@@ -1448,39 +1448,39 @@ conditional:
 
 bases:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = LEFTPARENS bases = parser_generator_separated_list_COMMA_argument_ _3 = RIGHTPARENS
-    {                                                                                      (
+    {(
       bases
     )}
 
 decorator_arguments:
   
-    {    ( None )}
+    {( None )}
 | _1 = LEFTPARENS arguments = arguments _3 = RIGHTPARENS
-    {                                                   ( Some arguments )}
+    {( Some arguments )}
 
 decorator:
   _1 = AT name = reference arguments = decorator_arguments _4 = nonempty_list_NEWLINE_
-    {                                                                    (
+    {(
       { decorator_name = { Node.location = fst name; value = snd name }; arguments }
     )}
 
 identifier:
   identifier = IDENTIFIER
-    {                            (
+    {(
       let start, stop = fst identifier in
       Location.create ~start ~stop, snd identifier
     )}
 | position = ASYNC
-    {                     (
+    {(
       Location.create ~start:(fst position) ~stop:(snd position),
       "async"
     )}
 
 reference:
   identifiers = parser_generator_separated_nonempty_list_DOT_identifier_
-    {                                                                            (
+    {(
       let location =
         let (start, _) = List.hd_exn identifiers in
         let (stop, _) = List.last_exn identifiers in
@@ -1495,7 +1495,7 @@ reference:
 
 define_parameters:
   asteriks = ASTERIKS _2 = COMMA annotation = option_comment_annotation_ parameters = define_parameters
-    {let parameter =                         (
+    {let parameter = (
       {
         Node.location = Location.create ~start:(fst asteriks) ~stop:(snd asteriks);
         value = {
@@ -1505,9 +1505,9 @@ define_parameters:
         };
       }
     ) in
-                                   ( (with_annotation ~parameter ~annotation) :: parameters )}
+( (with_annotation ~parameter ~annotation) :: parameters )}
 | slash = SLASH _2 = COMMA annotation = option_comment_annotation_ parameters = define_parameters
-    {let parameter =                   (
+    {let parameter = (
     {
       Node.location = Location.create ~start:slash ~stop:slash;
       value = {
@@ -1517,11 +1517,11 @@ define_parameters:
       };
     }
   ) in
-                                   ( (with_annotation ~parameter ~annotation) :: parameters )}
+( (with_annotation ~parameter ~annotation) :: parameters )}
 | expression = expression annotation_inlined1 = option_annotation_ _2 = COMMA annotation = option_comment_annotation_ parameters = define_parameters
     {let parameter =
   let annotation = annotation_inlined1 in
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -1540,18 +1540,18 @@ define_parameters:
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                                            (
+  (
       {
         Node.location = fst name;
         value = { Parameter.name = snd name; value = None; annotation };
       }
     )
 in
-                                   ( (with_annotation ~parameter ~annotation) :: parameters )}
+( (with_annotation ~parameter ~annotation) :: parameters )}
 | expression = expression annotation_inlined1 = option_annotation_ _3 = EQUALS value = test _2 = COMMA annotation = option_comment_annotation_ parameters = define_parameters
     {let parameter =
   let annotation = annotation_inlined1 in
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -1570,16 +1570,16 @@ in
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                                                                  (
+  (
       {
         Node.location = fst name;
         value = { Parameter.name = snd name; value = Some value; annotation };
       }
     )
 in
-                                   ( (with_annotation ~parameter ~annotation) :: parameters )}
+( (with_annotation ~parameter ~annotation) :: parameters )}
 | asteriks = ASTERIKS annotation = option_comment_annotation_
-    {let parameter =                         (
+    {let parameter = (
       {
         Node.location = Location.create ~start:(fst asteriks) ~stop:(snd asteriks);
         value = {
@@ -1589,9 +1589,9 @@ in
         };
       }
     ) in
-                                     ( [with_annotation ~parameter ~annotation] )}
+( [with_annotation ~parameter ~annotation] )}
 | slash = SLASH annotation = option_comment_annotation_
-    {let parameter =                   (
+    {let parameter = (
     {
       Node.location = Location.create ~start:slash ~stop:slash;
       value = {
@@ -1601,11 +1601,11 @@ in
       };
     }
   ) in
-                                     ( [with_annotation ~parameter ~annotation] )}
+( [with_annotation ~parameter ~annotation] )}
 | expression = expression annotation_inlined1 = option_annotation_ annotation = option_comment_annotation_
     {let parameter =
   let annotation = annotation_inlined1 in
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -1624,18 +1624,18 @@ in
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                                            (
+  (
       {
         Node.location = fst name;
         value = { Parameter.name = snd name; value = None; annotation };
       }
     )
 in
-                                     ( [with_annotation ~parameter ~annotation] )}
+( [with_annotation ~parameter ~annotation] )}
 | expression = expression annotation_inlined1 = option_annotation_ _3 = EQUALS value = test annotation = option_comment_annotation_
     {let parameter =
   let annotation = annotation_inlined1 in
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -1654,76 +1654,76 @@ in
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                                                                  (
+  (
       {
         Node.location = fst name;
         value = { Parameter.name = snd name; value = Some value; annotation };
       }
     )
 in
-                                     ( [with_annotation ~parameter ~annotation] )}
+( [with_annotation ~parameter ~annotation] )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 with_item:
   resource = test
-    {                    ( resource, None )}
+    {( resource, None )}
 | resource = test _2 = AS target = expression
-    {                                             ( resource, Some target )}
+    {( resource, Some target )}
 
 handler:
   start = EXCEPT _2 = COLON handler_body = block
-    {                                                (
+    {(
       location_create_with_stop ~start ~stop:(fst handler_body).Location.stop,
       { Try.Handler.kind = None; name = None; body = snd handler_body }
     )}
 | start = EXCEPT kind = expression _3 = COLON handler_body = block
-    {                                                                   (
+    {(
       location_create_with_stop ~start ~stop:(fst handler_body).Location.stop,
       { Try.Handler.kind = Some kind >>| convert; name = None; body = snd handler_body }
     )}
 | start = EXCEPT kind = expression _3 = AS name = identifier _5 = COLON handler_body = block
-    {                                (
+    {(
       location_create_with_stop ~start ~stop:(fst handler_body).Location.stop,
       { Try.Handler.kind = Some kind >>| convert; name = Some (snd name); body = snd handler_body }
     )}
 | start = EXCEPT kind = expression _3 = COMMA name = identifier _5 = COLON handler_body = block
-    {                                (
+    {(
       location_create_with_stop ~start ~stop:(fst handler_body).Location.stop,
       { Try.Handler.kind = Some kind >>| convert; name = Some (snd name); body = snd handler_body }
     )}
 | start = EXCEPT kind = or_test _3 = COLON handler_body = block
-    {                                                (
+    {(
       location_create_with_stop ~start ~stop:(fst handler_body).Location.stop,
       { Try.Handler.kind = Some kind >>| convert; name = None; body = snd handler_body }
     )}
 | start = EXCEPT kind = or_test _3 = AS name = identifier _5 = COLON handler_body = block
-    {                                (
+    {(
       location_create_with_stop ~start ~stop:(fst handler_body).Location.stop,
       { Try.Handler.kind = Some kind >>| convert; name = Some (snd name); body = snd handler_body }
     )}
 
 from:
   from = from_string
-    {                       (
+    {(
       { Node.location = fst from; value = Reference.create (snd from) }
       |> Option.some
     )}
 
 from_string:
   identifier = identifier
-    {                            (
+    {(
       identifier
   )}
 | identifier = identifier from_string = from_string
-    {                                                       (
+    {(
       let location =
         { (fst identifier) with Location.stop = (fst from_string).Location.stop }
       in
       location, (snd identifier) ^ (snd from_string)
     )}
 | relative = nonempty_list_ellipsis_or_dot_
-    {                                              (
+    {(
       let location =
         Location.create
           ~start:(fst (fst (List.hd_exn relative)))
@@ -1732,7 +1732,7 @@ from_string:
       location, String.concat (List.map ~f:snd relative)
     )}
 | relative = nonempty_list_ellipsis_or_dot_ from_string = from_string
-    {                              (
+    {(
       let location =
         location_create_with_stop
           ~start:(fst (fst (List.hd_exn relative)))
@@ -1743,17 +1743,17 @@ from_string:
 
 ellipsis_or_dot:
   position = DOT
-    {                   (
+    {(
       position, "."
     )}
 | position = ELLIPSES
-    {                        (
+    {(
       position, "..."
     )}
 
 imports:
   imports = parser_generator_separated_nonempty_list_COMMA_import_
-    {                                                                      (
+    {(
       let location =
         let (start, _) = List.hd_exn imports in
         let (stop, _) = List.last_exn imports in
@@ -1762,14 +1762,14 @@ imports:
       location, List.map ~f:snd imports
     )}
 | start = LEFTPARENS imports = parser_generator_separated_nonempty_list_COMMA_import_ stop = RIGHTPARENS
-    {                       (
+    {(
       (Location.create ~start ~stop),
       List.map ~f:snd imports
     )}
 
 import:
   position = ASTERIKS
-    {                        (
+    {(
       let location =
         let start, stop = position in
         Location.create ~start ~stop
@@ -1781,7 +1781,7 @@ import:
       }
     )}
 | name = reference
-    {                     (
+    {(
       fst name,
       {
         Import.name = { Node.location = fst name; value = snd name };
@@ -1789,7 +1789,7 @@ import:
       }
     )}
 | name = reference _2 = AS alias = identifier
-    {                           (
+    {(
       {(fst name) with Location.stop = (fst alias).Location.stop},
       {
         Import.name = { Node.location = fst name; value = snd name };
@@ -1799,7 +1799,7 @@ import:
 
 targets:
   target = test_list _2 = EQUALS
-    {let target =                        (
+    {let target = (
       let assignment_with_annotation ~value ~annotation =
         {
           Node.location = {
@@ -1816,17 +1816,17 @@ targets:
       in
       assignment_with_annotation
     ) in
-                            ( [target] )}
+( [target] )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _2 = EQUALS
     {let target =
-  let subscript =                          (
+  let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                            ( subscript_mutation ~subscript )
+  ( subscript_mutation ~subscript )
 in
-                            ( [target] )}
+( [target] )}
 | targets = targets target = test_list _3 = EQUALS
-    {let target =                        (
+    {let target = (
       let assignment_with_annotation ~value ~annotation =
         {
           Node.location = {
@@ -1843,102 +1843,102 @@ in
       in
       assignment_with_annotation
     ) in
-                                               ( targets @ [target] )}
+( targets @ [target] )}
 | targets = targets head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET _3 = EQUALS
     {let target =
-  let subscript =                          (
+  let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                            ( subscript_mutation ~subscript )
+  ( subscript_mutation ~subscript )
 in
-                                               ( targets @ [target] )}
+( targets @ [target] )}
 
 value:
   test = test_list
-    {                     ( test )}
+    {( test )}
 | yield = yield
-    {                  ( snd yield )}
+    {( snd yield )}
 
 atom:
   identifier = identifier
-    {                            (
+    {(
       {
         Node.location = fst identifier;
         value = Name (Name.Identifier (snd identifier));
       }
     )}
 | ellipsis = ELLIPSES
-    {                        (
+    {(
       let location = Location.create ~start:(fst ellipsis) ~stop:(snd ellipsis) in
       Node.create Expression.Ellipsis ~location
     )}
 | left = expression _1 = PLUS right = expression
-    {let operator =          ( Add ) in
-                        (
+    {let operator = ( Add ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = AT right = expression
-    {let operator =        ( At ) in
-                        (
+    {let operator = ( At ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = AMPERSAND right = expression
-    {let operator =               ( BitAnd ) in
-                        (
+    {let operator = ( BitAnd ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = BAR right = expression
-    {let operator =         ( BitOr ) in
-                        (
+    {let operator = ( BitOr ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = HAT right = expression
-    {let operator =         ( BitXor ) in
-                        (
+    {let operator = ( BitXor ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = SLASH _2 = SLASH right = expression
-    {let operator =                  ( FloorDivide ) in
-                        (
+    {let operator = ( FloorDivide ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = SLASH right = expression
-    {let operator =           ( Divide ) in
-                        (
+    {let operator = ( Divide ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = LEFTANGLELEFTANGLE right = expression
-    {let operator =                        ( LeftShift ) in
-                        (
+    {let operator = ( LeftShift ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = PERCENT right = expression
-    {let operator =             ( Modulo ) in
-                        (
+    {let operator = ( Modulo ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = ASTERIKS _2 = ASTERIKS right = expression
-    {let operator =                        ( Power ) in
-                        (
+    {let operator = ( Power ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = ASTERIKS right = expression
-    {let operator =              ( Multiply ) in
-                        (
+    {let operator = ( Multiply ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = RIGHTANGLERIGHTANGLE right = expression
-    {let operator =                          ( RightShift ) in
-                        (
+    {let operator = ( RightShift ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | left = expression _1 = MINUS right = expression
-    {let operator =           ( Subtract ) in
-                        (
+    {let operator = ( Subtract ) in
+(
       binary_operator ~compound:false ~left ~operator ~right
     )}
 | bytes = nonempty_list_BYTES_
-    {                   (
+    {(
       let (start, stop), _, _ = List.hd_exn bytes in
       {
         Node.location = Location.create ~start ~stop;
@@ -1950,7 +1950,7 @@ atom:
       }
     )}
 | format = FORMAT mixed_string = mixed_string
-    {                                                 (
+    {(
       let all_strings = create_substring AstExpression.Substring.Format format :: mixed_string in
       let all_pieces = List.map all_strings ~f:snd in
       let (head, _), (last, _) = List.hd_exn all_strings, List.last_exn all_strings in
@@ -1962,18 +1962,18 @@ atom:
       }
     )}
 | name = expression start = LEFTPARENS arguments = arguments stop = RIGHTPARENS
-    {                       (
+    {(
       let call_location = Location.create ~start ~stop in
       Expression.Call { callee = name; arguments }
       |> Node.create
         ~location:({ name.Node.location with Location.stop = call_location.Location.stop })
     )}
 | set_or_dictionary = set_or_dictionary
-    {                                          (
+    {(
       set_or_dictionary
     )}
 | position = FALSE
-    {                     (
+    {(
       let start, stop = position in
       {
         Node.location = Location.create ~start ~stop;
@@ -1981,7 +1981,7 @@ atom:
       }
     )}
 | number = COMPLEX
-    {                     (
+    {(
       let start, stop = fst number in
       {
         Node.location = Location.create ~start ~stop;
@@ -1989,7 +1989,7 @@ atom:
       }
     )}
 | number = FLOAT
-    {                   (
+    {(
       let start, stop = fst number in
       {
         Node.location = Location.create ~start ~stop;
@@ -1997,7 +1997,7 @@ atom:
       }
     )}
 | number = INTEGER
-    {                     (
+    {(
       let start, stop = fst number in
       {
         Node.location = Location.create ~start ~stop;
@@ -2005,28 +2005,28 @@ atom:
       }
     )}
 | start = LEFTBRACKET items = parser_generator_separated_list_COMMA_test_ stop = RIGHTBRACKET
-    {                        (
+    {(
       {
         Node.location = Location.create ~start ~stop;
         value = Expression.List items;
       }
     )}
 | start = LEFTBRACKET element = test generators = nonempty_list_comprehension_ stop = RIGHTBRACKET
-    {                        (
+    {(
       {
         Node.location = Location.create ~start ~stop;
         value = Expression.ListComprehension { Comprehension.element; generators };
       }
     )}
 | start = LEFTCURLY element = test generators = nonempty_list_comprehension_ stop = RIGHTCURLY
-    {                      (
+    {(
       {
         Node.location = Location.create ~start ~stop;
         value = Expression.SetComprehension { Comprehension.element; generators };
       }
     )}
 | position = ASTERIKS test = expression
-    {                                           (
+    {(
     let start, _ = position in
     let location = location_create_with_stop ~start ~stop:(Node.stop test) in
     match test with
@@ -2043,7 +2043,7 @@ atom:
       }
     )}
 | string = STRING mixed_string = mixed_string
-    {                                                 (
+    {(
       let all_strings = create_substring AstExpression.Substring.Literal string :: mixed_string in
       let all_pieces = List.map all_strings ~f:snd in
       let (head, _), (last, _) = List.hd_exn all_strings, List.last_exn all_strings in
@@ -2055,13 +2055,13 @@ atom:
       }
     )}
 | position = TRUE
-    {                    (
+    {(
       let start, stop = position in
       { Node.location = Location.create ~start ~stop; value = True }
     )}
 | position = TILDE operand = expression
-    {let operator =                      ( position, AstExpression.UnaryOperator.Invert ) in
-                                                    (
+    {let operator = ( position, AstExpression.UnaryOperator.Invert ) in
+(
       let start, operator = operator in
       let { Node.value; _ } = operand in
       let location = location_create_with_stop ~start ~stop:(Node.stop operand)
@@ -2080,8 +2080,8 @@ atom:
       }
     )}
 | position = MINUS operand = expression
-    {let operator =                      ( position, AstExpression.UnaryOperator.Negative ) in
-                                                    (
+    {let operator = ( position, AstExpression.UnaryOperator.Negative ) in
+(
       let start, operator = operator in
       let { Node.value; _ } = operand in
       let location = location_create_with_stop ~start ~stop:(Node.stop operand)
@@ -2100,8 +2100,8 @@ atom:
       }
     )}
 | position = NOT operand = expression
-    {let operator =                    ( position, AstExpression.UnaryOperator.Not ) in
-                                                    (
+    {let operator = ( position, AstExpression.UnaryOperator.Not ) in
+(
       let start, operator = operator in
       let { Node.value; _ } = operand in
       let location = location_create_with_stop ~start ~stop:(Node.stop operand)
@@ -2120,8 +2120,8 @@ atom:
       }
     )}
 | position = PLUS operand = expression
-    {let operator =                     ( position, AstExpression.UnaryOperator.Positive ) in
-                                                    (
+    {let operator = ( position, AstExpression.UnaryOperator.Positive ) in
+(
       let start, operator = operator in
       let { Node.value; _ } = operand in
       let location = location_create_with_stop ~start ~stop:(Node.stop operand)
@@ -2142,23 +2142,23 @@ atom:
 
 expression:
   atom = atom
-    {                ( atom )}
+    {( atom )}
 | start = LEFTPARENS stop = RIGHTPARENS
-    {                                           (
+    {(
       {
         Node.location = Location.create ~start ~stop;
         value = Tuple [];
       }
     )}
 | start = LEFTPARENS test = test_list stop = RIGHTPARENS
-    {                                                             (
+    {(
       {
         Node.location = Location.create ~start ~stop;
         value = Parenthesis test;
       }
     )}
 | expression = expression _2 = DOT identifier = identifier
-    {                                                          (
+    {(
       let location =
         { expression.Node.location with Location.stop = Location.stop (fst identifier) }
       in
@@ -2170,25 +2170,25 @@ expression:
       }
     )}
 | head = expression left = LEFTBRACKET subscripts = parser_generator_separated_nonempty_list_COMMA_subscript_key_ right = RIGHTBRACKET
-    {let subscript =                          (
+    {let subscript = (
       head, subscripts, Location.create ~start:left ~stop:right
     ) in
-                          ( subscript_access subscript )}
+( subscript_access subscript )}
 | start = AWAIT expression = expression
-    {                                           (
+    {(
       {
         Node.location = location_create_with_stop ~start ~stop:(Node.stop expression);
         value = Await expression;
       }
     )}
 | _1 = LEFTPARENS generator = generator _3 = RIGHTPARENS
-    {                                                   ( generator )}
+    {( generator )}
 | _1 = LEFTPARENS yield = yield _3 = RIGHTPARENS
-    {                                          ( snd yield )}
+    {( snd yield )}
 
 expression_list:
   items = separated_nonempty_list_indicator_COMMA_expression_
-    {                                                                 (
+    {(
       match items with
       | head::[], has_trailing_comma ->
           if has_trailing_comma then
@@ -2208,21 +2208,21 @@ expression_list:
 
 mixed_string:
   
-    {    ( [] )}
+    {( [] )}
 | first_string = FORMAT rest = mixed_string
-    {                                               (
+    {(
       create_substring AstExpression.Substring.Format first_string :: rest
     )}
 | first_string = STRING rest = mixed_string
-    {                                               (
+    {(
       create_substring AstExpression.Substring.Literal first_string :: rest
     )}
 
 comparison:
   expression = expression
-    {                            ( expression )}
+    {( expression )}
 | left = expression comparisons = nonempty_list_comparison_operator_
-    {                                                                        (
+    {(
       let rec comparison ({ Node.location; _ } as left) comparisons =
         match comparisons with
         | (operator, right) :: comparisons when List.length comparisons > 0 ->
@@ -2248,9 +2248,9 @@ comparison:
 
 not_test:
   comparison = comparison
-    {                            ( comparison )}
+    {( comparison )}
 | start = NOT not_test = not_test
-    {                                     (
+    {(
       let location = location_create_with_stop ~start ~stop:(Node.stop not_test) in
       {
         Node.location;
@@ -2263,9 +2263,9 @@ not_test:
 
 and_test:
   not_test = not_test
-    {                        ( not_test )}
+    {( not_test )}
 | left = not_test _2 = AND right = and_test
-    {                                           (
+    {(
       let location = { (Node.location left) with Location.stop = Node.stop right } in
       {
         Node.location;
@@ -2279,9 +2279,9 @@ and_test:
 
 or_test:
   and_test = and_test
-    {                        ( and_test )}
+    {( and_test )}
 | left = and_test _2 = OR right = or_test
-    {                                         (
+    {(
       let location = { (Node.location left) with Location.stop = Node.stop right } in
       {
         Node.location;
@@ -2295,15 +2295,15 @@ or_test:
 
 test_with_generator:
   generator = generator
-    {                          ( generator )}
+    {( generator )}
 | test = test
-    {                ( test )}
+    {( test )}
 
 test:
   or_test = or_test
-    {                      ( or_test )}
+    {( or_test )}
 | target = identifier _2 = COLONEQUALS value = test
-    {                                                   (
+    {(
       {
         Node.location = { (fst target) with Location.stop = Node.stop value };
         value = Expression.WalrusOperator {
@@ -2315,14 +2315,14 @@ test:
       }
     )}
 | target = or_test _2 = IF test = test_list _4 = ELSE alternative = test
-    {                       (
+    {(
       {
         Node.location = { target.Node.location with Location.stop = Node.stop alternative };
         value = Expression.Ternary { Ternary.target; test; alternative };
       }
     )}
 | start = LAMBDA parameters = parser_generator_separated_list_COMMA_lambda_parameter_ _3 = COLON body = test
-    {                (
+    {(
       {
         Node.location =  location_create_with_stop ~start ~stop:(Node.stop body);
         value = Expression.Lambda { Lambda.parameters; body }
@@ -2331,7 +2331,7 @@ test:
 
 test_list:
   items = separated_nonempty_list_indicator_COMMA_test_
-    {                                                           (
+    {(
       match items with
       | head :: [], has_trailing_comma ->
         if has_trailing_comma then
@@ -2352,7 +2352,7 @@ test_list:
 
 yield:
   position = YIELD has_from = option_FROM_ test = option_test_list_
-    {                                                           (
+    {(
       let start, stop = position in
       let location =
         Option.map
@@ -2369,66 +2369,66 @@ yield:
 
 comparison_operator:
   _1 = DOUBLEEQUALS operand = expression
-    {                                       ( AstExpression.ComparisonOperator.Equals, operand )}
+    {( AstExpression.ComparisonOperator.Equals, operand )}
 | _1 = RIGHTANGLE operand = expression
-    {                                     ( AstExpression.ComparisonOperator.GreaterThan, operand )}
+    {( AstExpression.ComparisonOperator.GreaterThan, operand )}
 | _1 = RIGHTANGLEEQUALS operand = expression
-    {                                           (
+    {(
       AstExpression.ComparisonOperator.GreaterThanOrEquals, operand
     )}
 | _1 = IN operand = expression
-    {                             ( AstExpression.ComparisonOperator.In, operand )}
+    {( AstExpression.ComparisonOperator.In, operand )}
 | _1 = IS operand = expression
-    {                             ( AstExpression.ComparisonOperator.Is, operand )}
+    {( AstExpression.ComparisonOperator.Is, operand )}
 | _1 = ISNOT operand = expression
-    {                                ( AstExpression.ComparisonOperator.IsNot, operand )}
+    {( AstExpression.ComparisonOperator.IsNot, operand )}
 | _1 = LEFTANGLE operand = expression
-    {                                    ( AstExpression.ComparisonOperator.LessThan, operand )}
+    {( AstExpression.ComparisonOperator.LessThan, operand )}
 | _1 = LEFTANGLEEQUALS operand = expression
-    {                                          (
+    {(
       AstExpression.ComparisonOperator.LessThanOrEquals, operand
     )}
 | _1 = EXCLAMATIONMARK _2 = EQUALS operand = expression
-    {                                                  (
+    {(
       AstExpression.ComparisonOperator.NotEquals, operand
     )}
 | _1 = NOT _2 = IN operand = expression
-    {                                  ( AstExpression.ComparisonOperator.NotIn, operand )}
+    {( AstExpression.ComparisonOperator.NotIn, operand )}
 
 arguments:
   arguments = parser_generator_separated_list_COMMA_argument_
-    {                                                                 ( arguments )}
+    {( arguments )}
 | test = test_with_generator
-    {                               ( [{ Call.Argument.name = None; value = test }] )}
+    {( [{ Call.Argument.name = None; value = test }] )}
 | test = generator _2 = COMMA
-    {                            ( [{ Call.Argument.name = None; value = test }] )}
+    {( [{ Call.Argument.name = None; value = test }] )}
 
 argument:
   identifier = identifier _2 = EQUALS value = test
-    {                                                  (
+    {(
       {
         Call.Argument.name = Some { Node.location = fst identifier; value = snd identifier };
         value;
       }
     )}
 | value = test
-    {                 ( { Call.Argument.name = None; value } )}
+    {( { Call.Argument.name = None; value } )}
 
 subscript_key:
   index = test
-    {                 ( index )}
+    {( index )}
 | lower = option_test_ bound_colon = COLON upper = option_test_
-    {                                                      (
+    {(
       slice ~lower ~upper ~step:None ~bound_colon ~step_colon:None
     )}
 | lower = option_test_ bound_colon = COLON upper = option_test_ step_colon = COLON step = option_test_
-    {                                                                                        (
+    {(
       slice ~lower ~upper ~step ~bound_colon ~step_colon:(Some step_colon)
     )}
 
 set_or_dictionary_entry:
   test = test
-    {                (
+    {(
       match test with
       | { Node.value = Starred (Starred.Twice keywords); _ } ->
           Keywords keywords
@@ -2436,34 +2436,34 @@ set_or_dictionary_entry:
           Item test
     )}
 | key = test _2 = COLON value = test
-    {                                    (
+    {(
       Entry { Dictionary.Entry.key = key; value = value; }
     )}
 
 set_or_dictionary_maker:
   entry = set_or_dictionary_entry
-    {                                    (
+    {(
       add_entry { entries = []; comprehensions = []; items = []; keywords = [] } entry
     )}
 | items = set_or_dictionary_maker _2 = COMMA entry = set_or_dictionary_entry
-    {                                                                            (
+    {(
       add_entry items entry
     )}
 | items = set_or_dictionary_maker comprehension = comprehension
-    {                                                                   (
+    {(
       add_entry items (Comprehension comprehension)
     )}
 
 set_or_dictionary:
   start = LEFTCURLY stop = RIGHTCURLY
-    {                                         (
+    {(
       {
         Node.location = Location.create ~start ~stop;
         value = Dictionary { Dictionary.entries = []; keywords = [] };
       }
     )}
 | start = LEFTCURLY items = set_or_dictionary_maker _3 = option_COMMA_ stop = RIGHTCURLY
-    {                                                                                  (
+    {(
       let value =
         match items with
         | { entries; keywords; comprehensions = []; items = [] } ->
@@ -2487,7 +2487,7 @@ set_or_dictionary:
 
 generator:
   element = test generators = nonempty_list_comprehension_
-    {                                                (
+    {(
       let stop =
         let { Comprehension.Generator.iterator; conditions; _ } = List.last_exn generators in
         match List.rev conditions with
@@ -2502,53 +2502,53 @@ generator:
 
 comprehension:
   _1 = ASYNC _2 = FOR target = expression_list _4 = IN iterator = or_test conditions = list_condition_
-    {                                 (
+    {(
       { Comprehension.Generator.target; iterator; conditions; async = true }
     )}
 | _1 = FOR target = expression_list _3 = IN iterator = or_test conditions = list_condition_
-    {                                 (
+    {(
       { Comprehension.Generator.target; iterator; conditions; async = false }
     )}
 
 condition:
   _1 = IF test = or_test
-    {                       ( test )}
+    {( test )}
 
 parser_generator_separated_list_COMMA_argument_:
   
-    {    ( [] )}
+    {( [] )}
 | item = argument
-    {                ( [item] )}
+    {( [item] )}
 | item = argument _2 = COMMA rest = parser_generator_separated_list_COMMA_argument_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_COMMA_identifier_:
   
-    {    ( [] )}
+    {( [] )}
 | item = identifier
-    {                ( [item] )}
+    {( [item] )}
 | item = identifier _2 = COMMA rest = parser_generator_separated_list_COMMA_identifier_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_COMMA_import_:
   
-    {    ( [] )}
+    {( [] )}
 | item = import
-    {                ( [item] )}
+    {( [item] )}
 | item = import _2 = COMMA rest = parser_generator_separated_list_COMMA_import_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_COMMA_lambda_parameter_:
   
-    {    ( [] )}
+    {( [] )}
 | asteriks = ASTERIKS
-    {let item =                         (
+    {let item = (
       {
         Node.location = Location.create ~start:(fst asteriks) ~stop:(snd asteriks);
         value = {
@@ -2558,10 +2558,10 @@ parser_generator_separated_list_COMMA_lambda_parameter_:
         };
       }
     ) in
-                ( [item] )}
+( [item] )}
 | expression = expression
     {let item =
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -2580,17 +2580,17 @@ parser_generator_separated_list_COMMA_lambda_parameter_:
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                  (
+  (
       {
         Node.location = fst name;
         value = { Parameter.name = snd name; value = None; annotation = None }
       }
     )
 in
-                ( [item] )}
+( [item] )}
 | expression = expression _2 = EQUALS value = test
     {let item =
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -2609,16 +2609,16 @@ in
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                                        (
+  (
       {
         Node.location = { (fst name) with Location.stop = value.Node.location.Location.stop };
         value = { Parameter.name = snd name; value = Some value; annotation = None};
       }
     )
 in
-                ( [item] )}
+( [item] )}
 | asteriks = ASTERIKS _2 = COMMA rest = parser_generator_separated_list_COMMA_lambda_parameter_
-    {let item =                         (
+    {let item = (
       {
         Node.location = Location.create ~start:(fst asteriks) ~stop:(snd asteriks);
         value = {
@@ -2628,12 +2628,12 @@ in
         };
       }
     ) in
-                                                                                    (
+(
       item::rest
     )}
 | expression = expression _2 = COMMA rest = parser_generator_separated_list_COMMA_lambda_parameter_
     {let item =
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -2652,19 +2652,19 @@ in
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                  (
+  (
       {
         Node.location = fst name;
         value = { Parameter.name = snd name; value = None; annotation = None }
       }
     )
 in
-                                                                                    (
+(
       item::rest
     )}
 | expression = expression _2_inlined1 = EQUALS value = test _2 = COMMA rest = parser_generator_separated_list_COMMA_lambda_parameter_
     {let item =
-  let name =                             (
+  let name = (
       let rec identifier expression =
         match expression with
         | { Node.location; value = Expression.Name (Name.Identifier identifier) } ->
@@ -2683,148 +2683,148 @@ in
             raise (ParserError "Unexpected parameters") in
       identifier expression
     ) in
-                                        (
+  (
       {
         Node.location = { (fst name) with Location.stop = value.Node.location.Location.stop };
         value = { Parameter.name = snd name; value = Some value; annotation = None};
       }
     )
 in
-                                                                                    (
+(
       item::rest
     )}
 
 parser_generator_separated_list_COMMA_subscript_key_:
   
-    {    ( [] )}
+    {( [] )}
 | item = subscript_key
-    {                ( [item] )}
+    {( [item] )}
 | item = subscript_key _2 = COMMA rest = parser_generator_separated_list_COMMA_subscript_key_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_COMMA_test_:
   
-    {    ( [] )}
+    {( [] )}
 | item = test
-    {                ( [item] )}
+    {( [item] )}
 | item = test _2 = COMMA rest = parser_generator_separated_list_COMMA_test_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_COMMA_with_item_:
   
-    {    ( [] )}
+    {( [] )}
 | item = with_item
-    {                ( [item] )}
+    {( [item] )}
 | item = with_item _2 = COMMA rest = parser_generator_separated_list_COMMA_with_item_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_DOT_identifier_:
   
-    {    ( [] )}
+    {( [] )}
 | item = identifier
-    {                ( [item] )}
+    {( [item] )}
 | item = identifier _2 = DOT rest = parser_generator_separated_list_DOT_identifier_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 separated_nonempty_list_indicator_tail_COMMA_expression_:
   
-    {    ( [], false )}
+    {( [], false )}
 | _1 = COMMA
-    {              ( [], true )}
+    {( [], true )}
 | _1 = COMMA item = expression rest = separated_nonempty_list_indicator_tail_COMMA_expression_
-    {                                                                                           (
+    {(
       let rest, has_trailing = rest in
       item :: rest, has_trailing
     )}
 
 separated_nonempty_list_indicator_tail_COMMA_test_:
   
-    {    ( [], false )}
+    {( [], false )}
 | _1 = COMMA
-    {              ( [], true )}
+    {( [], true )}
 | _1 = COMMA item = test rest = separated_nonempty_list_indicator_tail_COMMA_test_
-    {                                                                                           (
+    {(
       let rest, has_trailing = rest in
       item :: rest, has_trailing
     )}
 
 separated_nonempty_list_indicator_COMMA_expression_:
   item = expression rest = separated_nonempty_list_indicator_tail_COMMA_expression_
-    {                                                                                (
+    {(
       let rest, has_trailing = rest in
       item :: rest, has_trailing
     )}
 
 separated_nonempty_list_indicator_COMMA_test_:
   item = test rest = separated_nonempty_list_indicator_tail_COMMA_test_
-    {                                                                                (
+    {(
       let rest, has_trailing = rest in
       item :: rest, has_trailing
     )}
 
 parser_generator_separated_nonempty_list_COMMA_identifier_:
   item = identifier
-    {                ( [item] )}
+    {( [item] )}
 | item = identifier _2 = COMMA rest = parser_generator_separated_list_COMMA_identifier_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_nonempty_list_COMMA_import_:
   item = import
-    {                ( [item] )}
+    {( [item] )}
 | item = import _2 = COMMA rest = parser_generator_separated_list_COMMA_import_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_nonempty_list_COMMA_subscript_key_:
   item = subscript_key
-    {                ( [item] )}
+    {( [item] )}
 | item = subscript_key _2 = COMMA rest = parser_generator_separated_list_COMMA_subscript_key_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_nonempty_list_COMMA_with_item_:
   item = with_item
-    {                ( [item] )}
+    {( [item] )}
 | item = with_item _2 = COMMA rest = parser_generator_separated_list_COMMA_with_item_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_nonempty_list_DOT_identifier_:
   item = identifier
-    {                ( [item] )}
+    {( [item] )}
 | item = identifier _2 = DOT rest = parser_generator_separated_list_DOT_identifier_
-    {                                                                                    (
+    {(
       item::rest
     )}
 
 parser_generator_separated_list_of_lists_SEMICOLON_small_statement_:
   
-    {    ( [] )}
+    {( [] )}
 | list_item = small_statement
-    {                          ( [list_item] )}
+    {( [list_item] )}
 | list_item = small_statement _2 = SEMICOLON rest = parser_generator_separated_list_of_lists_SEMICOLON_small_statement_
-    {                                                                          (
+    {(
       list_item::rest
     )}
 
 parser_generator_separated_nonempty_list_of_lists_SEMICOLON_small_statement_:
   list_item = small_statement
-    {                          ( [list_item] )}
+    {( [list_item] )}
 | list_item = small_statement _2 = SEMICOLON rest = parser_generator_separated_list_of_lists_SEMICOLON_small_statement_
-    {                                                                          (
+    {(
       list_item::rest
     )}
 

@@ -36,40 +36,40 @@ Warning: the token WHSP is unused.
 
 filterlist:
   _1 = filterlist _2 = filter
-    {                    (_2 :: _1)}
+    {(_2 :: _1)}
 | _1 = filter
-    {         ([_1])}
+    {([_1])}
 
 filter:
   _1 = LPAREN _2 = AND _3 = filterlist _4 = RPAREN
-    {                               (`And _3)}
+    {(`And _3)}
 | _1 = LPAREN _2 = OR _3 = filterlist _4 = RPAREN
-    {                              (`Or _3)}
+    {(`Or _3)}
 | _1 = LPAREN _2 = NOT _3 = filter _4 = RPAREN
-    {                           (`Not _3)}
+    {(`Not _3)}
 | _1 = LPAREN _2 = filter _3 = RPAREN
-    {                       (_2)}
+    {(_2)}
 | _1 = ATTREQUALSUB
-    {               (`Substrings {attrtype=(fst _1);substrings=(snd _1)})}
+    {(`Substrings {attrtype=(fst _1);substrings=(snd _1)})}
 | _1 = ATTREQUAL
-    {            (`EqualityMatch {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
+    {(`EqualityMatch {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
 | _1 = ATTRGTE
-    {          (`GreaterOrEqual {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
+    {(`GreaterOrEqual {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
 | _1 = ATTRLTE
-    {          (`LessOrEqual {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
+    {(`LessOrEqual {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
 | _1 = ATTRPRESENT
-    {              (`Present _1)}
+    {(`Present _1)}
 | _1 = ATTRAPPROX
-    {             (`ApproxMatch {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
+    {(`ApproxMatch {attributeDesc=(fst _1);assertionValue=(unescape (snd _1))})}
 | _1 = ATTREXTENDEDMATCH
-    {                    (let (a, oid, v) = _1 in
+    {(let (a, oid, v) = _1 in
                        `ExtensibleMatch
                          {matchingRule=(Some (unescape oid));
                           ruletype=(Some (unescape a));
                           matchValue=(unescape v);
                           dnAttributes=false})}
 | _1 = ATTREXTENDEDDN
-    {                 (let (a, oid, v) = _1 in
+    {(let (a, oid, v) = _1 in
                     `ExtensibleMatch
                       {matchingRule=(match oid with
                                          Some s -> Some (unescape s)
@@ -80,6 +80,6 @@ filter:
 
 filter_and_eof:
   _1 = filter _2 = EOF
-    {             (_1)}
+    {(_1)}
 
 %%

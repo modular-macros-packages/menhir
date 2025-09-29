@@ -17,15 +17,15 @@ open Doc_parsetree
 
 file:
   _1 = EOF
-    {    ( [] )}
+    {( [] )}
 | _1 = OPEN _2 = ftext _3 = CLOSE _4 = file
-    {    (
+    {(
       { cmt_start = _1;
 	cmt_end = _3;
 	cmt_content = Ftext (List.rev _2)
       } :: _4 )}
 | _1 = TERMINATE _2 = file
-    {    (
+    {(
       { cmt_start = fst _1;
 	cmt_end = snd _1 ;
 	cmt_content = Terminate
@@ -33,14 +33,14 @@ file:
 
 ftext:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = ftext _2 = DIRECTIVE
-    {    ( (Directive _2) :: _1 )}
+    {( (Directive _2) :: _1 )}
 | _1 = ftext _2 = TEXT
-    {    ( (String _2) :: _1 )}
+    {( (String _2) :: _1 )}
 | _1 = ftext _2 = LBRACE _3 = ftext _4 = RBRACE
-    {    ( (Block (_2, List.rev _3)) :: _1 )}
+    {( (Block (_2, List.rev _3)) :: _1 )}
 | _1 = ftext _2 = VERB
-    {    ( (Block ("src", [String _2])) :: _1 )}
+    {( (Block ("src", [String _2])) :: _1 )}
 
 %%

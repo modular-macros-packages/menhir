@@ -11,27 +11,27 @@
 
 loption_separated_nonempty_list_BAR_ATOM__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_BAR_ATOM_]
+    {( [] )} [@name none_separated_nonempty_list_BAR_ATOM_]
 | x = separated_nonempty_list_BAR_ATOM_
-    {    ( x )} [@name some_separated_nonempty_list_BAR_ATOM_]
+    {( x )} [@name some_separated_nonempty_list_BAR_ATOM_]
 
 separated_nonempty_list_BAR_ATOM_:
   x = ATOM
-    {    ( [ x ] )} [@name one_BAR_ATOM]
+    {( [ x ] )} [@name one_BAR_ATOM]
 | x = ATOM _2 = BAR xs = separated_nonempty_list_BAR_ATOM_
-    {    ( x :: xs )} [@name more_BAR_ATOM]
+    {( x :: xs )} [@name more_BAR_ATOM]
 
 expr:
   _1 = BACKSLASH _2 = bar_list
-    {                    ()}
+    {()}
 | _1 = BACKSLASH xs = loption_separated_nonempty_list_BAR_ATOM__
-    {let _2 =     ( xs ) in
-                                     ()}
+    {let _2 = ( xs ) in
+()}
 
 bar_list:
   _1 = expr %prec BAR
-    {          ()}
+    {()}
 | _1 = expr _2 = BAR _3 = bar_list
-    {                         ()}
+    {()}
 
 %%

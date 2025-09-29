@@ -13,23 +13,23 @@
 
 main:
   xs = llist_expr_ _2 = EOL
-    {let es =     ( List.rev xs ) in
-    ( es )}
+    {let es = ( List.rev xs ) in
+( es )}
 
 expr:
   i = INT
-    {    ( i )}
+    {( i )}
 | _1 = LPAREN e = expr _3 = RPAREN
-    {    ( e )}
+    {( e )}
 | e1 = expr _2 = PLUS e2 = expr
-    {    ( e1 + e2 )}
+    {( e1 + e2 )}
 | e1 = expr _2 = TIMES e2 = expr
-    {    ( e1 * e2 )}
+    {( e1 * e2 )}
 
 llist_expr_:
   
-    {    ( [] )}
+    {( [] )}
 | xs = llist_expr_ x = expr
-    {    ( x :: xs )}
+    {( x :: xs )}
 
 %%

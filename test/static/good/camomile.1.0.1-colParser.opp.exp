@@ -26,30 +26,30 @@ let acset : AbsCe.aceset_info = Toolslib.Unidata.read_data "acset"
 
 main:
   _1 = header _2 = rules _3 = EOF
-    {  (let ceset = acset.lowercase_first_tbl in
+    {(let ceset = acset.lowercase_first_tbl in
   let ace_info = AbsCe.create_ace_info ceset in
   let ace_info = _1 ace_info in
   {ace_info with ceset = _2 ace_info.AbsCe.ceset})}
 | _1 = rules _2 = EOF
-    {  (let ceset = acset.lowercase_first_tbl in
+    {(let ceset = acset.lowercase_first_tbl in
   let ace_info = AbsCe.create_ace_info ceset in
   {ace_info with ceset = _1 ace_info.ceset})}
 | _1 = header _2 = EOF
-    {    (let ceset = acset.lowercase_first_tbl in
+    {(let ceset = acset.lowercase_first_tbl in
     _1 (AbsCe.create_ace_info ceset))}
 | _1 = EOF
-    {    (AbsCe.create_ace_info acset.lowercase_first_tbl)}
+    {(AbsCe.create_ace_info acset.lowercase_first_tbl)}
 
 header:
   _1 = header_option _2 = header
-    {    (fun env ->
+    {(fun env ->
       _2 (_1 env))}
 | _1 = header_option
-    {    (fun env -> _1 env)}
+    {(fun env -> _1 env)}
 
 header_option:
   _1 = OPTION
-    {           (fun env ->
+    {(fun env ->
       match _1 with
 	["alternate"; "non-ignorable"] ->
 	  {env with variable_option = `Non_ignorable}
@@ -89,7 +89,7 @@ header_option:
 	  let s = String.concat " " x in
 	  failwith ("unknown option:" ^ s))}
 | _1 = UCHAR
-    {          (
+    {(
     fun env ->
       if _1 = UChar.of_char '@' then
 	{env with french = true}
@@ -98,17 +98,17 @@ header_option:
 
 rules:
   _1 = rule _2 = rules
-    {    (fun env ->
+    {(fun env ->
       let _, _, env = _1 env in
       _2 env)}
 | _1 = rule
-    {       (fun env -> let _, _, env = _1 env in env)}
+    {(fun env -> let _, _, env = _1 env in env)}
 
 rule:
   _1 = RESET _2 = init
-    {             (_2)}
+    {(_2)}
 | _1 = RESET _2 = OPTION _3 = init
-    {                    (
+    {(
   fun ceset ->
     match _2 with
       ["before"; depth] ->
@@ -123,28 +123,28 @@ rule:
 	(AbsCe.prev prec pos ceset, exp, ceset)
     | _ -> failwith "Unknown option")}
 | _1 = rule _2 = PRIMARY _3 = elem
-    {                    (
+    {(
   fun ceset ->
     let pos, exp, ceset = _1 ceset in
     let pos', ceset = AbsCe.add_after `Primary pos ceset in
     let ceset' = _3 [] (pos' :: exp) ceset in
     (pos', exp, ceset'))}
 | _1 = rule _2 = SECONDARY _3 = elem
-    {                      (
+    {(
   fun ceset ->
     let pos, exp, ceset = _1 ceset in
     let pos', ceset = AbsCe.add_after `Secondary pos ceset in
     let ceset' = _3 [] (pos' :: exp) ceset in
     (pos', exp, ceset'))}
 | _1 = rule _2 = TERTIARY _3 = elem
-    {                     (
+    {(
   fun ceset ->
     let pos, exp, ceset = _1 ceset in
     let pos', ceset = AbsCe.add_after `Tertiary pos ceset in
     let ceset' = _3 [] (pos' :: exp) ceset in
     (pos', exp, ceset'))}
 | _1 = rule _2 = EQ _3 = elem
-    {               (
+    {(
   fun ceset ->
     let pos, exp, ceset = _1 ceset in
     let ceset' = _3 [] (pos :: exp) ceset in
@@ -152,18 +152,18 @@ rule:
 
 ulist:
   _1 = UCHAR
-    {                ([_1])}
+    {([_1])}
 | _1 = UCHAR _2 = ulist
-    {                                     (_1 :: _2)}
+    {(_1 :: _2)}
 
 init:
   _1 = ulist
-    {          (
+    {(
   fun ceset ->
     let ceset, es = AbsCe.ces_of ceset _1 in
     (List.hd es, List.tl es, ceset))}
 | _1 = OPTION
-    {         (
+    {(
   fun ceset ->
     match _1 with
       [("first" | "last") ; "teritiary"; "ignorable"]
@@ -199,18 +199,18 @@ init:
 
 elem:
   _1 = ulist
-    {          (fun prefix ces ceset ->
+    {(fun prefix ces ceset ->
       AbsCe.put (`Seq (prefix @ _1)) ces ceset)}
 | _1 = elem _2 = EXPAND _3 = ulist
-    {                    (fun prefix ces ceset ->
+    {(fun prefix ces ceset ->
     let ceset', exps = AbsCe.ces_of ceset _3 in
     _1 prefix (ces @ exps) ceset')}
 | _1 = ulist _2 = PREFIX _3 = elem
-    {                    (fun prefix ces ceset ->
+    {(fun prefix ces ceset ->
     let ceset', exps = AbsCe.ces_of ceset _1 in
     _3 (prefix @ _1) (exps @ ces) ceset')}
 | _1 = OPTION
-    {         (fun prefix ces ceset ->
+    {(fun prefix ces ceset ->
     match _1 with ["variable"; "top"] ->
       (match prefix, ces with
 	[], [_] ->

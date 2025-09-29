@@ -141,306 +141,306 @@ open MemOrderOrAnnot
 
 parameter_list:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = parameter_declaration
-    {                        ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = parameter_declaration _2 = COMMA _3 = parameter_list
-    {                                             ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 parameter_declaration:
   _1 = toptyp _2 = IDENTIFIER
-    {                    ( {CAst.param_ty = _1; param_name = _2} )}
+    {( {CAst.param_ty = _1; param_name = _2} )}
 
 toptyp:
   _1 = typ _2 = STAR
-    {           ( Pointer _1 )}
+    {( Pointer _1 )}
 
 typ:
   _1 = typ _2 = STAR
-    {           ( Pointer _1 )}
+    {( Pointer _1 )}
 | _1 = typ _2 = VOLATILE
-    {               ( Volatile _1 )}
+    {( Volatile _1 )}
 | _1 = ATOMIC _2 = base
-    {              ( Atomic _2 )}
+    {( Atomic _2 )}
 | _1 = VOLATILE _2 = base0
-    {                 ( Volatile _2 )}
+    {( Volatile _2 )}
 | _1 = base
-    {       ( _1 )}
+    {( _1 )}
 
 base0:
   _1 = ATOMIC_TYPE
-    {              ( Atomic (Base _1) )}
+    {( Atomic (Base _1) )}
 | _1 = BASE_TYPE
-    {            ( (Base _1) )}
+    {( (Base _1) )}
 | _1 = VOID
-    {       ( (Base "void") )}
+    {( (Base "void") )}
 | _1 = ty_attr _2 = MUTEX
-    {                ( Base (_1 ^ "mutex") )}
+    {( Base (_1 ^ "mutex") )}
 | _1 = ty_attr _2 = CHAR
-    {               ( Base (_1 ^ "char") )}
+    {( Base (_1 ^ "char") )}
 | _1 = ty_attr _2 = INT
-    {              ( Base (_1 ^ "int") )}
+    {( Base (_1 ^ "int") )}
 | _1 = ty_attr _2 = LONG
-    {               ( Base (_1 ^ "long") )}
+    {( Base (_1 ^ "long") )}
 
 base:
   _1 = base0
-    {        ( _1 )}
+    {( _1 )}
 | _1 = LPAR _2 = typ _3 = RPAR %prec PREC_BASE
-    {                                ( _2 )}
+    {( _2 )}
 
 ty_attr:
   
-    {  ( "" )}
+    {( "" )}
 
 shallow_main:
   _1 = EOF
-    {      ( [] )}
+    {( [] )}
 | _1 = BODY _2 = shallow_main
-    {                    ( CAst.Global _1 :: _2 )}
+    {( CAst.Global _1 :: _2 )}
 | _1 = voidopt _2 = PROC _3 = LPAR _4 = parameter_list _5 = RPAR _6 = BODY _7 = shallow_main
-    {    ( CAst.Test {CAst.proc = _2; params = _4; body = _6} :: _7 )}
+    {( CAst.Test {CAst.proc = _2; params = _4; body = _6} :: _7 )}
 
 voidopt:
   _1 = VOID
-    {       ( () )}
+    {( () )}
 | 
-    {  ( () )}
+    {( () )}
 
 declaration:
   _1 = typ _2 = IDENTIFIER _3 = SEMI
-    {                      ( DeclReg (_1,_2) )}
+    {( DeclReg (_1,_2) )}
 
 initialisation:
   _1 = typ _2 = IDENTIFIER _3 = EQ _4 = expr
-    {                         ( StoreReg (Some _1,_2,_4) ; )}
+    {( StoreReg (Some _1,_2,_4) ; )}
 
 atomic_op:
   _1 = ADD
-    {      ( Op.Add )}
+    {( Op.Add )}
 | _1 = SUB
-    {      ( Op.Sub )}
+    {( Op.Sub )}
 
 annot:
   _1 = annot_base
-    {              ( _1 )}
+    {( _1 )}
 | _1 = annot_base _2 = SUB _3 = annot
-    {                       ( _1 ^ "-" ^ _3 )}
+    {( _1 ^ "-" ^ _3 )}
 
 annot_base:
   _1 = LOCK
-    {             ( "lock" )}
+    {( "lock" )}
 | _1 = UNLOCK
-    {             ( "unlock" )}
+    {( "unlock" )}
 | _1 = IDENTIFIER
-    {             ( _1 )}
+    {( _1 )}
 
 annot_list:
   _1 = annot _2 = COMMA _3 = annot_list
-    {  (_1::_3)}
+    {(_1::_3)}
 | _1 = annot
-    {  ([_1])}
+    {([_1])}
 
 expr:
   _1 = LPAR _2 = expr _3 = RPAR
-    {                 ( _2 )}
+    {( _2 )}
 | _1 = CONSTANT
-    {           ( Const(Constant.Concrete _1) )}
+    {( Const(Constant.Concrete _1) )}
 | _1 = CONSTVAR
-    {           ( Const(mk_sym _1) )}
+    {( Const(mk_sym _1) )}
 | _1 = IDENTIFIER
-    {             ( LoadReg _1 )}
+    {( LoadReg _1 )}
 | _1 = LPAR _2 = typ _3 = RPAR _4 = expr %prec CAST
-    {                                ( _4 )}
+    {( _4 )}
 | _1 = STAR _2 = IDENTIFIER
-    {                  ( LoadMem (LoadReg _2,AN []) )}
+    {( LoadMem (LoadReg _2,AN []) )}
 | _1 = STAR _2 = LPAR _3 = typ _4 = RPAR _5 = IDENTIFIER
-    {                                ( LoadMem (LoadReg _5,AN []) )}
+    {( LoadMem (LoadReg _5,AN []) )}
 | _1 = STAR _2 = LPAR _3 = expr _4 = RPAR
-    {                      ( LoadMem (_3,AN []) )}
+    {( LoadMem (_3,AN []) )}
 | _1 = LOAD _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = LPAR _6 = expr _7 = RPAR
-    {                                               ( LoadMem(_6,AN _3) )}
+    {( LoadMem(_6,AN _3) )}
 | _1 = LD_EXPLICIT _2 = LPAR _3 = expr _4 = COMMA _5 = MEMORDER _6 = RPAR
-    {                                            ( LoadMem(_3,MO _5) )}
+    {( LoadMem(_3,MO _5) )}
 | _1 = expr _2 = STAR _3 = expr
-    {                 ( Op(Op.Mul,_1,_3) )}
+    {( Op(Op.Mul,_1,_3) )}
 | _1 = expr _2 = ADD _3 = expr
-    {                ( Op(Op.Add,_1,_3) )}
+    {( Op(Op.Add,_1,_3) )}
 | _1 = expr _2 = SUB _3 = expr
-    {                ( Op(Op.Sub,_1,_3) )}
+    {( Op(Op.Sub,_1,_3) )}
 | _1 = expr _2 = DIV _3 = expr
-    {                ( Op(Op.Div,_1,_3) )}
+    {( Op(Op.Div,_1,_3) )}
 | _1 = expr _2 = LAND _3 = expr
-    {                 ( Op(Op.And,_1,_3) )}
+    {( Op(Op.And,_1,_3) )}
 | _1 = expr _2 = PIPE _3 = expr
-    {                 ( Op(Op.Or,_1,_3) )}
+    {( Op(Op.Or,_1,_3) )}
 | _1 = expr _2 = XOR _3 = expr
-    {                ( Op(Op.Xor,_1,_3) )}
+    {( Op(Op.Xor,_1,_3) )}
 | _1 = expr _2 = EQ_OP _3 = expr
-    {                  ( Op(Op.Eq,_1,_3) )}
+    {( Op(Op.Eq,_1,_3) )}
 | _1 = expr _2 = NEQ_OP _3 = expr
-    {                   ( Op(Op.Ne,_1,_3) )}
+    {( Op(Op.Ne,_1,_3) )}
 | _1 = expr _2 = LT _3 = expr
-    {               ( Op(Op.Lt,_1,_3) )}
+    {( Op(Op.Lt,_1,_3) )}
 | _1 = expr _2 = GT _3 = expr
-    {               ( Op(Op.Gt,_1,_3) )}
+    {( Op(Op.Gt,_1,_3) )}
 | _1 = expr _2 = LE _3 = expr
-    {               ( Op(Op.Le,_1,_3) )}
+    {( Op(Op.Le,_1,_3) )}
 | _1 = expr _2 = GE _3 = expr
-    {               ( Op(Op.Ge,_1,_3) )}
+    {( Op(Op.Ge,_1,_3) )}
 | _1 = EXC_EXPLICIT _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = MEMORDER _8 = RPAR
-    {  ( Exchange(_3, _5, MO _7) )}
+    {( Exchange(_3, _5, MO _7) )}
 | _1 = XCHG _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = LPAR _6 = expr _7 = COMMA _8 = expr _9 = RPAR
-    {  ( Exchange(_6,_8,AN _3) )}
+    {( Exchange(_6,_8,AN _3) )}
 | _1 = CMPXCHG _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = LPAR _6 = expr _7 = COMMA _8 = expr _9 = COMMA _10 = expr _11 = RPAR
-    {  ( CmpExchange(_6,_8,_10,_3) )}
+    {( CmpExchange(_6,_8,_10,_3) )}
 | _1 = ATOMIC_FETCH_EXPLICIT _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = MEMORDER _8 = RPAR
-    {  ( Fetch(_3, _1, _5, _7) )}
+    {( Fetch(_3, _1, _5, _7) )}
 | _1 = IDENTIFIER _2 = LPAR _3 = args _4 = RPAR
-    {  ( ECall (_1,_3) )}
+    {( ECall (_1,_3) )}
 | _1 = WCAS _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = expr _8 = RPAR
-    {  ( ECas (_3,_5,_7,SC,SC,false) )}
+    {( ECas (_3,_5,_7,SC,SC,false) )}
 | _1 = WCAS_EXPLICIT _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = expr _8 = COMMA _9 = MEMORDER _10 = COMMA _11 = MEMORDER _12 = RPAR
-    {  ( ECas (_3,_5,_7,_9,_11,false) )}
+    {( ECas (_3,_5,_7,_9,_11,false) )}
 | _1 = SCAS _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = expr _8 = RPAR
-    {  ( ECas (_3,_5,_7,SC,SC,true) )}
+    {( ECas (_3,_5,_7,SC,SC,true) )}
 | _1 = SCAS_EXPLICIT _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = expr _8 = COMMA _9 = MEMORDER _10 = COMMA _11 = MEMORDER _12 = RPAR
-    {  ( ECas (_3,_5,_7,_9,_11,true) )}
+    {( ECas (_3,_5,_7,_9,_11,true) )}
 | _1 = SPINTRYLOCK _2 = LPAR _3 = expr _4 = RPAR
-    {  ( TryLock (_3,MutexLinux) )}
+    {( TryLock (_3,MutexLinux) )}
 | _1 = SPINISLOCKED _2 = LPAR _3 = expr _4 = RPAR
-    {  ( IsLocked (_3,MutexLinux) )}
+    {( IsLocked (_3,MutexLinux) )}
 | _1 = UNDERATOMICOPRETURN _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = LPAR _6 = expr _7 = COMMA _8 = atomic_op _9 = COMMA _10 = expr _11 = RPAR
-    {  ( AtomicOpReturn(_6,_8,_10,OpReturn,_3) )}
+    {( AtomicOpReturn(_6,_8,_10,OpReturn,_3) )}
 | _1 = UNDERATOMICFETCHOP _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = LPAR _6 = expr _7 = COMMA _8 = atomic_op _9 = COMMA _10 = expr _11 = RPAR
-    {  ( AtomicOpReturn(_6,_8,_10,FetchOp,_3) )}
+    {( AtomicOpReturn(_6,_8,_10,FetchOp,_3) )}
 | _1 = UNDERATOMICADDUNLESS _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = expr _8 = RPAR
-    {  ( AtomicAddUnless(_3,_5,_7,false) )}
+    {( AtomicAddUnless(_3,_5,_7,false) )}
 | _1 = ATOMICADDUNLESS _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = expr _8 = RPAR
-    {  ( AtomicAddUnless(_3,_5,_7,true) )}
+    {( AtomicAddUnless(_3,_5,_7,true) )}
 
 args:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = args_ne
-    {          ( _1 )}
+    {( _1 )}
 
 args_ne:
   _1 = expr
-    {       ( [_1] )}
+    {( [_1] )}
 | _1 = expr _2 = COMMA _3 = args_ne
-    {                     ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 location:
   _1 = IDENTIFIER
-    {             ( LoadReg(_1) )}
+    {( LoadReg(_1) )}
 | _1 = STAR _2 = location
-    {                ( LoadMem(_2,AN []) )}
+    {( LoadMem(_2,AN []) )}
 | _1 = LPAR _2 = expr _3 = RPAR
-    {                 ( _2 )}
+    {( _2 )}
 
 instruction:
   _1 = IF _2 = LPAR _3 = expr _4 = RPAR _5 = block_ins %prec LOWER_THAN_ELSE
-    {  ( If(_3,_5,None) )}
+    {( If(_3,_5,None) )}
 | _1 = IF _2 = LPAR _3 = expr _4 = RPAR _5 = block_ins _6 = ELSE _7 = block_ins
-    {  ( If(_3,_5,Some _7) )}
+    {( If(_3,_5,Some _7) )}
 | _1 = initialisation _2 = SEMI
-    {  ( _1 )}
+    {( _1 )}
 | _1 = IDENTIFIER _2 = EQ _3 = expr _4 = SEMI
-    {  ( StoreReg(None,_1,_3) )}
+    {( StoreReg(None,_1,_3) )}
 | _1 = STAR _2 = location _3 = EQ _4 = expr _5 = SEMI
-    {  ( StoreMem(_2,_4,AN []) )}
+    {( StoreMem(_2,_4,AN []) )}
 | _1 = STORE _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = LPAR _6 = expr _7 = COMMA _8 = expr _9 = RPAR _10 = SEMI
-    {  ( StoreMem(_6,_8,AN _3) )}
+    {( StoreMem(_6,_8,AN _3) )}
 | _1 = ST_EXPLICIT _2 = LPAR _3 = expr _4 = COMMA _5 = expr _6 = COMMA _7 = MEMORDER _8 = RPAR _9 = SEMI
-    {  ( StoreMem(_3, _5, MO _7) )}
+    {( StoreMem(_3, _5, MO _7) )}
 | _1 = LOCK _2 = LPAR _3 = expr _4 = RPAR _5 = SEMI
-    {  ( Lock (_3,MutexC11) )}
+    {( Lock (_3,MutexC11) )}
 | _1 = UNLOCK _2 = LPAR _3 = expr _4 = RPAR _5 = SEMI
-    {  ( Unlock (_3,MutexC11) )}
+    {( Unlock (_3,MutexC11) )}
 | _1 = SPINLOCK _2 = LPAR _3 = expr _4 = RPAR _5 = SEMI
-    {  ( Lock (_3,MutexLinux) )}
+    {( Lock (_3,MutexLinux) )}
 | _1 = SPINUNLOCK _2 = LPAR _3 = expr _4 = RPAR _5 = SEMI
-    {  ( Unlock (_3,MutexLinux) )}
+    {( Unlock (_3,MutexLinux) )}
 | _1 = UNDERFENCE _2 = LBRACE _3 = annot_list _4 = RBRACE _5 = SEMI
-    {  ( Fence(AN _3) )}
+    {( Fence(AN _3) )}
 | _1 = UNDERATOMICOP _2 = LPAR _3 = expr _4 = COMMA _5 = atomic_op _6 = COMMA _7 = expr _8 = RPAR _9 = SEMI
-    {  ( AtomicOp(_3,_5,_7) )}
+    {( AtomicOp(_3,_5,_7) )}
 | _1 = FENCE _2 = LPAR _3 = MEMORDER _4 = RPAR _5 = SEMI
-    {  ( Fence(MO _3) )}
+    {( Fence(MO _3) )}
 | _1 = CODEVAR _2 = SEMI
-    {  ( Symb _1 )}
+    {( Symb _1 )}
 | _1 = IDENTIFIER _2 = LPAR _3 = args _4 = RPAR _5 = SEMI
-    {  ( PCall (_1,_3) )}
+    {( PCall (_1,_3) )}
 
 ins_seq:
   _1 = block_ins
-    {            ( [_1] )}
+    {( [_1] )}
 | _1 = block_ins _2 = ins_seq
-    {                    ( _1::_2 )}
+    {( _1::_2 )}
 | _1 = declaration
-    {              ( [_1] )}
+    {( [_1] )}
 | _1 = declaration _2 = ins_seq
-    {                      ( _1::_2 )}
+    {( _1::_2 )}
 
 block_ins:
   _1 = instruction
-    {              ( _1 )}
+    {( _1 )}
 | _1 = LBRACE _2 = ins_seq _3 = RBRACE
-    {                        ( Seq(_2,true) )}
+    {( Seq(_2,true) )}
 
 pseudo_seq:
   _1 = block_ins
-    {            ( [Instruction _1] )}
+    {( [Instruction _1] )}
 | _1 = block_ins _2 = pseudo_seq
-    {                       ( (Instruction _1)::_2 )}
+    {( (Instruction _1)::_2 )}
 | _1 = declaration
-    {              ( [] )}
+    {( [] )}
 | _1 = declaration _2 = pseudo_seq
-    {                         ( _2 )}
+    {( _2 )}
 
 function_def:
   _1 = voidopt _2 = PROC _3 = LPAR _4 = parameter_list _5 = RPAR _6 = LBRACE _7 = pseudo_seq _8 = RBRACE
-    {  ( { CAst.proc = _2;
+    {( { CAst.proc = _2;
       CAst.params = _4;
       CAst.body = _7 } )}
 
 trans_unit:
   _1 = function_def
-    {  ( [_1] )}
+    {( [_1] )}
 | _1 = trans_unit _2 = function_def
-    {  ( _1 @ [_2] )}
+    {( _1 @ [_2] )}
 
 deep_main:
   _1 = trans_unit _2 = EOF
-    {                 ( _1 )}
+    {( _1 )}
 
 formals_ne:
   _1 = IDENTIFIER
-    {             ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = IDENTIFIER _2 = COMMA _3 = formals_ne
-    {                              ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 formals:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = formals_ne
-    {             ( _1 )}
+    {( _1 )}
 
 body:
   _1 = LBRACE _2 = ins_seq _3 = RBRACE
-    {                        ( Seq (_2,true) )}
+    {( Seq (_2,true) )}
 
 macro:
   _1 = IDENTIFIER _2 = LPAR _3 = formals _4 = RPAR _5 = expr
-    {                                    ( EDef (_1,_3,_5) )}
+    {( EDef (_1,_3,_5) )}
 | _1 = IDENTIFIER _2 = LPAR _3 = formals _4 = RPAR _5 = body
-    {                                    ( PDef (_1,_3,_5) )}
+    {( PDef (_1,_3,_5) )}
 
 macros:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = macro _2 = macros
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 %%

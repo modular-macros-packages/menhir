@@ -9,12 +9,12 @@ Warning: symbol list(B) is unreachable from any of the start symbol(s).
 
 list_C_ [@foo "bar"]:
   
-    {    ( [] )} [@name nil_C]
+    {( [] )} [@name nil_C]
 | x = C xs = list_C_
-    {    ( x :: xs )} [@name cons_C]
+    {( x :: xs )} [@name cons_C]
 
 main:
   _1 = A _2 = B _3 = list_C_
-    {              ()}
+    {()}
 
 %%

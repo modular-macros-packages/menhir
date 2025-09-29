@@ -73,413 +73,413 @@
 
 option_Pipe_:
   
-    {    ( None )} [@name none_Pipe]
+    {( None )} [@name none_Pipe]
 | x = Pipe
-    {    ( Some x )} [@name some_Pipe]
+    {( Some x )} [@name some_Pipe]
 
 loption_separated_nonempty_list_Comma_typeExpr__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_Comma_typeExpr_]
+    {( [] )} [@name none_separated_nonempty_list_Comma_typeExpr_]
 | x = separated_nonempty_list_Comma_typeExpr_
-    {    ( x )} [@name some_separated_nonempty_list_Comma_typeExpr_]
+    {( x )} [@name some_separated_nonempty_list_Comma_typeExpr_]
 
 loption_separated_nonempty_list_Pipe_typeExpr__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_Pipe_typeExpr_]
+    {( [] )} [@name none_separated_nonempty_list_Pipe_typeExpr_]
 | x = separated_nonempty_list_Pipe_typeExpr_
-    {    ( x )} [@name some_separated_nonempty_list_Pipe_typeExpr_]
+    {( x )} [@name some_separated_nonempty_list_Pipe_typeExpr_]
 
 list_import_:
   
-    {    ( [] )} [@name nil_import]
+    {( [] )} [@name nil_import]
 | x = import xs = list_import_
-    {    ( x :: xs )} [@name cons_import]
+    {( x :: xs )} [@name cons_import]
 
 list_kind_and_name_:
   
-    {    ( [] )} [@name nil_kind_and_name]
+    {( [] )} [@name nil_kind_and_name]
 | x = kind_and_name xs = list_kind_and_name_
-    {    ( x :: xs )} [@name cons_kind_and_name]
+    {( x :: xs )} [@name cons_kind_and_name]
 
 list_kind_and_name_in_value_:
   
-    {    ( [] )} [@name nil_kind_and_name_in_value]
+    {( [] )} [@name nil_kind_and_name_in_value]
 | x = kind_and_name_in_value xs = list_kind_and_name_in_value_
-    {    ( x :: xs )} [@name cons_kind_and_name_in_value]
+    {( x :: xs )} [@name cons_kind_and_name_in_value]
 
 list_typeExprClosed_:
   
-    {    ( [] )} [@name nil_typeExprClosed]
+    {( [] )} [@name nil_typeExprClosed]
 | x = typeExprClosed xs = list_typeExprClosed_
-    {    ( x :: xs )} [@name cons_typeExprClosed]
+    {( x :: xs )} [@name cons_typeExprClosed]
 
 nonempty_list_kind_and_name_:
   x = kind_and_name
-    {    ( [ x ] )} [@name one_kind_and_name]
+    {( [ x ] )} [@name one_kind_and_name]
 | x = kind_and_name xs = nonempty_list_kind_and_name_
-    {    ( x :: xs )} [@name more_kind_and_name]
+    {( x :: xs )} [@name more_kind_and_name]
 
 nonempty_list_letSig_:
   x = letSig
-    {    ( [ x ] )} [@name one_letSig]
+    {( [ x ] )} [@name one_letSig]
 | x = letSig xs = nonempty_list_letSig_
-    {    ( x :: xs )} [@name more_letSig]
+    {( x :: xs )} [@name more_letSig]
 
 nonempty_list_let_case_:
   x = let_case
-    {    ( [ x ] )} [@name one_let_case]
+    {( [ x ] )} [@name one_let_case]
 | x = let_case xs = nonempty_list_let_case_
-    {    ( x :: xs )} [@name more_let_case]
+    {( x :: xs )} [@name more_let_case]
 
 nonempty_list_patClosed_:
   x = patClosed
-    {    ( [ x ] )} [@name one_patClosed]
+    {( [ x ] )} [@name one_patClosed]
 | x = patClosed xs = nonempty_list_patClosed_
-    {    ( x :: xs )} [@name more_patClosed]
+    {( x :: xs )} [@name more_patClosed]
 
 nonempty_list_typeExprClosed_:
   x = typeExprClosed
-    {    ( [ x ] )} [@name one_typeExprClosed]
+    {( [ x ] )} [@name one_typeExprClosed]
 | x = typeExprClosed xs = nonempty_list_typeExprClosed_
-    {    ( x :: xs )} [@name more_typeExprClosed]
+    {( x :: xs )} [@name more_typeExprClosed]
 
 separated_nonempty_list_Comma_typeExpr_:
   x = typeExpr
-    {    ( [ x ] )} [@name one_Comma_typeExpr]
+    {( [ x ] )} [@name one_Comma_typeExpr]
 | x = typeExpr _2 = Comma xs = separated_nonempty_list_Comma_typeExpr_
-    {    ( x :: xs )} [@name more_Comma_typeExpr]
+    {( x :: xs )} [@name more_Comma_typeExpr]
 
 separated_nonempty_list_Pipe_pattern_:
   x = pattern
-    {    ( [ x ] )} [@name one_Pipe_pattern]
+    {( [ x ] )} [@name one_Pipe_pattern]
 | x = pattern _2 = Pipe xs = separated_nonempty_list_Pipe_pattern_
-    {    ( x :: xs )} [@name more_Pipe_pattern]
+    {( x :: xs )} [@name more_Pipe_pattern]
 
 separated_nonempty_list_Pipe_typeExpr_:
   x = typeExpr
-    {    ( [ x ] )} [@name one_Pipe_typeExpr]
+    {( [ x ] )} [@name one_Pipe_typeExpr]
 | x = typeExpr _2 = Pipe xs = separated_nonempty_list_Pipe_typeExpr_
-    {    ( x :: xs )} [@name more_Pipe_typeExpr]
+    {( x :: xs )} [@name more_Pipe_typeExpr]
 
 separated_nonempty_list_Pipe_variant_:
   x = variant
-    {    ( [ x ] )} [@name one_Pipe_variant]
+    {( [ x ] )} [@name one_Pipe_variant]
 | x = variant _2 = Pipe xs = separated_nonempty_list_Pipe_variant_
-    {    ( x :: xs )} [@name more_Pipe_variant]
+    {( x :: xs )} [@name more_Pipe_variant]
 
 main:
   _1 = entry_body_
-    {                  ( _1 )}
+    {( _1 )}
 
 mainInterface:
   _1 = entry_bodyInterface_
-    {                                    ( _1 )}
+    {( _1 )}
 
 body:
   x = let_case
-    {      ( ParseTree.Value x )}
+    {( ParseTree.Value x )}
 | typeAlias = typeAlias
-    {      ( ParseTree.Type typeAlias )}
+    {( ParseTree.Type typeAlias )}
 | _1 = Foreign cname = String name = LowerName _4 = Colon ty = typeExpr
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( ParseTree.Foreign (cname, name, ty) )}
+( ParseTree.Foreign (cname, name, ty) )}
 | _1 = Foreign cname = String _1_inlined1 = Underscore _4 = Colon ty = typeExpr
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( ParseTree.Foreign (cname, name, ty) )}
+( ParseTree.Foreign (cname, name, ty) )}
 | _1 = Type name = newUpperName k = kindopt
-    {      ( ParseTree.AbstractType (name, k) )}
+    {( ParseTree.AbstractType (name, k) )}
 | datatype = datatype
-    {      ( ParseTree.Datatype datatype )}
+    {( ParseTree.Datatype datatype )}
 | _1 = Exception name = newUpperName args = exceptionArgs
-    {      ( ParseTree.Exception (name, args) )}
+    {( ParseTree.Exception (name, args) )}
 | _1 = Open modul = import_module
-    {      ( ParseTree.Open modul )}
+    {( ParseTree.Open modul )}
 | _1 = Class name = newUpperName params = nonempty_list_kind_and_name_ _4 = Equal sigs = nonempty_list_letSig_ _6 = End
-    {      ( ParseTree.Class (name, params, sigs) )}
+    {( ParseTree.Class (name, params, sigs) )}
 | _1 = Instance name = instanceName x = tyclassInstance _4 = Equal values = nonempty_list_let_case_ _6 = End
-    {      ( ParseTree.Instance (x, name, values) )}
+    {( ParseTree.Instance (x, name, values) )}
 
 instanceName:
   
-    {    ( None )}
+    {( None )}
 | _1 = LBracket name = LowerName _3 = RBracket
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( Some name )}
+( Some name )}
 | _1 = LBracket _1_inlined1 = Underscore _3 = RBracket
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( Some name )}
+( Some name )}
 
 exceptionArgs:
   x = typeExprClosed xs = exceptionArgs
-    {      ( x :: xs )}
+    {( x :: xs )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 let_case:
   _1 = Let name = LowerName x = args_let_aux_
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-let r =     ( ParseTree.NonRec ) in
-      ( (name, r, x) )}
+let r = ( ParseTree.NonRec ) in
+( (name, r, x) )}
 | _1 = Let _1_inlined1 = Underscore x = args_let_aux_
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-let r =     ( ParseTree.NonRec ) in
-      ( (name, r, x) )}
+let r = ( ParseTree.NonRec ) in
+( (name, r, x) )}
 | _1 = Let _1_inlined1 = Rec name = LowerName x = args_let_aux_
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-let r =         ( ParseTree.Rec ) in
-      ( (name, r, x) )}
+let r = ( ParseTree.Rec ) in
+( (name, r, x) )}
 | _1 = Let _1_inlined1 = Rec _1_inlined2 = Underscore x = args_let_aux_
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined2_, _startpos__1_inlined2_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-let r =         ( ParseTree.Rec ) in
-      ( (name, r, x) )}
+let r = ( ParseTree.Rec ) in
+( (name, r, x) )}
 
 let_aux:
   _2 = Equal t = term
-    {let ty =     ( None ) in
-      ( (ty, t) )}
+    {let ty = ( None ) in
+( (ty, t) )}
 | _1 = Colon eff = typeExpr _3 = Hash ty = typeExpr _2 = Equal t = term
     {let ty =
-  let ty =       ( (ty, Some eff) ) in
-        ( Some ty )
+  let ty = ( (ty, Some eff) ) in
+  ( Some ty )
 in
-      ( (ty, t) )}
+( (ty, t) )}
 | _1 = Colon ty = typeExpr _2 = Equal t = term
     {let ty =
-  let ty =       ( (ty, None) ) in
-        ( Some ty )
+  let ty = ( (ty, None) ) in
+  ( Some ty )
 in
-      ( (ty, t) )}
+( (ty, t) )}
 
 datatype:
   _1 = Type name = newUpperName args = list_kind_and_name_ _4 = Equal _5 = option_Pipe_ variants = separated_nonempty_list_Pipe_variant_
-    {      ( (name, args, variants) )}
+    {( (name, args, variants) )}
 
 typeAlias:
   _1 = Type _2 = Alias name = newUpperName _4 = Equal ty = typeExpr
-    {      ( (name, ty) )}
+    {( (name, ty) )}
 
 lambda_aux:
   _2 = Arrow t = term
-    {let ty =     ( None ) in
-      ( (ty, t) )}
+    {let ty = ( None ) in
+( (ty, t) )}
 | _1 = Colon eff = typeExprProtectedPermissive _3 = Hash ty = typeExprProtectedPermissive _2 = Arrow t = term
     {let ty =
-  let ty =       ( (ty, Some eff) ) in
-        ( Some ty )
+  let ty = ( (ty, Some eff) ) in
+  ( Some ty )
 in
-      ( (ty, t) )}
+( (ty, t) )}
 | _1 = Colon ty = typeExprProtectedPermissive _2 = Arrow t = term
     {let ty =
-  let ty =       ( (ty, None) ) in
-        ( Some ty )
+  let ty = ( (ty, None) ) in
+  ( Some ty )
 in
-      ( (ty, t) )}
+( (ty, t) )}
 
 termStrictlyUnclosed:
   _1 = Lambda args = nonempty_args_lambda_aux_
     {let _endpos = _endpos_args_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.Abs args) )}
+( (loc _startpos _endpos, ParseTree.Abs args) )}
 | x = let_case _2 = In xs = term
     {let _endpos = _endpos_xs_ in
 let _startpos = _startpos_x_ in
-      ( (loc _startpos _endpos, ParseTree.Let (x, xs)) )}
+( (loc _startpos _endpos, ParseTree.Let (x, xs)) )}
 | x = termProtectedPermissive _2 = Semicolon y = term
     {let _endpos = _endpos_y_ in
 let _startpos = _startpos_x_ in
-      ( (loc _startpos _endpos, ParseTree.Seq (x, y)) )}
+( (loc _startpos _endpos, ParseTree.Seq (x, y)) )}
 | t = termProtectedPermissive _1 = Colon eff = typeExpr _3 = Hash ty = typeExpr
-    {let ty =       ( (ty, Some eff) ) in
+    {let ty = ( (ty, Some eff) ) in
 let _endpos = _endpos_ty_ in
 let _startpos = _startpos_t_ in
-      ( (loc _startpos _endpos, ParseTree.Annot (t, ty)) )}
+( (loc _startpos _endpos, ParseTree.Annot (t, ty)) )}
 | t = termProtectedPermissive _1 = Colon ty = typeExpr
-    {let ty =       ( (ty, None) ) in
+    {let ty = ( (ty, None) ) in
 let _endpos = _endpos_ty_ in
 let _startpos = _startpos_t_ in
-      ( (loc _startpos _endpos, ParseTree.Annot (t, ty)) )}
+( (loc _startpos _endpos, ParseTree.Annot (t, ty)) )}
 
 termNonStrictlyUnclosed:
   x = app
-    {      ( x )}
+    {( x )}
 | _1 = Fail _2 = LBracket ty = typeExpr _4 = RBracket exn = termClosed
     {let _endpos = _endpos_exn_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.Fail (ty, exn)) )}
+( (loc _startpos _endpos, ParseTree.Fail (ty, exn)) )}
 
 termUnclosed:
   x = termStrictlyUnclosed
-    {                             ( x )}
+    {( x )}
 | x = termNonStrictlyUnclosed
-    {                                ( x )}
+    {( x )}
 
 termClosed:
   name = lowerName
     {let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( (loc _startpos _endpos, ParseTree.LowerVal name) )}
+( (loc _startpos _endpos, ParseTree.LowerVal name) )}
 | name = upperName
     {let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( (loc _startpos _endpos, ParseTree.UpperVal name) )}
+( (loc _startpos _endpos, ParseTree.UpperVal name) )}
 | _1 = Match t = term _3 = With _4 = option_Pipe_ p = separated_nonempty_list_Pipe_pattern_ _6 = End
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.PatternMatching (t, p)) )}
+( (loc _startpos _endpos, ParseTree.PatternMatching (t, p)) )}
 | _1 = Try t = term _3 = With _4 = option_Pipe_ p = separated_nonempty_list_Pipe_pattern_ _6 = End
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.Try (t, p)) )}
+( (loc _startpos _endpos, ParseTree.Try (t, p)) )}
 | n = Int
     {let _endpos = _endpos_n_ in
 let _startpos = _startpos_n_ in
-      ( (loc _startpos _endpos, ParseTree.Const (ParseTree.Int n)) )}
+( (loc _startpos _endpos, ParseTree.Const (ParseTree.Int n)) )}
 | n = Float
     {let _endpos = _endpos_n_ in
 let _startpos = _startpos_n_ in
-      ( (loc _startpos _endpos, ParseTree.Const (ParseTree.Float n)) )}
+( (loc _startpos _endpos, ParseTree.Const (ParseTree.Float n)) )}
 | c = Char
     {let _endpos = _endpos_c_ in
 let _startpos = _startpos_c_ in
-      ( (loc _startpos _endpos, ParseTree.Const (ParseTree.Char c)) )}
+( (loc _startpos _endpos, ParseTree.Const (ParseTree.Char c)) )}
 | s = String
     {let _endpos = _endpos_s_ in
 let _startpos = _startpos_s_ in
-      ( (loc _startpos _endpos, ParseTree.Const (ParseTree.String s)) )}
+( (loc _startpos _endpos, ParseTree.Const (ParseTree.String s)) )}
 | _1 = LParen x = term _3 = RParen
-    {      ( x )}
+    {( x )}
 
 term:
   x = termUnclosed
-    {                     ( x )}
+    {( x )}
 | x = termClosed
-    {                   ( x )}
+    {( x )}
 
 termProtectedPermissive:
   x = termNonStrictlyUnclosed
-    {                                ( x )}
+    {( x )}
 | x = termClosed
-    {                   ( x )}
+    {( x )}
 
 appAux:
   f = termClosed
-    {                   ( f )}
+    {( f )}
 | f = app
-    {            ( f )}
+    {( f )}
 
 app:
   f = appAux _2 = LBracket ty = typeExpr _4 = RBracket
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_f_ in
-      ( (loc _startpos _endpos, ParseTree.TApp (f, ty)) )}
+( (loc _startpos _endpos, ParseTree.TApp (f, ty)) )}
 | f = appAux x = termClosed
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_f_ in
-      ( (loc _startpos _endpos, ParseTree.App (f, x)) )}
+( (loc _startpos _endpos, ParseTree.App (f, x)) )}
 | f = appAux _2 = LQMarkBracket tyclass = tyclassAppArg _4 = RBracket
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos_f_ in
-      ( (loc _startpos _endpos, ParseTree.TyClassApp (f, tyclass)) )}
+( (loc _startpos _endpos, ParseTree.TyClassApp (f, tyclass)) )}
 
 tyclassInstance:
   name = upperName tys = nonempty_list_typeExprClosed_
-    {      ( (name, tys) )}
+    {( (name, tys) )}
 
 tyclassAppArg:
   x = tyclassInstance
-    {                        ( ParseTree.TyClassInstance x )}
+    {( ParseTree.TyClassInstance x )}
 | x = lowerName
-    {                  ( ParseTree.TyClassVariable x )}
+    {( ParseTree.TyClassVariable x )}
 
 arg:
   _1 = LParen name = LowerName _3 = Colon ty = typeExpr _5 = RParen
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( ParseTree.VArg (name, ty) )}
+( ParseTree.VArg (name, ty) )}
 | _1 = LParen _1_inlined1 = Underscore _3 = Colon ty = typeExpr _5 = RParen
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( ParseTree.VArg (name, ty) )}
+( ParseTree.VArg (name, ty) )}
 | ty = kind_and_name_in_value
-    {      ( ParseTree.TArg ty )}
+    {( ParseTree.TArg ty )}
 | _1 = LParen _2 = RParen
-    {      ( ParseTree.Unit )}
+    {( ParseTree.Unit )}
 | _1 = LQMarkParen name = LowerName _3 = Colon tyclass = tyclass _5 = RParen
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( ParseTree.TyClassArg (name, tyclass) )}
+( ParseTree.TyClassArg (name, tyclass) )}
 | _1 = LQMarkParen _1_inlined1 = Underscore _3 = Colon tyclass = tyclass _5 = RParen
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( ParseTree.TyClassArg (name, tyclass) )}
+( ParseTree.TyClassArg (name, tyclass) )}
 
 args_lambda_aux_:
   rest = lambda_aux
-    {      ( ([], rest) )}
+    {( ([], rest) )}
 | x = arg xs = args_lambda_aux_
     {let _endpos = _endpos_xs_ in
 let _startpos = _startpos_x_ in
-      ( let (xs, rest) = xs in
+( let (xs, rest) = xs in
         ((loc _startpos _endpos, x) :: xs, rest)
       )}
 
 args_let_aux_:
   rest = let_aux
-    {      ( ([], rest) )}
+    {( ([], rest) )}
 | x = arg xs = args_let_aux_
     {let _endpos = _endpos_xs_ in
 let _startpos = _startpos_x_ in
-      ( let (xs, rest) = xs in
+( let (xs, rest) = xs in
         ((loc _startpos _endpos, x) :: xs, rest)
       )}
 
@@ -487,372 +487,372 @@ nonempty_args_lambda_aux_:
   x = arg xs = args_lambda_aux_
     {let _endpos = _endpos_xs_ in
 let _startpos = _startpos_x_ in
-      ( let (xs, rest) = xs in
+( let (xs, rest) = xs in
         ((loc _startpos _endpos, x) :: xs, rest)
       )}
 
 tyclass:
   name = upperName tyvars = list_kind_and_name_in_value_ args = nonempty_list_typeExprClosed_
-    {      ( (name, tyvars, args) )}
+    {( (name, tyvars, args) )}
 
 typeExprStrictlyUnclosed:
   param = typeExprProtectedPermissive _2 = Arrow ret = typeExpr
     {let _endpos = _endpos_ret_ in
 let _startpos = _startpos_param_ in
-      ( (loc _startpos _endpos, ParseTree.Fun (param, None, ret)) )}
+( (loc _startpos _endpos, ParseTree.Fun (param, None, ret)) )}
 | param = typeExprProtectedPermissive _2 = LArrowEff eff = eff _4 = RArrowEff ret = typeExpr
     {let _endpos = _endpos_ret_ in
 let _startpos = _startpos_param_ in
-      ( (loc _startpos _endpos, ParseTree.Fun (param, Some eff, ret)) )}
+( (loc _startpos _endpos, ParseTree.Fun (param, Some eff, ret)) )}
 | _1 = Forall x = nonempty_list_kind_and_name_ _3 = Comma ret = typeExpr
     {let _endpos = _endpos_ret_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.Forall (x, ret)) )}
+( (loc _startpos _endpos, ParseTree.Forall (x, ret)) )}
 | _1 = LBrace tyclass = tyclass _3 = RBrace _4 = DoubleArrow ty = typeExpr
     {let _endpos = _endpos_ty_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.TyClass (tyclass, None, ty)) )}
+( (loc _startpos _endpos, ParseTree.TyClass (tyclass, None, ty)) )}
 | _1 = LBrace tyclass = tyclass _3 = RBrace _4 = LDoubleArrowEff eff = eff _6 = RDoubleArrowEff ty = typeExpr
     {let _endpos = _endpos_ty_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.TyClass (tyclass, Some eff, ty)) )}
+( (loc _startpos _endpos, ParseTree.TyClass (tyclass, Some eff, ty)) )}
 | _1 = Lambda x = nonempty_list_kind_and_name_ _3 = Comma ret = typeExpr
     {let _endpos = _endpos_ret_ in
 let _startpos = _startpos__1_ in
-      ( (loc _startpos _endpos, ParseTree.AbsOnTy (x, ret)) )}
+( (loc _startpos _endpos, ParseTree.AbsOnTy (x, ret)) )}
 
 typeExprNonStrictlyUnclosed:
   x = tyApp
-    {      ( x )}
+    {( x )}
 
 typeExprUnclosed:
   x = typeExprStrictlyUnclosed
-    {                                 ( x )}
+    {( x )}
 | x = typeExprNonStrictlyUnclosed
-    {                                    ( x )}
+    {( x )}
 
 typeExprClosed:
   name = upperName
     {let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( (loc _startpos _endpos, ParseTree.Ty name) )}
+( (loc _startpos _endpos, ParseTree.Ty name) )}
 | name = LowerName
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
 let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( (loc _startpos _endpos, ParseTree.TyVar name) )}
+( (loc _startpos _endpos, ParseTree.TyVar name) )}
 | _1 = Underscore
     {let name =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
 let (_endpos_name_, _startpos_name_) = (_endpos__1_, _startpos__1_) in
 let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( (loc _startpos _endpos, ParseTree.TyVar name) )}
+( (loc _startpos _endpos, ParseTree.TyVar name) )}
 | _1 = LBracket eff = eff _3 = RBracket
-    {      ( (loc _startpos_eff_ _endpos_eff_, ParseTree.Eff eff) )}
+    {( (loc _startpos_eff_ _endpos_eff_, ParseTree.Eff eff) )}
 | _1 = LBracketUp sum = sum _3 = RBracketUp
-    {      ( (loc _startpos_sum_ _endpos_sum_, ParseTree.Sum sum) )}
+    {( (loc _startpos_sum_ _endpos_sum_, ParseTree.Sum sum) )}
 | _1 = LParen x = typeExpr _3 = RParen
-    {      ( x )}
+    {( x )}
 
 typeExpr:
   x = typeExprUnclosed
-    {                         ( x )}
+    {( x )}
 | x = typeExprClosed
-    {                       ( x )}
+    {( x )}
 
 typeExprProtectedPermissive:
   x = typeExprNonStrictlyUnclosed
-    {                                    ( x )}
+    {( x )}
 | x = typeExprClosed
-    {                       ( x )}
+    {( x )}
 
 tyAppAux:
   f = typeExprClosed
-    {                       ( f )}
+    {( f )}
 | f = tyApp
-    {              ( f )}
+    {( f )}
 
 tyApp:
   f = tyAppAux x = typeExprClosed
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_f_ in
-      ( (loc _startpos _endpos, ParseTree.AppOnTy (f, x)) )}
+( (loc _startpos _endpos, ParseTree.AppOnTy (f, x)) )}
 
 kindUnclosed:
   k1 = kindClosed _2 = Arrow k2 = kind
-    {      ( ParseTree.KFun (k1, k2) )}
+    {( ParseTree.KFun (k1, k2) )}
 
 kindClosed:
   _1 = Star
-    {         ( ParseTree.KStar )}
+    {( ParseTree.KStar )}
 | _1 = Eff
-    {        ( ParseTree.KEff )}
+    {( ParseTree.KEff )}
 | _1 = Caret
-    {          ( ParseTree.KExn )}
+    {( ParseTree.KExn )}
 | _1 = LParen x = kind _3 = RParen
-    {                           ( x )}
+    {( x )}
 
 kind:
   x = kindUnclosed
-    {                     ( x )}
+    {( x )}
 | x = kindClosed
-    {                   ( x )}
+    {( x )}
 
 eff:
   xs = loption_separated_nonempty_list_Comma_typeExpr__
-    {let eff =     ( xs ) in
+    {let eff = ( xs ) in
 let (_endpos_eff_, _startpos_eff_) = (_endpos_xs_, _startpos_xs_) in
 let _endpos = _endpos_eff_ in
 let _startpos = _startpos_eff_ in
-                                           ( (loc _startpos _endpos, eff) )}
+( (loc _startpos _endpos, eff) )}
 
 sum:
   xs = loption_separated_nonempty_list_Pipe_typeExpr__
-    {let sum =     ( xs ) in
-                                          ( sum )}
+    {let sum = ( xs ) in
+( sum )}
 
 variant:
   name = newUpperName tys = list_typeExprClosed_
-    {      ( (name, tys) )}
+    {( (name, tys) )}
 
 kindopt:
   
-    {    ( None )}
+    {( None )}
 | _1 = Colon k = kind
-    {                   ( Some k )}
+    {( Some k )}
 
 kind_and_name:
   name = LowerName
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( (name, None) )}
+( (name, None) )}
 | _1 = Underscore
     {let name =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( (name, None) )}
+( (name, None) )}
 | _1 = LParen name = LowerName _3 = Colon k = kind _5 = RParen
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( (name, Some k) )}
+( (name, Some k) )}
 | _1 = LParen _1_inlined1 = Underscore _3 = Colon k = kind _5 = RParen
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( (name, Some k) )}
+( (name, Some k) )}
 
 kind_and_name_in_value:
   _1 = LBrace name = LowerName _3 = RBrace
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( (name, None) )}
+( (name, None) )}
 | _1 = LBrace _1_inlined1 = Underscore _3 = RBrace
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( (name, None) )}
+( (name, None) )}
 | _1 = LBrace name = LowerName _3 = Colon k = kind _5 = RBrace
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( (name, Some k) )}
+( (name, Some k) )}
 | _1 = LBrace _1_inlined1 = Underscore _3 = Colon k = kind _5 = RBrace
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( (name, Some k) )}
+( (name, Some k) )}
 
 pattern:
   p = pat _2 = Arrow t = term
-    {      ( (p, t) )}
+    {( (p, t) )}
 
 patClosed:
   name = LowerName
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( ParseTree.Any name )}
+( ParseTree.Any name )}
 | _1 = Underscore
     {let name =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( ParseTree.Any name )}
+( ParseTree.Any name )}
 | name = upperName
     {let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( ParseTree.TyConstr (loc _startpos _endpos, name, []) )}
+( ParseTree.TyConstr (loc _startpos _endpos, name, []) )}
 | _1 = LParen p = pat _3 = RParen
-    {      ( p )}
+    {( p )}
 
 patNonStrictlyUnclosed:
   name = upperName args = nonempty_list_patClosed_
     {let _endpos = _endpos_args_ in
 let _startpos = _startpos_name_ in
-      ( ParseTree.TyConstr (loc _startpos _endpos, name, args) )}
+( ParseTree.TyConstr (loc _startpos _endpos, name, args) )}
 | p = patProtectedPermissive _2 = As name = LowerName
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( ParseTree.As (p, name) )}
+( ParseTree.As (p, name) )}
 | p = patProtectedPermissive _2 = As _1 = Underscore
     {let name =
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( ParseTree.As (p, name) )}
+( ParseTree.As (p, name) )}
 
 patStrictlyUnclosed:
   p1 = patProtectedPermissive _2 = Pipe p2 = pat
-    {      ( ParseTree.Or (p1, p2) )}
+    {( ParseTree.Or (p1, p2) )}
 
 patUnclosed:
   p = patNonStrictlyUnclosed
-    {                               ( p )}
+    {( p )}
 | p = patStrictlyUnclosed
-    {                            ( p )}
+    {( p )}
 
 patProtectedPermissive:
   p = patClosed
-    {                  ( p )}
+    {( p )}
 | p = patNonStrictlyUnclosed
-    {                               ( p )}
+    {( p )}
 
 pat:
   p = patClosed
-    {                  ( p )}
+    {( p )}
 | p = patUnclosed
-    {                    ( p )}
+    {( p )}
 
 letSig:
   _1 = Let name = LowerName _3 = Colon ty = typeExpr
     {let name =
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
-        ( (loc _startpos _endpos, `NewLowerName name) )
+  ( (loc _startpos _endpos, `NewLowerName name) )
 in
-      ( (name, ty) )}
+( (name, ty) )}
 | _1 = Let _1_inlined1 = Underscore _3 = Colon ty = typeExpr
     {let name =
   let (_endpos__1_, _startpos__1_) = (_endpos__1_inlined1_, _startpos__1_inlined1_) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
-        ( (loc _startpos _endpos, `Underscore) )
+  ( (loc _startpos _endpos, `Underscore) )
 in
-      ( (name, ty) )}
+( (name, ty) )}
 
 lowerName_aux:
   name = LowerName
-    {      ( [name] )}
+    {( [name] )}
 | m = UpperName _2 = Dot xs = lowerName_aux
-    {      ( m :: xs )}
+    {( m :: xs )}
 
 lowerName:
   x = lowerName_aux
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-                             ( (loc _startpos _endpos, `LowerName x) )}
+( (loc _startpos _endpos, `LowerName x) )}
 
 upperName_aux:
   name = UpperName
-    {      ( [name] )}
+    {( [name] )}
 | m = UpperName _2 = Dot xs = upperName_aux
-    {      ( m :: xs )}
+    {( m :: xs )}
 
 upperName:
   x = upperName_aux
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_x_ in
-                             ( (loc _startpos _endpos, `UpperName x) )}
+( (loc _startpos _endpos, `UpperName x) )}
 
 newUpperName:
   name = UpperName
     {let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
-      ( (loc _startpos _endpos, `NewUpperName name) )}
+( (loc _startpos _endpos, `NewUpperName name) )}
 
 bodyInterface:
   x = letSig
-    {      ( ParseTree.IVal x )}
+    {( ParseTree.IVal x )}
 | _1 = Type name = newUpperName k = kindopt
-    {      ( ParseTree.IAbstractType (name, k) )}
+    {( ParseTree.IAbstractType (name, k) )}
 | datatype = datatype
-    {      ( ParseTree.IDatatype datatype )}
+    {( ParseTree.IDatatype datatype )}
 | typeAlias = typeAlias
-    {      ( ParseTree.ITypeAlias typeAlias )}
+    {( ParseTree.ITypeAlias typeAlias )}
 | _1 = Exception name = newUpperName args = exceptionArgs
-    {      ( ParseTree.IException (name, args) )}
+    {( ParseTree.IException (name, args) )}
 | _1 = Open modul = import_module
-    {      ( ParseTree.IOpen modul )}
+    {( ParseTree.IOpen modul )}
 | _1 = Class name = newUpperName params = nonempty_list_kind_and_name_ _4 = Equal sigs = nonempty_list_letSig_ _6 = End
-    {      ( ParseTree.IClass (name, params, sigs) )}
+    {( ParseTree.IClass (name, params, sigs) )}
 | _1 = Instance name = instanceName x = tyclassInstance
-    {      ( ParseTree.IInstance (x, name) )}
+    {( ParseTree.IInstance (x, name) )}
 
 import_module:
   modul = upperName
-    {      ( ParseTree.Source modul )}
+    {( ParseTree.Source modul )}
 | _1 = Library modul = upperName
-    {      ( ParseTree.Library modul )}
+    {( ParseTree.Library modul )}
 
 import:
   _1 = Import m = import_module
-    {                                 ( m )}
+    {( m )}
 
 entry_body_:
   imports = list_import_ body = body_list_body_
-    {      ( (imports, body) )}
+    {( (imports, body) )}
 
 entry_bodyInterface_:
   imports = list_import_ body = body_list_bodyInterface_
-    {      ( (imports, body) )}
+    {( (imports, body) )}
 
 body_list_body_:
   _1 = EOF
-    {      ( [] )}
+    {( [] )}
 | x = body xs = body_list_body_
-    {      ( x :: xs )}
+    {( x :: xs )}
 
 body_list_bodyInterface_:
   _1 = EOF
-    {      ( [] )}
+    {( [] )}
 | x = bodyInterface xs = body_list_bodyInterface_
-    {      ( x :: xs )}
+    {( x :: xs )}
 
 %%

@@ -58,104 +58,104 @@ let tr_rw = function
 
 main:
   _1 = semi_opt _2 = proc_list _3 = iol_list _4 = EOF
-    {                                  ( _2,_3 )}
+    {( _2,_3 )}
 
 semi_opt:
   
-    {  ( () )}
+    {( () )}
 | _1 = SEMI
-    {       ( () )}
+    {( () )}
 
 proc_list:
   _1 = PROC _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = PROC _2 = PIPE _3 = proc_list
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 iol_list:
   _1 = instr_option_list _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = instr_option_list _2 = SEMI _3 = iol_list
-    {                                   (_1::_3)}
+    {(_1::_3)}
 
 instr_option_list:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = PIPE _3 = instr_option_list
-    {      (_1::_3)}
+    {(_1::_3)}
 
 instr_option:
   
-    {             ( Nop )}
+    {( Nop )}
 | _1 = NAME _2 = COLON _3 = instr_option
-    {                          ( Label (_1,_3) )}
+    {( Label (_1,_3) )}
 | _1 = instr
-    {             ( Instruction _1)}
+    {( Instruction _1)}
 
 reg:
   _1 = SYMB_REG
-    {           ( Symbolic_reg _1 )}
+    {( Symbolic_reg _1 )}
 | _1 = ARCH_REG
-    {           ( _1 )}
+    {( _1 )}
 
 k:
   _1 = NUM
-    {       ( MetaConst.Int _1 )}
+    {( MetaConst.Int _1 )}
 | _1 = META
-    {       ( MetaConst.Meta _1 )}
+    {( MetaConst.Meta _1 )}
 
 addr:
   _1 = NUM _2 = LPAR _3 = reg _4 = RPAR
-    {    ( _1,_3 )}
+    {( _1,_3 )}
 | _1 = LPAR _2 = reg _3 = RPAR
-    {    ( 0,_2 )}
+    {( 0,_2 )}
 
 addr0:
   _1 = NUM _2 = LPAR _3 = reg _4 = RPAR
-    {    ( if _1 <> 0 then raise Parsing.Parse_error;
+    {( if _1 <> 0 then raise Parsing.Parse_error;
       _3 )}
 | _1 = LPAR _2 = reg _3 = RPAR
-    {    ( _2 )}
+    {( _2 )}
 
 instr:
   _1 = LI _2 = reg _3 = COMMA _4 = k
-    {  ( OpI (ORI,_2,Ireg X0,_4) )}
+    {( OpI (ORI,_2,Ireg X0,_4) )}
 | _1 = OPI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {  ( OpI (_1,_2,_4,_6) )}
+    {( OpI (_1,_2,_4,_6) )}
 | _1 = OPIW _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {  ( OpIW (_1,_2,_4,_6) )}
+    {( OpIW (_1,_2,_4,_6) )}
 | _1 = OP _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {  ( Op (_1,_2,_4,_6) )}
+    {( Op (_1,_2,_4,_6) )}
 | _1 = OPW _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {  ( OpW (_1,_2,_4,_6) )}
+    {( OpW (_1,_2,_4,_6) )}
 | _1 = J _2 = NAME
-    {    ( J _2 )}
+    {( J _2 )}
 | _1 = BCC _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = NAME
-    {    ( Bcc (_1,_2,_4,_6) )}
+    {( Bcc (_1,_2,_4,_6) )}
 | _1 = LOAD _2 = reg _3 = COMMA _4 = addr
-    {    ( let w,s,mo = _1 in
+    {( let w,s,mo = _1 in
     let off,r = _4 in
     Load (w,s,mo,_2,off,r) )}
 | _1 = STORE _2 = reg _3 = COMMA _4 = addr
-    {    (let w,mo = _1 in
+    {(let w,mo = _1 in
      let off,r = _4 in
      Store (w,mo,_2,off,r) )}
 | _1 = LR _2 = reg _3 = COMMA _4 = addr0
-    {    ( let w,mo = _1 in
+    {( let w,mo = _1 in
     LoadReserve (w,mo,_2,_4) )}
 | _1 = SC _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = addr0
-    {    ( let w,mo = _1 in
+    {( let w,mo = _1 in
     StoreConditional (w,mo,_2,_4,_6) )}
 | _1 = AMO _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = addr0
-    {    ( let op,w,mo = _1 in
+    {( let op,w,mo = _1 in
     Amo (op,w,mo,_2,_4,_6) )}
 | _1 = FENCEI
-    {    ( FenceIns FenceI )}
+    {( FenceIns FenceI )}
 | _1 = FENCETSO
-    {    ( FenceIns FenceTSO )}
+    {( FenceIns FenceTSO )}
 | _1 = FENCE
-    {    ( FenceIns (Fence (RW,RW)) )}
+    {( FenceIns (Fence (RW,RW)) )}
 | _1 = FENCE _2 = NAME _3 = COMMA _4 = NAME
-    {    ( FenceIns (Fence (tr_rw _2,tr_rw _4)) )}
+    {( FenceIns (Fence (tr_rw _2,tr_rw _4)) )}
 
 %%

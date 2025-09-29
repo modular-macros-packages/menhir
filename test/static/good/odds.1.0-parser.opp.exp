@@ -22,25 +22,25 @@ open Odds.Algebra
 
 entry:
   t = formula _2 = EOF
-    {                 ( t )}
+    {( t )}
 
 formula:
   i = INTEGER
-    {             ( !i )}
+    {( !i )}
 | _1 = LPAREN t = formula _3 = RPAREN
-    {                             ( t )}
+    {( t )}
 | l = formula _2 = D r = formula
-    {                         ( dice l r )}
+    {( dice l r )}
 | l = formula _2 = PLUS r = formula
-    {                            ( l + r )}
+    {( l + r )}
 | l = formula _2 = DASH r = formula
-    {                            ( l - r )}
+    {( l - r )}
 | l = formula _2 = STAR r = formula
-    {                            ( l * r )}
+    {( l * r )}
 | l = formula _2 = SLASH r = formula
-    {                             ( l / r )}
+    {( l / r )}
 | _1 = DASH t = formula %prec NEG
-    {                            ( ~- t )}
+    {( ~- t )}
 
 %%
 

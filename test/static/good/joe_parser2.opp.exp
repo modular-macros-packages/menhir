@@ -188,8 +188,8 @@ Warning: the token ZZZ is unused.
 
 look_for_trouble:
   _1 = COOL_TOKEN
-    {               ( )}
+    {( )}
 | _1 = COOL_TOKEN
-    {               ( )}
+    {( )}
 
 %%

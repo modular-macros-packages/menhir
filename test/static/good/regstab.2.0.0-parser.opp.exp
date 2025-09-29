@@ -235,152 +235,152 @@ Warning: the token LT is unused.
 
 main:
   _1 = regstab_2_0_0_parser_option _2 = main
-    {              ( let (_,res) = _2 in Some _1, res)}
+    {( let (_,res) = _2 in Some _1, res)}
 | _1 = sentences
-    {               ( None, regular_schema_of_ast _1 )}
+    {( None, regular_schema_of_ast _1 )}
 
 regstab_2_0_0_parser_option:
   _1 = SAT
-    {         ( `Sat   )}
+    {( `Sat   )}
 | _1 = UNSAT
-    {         ( `Unsat )}
+    {( `Unsat )}
 
 sentences:
   _1 = LET _2 = def_lhs _3 = def_rhs
-    {                         ( { _3#cons with defs = (_2#name, _2#params, _3#body) :: _3#cons.defs } )}
+    {( { _3#cons with defs = (_2#name, _2#params, _3#body) :: _3#cons.defs } )}
 | _1 = regschema _2 = EOF
-    {                         ( { defs = []; sch = _1;  cstr = H.True } )}
+    {( { defs = []; sch = _1;  cstr = H.True } )}
 | _1 = regschema _2 = ST _3 = cstr _4 = EOF
-    {                         ( { defs = []; sch = _1;  cstr = _3      } )}
+    {( { defs = []; sch = _1;  cstr = _3      } )}
 | _1 = EOF
-    {                         ( { defs = []; sch = Top; cstr = H.True } )}
+    {( { defs = []; sch = Top; cstr = H.True } )}
 
 def_rhs:
   _1 = DEF _2 = regschema _3 = in_sentences
-    {                             ( object method body = _2 method cons = _3 end )}
+    {( object method body = _2 method cons = _3 end )}
 | _1 = EQUAL
-    {                             ( parse_error "'=' used instead of ':='" )}
+    {( parse_error "'=' used instead of ':='" )}
 
 in_sentences:
   _1 = IN _2 = sentences
-    {               ( _2 )}
+    {( _2 )}
 | _1 = sentences
-    {               ( parse_error "Missing 'in' in 'let ... in' statement" )}
+    {( parse_error "Missing 'in' in 'let ... in' statement" )}
 
 def_lhs:
   _1 = PROP _2 = LPAREN _3 = params _4 = RPAREN
-    {                            ( object method name = _1 method params = _3 end )}
+    {( object method name = _1 method params = _3 end )}
 | _1 = PROP
-    {                            ( object method name = _1 method params = [] end )}
+    {( object method name = _1 method params = [] end )}
 
 params:
   _1 = PROP
-    {                     ( [PropParam _1]      )}
+    {( [PropParam _1]      )}
 | _1 = VAR
-    {                     ( [TermeParam _1]     )}
+    {( [TermeParam _1]     )}
 | _1 = PROP _2 = COMMA _3 = params
-    {                     ( (PropParam _1)::_3  )}
+    {( (PropParam _1)::_3  )}
 | _1 = VAR _2 = COMMA _3 = params
-    {                     ( (TermeParam _1)::_3 )}
+    {( (TermeParam _1)::_3 )}
 
 regschema:
   _1 = PROP _2 = INDEX _3 = terme
-    {                   ( Atom(_1,_3) )}
+    {( Atom(_1,_3) )}
 | _1 = NOT _2 = regschema
-    {                             ( Neg _2 )}
+    {( Neg _2 )}
 | _1 = regschema _2 = AND _3 = regschema
-    {                             ( Op(H.And,_1, _3)   )}
+    {( Op(H.And,_1, _3)   )}
 | _1 = regschema _2 = OR _3 = regschema
-    {                             ( Op(H.Or,_1, _3)    )}
+    {( Op(H.Or,_1, _3)    )}
 | _1 = regschema _2 = XOR _3 = regschema
-    {                             ( Op(H.Xor,_1, _3)   )}
+    {( Op(H.Xor,_1, _3)   )}
 | _1 = regschema _2 = EQUIV _3 = regschema
-    {                             ( Op(H.Equiv,_1, _3) )}
+    {( Op(H.Equiv,_1, _3) )}
 | _1 = regschema _2 = IMPLY _3 = regschema
-    {                             ( Op(H.Imply,_1, _3) )}
+    {( Op(H.Imply,_1, _3) )}
 | _1 = LPAREN _2 = regschema _3 = RPAREN
-    {                             ( _2 )}
+    {( _2 )}
 | _1 = AND _2 = VAR _3 = EQUAL _4 = INT _5 = DOTS _6 = upper _7 = flatschema %prec ITAND
-    {                                                       ( It(H.Big_and,_2,_4,_6,_7) )}
+    {( It(H.Big_and,_2,_4,_6,_7) )}
 | _1 = OR _2 = VAR _3 = EQUAL _4 = INT _5 = DOTS _6 = upper _7 = flatschema %prec ITOR
-    {                                                       ( It(H.Big_or,_2,_4,_6,_7) )}
+    {( It(H.Big_or,_2,_4,_6,_7) )}
 | _1 = function_call
-    {                                                       ( FunctionCall(_1#name,_1#args) )}
+    {( FunctionCall(_1#name,_1#args) )}
 
 function_call:
   _1 = PROP _2 = LPAREN _3 = arguments _4 = RPAREN
-    {                               ( object method name = _1 method args = _3 end )}
+    {( object method name = _1 method args = _3 end )}
 | _1 = PROP _2 = LPAREN _3 = RPAREN
-    {                               ( object method name = _1 method args = [] end )}
+    {( object method name = _1 method args = [] end )}
 | _1 = PROP _2 = AND
-    {                               ( parse_error "Missing parentheses in function call" )}
+    {( parse_error "Missing parentheses in function call" )}
 | _1 = PROP _2 = OR
-    {                               ( parse_error "Missing parentheses in function call" )}
+    {( parse_error "Missing parentheses in function call" )}
 | _1 = PROP _2 = NOT
-    {                               ( parse_error "Missing parentheses in function call" )}
+    {( parse_error "Missing parentheses in function call" )}
 | _1 = PROP _2 = PROP
-    {                               ( parse_error "Missing parentheses in function call" )}
+    {( parse_error "Missing parentheses in function call" )}
 | _1 = PROP _2 = EOF
-    {                               ( parse_error "Missing parentheses in function call" )}
+    {( parse_error "Missing parentheses in function call" )}
 
 arguments:
   _1 = terme
-    {                         ( [TermeArg _1]       )}
+    {( [TermeArg _1]       )}
 | _1 = PROP
-    {                         ( [PropArg _1]        )}
+    {( [PropArg _1]        )}
 | _1 = PROP _2 = COMMA _3 = arguments
-    {                         ( (PropArg _1) :: _3  )}
+    {( (PropArg _1) :: _3  )}
 | _1 = terme _2 = COMMA _3 = arguments
-    {                         ( (TermeArg _1) :: _3 )}
+    {( (TermeArg _1) :: _3 )}
 
 flatschema:
   _1 = PROP _2 = INDEX _3 = terme
-    {                                       ( Atom(_1, _3) )}
+    {( Atom(_1, _3) )}
 | _1 = NOT _2 = flatschema
-    {                                       ( Neg _2 )}
+    {( Neg _2 )}
 | _1 = flatschema _2 = AND _3 = flatschema
-    {                                       ( Op(H.And, _1, _3)   )}
+    {( Op(H.And, _1, _3)   )}
 | _1 = flatschema _2 = OR _3 = flatschema
-    {                                       ( Op(H.Or, _1, _3)    )}
+    {( Op(H.Or, _1, _3)    )}
 | _1 = flatschema _2 = XOR _3 = flatschema
-    {                                       ( Op(H.Xor, _1, _3)   )}
+    {( Op(H.Xor, _1, _3)   )}
 | _1 = flatschema _2 = EQUIV _3 = flatschema
-    {                                       ( Op(H.Equiv, _1, _3) )}
+    {( Op(H.Equiv, _1, _3) )}
 | _1 = flatschema _2 = IMPLY _3 = flatschema
-    {                                       ( Op(H.Imply, _1, _3) )}
+    {( Op(H.Imply, _1, _3) )}
 | _1 = LPAREN _2 = flatschema _3 = RPAREN
-    {                                       ( _2 )}
+    {( _2 )}
 | _1 = AND _2 = VAR _3 = EQUAL _4 = INT _5 = DOTS %prec ITAND
-    {                                       ( parse_error "Iterations cannot be nested (regular schemata)" )}
+    {( parse_error "Iterations cannot be nested (regular schemata)" )}
 | _1 = OR _2 = VAR _3 = EQUAL _4 = INT _5 = DOTS %prec ITOR
-    {                                       ( parse_error "Iterations cannot be nested (regular schemata)" )}
+    {( parse_error "Iterations cannot be nested (regular schemata)" )}
 | _1 = function_call
-    {                                       ( FunctionCall(_1#name,_1#args) )}
+    {( FunctionCall(_1#name,_1#args) )}
 
 cstr:
   _1 = VAR _2 = GE _3 = INT
-    {                 ( H.(Atom(_1,Ge,_3)) )}
+    {( H.(Atom(_1,Ge,_3)) )}
 | _1 = VAR _2 = GT _3 = INT
-    {                 ( H.(Atom(_1,Gt,_3)) )}
+    {( H.(Atom(_1,Gt,_3)) )}
 | _1 = VAR _2 = EQUAL _3 = INT
-    {                 ( H.(Atom(_1,Eq,_3)) )}
+    {( H.(Atom(_1,Eq,_3)) )}
 
 terme:
   _1 = VAR
-    {                  ( H.Sum(_1,0)   )}
+    {( H.Sum(_1,0)   )}
 | _1 = INT
-    {                  ( H.Int _1        )}
+    {( H.Int _1        )}
 | _1 = VAR _2 = PLUS _3 = INT
-    {                  ( H.Sum(_1,_3)  )}
+    {( H.Sum(_1,_3)  )}
 | _1 = VAR _2 = MINUS _3 = INT
-    {                  ( H.Sum(_1,-_3) )}
+    {( H.Sum(_1,-_3) )}
 
 upper:
   _1 = VAR
-    {                  ( (_1,0)   )}
+    {( (_1,0)   )}
 | _1 = VAR _2 = PLUS _3 = INT
-    {                  ( (_1,_3)  )}
+    {( (_1,_3)  )}
 | _1 = VAR _2 = MINUS _3 = INT
-    {                  ( (_1,-_3) )}
+    {( (_1,-_3) )}
 
 %%

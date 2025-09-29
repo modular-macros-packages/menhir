@@ -6,18 +6,18 @@
 
 main:
   _1 = option1_A_ _2 = option2_B_
-    {    ()}
+    {()}
 
 option1_A_:
   
-    {           (  None  )}
+    {(  None  )}
 | x = A
-    {           ( Some x )}
+    {( Some x )}
 
 option2_B_:
   
-    {           ( None )}
+    {( None )}
 | x = B
-    {             Some   x}
+    { Some  x}
 
 %%

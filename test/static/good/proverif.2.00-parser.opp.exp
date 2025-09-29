@@ -79,224 +79,224 @@ exception Syntax
 
 term:
   _1 = IDENT _2 = LPAREN _3 = termseq _4 = RPAREN
-    { ( PFunApp (_1, _3) )}
+    {( PFunApp (_1, _3) )}
 | _1 = LPAREN _2 = termseq _3 = RPAREN
-    { ( PTuple _2 )}
+    {( PTuple _2 )}
 | _1 = IDENT _2 = LBRACKET _3 = termseq _4 = RBRACKET
-    { ( PName(_1, _3) )}
+    {( PName(_1, _3) )}
 | _1 = IDENT
-    { ( PIdent (_1) )}
+    {( PIdent (_1) )}
 
 netermseq:
   _1 = term _2 = COMMA _3 = netermseq
-    { ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = term
-    { ( [_1] )}
+    {( [_1] )}
 
 termseq:
   _1 = netermseq
-    {        ( _1 )}
+    {( _1 )}
 | 
-    { ( [] )}
+    {( [] )}
 
 neidentseq:
   _1 = IDENT _2 = COMMA _3 = neidentseq
-    {        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = IDENT
-    { ( [_1] )}
+    {( [_1] )}
 
 format:
   _1 = IDENT _2 = LPAREN _3 = formatseq _4 = RPAREN
-    { ( PFFunApp (_1, _3) )}
+    {( PFFunApp (_1, _3) )}
 | _1 = LPAREN _2 = formatseq _3 = RPAREN
-    { ( PFTuple _2 )}
+    {( PFTuple _2 )}
 | _1 = IDENT _2 = LBRACKET _3 = formatseq _4 = RBRACKET
-    { ( PFName(_1, _3) )}
+    {( PFName(_1, _3) )}
 | _1 = IDENT
-    { ( PFIdent (_1) )}
+    {( PFIdent (_1) )}
 | _1 = STAR _2 = IDENT
-    {        ( PFAny (_2) )}
+    {( PFAny (_2) )}
 
 neformatseq:
   _1 = format _2 = COMMA _3 = neformatseq
-    { ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = format
-    { ( [_1] )}
+    {( [_1] )}
 
 formatseq:
   _1 = neformatseq
-    {        ( _1 )}
+    {( _1 )}
 | 
-    { ( [] )}
+    {( [] )}
 
 optint:
   _1 = SLASH _2 = INT
-    {        ( _2 )}
+    {( _2 )}
 | 
-    {        ( -1 )}
+    {( -1 )}
 
 identseq:
   _1 = neidentseq
-    {        ( _1 )}
+    {( _1 )}
 | 
-    {        ( [] )}
+    {( [] )}
 
 fact:
   _1 = IDENT _2 = COLON _3 = termseq
-    { ( PSimpleFact(_1,_3), parse_extent() )}
+    {( PSimpleFact(_1,_3), parse_extent() )}
 | _1 = term _2 = DIFF _3 = term
-    {        ( PSNeq(_1,_3), parse_extent() )}
+    {( PSNeq(_1,_3), parse_extent() )}
 
 rule:
   _1 = termand _2 = RED _3 = fact
-    {        ( Clause(_1,_3) )}
+    {( Clause(_1,_3) )}
 | _1 = fact
-    {        ( Clause([],_1) )}
+    {( Clause([],_1) )}
 | _1 = termand _2 = EQUIV _3 = fact
-    {        ( Equiv(_1,_3,true) )}
+    {( Equiv(_1,_3,true) )}
 | _1 = termand _2 = EQUIVEQ _3 = fact
-    {        ( Equiv(_1,_3,false) )}
+    {( Equiv(_1,_3,false) )}
 
 termand:
   _1 = fact _2 = WEDGE _3 = termand
-    { ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = fact
-    { ( [_1] )}
+    {( [_1] )}
 
 reduc:
   _1 = rule _2 = SEMI _3 = reduc
-    { ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = rule _2 = DOT
-    { ( [_1] )}
+    {( [_1] )}
 
 factformat:
   _1 = IDENT _2 = COLON _3 = formatseq
-    { ( (_1,_3) )}
+    {( (_1,_3) )}
 
 eqlist:
   _1 = term _2 = EQUAL _3 = term
-    {        ( [(_1, _3)] )}
+    {( [(_1, _3)] )}
 | _1 = term _2 = EQUAL _3 = term _4 = SEMI _5 = eqlist
-    { ( (_1, _3) :: _5 )}
+    {( (_1, _3) :: _5 )}
 
 all:
   _1 = FUN _2 = IDENT _3 = SLASH _4 = INT _5 = DOT _6 = all
-    {        ( (FunDecl(_2, _4)) :: _6 )}
+    {( (FunDecl(_2, _4)) :: _6 )}
 | _1 = DATA _2 = IDENT _3 = SLASH _4 = INT _5 = DOT _6 = all
-    {        ( (DataFunDecl(_2, _4)) :: _6 )}
+    {( (DataFunDecl(_2, _4)) :: _6 )}
 | _1 = EQUATION _2 = eqlist _3 = DOT _4 = all
-    {        ( (Equation(_2)) :: _4 )}
+    {( (Equation(_2)) :: _4 )}
 | _1 = QUERY _2 = fact _3 = DOT _4 = all
-    {        ( (Query _2) :: _4 )}
+    {( (Query _2) :: _4 )}
 | _1 = NOUNIF _2 = factformat _3 = optint _4 = DOT _5 = all
-    {        ( (NoUnif (_2,_3)) :: _5 )}
+    {( (NoUnif (_2,_3)) :: _5 )}
 | _1 = NOT _2 = fact _3 = DOT _4 = all
-    {        ( (Not _2) :: _4 )}
+    {( (Not _2) :: _4 )}
 | _1 = ELIMTRUE _2 = fact _3 = DOT _4 = all
-    {        ( (Elimtrue _2) :: _4 )}
+    {( (Elimtrue _2) :: _4 )}
 | _1 = PREDICATE _2 = IDENT _3 = SLASH _4 = INT _5 = identseq _6 = DOT _7 = all
-    {        ( (PredDecl(_2, _4, _5)) :: _7 )}
+    {( (PredDecl(_2, _4, _5)) :: _7 )}
 | _1 = PARAM _2 = IDENT _3 = EQUAL _4 = IDENT _5 = DOT _6 = all
-    {        ( (Param(_2,S _4)) :: _6 )}
+    {( (Param(_2,S _4)) :: _6 )}
 | _1 = PARAM _2 = IDENT _3 = EQUAL _4 = INT _5 = DOT _6 = all
-    {        ( (Param(_2,I _4)) :: _6 )}
+    {( (Param(_2,I _4)) :: _6 )}
 | _1 = REDUCTION _2 = reduc _3 = EOF
-    { ( [Reduc(_2)] )}
+    {( [Reduc(_2)] )}
 
 tfact:
   _1 = IDENT _2 = LPAREN _3 = termseq _4 = RPAREN
-    { ( PSimpleFact(_1,_3), parse_extent() )}
+    {( PSimpleFact(_1,_3), parse_extent() )}
 | _1 = IDENT
-    {        ( PSimpleFact(_1,[]), parse_extent() )}
+    {( PSimpleFact(_1,[]), parse_extent() )}
 | _1 = term _2 = DIFF _3 = term
-    {        ( PSNeq(_1,_3), parse_extent() )}
+    {( PSNeq(_1,_3), parse_extent() )}
 
 trule:
   _1 = ttermand _2 = RED _3 = tfact
-    {        ( Clause(_1,_3) )}
+    {( Clause(_1,_3) )}
 | _1 = tfact
-    {        ( Clause([],_1) )}
+    {( Clause([],_1) )}
 | _1 = ttermand _2 = EQUIV _3 = tfact
-    {        ( Equiv(_1,_3,true) )}
+    {( Equiv(_1,_3,true) )}
 | _1 = ttermand _2 = EQUIVEQ _3 = tfact
-    {        ( Equiv(_1,_3,false) )}
+    {( Equiv(_1,_3,false) )}
 
 ttermand:
   _1 = tfact _2 = WEDGE _3 = ttermand
-    { ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = tfact
-    { ( [_1] )}
+    {( [_1] )}
 
 tfactformat:
   _1 = IDENT _2 = LPAREN _3 = formatseq _4 = RPAREN
-    { ( (_1,_3) )}
+    {( (_1,_3) )}
 
 nevartype:
   _1 = IDENT _2 = COLON _3 = IDENT _4 = COMMA _5 = nevartype
-    {        ( (_1,_3)::_5 )}
+    {( (_1,_3)::_5 )}
 | _1 = IDENT _2 = COLON _3 = IDENT
-    {        ( [(_1,_3)] )}
+    {( [(_1,_3)] )}
 
 forallvartype:
   _1 = FORALL _2 = nevartype _3 = SEMI
-    {        ( _2 )}
+    {( _2 )}
 | 
-    {        ( [] )}
+    {( [] )}
 
 treduc:
   _1 = forallvartype _2 = trule _3 = SEMI _4 = treduc
-    { ( (_1,_2) :: _4 )}
+    {( (_1,_2) :: _4 )}
 | _1 = forallvartype _2 = trule _3 = DOT
-    { ( [_1,_2] )}
+    {( [_1,_2] )}
 
 options:
   _1 = LBRACKET _2 = neidentseq _3 = RBRACKET
-    {        ( _2 )}
+    {( _2 )}
 | 
-    {        ( [] )}
+    {( [] )}
 
 teqlist:
   _1 = forallvartype _2 = term _3 = EQUAL _4 = term
-    {    ( [(_1, _2, _4)] )}
+    {( [(_1, _2, _4)] )}
 | _1 = forallvartype _2 = term _3 = EQUAL _4 = term _5 = SEMI _6 = teqlist
-    {    ( (_1, _2, _4)::_6 )}
+    {( (_1, _2, _4)::_6 )}
 
 tall:
   _1 = TYPE _2 = IDENT _3 = DOT _4 = tall
-    {        ( TTypeDecl(_2) :: _4 )}
+    {( TTypeDecl(_2) :: _4 )}
 | _1 = NAME _2 = IDENT _3 = COLON _4 = IDENT _5 = DOT _6 = tall
-    {        ( TNameDecl(_2,_4) :: _6 )}
+    {( TNameDecl(_2,_4) :: _6 )}
 | _1 = FUN _2 = IDENT _3 = LPAREN _4 = identseq _5 = RPAREN _6 = COLON _7 = IDENT _8 = options _9 = DOT _10 = tall
-    {        ( (TFunDecl(_2, _4, _7, _8)) :: _10 )}
+    {( (TFunDecl(_2, _4, _7, _8)) :: _10 )}
 | _1 = CONST _2 = IDENT _3 = COLON _4 = IDENT _5 = options _6 = DOT _7 = tall
-    {        ( (TConstDecl(_2, _4, _5)) :: _7 )}
+    {( (TConstDecl(_2, _4, _5)) :: _7 )}
 | _1 = EQUATION _2 = options _3 = teqlist _4 = DOT _5 = tall
-    {        ( (TEquation(_3, _2)) :: _5 )}
+    {( (TEquation(_3, _2)) :: _5 )}
 | _1 = QUERY _2 = nevartype _3 = SEMI _4 = tfact _5 = DOT _6 = tall
-    {        ( (TQuery(_2, _4)) :: _6 )}
+    {( (TQuery(_2, _4)) :: _6 )}
 | _1 = QUERY _2 = tfact _3 = DOT _4 = tall
-    {        ( (TQuery([], _2)) :: _4 )}
+    {( (TQuery([], _2)) :: _4 )}
 | _1 = NOUNIF _2 = nevartype _3 = SEMI _4 = tfactformat _5 = optint _6 = DOT _7 = tall
-    {        ( (TNoUnif (_2, _4,_5)) :: _7 )}
+    {( (TNoUnif (_2, _4,_5)) :: _7 )}
 | _1 = NOUNIF _2 = tfactformat _3 = optint _4 = DOT _5 = tall
-    {        ( (TNoUnif ([],_2,_3)) :: _5 )}
+    {( (TNoUnif ([],_2,_3)) :: _5 )}
 | _1 = NOT _2 = nevartype _3 = SEMI _4 = tfact _5 = DOT _6 = tall
-    {        ( (TNot(_2,_4)) :: _6 )}
+    {( (TNot(_2,_4)) :: _6 )}
 | _1 = NOT _2 = tfact _3 = DOT _4 = tall
-    {        ( (TNot([],_2)) :: _4 )}
+    {( (TNot([],_2)) :: _4 )}
 | _1 = ELIMTRUE _2 = nevartype _3 = SEMI _4 = tfact _5 = DOT _6 = tall
-    {        ( (TElimtrue(_2,_4)) :: _6 )}
+    {( (TElimtrue(_2,_4)) :: _6 )}
 | _1 = ELIMTRUE _2 = tfact _3 = DOT _4 = tall
-    {        ( (TElimtrue([],_2)) :: _4 )}
+    {( (TElimtrue([],_2)) :: _4 )}
 | _1 = PREDICATE _2 = IDENT _3 = LPAREN _4 = identseq _5 = RPAREN _6 = options _7 = DOT _8 = tall
-    {        ( (TPredDecl(_2, _4, _6)) :: _8 )}
+    {( (TPredDecl(_2, _4, _6)) :: _8 )}
 | _1 = PREDICATE _2 = IDENT _3 = options _4 = DOT _5 = tall
-    {        ( (TPredDecl(_2, [], _3)) :: _5 )}
+    {( (TPredDecl(_2, [], _3)) :: _5 )}
 | _1 = SET _2 = IDENT _3 = EQUAL _4 = IDENT _5 = DOT _6 = tall
-    {        ( (TSet(_2,S _4)) :: _6 )}
+    {( (TSet(_2,S _4)) :: _6 )}
 | _1 = SET _2 = IDENT _3 = EQUAL _4 = INT _5 = DOT _6 = tall
-    {        ( (TSet(_2,I _4)) :: _6 )}
+    {( (TSet(_2,I _4)) :: _6 )}
 | _1 = CLAUSES _2 = treduc _3 = EOF
-    { ( [TReduc(_2)] )}
+    {( [TReduc(_2)] )}
 
 %%

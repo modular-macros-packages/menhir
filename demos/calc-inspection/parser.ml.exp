@@ -18,11 +18,11 @@ module MenhirBasics = struct
     | PLUS
     | MINUS
     | LPAREN
-    | INT of (
+    | INT of 
 # 1 "demos/calc-inspection/parser.mly"
        (int)
 # 25 "demos/calc-inspection/parser.ml"
-  )
+  
     | EOL
     | DIV
   
@@ -65,11 +65,11 @@ module Tables = struct
       | EOL ->
           Obj.repr ()
       | INT _v ->
-          Obj.repr (_v : (
+          Obj.repr (_v : 
 # 1 "demos/calc-inspection/parser.mly"
        (int)
 # 72 "demos/calc-inspection/parser.ml"
-          ))
+          )
       | LPAREN ->
           Obj.repr ()
       | MINUS ->
@@ -111,11 +111,11 @@ module Tables = struct
           MenhirLib.EngineTypes.endp = _endpos_i_;
           MenhirLib.EngineTypes.next = _menhir_stack;
         } = _menhir_stack in
-        let i : (
+        let i : 
 # 1 "demos/calc-inspection/parser.mly"
        (int)
 # 118 "demos/calc-inspection/parser.ml"
-        ) = Obj.magic i in
+         = Obj.magic i in
         let _endpos__0_ = _menhir_stack.MenhirLib.EngineTypes.endp in
         let _startpos = _startpos_i_ in
         let _endpos = _endpos_i_ in
@@ -421,11 +421,11 @@ module MenhirInterpreter = struct
       | T_PLUS : unit terminal
       | T_MINUS : unit terminal
       | T_LPAREN : unit terminal
-      | T_INT : (
+      | T_INT : 
 # 1 "demos/calc-inspection/parser.mly"
        (int)
 # 428 "demos/calc-inspection/parser.ml"
-    ) terminal
+     terminal
       | T_EOL : unit terminal
       | T_DIV : unit terminal
     

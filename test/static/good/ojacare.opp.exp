@@ -175,216 +175,216 @@ let make_package name defs = {
 
 idl_file:
   _1 = idl_file_list _2 = EOF
-    {                    ( _1 )}
+    {( _1 )}
 | _1 = defs _2 = EOF
-    {           ( [make_package [] _1] )}
+    {( [make_package [] _1] )}
 
 idl_file_list:
   _1 = PACKAGE _2 = ident_list _3 = SEMI _4 = defs
-    {                               ( [make_package _2 _4] )}
+    {( [make_package _2 _4] )}
 | _1 = PACKAGE _2 = ident_list _3 = SEMI _4 = defs _5 = idl_file_list
-    {                                             ( (make_package _2 _4) :: _5 )}
+    {( (make_package _2 _4) :: _5 )}
 
 defs:
   _1 = def
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = def _2 = defs
-    {           ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 def:
   _1 = CLASS _2 = ident _3 = def_body
-    {                       ( make_def _2 _3 )}
+    {( make_def _2 _3 )}
 | _1 = annotations _2 = CLASS _3 = ident _4 = def_body
-    {                                   ( make_def ~annotations:_1 _3 _4 )}
+    {( make_def ~annotations:_1 _3 _4 )}
 | _1 = modifiers _2 = CLASS _3 = ident _4 = def_body
-    {                                 ( make_def  ~modifiers:_1 _3 _4 )}
+    {( make_def  ~modifiers:_1 _3 _4 )}
 | _1 = annotations _2 = modifiers _3 = CLASS _4 = ident _5 = def_body
-    {                                             ( make_def ~modifiers:_2 ~annotations:_1 _4 _5 )}
+    {( make_def ~modifiers:_2 ~annotations:_1 _4 _5 )}
 | _1 = CLASS _2 = ident _3 = super _4 = def_body
-    {                             ( make_def _2 ~super:_3 _4 )}
+    {( make_def _2 ~super:_3 _4 )}
 | _1 = annotations _2 = CLASS _3 = ident _4 = super _5 = def_body
-    {                                         ( make_def ~annotations:_1 _3 ~super:_4 _5 )}
+    {( make_def ~annotations:_1 _3 ~super:_4 _5 )}
 | _1 = modifiers _2 = CLASS _3 = ident _4 = super _5 = def_body
-    {                                       ( make_def  ~modifiers:_1 _3 ~super:_4 _5 )}
+    {( make_def  ~modifiers:_1 _3 ~super:_4 _5 )}
 | _1 = annotations _2 = modifiers _3 = CLASS _4 = ident _5 = super _6 = def_body
-    {                                                   ( make_def ~modifiers:_2 ~annotations:_1 _4 ~super:_5 _6 )}
+    {( make_def ~modifiers:_2 ~annotations:_1 _4 ~super:_5 _6 )}
 | _1 = CLASS _2 = ident _3 = IMPLEMENTS _4 = interface_list _5 = def_body
-    {                                                 ( make_def _2 ~implements:_4 _5 )}
+    {( make_def _2 ~implements:_4 _5 )}
 | _1 = annotations _2 = CLASS _3 = ident _4 = IMPLEMENTS _5 = interface_list _6 = def_body
-    {                                                             ( make_def ~annotations:_1 _3 ~implements:_5 _6 )}
+    {( make_def ~annotations:_1 _3 ~implements:_5 _6 )}
 | _1 = modifiers _2 = CLASS _3 = ident _4 = IMPLEMENTS _5 = interface_list _6 = def_body
-    {                                                           ( make_def  ~modifiers:_1 _3 ~implements:_5 _6 )}
+    {( make_def  ~modifiers:_1 _3 ~implements:_5 _6 )}
 | _1 = annotations _2 = modifiers _3 = CLASS _4 = ident _5 = IMPLEMENTS _6 = interface_list _7 = def_body
-    {                                                                       ( make_def ~modifiers:_2 ~annotations:_1 _4 ~implements:_6 _7 )}
+    {( make_def ~modifiers:_2 ~annotations:_1 _4 ~implements:_6 _7 )}
 | _1 = CLASS _2 = ident _3 = super _4 = IMPLEMENTS _5 = interface_list _6 = def_body
-    {                                                       ( make_def _2 ~super:_3 ~implements:_5 _6 )}
+    {( make_def _2 ~super:_3 ~implements:_5 _6 )}
 | _1 = annotations _2 = CLASS _3 = ident _4 = super _5 = IMPLEMENTS _6 = interface_list _7 = def_body
-    {                                                                   ( make_def ~annotations:_1 _3 ~super:_4 ~implements:_6 _7 )}
+    {( make_def ~annotations:_1 _3 ~super:_4 ~implements:_6 _7 )}
 | _1 = modifiers _2 = CLASS _3 = ident _4 = super _5 = IMPLEMENTS _6 = interface_list _7 = def_body
-    {                                                                 ( make_def  ~modifiers:_1 _3 ~super:_4 ~implements:_6 _7 )}
+    {( make_def  ~modifiers:_1 _3 ~super:_4 ~implements:_6 _7 )}
 | _1 = annotations _2 = modifiers _3 = CLASS _4 = ident _5 = super _6 = IMPLEMENTS _7 = interface_list _8 = def_body
-    {                                                                             ( make_def ~modifiers:_2 ~annotations:_1 _4 ~super:_5 ~implements:_7 _8 )}
+    {( make_def ~modifiers:_2 ~annotations:_1 _4 ~super:_5 ~implements:_7 _8 )}
 | _1 = INTERFACE _2 = ident _3 = def_body
-    {                           ( make_def ~interface:true _2 _3 )}
+    {( make_def ~interface:true _2 _3 )}
 | _1 = annotations _2 = INTERFACE _3 = ident _4 = def_body
-    {                                       ( make_def ~annotations:_1 ~interface:true _3 _4 )}
+    {( make_def ~annotations:_1 ~interface:true _3 _4 )}
 | _1 = INTERFACE _2 = ident _3 = IMPLEMENTS _4 = interface_list _5 = def_body
-    {                                                     ( make_def ~interface:true _2 ~implements:_4 _5 )}
+    {( make_def ~interface:true _2 ~implements:_4 _5 )}
 | _1 = annotations _2 = INTERFACE _3 = ident _4 = IMPLEMENTS _5 = interface_list _6 = def_body
-    {                                                                 ( make_def ~annotations:_1 ~interface:true _3 ~implements:_5 _6 )}
+    {( make_def ~annotations:_1 ~interface:true _3 ~implements:_5 _6 )}
 
 super:
   _1 = EXTENDS _2 = qident
-    {                 ( _2 )}
+    {( _2 )}
 
 def_body:
   _1 = LBRACE _2 = decls _3 = RBRACE
-    {                      ( _2 )}
+    {( _2 )}
 | _1 = LBRACE _2 = RBRACE
-    {                ( [] )}
+    {( [] )}
 
 decls:
   _1 = decl _2 = SEMI
-    {            ( [_1] )}
+    {( [_1] )}
 | _1 = decl _2 = SEMI _3 = decls
-    {                  ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 decl:
   _1 = fields
-    {         ( _1 )}
+    {( _1 )}
 | _1 = methods
-    {          ( _1 )}
+    {( _1 )}
 | _1 = inits
-    {        ( _1 )}
+    {( _1 )}
 
 fields:
   _1 = typ _2 = ident
-    {            ( make_field _1 _2 )}
+    {( make_field _1 _2 )}
 | _1 = annotations _2 = typ _3 = ident
-    {                        ( make_field ~annotations:_1 _2 _3 )}
+    {( make_field ~annotations:_1 _2 _3 )}
 | _1 = modifiers _2 = typ _3 = ident
-    {                      ( make_field ~modifiers:_1 _2 _3 )}
+    {( make_field ~modifiers:_1 _2 _3 )}
 | _1 = annotations _2 = modifiers _3 = typ _4 = ident
-    {                                  ( make_field ~modifiers:_2 ~annotations:_1 _3 _4 )}
+    {( make_field ~modifiers:_2 ~annotations:_1 _3 _4 )}
 
 methods:
   _1 = typ _2 = ident _3 = args
-    {      ( make_method _1 _2 _3 )}
+    {( make_method _1 _2 _3 )}
 | _1 = annotations _2 = typ _3 = ident _4 = args
-    {      ( make_method ~annotations:_1 _2 _3 _4 )}
+    {( make_method ~annotations:_1 _2 _3 _4 )}
 | _1 = modifiers _2 = typ _3 = ident _4 = args
-    {      ( make_method ~modifiers:_1 _2 _3 _4 )}
+    {( make_method ~modifiers:_1 _2 _3 _4 )}
 | _1 = annotations _2 = modifiers _3 = typ _4 = ident _5 = args
-    {      ( make_method ~modifiers:_2 ~annotations:_1 _3 _4 _5 )}
+    {( make_method ~modifiers:_2 ~annotations:_1 _3 _4 _5 )}
 
 inits:
   _1 = annotations _2 = INIT _3 = args
-    {                        ( make_init _1 _3 )}
+    {( make_init _1 _3 )}
 | _1 = INIT _2 = args
-    {            ( raise (Syntax_error (Einit_no_alias (Loc.get ()))) )}
+    {( raise (Syntax_error (Einit_no_alias (Loc.get ()))) )}
 
 args:
   _1 = LPAREN _2 = RPAREN
-    {                ( [] )}
+    {( [] )}
 | _1 = LPAREN _2 = arg_list _3 = RPAREN
-    {                         ( _2 )}
+    {( _2 )}
 
 arg_list:
   _1 = arg
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = arg _2 = COMMA _3 = arg_list
-    {                     ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 arg:
   _1 = typ
-    {      ( make_arg _1 )}
+    {( make_arg _1 )}
 | _1 = annotations _2 = typ
-    {                  ( make_arg ~annotations:_1 _2)}
+    {( make_arg ~annotations:_1 _2)}
 | _1 = typ _2 = ident
-    {            ( make_arg ~ident:_2 _1 )}
+    {( make_arg ~ident:_2 _1 )}
 | _1 = annotations _2 = typ _3 = ident
-    {                        ( make_arg ~annotations:_1 ~ident:_3 _2 )}
+    {( make_arg ~annotations:_1 ~ident:_3 _2 )}
 
 typ:
   _1 = VOID
-    {       ( make_type Ivoid )}
+    {( make_type Ivoid )}
 | _1 = BOOLEAN
-    {           ( make_type Iboolean )}
+    {( make_type Iboolean )}
 | _1 = BYTE
-    {        ( make_type Ibyte )}
+    {( make_type Ibyte )}
 | _1 = SHORT
-    {         ( make_type Ishort )}
+    {( make_type Ishort )}
 | _1 = INT
-    {       ( make_type Icamlint )}
+    {( make_type Icamlint )}
 | _1 = LONG
-    {        ( make_type Ilong )}
+    {( make_type Ilong )}
 | _1 = FLOAT
-    {         ( make_type Ifloat )}
+    {( make_type Ifloat )}
 | _1 = DOUBLE
-    {          ( make_type Idouble )}
+    {( make_type Idouble )}
 | _1 = CHAR
-    {       ( make_type Ichar )}
+    {( make_type Ichar )}
 | _1 = STRING
-    {         ( make_type Istring )}
+    {( make_type Istring )}
 | _1 = TOP
-    {      ( make_type Itop )}
+    {( make_type Itop )}
 | _1 = typ _2 = LBRACKET _3 = RBRACKET
-    {                        ( make_type (Iarray _1) )}
+    {( make_type (Iarray _1) )}
 | _1 = qident
-    {         ( make_type (Iobject _1) )}
+    {( make_type (Iobject _1) )}
 
 modifiers:
   _1 = modifier
-    {           ( [_1] )}
+    {( [_1] )}
 | _1 = modifier _2 = modifiers
-    {                     ( _1::_2 )}
+    {( _1::_2 )}
 
 modifier:
   _1 = STATIC
-    {         ( make_modifiers Istatic )}
+    {( make_modifiers Istatic )}
 | _1 = ABSTRACT
-    {           ( make_modifiers Iabstract )}
+    {( make_modifiers Iabstract )}
 | _1 = FINAL
-    {         ( make_modifiers Ifinal )}
+    {( make_modifiers Ifinal )}
 
 annotations:
   _1 = LBRACKET _2 = ann_list _3 = RBRACKET
-    {                             ( _2 )}
+    {( _2 )}
 
 ann_list:
   _1 = ann
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = ann _2 = COMMA _3 = ann_list
-    {                     ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 ann:
   _1 = NAME _2 = ident
-    {             ( make_annotation (Iname _2) )}
+    {( make_annotation (Iname _2) )}
 | _1 = CALLBACK
-    {           ( make_annotation Icallback )}
+    {( make_annotation Icallback )}
 | _1 = ARRAY
-    {        ( make_annotation (Icamlarray) )}
+    {( make_annotation (Icamlarray) )}
 
 ident:
   _1 = IDENT
-    {        ( make_ident _1 )}
+    {( make_ident _1 )}
 
 ident_list:
   _1 = IDENT
-    {        ( [_1] )}
+    {( [_1] )}
 | _1 = ident_list _2 = DOT _3 = IDENT
-    {                       ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 qident:
   _1 = ident
-    {        ( make_qident [] _1 )}
+    {( make_qident [] _1 )}
 | _1 = ident_list _2 = DOT _3 = ident
-    {                       ( make_qident _1 _3 )}
+    {( make_qident _1 _3 )}
 
 interface_list:
   _1 = qident
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = qident _2 = COMMA _3 = interface_list
-    {                              ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 %%

@@ -8,6 +8,6 @@ Warning: symbol bar is unreachable from any of the start symbol(s).
 
 main:
   _1 = A _2 = B
-    {      ()}
+    {()}
 
 %%

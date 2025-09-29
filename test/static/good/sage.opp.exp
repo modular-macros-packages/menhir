@@ -299,14 +299,14 @@ let make_datatype fi vars prims (name:string) (args:(string * ty) list) (constrs
 
 toplevel:
   _1 = EOF
-    {      ( fun vars prims -> ([], vars) )}
+    {( fun vars prims -> ([], vars) )}
 | _1 = command _2 = SEMISEMI _3 = toplevel
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let (cmd, vars') = _1 vars prims in
           let (cmds, vars'') = _3 vars' prims in
           (cmd::cmds, vars'') )}
 | _1 = Datatype _2 = SEMISEMI _3 = toplevel
-    {      (
+    {(
 	    fun vars prims ->
 	      let (fi,name,params,constrs) = _1 vars prims in
           let dt_str =
@@ -319,16 +319,16 @@ toplevel:
 
 command:
   _1 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let t = _1 vars prims in (Eval(tm_info t, t), vars) )}
 | _1 = Let
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           (* The parser generator has a bug/feature so I MUST deconstruct and
              reconstruct this value. *)
           let (fi,x,tm) = _1 vars prims in
           Define (fi,x,tm), x::vars )}
 | _1 = AssumeWord _2 = Environment _3 = COLONDASH _4 = Type _5 = SUBTYPE _6 = Type
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let ctx = _2 vars prims in
           let vars' = (var_list_from_ctx ctx) @ vars in
           Assume (ctx, _4 vars' prims, _6 vars' prims, _1), vars
@@ -336,23 +336,23 @@ command:
 
 AssumeWord:
   _1 = ASSUMENOT
-    {              ( false )}
+    {( false )}
 | _1 = ASSUME
-    {              ( true )}
+    {( true )}
 
 Environment:
   
-    {                        ( fun vars prims -> empty_ctx )}
+    {( fun vars prims -> empty_ctx )}
 | _1 = NonEmptyEnvironment
-    {                        ( _1 )}
+    {( _1 )}
 
 NonEmptyEnvironment:
   _1 = Assumption
-    {               ( fun vars prims ->
+    {( fun vars prims ->
                    let var, bind = _1 vars prims in
                    add_binding empty_ctx var bind )}
 | _1 = NonEmptyEnvironment _2 = COMMA _3 = Assumption
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let ctx = _1 vars prims in
           let vars' = var_list_from_ctx ctx in
           let var, bind = _3 (vars' @ vars) prims in
@@ -361,10 +361,10 @@ NonEmptyEnvironment:
 
 Assumption:
   _1 = ID _2 = COLON _3 = ident_free_term _4 = MaybeEqTerm
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           _1.v, VarBind(_3 vars prims, _4 vars prims) )}
 | _1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term _6 = MaybeEqTerm
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let x = _1.v in
           let ty = _3 vars prims in
           x,
@@ -376,13 +376,13 @@ Assumption:
 
 MaybeEqTerm:
   
-    {                   ( fun vars prims -> None )}
+    {( fun vars prims -> None )}
 | _1 = EQEQ _2 = term
-    {                   ( fun vars prims -> Some (_2 vars prims) )}
+    {( fun vars prims -> Some (_2 vars prims) )}
 
 Let:
   _1 = LET _2 = ID _3 = ParamSeq _4 = MaybeTy _5 = EQ _6 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let params = _3 vars prims in
           let vars' =  (List.rev_map fst params) @ vars in
           let return = _4 vars' prims in
@@ -390,14 +390,14 @@ Let:
           _1, _2.v, make_lambda_sequence _1 vars params ?ret:return body
       )}
 | _1 = LET _2 = REC _3 = ID _4 = ParamSeq _5 = MaybeTy _6 = EQ _7 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           _1, _3.v, (make_rec _1 vars prims _3.v
                        ~args:_4 ~ret:_5 ~body:_7)
       )}
 
 Datatype:
   _1 = DATATYPE _2 = ID _3 = ParamSeq _4 = EQ _5 = ConstructorSeq
-    {                                         (
+    {(
     fun vars prims ->
       let params = _3 vars prims in
       let vars' = _2.v::((List.map (fun (x,ty) -> x) params) @ vars) in
@@ -406,17 +406,17 @@ Datatype:
 
 ConstructorSeq:
   _1 = Constructor %prec VBAR
-    {                               ( fun vars prims -> (_1 vars prims)::[] )}
+    {( fun vars prims -> (_1 vars prims)::[] )}
 | _1 = Constructor _2 = VBAR _3 = ConstructorSeq
-    {                                     (
+    {(
 	fun vars prims -> (_1 vars prims)::(_3 (vars) prims)
 	)}
 
 Constructor:
   _1 = ID _2 = OF _3 = ParamSeq
-    {      ( fun vars prims -> (_1.v, _3 vars prims) )}
+    {( fun vars prims -> (_1.v, _3 vars prims) )}
 | _1 = ID
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           (*
           let (_, x) = pick_fresh_var vars "u" in
           let ty = TmPrimitive($1.i, "Unit", []) in
@@ -425,31 +425,31 @@ Constructor:
 
 Type:
   _1 = term %prec ALWAYS_SHIFT
-    {                               ( _1 )}
+    {( _1 )}
 
 term:
   _1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_refinement _1.i  vars _1.v
             (_3 vars prims)
             (_5 (_1.v::vars) prims) )}
 | _1 = LCURLY _2 = ID _3 = COLON _4 = ident_free_term _5 = VBAR _6 = term _7 = RCURLY
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_refinement _2.i  vars _2.v
             (_4 vars prims)
             (_6 (_2.v::vars) prims) )}
 | _1 = ID _2 = COLON _3 = ident_free_term _4 = ARROW _5 = term %prec ABSTRACTION
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let x = _1.v in
           TmArrow(_1.i, x, _3 vars prims, _5 (x::vars) prims) )}
 | _1 = ident_free_term %prec ARROW
-    {                                  ( _1 )}
+    {( _1 )}
 
 ident_free_term:
   _1 = LPAREN _2 = term _3 = RPAREN
-    {                       ( _2 )}
+    {( _2 )}
 | _1 = ID
-    {       ( fun vars prims ->
+    {( fun vars prims ->
            let fi = _1.i in
            if List.mem _1.v vars then
              var_to_term fi vars _1.v
@@ -459,31 +459,31 @@ ident_free_term:
              error fi ("Identifier " ^ _1.v ^
                  " not bound to variable or primitive") )}
 | _1 = LAMBDA _2 = ID _3 = COLON _4 = ident_free_term _5 = DOT _6 = term %prec ABSTRACTION
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let x = _2.v in
           TmFun(_1, x, _4 vars prims, _6 (x::vars) prims) )}
 | _1 = Let _2 = IN _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let (fi,x,arg) = _1 vars prims in
           TmLet(fi, x, arg, _3 (x::vars) prims) )}
 | _1 = term _2 = ARROW _3 = term %prec ABSTRACTION
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let x = "_" in
           TmArrow(_2, x, _1 vars prims, _3 (x::vars) prims) )}
 | _1 = term _2 = term %prec APPLICATION
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let t1 = _1 vars prims in
           let t2 = _2 vars prims in
           TmApp(tm_info t1, t1, t2) )}
 | _1 = term _2 = AS _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let tm = _1 vars prims in
           let ty = _3 vars prims in
           let info = tm_info tm in
           make_as info vars tm ty
       )}
 | _1 = FN _2 = ParamSeq _3 = MaybeTy _4 = DARROW _5 = term %prec ABSTRACTION
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let params = _2 vars prims in
           let vars' =  (List.rev_map fst params) @ vars in
           let return = _3 vars' prims in
@@ -491,88 +491,88 @@ ident_free_term:
               make_lambda_sequence _1 vars params ?ret:return body
       )}
 | _1 = REC _2 = ID _3 = ParamSeq _4 = MaybeTy _5 = DARROW _6 = term %prec ABSTRACTION
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_rec _1 vars prims _2.v
             ~args:_3 ~ret:_4 ~body:_6
       )}
 | _1 = term _2 = SEMI _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let x = "_" in
           let t1 = _1 vars prims in
           let t2 = _3 (x::vars) prims in
           TmLet(tm_info t1, x, t1, t2) )}
 | _1 = QUESTION
-    {      ( fun vars prims -> tm_prim ~fi:_1 "Dynamic" )}
+    {( fun vars prims -> tm_prim ~fi:_1 "Dynamic" )}
 | _1 = STAR
-    {      ( fun vars prims -> tm_prim ~fi:_1 "*" )}
+    {( fun vars prims -> tm_prim ~fi:_1 "*" )}
 | _1 = INTV
-    {      ( fun vars prims -> tm_prim ~fi:_1.i (string_of_int _1.v) )}
+    {( fun vars prims -> tm_prim ~fi:_1.i (string_of_int _1.v) )}
 | _1 = STRINGV
-    {      ( fun vars prims -> tm_prim ~fi:_1.i ("\"" ^ _1.v ^ "\"") )}
+    {( fun vars prims -> tm_prim ~fi:_1.i ("\"" ^ _1.v ^ "\"") )}
 | _1 = term _2 = EQ _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "inteq" []
             [_1 vars prims;
              _3 vars prims] )}
 | _1 = term _2 = IFF _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "iff" []
             [_1 vars prims;
              _3 vars prims] )}
 | _1 = term _2 = LEQ _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "leq" []
             [(_1 vars prims);
              (_3 vars prims)] )}
 | _1 = term _2 = GEQ _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "geq" []
             [(_1 vars prims);
              (_3 vars prims)] )}
 | _1 = term _2 = LT _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "lt" []
             [(_1 vars prims);
              (_3 vars prims)] )}
 | _1 = term _2 = GT _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "gt" []
             [(_1 vars prims);
              (_3 vars prims)] )}
 | _1 = term _2 = PLUS _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "add" []
             [(_1 vars prims); (_3 vars prims)] )}
 | _1 = term _2 = MINUS _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "sub" []
             [(_1 vars prims); (_3 vars prims)] )}
 | _1 = term _2 = AND _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "and" []
             [(_1 vars prims); (_3 vars prims)] )}
 | _1 = term _2 = OR _3 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           make_prim_app_sequence _2 vars "or" []
             [(_1 vars prims); (_3 vars prims)] )}
 | _1 = LCURLY _2 = LabelColonTyList _3 = RCURLY
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let labels, types = List.split (_2 vars prims) in
           make_prim_app_sequence _1 vars "Record" labels types
       )}
 | _1 = LT _2 = LabelColonTyList _3 = GT
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let labels, types = List.split (_2 vars prims) in
           make_prim_app_sequence _1 vars "Variant" labels types
       )}
 | _1 = LT _2 = ID _3 = EQ _4 = term _5 = GT
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let fi = _1 in
           let tm, ty = _4 vars prims, tm_prim ~fi "Dynamic" in
           make_prim_app_sequence fi vars "mkVariant" [_2.v] [ty; tm]
       )}
 | _1 = IF _2 = LSQUARE _3 = Type _4 = RSQUARE _5 = term _6 = THEN _7 = term _8 = ELSE _9 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let fi = _1 in
 	      make_prim_app_sequence fi vars "IF" []
             [_3 vars prims;
@@ -581,7 +581,7 @@ ident_free_term:
              TmFun(fi, "_", tm_prim ~fi "Dynamic", _9 ("_"::vars) prims) ]
       )}
 | _1 = IF _2 = term _3 = THEN _4 = term _5 = ELSE _6 = term
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let fi = _1 in
 	  let ph1 = tm_prim ~fi "Dynamic" in
 	  let ph2 = tm_prim ~fi "Dynamic" in
@@ -594,41 +594,41 @@ ident_free_term:
 
 ParamSeq:
   
-    {      ( fun vars prims -> [] )}
+    {( fun vars prims -> [] )}
 | _1 = Param _2 = ParamSeq
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let x,ty = _1 vars prims in
           (x,ty) :: (_2 (x::vars) prims) )}
 
 Param:
   _1 = ID
-    {      ( fun vars prims -> _1.v, tm_prim ~fi:_1.i "Dynamic" )}
+    {( fun vars prims -> _1.v, tm_prim ~fi:_1.i "Dynamic" )}
 | _1 = LPAREN _2 = ID _3 = COLON _4 = term _5 = RPAREN
-    {      ( fun vars prims -> _2.v, _4 vars prims )}
+    {( fun vars prims -> _2.v, _4 vars prims )}
 | _1 = LPAREN _2 = ID _3 = COLON _4 = term _5 = DOT _6 = term _7 = RPAREN
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let ty = _4 vars prims in
           let refine = _6 (_2.v :: vars) prims in
           _2.v, make_refinement _2.i vars _2.v ty refine )}
 
 MaybeTy:
   _1 = COLON _2 = term
-    {                ( fun vars prims -> Some (_2 vars prims) )}
+    {( fun vars prims -> Some (_2 vars prims) )}
 | 
-    {                ( fun vars prims -> None )}
+    {( fun vars prims -> None )}
 
 LabelColonTyList:
   _1 = NonEmptyLabelColonTyList
-    {                             ( _1 )}
+    {( _1 )}
 | 
-    {                             ( fun vars prims -> [] )}
+    {( fun vars prims -> [] )}
 
 NonEmptyLabelColonTyList:
   _1 = ID _2 = COLON _3 = Type
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           [_1.v, _3 vars prims] )}
 | _1 = ID _2 = COLON _3 = Type _4 = COMMA _5 = NonEmptyLabelColonTyList
-    {      ( fun vars prims ->
+    {( fun vars prims ->
           let l = _1.v in
           (l, _3 vars prims) :: (_5 (l::vars) prims) )}
 

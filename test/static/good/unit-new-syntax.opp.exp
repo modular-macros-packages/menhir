@@ -6,10 +6,10 @@
 
 foo:
   _1 = A
-    {               FOO  ()}
+    {FOO ()}
 
 bar:
   _1 = foo _2 = EOF
-    {                      BAR  ()}
+    {BAR ()}
 
 %%

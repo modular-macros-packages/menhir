@@ -57,43 +57,43 @@ let get_fresh_ident () =
 
 ltl:
   _1 = formula _2 = EOF
-    {                      ((_1,observed_expressions))}
+    {((_1,observed_expressions))}
 
 formula:
   _1 = LTL_TRUE
-    {            (Ltlast.LTrue)}
+    {(Ltlast.LTrue)}
 | _1 = LTL_FALSE
-    {     (Ltlast.LFalse)}
+    {(Ltlast.LFalse)}
 | _1 = LTL_LPAREN _2 = formula _3 = LTL_RPAREN
-    {     ( _2 )}
+    {( _2 )}
 | _1 = LTL_GLOBALLY _2 = formula
-    {     ( Ltlast.LGlobally(_2) )}
+    {( Ltlast.LGlobally(_2) )}
 | _1 = LTL_FATALLY _2 = formula
-    {     ( Ltlast.LFatally(_2) )}
+    {( Ltlast.LFatally(_2) )}
 | _1 = formula _2 = LTL_UNTIL _3 = formula
-    {     ( Ltlast.LUntil(_1,_3) )}
+    {( Ltlast.LUntil(_1,_3) )}
 | _1 = formula _2 = LTL_RELEASE _3 = formula
-    {     ( Ltlast.LRelease(_1,_3) )}
+    {( Ltlast.LRelease(_1,_3) )}
 | _1 = LTL_NEXT _2 = formula
-    {     ( Ltlast.LNext(_2) )}
+    {( Ltlast.LNext(_2) )}
 | _1 = formula _2 = LTL_OR _3 = formula
-    {     ( Ltlast.LOr(_1,_3) )}
+    {( Ltlast.LOr(_1,_3) )}
 | _1 = formula _2 = LTL_AND _3 = formula
-    {     ( Ltlast.LAnd(_1,_3) )}
+    {( Ltlast.LAnd(_1,_3) )}
 | _1 = LTL_NOT _2 = formula
-    {     ( Ltlast.LNot(_2) )}
+    {( Ltlast.LNot(_2) )}
 | _1 = formula _2 = LTL_IMPLIES _3 = formula
-    {     ( Ltlast.LImplies(_1,_3) )}
+    {( Ltlast.LImplies(_1,_3) )}
 | _1 = formula _2 = LTL_LEFT_RIGHT_ARROW _3 = formula
-    {     ( Ltlast.LIff(_1,_3) )}
+    {( Ltlast.LIff(_1,_3) )}
 | _1 = LTL_CALL _2 = LTL_LPAREN _3 = LTL_LABEL _4 = LTL_RPAREN
-    {     ( Ltlast.LCall(_3))}
+    {( Ltlast.LCall(_3))}
 | _1 = LTL_RETURN _2 = LTL_LPAREN _3 = LTL_LABEL _4 = LTL_RPAREN
-    {     ( Ltlast.LReturn(_3))}
+    {( Ltlast.LReturn(_3))}
 | _1 = LTL_CALL_OR_RETURN _2 = LTL_LPAREN _3 = LTL_LABEL _4 = LTL_RPAREN
-    {     ( Ltlast.LCallOrReturn(_3))}
+    {( Ltlast.LCallOrReturn(_3))}
 | _1 = logic_relation
-    {     (
+    {(
 	      let id = get_fresh_ident () in
 	        Hashtbl.add observed_expressions id _1;
 	        Ltlast.LIdent(id)
@@ -101,70 +101,70 @@ formula:
 
 logic_relation:
   _1 = arith_relation _2 = LTL_EQ _3 = arith_relation
-    {                                         ( Eq, _1 , _3)}
+    {( Eq, _1 , _3)}
 | _1 = arith_relation _2 = LTL_LT _3 = arith_relation
-    {                                         ( Lt, _1, _3 )}
+    {( Lt, _1, _3 )}
 | _1 = arith_relation _2 = LTL_GT _3 = arith_relation
-    {                                         ( Gt, _1, _3 )}
+    {( Gt, _1, _3 )}
 | _1 = arith_relation _2 = LTL_LE _3 = arith_relation
-    {                                         ( Le, _1, _3 )}
+    {( Le, _1, _3 )}
 | _1 = arith_relation _2 = LTL_GE _3 = arith_relation
-    {                                         ( Ge, _1, _3 )}
+    {( Ge, _1, _3 )}
 | _1 = arith_relation _2 = LTL_NEQ _3 = arith_relation
-    {                                         ( Neq, _1, _3 )}
+    {( Neq, _1, _3 )}
 | _1 = arith_relation
-    {                  ( Neq, _1, PCst (IntConstant "0") )}
+    {( Neq, _1, PCst (IntConstant "0") )}
 
 arith_relation:
   _1 = arith_relation_mul _2 = LTL_PLUS _3 = arith_relation
-    {                                                     ( PBinop(Badd,_1,_3) )}
+    {( PBinop(Badd,_1,_3) )}
 | _1 = arith_relation_mul _2 = LTL_MINUS _3 = arith_relation
-    {                                               ( PBinop(Bsub,_1,_3) )}
+    {( PBinop(Bsub,_1,_3) )}
 | _1 = arith_relation_mul
-    {                      ( _1 )}
+    {( _1 )}
 
 arith_relation_mul:
   _1 = arith_relation_mul _2 = LTL_DIV _3 = access_or_const
-    {                                              ( PBinop(Bdiv,_1,_3) )}
+    {( PBinop(Bdiv,_1,_3) )}
 | _1 = arith_relation_mul _2 = LTL_STAR _3 = access_or_const
-    {                                               ( PBinop(Bmul,_1,_3) )}
+    {( PBinop(Bmul,_1,_3) )}
 | _1 = arith_relation_mul _2 = LTL_MODULO _3 = access_or_const
-    {                                                 ( PBinop(Bmod,_1,_3))}
+    {( PBinop(Bmod,_1,_3))}
 | _1 = access_or_const
-    {                   ( _1 )}
+    {( _1 )}
 
 access_or_const:
   _1 = LTL_INT
-    {                  ( PCst (IntConstant _1) )}
+    {( PCst (IntConstant _1) )}
 | _1 = LTL_MINUS _2 = LTL_INT
-    {                            ( PUnop (Uminus,PCst (IntConstant _2)) )}
+    {( PUnop (Uminus,PCst (IntConstant _2)) )}
 | _1 = access
-    {          ( _1 )}
+    {( _1 )}
 | _1 = LTL_LPAREN _2 = arith_relation _3 = LTL_RPAREN
-    {                                        ( _2 )}
+    {( _2 )}
 
 access:
   _1 = access _2 = LTL_RIGHT_ARROW _3 = LTL_LABEL
-    {                                    ( PField (PUnop(Ustar,_1),_3) )}
+    {( PField (PUnop(Ustar,_1),_3) )}
 | _1 = access _2 = LTL_DOT _3 = LTL_LABEL
-    {                            ( PField(_1,_3) )}
+    {( PField(_1,_3) )}
 | _1 = access_array
-    {                (_1)}
+    {(_1)}
 
 access_array:
   _1 = access_array _2 = LTL_LEFT_SQUARE _3 = access_or_const _4 = LTL_RIGHT_SQUARE
-    {     ( PArrget(_1,_3) )}
+    {( PArrget(_1,_3) )}
 | _1 = access_leaf
-    {                   (_1)}
+    {(_1)}
 
 access_leaf:
   _1 = LTL_ADRESSE _2 = access
-    {                             ( PUnop (Uamp,_2) )}
+    {( PUnop (Uamp,_2) )}
 | _1 = LTL_STAR _2 = access
-    {                   ( PUnop (Ustar, _2 ) )}
+    {( PUnop (Ustar, _2 ) )}
 | _1 = LTL_LABEL
-    {             ( PVar _1 )}
+    {( PVar _1 )}
 | _1 = LTL_LPAREN _2 = access _3 = LTL_RPAREN
-    {                                ( _2 )}
+    {( _2 )}
 
 %%

@@ -84,168 +84,168 @@ let mkvl (l: c_lvalk): c_lval =
 
 memcad_command:
   _1 = T_add_inductive _2 = T_lparen _3 = c_lval _4 = T_comma _5 = indname _6 = indparams _7 = T_rparen
-    {    ( Mc_add_inductive (_3, Some _5, _6) )}
+    {( Mc_add_inductive (_3, Some _5, _6) )}
 | _1 = T_add_segment _2 = T_lparen _3 = c_lval _4 = T_comma _5 = indname _6 = indparams _7 = T_seg _8 = c_lval _9 = T_comma _10 = indname _11 = indparams _12 = T_rparen
-    {    ( Mc_add_segment (_3, _5, _6, _8, _10, _11 ) )}
+    {( Mc_add_segment (_3, _5, _6, _8, _10, _11 ) )}
 | _1 = T_check_segment _2 = T_lparen _3 = c_lval _4 = T_comma _5 = indname _6 = indparams _7 = T_seg _8 = c_lval _9 = T_comma _10 = indname _11 = indparams _12 = T_rparen
-    {    ( Mc_check_segment (_3, _5, _6, _8, _10, _11 ) )}
+    {( Mc_check_segment (_3, _5, _6, _8, _10, _11 ) )}
 | _1 = T_add_setexprs _2 = T_lparen _3 = set_exprs _4 = T_rparen
-    {    ( Mc_add_setexprs _3 )}
+    {( Mc_add_setexprs _3 )}
 | _1 = T_assume _2 = T_lparen _3 = num_exprs _4 = T_rparen
-    {    ( Mc_assume _3 )}
+    {( Mc_assume _3 )}
 | _1 = T_decl_setvars _2 = T_lparen _3 = setvars _4 = T_rparen
-    {    ( Mc_decl_setvars _3)}
+    {( Mc_decl_setvars _3)}
 | _1 = T_check_setexprs _2 = T_lparen _3 = set_exprs _4 = T_rparen
-    {    ( Mc_check_setexprs _3 )}
+    {( Mc_check_setexprs _3 )}
 | _1 = T_check_inductive _2 = T_lparen _3 = c_lval _4 = T_rparen
-    {    ( Mc_check_inductive (_3, None, None) )}
+    {( Mc_check_inductive (_3, None, None) )}
 | _1 = T_check_inductive _2 = T_lparen _3 = c_lval _4 = T_comma _5 = indname _6 = indparams _7 = T_rparen
-    {    ( Mc_check_inductive (_3, Some _5, _6) )}
+    {( Mc_check_inductive (_3, Some _5, _6) )}
 | _1 = T_check_bottomness _2 = T_lparen _3 = V_bool _4 = T_rparen
-    {    ( Mc_check_bottomness _3 )}
+    {( Mc_check_bottomness _3 )}
 | _1 = T_unfold _2 = T_lparen _3 = c_lval _4 = T_rparen
-    {    ( Mc_unfold _3 )}
+    {( Mc_unfold _3 )}
 | _1 = T_unfold_bseg _2 = T_lparen _3 = c_lval _4 = T_rparen
-    {    ( Mc_unfold_bseg _3 )}
+    {( Mc_unfold_bseg _3 )}
 | _1 = T_unroll _2 = T_lparen _3 = V_int _4 = T_rparen
-    {    ( Mc_unroll _3 )}
+    {( Mc_unroll _3 )}
 | _1 = T_merge _2 = T_lparen _3 = T_rparen
-    {    ( Mc_merge )}
+    {( Mc_merge )}
 | _1 = T_output_dot _2 = T_lparen _3 = var_name_list _4 = T_pipe _5 = var_name_list _6 = T_rparen
-    {    ( Mc_output_ext (Flags.Out_dot (_3, _5)) )}
+    {( Mc_output_ext (Flags.Out_dot (_3, _5)) )}
 | _1 = T_output_stdout _2 = T_lparen _3 = T_rparen
-    {    ( Mc_output_stdout )}
+    {( Mc_output_stdout )}
 | _1 = T_sel_merge _2 = T_lparen _3 = c_var_list _4 = T_rparen
-    {    ( Mc_sel_merge (List.rev _3) )}
+    {( Mc_sel_merge (List.rev _3) )}
 | _1 = T_force_live _2 = T_lparen _3 = c_var_list _4 = T_rparen
-    {    ( Mc_force_live (List.rev _3) )}
+    {( Mc_force_live (List.rev _3) )}
 | _1 = T_kill_flow
-    {    ( Mc_kill_flow )}
+    {( Mc_kill_flow )}
 | _1 = T_reduce_eager
-    {    ( Mc_reduce_eager )}
+    {( Mc_reduce_eager )}
 | _1 = T_reduce_localize _2 = T_lparen _3 = c_lval _4 = T_rparen
-    {    ( Mc_reduce_localize _3 )}
+    {( Mc_reduce_localize _3 )}
 | _1 = T_array_check _2 = V_astring
-    {    ( Array_pred_sig.hint_array := _2; Mc_array_check )}
+    {( Array_pred_sig.hint_array := _2; Mc_array_check )}
 | _1 = T_array_assume _2 = V_astring
-    {    ( Array_pred_sig.assume_array := _2; Mc_array_assume )}
+    {( Array_pred_sig.assume_array := _2; Mc_array_assume )}
 
 indname:
   _1 = V_string
-    {           ( _1 )}
+    {( _1 )}
 
 indparams:
   
-    {  ( None )}
+    {( None )}
 | _1 = T_comma _2 = T_lbrack _3 = lparams _4 = T_pipe _5 = lparams _6 = T_pipe _7 = lparams_set _8 = T_rbrack
-    {      ( Some { mc_pptr = _3 ;
+    {( Some { mc_pptr = _3 ;
                mc_pint = _5 ;
                mc_pset = _7 } )}
 
 lparams:
   
-    {  ( [ ] )}
+    {( [ ] )}
 | _1 = param
-    {        ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = param _2 = T_comma _3 = lparams
-    {                        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 param:
   _1 = V_int
-    {           ( Cmp_const _1 )}
+    {( Cmp_const _1 )}
 | _1 = c_lval
-    {           ( Cmp_lval  _1 )}
+    {( Cmp_lval  _1 )}
 
 setvars:
   
-    {  ([ ])}
+    {([ ])}
 | _1 = setvar
-    {           ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = setvar _2 = T_comma _3 = setvars
-    {                         ( _1::_3 )}
+    {( _1::_3 )}
 
 setvar:
   _1 = V_string
-    {           ( { mc_setvar_name = _1;
+    {( { mc_setvar_name = _1;
                mc_setvar_uid  = -1 } )}
 
 lparams_set:
   
-    {  ([ ])}
+    {([ ])}
 | _1 = setvar
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = setvar _2 = T_comma _3 = lparams_set
-    {                             ( _1::_3 )}
+    {( _1::_3 )}
 
 set_exprs:
   
-    {  ( [ ] )}
+    {( [ ] )}
 | _1 = set_expr
-    {           ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = set_expr _2 = T_comma _3 = set_exprs
-    {                             ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 set_expr:
   _1 = setvar _2 = T_subseteq _3 = setvar
-    {                               ( Cmp_subset (  _1, _3 ) )}
+    {( Cmp_subset (  _1, _3 ) )}
 | _1 = c_lval _2 = T_setin _3 = setvar
-    {                               ( Cmp_mem (   _1,  _3 ) )}
+    {( Cmp_mem (   _1,  _3 ) )}
 | _1 = setvar _2 = T_equal _3 = T_setempty
-    {                               ( Cmp_empty _1 )}
+    {( Cmp_empty _1 )}
 | _1 = setvar _2 = T_equal _3 = c_lval _4 = T_euplus _5 = setvar
-    {                                        ( Cmp_euplus (_1, _3, _5) )}
+    {( Cmp_euplus (_1, _3, _5) )}
 
 num_exprs:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = num_expr
-    {           ( [_1] )}
+    {( [_1] )}
 | _1 = num_expr _2 = T_comma _3 = num_exprs
-    {                             ( (_1 :: _3) )}
+    {( (_1 :: _3) )}
 
 num_expr:
   _1 = c_lval _2 = T_eq _3 = param
-    {                    ( (Cbeq, _1, _3) )}
+    {( (Cbeq, _1, _3) )}
 | _1 = c_lval _2 = T_ne _3 = param
-    {                    ( (Cbne, _1, _3) )}
+    {( (Cbne, _1, _3) )}
 | _1 = c_lval _2 = T_lt _3 = param
-    {                    ( (Cblt, _1, _3) )}
+    {( (Cblt, _1, _3) )}
 | _1 = c_lval _2 = T_gt _3 = param
-    {                    ( (Cbgt, _1, _3) )}
+    {( (Cbgt, _1, _3) )}
 | _1 = c_lval _2 = T_le _3 = param
-    {                    ( (Cble, _1, _3) )}
+    {( (Cble, _1, _3) )}
 | _1 = c_lval _2 = T_ge _3 = param
-    {                    ( (Cbge, _1, _3) )}
+    {( (Cbge, _1, _3) )}
 
 c_var:
   _1 = V_string
-    {           ( { cv_name     = _1;
+    {( { cv_name     = _1;
                cv_uid      = -1;
                cv_type     = Ctvoid;
                cv_volatile = false } )}
 
 c_lval:
   _1 = c_var
-    {        ( { clk = Clvar _1 ;
+    {( { clk = Clvar _1 ;
             clt = Ctvoid } )}
 | _1 = c_lval _2 = T_arrow _3 = V_string
-    {    ( { clk = Clfield (mkvl (Clderef (mkve (Celval _1))), _3);
+    {( { clk = Clfield (mkvl (Clderef (mkve (Celval _1))), _3);
         clt = Ctvoid } )}
 
 c_var_list:
   
-    {  ( [ ] )}
+    {( [ ] )}
 | _1 = c_var
-    {        ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = c_var_list _2 = T_comma _3 = c_var
-    {                           ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 var_name_list:
   
-    {  ( [ ] )}
+    {( [ ] )}
 | _1 = V_string
-    {           ( [ _1 ] )}
+    {( [ _1 ] )}
 | _1 = V_string _2 = T_comma _3 = var_name_list
-    {                                 ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 %%

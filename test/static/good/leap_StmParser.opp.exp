@@ -1127,7 +1127,7 @@ let fix_conditional_jumps () : unit =
 
 system:
   _1 = GLOBAL _2 = global_declarations _3 = initial_assumption _4 = procedure_list
-    {    (
+    {(
       (* ALE: Check if conditional jump positions is correct. *)
       fix_conditional_jumps();
 
@@ -1221,19 +1221,19 @@ system:
 
 global_declarations:
   
-    {    ( (decl_global_var Conf.heap_name E.Mem None E.RealVar) )}
+    {( (decl_global_var Conf.heap_name E.Mem None E.RealVar) )}
 | _1 = global_decl_list
-    {    ( (decl_global_var Conf.heap_name E.Mem None E.RealVar) )}
+    {( (decl_global_var Conf.heap_name E.Mem None E.RealVar) )}
 
 global_decl_list:
   _1 = global_decl
-    {    ( () )}
+    {( () )}
 | _1 = global_decl _2 = global_decl_list
-    {    ( () )}
+    {( () )}
 
 global_decl:
   _1 = kind _2 = IDENT _3 = IDENT
-    {    (
+    {(
       let k      = _1 in
       let s      = check_and_get_sort (get_name _2) in
       let v_name = get_name _3 in
@@ -1241,7 +1241,7 @@ global_decl:
       decl_global_var v_name s None k
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = ASSIGN _5 = term
-    {    (
+    {(
       let k      = _1 in
       let s      = check_and_get_sort (get_name _2) in
       let v_name = get_name _3 in
@@ -1256,7 +1256,7 @@ global_decl:
         parser_check_compatibility v t get_str_expr
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = ASSIGN _5 = formula
-    {    (
+    {(
       let k      = _1 in
       let s      = check_and_get_sort (get_name _2) in
       let v_name = get_name _3 in
@@ -1270,90 +1270,90 @@ global_decl:
         parser_check_var_assign v_name s (E.Bool) get_str_expr
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = MATH_LESS _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) Less _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = MATH_GREATER _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) Greater _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = MATH_LESS_EQ _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) LessEq _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = MATH_GREATER_EQ _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) GreaterEq _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = IN _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) In _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = SUBSETEQ _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) SubsetEq _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = INTH _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) InTh _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = SUBSETEQTH _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) SubsetEqTh _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = ININT _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) InInt _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = SUBSETEQINT _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) SubsetEqInt _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = INELEM _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) InElem _5
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = SUBSETEQELEM _5 = term
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _3) SubsetEqElem _5
     )}
 | _1 = kind _2 = IDENT _3 = SETPAIRIN _4 = OPEN_PAREN _5 = IDENT _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _5) InPair _7
     )}
 | _1 = kind _2 = IDENT _3 = SETPAIRSUBSETEQ _4 = OPEN_PAREN _5 = IDENT _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       global_decl_cond _1 (get_name _2) (get_name _5) SubsetEqPair _7
     )}
 
 initial_assumption:
   
-    {    ( None )}
+    {( None )}
 | _1 = ASSUME _2 = formula
-    {    ( Some _2 )}
+    {( Some _2 )}
 
 local_declarations:
   
-    {    ( () )}
+    {( () )}
 | _1 = local_decl_list
-    {    ( () )}
+    {( () )}
 
 local_decl_list:
   _1 = local_decl
-    {    ( () )}
+    {( () )}
 | _1 = local_decl _2 = local_decl_list
-    {    ( () )}
+    {( () )}
 
 local_decl:
   _1 = kind _2 = IDENT _3 = IDENT
-    {    (
+    {(
       let k      = _1 in
       let v_name = get_name _3 in
       let s      = check_and_get_sort (get_name _2) in
       decl_local_var v_name s None k
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = ASSIGN _5 = term
-    {    (
+    {(
       let conv_term = Stm.term_to_expr_term in
       let k      = _1 in
       let s      = check_and_get_sort (get_name _2) in
@@ -1368,7 +1368,7 @@ local_decl:
         parser_check_compatibility v t get_str_expr
     )}
 | _1 = kind _2 = IDENT _3 = IDENT _4 = ASSIGN _5 = formula
-    {    (
+    {(
       let k      = _1 in
       let s      = check_and_get_sort (get_name _2) in
       let v_name = get_name _3 in
@@ -1384,19 +1384,19 @@ local_decl:
 
 kind:
   
-    {    ( E.RealVar )}
+    {( E.RealVar )}
 | _1 = GHOST
-    {    ( E.GhostVar )}
+    {( E.GhostVar )}
 
 procedure_list:
   _1 = procedure
-    {    ( () )}
+    {( () )}
 | _1 = procedure _2 = procedure_list
-    {    ( () )}
+    {( () )}
 
 procedure:
   _1 = PROCEDURE _2 = procedure_name _3 = args _4 = procedure_sort _5 = local_declarations _6 = BEGIN _7 = program _8 = END
-    {    (
+    {(
       let proc_sort = _4 in
       let proc_name  = _2 in
       let args_signature = _3 in
@@ -1425,35 +1425,35 @@ procedure:
 
 procedure_sort:
   
-    {    ( None )}
+    {( None )}
 | _1 = COLON _2 = IDENT
-    {    (
+    {(
       let s = check_and_get_sort (get_name _2) in
       Some s
     )}
 
 procedure_name:
   _1 = IDENT
-    {  (
+    {(
     let p_name = get_name _1 in
     current_proc := p_name; p_name
   )}
 
 args:
   _1 = OPEN_PAREN _2 = CLOSE_PAREN
-    {    ( [] )}
+    {( [] )}
 | _1 = OPEN_PAREN _2 = arg_list _3 = CLOSE_PAREN
-    {    ( _2 )}
+    {( _2 )}
 
 arg_list:
   _1 = arg
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = arg _2 = COMMA _3 = arg_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 arg:
   _1 = IDENT _2 = COLON _3 = IDENT
-    {    (
+    {(
       let v_name = get_name _1 in
       let s      = check_and_get_sort (get_name _3) in
       let _      = decl_input_var v_name s None
@@ -1463,12 +1463,12 @@ arg:
 
 atomic_statement_list:
   _1 = atomic_statement
-    {    (
+    {(
       let (assign_list, code) = _1 in
       (assign_list, [code])
     )}
 | _1 = atomic_statement _2 = atomic_statement_list
-    {    (
+    {(
       let (assign_body, code) = _1 in
       let (assign_list, code_list) = _2 in
       let st_list = code::code_list in
@@ -1480,33 +1480,33 @@ atomic_statement_list:
 
 atomic_statement:
   _1 = ST_SKIP _2 = SEMICOLON
-    {    (
+    {(
       ([], Stm.StSkip (None, None))
     )}
 | _1 = ST_ASSERT _2 = formula _3 = SEMICOLON
-    {    (
+    {(
       let cond = _2 in
       let get_str_expr () = sprintf "assert %s" (Stm.boolean_to_str cond) in
       unexpected_statement get_str_expr
     )}
 | _1 = ST_AWAIT _2 = formula _3 = SEMICOLON
-    {    (
+    {(
       let cond = _2 in
       ([], Stm.StAwait (cond, None, None))
     )}
 | _1 = ST_NONCRITICAL _2 = SEMICOLON
-    {    (
+    {(
 
       let get_str_expr () = sprintf "noncritical" in
       unexpected_statement get_str_expr
     )}
 | _1 = ST_CRITICAL _2 = SEMICOLON
-    {    (
+    {(
       let get_str_expr () = sprintf "critical" in
       unexpected_statement get_str_expr
     )}
 | _1 = term _2 = ASSIGN _3 = term _4 = SEMICOLON
-    {    (
+    {(
       let t1 = _1 in
       let t2 = _3 in
       let get_str_expr () = sprintf "%s = %s" (Stm.term_to_str t1)
@@ -1519,7 +1519,7 @@ atomic_statement:
       ([Stm.Term t1], Stm.StAssign (t1, Stm.Term t2, None, None))
     )}
 | _1 = IDENT _2 = ASSIGN _3 = term _4 = SEMICOLON
-    {    (
+    {(
       let v = get_name _1 in
       let t = _3 in
 
@@ -1540,7 +1540,7 @@ atomic_statement:
       ([Stm.Term var], Stm.StAssign (var, Stm.Term t, None, None))
     )}
 | _1 = IDENT _2 = ASSIGN _3 = formula _4 = SEMICOLON
-    {    (
+    {(
       let v = get_name _1 in
       let b = _3 in
       let _ = check_sort_var v (Stm.Scope !current_proc) E.Bool in
@@ -1559,7 +1559,7 @@ atomic_statement:
       ([Stm.Term var], Stm.StAssign (var, Stm.Formula b, None, None))
     )}
 | _1 = if_ghost_atomic_keyword _2 = formula _3 = ST_THEN _4 = atomic_statement_list _5 = atomic_statements_else_if _6 = ST_ENDIF
-    {    (
+    {(
       let cond = _2 in
       let (then_assign, then_st) = _4 in
       let (else_assign, else_st) = _5 in
@@ -1572,7 +1572,7 @@ atomic_statement:
         (all_assign, st)
     )}
 | _1 = while_keyword _2 = formula _3 = ST_DO _4 = atomic_statement_list _5 = ST_ENDWHILE
-    {    (
+    {(
       let cond = Stm.boolean_to_expr_formula _2 in
       let (_, body_code) = _4 in
       let body = Stm.StSeq body_code in
@@ -1584,7 +1584,7 @@ atomic_statement:
       unexpected_statement get_str_expr
     )}
 | _1 = choice_keyword _2 = atomic_statements_choice _3 = ST_ENDCHOICE
-    {    (
+    {(
       let (_, choice_list) = List.split _2 in
       (* ALE: Eliminate also duplicated variables
          let assign_list = List.flatten assign_lists in *)
@@ -1597,54 +1597,54 @@ atomic_statement:
 
 atomic_statements_else_if:
   
-    {    ( ([], None) )}
+    {( ([], None) )}
 | _1 = ST_ELSE _2 = atomic_statement_list
-    {    (
+    {(
       let (assign_list, body_code) = _2 in
       (assign_list, Some (Stm.StSeq body_code))
     )}
 
 atomic_statements_choice:
   _1 = atomic_statement_list
-    {    (
+    {(
       let (assign_list, body_code) = _1 in
       [(assign_list, Stm.StSeq body_code)]
     )}
 | _1 = atomic_statement_list _2 = ST_OR _3 = atomic_statements_choice
-    {    (
+    {(
       let (assign_list, body_code) = _1 in
       (assign_list, Stm.StSeq body_code) :: _3
     )}
 
 ghost_block_or_semicolon:
   _1 = SEMICOLON
-    {    ( None )}
+    {( None )}
 | _1 = ghost_block
-    {    ( _1 )}
+    {( _1 )}
 
 ghost_block_or_nothing:
   
-    {    ( None )}
+    {( None )}
 | _1 = ghost_block
-    {    ( _1 )}
+    {( _1 )}
 
 ghost_block:
   _1 = GHOST_DELIMITER _2 = GHOST_DELIMITER
-    {    ( None )}
+    {( None )}
 | _1 = GHOST_DELIMITER _2 = ghost_statement_list _3 = GHOST_DELIMITER
-    {    (
+    {(
       let (_, st_list) = _2 in
       Some (Stm.StSeq st_list)
     )}
 
 ghost_statement_list:
   _1 = ghost_statement
-    {    (
+    {(
       let (assign_list, code) = _1 in
       (assign_list, [code])
     )}
 | _1 = ghost_statement _2 = ghost_statement_list
-    {    (
+    {(
       let (assign_body, code) = _1 in
       let (assign_list, code_list) = _2 in
       let st_list = code::code_list in
@@ -1656,33 +1656,33 @@ ghost_statement_list:
 
 ghost_statement:
   _1 = ST_SKIP _2 = SEMICOLON
-    {    (
+    {(
       ([], Stm.StSkip (None, None))
     )}
 | _1 = ST_ASSERT _2 = formula _3 = SEMICOLON
-    {    (
+    {(
       let cond = Stm.boolean_to_expr_formula _2 in
       let get_str_expr () = sprintf "assert %s" (E.formula_to_str cond) in
       unexpected_statement get_str_expr
     )}
 | _1 = ST_AWAIT _2 = formula _3 = SEMICOLON
-    {    (
+    {(
       let cond = Stm.boolean_to_expr_formula _2 in
       let get_str_expr () = sprintf "await %s" (E.formula_to_str cond) in
       unexpected_statement get_str_expr
     )}
 | _1 = ST_NONCRITICAL _2 = SEMICOLON
-    {    (
+    {(
       let get_str_expr () = sprintf "noncritical" in
       unexpected_statement get_str_expr
     )}
 | _1 = ST_CRITICAL _2 = SEMICOLON
-    {    (
+    {(
       let get_str_expr () = sprintf "critical" in
       unexpected_statement get_str_expr
     )}
 | _1 = term _2 = ASSIGN _3 = term _4 = SEMICOLON
-    {    (
+    {(
       let t1 = _1 in
       let t2 = _3 in
       let get_str_expr () = sprintf "%s = %s" (Stm.term_to_str t1)
@@ -1695,7 +1695,7 @@ ghost_statement:
       ([Stm.Term t1], Stm.StAssign (t1, Stm.Term t2, None, None))
     )}
 | _1 = IDENT _2 = ASSIGN _3 = term _4 = SEMICOLON
-    {    (
+    {(
       let v = get_name _1 in
       let t = _3 in
 
@@ -1718,7 +1718,7 @@ ghost_statement:
       ([Stm.Term var], Stm.StAssign (var, Stm.Term t, None, None))
     )}
 | _1 = IDENT _2 = ASSIGN _3 = formula _4 = SEMICOLON
-    {    (
+    {(
       let v = get_name _1 in
       let b = _3 in
       let _ = check_sort_var v (Stm.Scope !current_proc) E.Bool in
@@ -1738,7 +1738,7 @@ ghost_statement:
       ([Stm.Term var], Stm.StAssign (var, Stm.Formula b, None, None))
     )}
 | _1 = if_ghost_atomic_keyword _2 = formula _3 = ST_THEN _4 = ghost_statement_list _5 = ghost_statements_else_if _6 = ST_ENDIF
-    {    (
+    {(
       let cond = _2 in
       let (then_assign, then_st) = _4 in
       let (else_assign, else_st) = _5 in
@@ -1752,7 +1752,7 @@ ghost_statement:
         (all_assign, st)
     )}
 | _1 = while_keyword _2 = formula _3 = ST_DO _4 = ghost_statement_list _5 = ST_ENDWHILE
-    {    (
+    {(
       let cond = Stm.boolean_to_expr_formula _2 in
       let (_, body_code) = _4 in
       let body = Stm.StSeq body_code in
@@ -1763,7 +1763,7 @@ ghost_statement:
       unexpected_statement get_str_expr
     )}
 | _1 = choice_keyword _2 = ghost_statements_choice _3 = ST_ENDCHOICE
-    {    (
+    {(
       let (_, choice_list) = List.split _2 in
       (* ALE: Eliminates duplicated variables.
          let assign_list = List.flatten assign_lists in *)
@@ -1776,79 +1776,79 @@ ghost_statement:
 
 ghost_statements_else_if:
   
-    {    ( ([], None) )}
+    {( ([], None) )}
 | _1 = ST_ELSE _2 = ghost_statement_list
-    {    (
+    {(
       let (assign_list, body_code) = _2 in
       (assign_list, Some (Stm.StSeq body_code))
     )}
 
 ghost_statements_choice:
   _1 = ghost_statement_list
-    {    (
+    {(
       let (assign_list, body_code) = _1 in
       [(assign_list, Stm.StSeq body_code)]
     )}
 | _1 = ghost_statement_list _2 = ST_OR _3 = ghost_statements_choice
-    {    (
+    {(
       let (assign_list, body_code) = _1 in
       (assign_list, Stm.StSeq body_code) :: _3
     )}
 
 program:
   
-    {    ( None )}
+    {( None )}
 | _1 = statement_list
-    {    ( Some (Stm.StSeq _1) )}
+    {( Some (Stm.StSeq _1) )}
 
 line_label_list:
   
-    {    ( () )}
+    {( () )}
 | _1 = line_label _2 = line_label_list
-    {    ( () )}
+    {( () )}
 
 line_label:
   _1 = COLON _2 = IDENT
-    {    (
+    {(
       let label_name = get_name _2 in
         System.add_single_label labelTbl label_name !pos
     )}
 | _1 = COLON _2 = IDENT _3 = OPEN_BRACKET
-    {    (
+    {(
       let label_name = get_name _2 in
         System.add_open_label labelTbl label_name !pos
     )}
 | _1 = COLON _2 = IDENT _3 = CLOSE_BRACKET
-    {    (
+    {(
       let label_name = get_name _2 in
         System.add_close_label labelTbl label_name (!pos-1)
     )}
 
 if_keyword:
   _1 = line_label_list _2 = ST_IF
-    {    ( pos := !pos+1; !pos-1 )}
+    {( pos := !pos+1; !pos-1 )}
 
 if_ghost_atomic_keyword:
   _1 = line_label_list _2 = ST_IF
-    {    ( )}
+    {( )}
 
 while_keyword:
   _1 = line_label_list _2 = ST_WHILE
-    {    ( pos := !pos+1; !pos-1 )}
+    {( pos := !pos+1; !pos-1 )}
 
 choice_keyword:
   _1 = line_label_list _2 = ST_CHOICE
-    {    ( pos := !pos+1; !pos-1 )}
+    {( pos := !pos+1; !pos-1 )}
 
 statement_list:
   _1 = statement _2 = line_label_list
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = statement _2 = statement_list
-    {    ( (_1 :: _2) )}
+    {( (_1 :: _2) )}
 
 statement:
   _1 = line_label_list _2 = ST_SKIP _3 = ghost_block_or_semicolon
-    {    (
+    {(
       let g_code  = _3 in
       let st_info = { Stm.pos             = !pos;
                       Stm.next_pos        = !pos+1;
@@ -1864,7 +1864,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = ST_ASSERT _3 = formula _4 = ghost_block_or_semicolon
-    {    (
+    {(
       let cond    = _3 in
       let g_code  = _4 in
       let st_info = { Stm.pos             = !pos;
@@ -1881,7 +1881,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = ST_AWAIT _3 = formula _4 = ghost_block_or_semicolon
-    {    (
+    {(
       let cond    = _3 in
       let g_code  = _4 in
       let st_info = { Stm.pos             = !pos;
@@ -1898,7 +1898,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = ST_NONCRITICAL _3 = ghost_block_or_semicolon
-    {    (
+    {(
       let g_code  = _3 in
       let st_info = { Stm.pos             = !pos;
                       Stm.next_pos        = !pos+1;
@@ -1914,7 +1914,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = ST_CRITICAL _3 = ghost_block_or_semicolon
-    {    (
+    {(
       let g_code  = _3 in
       let st_info = { Stm.pos             = !pos;
                       Stm.next_pos        = !pos+1;
@@ -1930,7 +1930,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = term _3 = ASSIGN _4 = term _5 = ghost_block_or_semicolon
-    {    (
+    {(
       let t1 = _2 in
       let t2 = _4 in
       let g_code = _5 in
@@ -1954,7 +1954,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = IDENT _3 = ASSIGN _4 = term _5 = ghost_block_or_semicolon
-    {    (
+    {(
       let v = get_name _2 in
       let t = _4 in
       let g_code = _5 in
@@ -1989,7 +1989,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = IDENT _3 = ASSIGN _4 = formula _5 = ghost_block_or_semicolon
-    {    (
+    {(
       let v = get_name _2 in
       let b = _4 in
       let g_code = _5 in
@@ -2020,7 +2020,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = term _3 = ASSIGN _4 = CALL _5 = IDENT _6 = OPEN_PAREN _7 = params _8 = CLOSE_PAREN _9 = ghost_block_or_semicolon
-    {    (
+    {(
       let t = _2 in
       let proc_name = get_name _5 in
       let ps = _7 in
@@ -2047,7 +2047,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = IDENT _3 = ASSIGN _4 = CALL _5 = IDENT _6 = OPEN_PAREN _7 = params _8 = CLOSE_PAREN _9 = ghost_block_or_semicolon
-    {    (
+    {(
       let v = get_name _2 in
       let proc_name = get_name _5 in
       let ps = _7 in
@@ -2081,7 +2081,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = term _3 = POINTER _4 = LOCK _5 = lock_pos _6 = ghost_block_or_semicolon
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->lock%s" (Stm.term_to_str _2) (lock_pos_to_str _5) in
       let a = parser_check_type check_type_addr _2 E.Addr get_str_expr in
       let st_info = { Stm.pos             = !pos;
@@ -2102,7 +2102,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = term _3 = POINTER _4 = UNLOCK _5 = lock_pos _6 = ghost_block_or_semicolon
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->unlock%s" (Stm.term_to_str _2) (lock_pos_to_str _5) in
       let a = parser_check_type check_type_addr _2 E.Addr get_str_expr in
       let st_info = { Stm.pos             = !pos;
@@ -2123,7 +2123,7 @@ statement:
       st
     )}
 | _1 = if_keyword _2 = formula _3 = ST_THEN _4 = statement_list _5 = statements_else_if _6 = ST_ENDIF _7 = ghost_block_or_nothing
-    {    (
+    {(
       let n       = _1 in
       let cond    = _2 in
       let then_st = _4 in
@@ -2163,7 +2163,7 @@ statement:
       st
     )}
 | _1 = while_keyword _2 = formula _3 = ST_DO _4 = statement_list _5 = ST_ENDWHILE
-    {    (
+    {(
       let n = _1 in
       let cond = _2 in
       let body = Stm.StSeq _4 in
@@ -2206,7 +2206,7 @@ statement:
       st
     )}
 | _1 = choice_keyword _2 = statements_choice _3 = ST_ENDCHOICE
-    {    (
+    {(
       let n = _1 in
       let opt = _2 in
       let end_p = Stm.get_last_st_pos (lastElem opt) + 1 in
@@ -2226,7 +2226,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = OPEN_SET _3 = atomic_statement_list _4 = CLOSE_SET _5 = ghost_block_or_nothing
-    {    (
+    {(
       let (_, st_list) = _3 in
       let g_code       = _5 in
       let st_info      = { Stm.pos              = !pos;
@@ -2242,7 +2242,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = CALL _3 = IDENT _4 = OPEN_PAREN _5 = params _6 = CLOSE_PAREN _7 = ghost_block_or_semicolon
-    {    (
+    {(
       let proc_name = get_name _3 in
       let ps = _5 in
       let g_code = _7 in
@@ -2260,7 +2260,7 @@ statement:
       st
     )}
 | _1 = line_label_list _2 = RETURN _3 = OPEN_PAREN _4 = maybe_term _5 = CLOSE_PAREN _6 = ghost_block_or_semicolon
-    {    (
+    {(
       let t = _4 in
       let g_code = _6 in
       let st_info = {Stm.pos              = !pos;
@@ -2279,9 +2279,9 @@ statement:
 
 lock_pos:
   
-    {    ( None )}
+    {( None )}
 | _1 = OPEN_BRACKET _2 = term _3 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "[%s]" (Stm.term_to_str _2) in
       let i = parser_check_type check_type_int _2 E.Int get_str_expr in
         Some i
@@ -2289,61 +2289,61 @@ lock_pos:
 
 maybe_term:
   
-    {    ( None )}
+    {( None )}
 | _1 = term
-    {    ( Some _1 )}
+    {( Some _1 )}
 
 term_list:
   _1 = term _2 = COMMA _3 = term
-    {    ( [_1;_3] )}
+    {( [_1;_3] )}
 | _1 = term _2 = COMMA _3 = term_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 params:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = param_list
-    {    ( _1 )}
+    {( _1 )}
 
 param_list:
   _1 = term
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = term _2 = COMMA _3 = param_list
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 statements_else_if:
   
-    {    ( None )}
+    {( None )}
 | _1 = ST_ELSE _2 = statement_list
-    {    ( Some (Stm.StSeq _2) )}
+    {( Some (Stm.StSeq _2) )}
 
 statements_choice:
   _1 = statement_list
-    {    ( [Stm.StSeq _1] )}
+    {( [Stm.StSeq _1] )}
 | _1 = statement_list _2 = ST_OR _3 = statements_choice
-    {    ( ((Stm.StSeq _1) :: _3) )}
+    {( ((Stm.StSeq _1) :: _3) )}
 
 formula:
   _1 = OPEN_PAREN _2 = formula _3 = CLOSE_PAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = atom
-    {      ( F.atom_to_formula _1 )}
+    {( F.atom_to_formula _1 )}
 | _1 = LOGICAL_TRUE
-    {      ( F.True )}
+    {( F.True )}
 | _1 = LOGICAL_FALSE
-    {      ( F.False )}
+    {( F.False )}
 | _1 = LOGICAL_NOT _2 = formula
-    {      ( F.Not _2 )}
+    {( F.Not _2 )}
 | _1 = formula _2 = LOGICAL_AND _3 = formula
-    {      ( F.And (_1, _3) )}
+    {( F.And (_1, _3) )}
 | _1 = formula _2 = LOGICAL_OR _3 = formula
-    {      ( F.Or (_1, _3) )}
+    {( F.Or (_1, _3) )}
 | _1 = formula _2 = LOGICAL_THEN _3 = formula
-    {      ( F.Implies (_1, _3) )}
+    {( F.Implies (_1, _3) )}
 | _1 = formula _2 = EQUALS _3 = formula
-    {      ( F.Iff (_1, _3) )}
+    {( F.Iff (_1, _3) )}
 | _1 = OPEN_PAREN _2 = IDENT _3 = CLOSE_PAREN
-    {      (
+    {(
         let v        = get_name _2 in
         let is_input = System.mem_var inputVars v in
         let is_local = System.mem_var localVars v in
@@ -2362,7 +2362,7 @@ formula:
 
 atom:
   _1 = APPEND _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "append(%s,%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5)
                                                        (Stm.term_to_str _7) in
@@ -2372,7 +2372,7 @@ atom:
         Stm.Append (p1,p2,pres)
     )}
 | _1 = REACH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "reach(%s,%s,%s,%s)" (Stm.term_to_str _3)
                                                          (Stm.term_to_str _5)
                                                          (Stm.term_to_str _7)
@@ -2384,7 +2384,7 @@ atom:
         Stm.Reach (h,a_from,a_to,p)
     )}
 | _1 = ORDERLIST _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "orderlist(%s,%s,%s)" (Stm.term_to_str _3)
                                                           (Stm.term_to_str _5)
                                                           (Stm.term_to_str _7) in
@@ -2394,7 +2394,7 @@ atom:
         Stm.OrderList (h,a_from,a_to)
     )}
 | _1 = SKIPLIST _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = COMMA _11 = term _12 = COMMA _13 = term _14 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "skiplist(%s,%s,%s,%s,%s)"
                                         (Stm.term_to_str _3)
                                         (Stm.term_to_str _5)
@@ -2410,7 +2410,7 @@ atom:
         Stm.Skiplist (h,s,l,a_from,a_to,elems)
     )}
 | _1 = IN _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "in(%s,%s)" (Stm.term_to_str _3)
                                                 (Stm.term_to_str _5) in
       let a = parser_check_type check_type_addr _3 E.Addr get_str_expr in
@@ -2418,7 +2418,7 @@ atom:
         Stm.In (a,r)
     )}
 | _1 = SUBSETEQ _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "subseteq(%s,%s)" (Stm.term_to_str _3)
                                                       (Stm.term_to_str _5) in
       let s = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -2426,7 +2426,7 @@ atom:
         Stm.SubsetEq(s,r)
     )}
 | _1 = INTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "tin(%s, %s" (Stm.term_to_str _3)
                                                  (Stm.term_to_str _5) in
       let th = parser_check_type check_type_tid  _3 E.Tid get_str_expr in
@@ -2434,7 +2434,7 @@ atom:
         Stm.InTh (th,s)
     )}
 | _1 = SUBSETEQTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "tsubseteq(%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5) in
       let r = parser_check_type check_type_setth _3 E.SetTh get_str_expr in
@@ -2442,7 +2442,7 @@ atom:
         Stm.SubsetEqTh(r,s)
     )}
 | _1 = ININT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "iin(%s,%s)" (Stm.term_to_str _3)
                                                  (Stm.term_to_str _5) in
       let i = parser_check_type check_type_int _3 E.Int get_str_expr in
@@ -2450,7 +2450,7 @@ atom:
         Stm.InInt (i,s)
     )}
 | _1 = SUBSETEQINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "isubseteq(%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5) in
       let r = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -2458,7 +2458,7 @@ atom:
         Stm.SubsetEqInt(r,s)
     )}
 | _1 = INELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "ein(%s,%s)" (Stm.term_to_str _3)
                                                  (Stm.term_to_str _5) in
       let e = parser_check_type check_type_elem _3 E.Elem get_str_expr in
@@ -2466,7 +2466,7 @@ atom:
         Stm.InElem (e,s)
     )}
 | _1 = SUBSETEQELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "esubseteq(%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5) in
       let r = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -2474,7 +2474,7 @@ atom:
         Stm.SubsetEqElem(r,s)
     )}
 | _1 = SETPAIRIN _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spin(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let p = parser_check_type check_type_pair _3 E.Pair get_str_expr in
@@ -2482,7 +2482,7 @@ atom:
         Stm.InPair (p,s)
     )}
 | _1 = SETPAIRSUBSETEQ _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spsubseteq(%s,%s)" (Stm.term_to_str _3)
                                                         (Stm.term_to_str _5) in
       let r = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
@@ -2490,7 +2490,7 @@ atom:
         Stm.SubsetEqPair(r,s)
     )}
 | _1 = HASHTBL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = COMMA _11 = term _12 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "hashtbl(%s,%s,%s,%s,%s)"
                                         (Stm.term_to_str _3)
                                         (Stm.term_to_str _5)
@@ -2505,7 +2505,7 @@ atom:
         Stm.Hashtbl (h,s,se,bb,i)
     )}
 | _1 = term _2 = MATH_LESS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s < %s" (Stm.term_to_str _1)
                                               (Stm.term_to_str _3) in
       try
@@ -2518,7 +2518,7 @@ atom:
                Stm.Less (i1, i2)
     )}
 | _1 = term _2 = MATH_GREATER _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s > %s" (Stm.term_to_str _1)
                                               (Stm.term_to_str _3) in
       try
@@ -2531,7 +2531,7 @@ atom:
                Stm.Greater (i1, i2)
     )}
 | _1 = term _2 = MATH_LESS_EQ _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s <= %s" (Stm.term_to_str _1)
                                                (Stm.term_to_str _3) in
       let i1 = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -2539,7 +2539,7 @@ atom:
         Stm.LessEq (i1, i2)
     )}
 | _1 = term _2 = MATH_GREATER_EQ _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s >= %s" (Stm.term_to_str _1)
                                                (Stm.term_to_str _3) in
       let i1 = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -2547,13 +2547,13 @@ atom:
         Stm.GreaterEq (i1, i2)
     )}
 | _1 = equals
-    {    ( Stm.Eq(_1) )}
+    {( Stm.Eq(_1) )}
 | _1 = disequals
-    {    ( Stm.InEq(_1) )}
+    {( Stm.InEq(_1) )}
 
 equals:
   _1 = term _2 = EQUALS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s = %s" (Stm.term_to_str _1)
                                               (Stm.term_to_str _3) in
       let t1 = _1 in
@@ -2565,7 +2565,7 @@ equals:
 
 disequals:
   _1 = term _2 = NOT_EQUALS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s != %s" (Stm.term_to_str _1)
                                                (Stm.term_to_str _3) in
       let t1= _1 in
@@ -2577,49 +2577,49 @@ disequals:
 
 term:
   _1 = ident
-    {    ( _1 )}
+    {( _1 )}
 | _1 = set
-    {    ( Stm.SetT(_1) )}
+    {( Stm.SetT(_1) )}
 | _1 = elem
-    {    ( Stm.ElemT(_1) )}
+    {( Stm.ElemT(_1) )}
 | _1 = tid
-    {    ( Stm.TidT(_1) )}
+    {( Stm.TidT(_1) )}
 | _1 = addr
-    {    ( Stm.AddrT(_1) )}
+    {( Stm.AddrT(_1) )}
 | _1 = cell
-    {    ( Stm.CellT(_1) )}
+    {( Stm.CellT(_1) )}
 | _1 = setth
-    {    ( Stm.SetThT(_1) )}
+    {( Stm.SetThT(_1) )}
 | _1 = setint
-    {    ( Stm.SetIntT(_1) )}
+    {( Stm.SetIntT(_1) )}
 | _1 = setelem
-    {    ( Stm.SetElemT(_1) )}
+    {( Stm.SetElemT(_1) )}
 | _1 = setpair
-    {    ( Stm.SetPairT(_1) )}
+    {( Stm.SetPairT(_1) )}
 | _1 = path
-    {    ( Stm.PathT(_1) )}
+    {( Stm.PathT(_1) )}
 | _1 = mem
-    {    ( Stm.MemT(_1) )}
+    {( Stm.MemT(_1) )}
 | _1 = integer
-    {    ( Stm.IntT(_1) )}
+    {( Stm.IntT(_1) )}
 | _1 = pair
-    {    ( Stm.PairT(_1) )}
+    {( Stm.PairT(_1) )}
 | _1 = mark
-    {    ( Stm.MarkT(_1) )}
+    {( Stm.MarkT(_1) )}
 | _1 = arraylookup
-    {    ( _1 )}
+    {( _1 )}
 | _1 = arrayupd
-    {    ( _1 )}
+    {( _1 )}
 | _1 = bucket
-    {    ( Stm.BucketT(_1) )}
+    {( Stm.BucketT(_1) )}
 | _1 = lock
-    {    ( Stm.LockT(_1) )}
+    {( Stm.LockT(_1) )}
 | _1 = OPEN_PAREN _2 = term _3 = CLOSE_PAREN
-    {    ( _2 )}
+    {( _2 )}
 
 ident:
   _1 = IDENT
-    {    (
+    {(
       let v        = get_name _1 in
       let is_input = System.mem_var inputVars v in
       let is_local = System.mem_var localVars v in
@@ -2639,15 +2639,15 @@ ident:
 
 set:
   _1 = EMPTYSET
-    {    ( Stm.EmptySet )}
+    {( Stm.EmptySet )}
 | _1 = OPEN_SET _2 = term _3 = CLOSE_SET
-    {    (
+    {(
       let get_str_expr() = sprintf "{ %s }" (Stm.term_to_str _2) in
       let a = parser_check_type check_type_addr _2 E.Addr get_str_expr in
         Stm.Singl(a)
     )}
 | _1 = UNION _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "union(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -2655,7 +2655,7 @@ set:
         Stm.Union(s1,s2)
     )}
 | _1 = INTR _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "intr(%s,%s)" (Stm.term_to_str _3)
                                                  (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -2663,7 +2663,7 @@ set:
         Stm.Intr(s1,s2)
     )}
 | _1 = SETDIFF _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "diff(%s,%s)" (Stm.term_to_str _3)
                                                  (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_set  _3 E.Set get_str_expr in
@@ -2671,13 +2671,13 @@ set:
         Stm.Setdiff(s1,s2)
     )}
 | _1 = PATH2SET _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "path2set(%s)" (Stm.term_to_str _3) in
       let p = parser_check_type check_type_path _3 E.Path get_str_expr in
         Stm.PathToSet(p)
     )}
 | _1 = ADDR2SET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "addr2set(%s,%s)" (Stm.term_to_str _3)
                                                       (Stm.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -2685,7 +2685,7 @@ set:
         Stm.AddrToSet(h,a)
     )}
 | _1 = ADDR2SET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "addr2set(%s,%s,%s)" (Stm.term_to_str _3)
                                                          (Stm.term_to_str _5)
                                                          (Stm.term_to_str _7) in
@@ -2695,7 +2695,7 @@ set:
         Stm.AddrToSetAt(h,a,l)
     )}
 | _1 = term _2 = DOT _3 = BREGION
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.bregion" (Stm.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         Stm.BucketRegion(b)
@@ -2703,37 +2703,37 @@ set:
 
 elem:
   _1 = term _2 = DOT _3 = DATA
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.data" (Stm.term_to_str _1) in
       let c = parser_check_type check_type_cell  _1 E.Cell get_str_expr in
         Stm.CellData(c)
     )}
 | _1 = term _2 = POINTER _3 = DATA
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->data" (Stm.term_to_str _1) in
       let a = parser_check_type check_type_addr _1 E.Addr get_str_expr in
         Stm.PointerData a
     )}
 | _1 = HAVOCLISTELEM _2 = OPEN_PAREN _3 = CLOSE_PAREN
-    {    (
+    {(
       Stm.HavocListElem
     )}
 | _1 = HAVOCSKIPLISTELEM _2 = OPEN_PAREN _3 = CLOSE_PAREN
-    {    (
+    {(
       Stm.HavocSkiplistElem
     )}
 | _1 = LOWEST_ELEM
-    {    (
+    {(
       Stm.LowestElem
     )}
 | _1 = HIGHEST_ELEM
-    {    (
+    {(
       Stm.HighestElem
     )}
 
 tid:
   _1 = term _2 = DOT _3 = LOCKID
-    {    (
+    {(
 
       let get_str_expr () = sprintf "%s.lockid" (Stm.term_to_str _1) in
       try
@@ -2744,27 +2744,27 @@ tid:
           Stm.LockId(l)
     )}
 | _1 = SHARP
-    {    (
+    {(
       Stm.NoTid
     )}
 | _1 = term _2 = POINTER _3 = LOCKID
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->lockid" (Stm.term_to_str _1) in
       let a = parser_check_type check_type_addr _1 E.Addr get_str_expr in
         Stm.PointerLockid a
     )}
 | _1 = ME
-    {    (
+    {(
       Stm.VarTh (Stm.build_var Sys.me_tid E.Tid Stm.GlobalScope)
     )}
 | _1 = TIDOF _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "tid_of(%s)" (Stm.term_to_str _3) in
       let p = parser_check_type check_type_pair _3 E.Pair get_str_expr in
         Stm.PairTid(p)
     )}
 | _1 = term _2 = DOT _3 = BTID
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.btid" (Stm.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         Stm.BucketTid(b)
@@ -2772,15 +2772,15 @@ tid:
 
 addr:
   _1 = NULL
-    {    ( Stm.Null )}
+    {( Stm.Null )}
 | _1 = term _2 = DOT _3 = NEXT
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.next" (Stm.term_to_str _1) in
       let c = parser_check_type check_type_cell  _1 E.Cell get_str_expr in
         Stm.Next(c)
     )}
 | _1 = term _2 = DOT _3 = NEXTAT _4 = OPEN_BRACKET _5 = term _6 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.nextat[%s]" (Stm.term_to_str _1)
                                                     (Stm.term_to_str _5) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
@@ -2788,7 +2788,7 @@ addr:
         Stm.NextAt(c,l)
     )}
 | _1 = term _2 = DOT _3 = ARR _4 = OPEN_BRACKET _5 = term _6 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.arr[%s]" (Stm.term_to_str _1)
                                                  (Stm.term_to_str _5) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
@@ -2796,7 +2796,7 @@ addr:
         Stm.ArrAt(c,l)
     )}
 | _1 = FIRSTLOCKED _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "firstlocked(%s,%s)" (Stm.term_to_str _3)
                                                          (Stm.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -2804,7 +2804,7 @@ addr:
         Stm.FirstLocked(h,p)
     )}
 | _1 = LASTLOCKED _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "lastlocked(%s,%s)" (Stm.term_to_str _3)
                                                         (Stm.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -2812,7 +2812,7 @@ addr:
         Stm.LastLocked(h,p)
     )}
 | _1 = MALLOC _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "malloc(%s,%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5)
                                                        (Stm.term_to_str _7)
@@ -2824,7 +2824,7 @@ addr:
         Stm.Malloc(e,a,t)
     )}
 | _1 = MALLOCSL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mallocSL(%s,%s)" (Stm.term_to_str _3)
                                                       (Stm.term_to_str _5)
       in
@@ -2833,7 +2833,7 @@ addr:
         Stm.MallocSL(e,l)
     )}
 | _1 = MALLOCSLK _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mallocSLK(%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5)
       in
@@ -2842,13 +2842,13 @@ addr:
         Stm.MallocSLK(e,l)
     )}
 | _1 = term _2 = POINTER _3 = NEXT
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->next" (Stm.term_to_str _1) in
       let a = parser_check_type check_type_addr _1 E.Addr get_str_expr in
         Stm.PointerNext a
     )}
 | _1 = term _2 = POINTER _3 = NEXTAT _4 = OPEN_BRACKET _5 = term _6 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->nextat[%s]" (Stm.term_to_str _1)
                                                      (Stm.term_to_str _5) in
       let a = parser_check_type check_type_addr _1 E.Addr get_str_expr in
@@ -2856,7 +2856,7 @@ addr:
         Stm.PointerNextAt (a,l)
     )}
 | _1 = term _2 = POINTER _3 = ARR _4 = OPEN_BRACKET _5 = term _6 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->arr[%s]" (Stm.term_to_str _1)
                                                    (Stm.term_to_str _5) in
       let a = parser_check_type check_type_addr _1 E.Addr get_str_expr in
@@ -2864,13 +2864,13 @@ addr:
         Stm.PointerArrAt (a,l)
     )}
 | _1 = term _2 = DOT _3 = BINIT
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.binit" (Stm.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         Stm.BucketInit(b)
     )}
 | _1 = term _2 = DOT _3 = BEND
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.bend" (Stm.term_to_str _1) in
       let b = parser_check_type check_type_bucket _1 E.Bucket get_str_expr in
         Stm.BucketEnd(b)
@@ -2878,9 +2878,9 @@ addr:
 
 cell:
   _1 = ERROR
-    {    ( Stm.Error )}
+    {( Stm.Error )}
 | _1 = MKCELL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mkcell(%s,%s,%s)"
                                            (Stm.term_to_str _3)
                                            (Stm.term_to_str _5)
@@ -2891,7 +2891,7 @@ cell:
         Stm.MkCell(d,a,th)
     )}
 | _1 = MKCELL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = OPEN_BRACKET _6 = term_list _7 = CLOSE_BRACKET _8 = COMMA _9 = OPEN_BRACKET _10 = term_list _11 = CLOSE_BRACKET _12 = CLOSE_PAREN
-    {    (
+    {(
       let list_term_to_str ts = String.concat "," (List.map Stm.term_to_str ts) in
       let addrs_str = list_term_to_str _6 in
       let tids_str = list_term_to_str _10 in
@@ -2917,7 +2917,7 @@ cell:
         Stm.MkSLKCell(e,addrs,tids)
     )}
 | _1 = MKCELL _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mkslcell(%s,%s,%s,%s)"
                                            (Stm.term_to_str _3)
                                            (Stm.term_to_str _5)
@@ -2930,20 +2930,20 @@ cell:
         Stm.MkSLCell(e,aa,ta,l)
     )}
 | _1 = term _2 = DOT _3 = LOCK
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.lock" (Stm.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
         Stm.CellLock(c)
     )}
 | _1 = term _2 = DOT _3 = UNLOCK
-    {    (
+    {(
 
       let get_str_expr () = sprintf "%s.unlock" (Stm.term_to_str _1) in
       let c = parser_check_type check_type_cell _1 E.Cell get_str_expr in
         Stm.CellUnlock(c)
     )}
 | _1 = MEMORY_READ _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "%s [ %s ]" (Stm.term_to_str _3)
                                                 (Stm.term_to_str _5) in
       let h = parser_check_type check_type_mem  _3 E.Mem get_str_expr in
@@ -2953,17 +2953,17 @@ cell:
 
 mark:
   _1 = MARK_T
-    {    ( Stm.MarkTrue )}
+    {( Stm.MarkTrue )}
 | _1 = MARK_F
-    {    ( Stm.MarkFalse )}
+    {( Stm.MarkFalse )}
 | _1 = term _2 = DOT _3 = MARKED
-    {    (
+    {(
       let get_str_expr () = sprintf "%s.marked" (Stm.term_to_str _1) in
       let c = parser_check_type check_type_cell  _1 E.Cell get_str_expr in
         Stm.Marked(c)
     )}
 | _1 = term _2 = POINTER _3 = MARKED
-    {    (
+    {(
       let get_str_expr () = sprintf "%s->marked" (Stm.term_to_str _1) in
       let a = parser_check_type check_type_addr _1 E.Addr get_str_expr in
         Stm.PointerMarked a
@@ -2971,15 +2971,15 @@ mark:
 
 setth:
   _1 = EMPTYSETTH
-    {    ( Stm.EmptySetTh )}
+    {( Stm.EmptySetTh )}
 | _1 = SINGLETH _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tsingle(%s)" (Stm.term_to_str _3) in
       let th = parser_check_type check_type_tid  _3 E.Tid get_str_expr in
         Stm.SinglTh(th)
     )}
 | _1 = UNIONTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tunion(%s,%s)" (Stm.term_to_str _3)
                                                    (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setth  _3 E.SetTh get_str_expr in
@@ -2987,7 +2987,7 @@ setth:
         Stm.UnionTh(s1,s2)
     )}
 | _1 = INTRTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tintr(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setth  _3 E.SetTh get_str_expr in
@@ -2995,7 +2995,7 @@ setth:
         Stm.IntrTh(s1,s2)
     )}
 | _1 = SETDIFFTH _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "tdiff(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setth  _3 E.SetTh get_str_expr in
@@ -3005,15 +3005,15 @@ setth:
 
 setint:
   _1 = EMPTYSETINT
-    {     ( Stm.EmptySetInt )}
+    {( Stm.EmptySetInt )}
 | _1 = SINGLEINT _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "isingle(%s)" (Stm.term_to_str _3) in
       let th = parser_check_type check_type_int _3 E.Int get_str_expr in
         Stm.SinglInt(th)
     )}
 | _1 = UNIONINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "iunion(%s,%s)" (Stm.term_to_str _3)
                                                    (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -3021,7 +3021,7 @@ setint:
         Stm.UnionInt(s1,s2)
     )}
 | _1 = INTRINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "iintr(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -3029,7 +3029,7 @@ setint:
         Stm.IntrInt(s1,s2)
     )}
 | _1 = SETDIFFINT _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "idiff(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setint _3 E.SetInt get_str_expr in
@@ -3039,15 +3039,15 @@ setint:
 
 setelem:
   _1 = EMPTYSETELEM
-    {     ( Stm.EmptySetElem )}
+    {( Stm.EmptySetElem )}
 | _1 = SINGLEELEM _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "esingle(%s)" (Stm.term_to_str _3) in
       let e = parser_check_type check_type_elem _3 E.Elem get_str_expr in
         Stm.SinglElem(e)
     )}
 | _1 = UNIONELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "eunion(%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -3055,7 +3055,7 @@ setelem:
         Stm.UnionElem(s1,s2)
     )}
 | _1 = INTRELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "eintr(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -3063,7 +3063,7 @@ setelem:
         Stm.IntrElem(s1,s2)
     )}
 | _1 = SETDIFFELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "ediff(%s,%s)" (Stm.term_to_str _3)
                                                   (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setelem _3 E.SetElem get_str_expr in
@@ -3071,7 +3071,7 @@ setelem:
         Stm.SetdiffElem(s1,s2)
     )}
 | _1 = SET2ELEM _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "set2elem(%s,%s)" (Stm.term_to_str _3)
                                                       (Stm.term_to_str _5) in
       let m = parser_check_type check_type_mem _3 E.Mem get_str_expr in
@@ -3081,15 +3081,15 @@ setelem:
 
 setpair:
   _1 = SETPAIREMPTY
-    {     ( Stm.EmptySetPair )}
+    {( Stm.EmptySetPair )}
 | _1 = SETPAIRSINGLE _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spsingle(%s)" (Stm.term_to_str _3) in
       let p = parser_check_type check_type_pair _3 E.Pair get_str_expr in
         Stm.SinglPair(p)
     )}
 | _1 = SETPAIRUNION _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spunion(%s,%s)" (Stm.term_to_str _3)
                                                     (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setpair  _3 E.SetPair get_str_expr in
@@ -3097,7 +3097,7 @@ setpair:
         Stm.UnionPair(s1,s2)
     )}
 | _1 = SETPAIRINTR _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spintr(%s,%s)" (Stm.term_to_str _3)
                                                    (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setpair  _3 E.SetPair get_str_expr in
@@ -3105,7 +3105,7 @@ setpair:
         Stm.IntrPair(s1,s2)
     )}
 | _1 = SETPAIRDIFF _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr() = sprintf "spdiff(%s,%s)" (Stm.term_to_str _3)
                                                    (Stm.term_to_str _5) in
       let s1 = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
@@ -3115,15 +3115,15 @@ setpair:
 
 path:
   _1 = EPSILON
-    {    ( Stm.Epsilon )}
+    {( Stm.Epsilon )}
 | _1 = SINGLE_PATH _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "[ %s ]" (Stm.term_to_str _3) in
       let a = parser_check_type check_type_addr _3 E.Addr get_str_expr in
         Stm.SimplePath(a)
     )}
 | _1 = GETP _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "getp(%s,%s,%s)" (Stm.term_to_str _3)
                                                      (Stm.term_to_str _5)
                                                      (Stm.term_to_str _7) in
@@ -3135,7 +3135,7 @@ path:
 
 mem:
   _1 = UPDATE _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "update(%s,%s,%s)" (Stm.term_to_str _3)
                                                        (Stm.term_to_str _5)
                                                        (Stm.term_to_str _7) in
@@ -3147,15 +3147,15 @@ mem:
 
 integer:
   _1 = NUMBER
-    {    ( Stm.IntVal _1 )}
+    {( Stm.IntVal _1 )}
 | _1 = MATH_MINUS _2 = term %prec MATH_NEG
-    {    (
+    {(
       let get_str_expr () = sprintf "-%s" (Stm.term_to_str _2) in
       let i  = parser_check_type check_type_int _2 E.Int get_str_expr in
         Stm.IntNeg i
     )}
 | _1 = term _2 = MATH_PLUS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s+%s" (Stm.term_to_str _1)
                                             (Stm.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -3163,7 +3163,7 @@ integer:
         Stm.IntAdd (i1,i2)
     )}
 | _1 = term _2 = MATH_MINUS _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s-%s" (Stm.term_to_str _1)
                                             (Stm.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -3171,7 +3171,7 @@ integer:
         Stm.IntSub (i1,i2)
     )}
 | _1 = term _2 = MATH_MULT _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s*%s" (Stm.term_to_str _1)
                                             (Stm.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -3179,7 +3179,7 @@ integer:
         Stm.IntMul (i1,i2)
     )}
 | _1 = term _2 = MATH_DIV _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s/%s" (Stm.term_to_str _1)
                                             (Stm.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -3187,7 +3187,7 @@ integer:
         Stm.IntDiv (i1,i2)
     )}
 | _1 = term _2 = MATH_MOD _3 = term
-    {    (
+    {(
       let get_str_expr () = sprintf "%s %% %s" (Stm.term_to_str _1)
                                                (Stm.term_to_str _3) in
       let i1  = parser_check_type check_type_int _1 E.Int get_str_expr in
@@ -3195,7 +3195,7 @@ integer:
         Stm.IntMod (i1,i2)
     )}
 | _1 = SETINTMIN _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let iSet = _3 in
       let get_str_expr () = sprintf "setIntMin(%s)" (Stm.term_to_str iSet) in
       let s  = parser_check_type check_type_setint iSet E.SetInt get_str_expr
@@ -3203,7 +3203,7 @@ integer:
         Stm.IntSetMin (s)
     )}
 | _1 = SETINTMAX _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let iSet = _3 in
       let get_str_expr () = sprintf "setIntMax(%s)" (Stm.term_to_str iSet) in
       let s  = parser_check_type check_type_setint iSet E.SetInt get_str_expr
@@ -3211,18 +3211,18 @@ integer:
         Stm.IntSetMax (s)
     )}
 | _1 = HAVOCLEVEL _2 = OPEN_PAREN _3 = CLOSE_PAREN
-    {    (
+    {(
       Stm.HavocLevel
     )}
 | _1 = HASHCODE _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "hashCode(%s)" (Stm.term_to_str _3) in
       let e  = parser_check_type check_type_elem _3 E.Elem get_str_expr
       in
         Stm.HashCode (e)
     )}
 | _1 = INTOF _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "int_of(%s)" (Stm.term_to_str _3) in
       let p  = parser_check_type check_type_pair _3 E.Pair get_str_expr
       in
@@ -3231,7 +3231,7 @@ integer:
 
 pair:
   _1 = OPEN_PAREN _2 = term _3 = COMMA _4 = term _5 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "(%s,%s)" (Stm.term_to_str _2)
                                               (Stm.term_to_str _4) in
       let i  = parser_check_type check_type_int _2 E.Int get_str_expr in
@@ -3239,13 +3239,13 @@ pair:
         Stm.IntTidPair(i,t)
     )}
 | _1 = SETPAIRMIN _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spmin(%s)" (Stm.term_to_str _3) in
       let s  = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
         Stm.SetPairMin(s)
     )}
 | _1 = SETPAIRMAX _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "spmax(%s)" (Stm.term_to_str _3) in
       let s  = parser_check_type check_type_setpair _3 E.SetPair get_str_expr in
         Stm.SetPairMax(s)
@@ -3253,7 +3253,7 @@ pair:
 
 arraylookup:
   _1 = term _2 = OPEN_BRACKET _3 = term _4 = CLOSE_BRACKET
-    {    (
+    {(
       let get_str_expr () = sprintf "%s[%s]" (Stm.term_to_str _1)
                                              (Stm.term_to_str _3) in
       let i = parser_check_type check_type_int _3 E.Int get_str_expr in
@@ -3281,7 +3281,7 @@ arraylookup:
 
 arrayupd:
   _1 = ARR_UPDATE _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "arrUpd (%s,%s,%s)" (Stm.term_to_str _3)
                                                         (Stm.term_to_str _5)
                                                         (Stm.term_to_str _7) in
@@ -3308,7 +3308,7 @@ arrayupd:
 
 bucket:
   _1 = MKBUCKET _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = COMMA _7 = term _8 = COMMA _9 = term _10 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "mkbucket(%s,%s,%s,%s)"
                                            (Stm.term_to_str _3)
                                            (Stm.term_to_str _5)
@@ -3323,7 +3323,7 @@ bucket:
 
 lock:
   _1 = LOCK _2 = OPEN_PAREN _3 = term _4 = COMMA _5 = term _6 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "lock(%s,%s)"
                                            (Stm.term_to_str _3)
                                            (Stm.term_to_str _5) in
@@ -3332,7 +3332,7 @@ lock:
         Stm.LLock(l,t)
     )}
 | _1 = UNLOCK _2 = OPEN_PAREN _3 = term _4 = CLOSE_PAREN
-    {    (
+    {(
       let get_str_expr () = sprintf "unlock(%s)"
                                            (Stm.term_to_str _3) in
       let l = parser_check_type check_type_lock _3 E.Lock get_str_expr in

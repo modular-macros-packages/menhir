@@ -311,420 +311,420 @@ let add_atom ai (i,xs,bs) = match ai with
 
 modl:
   _1 = MODULE _2 = UIDENT _3 = EQUAL _4 = opens _5 = decls _6 = EOF
-    {      ( Mod(m _1 _6,_2,_4,_5) )}
+    {( Mod(m _1 _6,_2,_4,_5) )}
 
 opens:
   _1 = OPEN _2 = qid _3 = opens
-    {      ( _2::_3 )}
+    {( _2::_3 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 decls:
   _1 = MODULE _2 = UIDENT _3 = EQUAL _4 = decls _5 = END _6 = decls
-    {      ( let i = m _1 _5 in
+    {( let i = m _1 _5 in
         DMod(i,_2,_4)::_6 )}
 | _1 = TYPE _2 = tyvar_list _3 = LIDENT _4 = EQUAL _5 = dtsort_list _6 = decls
-    {      ( let i = m _1 _4 in
+    {( let i = m _1 _4 in
         DType(i,_2,Qid.t_of_id _3,_5)::_6 )}
 | _1 = LET _2 = id _3 = param_list _4 = COLON _5 = sort _6 = EQUAL _7 = exp _8 = decls
-    {      ( let i = me2 _1 _7 in
+    {( let i = me2 _1 _7 in
         let f,f_sort = build_fun i _3 _7 _5 in
         let i2,_ = _2 in
         let b = Bind(i,PVar(i2,_2,None),None,f) in
         DLet(i,b)::_8 )}
 | _1 = LET _2 = id _3 = param_list _4 = EQUAL _5 = exp _6 = decls
-    {      ( let i = me2 _1 _5 in
+    {( let i = me2 _1 _5 in
         let f = build_bare_fun i _3 _5 in
         let i2,_ = _2 in
         let b =  Bind(i,PVar(i2,_2,None),None,f) in
         DLet(i,b)::_6 )}
 | _1 = LET _2 = letpat _3 = COLON _4 = sort _5 = EQUAL _6 = exp _7 = decls
-    {      ( let i = me2 _1 _6 in
+    {( let i = me2 _1 _6 in
         let b = Bind(i,fixup_pat i _2,Some _4,_6) in
         DLet(i,b)::_7 )}
 | _1 = LET _2 = letpat _3 = EQUAL _4 = exp _5 = decls
-    {      ( let i = me2 _1 _4 in
+    {( let i = me2 _1 _4 in
         let b =  Bind(i,fixup_pat i _2,None,_4) in
         DLet(i,b)::_5 )}
 | _1 = TEST _2 = infixexp _3 = EQUAL _4 = test_res_exp _5 = decls
-    {      ( let i4,tr = _4 in
+    {( let i4,tr = _4 in
         let i = m _1 i4 in
         DTest(i,_2,tr)::_5 )}
 | _1 = TEST _2 = infixexp _3 = COLON _4 = test_res_sort _5 = decls
-    {      ( let i = m _1 _3 in
+    {( let i = m _1 _3 in
         DTest(i,_2,_4)::_5 )}
 | _1 = TEST _2 = infixexp _3 = COLON _4 = ERROR _5 = decls
-    {      ( let i = m _1 _4 in
+    {( let i = m _1 _4 in
         DTest(i,_2,TestError)::_5 )}
 | 
-    {    ( [] )}
+    {( [] )}
 
 test_res_exp:
   _1 = QMARK
-    {      ( (_1,TestPrint) )}
+    {( (_1,TestPrint) )}
 | _1 = ERROR
-    {      ( (_1,TestError) )}
+    {( (_1,TestError) )}
 | _1 = appexp
-    {      ( (info_of_exp _1, TestEqual _1) )}
+    {( (info_of_exp _1, TestEqual _1) )}
 
 test_res_sort:
   _1 = QMARK
-    {      ( TestSortPrint None )}
+    {( TestSortPrint None )}
 | _1 = sort
-    {      ( TestSortEqual(None,_1) )}
+    {( TestSortEqual(None,_1) )}
 
 exp:
   _1 = LET _2 = id _3 = param_list _4 = COLON _5 = sort _6 = EQUAL _7 = exp _8 = IN _9 = exp
-    {      ( let i = me2 _1 _9 in
+    {( let i = me2 _1 _9 in
         let f,f_sort = build_fun i _3 _7 _5 in
         let i2,_ = _2 in
         let b = Bind(i,PVar(i2,_2,None),None,f) in
         ELet(i,b,_9) )}
 | _1 = LET _2 = id _3 = param_list _4 = EQUAL _5 = exp _6 = IN _7 = exp
-    {      ( let i = me2 _1 _7 in
+    {( let i = me2 _1 _7 in
         let f = build_bare_fun i _3 _5 in
         let i2,_ = _2 in
         let b = Bind(i,PVar(i2,_2,None),None,f) in
         ELet(i,b,_7) )}
 | _1 = LET _2 = letpat _3 = COLON _4 = sort _5 = EQUAL _6 = exp _7 = IN _8 = exp
-    {      ( let i = me2 _1 _8 in
+    {( let i = me2 _1 _8 in
         let b = Bind(i,fixup_pat i _2,Some _4,_6) in
         ELet(i,b,_8) )}
 | _1 = LET _2 = letpat _3 = EQUAL _4 = exp _5 = IN _6 = exp
-    {      ( let i = me2 _1 _6 in
+    {( let i = me2 _1 _6 in
         let b = Bind(i,fixup_pat i _2,None,_4) in
         ELet(i,b,_6) )}
 | _1 = funexp
-    {      ( _1 )}
+    {( _1 )}
 
 funexp:
   _1 = FUN _2 = param_list _3 = ARROW _4 = exp
-    {      ( let i = me2 _1 _4 in
+    {( let i = me2 _1 _4 in
         build_bare_fun i _2 _4 )}
 | _1 = FUN _2 = param_list _3 = COLON _4 = asort _5 = ARROW _6 = exp
-    {      ( let i = me2 _1 _6 in
+    {( let i = me2 _1 _6 in
         let f,_ = build_fun i _2 _6 _4 in
         f )}
 | _1 = cexp _2 = DOLLAR _3 = funexp
-    {      ( mk_app (me _1 _3) _1 _3 )}
+    {( mk_app (me _1 _3) _1 _3 )}
 | _1 = cexp
-    {      ( _1 )}
+    {( _1 )}
 
 cexp:
   _1 = MATCH _2 = composeexp _3 = WITH _4 = branch_list
-    {       ( let i4,pl = _4 in
+    {( let i4,pl = _4 in
          ECase(m _1 i4,_2,pl,None) )}
 | _1 = MATCH _2 = composeexp _3 = WITH _4 = branch_list _5 = COLON _6 = sort
-    {      ( let i4,pl = _4 in
+    {( let i4,pl = _4 in
         ECase(m _1 i4,_2,pl,Some _6) )}
 | _1 = composeexp
-    {      ( _1 )}
+    {( _1 )}
 
 composeexp:
   _1 = composeexp _2 = SEMI _3 = commaexp
-    {      ( mk_compose (me _1 _3) _1 _3 )}
+    {( mk_compose (me _1 _3) _1 _3 )}
 | _1 = commaexp
-    {      ( _1 )}
+    {( _1 )}
 
 commaexp:
   _1 = commaexp _2 = COMMA _3 = barexp
-    {      ( EPair(me _1 _3, _1, _3) )}
+    {( EPair(me _1 _3, _1, _3) )}
 | _1 = barexp
-    {      ( _1 )}
+    {( _1 )}
 
 barexp:
   _1 = obarexp
-    {      ( mk_tree OBar (Safelist.rev _1) )}
+    {( mk_tree OBar (Safelist.rev _1) )}
 | _1 = dbarexp
-    {      ( mk_tree OBarBar (Safelist.rev _1) )}
+    {( mk_tree OBarBar (Safelist.rev _1) )}
 | _1 = equalexp
-    {      ( _1 )}
+    {( _1 )}
 
 obarexp:
   _1 = obarexp _2 = BAR _3 = equalexp
-    {      ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | _1 = equalexp _2 = BAR _3 = equalexp
-    {      ( [_3; _1 ] )}
+    {( [_3; _1 ] )}
 
 dbarexp:
   _1 = dbarexp _2 = BARBAR _3 = equalexp
-    {      ( _3 :: _1 )}
+    {( _3 :: _1 )}
 | _1 = equalexp _2 = BARBAR _3 = equalexp
-    {      ( [_3; _1] )}
+    {( [_3; _1] )}
 
 equalexp:
   _1 = appexp _2 = EQUAL _3 = appexp
-    {      ( mk_over (me _1 _3) OEqual [_1; _3] )}
+    {( mk_over (me _1 _3) OEqual [_1; _3] )}
 | _1 = infixexp
-    {      ( _1 )}
+    {( _1 )}
 
 infixexp:
   _1 = dotexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = tildeexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = rewriteexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = ampexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = ampampexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = lenscomponentexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = minusexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = ltexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = leqexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = gtexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = geqexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = appexp
-    {      ( _1 )}
+    {( _1 )}
 
 dotexp:
   _1 = dotexp _2 = DOT _3 = appexp
-    {      ( mk_over (me _1 _3) ODot [_1; _3] )}
+    {( mk_over (me _1 _3) ODot [_1; _3] )}
 | _1 = dotexp _2 = DOT _3 = rewriteexp
-    {      ( mk_over (me _1 _3) ODot [_1; _3] )}
+    {( mk_over (me _1 _3) ODot [_1; _3] )}
 | _1 = appexp _2 = DOT _3 = appexp
-    {      ( mk_over (me _1 _3) ODot [_1; _3] )}
+    {( mk_over (me _1 _3) ODot [_1; _3] )}
 | _1 = rewriteexp _2 = DOT _3 = rewriteexp
-    {      ( mk_over (me _1 _3) ODot [_1; _3] )}
+    {( mk_over (me _1 _3) ODot [_1; _3] )}
 | _1 = rewriteexp _2 = DOT _3 = appexp
-    {      ( mk_over (me _1 _3) ODot [_1; _3] )}
+    {( mk_over (me _1 _3) ODot [_1; _3] )}
 | _1 = appexp _2 = DOT _3 = rewriteexp
-    {      ( mk_over (me _1 _3) ODot [_1; _3] )}
+    {( mk_over (me _1 _3) ODot [_1; _3] )}
 
 tildeexp:
   _1 = tildeexp _2 = TILDE _3 = appexp
-    {      ( mk_over (me _1 _3) OTilde [_1; _3] )}
+    {( mk_over (me _1 _3) OTilde [_1; _3] )}
 | _1 = appexp _2 = TILDE _3 = appexp
-    {      ( mk_over (me _1 _3) OTilde [_1; _3] )}
+    {( mk_over (me _1 _3) OTilde [_1; _3] )}
 
 ampexp:
   _1 = ampexp _2 = AMPERSAND _3 = appexp
-    {      ( mk_over (me _1 _3) OAmp [_1; _3] )}
+    {( mk_over (me _1 _3) OAmp [_1; _3] )}
 | _1 = appexp _2 = AMPERSAND _3 = appexp
-    {      ( mk_over (me _1 _3) OAmp [_1; _3] )}
+    {( mk_over (me _1 _3) OAmp [_1; _3] )}
 
 ampampexp:
   _1 = appexp _2 = AMPERSAND _3 = AMPERSAND _4 = ampampexp
-    {      ( mk_over (me _1 _4) OAmpAmp [_1; _4] )}
+    {( mk_over (me _1 _4) OAmpAmp [_1; _4] )}
 | _1 = appexp _2 = AMPERSAND _3 = AMPERSAND _4 = appexp
-    {      ( mk_over (me _1 _4) OAmpAmp [_1; _4] )}
+    {( mk_over (me _1 _4) OAmpAmp [_1; _4] )}
 
 rewriteexp:
   _1 = appexp _2 = DARROW _3 = appexp
-    {      ( mk_over (me _1 _3) ODarrow [_1; _3] )}
+    {( mk_over (me _1 _3) ODarrow [_1; _3] )}
 | _1 = appexp _2 = DEQARROW _3 = appexp
-    {      ( mk_over (me _1 _3) ODeqarrow [_1; _3] )}
+    {( mk_over (me _1 _3) ODeqarrow [_1; _3] )}
 
 lenscomponentexp:
   _1 = appexp _2 = GET _3 = appexp
-    {      ( let i = me _1 _3 in
+    {( let i = me _1 _3 in
         mk_bin_op i (mk_core_var i "get") _1 _3 )}
 | _1 = appexp _2 = PUT _3 = appexp _4 = INTO _5 = appexp
-    {      ( let i = me _1 _3 in
+    {( let i = me _1 _3 in
         mk_tern_op i (mk_core_var i "put") _1 _3 _5 )}
 | _1 = appexp _2 = CREATE _3 = appexp
-    {      ( let i = me _1 _3 in
+    {( let i = me _1 _3 in
         mk_bin_op i (mk_core_var i "create") _1 _3 )}
 | _1 = appexp _2 = CANONIZE _3 = appexp
-    {      ( let i = me _1 _3 in
+    {( let i = me _1 _3 in
         mk_bin_op i (mk_core_var i "canonize") _1 _3 )}
 | _1 = appexp _2 = CHOOSE _3 = appexp
-    {      ( let i = me _1 _3 in
+    {( let i = me _1 _3 in
         mk_bin_op i (mk_core_var i "choose") _1 _3 )}
 
 minusexp:
   _1 = infixexp _2 = MINUS _3 = appexp
-    {      ( mk_over (me _1 _3) OMinus [_1; _3] )}
+    {( mk_over (me _1 _3) OMinus [_1; _3] )}
 | _1 = MINUS _2 = appexp
-    {      ( mk_over (me2 _1 _2) OMinus [EInteger(_1,0); _2] )}
+    {( mk_over (me2 _1 _2) OMinus [EInteger(_1,0); _2] )}
 
 ltexp:
   _1 = appexp _2 = LT _3 = appexp
-    {      ( mk_over (me _1 _3) OLt [_1; _3] )}
+    {( mk_over (me _1 _3) OLt [_1; _3] )}
 
 leqexp:
   _1 = appexp _2 = LEQ _3 = appexp
-    {      ( mk_over (me _1 _3) OLeq [_1; _3] )}
+    {( mk_over (me _1 _3) OLeq [_1; _3] )}
 
 gtexp:
   _1 = appexp _2 = GT _3 = appexp
-    {      ( mk_over (me _1 _3) OGt [_1; _3] )}
+    {( mk_over (me _1 _3) OGt [_1; _3] )}
 
 geqexp:
   _1 = appexp _2 = GEQ _3 = appexp
-    {      ( mk_over (me _1 _3) OGeq [_1; _3] )}
+    {( mk_over (me _1 _3) OGeq [_1; _3] )}
 
 appexp:
   _1 = appexp _2 = repexp
-    {      ( mk_app (me _1 _2) _1 _2 )}
+    {( mk_app (me _1 _2) _1 _2 )}
 | _1 = PERM _2 = LPAREN _3 = listexp1 _4 = WITH _5 = repexp
-    {            ( let i = me2 _1 _5 in
+    {( let i = me2 _1 _5 in
         EPerm(i,_3,_5) )}
 | _1 = PROJECT _2 = appexp _3 = ARROW _4 = repexp
-    {      ( let i = me2 _1 _4 in
+    {( let i = me2 _1 _4 in
         EProject(i,_2,_4) )}
 | _1 = SYNTH _2 = appexp _3 = DEQARROW _4 = repexp _5 = USING _6 = LBRACE _7 = listexp2
-    {         ( let i = if List.length _7 = 0 then
+    {( let i = if List.length _7 = 0 then
 					me2 _1 _4 else
 					me2 _1 (List.hd (List.rev _7)) in
         ESynth (i,_2,_4,Some _7) )}
 | _1 = SYNTH _2 = appexp _3 = DEQARROW _4 = repexp
-    {         ( let i = me2 _1 _4 in
+    {( let i = me2 _1 _4 in
         ESynth (i,_2,_4,None) )}
 | _1 = SQUASH _2 = appexp _3 = ARROW _4 = repexp _5 = USING _6 = repexp
-    {    ( let i = me2 _1 _6 in
+    {( let i = me2 _1 _6 in
         ESquash(i,_2,_4, _6) )}
 | _1 = repexp
-    {      ( _1 )}
+    {( _1 )}
 
 listexp1:
   _1 = RPAREN
-    {        ([])}
+    {([])}
 | _1 = appexp _2 = RPAREN
-    {        ([_1])}
+    {([_1])}
 | _1 = appexp _2 = COMMA _3 = listexp1
-    {        (_1 :: _3)}
+    {(_1 :: _3)}
 
 listexp2:
   _1 = RBRACE
-    {  ([])}
+    {([])}
 | _1 = appexp _2 = RBRACE
-    {  ([_1])}
+    {([_1])}
 | _1 = appexp _2 = COMMA _3 = listexp2
-    {  (_1 :: _3)}
+    {(_1 :: _3)}
 
 repexp:
   _1 = tyexp _2 = rep
-    {      ( let i2,(min,max) = _2 in
+    {( let i2,(min,max) = _2 in
         let i = me1 _1 i2 in
 	  mk_iter i min max _1 )}
 | _1 = tyexp
-    {      ( _1 )}
+    {( _1 )}
 
 tyexp:
   _1 = tyexp _2 = LBRACE _3 = sort _4 = RBRACE
-    {      ( let i = me1 _1 _4 in
+    {( let i = me1 _1 _4 in
         ETyApp(i,_1,_3) )}
 | _1 = aexp
-    {      ( _1 )}
+    {( _1 )}
 
 aexp:
   _1 = LPAREN _2 = exp _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = BEGIN _2 = exp _3 = END
-    {      ( _2 )}
+    {( _2 )}
 | _1 = qid
-    {      ( mk_qid_var _1 )}
+    {( mk_qid_var _1 )}
 | _1 = matchexp
-    {      ( _1 )}
+    {( _1 )}
 | _1 = HASH _2 = LBRACE _3 = sort _4 = LLIST _5 = boomerang_bparser_list
-    {      ( let i6,mk = _5 in
+    {( let i6,mk = _5 in
         let i = m _1 i6 in
         let l = mk i _3 in
         l )}
 | _1 = CHARACTER
-    {      ( let i,c = _1 in
+    {( let i,c = _1 in
         EChar(i,c) )}
 | _1 = INTEGER
-    {      ( let i,n = _1 in
+    {( let i,n = _1 in
         EInteger(i,n) )}
 | _1 = BOOLEAN
-    {      ( let i,b = _1 in
+    {( let i,b = _1 in
         EBoolean(i,if b then None else Some (EString(i,""))) )}
 | _1 = CEX _2 = LPAREN _3 = exp _4 = RPAREN
-    {      ( EBoolean(_1,Some _3) )}
+    {( EBoolean(_1,Some _3) )}
 | _1 = CSET
-    {      ( let i1,s1 = _1 in
+    {( let i1,s1 = _1 in
         ECSet(i1,true,parse_cset s1) )}
 | _1 = NSET
-    {      ( let i1,s1 = _1 in
+    {( let i1,s1 = _1 in
         ECSet(i1,false,parse_cset s1) )}
 | _1 = STR
-    {      ( let i,s = _1 in
+    {( let i,s = _1 in
         EString(i,s) )}
 | _1 = LPAREN _2 = RPAREN
-    {      ( EUnit(m _1 _2) )}
+    {( EUnit(m _1 _2) )}
 | _1 = GRAMMAR _2 = productions _3 = END
-    {      ( EGrammar(m _1 _3, _2) )}
+    {( EGrammar(m _1 _3, _2) )}
 | _1 = aexp _2 = STYPE
-    {      ( let i = me1 _1 _2 in
+    {( let i = me1 _1 _2 in
         mk_app i (mk_core_var i "stype") _1 )}
 | _1 = aexp _2 = VTYPE
-    {      ( let i = me1 _1 _2 in
+    {( let i = me1 _1 _2 in
         mk_app i (mk_core_var i "vtype") _1 )}
 | _1 = aexp _2 = ASTYPE
-    {      ( let i = me1 _1 _2 in
+    {( let i = me1 _1 _2 in
         mk_app i (mk_core_var i "astype") _1 )}
 | _1 = aexp _2 = AVTYPE
-    {      ( let i = me1 _1 _2 in
+    {( let i = me1 _1 _2 in
         mk_app i (mk_core_var i "avtype") _1 )}
 | _1 = aexp _2 = BIJ
-    {      ( let i = me1 _1 _2 in
+    {( let i = me1 _1 _2 in
         mk_app i (mk_core_var i "bij") _1 )}
 
 matchexp:
   _1 = LANGLE _2 = exp _3 = RANGLE
-    {      ( let i = _1 in
+    {( let i = _1 in
         let tag = mk_default_tag i in
         mk_over (m _1 _3) OMatch [tag; _2] )}
 | _1 = LANGLE _2 = appexp _3 = COLON _4 = exp _5 = RANGLE
-    {      ( mk_over (m _1 _5) OMatch [_2; _4] )}
+    {( mk_over (m _1 _5) OMatch [_2; _4] )}
 
 branch:
   _1 = pat _2 = ARROW _3 = equalexp
-    {      ( let i = m (info_of_pat _1) (info_of_exp _3) in
+    {( let i = m (info_of_pat _1) (info_of_exp _3) in
         (i,_1,_3) )}
 
 branch_list:
   _1 = branch _2 = branch_list2
-    {      ( let (i1,p,e) = _1 in
+    {( let (i1,p,e) = _1 in
         let (i2,l) = _2 i1 in
         (m i1 i2, (p,e)::l) )}
 | _1 = BAR _2 = branch _3 = branch_list2
-    {      ( let (i1,p,e) = _2 in
+    {( let (i1,p,e) = _2 in
         let (i2,l) = _3 i1 in
         (m _1 i2, (p,e)::l) )}
 
 branch_list2:
   
-    {      ( (fun i -> (i,[])) )}
+    {( (fun i -> (i,[])) )}
 | _1 = BAR _2 = branch _3 = branch_list2
-    {      ( let (i1,p,e) = _2 in
+    {( let (i1,p,e) = _2 in
         let (i2,l) = _3 i1 in
         (fun _ -> (m _1 i2, (p,e)::l)) )}
 
 rep:
   _1 = STAR
-    {      ( (_1, (0,-1)) )}
+    {( (_1, (0,-1)) )}
 | _1 = PLUS
-    {      ( (_1, (1,-1)) )}
+    {( (_1, (1,-1)) )}
 | _1 = QMARK
-    {      ( (_1, (0,1)) )}
+    {( (_1, (0,1)) )}
 | _1 = LBRACE _2 = INTEGER _3 = RBRACE
-    {      ( let i = m _1 _3 in let _,n = _2 in (i, (n,n)) )}
+    {( let i = m _1 _3 in let _,n = _2 in (i, (n,n)) )}
 | _1 = LBRACE _2 = INTEGER _3 = COMMA _4 = RBRACE
-    {      ( let i = m _1 _3 in let _,n = _2 in (i, (n,-1)) )}
+    {( let i = m _1 _3 in let _,n = _2 in (i, (n,-1)) )}
 | _1 = LBRACE _2 = INTEGER _3 = COMMA _4 = INTEGER _5 = RBRACE
-    {      ( let i = m _1 _5 in let _,n2 = _2 in let _,n4 = _4 in (i, (n2, n4)) )}
+    {( let i = m _1 _5 in let _,n2 = _2 in let _,n4 = _4 in (i, (n2, n4)) )}
 
 boomerang_bparser_list:
   _1 = RBRACK
-    {      ( _1, (fun i s -> ETyApp(i,mk_list_var i "Nil",s)) )}
+    {( _1, (fun i s -> ETyApp(i,mk_list_var i "Nil",s)) )}
 | _1 = commaexp _2 = RBRACK
-    {      ( (_2,
+    {( (_2,
          (fun i s ->
             mk_app i
               (ETyApp(i,mk_list_var i "Cons",s))
               (EPair(i,_1,ETyApp(i,mk_list_var i "Nil",s))))) )}
 | _1 = commaexp _2 = SEMI _3 = boomerang_bparser_list
-    {    ( let i3,mk = _3 in
+    {( let i3,mk = _3 in
       (i3,
        (fun i s ->
           mk_app i
@@ -733,103 +733,103 @@ boomerang_bparser_list:
 
 atom:
   _1 = aexp
-    {      ( Misc.Left _1 )}
+    {( Misc.Left _1 )}
 | _1 = LIDENT _2 = COLON _3 = aexp
-    {      ( Misc.Right (_1,_3) )}
+    {( Misc.Right (_1,_3) )}
 
 atoms:
   _1 = atom _2 = atoms2
-    {      ( add_atom _1 _2 )}
+    {( add_atom _1 _2 )}
 
 atoms2:
   
-    {     ( (Info.M "atoms",[],[]) )}
+    {( (Info.M "atoms",[],[]) )}
 | _1 = atom _2 = atoms2
-    {     ( add_atom _1 _2 )}
+    {( add_atom _1 _2 )}
 
 aexps:
   _1 = aexp _2 = aexps2
-    {      ( add_aexp _1 _2 )}
+    {( add_aexp _1 _2 )}
 
 aexps2:
   
-    {      ( (Info.M "aexps", []) )}
+    {( (Info.M "aexps", []) )}
 | _1 = aexp _2 = aexps2
-    {      ( add_aexp _1 _2 )}
+    {( add_aexp _1 _2 )}
 
 rule:
   _1 = atoms _2 = DARROW _3 = aexps
-    {     ( let i1,xs,bs = _1 in
+    {( let i1,xs,bs = _1 in
        let i3,ys = _3 in
        Rule(m i1 i3,xs,ys,bs) )}
 
 rules:
   _1 = rule _2 = rules2
-    {    ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | _1 = BAR _2 = rule _3 = rules2
-    {    ( _2 :: _3 )}
+    {( _2 :: _3 )}
 
 rules2:
   
-    {    ( [] )}
+    {( [] )}
 | _1 = BAR _2 = rule _3 = rules2
-    {    ( _2 :: _3 )}
+    {( _2 :: _3 )}
 
 production:
   _1 = LIDENT _2 = COLONCOLON _3 = EQUAL _4 = rules
-    {    ( let i1,_ = _1 in
+    {( let i1,_ = _1 in
       let i5 = info_of_rules _4 in
       Prod(m i1 i5,_1,_4) )}
 
 productions:
   _1 = production
-    {    ( [_1] )}
+    {( [_1] )}
 | _1 = production _2 = AND _3 = productions
-    {    ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 id:
   _1 = LIDENT
-    {      ( _1 )}
+    {( _1 )}
 | _1 = UIDENT
-    {      ( _1 )}
+    {( _1 )}
 
 qid:
   _1 = LIDENT
-    {      ( Qid.t_of_id _1 )}
+    {( Qid.t_of_id _1 )}
 | _1 = UIDENT
-    {      ( Qid.t_of_id _1 )}
+    {( Qid.t_of_id _1 )}
 | _1 = QUALIDENT
-    {      ( let (i,qs) = _1 in parse_qid i qs )}
+    {( let (i,qs) = _1 in parse_qid i qs )}
 
 qvar:
   _1 = LIDENT
-    {      ( Qid.t_of_id _1 )}
+    {( Qid.t_of_id _1 )}
 | _1 = QUALIDENT
-    {      ( let (i,qs) = _1 in parse_qid i qs )}
+    {( let (i,qs) = _1 in parse_qid i qs )}
 
 param_list:
   _1 = param _2 = param_list2
-    {      ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 param_list2:
   _1 = param _2 = param_list2
-    {      ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {      ( [] )}
+    {( [] )}
 
 param:
   _1 = LPAREN _2 = id _3 = COLON _4 = sort _5 = RPAREN
-    {      ( let i = m _1 _5 in
+    {( let i = m _1 _5 in
         Misc.Left (Param(i,_2,_4)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = LENS _5 = IN _6 = QMARK _7 = DARROW _8 = appexp _9 = RPAREN
-    {      ( let i = m _1 _9 in
+    {( let i = m _1 _9 in
         let p = mk_bin_op i (mk_core_var i "equiv")
 	                    (mk_app i (mk_core_var i "vtype") (mk_var _2))
                             _8 in
         let s = SRefine(_2,false,SLens,p,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = LENS _5 = IN _6 = QMARK _7 = DEQARROW _8 = appexp _9 = RPAREN
-    {      ( let i = m _1 _9 in
+    {( let i = m _1 _9 in
         let p = mk_bin_op i (mk_core_var i "land")
 	                    (mk_bin_op i (mk_core_var i "equiv")
 	                                 (mk_app i (mk_core_var i "vtype") (mk_var _2))
@@ -838,14 +838,14 @@ param:
         let s = SRefine(_2,false,SLens,p,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = LENS _5 = IN _6 = appexp _7 = DARROW _8 = QMARK _9 = RPAREN
-    {      ( let i = m _1 _9 in
+    {( let i = m _1 _9 in
         let p = mk_bin_op i (mk_core_var i "equiv")
 	                    (mk_app i (mk_core_var i "stype") (mk_var _2))
                             _6 in
         let s = SRefine(_2,false,SLens,p,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = LENS _5 = IN _6 = appexp _7 = DEQARROW _8 = QMARK _9 = RPAREN
-    {      ( let i = m _1 _9 in
+    {( let i = m _1 _9 in
         let p = mk_bin_op i (mk_core_var i "land")
 	                    (mk_bin_op i (mk_core_var i "equiv")
 	                                 (mk_app i (mk_core_var i "stype") (mk_var _2))
@@ -854,84 +854,84 @@ param:
         let s = SRefine(_2,false,SLens,p,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = LENS _5 = IN _6 = appexp _7 = DARROW _8 = appexp _9 = RPAREN
-    {      ( let i = m _1 _9 in
+    {( let i = m _1 _9 in
         let p = mk_tern_op i (mk_core_var i "in_lens_type") (mk_var _2) _6 _8 in
         let s = SRefine(_2,false,SLens,p,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = LENS _5 = IN _6 = appexp _7 = DEQARROW _8 = appexp _9 = RPAREN
-    {      ( let i = m _1 _9 in
+    {( let i = m _1 _9 in
         let p = mk_tern_op i (mk_core_var i "in_bij_lens_type") (mk_var _2) _6 _8 in
         let s = SRefine(_2,false,SLens,p,Some(_6, _8)) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = STRING _5 = IN _6 = exp _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
         let p = mk_bin_op i (mk_core_var i "matches") _6 (mk_var _2) in
         let s = SRefine(_2,false,SString,p,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = sort _5 = WHERE _6 = BANG _7 = exp _8 = RPAREN
-    {      ( let i,_ = _2 in
+    {( let i,_ = _2 in
         let s = SRefine(_2,true,_4,_7,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = sort _5 = WHERE _6 = exp _7 = RPAREN
-    {      ( let i,_ = _2 in
+    {( let i,_ = _2 in
         let s = SRefine(_2,false,_4,_6,None) in
         Misc.Left (Param(i,_2,s)) )}
 | _1 = LPAREN _2 = TYVARIDENT _3 = RPAREN
-    {      ( Misc.Right (_2) )}
+    {( Misc.Right (_2) )}
 | _1 = TYVARIDENT
-    {      ( Misc.Right (_1) )}
+    {( Misc.Right (_1) )}
 | _1 = LPAREN _2 = RPAREN
-    {      ( let i = m _1 _2 in
+    {( let i = m _1 _2 in
         Misc.Left (Param(i,(i,"(unit)"),SUnit)) )}
 
 sort:
   _1 = FORALL _2 = TYVARIDENT _3 = EQARROW _4 = sort
-    {      ( SForall(_2,_4) )}
+    {( SForall(_2,_4) )}
 | _1 = arrowsort
-    {      ( _1 )}
+    {( _1 )}
 
 arrowsort:
   _1 = productsort _2 = ARROW _3 = arrowsort
-    {      ( SFunction(Id.wild,_1,_3) )}
+    {( SFunction(Id.wild,_1,_3) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = productsort _5 = ARROW _6 = arrowsort _7 = RPAREN
-    {      ( SFunction(_2,_4,_6) )}
+    {( SFunction(_2,_4,_6) )}
 | _1 = productsort
-    {      ( _1 )}
+    {( _1 )}
 
 productsort:
   _1 = productsort _2 = STAR _3 = datatypesort
-    {      ( SProduct(_1,_3) )}
+    {( SProduct(_1,_3) )}
 | _1 = datatypesort
-    {      ( _1 )}
+    {( _1 )}
 
 datatypesort:
   _1 = bsort _2 = qvar
-    {      ( SData([_1],_2) )}
+    {( SData([_1],_2) )}
 | _1 = LPAREN _2 = sort _3 = COMMA _4 = sort_list _5 = RPAREN _6 = qvar
-    {      ( SData(_2::_4, _6) )}
+    {( SData(_2::_4, _6) )}
 | _1 = bsort
-    {      ( _1 )}
+    {( _1 )}
 
 bsort:
   _1 = LPAREN _2 = sort _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = sort _3 = WHERE _4 = BANG _5 = exp _6 = RPAREN
-    {      ( SRefine(Id.wild,false,_2,_5,None) )}
+    {( SRefine(Id.wild,false,_2,_5,None) )}
 | _1 = LPAREN _2 = sort _3 = WHERE _4 = exp _5 = RPAREN
-    {      ( SRefine(Id.wild,true,_2,_4,None) )}
+    {( SRefine(Id.wild,true,_2,_4,None) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = sort _5 = WHERE _6 = BANG _7 = exp _8 = RPAREN
-    {      ( SRefine(_2,true,_4,_7,None) )}
+    {( SRefine(_2,true,_4,_7,None) )}
 | _1 = LPAREN _2 = id _3 = COLON _4 = sort _5 = WHERE _6 = exp _7 = RPAREN
-    {      ( SRefine(_2,false,_4,_6,None) )}
+    {( SRefine(_2,false,_4,_6,None) )}
 | _1 = LPAREN _2 = LENS _3 = IN _4 = QMARK _5 = DARROW _6 = appexp _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
         let l = Id.mk i "_l" in
         let p = mk_bin_op i (mk_core_var i "equiv")
 	                    (mk_app i (mk_core_var i "vtype") (mk_var l))
                             _6 in
         SRefine(l,false,SLens,p,None) )}
 | _1 = LPAREN _2 = LENS _3 = IN _4 = QMARK _5 = DEQARROW _6 = appexp _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
         let l = Id.mk i "_l" in
         let p = mk_bin_op i (mk_core_var i "land")
 	                    (mk_bin_op i (mk_core_var i "equiv")
@@ -940,14 +940,14 @@ bsort:
 			    (mk_app i (mk_core_var i "bij") (mk_var l)) in
         SRefine(l,false,SLens,p,None) )}
 | _1 = LPAREN _2 = LENS _3 = IN _4 = appexp _5 = DARROW _6 = QMARK _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
 	let l = Id.mk i "_l" in
         let p = mk_bin_op i (mk_core_var i "equiv")
 	                    (mk_app i (mk_core_var i "stype") (mk_var l))
                             _4 in
         SRefine(l,false,SLens,p,None) )}
 | _1 = LPAREN _2 = LENS _3 = IN _4 = appexp _5 = DEQARROW _6 = QMARK _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
 	let l = Id.mk i "_l" in
         let p = mk_bin_op i (mk_core_var i "land")
 	                    (mk_bin_op i (mk_core_var i "equiv")
@@ -956,182 +956,182 @@ bsort:
 			    (mk_app i (mk_core_var i "bij") (mk_var l)) in
         SRefine(l,false,SLens,p,None) )}
 | _1 = LPAREN _2 = LENS _3 = IN _4 = appexp _5 = DARROW _6 = appexp _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
         let l = Id.mk i "_l" in
         let chk c a = mk_tern_op i (mk_core_var i "in_lens_type") (mk_var l) c a in
         SRefine(l,false,SLens,chk _4 _6,None) )}
 | _1 = LPAREN _2 = LENS _3 = IN _4 = appexp _5 = DEQARROW _6 = appexp _7 = RPAREN
-    {      ( let i = m _1 _7 in
+    {( let i = m _1 _7 in
         let l = Id.mk i "_l" in
         let chk c a = mk_tern_op i (mk_core_var i "in_bij_lens_type") (mk_var l) c a in
         SRefine(l,false,SLens,chk _4 _6,Some(_4,_6)) )}
 | _1 = LPAREN _2 = STRING _3 = IN _4 = exp _5 = RPAREN
-    {      ( let i = m _1 _5 in
+    {( let i = m _1 _5 in
         let s = Id.mk i "_s" in
         let p = mk_bin_op i (mk_core_var i "matches") _4 (mk_var s) in
         SRefine(s,false,SString,p,None) )}
 | _1 = asort
-    {      ( _1 )}
+    {( _1 )}
 
 asort:
   _1 = qvar
-    {      ( SData([], _1) )}
+    {( SData([], _1) )}
 | _1 = CHAR
-    {      ( SChar )}
+    {( SChar )}
 | _1 = STRING
-    {      ( SString )}
+    {( SString )}
 | _1 = REGEXP
-    {      ( SRegexp )}
+    {( SRegexp )}
 | _1 = AREGEXP
-    {      ( SAregexp )}
+    {( SAregexp )}
 | _1 = SKELETONS
-    {      ( SSkeletons )}
+    {( SSkeletons )}
 | _1 = RESOURCES
-    {      ( SResources )}
+    {( SResources )}
 | _1 = LENS
-    {      ( SLens )}
+    {( SLens )}
 | _1 = INT
-    {      ( SInteger )}
+    {( SInteger )}
 | _1 = BOOL
-    {      ( SBool )}
+    {( SBool )}
 | _1 = CANONIZER
-    {      ( SCanonizer )}
+    {( SCanonizer )}
 | _1 = BOOLPREFS
-    {      ( SPrefs PrBool )}
+    {( SPrefs PrBool )}
 | _1 = INTPREFS
-    {      ( SPrefs PrInt )}
+    {( SPrefs PrInt )}
 | _1 = STRINGPREFS
-    {      ( SPrefs PrString )}
+    {( SPrefs PrString )}
 | _1 = STRINGLISTPREFS
-    {      ( SPrefs PrStringList )}
+    {( SPrefs PrStringList )}
 | _1 = UNIT
-    {      ( SUnit )}
+    {( SUnit )}
 | _1 = tyvar
-    {      ( SVar _1 )}
+    {( SVar _1 )}
 
 tyvar:
   _1 = TYVARIDENT
-    {      ( _1 )}
+    {( _1 )}
 
 tyvar_list:
   
-    {      ( [] )}
+    {( [] )}
 | _1 = tyvar
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = LPAREN _2 = tyvar_list2 _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 
 tyvar_list2:
   _1 = tyvar
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = tyvar _2 = COMMA _3 = tyvar_list2
-    {      ( _1::_3 )}
+    {( _1::_3 )}
 
 sort_list:
   _1 = sort
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = sort _2 = COMMA _3 = sort_list
-    {      ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 dtsort:
   _1 = UIDENT
-    {      ( (_1,None) )}
+    {( (_1,None) )}
 | _1 = UIDENT _2 = OF _3 = sort
-    {      ( (_1,Some _3) )}
+    {( (_1,Some _3) )}
 
 dtsort_list:
   _1 = dtsort _2 = dtsort_list2
-    {      ( _1 :: _2 )}
+    {( _1 :: _2 )}
 
 dtsort_list2:
   
-    {      ( [] )}
+    {( [] )}
 | _1 = BAR _2 = dtsort _3 = dtsort_list2
-    {      ( _2 :: _3 )}
+    {( _2 :: _3 )}
 
 lcpat:
   _1 = listpat
-    {            ( _1 )}
+    {( _1 )}
 | _1 = conpat
-    {           ( _1 )}
+    {( _1 )}
 
 pat:
   _1 = pat _2 = COMMA _3 = lcpat
-    {      ( let i = mp _1 _3 in
+    {( let i = mp _1 _3 in
         PPar(i,_1,_3) )}
 | _1 = lcpat
-    {          ( _1 )}
+    {( _1 )}
 
 letpat:
   _1 = letpat _2 = COMMA _3 = lcpat
-    {      ( let i = mp _1 _3 in
+    {( let i = mp _1 _3 in
         PPar(i,_1,_3) )}
 | _1 = QUALIDENT _2 = apat
-    {      ( let i,qs = _1 in
+    {( let i,qs = _1 in
         PVnt(i,parse_qid i qs, Some _2) )}
 | _1 = apat
-    {         ( _1 )}
+    {( _1 )}
 
 conpat:
   _1 = UIDENT _2 = apat
-    {      ( let i1,_ = _1 in
+    {( let i1,_ = _1 in
         let i = mp2 i1 _2 in
          PVnt(i,Qid.t_of_id _1,Some _2) )}
 | _1 = QUALIDENT _2 = apat
-    {      ( let (i,qs) = _1 in
+    {( let (i,qs) = _1 in
         PVnt(i,parse_qid i qs,Some _2) )}
 | _1 = apat
-    {         ( _1 )}
+    {( _1 )}
 
 apat:
   _1 = aapat
-    {      ( _1 )}
+    {( _1 )}
 | _1 = LPAREN _2 = RPAREN
-    {      ( PUnt(m _1 _2) )}
+    {( PUnt(m _1 _2) )}
 | _1 = INTEGER
-    {    ( let i,n = _1 in
+    {( let i,n = _1 in
        PInt(i,n) )}
 | _1 = BOOLEAN
-    {      ( let i,b = _1 in
+    {( let i,b = _1 in
         PBol(i,b) )}
 | _1 = CEX _2 = LPAREN _3 = pat _4 = RPAREN
-    {      ( PCex(_1,_3) )}
+    {( PCex(_1,_3) )}
 | _1 = STR
-    {      ( let i,s = _1 in
+    {( let i,s = _1 in
         PStr(i,s) )}
 | _1 = UIDENT
-    {      ( let i,_ = _1 in
+    {( let i,_ = _1 in
         PVnt(i,Qid.t_of_id _1,None) )}
 | _1 = QUALIDENT
-    {      ( let (i,qs) = _1 in
+    {( let (i,qs) = _1 in
         PVnt(i,parse_qid i qs,None) )}
 | _1 = LPAREN _2 = pat _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 
 aapat:
   _1 = UNDERLINE
-    {      ( PWld _1 )}
+    {( PWld _1 )}
 | _1 = LIDENT
-    {      ( let i, _ = _1 in
+    {( let i, _ = _1 in
         PVar (i, _1, None) )}
 
 listpat:
   _1 = CSET
-    {      ( let i, cset = _1 in
+    {( let i, cset = _1 in
         if cset = ""
         then PVnt (i, Qid.mk_list_t i "Nil", None)
         else syntax_error i (Printf.sprintf "\nDid you meant %s::[] instead of [%s]?" cset cset) )}
 | _1 = conpat _2 = COLONCOLON _3 = aapat
-    {      ( let i = _2 in
+    {( let i = _2 in
         let p = PPar (i, _1, _3) in
         PVnt (_2, Qid.mk_list_t i "Cons", Some p) )}
 | _1 = conpat _2 = COLONCOLON _3 = listpat
-    {      ( let i = _2 in
+    {( let i = _2 in
         let p = PPar (i, _1, _3) in
         PVnt (_2, Qid.mk_list_t i "Cons", Some p) )}
 
 uid:
   _1 = UIDENT
-    {      ( Qid.t_of_id _1 )}
+    {( Qid.t_of_id _1 )}
 
 %%

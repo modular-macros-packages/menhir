@@ -117,253 +117,253 @@ open MachSize
 
 main:
   _1 = semi_opt _2 = proc_list _3 = iol_list _4 = EOF
-    {                                  ( _2,_3 )}
+    {( _2,_3 )}
 | _1 = semi_opt _2 = proc_list _3 = EOF
-    {                         ( _2,[] )}
+    {( _2,[] )}
 
 semi_opt:
   
-    {  ( () )}
+    {( () )}
 | _1 = SEMI
-    {       ( () )}
+    {( () )}
 
 proc_list:
   _1 = PROC _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = PROC _2 = PIPE _3 = proc_list
-    {                       ( _1::_3 )}
+    {( _1::_3 )}
 
 iol_list:
   _1 = instr_option_list _2 = SEMI
-    {    ([_1])}
+    {([_1])}
 | _1 = instr_option_list _2 = SEMI _3 = iol_list
-    {                                   (_1::_3)}
+    {(_1::_3)}
 
 instr_option_list:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = PIPE _3 = instr_option_list
-    {      (_1::_3)}
+    {(_1::_3)}
 
 instr_option_seq:
   _1 = instr_option
-    {      ([_1])}
+    {([_1])}
 | _1 = instr_option _2 = SEMI _3 = instr_option_seq
-    {      (_1::_3)}
+    {(_1::_3)}
 
 instr_option:
   
-    {             ( Nop )}
+    {( Nop )}
 | _1 = NAME _2 = COLON _3 = instr_option
-    {                          ( Label (_1,_3) )}
+    {( Label (_1,_3) )}
 | _1 = NAME _2 = LPAR _3 = reg_list _4 = RPAR
-    {             ( Macro (_1,_3) )}
+    {( Macro (_1,_3) )}
 | _1 = instr
-    {             ( Instruction _1)}
+    {( Instruction _1)}
 
 reg_list:
   
-    {  ( [] )}
+    {( [] )}
 | _1 = reg
-    {      ( [_1] )}
+    {( [_1] )}
 | _1 = reg _2 = COMMA _3 = reg_list
-    {                     ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 instr:
   _1 = ADD _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Padd (DontSetCR0,_2,_4,_6) )}
+    {( Padd (DontSetCR0,_2,_4,_6) )}
 | _1 = ADDDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Padd (SetCR0,_2,_4,_6) )}
+    {( Padd (SetCR0,_2,_4,_6) )}
 | _1 = SUB _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Psub (DontSetCR0,_2,_4,_6) )}
+    {( Psub (DontSetCR0,_2,_4,_6) )}
 | _1 = SUBDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Psub (SetCR0,_2,_4,_6) )}
+    {( Psub (SetCR0,_2,_4,_6) )}
 | _1 = SUBF _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Psubf (DontSetCR0,_2,_4,_6) )}
+    {( Psubf (DontSetCR0,_2,_4,_6) )}
 | _1 = SUBFDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Psubf (SetCR0,_2,_4,_6) )}
+    {( Psubf (SetCR0,_2,_4,_6) )}
 | _1 = ADDI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Paddi (_2,_4,_6) )}
+    {( Paddi (_2,_4,_6) )}
 | _1 = SUBI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {      ( Paddi (_2,_4, match _6 with MetaConst.Meta _ as k -> k
+    {( Paddi (_2,_4, match _6 with MetaConst.Meta _ as k -> k
                      | MetaConst.Int i -> MetaConst.Int(-i)) )}
 | _1 = CMPWI _2 = reg _3 = COMMA _4 = k
-    {    ( Pcmpwi (0,_2,_4) )}
+    {( Pcmpwi (0,_2,_4) )}
 | _1 = CMPWI _2 = crindex _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Pcmpwi (_2,_4,_6) )}
+    {( Pcmpwi (_2,_4,_6) )}
 | _1 = CMPW _2 = crindex _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pcmpw (_2,_4,_6))}
+    {( Pcmpw (_2,_4,_6))}
 | _1 = CMPW _2 = reg _3 = COMMA _4 = reg
-    {    ( Pcmpw (0,_2,_4))}
+    {( Pcmpw (0,_2,_4))}
 | _1 = LI _2 = reg _3 = COMMA _4 = k
-    {    ( Pli (_2,_4) )}
+    {( Pli (_2,_4) )}
 | _1 = XOR _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pxor (DontSetCR0,_2,_4,_6) )}
+    {( Pxor (DontSetCR0,_2,_4,_6) )}
 | _1 = XORDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pxor (SetCR0,_2,_4,_6) )}
+    {( Pxor (SetCR0,_2,_4,_6) )}
 | _1 = XORI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Pxori (_2,_4,_6) )}
+    {( Pxori (_2,_4,_6) )}
 | _1 = AND _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pand (DontSetCR0,_2,_4,_6) )}
+    {( Pand (DontSetCR0,_2,_4,_6) )}
 | _1 = ANDDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pand (SetCR0,_2,_4,_6) )}
+    {( Pand (SetCR0,_2,_4,_6) )}
 | _1 = ANDIDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Pandi (_2,_4,_6) )}
+    {( Pandi (_2,_4,_6) )}
 | _1 = OR _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Por (DontSetCR0,_2,_4,_6) )}
+    {( Por (DontSetCR0,_2,_4,_6) )}
 | _1 = ORDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Por (SetCR0,_2,_4,_6) )}
+    {( Por (SetCR0,_2,_4,_6) )}
 | _1 = ORI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Pori (_2,_4,_6) )}
+    {( Pori (_2,_4,_6) )}
 | _1 = MULL _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pmull (DontSetCR0,_2,_4,_6) )}
+    {( Pmull (DontSetCR0,_2,_4,_6) )}
 | _1 = MULLDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pmull (SetCR0,_2,_4,_6) )}
+    {( Pmull (SetCR0,_2,_4,_6) )}
 | _1 = MULLI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Pmulli (_2,_4,_6) )}
+    {( Pmulli (_2,_4,_6) )}
 | _1 = DIV _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pdiv (DontSetCR0,_2,_4,_6) )}
+    {( Pdiv (DontSetCR0,_2,_4,_6) )}
 | _1 = DIVDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pdiv (SetCR0,_2,_4,_6) )}
+    {( Pdiv (SetCR0,_2,_4,_6) )}
 | _1 = LBZ _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pload (Byte,_2,_4,_6))}
+    {( Pload (Byte,_2,_4,_6))}
 | _1 = LBZ _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pload (Byte,_2,_4,_6))}
+    {( Pload (Byte,_2,_4,_6))}
 | _1 = LHZ _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pload (Short,_2,_4,_6))}
+    {( Pload (Short,_2,_4,_6))}
 | _1 = LHZ _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pload (Short,_2,_4,_6))}
+    {( Pload (Short,_2,_4,_6))}
 | _1 = LWZ _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pload (Word,_2,_4,_6))}
+    {( Pload (Word,_2,_4,_6))}
 | _1 = LWZ _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pload (Word,_2,_4,_6))}
+    {( Pload (Word,_2,_4,_6))}
 | _1 = LWZU _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Plwzu (_2,_4,_6))}
+    {( Plwzu (_2,_4,_6))}
 | _1 = LWZU _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Plwzu (_2,_4,_6))}
+    {( Plwzu (_2,_4,_6))}
 | _1 = LD _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pload (Quad,_2,_4,_6))}
+    {( Pload (Quad,_2,_4,_6))}
 | _1 = LD _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pload (Quad,_2,_4,_6))}
+    {( Pload (Quad,_2,_4,_6))}
 | _1 = LBZX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Ploadx (Byte,_2,_4,_6))}
+    {( Ploadx (Byte,_2,_4,_6))}
 | _1 = LHZX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Ploadx (Short,_2,_4,_6))}
+    {( Ploadx (Short,_2,_4,_6))}
 | _1 = LWZX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Ploadx (Word,_2,_4,_6))}
+    {( Ploadx (Word,_2,_4,_6))}
 | _1 = LDX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Ploadx (Quad,_2,_4,_6))}
+    {( Ploadx (Quad,_2,_4,_6))}
 | _1 = MR _2 = reg _3 = COMMA _4 = reg
-    {    ( Pmr (_2,_4) )}
+    {( Pmr (_2,_4) )}
 | _1 = STB _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pstore (Byte,_2,_4,_6) )}
+    {( Pstore (Byte,_2,_4,_6) )}
 | _1 = STB _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pstore (Byte,_2,_4,_6) )}
+    {( Pstore (Byte,_2,_4,_6) )}
 | _1 = STH _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pstore (Short,_2,_4,_6) )}
+    {( Pstore (Short,_2,_4,_6) )}
 | _1 = STH _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pstore (Short,_2,_4,_6) )}
+    {( Pstore (Short,_2,_4,_6) )}
 | _1 = STW _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pstore (Word,_2,_4,_6) )}
+    {( Pstore (Word,_2,_4,_6) )}
 | _1 = STW _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pstore (Word,_2,_4,_6) )}
+    {( Pstore (Word,_2,_4,_6) )}
 | _1 = STWU _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pstwu (_2,_4,_6) )}
+    {( Pstwu (_2,_4,_6) )}
 | _1 = STWU _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pstwu (_2,_4,_6) )}
+    {( Pstwu (_2,_4,_6) )}
 | _1 = STD _2 = reg _3 = COMMA _4 = idx _5 = COMMA _6 = reg
-    {    ( Pstore (Quad,_2,_4,_6) )}
+    {( Pstore (Quad,_2,_4,_6) )}
 | _1 = STD _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {    ( Pstore (Quad,_2,_4,_6) )}
+    {( Pstore (Quad,_2,_4,_6) )}
 | _1 = STBX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pstorex (Byte,_2,_4,_6) )}
+    {( Pstorex (Byte,_2,_4,_6) )}
 | _1 = STHX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pstorex (Short,_2,_4,_6) )}
+    {( Pstorex (Short,_2,_4,_6) )}
 | _1 = STWX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pstorex (Word,_2,_4,_6) )}
+    {( Pstorex (Word,_2,_4,_6) )}
 | _1 = STDX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pstorex (Quad,_2,_4,_6) )}
+    {( Pstorex (Quad,_2,_4,_6) )}
 | _1 = LWARX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Plwarx (_2,_4,_6))}
+    {( Plwarx (_2,_4,_6))}
 | _1 = STWCX _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pstwcx (_2,_4,_6) )}
+    {( Pstwcx (_2,_4,_6) )}
 | _1 = SYNC
-    {    ( Psync )}
+    {( Psync )}
 | _1 = EIEIO
-    {    ( Peieio )}
+    {( Peieio )}
 | _1 = LWSYNC
-    {    ( Plwsync )}
+    {( Plwsync )}
 | _1 = ISYNC
-    {    ( Pisync )}
+    {( Pisync )}
 | _1 = DCBF _2 = reg _3 = COMMA _4 = reg
-    {    ( Pdcbf (_2,_4) )}
+    {( Pdcbf (_2,_4) )}
 | _1 = B _2 = NAME
-    {           ( Pb _2 )}
+    {( Pb _2 )}
 | _1 = BEQ _2 = NAME
-    {             ( Pbcc (Eq,_2) )}
+    {( Pbcc (Eq,_2) )}
 | _1 = BNE _2 = NAME
-    {             ( Pbcc (Ne,_2) )}
+    {( Pbcc (Ne,_2) )}
 | _1 = BLT _2 = NAME
-    {             ( Pbcc (Lt,_2) )}
+    {( Pbcc (Lt,_2) )}
 | _1 = BGE _2 = NAME
-    {             ( Pbcc (Ge,_2) )}
+    {( Pbcc (Ge,_2) )}
 | _1 = BNL _2 = NAME
-    {             ( Pbcc (Ge,_2) )}
+    {( Pbcc (Ge,_2) )}
 | _1 = BGT _2 = NAME
-    {             ( Pbcc (Gt,_2) )}
+    {( Pbcc (Gt,_2) )}
 | _1 = BLE _2 = NAME
-    {             ( Pbcc (Le,_2) )}
+    {( Pbcc (Le,_2) )}
 | _1 = BNG _2 = NAME
-    {             ( Pbcc (Le,_2) )}
+    {( Pbcc (Le,_2) )}
 | _1 = NOR _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pnor (DontSetCR0,_2,_4,_6))}
+    {( Pnor (DontSetCR0,_2,_4,_6))}
 | _1 = NORDOT _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pnor (SetCR0,_2,_4,_6))}
+    {( Pnor (SetCR0,_2,_4,_6))}
 | _1 = NEG _2 = reg _3 = COMMA _4 = reg
-    {    ( Pneg (DontSetCR0,_2,_4))}
+    {( Pneg (DontSetCR0,_2,_4))}
 | _1 = NEGDOT _2 = reg _3 = COMMA _4 = reg
-    {    ( Pneg (SetCR0,_2,_4))}
+    {( Pneg (SetCR0,_2,_4))}
 | _1 = SLW _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Pslw (DontSetCR0,_2,_4,_6))}
+    {( Pslw (DontSetCR0,_2,_4,_6))}
 | _1 = SRAWI _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = k
-    {    ( Psrawi (DontSetCR0,_2,_4,_6))}
+    {( Psrawi (DontSetCR0,_2,_4,_6))}
 | _1 = SRAW _2 = reg _3 = COMMA _4 = reg _5 = COMMA _6 = reg
-    {    ( Psraw (DontSetCR0,_2,_4,_6))}
+    {( Psraw (DontSetCR0,_2,_4,_6))}
 | _1 = BL _2 = NAME
-    {            ( Pbl _2 )}
+    {( Pbl _2 )}
 | _1 = BLR
-    {        ( Pblr )}
+    {( Pblr )}
 | _1 = MTLR _2 = reg
-    {             ( Pmtlr _2)}
+    {( Pmtlr _2)}
 | _1 = MFLR _2 = reg
-    {             ( Pmflr _2)}
+    {( Pmflr _2)}
 | _1 = LMW _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {                                     ( Plmw (_2,_4,_6) )}
+    {( Plmw (_2,_4,_6) )}
 | _1 = STMW _2 = reg _3 = COMMA _4 = idx _5 = LPAR _6 = reg _7 = RPAR
-    {                                      ( Pstmw (_2,_4,_6) )}
+    {( Pstmw (_2,_4,_6) )}
 | _1 = COMMENT _2 = STRING
-    {                   ( Pcomment _2 )}
+    {( Pcomment _2 )}
 
 k:
   _1 = NUM
-    {       ( MetaConst.Int _1 )}
+    {( MetaConst.Int _1 )}
 | _1 = CSTVAR
-    {         ( MetaConst.Meta _1 )}
+    {( MetaConst.Meta _1 )}
 
 idx:
   _1 = NUM
-    {       ( MetaConst.Int _1 )}
+    {( MetaConst.Int _1 )}
 | _1 = CSTVAR
-    {         ( MetaConst.Meta _1 )}
+    {( MetaConst.Meta _1 )}
 
 crindex:
   _1 = CRK
-    {       ( _1 )}
+    {( _1 )}
 
 reg:
   _1 = SYMB_REG
-    {           ( Symbolic_reg _1 )}
+    {( Symbolic_reg _1 )}
 | _1 = ARCH_REG
-    {           ( _1 )}
+    {( _1 )}
 
 %%

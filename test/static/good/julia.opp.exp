@@ -14,18 +14,18 @@
 
 main:
   _1 = statement _2 = EOF
-    {                 ( )}
+    {( )}
 
 statement:
   _1 = TReturn
-    {  (  )}
+    {(  )}
 | _1 = TIf _2 = TOPar _3 = expr _4 = TCPar _5 = statement %prec TIf
-    {  (  )}
+    {(  )}
 | _1 = TIf _2 = TOPar _3 = expr _4 = TCPar _5 = statement _6 = TElse _7 = statement
-    {  (  )}
+    {(  )}
 
 expr:
   _1 = TIdent
-    {         ( )}
+    {( )}
 
 %%

@@ -53,25 +53,25 @@
 
 gen_poly_entry:
   _1 = gen_poly _2 = EOF
-    {               ( _1 )}
+    {( _1 )}
 
 gen_poly:
   _1 = VAR
-    {      ( gen_var _1 )}
+    {( gen_var _1 )}
 | _1 = INT
-    {      ( GenericPolynomials.cte (Fd_polynomials.cte _1) )}
+    {( GenericPolynomials.cte (Fd_polynomials.cte _1) )}
 | _1 = PARGAUCHE _2 = gen_poly _3 = PARDROITE
-    {                               ( _2 )}
+    {( _2 )}
 | _1 = gen_poly _2 = PLUS _3 = gen_poly
-    {                           ( GenericPolynomials.add _1 _3 )}
+    {( GenericPolynomials.add _1 _3 )}
 | _1 = gen_poly _2 = MINUS _3 = gen_poly
-    {                           ( GenericPolynomials.sub _1 _3 )}
+    {( GenericPolynomials.sub _1 _3 )}
 | _1 = MINUS _2 = gen_poly %prec UMINUS
-    {                               ( GenericPolynomials.minus _2 )}
+    {( GenericPolynomials.minus _2 )}
 | _1 = gen_poly _2 = MULT _3 = gen_poly
-    {                           ( GenericPolynomials.mult _1 _3 )}
+    {( GenericPolynomials.mult _1 _3 )}
 | _1 = gen_poly _2 = EXP _3 = INT
-    {    ( try
+    {( try
 	GenericPolynomials.power _1 (Num.int_of_num _3)
       with
 	Failure("int_of_big_int") ->
@@ -80,43 +80,43 @@ gen_poly:
 
 poly_interp_entry:
   _1 = interp _2 = EOF
-    {             ( _1 )}
+    {( _1 )}
 
 interp:
   
-    {                           ( SymbolMap.empty )}
+    {( SymbolMap.empty )}
 | _1 = symbol_interp _2 = EQUAL _3 = poly _4 = SEMICOLON _5 = interp
-    {                           ( SymbolMap.add _1 _3 _5 )}
+    {( SymbolMap.add _1 _3 _5 )}
 
 symbol_interp:
   _1 = INTERP
-    {                            ( current_poly_vars := []; _1 )}
+    {( current_poly_vars := []; _1 )}
 | _1 = INTERP _2 = PARGAUCHE _3 = vars
-    {                            ( current_poly_vars := _3; _1 )}
+    {( current_poly_vars := _3; _1 )}
 
 vars:
   _1 = VAR _2 = PARDROITE
-    {                           ( [_1] )}
+    {( [_1] )}
 | _1 = VAR _2 = COMMA _3 = vars
-    {                           ( _1::_3 )}
+    {( _1::_3 )}
 
 poly:
   _1 = VAR
-    {                           ( var _1 )}
+    {( var _1 )}
 | _1 = INT
-    {                           ( IntPolynomials.cte _1 )}
+    {( IntPolynomials.cte _1 )}
 | _1 = PARGAUCHE _2 = poly _3 = PARDROITE
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = poly _2 = PLUS _3 = poly
-    {                           ( IntPolynomials.add _1 _3 )}
+    {( IntPolynomials.add _1 _3 )}
 | _1 = poly _2 = MINUS _3 = poly
-    {                           ( IntPolynomials.sub _1 _3 )}
+    {( IntPolynomials.sub _1 _3 )}
 | _1 = MINUS _2 = poly %prec UMINUS
-    {                           ( IntPolynomials.minus _2 )}
+    {( IntPolynomials.minus _2 )}
 | _1 = poly _2 = MULT _3 = poly
-    {                           ( IntPolynomials.mult _1 _3 )}
+    {( IntPolynomials.mult _1 _3 )}
 | _1 = poly _2 = EXP _3 = INT
-    {    ( try
+    {( try
 	IntPolynomials.power _1 (Num.int_of_num _3)
       with
 	Failure("int_of_big_int") ->

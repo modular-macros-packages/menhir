@@ -10,16 +10,16 @@
 
 phrase:
   b = expression _2 = EOF
-    {    ( b )}
+    {( b )}
 
 expression:
   _1 = TRUE
-    {    ( true )}
+    {( true )}
 | _1 = FALSE
-    {    ( false )}
+    {( false )}
 | _1 = IF b = expression _3 = THEN e = expression
-    {    ( if b then e else false )}
+    {( if b then e else false )}
 | _1 = IF b = expression _3 = THEN e1 = expression _5 = ELSE e2 = expression
-    {    ( if b then e1 else e2 )}
+    {( if b then e1 else e2 )}
 
 %%

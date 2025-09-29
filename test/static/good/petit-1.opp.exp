@@ -65,194 +65,194 @@
 
 loption_preceded_VAR_terminated_bindings__:
   
-    {    ( [] )} [@name none_preceded_VAR_terminated_bindings_]
+    {( [] )} [@name none_preceded_VAR_terminated_bindings_]
 | _1 = VAR x = terminated_bindings
-    {let x =     ( x ) in
-    ( x )} [@name some_preceded_VAR_terminated_bindings_]
+    {let x = ( x ) in
+( x )} [@name some_preceded_VAR_terminated_bindings_]
 
 loption_separated_nonempty_list_COMMA_expression__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_COMMA_expression_]
+    {( [] )} [@name none_separated_nonempty_list_COMMA_expression_]
 | x = separated_nonempty_list_COMMA_expression_
-    {    ( x )} [@name some_separated_nonempty_list_COMMA_expression_]
+    {( x )} [@name some_separated_nonempty_list_COMMA_expression_]
 
 loption_separated_nonempty_list_SEMICOLON_binding__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_SEMICOLON_binding_]
+    {( [] )} [@name none_separated_nonempty_list_SEMICOLON_binding_]
 | x = separated_nonempty_list_SEMICOLON_binding_
-    {    ( x )} [@name some_separated_nonempty_list_SEMICOLON_binding_]
+    {( x )} [@name some_separated_nonempty_list_SEMICOLON_binding_]
 
 loption_separated_nonempty_list_SEMICOLON_instruction__:
   
-    {    ( [] )} [@name none_separated_nonempty_list_SEMICOLON_instruction_]
+    {( [] )} [@name none_separated_nonempty_list_SEMICOLON_instruction_]
 | x = separated_nonempty_list_SEMICOLON_instruction_
-    {    ( x )} [@name some_separated_nonempty_list_SEMICOLON_instruction_]
+    {( x )} [@name some_separated_nonempty_list_SEMICOLON_instruction_]
 
 list_procedure_:
   
-    {    ( [] )} [@name nil_procedure]
+    {( [] )} [@name nil_procedure]
 | x = procedure xs = list_procedure_
-    {    ( x :: xs )} [@name cons_procedure]
+    {( x :: xs )} [@name cons_procedure]
 
 nonempty_list_terminated_binding_SEMICOLON__:
   x = binding _2 = SEMICOLON
-    {let x =     ( x ) in
-    ( [ x ] )} [@name one_terminated_binding_SEMICOLON_]
+    {let x = ( x ) in
+( [ x ] )} [@name one_terminated_binding_SEMICOLON_]
 | x = binding _2 = SEMICOLON xs = nonempty_list_terminated_binding_SEMICOLON__
-    {let x =     ( x ) in
-    ( x :: xs )} [@name more_terminated_binding_SEMICOLON_]
+    {let x = ( x ) in
+( x :: xs )} [@name more_terminated_binding_SEMICOLON_]
 
 separated_nonempty_list_COMMA_ID_:
   x = ID
-    {    ( [ x ] )} [@name one_COMMA_ID]
+    {( [ x ] )} [@name one_COMMA_ID]
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )} [@name more_COMMA_ID]
+    {( x :: xs )} [@name more_COMMA_ID]
 
 separated_nonempty_list_COMMA_expression_:
   x = expression
-    {    ( [ x ] )} [@name one_COMMA_expression]
+    {( [ x ] )} [@name one_COMMA_expression]
 | x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
-    {    ( x :: xs )} [@name more_COMMA_expression]
+    {( x :: xs )} [@name more_COMMA_expression]
 
 separated_nonempty_list_SEMICOLON_binding_:
   x = binding
-    {    ( [ x ] )} [@name one_SEMICOLON_binding]
+    {( [ x ] )} [@name one_SEMICOLON_binding]
 | x = binding _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_binding_
-    {    ( x :: xs )} [@name more_SEMICOLON_binding]
+    {( x :: xs )} [@name more_SEMICOLON_binding]
 
 separated_nonempty_list_SEMICOLON_instruction_:
   x = instruction
-    {    ( [ x ] )} [@name one_SEMICOLON_instruction]
+    {( [ x ] )} [@name one_SEMICOLON_instruction]
 | x = instruction _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_instruction_
-    {    ( x :: xs )} [@name more_SEMICOLON_instruction]
+    {( x :: xs )} [@name more_SEMICOLON_instruction]
 
 typ:
   _1 = INTEGER
-    {    ( TypInt )}
+    {( TypInt )}
 | _1 = BOOLEAN
-    {    ( TypBool )}
+    {( TypBool )}
 | _1 = ARRAY _2 = OF t = typ
-    {    ( TypArray t )}
+    {( TypArray t )}
 
 expression:
   e = raw_expression
     {let _endpos = _endpos_e_ in
 let _startpos = _startpos_e_ in
-    ( Location.make _startpos _endpos e )}
+( Location.make _startpos _endpos e )}
 | _1 = LPAREN e = expression _3 = RPAREN
-    {    ( e )}
+    {( e )}
 
 raw_expression:
   i = INTCONST
-    {    ( EConst (ConstInt i) )}
+    {( EConst (ConstInt i) )}
 | b = BOOLCONST
-    {    ( EConst (ConstBool b) )}
+    {( EConst (ConstBool b) )}
 | id = ID
-    {    ( EGetVar id )}
+    {( EGetVar id )}
 | _1 = MINUS e = expression %prec unary_minus
-    {    ( EUnOp (UOpNeg, e) )}
+    {( EUnOp (UOpNeg, e) )}
 | e1 = expression _1 = PLUS e2 = expression
-    {let op =     ( OpAdd ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpAdd ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = MINUS e2 = expression
-    {let op =     ( OpSub ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpSub ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = TIMES e2 = expression
-    {let op =     ( OpMul ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpMul ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = SLASH e2 = expression
-    {let op =     ( OpDiv ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpDiv ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = LT e2 = expression
-    {let op =     ( OpLt ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpLt ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = LE e2 = expression
-    {let op =     ( OpLe ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpLe ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = GT e2 = expression
-    {let op =     ( OpGt ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpGt ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = GE e2 = expression
-    {let op =     ( OpGe ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpGe ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = EQ e2 = expression
-    {let op =     ( OpEq ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpEq ) in
+( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = NE e2 = expression
-    {let op =     ( OpNe ) in
-    ( EBinOp (op, e1, e2) )}
+    {let op = ( OpNe ) in
+( EBinOp (op, e1, e2) )}
 | c = callee _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
-    {let actuals =     ( xs ) in
-    ( EFunCall (Location.make _startpos_c_ _endpos_c_ c, actuals) )}
+    {let actuals = ( xs ) in
+( EFunCall (Location.make _startpos_c_ _endpos_c_ c, actuals) )}
 | a = expression _2 = LBRACKET i = expression _4 = RBRACKET
-    {    ( EArrayGet (a, i) )}
+    {( EArrayGet (a, i) )}
 | _1 = NEW _2 = ARRAY _3 = OF t = typ _5 = LBRACKET e = expression _7 = RBRACKET
-    {    ( EArrayAlloc (t, e) )}
+    {( EArrayAlloc (t, e) )}
 
 nontrivial_condition:
   _1 = NOT c = condition
-    {    ( CNot c )}
+    {( CNot c )}
 | c1 = condition _2 = AND c2 = condition
-    {    ( CAnd (c1, c2) )}
+    {( CAnd (c1, c2) )}
 | c1 = condition _2 = OR c2 = condition
-    {    ( COr (c1, c2) )}
+    {( COr (c1, c2) )}
 | _1 = LPAREN c = nontrivial_condition _3 = RPAREN
-    {    ( c )}
+    {( c )}
 
 condition:
   e = expression
-    {    ( CExpression e )}
+    {( CExpression e )}
 | c = nontrivial_condition
-    {    ( c )}
+    {( c )}
 
 lvalue:
   id = ID
-    {    ( fun e -> ISetVar (id, e) )}
+    {( fun e -> ISetVar (id, e) )}
 | a = expression _2 = LBRACKET i = expression _4 = RBRACKET
-    {    ( fun e -> IArraySet (a, i, e) )}
+    {( fun e -> IArraySet (a, i, e) )}
 
 instruction:
   c = callee _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
-    {let actuals =     ( xs ) in
-    ( IProcCall (Location.make _startpos_c_ _endpos_c_ c, actuals) )}
+    {let actuals = ( xs ) in
+( IProcCall (Location.make _startpos_c_ _endpos_c_ c, actuals) )}
 | lvalue = lvalue _2 = COLONEQ e = expression
-    {    ( (lvalue : LPP.expression -> LPP.instruction) e )}
+    {( (lvalue : LPP.expression -> LPP.instruction) e )}
 | _1 = READLN _2 = LPAREN lvalue = lvalue _4 = RPAREN
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
-    ( let callee = Location.make _startpos__1_ _endpos__1_ (CPrimitiveFunction Readln) in
+( let callee = Location.make _startpos__1_ _endpos__1_ (CPrimitiveFunction Readln) in
       let e = Location.make _startpos _endpos (EFunCall (callee, [])) in
       (lvalue : LPP.expression -> LPP.instruction) e )}
 | _1 = IF c = condition _3 = THEN b = instruction_or_block
-    {    ( IIf (c, b, ISeq []) )}
+    {( IIf (c, b, ISeq []) )}
 | _1 = IF c = condition _3 = THEN b1 = instruction_or_block _5 = ELSE b2 = instruction_or_block
-    {    ( IIf (c, b1, b2) )}
+    {( IIf (c, b1, b2) )}
 | _1 = WHILE c = condition _3 = DO b = instruction_or_block
-    {    ( IWhile (c, b) )}
+    {( IWhile (c, b) )}
 
 block:
   _1 = BEGIN xs = loption_separated_nonempty_list_SEMICOLON_instruction__ _3 = END
-    {let is =     ( xs ) in
-    ( ISeq is )}
+    {let is = ( xs ) in
+( ISeq is )}
 
 instruction_or_block:
   i = instruction
-    {    ( i )}
+    {( i )}
 | b = block
-    {    ( b )}
+    {( b )}
 
 callee:
   _1 = WRITE
-    {    ( CPrimitiveFunction Write )}
+    {( CPrimitiveFunction Write )}
 | _1 = WRITELN
-    {    ( CPrimitiveFunction Writeln )}
+    {( CPrimitiveFunction Writeln )}
 | id = ID
-    {    ( CUserFunction (Location.content id))}
+    {( CUserFunction (Location.content id))}
 
 procedure:
   _1 = FUNCTION f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _6 = COLON t = typ _8 = SEMICOLON locals = variables body = block _11 = SEMICOLON
-    {let result =     ( Some t ) in
-    (
+    {let result = ( Some t ) in
+(
       f, {
         formals = formals;
         result = result;
@@ -261,8 +261,8 @@ procedure:
       }
     )}
 | _1 = PROCEDURE f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _7 = SEMICOLON locals = variables body = block _10 = SEMICOLON
-    {let result =     ( None ) in
-    (
+    {let result = ( None ) in
+(
       f, {
         formals = formals;
         result = result;
@@ -273,24 +273,24 @@ procedure:
 
 separated_bindings:
   xs = loption_separated_nonempty_list_SEMICOLON_binding__
-    {let bindings =     ( xs ) in
-    ( List.flatten bindings )}
+    {let bindings = ( xs ) in
+( List.flatten bindings )}
 
 terminated_bindings:
   bindings = nonempty_list_terminated_binding_SEMICOLON__
-    {    ( List.flatten bindings )}
+    {( List.flatten bindings )}
 
 binding:
   ids = separated_nonempty_list_COMMA_ID_ _2 = COLON t = typ
-    {    ( List.map (fun id -> (id, t)) ids )}
+    {( List.map (fun id -> (id, t)) ids )}
 
 variables:
   vars = loption_preceded_VAR_terminated_bindings__
-    {    ( vars )}
+    {( vars )}
 
 program:
   _1 = PROGRAM globals = variables defs = list_procedure_ main = block _5 = DOT
-    {    ({
+    {({
        globals = globals;
        defs = defs;
        main = main

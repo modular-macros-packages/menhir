@@ -7,12 +7,12 @@ a:
   x = c x_inlined1 = c
     {let y =
   let x = x_inlined1 in
-                    ( x )
+  ( x )
 in
-                ( x + y )}
+( x + y )}
 
 c:
   x = T
-    {         ( x )}
+    {( x )}
 
 %%

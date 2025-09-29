@@ -5,14 +5,14 @@
 
 start:
   _1 = seq_A_
-    {        ()}
+    {()}
 
 wrap_seq_wrap_A___:
   _1 = A
-    {   ()}
+    {()}
 
 seq_A_:
   _1 = wrap_seq_wrap_A___
-    {                     ()}
+    {()}
 
 %%

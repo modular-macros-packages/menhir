@@ -653,7 +653,7 @@ let wrap_stmt e =
 
 prog:
   _1 = all_defs _2 = TokEof
-    {          ( let defs = pop_tenv () in
+    {( let defs = pop_tenv () in
             let name = current_file () in
             let pos = name, 1, 0, 1, 0 in
                match defs with
@@ -663,173 +663,173 @@ prog:
 
 all_defs:
   _1 = rev_all_defs
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_all_defs:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = rev_all_defs _2 = all_def
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 all_def:
   _1 = var_defs
-    {          ( _1 )}
+    {( _1 )}
 | _1 = fun_def
-    {          ( _1 )}
+    {( _1 )}
 | _1 = type_defs
-    {          ( _1 )}
+    {( _1 )}
 
 opt_type_params:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = type_params
-    {          ( _1 )}
+    {( _1 )}
 
 type_params:
   _1 = TokTypeVar
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = TokLeftParen _2 = type_param_list _3 = TokRightParen
-    {          ( List.rev _2 )}
+    {( List.rev _2 )}
 
 type_param_list:
   _1 = TokTypeVar
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = type_param_list _2 = TokComma _3 = TokTypeVar
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 decl_spec:
   _1 = simp_decl_spec
-    {          ( _1 )}
+    {( _1 )}
 | _1 = struct_decl_spec
-    {          ( _1 )}
+    {( _1 )}
 
 simp_decl_spec:
   _1 = decl_specifiers
-    {          ( make_int_type _1 )}
+    {( make_int_type _1 )}
 | _1 = decl_specifiers_opt _2 = type_builtin _3 = decl_specifiers_opt
-    {          ( make_defined_type (_1 @ _3) _2 )}
+    {( make_defined_type (_1 @ _3) _2 )}
 | _1 = simp_type_spec _2 = decl_type_specifiers_opt
-    {          ( make_defined_type _2 _1 )}
+    {( make_defined_type _2 _1 )}
 | _1 = decl_type_specifiers _2 = simp_type_spec _3 = decl_type_specifiers_opt
-    {          ( make_defined_type (_1 @ _3) _2 )}
+    {( make_defined_type (_1 @ _3) _2 )}
 
 struct_decl_spec:
   _1 = struct_type_spec _2 = decl_type_specifiers_opt
-    {          ( make_defined_type _2 _1 )}
+    {( make_defined_type _2 _1 )}
 | _1 = decl_type_specifiers _2 = struct_type_spec _3 = decl_type_specifiers_opt
-    {          ( make_defined_type (_1 @ _3) _2 )}
+    {( make_defined_type (_1 @ _3) _2 )}
 
 decl_specifiers_opt:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = decl_specifiers
-    {          ( _1 )}
+    {( _1 )}
 | _1 = decl_type_specifiers
-    {          ( _1 )}
+    {( _1 )}
 
 decl_specifiers:
   _1 = type_mod
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = decl_type_specifiers _2 = type_mod
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 | _1 = decl_specifiers _2 = decl_specifier
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 decl_specifier:
   _1 = storage_class_spec
-    {          ( _1 )}
+    {( _1 )}
 | _1 = type_qual
-    {          ( _1 )}
+    {( _1 )}
 | _1 = type_mod
-    {          ( _1 )}
+    {( _1 )}
 
 decl_type_specifiers_opt:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = decl_type_specifiers
-    {          ( _1 )}
+    {( _1 )}
 
 decl_type_specifiers:
   _1 = decl_type_specifier
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = decl_type_specifiers _2 = decl_type_specifier
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 decl_type_specifier:
   _1 = storage_class_spec
-    {          ( _1 )}
+    {( _1 )}
 | _1 = type_qual
-    {          ( _1 )}
+    {( _1 )}
 
 decl_struct_type_specifiers_opt:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = decl_struct_type_specifiers
-    {          ( _1 )}
+    {( _1 )}
 
 decl_struct_type_specifiers:
   _1 = decl_struct_type_specifier
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = decl_struct_type_specifiers _2 = decl_struct_type_specifier
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 decl_struct_type_specifier:
   _1 = type_qual
-    {          ( _1 )}
+    {( _1 )}
 
 storage_class_spec:
   _1 = TokAuto
-    {          ( _1, AutoSpec )}
+    {( _1, AutoSpec )}
 | _1 = TokRegister
-    {          ( _1, RegisterSpec )}
+    {( _1, RegisterSpec )}
 | _1 = TokStatic
-    {          ( _1, StaticSpec )}
+    {( _1, StaticSpec )}
 | _1 = TokExtern
-    {          ( _1, ExternSpec )}
+    {( _1, ExternSpec )}
 
 type_qual:
   _1 = TokConst
-    {          ( _1, ConstSpec )}
+    {( _1, ConstSpec )}
 | _1 = TokVolatile
-    {          ( _1, VolatileSpec )}
+    {( _1, VolatileSpec )}
 
 type_mod:
   _1 = TokShort
-    {          ( _1, ShortSpec )}
+    {( _1, ShortSpec )}
 | _1 = TokLong
-    {          ( _1, LongSpec )}
+    {( _1, LongSpec )}
 | _1 = TokSigned
-    {          ( _1, SignedSpec )}
+    {( _1, SignedSpec )}
 | _1 = TokUnsigned
-    {          ( _1, UnsignedSpec )}
+    {( _1, UnsignedSpec )}
 
 type_builtin:
   _1 = TokTypeVoid
-    {          ( _1, VoidType )}
+    {( _1, VoidType )}
 | _1 = TokTypeChar
-    {          ( _1, CharType )}
+    {( _1, CharType )}
 | _1 = TokTypeInt
-    {          ( _1, IntType )}
+    {( _1, IntType )}
 | _1 = TokTypeFloat
-    {          ( _1, FloatType )}
+    {( _1, FloatType )}
 | _1 = TokTypeDouble
-    {          ( _1, DoubleType )}
+    {( _1, DoubleType )}
 
 simp_type_spec:
   _1 = TokTypeVar
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                pos, VarType id
           )}
 | _1 = TokTypeId
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                pos, ApplyType (id, [])
           )}
 | _1 = TokPoly
-    {          ( let pos = _1 in
+    {( let pos = _1 in
                pos, PolyType
           )}
 | _1 = TokPoly _2 = TokTypeId _3 = TokLeftParen _4 = opt_param_list _5 = TokRightParen
-    {          ( let _, id = _2 in
+    {( let _, id = _2 in
             let pos = union_pos _1 _5 in
             let args = List.map snd _4 in
                pos, ApplyType (id, args)
@@ -837,25 +837,25 @@ simp_type_spec:
 
 struct_type_spec:
   _1 = struct_spec
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                pos, ApplyType (id, [])
           )}
 | _1 = enum_spec
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                pos, ApplyType (id, [])
           )}
 | _1 = uenum_spec
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                pos, ApplyType (id, [])
           )}
 | _1 = tuple_spec
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                pos, ApplyType (id, [])
           )}
 
 tuple_spec:
   _1 = TokTuple _2 = opt_type_params _3 = tuple_declaration_list
-    {          ( let pos2, fields = _3 in
+    {( let pos2, fields = _3 in
             let pos = union_pos _1 pos2 in
             let id = new_symbol_string "tuple" in
             let ty = make_ty_lambda pos _2 (make_tuple fields pos) in
@@ -863,7 +863,7 @@ tuple_spec:
                pos, id
           )}
 | _1 = tuple_spec_id _2 = tuple_declaration_list
-    {          ( let pos1, args, id = _1 in
+    {( let pos1, args, id = _1 in
             let pos2, fields = _2 in
             let pos = union_pos pos1 pos2 in
             let ty = make_ty_lambda pos args (make_tuple fields pos) in
@@ -871,20 +871,20 @@ tuple_spec:
                pos, id
           )}
 | _1 = tuple_spec_id
-    {          ( let pos, _, id = _1 in
+    {( let pos, _, id = _1 in
                pos, id
           )}
 
 tuple_spec_id:
   _1 = TokTuple _2 = opt_type_params _3 = id
-    {          ( let pos2, id = _3 in
+    {( let pos2, id = _3 in
             let pos = union_pos _1 pos2 in
                pos, _2, id
           )}
 
 enum_spec:
   _1 = TokEnum _2 = opt_type_params _3 = enum_declaration_list
-    {          ( let pos2, fields = _3 in
+    {( let pos2, fields = _3 in
             let pos = union_pos _1 pos2 in
             let id = new_symbol_string "enum" in
             let ty = make_ty_lambda pos _2 (make_enum fields pos) in
@@ -892,7 +892,7 @@ enum_spec:
                pos, id
           )}
 | _1 = enum_spec_id _2 = enum_declaration_list
-    {          ( let pos1, args, id = _1 in
+    {( let pos1, args, id = _1 in
             let pos2, fields = _2 in
             let pos = union_pos pos1 pos2 in
             let ty = make_ty_lambda pos args (make_enum fields pos) in
@@ -900,20 +900,20 @@ enum_spec:
                pos, id
           )}
 | _1 = enum_spec_id
-    {          ( let pos, _, id = _1 in
+    {( let pos, _, id = _1 in
                pos, id
           )}
 
 enum_spec_id:
   _1 = TokEnum _2 = opt_type_params _3 = id
-    {          ( let pos2, id = _3 in
+    {( let pos2, id = _3 in
             let pos = union_pos _1 pos2 in
                pos, _2, id
           )}
 
 uenum_spec:
   _1 = union_enum _2 = opt_type_params _3 = uenum_declaration_list
-    {          ( let pos1 = _1 in
+    {( let pos1 = _1 in
             let pos2, fields = _3 in
             let pos = union_pos pos1 pos2 in
             let id = new_symbol_string "struct" in
@@ -922,7 +922,7 @@ uenum_spec:
                pos, id
           )}
 | _1 = uenum_spec_id _2 = uenum_declaration_list
-    {          ( let pos1, vars, id = _1 in
+    {( let pos1, vars, id = _1 in
             let pos2, fields = _2 in
             let pos = union_pos pos1 pos2 in
             let ty = make_ty_lambda pos vars (make_uenum id fields pos) in
@@ -931,7 +931,7 @@ uenum_spec:
                pos, id
           )}
 | _1 = uenum_spec_id
-    {          ( let pos, vars, id = _1 in
+    {( let pos, vars, id = _1 in
                if vars <> [] then
                   raise (ParseError (pos, "illegal union enum parameters"));
                pos, id
@@ -939,13 +939,13 @@ uenum_spec:
 
 union_enum:
   _1 = TokEnum _2 = TokUnion
-    {          ( union_pos _1 _2 )}
+    {( union_pos _1 _2 )}
 | _1 = TokUnion _2 = TokEnum
-    {          ( union_pos _1 _2 )}
+    {( union_pos _1 _2 )}
 
 uenum_spec_id:
   _1 = union_enum _2 = opt_type_params _3 = id
-    {          ( let pos1 = _1 in
+    {( let pos1 = _1 in
             let pos2, id = _3 in
             let pos = union_pos pos1 pos2 in
                Fc_parse_state.add_type id pos (TypeUEnum (pos, StatusNormal, Label (new_symbol id, id)));
@@ -954,7 +954,7 @@ uenum_spec_id:
 
 struct_spec:
   _1 = struct_or_union _2 = opt_type_params _3 = struct_declaration_list
-    {          ( let pos1, struct_flag = _1 in
+    {( let pos1, struct_flag = _1 in
             let pos2, fields = _3 in
             let pos = union_pos pos1 pos2 in
             let id = new_symbol_string "struct" in
@@ -963,7 +963,7 @@ struct_spec:
                pos, id
           )}
 | _1 = struct_spec_id _2 = struct_declaration_list
-    {          ( let pos1, struct_flag, vars, id = _1 in
+    {( let pos1, struct_flag, vars, id = _1 in
             let pos2, fields = _2 in
             let pos = union_pos pos1 pos2 in
             let ty = make_ty_lambda pos vars (make_struct_or_union struct_flag fields pos) in
@@ -971,7 +971,7 @@ struct_spec:
                pos, id
           )}
 | _1 = struct_spec_id
-    {          ( let pos, struct_flag, vars, id = _1 in
+    {( let pos, struct_flag, vars, id = _1 in
                if vars <> [] then
                   raise (ParseError (pos, "illegal struct parameters"));
                pos, id
@@ -979,13 +979,13 @@ struct_spec:
 
 struct_or_union:
   _1 = TokStruct
-    {          ( _1, StructCase )}
+    {( _1, StructCase )}
 | _1 = TokUnion
-    {          ( _1, UnionCase )}
+    {( _1, UnionCase )}
 
 struct_spec_id:
   _1 = struct_or_union _2 = opt_type_params _3 = id
-    {          ( let pos1, struct_flag = _1 in
+    {( let pos1, struct_flag = _1 in
             let pos2, id = _3 in
             let pos = union_pos pos1 pos2 in
             let ty =
@@ -999,233 +999,233 @@ struct_spec_id:
 
 tuple_declaration_list:
   _1 = TokLeftBrace _2 = rev_tuple_decl_list _3 = TokRightBrace
-    {          ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
             let fields = List.rev _2 in
                pos, fields
           )}
 
 rev_tuple_decl_list:
   _1 = tuple_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_tuple_decl_list _2 = tuple_decl
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 tuple_decl:
   _1 = simp_decl_spec _2 = TokSemi
-    {          ( snd _1 )}
+    {( snd _1 )}
 | _1 = struct_decl_spec _2 = TokSemi
-    {          ( snd _1 )}
+    {( snd _1 )}
 
 enum_declaration_list:
   _1 = TokLeftBrace _2 = TokRightBrace
-    {          ( union_pos _1 _2, [] )}
+    {( union_pos _1 _2, [] )}
 | _1 = TokLeftBrace _2 = rev_enum_decl_list _3 = opt_comma _4 = TokRightBrace
-    {          ( union_pos _1 _4, List.rev _2 )}
+    {( union_pos _1 _4, List.rev _2 )}
 
 rev_enum_decl_list:
   _1 = enum_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_enum_decl_list _2 = TokComma _3 = enum_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 enum_decl:
   _1 = TokId
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                make_enum_decl id None pos
           )}
 | _1 = TokId _2 = TokEq _3 = nc_expr
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
             let pos = union_pos pos (pos_of_expr _3) in
                make_enum_decl id (Some _3) pos
           )}
 
 uenum_declaration_list:
   _1 = TokLeftBrace _2 = uenum_declaration_list_cat _3 = TokRightBrace
-    {          ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
                pos, _2
           )}
 
 uenum_declaration_list_cat:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = uenum_declaration_list_cat _2 = uenum_declaration
-    {          ( _1 @ _2 )}
+    {( _1 @ _2 )}
 
 uenum_declaration:
   _1 = simp_decl_spec _2 = uenum_decl_list _3 = TokSemi
-    {          ( make_uenum_ty_decls _1 _2 )}
+    {( make_uenum_ty_decls _1 _2 )}
 | _1 = struct_decl_spec _2 = uenum_decl_list _3 = TokSemi
-    {          ( make_uenum_ty_decls _1 _2 )}
+    {( make_uenum_ty_decls _1 _2 )}
 | _1 = TokId _2 = TokSemi
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                [pos, id, None]
           )}
 
 uenum_decl_list:
   _1 = rev_uenum_decl_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_uenum_decl_list:
   _1 = id_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_uenum_decl_list _2 = TokComma _3 = id_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 struct_declaration_list:
   _1 = TokLeftBrace _2 = struct_declaration_list_cat _3 = TokRightBrace
-    {          ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
                pos, _2
           )}
 
 struct_declaration_list_cat:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = struct_declaration_list_cat _2 = struct_declaration
-    {          ( _1 @ _2  )}
+    {( _1 @ _2  )}
 
 struct_declaration:
   _1 = simp_decl_spec _2 = struct_decl_list _3 = TokSemi
-    {          ( make_struct_decls _1 _2 )}
+    {( make_struct_decls _1 _2 )}
 | _1 = struct_decl_spec _2 = struct_decl_list _3 = TokSemi
-    {          ( make_struct_decls _1 _2 )}
+    {( make_struct_decls _1 _2 )}
 
 struct_decl_list:
   _1 = rev_struct_decl_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_struct_decl_list:
   _1 = struct_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_struct_decl_list _2 = TokComma _3 = struct_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 struct_decl:
   _1 = id_decl
-    {          ( _1, None )}
+    {( _1, None )}
 | _1 = TokColon _2 = nc_expr
-    {          ( let id = new_symbol_string "pad" in
+    {( let id = new_symbol_string "pad" in
                VarNameId (_1, Some id), Some _2
           )}
 | _1 = id_decl _2 = TokColon _3 = nc_expr
-    {          ( _1, Some _3 )}
+    {( _1, Some _3 )}
 
 var_defs:
   _1 = struct_decl_spec _2 = id_init_decl_list _3 = TokSemi
-    {          ( let store, ty = _1 in
+    {( let store, ty = _1 in
             let pos = union_pos (pos_of_type ty) _3 in
                VarDefs (pos, make_patt_init_decls store ty _2)
           )}
 | _1 = simp_decl_spec _2 = patt_init_decl_list _3 = TokSemi
-    {          ( let store, ty = _1 in
+    {( let store, ty = _1 in
             let pos = union_pos (pos_of_type ty) _3 in
                VarDefs (pos, make_patt_init_decls store ty _2)
           )}
 
 id_init_decl_list:
   _1 = rev_id_init_decl_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_id_init_decl_list:
   _1 = id_init_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_id_init_decl_list _2 = TokComma _3 = id_init_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 id_init_decl:
   _1 = id_decl
-    {          ( _1, InitNone )}
+    {( _1, InitNone )}
 | _1 = id_decl _2 = TokEq _3 = init
-    {          ( _1, _3 )}
+    {( _1, _3 )}
 
 patt_init_decl_list:
   _1 = rev_patt_init_decl_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_patt_init_decl_list:
   _1 = patt_init_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_patt_init_decl_list _2 = TokComma _3 = patt_init_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 patt_init_decl:
   _1 = patt_decl
-    {          ( _1, InitNone )}
+    {( _1, InitNone )}
 | _1 = patt_decl _2 = TokEq _3 = init
-    {          ( _1, _3 )}
+    {( _1, _3 )}
 
 type_decl_list:
   _1 = rev_type_decl_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_type_decl_list:
   _1 = type_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_type_decl_list _2 = TokComma _3 = type_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 type_decl:
   _1 = type_direct_decl
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokStar _2 = decl_struct_type_specifiers_opt _3 = type_decl
-    {          ( let pos = union_pos _1 (pos_of_var_name _3) in
+    {( let pos = union_pos _1 (pos_of_var_name _3) in
                VarNamePointer (pos, _2, _3)
           )}
 | _1 = TokAddr _2 = decl_struct_type_specifiers_opt _3 = type_decl
-    {          ( let pos, _ = _1 in
+    {( let pos, _ = _1 in
             let pos = union_pos pos (pos_of_var_name _3) in
                VarNameRef (pos, _2, _3)
           )}
 
 type_direct_decl:
   _1 = TokId
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                VarNameId (pos, Some id)
           )}
 | _1 = TokPoly _2 = TokTypeId _3 = TokLeftParen _4 = param_list _5 = TokRightParen
-    {          ( let pos, id = _2 in
+    {( let pos, id = _2 in
             let pos = union_pos _1 _5 in
             let args = List.map snd _4 in
                VarNameApply (pos, id, args)
           )}
 | _1 = TokLeftParen _2 = type_decl _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 | _1 = type_direct_decl _2 = TokLeftBrack _3 = opt_expr _4 = TokRightBrack %prec prec_subscript
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                match _3 with
                   Some e -> VarNameArray (pos, [], _1, e)
                 | None -> VarNamePointer (pos, [], _1)
           )}
 | _1 = type_direct_decl _2 = TokLeftParen _3 = opt_param_list _4 = TokRightParen %prec prec_apply
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                VarNameFun (pos, _1, _3)
           )}
 
 patt_decl:
   _1 = pattern
-    {          ( VarNamePattern (pos_of_pattern _1, _1) )}
+    {( VarNamePattern (pos_of_pattern _1, _1) )}
 | _1 = patt_decl2
-    {          ( _1 )}
+    {( _1 )}
 
 patt_decl2:
   _1 = patt_direct_decl
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokStar _2 = decl_struct_type_specifiers_opt _3 = patt_decl2
-    {          ( let pos = union_pos _1 (pos_of_var_name _3) in
+    {( let pos = union_pos _1 (pos_of_var_name _3) in
                VarNamePointer (pos, _2, _3)
           )}
 | _1 = TokStar _2 = decl_struct_type_specifiers_opt _3 = TokId
-    {          ( let pos, id = _3 in
+    {( let pos, id = _3 in
             let id = VarNameId (pos, Some id) in
             let pos = union_pos _1 pos in
                VarNamePointer (pos, _2, id)
           )}
 | _1 = TokAddr _2 = decl_struct_type_specifiers_opt _3 = patt_decl2
-    {          ( let pos, _ = _1 in
+    {( let pos, _ = _1 in
             let pos = union_pos pos (pos_of_var_name _3) in
                VarNameRef (pos, _2, _3)
           )}
 | _1 = TokAddr _2 = decl_struct_type_specifiers_opt _3 = TokId
-    {          ( let pos1, _ = _1 in
+    {( let pos1, _ = _1 in
             let pos2, id = _3 in
             let id = VarNameId (pos2, Some id) in
             let pos = union_pos pos1 pos2 in
@@ -1234,19 +1234,19 @@ patt_decl2:
 
 patt_direct_decl:
   _1 = TokLeftParen _2 = patt_decl2 _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 | _1 = patt_direct_decl _2 = TokLeftBrack _3 = opt_expr _4 = TokRightBrack %prec prec_subscript
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                match _3 with
                   Some e -> VarNameArray (pos, [], _1, e)
                 | None -> VarNamePointer (pos, [], _1)
           )}
 | _1 = patt_direct_decl _2 = TokLeftParen _3 = opt_param_list _4 = TokRightParen %prec prec_apply
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                VarNameFun (pos, _1, _3)
           )}
 | _1 = TokId _2 = TokLeftBrack _3 = opt_expr _4 = TokRightBrack %prec prec_subscript
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
             let id = VarNameId (pos, Some id) in
             let pos = union_pos pos _4 in
                match _3 with
@@ -1254,7 +1254,7 @@ patt_direct_decl:
                 | None -> VarNamePointer (pos, [], id)
           )}
 | _1 = TokId _2 = TokLeftParen _3 = opt_param_list _4 = TokRightParen %prec prec_apply
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
             let id = VarNameId (pos, Some id) in
             let pos = union_pos pos _4 in
                VarNameFun (pos, id, _3)
@@ -1262,130 +1262,130 @@ patt_direct_decl:
 
 id_decl:
   _1 = direct_decl
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokStar _2 = decl_struct_type_specifiers_opt _3 = id_decl
-    {          ( let pos = union_pos _1 (pos_of_var_name _3) in
+    {( let pos = union_pos _1 (pos_of_var_name _3) in
                VarNamePointer (pos, _2, _3)
           )}
 | _1 = TokAddr _2 = decl_struct_type_specifiers_opt _3 = id_decl
-    {          ( let pos, _ = _1 in
+    {( let pos, _ = _1 in
             let pos = union_pos pos (pos_of_var_name _3) in
                VarNameRef (pos, _2, _3)
           )}
 
 direct_decl:
   _1 = TokId
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
                VarNameId (pos, Some id)
           )}
 | _1 = TokLeftParen _2 = id_decl _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 | _1 = direct_decl _2 = TokLeftBrack _3 = opt_expr _4 = TokRightBrack %prec prec_subscript
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                match _3 with
                   Some e -> VarNameArray (pos, [], _1, e)
                 | None -> VarNamePointer (pos, [], _1)
           )}
 | _1 = direct_decl _2 = TokLeftParen _3 = opt_param_list _4 = TokRightParen %prec prec_apply
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                VarNameFun (pos, _1, _3)
           )}
 
 opt_param_list:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = param_list
-    {          ( _1 )}
+    {( _1 )}
 
 param_list:
   _1 = rev_param_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_param_list:
   _1 = param_decl
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_param_list _2 = TokComma _3 = param_decl
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 param_decl:
   _1 = simp_decl_spec _2 = patt_decl
-    {          ( make_param_decl (snd _1) _2 )}
+    {( make_param_decl (snd _1) _2 )}
 | _1 = struct_decl_spec _2 = id_decl
-    {          ( make_param_decl (snd _1) _2 )}
+    {( make_param_decl (snd _1) _2 )}
 | _1 = simp_decl_spec _2 = abstract_decl
-    {          ( make_param_decl (snd _1) _2 )}
+    {( make_param_decl (snd _1) _2 )}
 | _1 = struct_decl_spec _2 = abstract_decl
-    {          ( make_param_decl (snd _1) _2 )}
+    {( make_param_decl (snd _1) _2 )}
 | _1 = simp_decl_spec
-    {          ( None, snd _1 )}
+    {( None, snd _1 )}
 | _1 = struct_decl_spec
-    {          ( None, snd _1 )}
+    {( None, snd _1 )}
 | _1 = TokElide
-    {          ( None, TypeElide _1 )}
+    {( None, TypeElide _1 )}
 
 cast_decl:
   _1 = simp_decl_spec _2 = abstract_decl
-    {          ( make_param_decl (snd _1) _2 )}
+    {( make_param_decl (snd _1) _2 )}
 | _1 = struct_decl_spec _2 = abstract_decl
-    {          ( make_param_decl (snd _1) _2 )}
+    {( make_param_decl (snd _1) _2 )}
 | _1 = decl_spec
-    {          ( None, snd _1 )}
+    {( None, snd _1 )}
 
 fun_param_list:
   _1 = TokLeftParen _2 = opt_param_list _3 = TokRightParen
-    {          ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
                pos, _2
           )}
 
 abstract_decl:
   _1 = direct_abstract_decl
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokStar _2 = decl_struct_type_specifiers_opt
-    {          ( let pos = _1 in
+    {( let pos = _1 in
                VarNamePointer (pos, _2, VarNameId (pos, None))
           )}
 | _1 = TokStar _2 = decl_struct_type_specifiers_opt _3 = abstract_decl
-    {          ( let pos = union_pos _1 (pos_of_var_name _3) in
+    {( let pos = union_pos _1 (pos_of_var_name _3) in
                VarNamePointer (pos, _2, _3)
           )}
 | _1 = TokAddr _2 = decl_struct_type_specifiers_opt
-    {          ( let pos, _ = _1 in
+    {( let pos, _ = _1 in
                VarNameRef (pos, _2, VarNameId (pos, None))
           )}
 | _1 = TokAddr _2 = decl_struct_type_specifiers_opt _3 = abstract_decl
-    {          ( let pos, _ = _1 in
+    {( let pos, _ = _1 in
             let pos = union_pos pos (pos_of_var_name _3) in
                VarNameRef (pos, _2, _3)
           )}
 
 direct_abstract_decl:
   _1 = TokLeftParen _2 = abstract_decl _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 | _1 = direct_abstract_decl _2 = TokLeftBrack _3 = opt_expr _4 = TokRightBrack %prec prec_subscript
-    {          ( let pos = union_pos (pos_of_var_name _1) _4 in
+    {( let pos = union_pos (pos_of_var_name _1) _4 in
                match _3 with
                   Some e -> VarNameArray (pos, [], _1, e)
                 | None -> VarNamePointer (pos, [], _1)
           )}
 | _1 = TokLeftBrack _2 = opt_expr _3 = TokRightBrack %prec prec_subscript
-    {          ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
                match _2 with
                   Some e -> VarNameArray (pos, [], VarNameId (pos, None), e)
                 | None -> VarNamePointer (pos, [], VarNameId (pos, None))
           )}
 | _1 = direct_abstract_decl _2 = fun_param_list %prec prec_apply
-    {          ( let pos, params = _2 in
+    {( let pos, params = _2 in
             let pos = union_pos (pos_of_var_name _1) pos in
                VarNameFun (pos, _1, params)
           )}
 | _1 = fun_param_list %prec prec_apply
-    {          ( let pos, params = _1 in
+    {( let pos, params = _1 in
                VarNameFun (pos, VarNameId (pos, None), params)
           )}
 
 fun_def:
   _1 = simp_decl_spec _2 = TokId _3 = TokLeftParen _4 = opt_param_list _5 = TokRightParen _6 = TokLeftBrace _7 = stmt_list _8 = TokRightBrace
-    {          ( let pos, id = _2 in
+    {( let pos, id = _2 in
             let id = VarNameId (pos, Some id) in
             let pos = union_pos pos _5 in
             let id = VarNameFun (pos, id, _4) in
@@ -1394,14 +1394,14 @@ fun_def:
                make_fun_def _1 id body
           )}
 | _1 = struct_decl_spec _2 = id_decl _3 = TokLeftBrace _4 = stmt_list _5 = TokRightBrace
-    {          ( let pos = union_pos _3 _5 in
+    {( let pos = union_pos _3 _5 in
             let body = wrap_stmt (SeqExpr (pos, _4)) in
                make_fun_def _1 _2 body
           )}
 
 type_defs:
   _1 = TokTypedef _2 = decl_spec _3 = type_decl_list _4 = TokSemi
-    {          ( let pos = union_pos _1 _4 in
+    {( let pos = union_pos _1 _4 in
             let types = make_type_decls (snd _2) _3 in
                List.iter (fun (pos, v, _, ty) ->
                    Fc_parse_state.add_type v pos ty;
@@ -1409,213 +1409,213 @@ type_defs:
                TypeDefs (pos, [])
           )}
 | _1 = simp_decl_spec _2 = TokSemi
-    {          ( (* Ignore them *)
+    {( (* Ignore them *)
             TypeDefs (pos_of_type (snd _1), [])
           )}
 | _1 = struct_decl_spec _2 = TokSemi
-    {          ( (* Ignore them *)
+    {( (* Ignore them *)
             TypeDefs (pos_of_type (snd _1), [])
           )}
 
 init:
   _1 = nc_expr
-    {         ( InitExpr (pos_of_expr _1, _1) )}
+    {( InitExpr (pos_of_expr _1, _1) )}
 | _1 = TokLeftBrace _2 = rev_init_list _3 = opt_comma _4 = TokRightBrace
-    {         ( let pos = union_pos _1 _4 in
+    {( let pos = union_pos _1 _4 in
               InitArray (pos, List.rev _2)
          )}
 
 init_field:
   _1 = init
-    {         ( None, _1 )}
+    {( None, _1 )}
 | _1 = id _2 = TokColon _3 = init
-    {         ( Some (snd _1), _3 )}
+    {( Some (snd _1), _3 )}
 
 rev_init_list:
   _1 = init_field
-    {         ( [_1] )}
+    {( [_1] )}
 | _1 = rev_init_list _2 = TokComma _3 = init_field
-    {         ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 pattern:
   _1 = TokChar
-    {          ( let pos, c = _1 in
+    {( let pos, c = _1 in
                CharPattern (pos, c)
           )}
 | _1 = TokInt
-    {          ( let pos, i = _1 in
+    {( let pos, i = _1 in
                IntPattern (pos, i)
           )}
 | _1 = TokFloat
-    {          ( let pos, x = _1 in
+    {( let pos, x = _1 in
                FloatPattern (pos, x)
           )}
 | _1 = TokString
-    {          ( let pos, pre, s = _1 in
+    {( let pos, pre, s = _1 in
                StringPattern (pos, pre, s)
           )}
 | _1 = TokLeftBrace _2 = rev_struct_field_pattern_list _3 = opt_comma _4 = TokRightBrace
-    {          ( let pos = union_pos _1 _4 in
+    {( let pos = union_pos _1 _4 in
                StructPattern (pos, List.rev _2)
           )}
 | _1 = TokId
-    {          ( let pos, v = _1 in
+    {( let pos, v = _1 in
                VarPattern (pos, v, v, None)
           )}
 | _1 = TokId _2 = pattern
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
             let pos = union_pos pos (pos_of_pattern _2) in
                EnumPattern (pos, id, _2)
           )}
 | _1 = TokLeftParen _2 = pattern _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 
 rev_struct_field_pattern_list:
   _1 = struct_field_pattern
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_struct_field_pattern_list _2 = TokComma _3 = struct_field_pattern
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 struct_field_pattern:
   _1 = pattern
-    {          ( None, _1 )}
+    {( None, _1 )}
 | _1 = id _2 = TokColon _3 = pattern
-    {          ( Some (snd _1), _3 )}
+    {( Some (snd _1), _3 )}
 
 expr:
   _1 = nc_expr
-    {          ( _1 )}
+    {( _1 )}
 | _1 = expr _2 = TokComma _3 = nc_expr
-    {          ( make_binop (_2, comma_sym) _1 _3 )}
+    {( make_binop (_2, comma_sym) _1 _3 )}
 
 nc_expr:
   _1 = TokChar
-    {          ( let pos, c = _1 in
+    {( let pos, c = _1 in
                CharExpr (pos, c)
           )}
 | _1 = TokInt
-    {          ( let pos, i = _1 in
+    {( let pos, i = _1 in
                IntExpr (pos, i)
           )}
 | _1 = TokFloat
-    {          ( let pos, x = _1 in
+    {( let pos, x = _1 in
                FloatExpr (pos, x)
           )}
 | _1 = TokString
-    {          ( let pos, pre, s = _1 in
+    {( let pos, pre, s = _1 in
                StringExpr (pos, pre, s)
           )}
 | _1 = TokId
-    {          ( let pos, v = _1 in
+    {( let pos, v = _1 in
                VarExpr (pos, v, v)
           )}
 | _1 = TokOperator _2 = operator
-    {          ( let pos, v = _2 in
+    {( let pos, v = _2 in
             let pos = union_pos _1 pos in
                VarExpr (pos, v, v)
           )}
 | _1 = TokAddr _2 = nc_expr %prec prec_unary
-    {          ( make_unop PreOp _1 _2 )}
+    {( make_unop PreOp _1 _2 )}
 | _1 = TokOp10 _2 = nc_expr %prec prec_unary
-    {          ( make_unop PreOp _1 _2 )}
+    {( make_unop PreOp _1 _2 )}
 | _1 = TokStar _2 = nc_expr %prec prec_unary
-    {          ( make_unop PreOp (_1, star_sym) _2 )}
+    {( make_unop PreOp (_1, star_sym) _2 )}
 | _1 = TokPreOp12 _2 = nc_expr %prec prec_unary
-    {          ( make_unop PreOp _1 _2 )}
+    {( make_unop PreOp _1 _2 )}
 | _1 = TokPrePostOp12 _2 = nc_expr %prec prec_unary
-    {          ( make_unop PreOp _1 _2 )}
+    {( make_unop PreOp _1 _2 )}
 | _1 = nc_expr _2 = TokPrePostOp12 %prec prec_unary
-    {          ( make_unop PostOp _2 _1 )}
+    {( make_unop PostOp _2 _1 )}
 | _1 = nc_expr _2 = TokEq _3 = nc_expr
-    {          ( make_binop (_2, eq_sym) _1 _3 )}
+    {( make_binop (_2, eq_sym) _1 _3 )}
 | _1 = nc_expr _2 = TokOp1 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokAnd _3 = nc_expr
-    {          ( make_and_op _1 _3 )}
+    {( make_and_op _1 _3 )}
 | _1 = nc_expr _2 = TokOr _3 = nc_expr
-    {          ( make_or_op _1 _3 )}
+    {( make_or_op _1 _3 )}
 | _1 = nc_expr _2 = TokOp4 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokOp5 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokAddr _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokOp7 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokOp8 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokOp9 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokOp10 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokStar _3 = nc_expr
-    {          ( make_binop (_2, star_sym) _1 _3 )}
+    {( make_binop (_2, star_sym) _1 _3 )}
 | _1 = nc_expr _2 = TokOp11 _3 = nc_expr
-    {          ( make_binop _2 _1 _3 )}
+    {( make_binop _2 _1 _3 )}
 | _1 = nc_expr _2 = TokDot _3 = id
-    {          ( make_project _2 _1 _3 )}
+    {( make_project _2 _1 _3 )}
 | _1 = nc_expr _2 = TokOp13 _3 = id
-    {          ( make_project _2 (make_unop PreOp _2 _1) _3 )}
+    {( make_project _2 (make_unop PreOp _2 _1) _3 )}
 | _1 = TokLeftParen _2 = expr _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 | _1 = TokLeftParen _2 = stmt _3 = TokRightParen
-    {          ( _2 )}
+    {( _2 )}
 | _1 = TokSizeof _2 = nc_expr %prec prec_unary
-    {          ( let pos = union_pos _1 (pos_of_expr _2) in
+    {( let pos = union_pos _1 (pos_of_expr _2) in
                SizeofExpr (pos, _2)
           )}
 | _1 = TokSizeof _2 = TokLeftParen _3 = cast_decl _4 = TokRightParen %prec prec_unary
-    {          ( let pos = union_pos _1 _4 in
+    {( let pos = union_pos _1 _4 in
             let _, ty = _3 in
                SizeofType (pos, ty)
           )}
 | _1 = TokLeftParen _2 = cast_decl _3 = TokRightParen _4 = nc_expr %prec prec_cast
-    {          ( let pos = union_pos _1 (pos_of_expr _4) in
+    {( let pos = union_pos _1 (pos_of_expr _4) in
             let _, ty = _2 in
                CastExpr (pos, ty, _4)
           )}
 | _1 = nc_expr _2 = TokLeftBrack _3 = nc_expr _4 = TokRightBrack %prec prec_subscript
-    {          ( let pos = union_pos (pos_of_expr _1) _4 in
+    {( let pos = union_pos (pos_of_expr _1) _4 in
                make_binop (_2, subscript_sym) _1 _3
           )}
 | _1 = nc_expr _2 = TokLeftParen _3 = args _4 = TokRightParen %prec prec_apply
-    {          ( let pos = union_pos (pos_of_expr _1) _4 in
+    {( let pos = union_pos (pos_of_expr _1) _4 in
                make_op pos PreOp apply_sym (_1 :: _1 :: _3)
           )}
 | _1 = nc_expr _2 = TokQuest _3 = nc_expr _4 = TokColon _5 = nc_expr
-    {          ( let pos = union_pos (pos_of_expr _1) (pos_of_expr _5) in
+    {( let pos = union_pos (pos_of_expr _1) (pos_of_expr _5) in
                IfExpr (pos, _1, _3, Some _5)
           )}
 
 opt_expr:
   
-    {          ( None )}
+    {( None )}
 | _1 = expr
-    {          ( Some _1 )}
+    {( Some _1 )}
 
 stmt:
   _1 = TokSemi
-    {          ( SeqExpr (_1, []) )}
+    {( SeqExpr (_1, []) )}
 | _1 = expr _2 = TokSemi
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokIf _2 = TokLeftParen _3 = expr _4 = TokRightParen _5 = stmt %prec prec_ifthen
-    {          ( let pos = union_pos _1 (pos_of_expr _5) in
+    {( let pos = union_pos _1 (pos_of_expr _5) in
             let stmt = wrap_stmt _5 in
                IfExpr (pos, _3, stmt, None)
           )}
 | _1 = TokIf _2 = TokLeftParen _3 = expr _4 = TokRightParen _5 = stmt _6 = TokElse _7 = stmt %prec prec_ifthenelse
-    {          ( let pos = union_pos _1 (pos_of_expr _7) in
+    {( let pos = union_pos _1 (pos_of_expr _7) in
             let stmt1 = wrap_stmt _5 in
             let stmt2 = wrap_stmt _7 in
                IfExpr (pos, _3, stmt1, Some stmt2)
           )}
 | _1 = TokSwitch _2 = TokLeftParen _3 = expr _4 = TokRightParen _5 = stmt
-    {          ( let pos = union_pos _1 (pos_of_expr _5) in
+    {( let pos = union_pos _1 (pos_of_expr _5) in
             let cases = normalize_cases pos _5 in
                SwitchExpr (pos, _3, cases)
           )}
 | _1 = TokFor _2 = TokLeftParen _3 = opt_expr _4 = TokSemi _5 = opt_expr _6 = TokSemi _7 = opt_expr _8 = TokRightParen _9 = stmt
-    {          ( let pos = union_pos _1 (pos_of_expr _9) in
+    {( let pos = union_pos _1 (pos_of_expr _9) in
             let init = make_opt_expr _3 (one_expr _4) in
             let test = make_opt_expr _5 (one_expr _6) in
             let step = make_opt_expr _7 (one_expr _8) in
@@ -1623,43 +1623,43 @@ stmt:
                ForExpr (pos, init, test, step, body)
           )}
 | _1 = TokWhile _2 = TokLeftParen _3 = expr _4 = TokRightParen _5 = stmt
-    {          ( let pos = union_pos _1 (pos_of_expr _5) in
+    {( let pos = union_pos _1 (pos_of_expr _5) in
             let body = wrap_stmt _5 in
                WhileExpr (pos, _3, body)
           )}
 | _1 = TokDo _2 = stmt _3 = TokWhile _4 = TokLeftParen _5 = expr _6 = TokRightParen _7 = TokSemi
-    {          ( let pos = union_pos _1 _7 in
+    {( let pos = union_pos _1 _7 in
             let body = wrap_stmt _2 in
                DoExpr (pos, body, _5)
           )}
 | _1 = TokReturn _2 = expr _3 = TokSemi
-    {          ( let pos = union_pos _1 (pos_of_expr _2) in
+    {( let pos = union_pos _1 (pos_of_expr _2) in
                ReturnExpr (pos, _2)
           )}
 | _1 = TokReturn _2 = TokSemi
-    {          ( let pos = union_pos _1 _2 in
+    {( let pos = union_pos _1 _2 in
             let e = SeqExpr (pos, []) in
                ReturnExpr (pos, e)
           )}
 | _1 = TokRaise _2 = expr _3 = TokSemi
-    {          ( let pos = union_pos _1 (pos_of_expr _2) in
+    {( let pos = union_pos _1 (pos_of_expr _2) in
                RaiseExpr (pos, _2)
           )}
 | _1 = TokBreak _2 = TokSemi
-    {          ( let pos = union_pos _1 _2 in
+    {( let pos = union_pos _1 _2 in
                BreakExpr pos
           )}
 | _1 = TokContinue _2 = TokSemi
-    {          ( let pos = union_pos _1 _2 in
+    {( let pos = union_pos _1 _2 in
                ContinueExpr pos
           )}
 | _1 = TokGoto _2 = id _3 = TokSemi
-    {          ( let pos2, label = _2 in
+    {( let pos2, label = _2 in
             let pos = union_pos _1 pos2 in
                GotoExpr (pos, label)
           )}
 | _1 = open_block _2 = stmt_list _3 = close_block
-    {          ( let pos, defs = _3 in
+    {( let pos, defs = _3 in
             let pos = union_pos _1 pos in
             let body =
                match defs with
@@ -1669,26 +1669,26 @@ stmt:
                SeqExpr (pos, body)
           )}
 | _1 = all_def
-    {          ( _1 )}
+    {( _1 )}
 | _1 = id _2 = TokColon
-    {          ( let pos, id = _1 in
+    {( let pos, id = _1 in
             let pos = union_pos pos _2 in
                LabelExpr (pos, id)
           )}
 | _1 = TokCase _2 = pattern _3 = TokColon
-    {          ( let pos = union_pos _1 _3 in
+    {( let pos = union_pos _1 _3 in
                CaseExpr (pos, _2)
           )}
 | _1 = TokDefault _2 = TokColon
-    {          ( let pos = union_pos _1 _2 in
+    {( let pos = union_pos _1 _2 in
                DefaultExpr pos
           )}
 | _1 = TokTry _2 = stmt
-    {          ( let pos = union_pos _1 (pos_of_expr _2) in
+    {( let pos = union_pos _1 (pos_of_expr _2) in
                TryExpr (pos, _2, [], None)
           )}
 | _1 = stmt _2 = TokCatch _3 = TokLeftParen _4 = pattern _5 = TokRightParen _6 = stmt %prec TokCatch
-    {          ( let pos = union_pos (pos_of_expr _1) (pos_of_expr _6) in
+    {( let pos = union_pos (pos_of_expr _1) (pos_of_expr _6) in
                match _1 with
                   TryExpr (pos, e, cases, finally) ->
                      let cases = cases @ [_4, [_6; BreakExpr pos]] in
@@ -1697,7 +1697,7 @@ stmt:
                      raise (ParseExpError (pos, "illegal catch", _1))
           )}
 | _1 = stmt _2 = TokFinally _3 = stmt
-    {          ( let pos = union_pos (pos_of_expr _1) (pos_of_expr _3) in
+    {( let pos = union_pos (pos_of_expr _1) (pos_of_expr _3) in
                match _1 with
                   TryExpr (pos, e, cases, finally) ->
                      let finally =
@@ -1712,82 +1712,82 @@ stmt:
 
 stmt_list:
   _1 = rev_stmt_list
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_stmt_list:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = rev_stmt_list _2 = stmt
-    {          ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 open_block:
   _1 = TokLeftBrace
-    {          ( Fc_parse_state.push_tenv ();
+    {( Fc_parse_state.push_tenv ();
             _1
           )}
 
 close_block:
   _1 = TokRightBrace
-    {          ( _1, Fc_parse_state.pop_tenv () )}
+    {( _1, Fc_parse_state.pop_tenv () )}
 
 args:
   
-    {          ( [] )}
+    {( [] )}
 | _1 = rev_args
-    {          ( List.rev _1 )}
+    {( List.rev _1 )}
 
 rev_args:
   _1 = nc_expr
-    {          ( [_1] )}
+    {( [_1] )}
 | _1 = rev_args _2 = TokComma _3 = nc_expr
-    {          ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 id:
   _1 = TokId
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokTypeId
-    {          ( _1 )}
+    {( _1 )}
 
 operator:
   _1 = TokComma
-    {          ( _1, comma_sym )}
+    {( _1, comma_sym )}
 | _1 = TokEq
-    {          ( _1, eq_sym )}
+    {( _1, eq_sym )}
 | _1 = TokOp1
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokAnd
-    {          ( _1, and_sym )}
+    {( _1, and_sym )}
 | _1 = TokOr
-    {          ( _1, or_sym )}
+    {( _1, or_sym )}
 | _1 = TokOp4
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokOp5
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokAddr
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokOp7
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokOp8
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokOp9
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokOp10
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokStar
-    {          ( _1, star_sym )}
+    {( _1, star_sym )}
 | _1 = TokOp11
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokPreOp12
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokPrePostOp12
-    {          ( _1 )}
+    {( _1 )}
 | _1 = TokOp13
-    {          ( _1 )}
+    {( _1 )}
 
 opt_comma:
   
-    {          ( () )}
+    {( () )}
 | _1 = TokComma
-    {          ( () )}
+    {( () )}
 
 %%

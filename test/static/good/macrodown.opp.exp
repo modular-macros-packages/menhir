@@ -283,98 +283,98 @@ Warning: the token IGNORED is unused.
 
 main:
   _1 = nxtoplevel _2 = EOI
-    {                   ( _1 )}
+    {( _1 )}
 | _1 = sxblock _2 = EOI
-    {                ( _1 )}
+    {( _1 )}
 
 nxtoplevel:
   _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = nxtoplevel
-    {                                                    ( make_let_expression _1 _2 _3 _5 _6 _7 )}
+    {( make_let_expression _1 _2 _3 _5 _6 _7 )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = nxtoplevel
-    {                                                    ( make_let_expression _1 _2 _3 _5 _6 _7 )}
+    {( make_let_expression _1 _2 _3 _5 _6 _7 )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = nxlet _5 = nxtoplevel
-    {                                                    ( make_let_mutable_expression _1 _2 _4 _5 )}
+    {( make_let_mutable_expression _1 _2 _4 _5 )}
 | _1 = MUTUAL _2 = LET _3 = VAR _4 = argvar _5 = DEFEQ _6 = nxlet _7 = nxmutual _8 = nxtoplevel
-    {                                                              ( make_let_expression _2 _3 _4 _6 _7 _8 )}
+    {( make_let_expression _2 _3 _4 _6 _7 _8 )}
 | _1 = MUTUAL _2 = LET _3 = CTRLSEQ _4 = argvar _5 = DEFEQ _6 = nxlet _7 = nxmutual _8 = nxtoplevel
-    {                                                              ( make_let_expression _2 _3 _4 _6 _7 _8 )}
+    {( make_let_expression _2 _3 _4 _6 _7 _8 )}
 | _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec
-    {                                     (
+    {(
         make_let_expression _1 _2 _3 _5 _6 ((-256, 0, 0, 0), UTFinishHeaderFile)
       )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec
-    {                                         (
+    {(
         make_let_expression _1 _2 _3 _5 _6 ((-257, 0, 0, 0), UTFinishHeaderFile)
       )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = nxlet
-    {                                     (
+    {(
         make_let_mutable_expression _1 _2 _4 ((-258, 0, 0, 0), UTFinishHeaderFile)
       )}
 | _1 = MUTUAL _2 = LET _3 = VAR _4 = argvar _5 = DEFEQ _6 = nxlet _7 = nxmutual
-    {                                                   (
+    {(
         make_let_expression _2 _3 _4 _6 _7 ((-259, 0, 0, 0), UTFinishHeaderFile)
       )}
 | _1 = MUTUAL _2 = LET _3 = CTRLSEQ _4 = argvar _5 = DEFEQ _6 = nxlet _7 = nxmutual
-    {                                                   (
+    {(
         make_let_expression _2 _3 _4 _6 _7 ((-259, 0, 0, 0), UTFinishHeaderFile)
       )}
 | _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
-    {                                                  ( make_let_expression _1 _2 _3 _5 _6 _8 )}
+    {( make_let_expression _1 _2 _3 _5 _6 _8 )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
-    {                                                  ( make_let_expression _1 _2 _3 _5 _6 _8 )}
+    {( make_let_expression _1 _2 _3 _5 _6 _8 )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = nxlet _5 = IN _6 = nxlet
-    {                                                  ( make_let_mutable_expression _1 _2 _4 _6 )}
+    {( make_let_mutable_expression _1 _2 _4 _6 )}
 | _1 = MUTUAL _2 = LET _3 = VAR _4 = argvar _5 = DEFEQ _6 = nxlet _7 = nxmutual _8 = IN _9 = nxlet
-    {                                                            ( make_let_expression _2 _3 _4 _6 _7 _9 )}
+    {( make_let_expression _2 _3 _4 _6 _7 _9 )}
 | _1 = MUTUAL _2 = LET _3 = CTRLSEQ _4 = argvar _5 = DEFEQ _6 = nxlet _7 = nxmutual _8 = IN _9 = nxlet
-    {                                                            ( make_let_expression _2 _3 _4 _6 _7 _9 )}
+    {( make_let_expression _2 _3 _4 _6 _7 _9 )}
 | _1 = LET _2 = error
-    {              (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'let'" "let ..<!>.." _1))
       )}
 | _1 = LET _2 = VAR _3 = error
-    {                  (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after 'let'"
             ("let" ^ vn ^ " ..<!>..") _1))
       )}
 | _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = error
-    {                               (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after '='"
             ("let " ^ vn ^ " " ^ (string_of_avc _3) ^ "= ..<!>..") _1))
       )}
 | _1 = LET _2 = CTRLSEQ _3 = error
-    {                      (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "missing '=' or illegal argument"
             ("let " ^ csname ^ " ..<!>..") ln))
       )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = error
-    {                                   (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after '='"
             ("let " ^ csname ^ " " ^ (string_of_avc _3) ^ " = ..<!>..") ln))
       )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = error
-    {                                                  (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after 'in'"
             ("let " ^ csname ^ " " ^ (string_of_avc _3) ^ "= ... in ..<!>..") ln))
       )}
 | _1 = LETMUTABLE _2 = error
-    {                     (
+    {(
         raise (ParseErrorDetail(error_reporting "missing identifier after 'let-mutable'"
           "let-mutable ..<!>.." _1))
       )}
 | _1 = LETMUTABLE _2 = VAR _3 = error
-    {                         (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting ("missing '<-' after '" ^ vn ^ "'")
             ("let-mutable " ^ vn ^ " ..<!>..") _1))
       )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = error
-    {                                     (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after '<-'"
             ("let-mutable " ^ vn ^ " <- ..<!>..") _1))
@@ -382,120 +382,120 @@ nxtoplevel:
 
 nxmutual:
   _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxmutual
-    {                                        (
+    {(
         let ((varln, varstt, varend), vn) = _2 in
         let varrng = (varln, varstt, varln, varend) in
         let curried = curry_lambda_abstract varrng _3 _5 in
           UTMutualLetCons(vn, curried, _6)
       )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxmutual
-    {                                            (
+    {(
         let ((csln, csstt, csend), cn) = _2 in
         let csrng = (csln, csstt, csln, csend) in
         let curried = curry_lambda_abstract csrng _3 _5 in
           UTMutualLetCons(cn, curried, _6)
       )}
 | _1 = ENDMUTUAL
-    {              ( UTEndOfMutualLet )}
+    {( UTEndOfMutualLet )}
 
 nxlet:
   _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
-    {                                                  ( make_let_expression _1 _2 _3 _5 _6 _8 )}
+    {( make_let_expression _1 _2 _3 _5 _6 _8 )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
-    {                                                  ( make_let_expression _1 _2 _3 _5 _6 _8 )}
+    {( make_let_expression _1 _2 _3 _5 _6 _8 )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = nxlet _5 = IN _6 = nxlet
-    {                                                  ( make_let_mutable_expression _1 _2 _4 _6 )}
+    {( make_let_mutable_expression _1 _2 _4 _6 )}
 | _1 = nxwhl
-    {          ( _1 )}
+    {( _1 )}
 | _1 = LET _2 = error
-    {              (
+    {(
         raise (ParseErrorDetail(error_reporting
           "missing identifier after 'let'" "let ..<!>.." _1))
       )}
 | _1 = LET _2 = VAR _3 = error
-    {                  (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "missing '=' or illegal argument"
             ("let " ^ vn ^ " ..<!>..") _1))
       )}
 | _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = error
-    {                               (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after '='"
             ("let " ^ vn ^ " " ^ (string_of_avc _3) ^ "= ..<!>..") _1))
       )}
 | _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = error
-    {                                              (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after 'in'"
             ("let " ^ vn ^ " " ^ (string_of_avc _3) ^ "= ... in ..<!>..") _1))
       )}
 | _1 = LET _2 = CTRLSEQ _3 = error
-    {                      (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "missing '=' or illegal argument"
             ("let " ^ csname ^ " ..<!>..") ln))
       )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = error
-    {                                   (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after '='"
             ("let " ^ csname ^ " " ^ (string_of_avc _3) ^ " = ..<!>..") ln))
       )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = error
-    {                                                  (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after 'in'"
             ("let " ^ csname ^ " " ^ (string_of_avc _3) ^ "= ... in ..<!>..") ln))
       )}
 | _1 = LETMUTABLE _2 = error
-    {                     (
+    {(
         raise (ParseErrorDetail(error_reporting "missing identifier after 'let-mutable'"
           "let-mutable ..<!>.." _1))
       )}
 | _1 = LETMUTABLE _2 = VAR _3 = error
-    {                         (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting ("missing '<-' after '" ^ vn ^ "'")
             ("let-mutable " ^ vn ^ " ..<!>..") _1))
       )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = error
-    {                                     (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after '<-'"
             ("let-mutable " ^ vn ^ " <- ..<!>..") _1))
       )}
 | _1 = LETMUTABLE _2 = VAR _3 = OVERWRITEEQ _4 = nxlet _5 = IN _6 = error
-    {                                              (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'in'"
           "in ..<!>.." _5))
       )}
 
 nxdec:
   _1 = LETAND _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec
-    {                                        (
+    {(
         let ((varln, varstt, varend), vn) = _2 in
         let varrng = (varln, varstt, varln, varend) in
         let curried = curry_lambda_abstract varrng _3 _5 in
           UTMutualLetCons(vn, curried, _6)
       )}
 | _1 = LETAND _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec
-    {                                            (
+    {(
         let ((csln, csstt, csend), csname) = _2 in
         let csrng = (csln, csstt, csln, csend) in
         let curried = curry_lambda_abstract csrng _3 _5 in
           UTMutualLetCons(csname, curried, _6)
       )}
 | 
-    {    ( UTEndOfMutualLet )}
+    {( UTEndOfMutualLet )}
 | _1 = LETAND _2 = VAR _3 = error
-    {                     (
+    {(
         let (_, vn) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after 'and'"
             ("and " ^ vn ^ " ..<!>..") _1))
       )}
 | _1 = LETAND _2 = CTRLSEQ _3 = error
-    {                         (
+    {(
         let (ln, csname) = _2 in
           raise (ParseErrorDetail(error_reporting "illegal token after 'and'"
             ("and " ^ csname ^ " ..<!>..") ln))
@@ -503,135 +503,135 @@ nxdec:
 
 nxwhl:
   _1 = WHILE _2 = nxlet _3 = DO _4 = nxwhl
-    {                         (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTWhileDo(_2, _4))
       )}
 | _1 = nxif
-    {         ( _1 )}
+    {( _1 )}
 | _1 = WHILE _2 = error
-    {                (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'while'" "while ..<!>.." _1))
       )}
 | _1 = WHILE _2 = nxlet _3 = DO _4 = error
-    {                         (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'do'" "do ..<!>.." _3))
       )}
 
 nxif:
   _1 = IF _2 = nxlet _3 = THEN _4 = nxlet _5 = ELSE _6 = nxlet
-    {                                   (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _6 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTIfThenElse(_2, _4, _6))
       )}
 | _1 = IFCLASSISVALID _2 = nxlet _3 = ELSE _4 = nxlet
-    {                                    (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTIfClassIsValid(_2, _4))
       )}
 | _1 = IFCLASSISVALID _2 = THEN _3 = nxlet _4 = ELSE _5 = nxlet
-    {                                         (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _5 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTIfClassIsValid(_3, _5))
       )}
 | _1 = IFIDISVALID _2 = nxlet _3 = ELSE _4 = nxlet
-    {                                 (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTIfIDIsValid(_2, _4))
       )}
 | _1 = IFIDISVALID _2 = THEN _3 = nxlet _4 = ELSE _5 = nxlet
-    {                                      (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _5 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTIfIDIsValid(_3, _5))
       )}
 | _1 = nxbfr
-    {          ( _1 )}
+    {( _1 )}
 | _1 = IF _2 = error
-    {             (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'if'" "if ..<!>.." _1))
       )}
 | _1 = IF _2 = nxlet _3 = THEN _4 = error
-    {                        (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'then'" "then ..<!>.." _3))
       )}
 | _1 = IF _2 = nxlet _3 = THEN _4 = nxlet _5 = ELSE _6 = error
-    {                                   (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'else'" "else ..<!>.." _5))
       )}
 | _1 = IFCLASSISVALID _2 = error
-    {                         (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'if-class-is-valid'" "if-class-is-valid ..<!>.." _1))
       )}
 | _1 = IFCLASSISVALID _2 = nxlet _3 = ELSE _4 = error
-    {                                    (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'else'" "else ..<!>.." _3))
       )}
 | _1 = IFCLASSISVALID _2 = THEN _3 = error
-    {                              (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'then'" "then ..<!>.." _2))
       )}
 | _1 = IFCLASSISVALID _2 = THEN _3 = nxlet _4 = ELSE _5 = error
-    {                                         (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'else'" "else ..<!>.." _4))
       )}
 | _1 = IFIDISVALID _2 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'if-id-is-valid'" "if-id-is-valid ..<!>.." _1))
       )}
 | _1 = IFIDISVALID _2 = nxlet _3 = ELSE _4 = error
-    {                                 (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'else'" "else ..<!>.." _3))
       )}
 | _1 = IFIDISVALID _2 = THEN _3 = error
-    {                           (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'then'" "then ..<!>.." _2))
       )}
 | _1 = IFIDISVALID _2 = THEN _3 = nxlet _4 = ELSE _5 = error
-    {                                      (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'else'" "else ..<!>.." _4))
       )}
 
 nxbfr:
   _1 = nxlambda _2 = BEFORE _3 = nxbfr
-    {                          (
+    {(
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTSequential(_1, _3))
       )}
 | _1 = nxlambda
-    {             ( _1 )}
+    {( _1 )}
 | _1 = nxlambda _2 = BEFORE _3 = error
-    {                          (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'before'" "before ..<!>.." _2))
       )}
 
 nxlambda:
   _1 = VAR _2 = OVERWRITEEQ _3 = nxlor
-    {                          (
+    {(
         let ((sttln, sttpos, varend), vn) = _1 in
         let (_, _, endln, endpos) = get_range _3 in
         let varrng = (sttln, sttpos, sttln, varend) in
@@ -639,230 +639,230 @@ nxlambda:
           (rng, UTOverwrite(varrng, vn, _3))
       )}
 | _1 = DECGLOBALHASH _2 = nxlet _3 = OVERWRITEGLOBALHASH _4 = nxlor
-    {                                                  (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTDeclareGlobalHash(_2, _4))
       )}
 | _1 = RENEWGLOBALHASH _2 = nxlet _3 = OVERWRITEGLOBALHASH _4 = nxlor
-    {                                                    (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTOverwriteGlobalHash(_2, _4))
       )}
 | _1 = LAMBDA _2 = argvar _3 = ARROW _4 = nxlor
-    {                              (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           curry_lambda_abstract rng _2 _4
       )}
 | _1 = nxlor
-    {          ( _1 )}
+    {( _1 )}
 | _1 = LAMBDA _2 = error
-    {                 (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after 'function'" "function ..<!>.." _1))
       )}
 | _1 = LAMBDA _2 = argvar _3 = ARROW _4 = error
-    {                              (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after '->'" "-> ..<!>.." _3))
       )}
 | _1 = DECGLOBALHASH _2 = error
-    {                        (
+    {(
         raise (ParseErrorDetail(error_reporting
           "illegal token after 'declare-global-hash'" "declare-global-hash ..<!>.." _1))
       )}
 | _1 = DECGLOBALHASH _2 = nxlet _3 = OVERWRITEGLOBALHASH _4 = error
-    {                                                  (
+    {(
         raise (ParseErrorDetail(error_reporting
           "illegal token after '<<-'" "<<- ..<!>.." _3))
       )}
 | _1 = RENEWGLOBALHASH _2 = error
-    {                          (
+    {(
         raise (ParseErrorDetail(error_reporting
           "illegal token after 'renew'" "renew ..<!>.." _1))
       )}
 | _1 = RENEWGLOBALHASH _2 = nxlet _3 = OVERWRITEGLOBALHASH _4 = error
-    {                                                    (
+    {(
         raise (ParseErrorDetail(error_reporting
           "illegal token after '<<-'" "<<- ..<!>.." _3))
       )}
 
 argvar:
   _1 = VAR _2 = argvar
-    {               (
+    {(
         let ((varln, varstt, varend), vn) = _1 in
         let varrng = (varln, varstt, varln, varend) in
           UTArgumentVariableCons(varrng, vn, _2)
       )}
 | 
-    {    ( UTEndOfArgumentVariable )}
+    {( UTEndOfArgumentVariable )}
 
 nxlor:
   _1 = nxland _2 = LOR _3 = nxlor
-    {                     ( binary_operator "||" _1 _2 _3 )}
+    {( binary_operator "||" _1 _2 _3 )}
 | _1 = nxland
-    {           ( _1 )}
+    {( _1 )}
 | _1 = nxland _2 = LOR _3 = error
-    {                     (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '||'" "|| ..<!>.." _2))
       )}
 
 nxland:
   _1 = nxcomp _2 = LAND _3 = nxland
-    {                       ( binary_operator "&&" _1 _2 _3 )}
+    {( binary_operator "&&" _1 _2 _3 )}
 | _1 = nxcomp
-    {           ( _1 )}
+    {( _1 )}
 | _1 = nxcomp _2 = LAND _3 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '&&'" "&& ..<!>.." _2))
       )}
 
 nxcomp:
   _1 = nxconcat _2 = EQ _3 = nxcomp
-    {                        ( binary_operator "==" _1 _2 _3 )}
+    {( binary_operator "==" _1 _2 _3 )}
 | _1 = nxconcat _2 = NEQ _3 = nxcomp
-    {                        ( binary_operator "<>" _1 _2 _3 )}
+    {( binary_operator "<>" _1 _2 _3 )}
 | _1 = nxconcat _2 = GEQ _3 = nxcomp
-    {                        ( binary_operator ">=" _1 _2 _3 )}
+    {( binary_operator ">=" _1 _2 _3 )}
 | _1 = nxconcat _2 = LEQ _3 = nxcomp
-    {                        ( binary_operator "<=" _1 _2 _3 )}
+    {( binary_operator "<=" _1 _2 _3 )}
 | _1 = nxconcat _2 = GT _3 = nxcomp
-    {                        ( binary_operator ">" _1 _2 _3 )}
+    {( binary_operator ">" _1 _2 _3 )}
 | _1 = nxconcat _2 = LT _3 = nxcomp
-    {                        ( binary_operator "<" _1 _2 _3 )}
+    {( binary_operator "<" _1 _2 _3 )}
 | _1 = nxconcat
-    {             ( _1 )}
+    {( _1 )}
 | _1 = nxconcat _2 = EQ _3 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '=='" "== ..<!>.." _2))
       )}
 | _1 = nxconcat _2 = NEQ _3 = error
-    {                       (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '<>'" "<> ..<!>.." _2))
       )}
 | _1 = nxconcat _2 = GEQ _3 = error
-    {                       (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '>='" ">= ..<!>.." _2))
       )}
 | _1 = nxconcat _2 = LEQ _3 = error
-    {                       (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '<='" "<= ..<!>.." _2))
       )}
 | _1 = nxconcat _2 = GT _3 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '>'" "> ..<!>.." _2))
       )}
 | _1 = nxconcat _2 = LT _3 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '<'" "< ..<!>.." _2))
       )}
 
 nxconcat:
   _1 = nxlplus _2 = CONCAT _3 = nxconcat
-    {                            ( binary_operator "^" _1 _2 _3 )}
+    {( binary_operator "^" _1 _2 _3 )}
 | _1 = nxlplus _2 = CONS _3 = nxconcat
-    {                            ( binary_operator "::" _1 _2 _3 )}
+    {( binary_operator "::" _1 _2 _3 )}
 | _1 = nxlplus
-    {            ( _1 )}
+    {( _1 )}
 | _1 = nxlplus _2 = CONCAT _3 = error
-    {                         (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '^'" "^ ..<!>.." _2))
       )}
 
 nxlplus:
   _1 = nxlminus _2 = PLUS _3 = nxrplus
-    {                          ( binary_operator "+" _1 _2 _3 )}
+    {( binary_operator "+" _1 _2 _3 )}
 | _1 = nxlminus
-    {             ( _1 )}
+    {( _1 )}
 | _1 = nxlminus _2 = PLUS _3 = error
-    {                        (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '+'" "+ ..<!>.." _2))
       )}
 
 nxlminus:
   _1 = nxlplus _2 = MINUS _3 = nxrtimes
-    {                           ( binary_operator "-" _1 _2 _3 )}
+    {( binary_operator "-" _1 _2 _3 )}
 | _1 = nxltimes
-    {             ( _1 )}
+    {( _1 )}
 | _1 = nxlplus _2 = MINUS _3 = error
-    {                        (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '-'" "- ..<!>.." _2))
       )}
 
 nxrplus:
   _1 = nxrminus _2 = PLUS _3 = nxrplus
-    {                          ( binary_operator "+" _1 _2 _3 )}
+    {( binary_operator "+" _1 _2 _3 )}
 | _1 = nxrminus
-    {             ( _1 )}
+    {( _1 )}
 | _1 = nxrminus _2 = PLUS _3 = error
-    {                        (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '+'" "+ ..<!>.." _2))
       )}
 
 nxrminus:
   _1 = nxrplus _2 = MINUS _3 = nxrtimes
-    {                           ( binary_operator "+" _1 _2 _3 )}
+    {( binary_operator "+" _1 _2 _3 )}
 | _1 = nxrtimes
-    {             ( _1 )}
+    {( _1 )}
 | _1 = nxrplus _2 = MINUS _3 = error
-    {                        (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '-'" "- ..<!>.." _2))
       )}
 
 nxltimes:
   _1 = nxun _2 = TIMES _3 = nxrtimes
-    {                           ( binary_operator "*" _1 _2 _3 )}
+    {( binary_operator "*" _1 _2 _3 )}
 | _1 = nxltimes _2 = DIVIDES _3 = nxapp
-    {                           ( binary_operator "/" _1 _2 _3 )}
+    {( binary_operator "/" _1 _2 _3 )}
 | _1 = nxltimes _2 = MOD _3 = nxapp
-    {                           ( binary_operator "mod" _1 _2 _3 )}
+    {( binary_operator "mod" _1 _2 _3 )}
 | _1 = nxun
-    {         ( _1 )}
+    {( _1 )}
 | _1 = nxun _2 = TIMES _3 = error
-    {                     (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '*'" "* ..<!>.." _2))
       )}
 | _1 = nxltimes _2 = DIVIDES _3 = error
-    {                           (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '/'" "/ ..<!>.." _2))
       )}
 | _1 = nxltimes _2 = MOD _3 = error
-    {                       (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'mod'" "mod ..<!>.." _2))
       )}
 
 nxrtimes:
   _1 = nxapp _2 = TIMES _3 = nxrtimes
-    {                           ( binary_operator "*" _1 _2 _3 )}
+    {( binary_operator "*" _1 _2 _3 )}
 | _1 = nxrtimes _2 = DIVIDES _3 = nxapp
-    {                           ( binary_operator "/" _1 _2 _3 )}
+    {( binary_operator "/" _1 _2 _3 )}
 | _1 = nxrtimes _2 = MOD _3 = nxapp
-    {                           ( binary_operator "mod" _1 _2 _3 )}
+    {( binary_operator "mod" _1 _2 _3 )}
 | _1 = nxapp
-    {          ( _1 )}
+    {( _1 )}
 | _1 = nxapp _2 = TIMES _3 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '*'" "* ..<!>.." _2))
       )}
 | _1 = nxrtimes _2 = DIVIDES _3 = error
-    {                           (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '/'" "/ ..<!>.." _2))
       )}
 | _1 = nxrtimes _2 = MOD _3 = error
-    {                       (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'mod'" "mod ..<!>.." _2))
       )}
 
 nxun:
   _1 = MINUS _2 = nxapp
-    {                ( binary_operator "-" ((-16, 0, 0, 0), UTNumericConstant(0)) _1 _2 )}
+    {( binary_operator "-" ((-16, 0, 0, 0), UTNumericConstant(0)) _1 _2 )}
 | _1 = LNOT _2 = nxapp
-    {                (
+    {(
         let (sttln, sttpos, lnotend) = _1 in
         let lnotrng = (sttln, sttpos, sttln, lnotend) in
         let (_, _, endln, endpos) = get_range _2 in
@@ -870,7 +870,7 @@ nxun:
           (rng, UTApply((lnotrng, UTContentOf("not")), _2))
       )}
 | _1 = REFNOW _2 = nxapp
-    {                 (
+    {(
         let (sttln, sttpos, refnowend) = _1 in
         let refnowrng = (sttln, sttpos, sttln, refnowend) in
         let (_, _, endln, endpos) = get_range _2 in
@@ -878,69 +878,69 @@ nxun:
           (rng, UTApply((refnowrng, UTContentOf("!")), _2))
       )}
 | _1 = REFFINAL _2 = nxapp
-    {                   (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _2 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTReferenceFinal(_2))
       )}
 | _1 = nxapp
-    {          ( _1 )}
+    {( _1 )}
 | _1 = MINUS _2 = error
-    {                (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after unary '-'" "- ..<!>.." _1))
       )}
 | _1 = LNOT _2 = error
-    {               (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after 'not'" "not ..<!>.." _1))
       )}
 | _1 = REFNOW _2 = error
-    {                 (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '!'" "! ..<!>.." _1))
       )}
 | _1 = REFFINAL _2 = error
-    {                   (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '!!'" "!! ..<!>.." _1))
       )}
 
 nxapp:
   _1 = nxapp _2 = nxbot
-    {                (
+    {(
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _2 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTApply(_1, _2))
       )}
 | _1 = nxbot
-    {          ( _1 )}
+    {( _1 )}
 
 nxbot:
   _1 = VAR
-    {        (
+    {(
         let ((varln, varstt, varend), vn) = _1 in
         let rng = (varln, varstt, varln, varend) in
           (rng, UTContentOf(vn))
       )}
 | _1 = NUMCONST
-    {             (
+    {(
         let ((ncln, ncstt, ncend), cs) = _1 in
         let rng = (ncln, ncstt, ncln, ncend) in
           (rng, UTNumericConstant(int_of_string cs))
       )}
 | _1 = TRUE
-    {          (
+    {(
         let (ln, sttpos, endpos) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTBooleanConstant(true))
       )}
 | _1 = FALSE
-    {          (
+    {(
         let (ln, sttpos, endpos) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTBooleanConstant(false))
       )}
 | _1 = LPAREN _2 = nxlet _3 = RPAREN
-    {                           (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let (_, utast) = _2 in
@@ -948,7 +948,7 @@ nxbot:
           (rng, utast)
       )}
 | _1 = OPENSTR _2 = sxsep _3 = CLOSESTR
-    {                           (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let (_, utast) = _2 in
@@ -956,210 +956,210 @@ nxbot:
           (rng, utast)
       )}
 | _1 = OPENQT _2 = sxsep _3 = CLOSEQT
-    {                         (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, omit_spaces _2)
       )}
 | _1 = BLIST _2 = ELIST
-    {                (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _2 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTEndOfList)
       )}
 | _1 = BLIST _2 = nxlet _3 = nxlist _4 = ELIST
-    {                             (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _4 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTListCons(_2, _3))
       )}
 | _1 = UNITVALUE
-    {              (
+    {(
         let (ln, sttpos, endpos) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTUnitConstant)
       )}
 | _1 = FINISH
-    {           (
+    {(
         let (ln, sttpos, endpos) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTFinishHeaderFile)
       )}
 | _1 = LPAREN _2 = binop _3 = RPAREN
-    {                        (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTContentOf(_2))
   )}
 | _1 = BLIST _2 = error
-    {                (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after '['" "[ ..<!>.." _1))
       )}
 | _1 = OPENSTR _2 = error
-    {                  (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after beginning of string area '{'" "{ ..<!>.." _1))
       )}
 | _1 = LPAREN _2 = error
-    {                 (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after '('" "( ..<!>.." _1))
       )}
 
 binop:
   _1 = PLUS
-    {            ( "+" )}
+    {( "+" )}
 | _1 = MINUS
-    {            ( "-" )}
+    {( "-" )}
 | _1 = MOD
-    {            ( "mod" )}
+    {( "mod" )}
 | _1 = TIMES
-    {            ( "*" )}
+    {( "*" )}
 | _1 = DIVIDES
-    {            ( "/" )}
+    {( "/" )}
 | _1 = CONCAT
-    {            ( "^" )}
+    {( "^" )}
 | _1 = EQ
-    {            ( "==" )}
+    {( "==" )}
 | _1 = NEQ
-    {            ( "<>" )}
+    {( "<>" )}
 | _1 = GEQ
-    {            ( ">=" )}
+    {( ">=" )}
 | _1 = LEQ
-    {            ( "<=" )}
+    {( "<=" )}
 | _1 = GT
-    {            ( ">" )}
+    {( ">" )}
 | _1 = LT
-    {            ( "<" )}
+    {( "<" )}
 | _1 = LAND
-    {            ( "&&" )}
+    {( "&&" )}
 | _1 = LOR
-    {            ( "||" )}
+    {( "||" )}
 | _1 = LNOT
-    {            ( "not" )}
+    {( "not" )}
 | _1 = BEFORE
-    {            ( "before" )}
+    {( "before" )}
 
 nxlist:
   _1 = LISTPUNCT _2 = nxlet _3 = nxlist
-    {                           (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTListCons(_2, _3))
       )}
 | 
-    {    ( ((-17, 0, 0, 0), UTEndOfList) )}
+    {( ((-17, 0, 0, 0), UTEndOfList) )}
 | _1 = LISTPUNCT _2 = error
-    {                    (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after ';'" "; ..<!>.." _1))
       )}
 
 sxsep:
   _1 = SEP _2 = sxsepsub
-    {                 ( _2 )}
+    {( _2 )}
 | _1 = sxblock
-    {            ( _1 )}
+    {( _1 )}
 | _1 = SEP _2 = error
-    {              (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after '|'" "| ..<!>.." _1))
       )}
 
 sxsepsub:
   _1 = sxblock _2 = SEP _3 = sxsepsub
-    {                         (
+    {(
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTListCons(_1, _3))
       )}
 | 
-    {    ( ((-18, 0, 0, 0), UTEndOfList) )}
+    {( ((-18, 0, 0, 0), UTEndOfList) )}
 | _1 = sxblock _2 = SEP _3 = error
-    {                      (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after '|'" "| ..<!>.." _2))
       )}
 
 sxblock:
   _1 = sxbot _2 = sxblock
-    {                  (
+    {(
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _2 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTConcat(_1, _2))
       )}
 | 
-    {    ( ((-19, 0, 0, 0), UTStringEmpty) )}
+    {( ((-19, 0, 0, 0), UTStringEmpty) )}
 
 sxbot:
   _1 = CHAR
-    {          (
+    {(
         let ((ln, sttpos, endpos), ch) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTStringConstant(ch))
       )}
 | _1 = SPACE
-    {          (
+    {(
         let (ln, sttpos, endpos) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTStringConstant(" "))
       )}
 | _1 = BREAK
-    {          (
+    {(
         let (ln, sttpos, endpos) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, UTBreakAndIndent)
       )}
 | _1 = VARINSTR _2 = END
-    {                 (
+    {(
         let ((sttln, sttpos, _), vn) = _1 in
         let (endln, _, endpos) = _2 in
         let rng = (sttln, sttpos, endln, endpos) in
           (rng, UTContentOf(vn))
       )}
 | _1 = CTRLSEQ _2 = sxclsnm _3 = sxidnm _4 = narg _5 = sarg
-    {                                     (
+    {(
         let ((csln, csstt, csend), csname) = _1 in
         let csrng = (csln, csstt, csln, csend) in
           convert_into_apply (csrng, UTContentOf(csname)) _2 _3 (append_argument_list _4 _5)
       )}
 | _1 = CTRLSEQ _2 = error
-    {                  (
+    {(
         let (ln, csname) = _1 in
         raise (ParseErrorDetail(error_reporting ("illegal token after '" ^ csname ^ "'") (csname ^ " ..<!>..") ln))
       )}
 
 sxclsnm:
   _1 = CLASSNAME
-    {              (
+    {(
         let ((ln, sttpos, endpos), clsnm) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, class_name_to_abstract_tree clsnm)
       )}
 | 
-    {    ( ((-20, 0, 0, 0), UTNoContent) )}
+    {( ((-20, 0, 0, 0), UTNoContent) )}
 
 sxidnm:
   _1 = IDNAME
-    {           (
+    {(
         let ((ln, sttpos, endpos), idnm) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
           (rng, id_name_to_abstract_tree idnm)
       )}
 | 
-    {    ( ((-21, 0, 0, 0), UTNoContent) )}
+    {( ((-21, 0, 0, 0), UTNoContent) )}
 
 narg:
   _1 = OPENNUM _2 = nxlet _3 = CLOSENUM _4 = narg
-    {                                (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let (_, utastmain) = _2 in
@@ -1167,42 +1167,42 @@ narg:
           UTArgumentCons((rng, utastmain), _4)
       )}
 | 
-    {    ( UTEndOfArgument )}
+    {( UTEndOfArgument )}
 | _1 = OPENNUM _2 = error
-    {                  (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after beginning of program '('" "( ..<!>.." _1))
       )}
 | _1 = OPENNUM _2 = nxlet _3 = CLOSENUM _4 = error
-    {                                 (
+    {(
         raise (ParseErrorDetail(
           error_reporting "illegal token after end of program ')'" ") ..<!>.." _3))
       )}
 
 sarg:
   _1 = BGRP _2 = sxsep _3 = EGRP _4 = sargsub
-    {                            ( UTArgumentCons(_2, _4) )}
+    {( UTArgumentCons(_2, _4) )}
 | _1 = OPENQT _2 = sxsep _3 = CLOSEQT _4 = sargsub
-    {                                 (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           UTArgumentCons((rng, omit_spaces _2), _4)
       )}
 | _1 = END
-    {        ( UTEndOfArgument )}
+    {( UTEndOfArgument )}
 | _1 = BGRP _2 = error
-    {               (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '{'" "{ ..<!>.." _1))
       )}
 | _1 = BGRP _2 = sxsep _3 = EGRP _4 = error
-    {                          (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '}'" "} ..<!>.." _3))
       )}
 
 sargsub:
   _1 = BGRP _2 = sxsep _3 = EGRP _4 = sargsub
-    {                            (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let rng = (sttln, sttpos, endln, endpos) in
@@ -1210,20 +1210,20 @@ sargsub:
           UTArgumentCons((rng, utast), _4)
       )}
 | _1 = OPENQT _2 = sxsep _3 = CLOSEQT _4 = sargsub
-    {                                 (
+    {(
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
         let rng = (sttln, sttpos, endln, endpos) in
           UTArgumentCons((rng, omit_spaces _2), _4)
       )}
 | 
-    {    ( UTEndOfArgument )}
+    {( UTEndOfArgument )}
 | _1 = BGRP _2 = error
-    {               (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '{'" "{ ..<!>.." _1))
       )}
 | _1 = BGRP _2 = sxsep _3 = EGRP _4 = error
-    {                          (
+    {(
         raise (ParseErrorDetail(error_reporting "illegal token after '}'" "} ..<!>.." _3))
       )}
 

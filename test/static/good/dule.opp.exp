@@ -198,250 +198,250 @@ let unclosed opening_name opening_num closing_name closing_num =
 
 type_label:
   _1 = LIDENT
-    {                                                ( IdIndex.s2type _1 )}
+    {( IdIndex.s2type _1 )}
 
 value_label:
   _1 = LIDENT
-    {                                                ( IdIndex.s2value _1 )}
+    {( IdIndex.s2value _1 )}
 
 case_label:
   _1 = UIDENT
-    {                                                ( IdIndex.s2case _1 )}
+    {( IdIndex.s2case _1 )}
 | _1 = LIDENT
-    {                                                ( IdIndex.s2case _1 )}
+    {( IdIndex.s2case _1 )}
 
 dule_label:
   _1 = UIDENT
-    {                                                ( IdIndex.s2dule _1 )}
+    {( IdIndex.s2dule _1 )}
 
 sp_label:
   _1 = UIDENT
-    {                                                ( IdIndex.s2sp _1 )}
+    {( IdIndex.s2sp _1 )}
 
 list0_field_typ:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list1_field_typ
-    {                                                ( _1 )}
+    {( _1 )}
 
 list1_field_typ:
   _1 = field_typ
-    {                                                ( cons _1 nil )}
+    {( cons _1 nil )}
 | _1 = list1_field_typ _2 = SEMI _3 = field_typ
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 field_typ:
   _1 = value_label _2 = COLON _3 = typ
-    {                                                ( (_1, _3) )}
+    {( (_1, _3) )}
 
 list0_case_typ:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list1_case_typ
-    {                                                ( _1 )}
+    {( _1 )}
 
 list1_case_typ:
   _1 = case_typ
-    {                                                ( cons _1 nil )}
+    {( cons _1 nil )}
 | _1 = list1_case_typ _2 = BAR _3 = case_typ
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 case_typ:
   _1 = BACKQUOTE _2 = case_label _3 = typ
-    {                                                ( (_2, _3) )}
+    {( (_2, _3) )}
 | _1 = BACKQUOTE _2 = case_label
-    {                                                ( (_2, mktyp(F_pp nil)) )}
+    {( (_2, mktyp(F_pp nil)) )}
 
 list0_param_typ:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list0_param_typ _2 = param_typ
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 param_typ:
   _1 = TILDE _2 = value_label _3 = COLON _4 = typ
-    {                                                ( (_2, _4) )}
+    {( (_2, _4) )}
 
 typ:
   _1 = typ _2 = DOT _3 = typ
-    {      ( mktyp(F_COMP (_1, _3)) )}
+    {( mktyp(F_COMP (_1, _3)) )}
 | _1 = type_label
-    {      ( mktyp(F_PR _1) )}
+    {( mktyp(F_PR _1) )}
 | _1 = dule_label
-    {      ( mktyp(F_PR _1) )}
+    {( mktyp(F_PR _1) )}
 | _1 = LBRACE _2 = list0_field_typ _3 = RBRACE
-    {      ( mktyp(F_pp _2) )}
+    {( mktyp(F_pp _2) )}
 | _1 = LBRACE _2 = list0_field_typ _3 = error
-    {      ( unclosed "{" 1 "}" 3 )}
+    {( unclosed "{" 1 "}" 3 )}
 | _1 = LBRACKET _2 = list0_case_typ _3 = RBRACKET
-    {      ( mktyp(F_ss _2) )}
+    {( mktyp(F_ss _2) )}
 | _1 = LBRACKET _2 = list0_case_typ _3 = error
-    {      ( unclosed "[" 1 "]" 3 )}
+    {( unclosed "[" 1 "]" 3 )}
 | _1 = list0_param_typ _2 = MINUSGREATER _3 = typ
-    {      ( mktyp(F_ee (_1, _3)) )}
+    {( mktyp(F_ee (_1, _3)) )}
 | _1 = IND _2 = type_label _3 = COLON _4 = typ
-    {      ( mktyp(F_ii (_2, _4)) )}
+    {( mktyp(F_ii (_2, _4)) )}
 | _1 = COIND _2 = type_label _3 = COLON _4 = typ
-    {      ( mktyp(F_tt (_2, _4)) )}
+    {( mktyp(F_tt (_2, _4)) )}
 | _1 = LPAREN _2 = typ _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = typ _3 = error
-    {      ( unclosed "(" 1 ")" 3 )}
+    {( unclosed "(" 1 ")" 3 )}
 
 list0_field:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list1_field
-    {                                                ( _1 )}
+    {( _1 )}
 
 list1_field:
   _1 = field
-    {                                                ( cons _1 nil )}
+    {( cons _1 nil )}
 | _1 = list1_field _2 = SEMI _3 = field
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 field:
   _1 = value_label _2 = EQUAL _3 = valu
-    {                                                ( (_1, _3) )}
+    {( (_1, _3) )}
 | _1 = value_label
-    {                                                ( (_1, mkvalu(T_pr _1)) )}
+    {( (_1, mkvalu(T_pr _1)) )}
 
 list0_case:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list1_case
-    {                                                ( _1 )}
+    {( _1 )}
 
 list1_case:
   _1 = case
-    {                                                ( cons _1 nil )}
+    {( cons _1 nil )}
 | _1 = list1_case _2 = BAR _3 = case
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 case:
   _1 = BACKQUOTE _2 = case_label _3 = embedding
-    {                                                  ( (_2, _3) )}
+    {( (_2, _3) )}
 
 embedding:
   _1 = valu
-    {      ( _1 )}
+    {( _1 )}
 | _1 = pattern _2 = MINUSGREATER _3 = valu
-    {      ( mkvalu(T_curry (cons (AtIndex.it, _1) nil, _3)) )}
+    {( mkvalu(T_curry (cons (AtIndex.it, _1) nil, _3)) )}
 | _1 = MINUSGREATER _2 = valu
-    {      ( mkvalu(T_curry (cons (AtIndex.it, (mkwild(), mktyp(F_x))) nil, _2)) )}
+    {( mkvalu(T_curry (cons (AtIndex.it, (mkwild(), mktyp(F_x))) nil, _2)) )}
 
 list1_argument:
   _1 = argument
-    {                                                ( cons _1 nil )}
+    {( cons _1 nil )}
 | _1 = list1_argument _2 = argument
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 argument:
   _1 = TILDE _2 = value_label _3 = COLON _4 = valu %prec prec_argument
-    {      ( (_2, _4) )}
+    {( (_2, _4) )}
 | _1 = TILDE _2 = value_label
-    {      ( (_2, mkvalu(T_pr _2)) )}
+    {( (_2, mkvalu(T_pr _2)) )}
 
 list0_declaration:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list0_declaration _2 = declaration
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 declaration:
   _1 = pattern _2 = EQUAL _3 = valu
-    {      ( let (k, f) = _1 in
+    {( let (k, f) = _1 in
       (k, (f, _3)) )}
 | _1 = REC _2 = pattern _3 = EQUAL _4 = valu
-    {      ( let (k, f) = _2 in
+    {( let (k, f) = _2 in
       (k, (f, mkvalu(T_fix (k, _4)))) )}
 
 list0_param:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list0_param _2 = param
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 param:
   _1 = TILDE _2 = value_label
-    {                                                ( (_2, (_2, mktyp(F_x))) )}
+    {( (_2, (_2, mktyp(F_x))) )}
 | _1 = TILDE _2 = value_label _3 = COLON _4 = pattern
-    {                                                ( (_2, _4) )}
+    {( (_2, _4) )}
 | _1 = TILDE _2 = LPAREN _3 = value_label _4 = COLON _5 = typ _6 = RPAREN
-    {                                                ( (_3, (_3, _5)) )}
+    {( (_3, (_3, _5)) )}
 | _1 = TILDE _2 = LPAREN _3 = value_label _4 = COLON _5 = typ _6 = error
-    {                                                ( unclosed "(" 2 ")" 6 )}
+    {( unclosed "(" 2 ")" 6 )}
 
 pattern:
   _1 = value_label _2 = COLON _3 = typ
-    {                                                ( (_1, _3) )}
+    {( (_1, _3) )}
 | _1 = value_label
-    {                                                ( (_1, mktyp(F_x)) )}
+    {( (_1, mktyp(F_x)) )}
 | _1 = UNDERSCORE
-    {                                                ( (mkwild(), mktyp(F_x)) )}
+    {( (mkwild(), mktyp(F_x)) )}
 | _1 = LBRACE _2 = list0_field _3 = RBRACE
-    {                                                ( (mkpatid(), mkpat(_2)) )}
+    {( (mkpatid(), mkpat(_2)) )}
 | _1 = LBRACE _2 = list0_field _3 = error
-    {                                                ( unclosed "{" 1 "}" 3 )}
+    {( unclosed "{" 1 "}" 3 )}
 
 partial_arguments:
   _1 = LPAREN _2 = list1_argument _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = list1_argument _3 = error
-    {      ( unclosed "(" 1 ")" 3 )}
+    {( unclosed "(" 1 ")" 3 )}
 
 valu:
   _1 = COLON _2 = typ
-    {      ( mkvalu(T_id _2) )}
+    {( mkvalu(T_id _2) )}
 | _1 = valu _2 = DOT _3 = valu
-    {      ( mkvalu(T_comp (_1, _3)) )}
+    {( mkvalu(T_comp (_1, _3)) )}
 | _1 = value_label
-    {      ( mkvalu(T_pr _1) )}
+    {( mkvalu(T_pr _1) )}
 | _1 = dule_label
-    {      ( mkvalu(T_pr _1) )}
+    {( mkvalu(T_pr _1) )}
 | _1 = LBRACE _2 = list0_field _3 = RBRACE
-    {      ( mkvalu(T_record _2) )}
+    {( mkvalu(T_record _2) )}
 | _1 = LBRACE _2 = list0_field _3 = error
-    {      ( unclosed "{" 1 "}" 3 )}
+    {( unclosed "{" 1 "}" 3 )}
 | _1 = valu _2 = DOT _3 = BACKQUOTE _4 = case_label
-    {      ( mkvalu(T_comp (_1, mkvalu(T_in _4))) )}
+    {( mkvalu(T_comp (_1, mkvalu(T_in _4))) )}
 | _1 = BACKQUOTE _2 = case_label
-    {      ( mkvalu(T_comp (mkvalu(T_record nil), mkvalu(T_in _2))) )}
+    {( mkvalu(T_comp (mkvalu(T_record nil), mkvalu(T_in _2))) )}
 | _1 = LBRACKET _2 = list0_case _3 = RBRACKET
-    {      ( mkvalu(T_case _2) )}
+    {( mkvalu(T_case _2) )}
 | _1 = LBRACKET _2 = list0_case _3 = error
-    {      ( unclosed "[" 1 "]" 3 )}
+    {( unclosed "[" 1 "]" 3 )}
 | _1 = MAP _2 = embedding
-    {      ( mkvalu(T_map _2) )}
+    {( mkvalu(T_map _2) )}
 | _1 = CON
-    {      ( mkvalu(T_con) )}
+    {( mkvalu(T_con) )}
 | _1 = FOLD _2 = embedding
-    {      ( mkvalu(T_fold _2) )}
+    {( mkvalu(T_fold _2) )}
 | _1 = DE
-    {      ( mkvalu(T_de) )}
+    {( mkvalu(T_de) )}
 | _1 = UNCON
-    {      ( mkvalu(T_uncon) )}
+    {( mkvalu(T_uncon) )}
 | _1 = UNFOLD _2 = embedding
-    {      ( mkvalu(T_unfold _2) )}
+    {( mkvalu(T_unfold _2) )}
 | _1 = UNDE
-    {      ( mkvalu(T_unde) )}
+    {( mkvalu(T_unde) )}
 | _1 = valu _2 = list1_argument
-    {      ( mkvalu(T_appl (_2, _1)) )}
+    {( mkvalu(T_appl (_2, _1)) )}
 | _1 = valu _2 = TILDE
-    {      ( mkvalu(T_appl (nil, _1)) )}
+    {( mkvalu(T_appl (nil, _1)) )}
 | _1 = MATCH _2 = valu _3 = WITH _4 = valu
-    {      ( mkvalu(T_appl (cons (AtIndex.it, _2) nil, _4)) )}
+    {( mkvalu(T_appl (cons (AtIndex.it, _2) nil, _4)) )}
 | _1 = LET _2 = list0_declaration _3 = IN _4 = valu
-    {      ( mkvalu(let lift = _2 in
+    {( mkvalu(let lift = _2 in
               let lt = vmap (fun (f, t) -> t) lift in
               let lif = bmap (fun (k, (f, t)) -> (k, f)) lift in
 	      T_appl (lt, (mkvalu(T_curry (lif, _4))))) )}
 | _1 = FUN _2 = list0_param _3 = MINUSGREATER _4 = valu
-    {      ( mkvalu(T_curry (_2, _4)) )}
+    {( mkvalu(T_curry (_2, _4)) )}
 | _1 = valu _2 = partial_arguments
-    {      ( mkvalu(T_pappl (_2, _1)) )}
+    {( mkvalu(T_pappl (_2, _1)) )}
 | _1 = IF _2 = valu _3 = THEN _4 = valu _5 = ELSE _6 = valu
-    {      ( let case =
+    {( let case =
 	  cons (AtIndex.tt,
 		mkvalu(T_curry (cons (AtIndex.it,
 				      (mkwild(), mktyp(F_x))) nil, _4)))
@@ -453,205 +453,205 @@ valu:
         mkvalu(T_appl (econs (AtIndex.it, _2) nil,
 		       mkvalu(T_case case))) )}
 | _1 = ASSERT _2 = valu _3 = IN _4 = valu
-    {      ( mkvalu(T_assert (_2, _4)) )}
+    {( mkvalu(T_assert (_2, _4)) )}
 | _1 = FAIL
-    {      ( mkvalu(T_fail) )}
+    {( mkvalu(T_fail) )}
 | _1 = INT
-    {      ( mkint(_1) )}
+    {( mkint(_1) )}
 | _1 = LPAREN _2 = valu _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = valu _3 = error
-    {      ( unclosed "(" 1 ")" 3 )}
+    {( unclosed "(" 1 ")" 3 )}
 
 list0_field_sp:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list1_field_sp
-    {                                                ( _1 )}
+    {( _1 )}
 
 list1_field_sp:
   _1 = field_sp
-    {                                                ( econs _1 nil )}
+    {( econs _1 nil )}
 | _1 = list1_field_sp _2 = SEMI _3 = field_sp
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 field_sp:
   _1 = dule_label _2 = COLON _3 = sp
-    {      ( (_1, _3) )}
+    {( (_1, _3) )}
 | _1 = dule_label
-    {      ( (_1, mksp(S_Ii (AtIndex.dule2sp _1))) )}
+    {( (_1, mksp(S_Ii (AtIndex.dule2sp _1))) )}
 
 list0_param_sp:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list0_param_sp _2 = param_sp
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 param_sp:
   _1 = TILDE _2 = field_sp
-    {                                                ( _2 )}
+    {( _2 )}
 
 list0_bb_item:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list0_bb_item _2 = bb_item
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 bb_item:
   _1 = TYPE _2 = type_label
-    {                                                ( (_2, Bb_type) )}
+    {( (_2, Bb_type) )}
 | _1 = VALUE _2 = value_label _3 = COLON _4 = typ
-    {                                                ( (_2, Bb_value _4) )}
+    {( (_2, Bb_value _4) )}
 
 sp:
   _1 = LBRACE _2 = list0_field_sp _3 = RBRACE
-    {      ( mksp(S_Aa _2) )}
+    {( mksp(S_Aa _2) )}
 | _1 = LBRACE _2 = list0_field_sp _3 = error
-    {      ( unclosed "{" 1 "}" 3 )}
+    {( unclosed "{" 1 "}" 3 )}
 | _1 = LBRACE _2 = LBRACE _3 = list0_field_sp _4 = RBRACE _5 = RBRACE
-    {      ( mksp(S_Cc _3) )}
+    {( mksp(S_Cc _3) )}
 | _1 = LBRACE _2 = LBRACE _3 = list0_field_sp _4 = error
-    {      ( unclosed "{{" 1 "}}" 4 )}
+    {( unclosed "{{" 1 "}}" 4 )}
 | _1 = list0_param_sp _2 = MINUSGREATER _3 = sp
-    {      ( mksp(S_Ee (_1, _3)) )}
+    {( mksp(S_Ee (_1, _3)) )}
 | _1 = SIG _2 = list0_bb_item _3 = END
-    {      ( mksp(S_Bb _2) )}
+    {( mksp(S_Bb _2) )}
 | _1 = SIG _2 = list0_bb_item _3 = error
-    {      ( unclosed "sig" 1 "end" 3 )}
+    {( unclosed "sig" 1 "end" 3 )}
 | _1 = sp _2 = WITH _3 = dule
-    {      ( mksp(S_Ww (_3, _1)) )}
+    {( mksp(S_Ww (_3, _1)) )}
 | _1 = sp_label
-    {      ( mksp(S_Ii _1) )}
+    {( mksp(S_Ii _1) )}
 | _1 = LPAREN _2 = sp _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = sp _3 = error
-    {      ( unclosed "(" 1 ")" 3 )}
+    {( unclosed "(" 1 ")" 3 )}
 
 list0_field_dule:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list1_field_dule
-    {                                                ( _1 )}
+    {( _1 )}
 
 list1_field_dule:
   _1 = field_dule
-    {                                                ( econs _1 nil )}
+    {( econs _1 nil )}
 | _1 = list1_field_dule _2 = SEMI _3 = field_dule
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 field_dule:
   _1 = dule_label _2 = EQUAL _3 = dule
-    {                                                ( (_1, _3) )}
+    {( (_1, _3) )}
 | _1 = dule_label
-    {                                                ( (_1, mkdule(M_Pr _1)) )}
+    {( (_1, mkdule(M_Pr _1)) )}
 
 list0_base_item:
   
-    {                                                ( nil )}
+    {( nil )}
 | _1 = list0_base_item _2 = base_item
-    {                                                ( econs _2 _1 )}
+    {( econs _2 _1 )}
 
 base_item:
   _1 = TYPE _2 = type_label _3 = EQUAL _4 = typ
-    {      ( (_2, Base_type _4) )}
+    {( (_2, Base_type _4) )}
 | _1 = VALUE _2 = value_label _3 = EQUAL _4 = valu
-    {      ( (_2, Base_value _4) )}
+    {( (_2, Base_value _4) )}
 | _1 = VALUE _2 = REC _3 = value_label _4 = EQUAL _5 = valu
-    {      ( (_3, Base_value (mkvalu(T_fix (_3, _5)))) )}
+    {( (_3, Base_value (mkvalu(T_fix (_3, _5)))) )}
 
 def_dule:
   _1 = dule_label _2 = EQUAL _3 = dule
-    {                                                ( (_1, _3) )}
+    {( (_1, _3) )}
 
 def_sp:
   _1 = sp_label _2 = EQUAL _3 = sp
-    {                                                ( (_1, _3) )}
+    {( (_1, _3) )}
 
 one_dule:
   _1 = def_dule
-    {                                                ( econs _1 nil )}
+    {( econs _1 nil )}
 | _1 = one_dule _2 = AND _3 = def_dule
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 one_sp:
   _1 = def_sp
-    {                                                ( econs _1 nil )}
+    {( econs _1 nil )}
 | _1 = one_sp _2 = AND _3 = def_sp
-    {                                                ( econs _3 _1 )}
+    {( econs _3 _1 )}
 
 list0_link_item:
   
-    {                                                ( [] )}
+    {( [] )}
 | _1 = list0_link_item _2 = link_item
-    {                                                ( _2 :: _1 )}
+    {( _2 :: _1 )}
 
 link_item:
   _1 = def_dule
-    {      ( let (i, m) = _1 in Link_Dule (i, m) )}
+    {( let (i, m) = _1 in Link_Dule (i, m) )}
 | _1 = MODULE _2 = def_dule
-    {      ( let (i, m) = _2 in Link_Dule (i, m) )}
+    {( let (i, m) = _2 in Link_Dule (i, m) )}
 | _1 = MODULE _2 = IND _3 = one_dule
-    {                                                ( Link_Ind_Dule _3 )}
+    {( Link_Ind_Dule _3 )}
 | _1 = MODULE _2 = COIND _3 = one_dule
-    {                                                ( Link_CoInd_Dule _3 )}
+    {( Link_CoInd_Dule _3 )}
 | _1 = SPEC _2 = def_sp
-    {      ( let (i, p) = _2 in Link_Sp (i, p) )}
+    {( let (i, p) = _2 in Link_Sp (i, p) )}
 | _1 = SPEC _2 = REC _3 = one_sp
-    {                                                ( Link_Rec_Sp _3 )}
+    {( Link_Rec_Sp _3 )}
 | _1 = LIBRARY _2 = def_dule
-    {      ( let (i, m) = _2 in Link_Lib (i, m) )}
+    {( let (i, m) = _2 in Link_Lib (i, m) )}
 | _1 = LIBRARY _2 = IND _3 = one_dule
-    {                                                ( Link_Ind_Lib _3 )}
+    {( Link_Ind_Lib _3 )}
 | _1 = LIBRARY _2 = COIND _3 = one_dule
-    {                                                ( Link_CoInd_Lib _3 )}
+    {( Link_CoInd_Lib _3 )}
 
 dule:
   _1 = COLON _2 = LBRACE _3 = LBRACE _4 = list0_field_sp _5 = RBRACE _6 = RBRACE
-    {      ( mkdule(M_Id _4) )}
+    {( mkdule(M_Id _4) )}
 | _1 = COLON _2 = LBRACE _3 = LBRACE _4 = sp _5 = error
-    {      ( unclosed ": {{" 2 "}}" 5 )}
+    {( unclosed ": {{" 2 "}}" 5 )}
 | _1 = dule _2 = DOT _3 = dule
-    {      ( mkdule(M_Comp (_1, _3)) )}
+    {( mkdule(M_Comp (_1, _3)) )}
 | _1 = dule_label
-    {      ( mkdule(M_Pr _1) )}
+    {( mkdule(M_Pr _1) )}
 | _1 = LBRACE _2 = list0_field_dule _3 = RBRACE
-    {      ( mkdule(M_Accord _2) )}
+    {( mkdule(M_Accord _2) )}
 | _1 = LBRACE _2 = list0_field_dule _3 = error
-    {      ( unclosed "{" 1 "}" 3 )}
+    {( unclosed "{" 1 "}" 3 )}
 | _1 = LBRACE _2 = LBRACE _3 = list0_field_dule _4 = RBRACE _5 = RBRACE
-    {      ( mkdule(M_Concord _3) )}
+    {( mkdule(M_Concord _3) )}
 | _1 = LBRACE _2 = LBRACE _3 = list0_field_dule _4 = error
-    {      ( unclosed "{{" 1 "}}" 4 )}
+    {( unclosed "{{" 1 "}}" 4 )}
 | _1 = COLONCOLON _2 = sp _3 = dule
-    {      ( mkdule(M_Spec (_3, _2)) )}
+    {( mkdule(M_Spec (_3, _2)) )}
 | _1 = STRUCT _2 = list0_base_item _3 = END
-    {      ( mkdule(M_Base _2) )}
+    {( mkdule(M_Base _2) )}
 | _1 = STRUCT _2 = list0_base_item _3 = error
-    {      ( unclosed "struct" 1 "end" 3 )}
+    {( unclosed "struct" 1 "end" 3 )}
 | _1 = dule _2 = BAR _3 = dule
-    {      ( mkdule(M_Inst (_1, _3)) )}
+    {( mkdule(M_Inst (_1, _3)) )}
 | _1 = dule _2 = WITH _3 = dule
-    {      ( mkdule(M_With (_3, _1)) )}
+    {( mkdule(M_With (_3, _1)) )}
 | _1 = dule _2 = COLONGREATER _3 = sp
-    {      ( mkdule(M_Trim (_1, _3)) )}
+    {( mkdule(M_Trim (_1, _3)) )}
 | _1 = LINK _2 = list0_link_item _3 = END
-    {      ( mkdule(M_Link _2) )}
+    {( mkdule(M_Link _2) )}
 | _1 = LINK _2 = list0_link_item _3 = error
-    {      ( unclosed "link" 1 "end" 3 )}
+    {( unclosed "link" 1 "end" 3 )}
 | _1 = LOAD _2 = dule_label
-    {      ( mkdule(M_Load _2) )}
+    {( mkdule(M_Load _2) )}
 | _1 = LPAREN _2 = dule _3 = RPAREN
-    {      ( _2 )}
+    {( _2 )}
 | _1 = LPAREN _2 = dule _3 = error
-    {      ( unclosed "(" 1 ")" 3 )}
+    {( unclosed "(" 1 ")" 3 )}
 
 start:
   _1 = list0_link_item _2 = EOF
-    {                                                ( mkstart(_1) )}
+    {( mkstart(_1) )}
 
 core:
   _1 = valu _2 = EOF
-    {                                                ( _1 )}
+    {( _1 )}
 
 %%
 

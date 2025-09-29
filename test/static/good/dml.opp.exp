@@ -157,549 +157,549 @@ open Dmlsyn
 
 top:
   _1 = decls _2 = EOF
-    {                 ( _1 )}
+    {( _1 )}
 
 decls:
   _1 = decl _2 = decls
-    {                  ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | _1 = decl
-    {            ( [_1] )}
+    {( [_1] )}
 
 decl:
   _1 = FUN _2 = fun_decls
-    {                    ( Fdecl _2 )}
+    {( Fdecl _2 )}
 | _1 = VAL _2 = var_typ_decl
-    {                       ( VTdecl _2 )}
+    {( VTdecl _2 )}
 | _1 = VAL _2 = val_decls
-    {                    ( Vdecl _2 )}
+    {( Vdecl _2 )}
 | _1 = SORT _2 = isort_decl
-    {                      ( Sdecl _2 )}
+    {( Sdecl _2 )}
 | _1 = DATATYPE _2 = union_decls
-    {                          ( Udecl _2 )}
+    {( Udecl _2 )}
 
 ident:
   _1 = IDENT
-    {             ( _1 )}
+    {( _1 )}
 
 constant:
   _1 = TRUE
-    {            ( Cboo true )}
+    {( Cboo true )}
 | _1 = FALSE
-    {             ( Cboo false)}
+    {( Cboo false)}
 | _1 = CONSTCHAR
-    {                 ( Ccha _1 )}
+    {( Ccha _1 )}
 | _1 = CONSTFLOAT
-    {                  ( Cflo _1 )}
+    {( Cflo _1 )}
 | _1 = CONSTINT
-    {                ( Cint _1 )}
+    {( Cint _1 )}
 | _1 = CONSTSTRING
-    {                   ( Cstr _1 )}
+    {( Cstr _1 )}
 
 opname:
   _1 = OP _2 = PLUS
-    {               ( "+" )}
+    {( "+" )}
 | _1 = OP _2 = MINUS
-    {                ( "-" )}
+    {( "-" )}
 | _1 = OP _2 = TIMES
-    {                ( "*" )}
+    {( "*" )}
 | _1 = OP _2 = DIV
-    {              ( "/" )}
+    {( "/" )}
 | _1 = OP _2 = PERCENT
-    {                  ( "%" )}
+    {( "%" )}
 | _1 = OP _2 = GT
-    {             ( ">" )}
+    {( ">" )}
 | _1 = OP _2 = GTEQ
-    {               ( ">=" )}
+    {( ">=" )}
 | _1 = OP _2 = LT
-    {             ( "<" )}
+    {( "<" )}
 | _1 = OP _2 = LTEQ
-    {               ( "<=" )}
+    {( "<=" )}
 | _1 = OP _2 = EQ
-    {             ( "=" )}
+    {( "=" )}
 | _1 = OP _2 = LTGT
-    {               ( "<>" )}
+    {( "<>" )}
 | _1 = OP _2 = AMPERAMPER
-    {                    ( "&&" )}
+    {( "&&" )}
 | _1 = OP _2 = BARBAR
-    {                 ( "||" )}
+    {( "||" )}
 | _1 = OP _2 = APPEND
-    {                 ( "@" )}
+    {( "@" )}
 
 var_typ_decl:
   _1 = IDENT _2 = COLON _3 = dtype
-    {                        ( {var_nam = _1; var_typ = Some _3} )}
+    {( {var_nam = _1; var_typ = Some _3} )}
 | _1 = opname _2 = COLON _3 = dtype
-    {                         ( {var_nam = _1; var_typ = Some _3} )}
+    {( {var_nam = _1; var_typ = Some _3} )}
 
 val_decl:
   _1 = pattern _2 = EQ _3 = exp
-    {                     ( {vd_pat = _1; vd_exp = _3} )}
+    {( {vd_pat = _1; vd_exp = _3} )}
 
 val_decls:
   _1 = val_decl _2 = AND _3 = val_decls
-    {                                        ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = val_decl
-    {                                        ( [_1] )}
+    {( [_1] )}
 
 fun_args:
   _1 = simple_pattern _2 = fun_args
-    {                             ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | _1 = simple_pattern
-    {                     ( [_1] )}
+    {( [_1] )}
 
 fun_decl_clause:
   _1 = IDENT _2 = fun_args _3 = EQ _4 = exp
-    {                           ( (_1, (_2, _4)) )}
+    {( (_1, (_2, _4)) )}
 
 fun_decl_clauses:
   _1 = fun_decl_clause _2 = BAR _3 = fun_decl_clauses
-    {     ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = fun_decl_clause
-    {                      ( [_1] )}
+    {( [_1] )}
 
 owithtype:
   _1 = WITHTYPE _2 = dtype
-    {                     ( Some _2 )}
+    {( Some _2 )}
 | 
-    {                   ( None )}
+    {( None )}
 
 fun_decl:
   _1 = tvar_para _2 = fun_decl_clauses _3 = owithtype
-    {     ( mk_function_d _1 _2 _3 )}
+    {( mk_function_d _1 _2 _3 )}
 
 fun_decls:
   _1 = fun_decl _2 = AND _3 = fun_decls
-    {                            ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = fun_decl
-    {                ( [_1] )}
+    {( [_1] )}
 
 isort_decl:
   _1 = IDENT _2 = EQ _3 = isort
-    {                     ( { sd_nam = _1; sd_def = _3 } )}
+    {( { sd_nam = _1; sd_def = _3 } )}
 
 union_decl:
   _1 = tvar_para _2 = IDENT _3 = ud_sorts _4 = EQ _5 = union_field_decls
-    {     ( { ud_nam = _2;
+    {( { ud_nam = _2;
 				            ud_tvs = _1;
 				            ud_sts = _3;
 					    ud_fds = _5 } )}
 
 union_decls:
   _1 = union_decl _2 = AND _3 = union_decls
-    {                                ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = union_decl
-    {                  ( [_1] )}
+    {( [_1] )}
 
 open_tvar_para:
   _1 = tvar _2 = RPAREN
-    {                   ( [TDvar (to_btv _1)] )}
+    {( [TDvar (to_btv _1)] )}
 | _1 = tvar _2 = COMMA _3 = open_tvar_para
-    {                               ( TDvar (to_btv _1) :: _3 )}
+    {( TDvar (to_btv _1) :: _3 )}
 
 tvar_para:
   _1 = LPAREN _2 = open_tvar_para
-    {                           ( _2 )}
+    {( _2 )}
 | _1 = tvar
-    {            ( [TDvar (to_btv _1)] )}
+    {( [TDvar (to_btv _1)] )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 ud_sorts:
   _1 = WITH _2 = isort
-    {                  ( [_2] )}
+    {( [_2] )}
 | _1 = WITH _2 = LPAREN _3 = open_isort_list
-    {                                   ( _3 )}
+    {( _3 )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 open_isort_list:
   _1 = isort _2 = RPAREN
-    {                   ( [_1] )}
+    {( [_1] )}
 | _1 = isort _2 = COMMA _3 = open_isort_list
-    {                                 ( _1 :: _3 )}
+    {( _1 :: _3 )}
 
 tvar:
   _1 = QUOTE _2 = IDENT
-    {                    ( _2 )}
+    {( _2 )}
 
 ivar_decl:
   _1 = ident _2 = COLON _3 = isort
-    {                        ( IDvar (to_ubiv _1 _3) )}
+    {( IDvar (to_ubiv _1 _3) )}
 | _1 = iprop
-    {             ( IDprop _1 )}
+    {( IDprop _1 )}
 
 ivar_decls:
   _1 = ivar_decl _2 = COMMA _3 = ivar_decls
-    {                                ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = ivar_decl _2 = BAR _3 = ivar_decls
-    {                              ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = ivar_decl
-    {                  ( [_1] )}
+    {( [_1] )}
 
 uni_ivar_decls:
   _1 = LBRACE _2 = ivar_decls _3 = RBRACE
-    {                              ( _2 )}
+    {( _2 )}
 
 exi_ivar_decls:
   _1 = LBRACKET _2 = ivar_decls _3 = RBRACKET
-    {                                 ( _2 )}
+    {( _2 )}
 
 ind_bop1:
   _1 = LAND
-    {            ( INFop "/\\" )}
+    {( INFop "/\\" )}
 | _1 = LOR
-    {            ( INFop "\\/" )}
+    {( INFop "\\/" )}
 
 ind_bop2:
   _1 = LT
-    {           ( INFop "<" )}
+    {( INFop "<" )}
 | _1 = LTEQ
-    {            ( INFop "<=" )}
+    {( INFop "<=" )}
 | _1 = GT
-    {           ( INFop ">" )}
+    {( INFop ">" )}
 | _1 = GTEQ
-    {            ( INFop ">=" )}
+    {( INFop ">=" )}
 | _1 = EQ
-    {           ( INFop "=" )}
+    {( INFop "=" )}
 | _1 = LTGT
-    {            ( INFop "<>" )}
+    {( INFop "<>" )}
 
 ind_aop1:
   _1 = PLUS
-    {            ( INFop "+" )}
+    {( INFop "+" )}
 | _1 = MINUS
-    {             ( INFop "-" )}
+    {( INFop "-" )}
 | _1 = BARBAR
-    {              ( INFop "||" )}
+    {( INFop "||" )}
 
 ind_aop2:
   _1 = TIMES
-    {             ( INFop "*" )}
+    {( INFop "*" )}
 | _1 = DIV
-    {            ( INFop "/" )}
+    {( INFop "/" )}
 | _1 = PERCENT
-    {               ( INFop "mod" )}
+    {( INFop "mod" )}
 | _1 = AMPERAMPER
-    {                  ( INFop "&&" )}
+    {( INFop "&&" )}
 
 simple_index:
   _1 = ident
-    {             ( Ivar _1 )}
+    {( Ivar _1 )}
 | _1 = CONSTINT
-    {                ( Iint _1 )}
+    {( Iint _1 )}
 | _1 = MINUS _2 = simple_index
-    {                                        ( Ifun("uminus", [_2]) )}
+    {( Ifun("uminus", [_2]) )}
 | _1 = ident _2 = LPAREN _3 = open_comma_index_list
-    {                                        ( Ifun(_1, _3) )}
+    {( Ifun(_1, _3) )}
 | _1 = LPAREN _2 = index _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 
 int_index:
   _1 = simple_index
-    {                   ( _1 )}
+    {( _1 )}
 | _1 = int_index _2 = ind_aop1 _3 = int_index %prec prec_ind_aop1
-    {     ( mk_infix_ind _1 _2 _3 )}
+    {( mk_infix_ind _1 _2 _3 )}
 | _1 = int_index _2 = ind_aop2 _3 = int_index %prec prec_ind_aop2
-    {     ( mk_infix_ind _1 _2 _3 )}
+    {( mk_infix_ind _1 _2 _3 )}
 
 bool_index_seq:
   _1 = int_index _2 = ind_bop2 _3 = int_index
-    {                                 ( (_2, _3, [mk_infix_ind _1 _2 _3]) )}
+    {( (_2, _3, [mk_infix_ind _1 _2 _3]) )}
 | _1 = bool_index_seq _2 = ind_bop2 _3 = int_index %prec prec_ind_bop2
-    {                                        ( mk_infix_bool_ind_seq _1 _2 _3 )}
+    {( mk_infix_bool_ind_seq _1 _2 _3 )}
 
 bool_index:
   _1 = bool_index_seq
-    {                     ( ind_of_bool_ind_seq _1 )}
+    {( ind_of_bool_ind_seq _1 )}
 | _1 = bool_index _2 = ind_bop1 _3 = bool_index
-    {                                   ( mk_infix_ind _1 _2 _3 )}
+    {( mk_infix_ind _1 _2 _3 )}
 | _1 = LPAREN _2 = bool_index _3 = RPAREN
-    {                              ( _2 )}
+    {( _2 )}
 
 index:
   _1 = int_index
-    {                 ( _1 )}
+    {( _1 )}
 | _1 = bool_index
-    {                  ( _1 )}
+    {( _1 )}
 
 open_comma_index_list:
   _1 = index _2 = COMMA _3 = open_comma_index_list
-    {                                      ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = index _2 = RPAREN
-    {                   ( [_1] )}
+    {( [_1] )}
 
 iprop:
   _1 = index
-    {                ( ip_of_ind _1 )}
+    {( ip_of_ind _1 )}
 
 isort:
   _1 = INT
-    {            ( ISint )}
+    {( ISint )}
 | _1 = NAT
-    {            ( isnat )}
+    {( isnat )}
 | _1 = IDENT
-    {             ( ISnam _1 )}
+    {( ISnam _1 )}
 | _1 = LBRACE _2 = ident _3 = COLON _4 = isort _5 = BAR _6 = iprop _7 = RBRACE
-    {                                        ( ISsub (to_ubiv _2 _4, _6) )}
+    {( ISsub (to_ubiv _2 _4, _6) )}
 
 named_dtype:
   _1 = IDENT
-    {             ( ([], _1) )}
+    {( ([], _1) )}
 | _1 = simple_dtype _2 = IDENT
-    {                         ( ([_1], _2) )}
+    {( ([_1], _2) )}
 | _1 = LPAREN _2 = dtype _3 = open_comma_dtype_list _4 = IDENT
-    {     ( (_2 :: _3, _4) )}
+    {( (_2 :: _3, _4) )}
 
 open_comma_dtype_list:
   _1 = COMMA _2 = dtype _3 = open_comma_dtype_list
-    {     ( _2 :: _3 )}
+    {( _2 :: _3 )}
 | _1 = COMMA _2 = dtype _3 = LPAREN
-    {                                ( [_2] )}
+    {( [_2] )}
 
 simple_dtype:
   _1 = tvar
-    {            ( mkdt (DTvar _1) )}
+    {( mkdt (DTvar _1) )}
 | _1 = BOOL
-    {            ( mkdt (DTnam([], "bool", [])) )}
+    {( mkdt (DTnam([], "bool", [])) )}
 | _1 = BOOL _2 = LPAREN _3 = index _4 = RPAREN
-    {                              ( mkdt (DTnam([], "bool", [_3])) )}
+    {( mkdt (DTnam([], "bool", [_3])) )}
 | _1 = INT
-    {            ( mkdt (DTnam([], "int", [])) )}
+    {( mkdt (DTnam([], "int", [])) )}
 | _1 = NAT
-    {            ( mkdt dtnat_dsc )}
+    {( mkdt dtnat_dsc )}
 | _1 = INT _2 = LPAREN _3 = index _4 = RPAREN
-    {                             ( mkdt (DTnam([], "int", [_3])) )}
+    {( mkdt (DTnam([], "int", [_3])) )}
 | _1 = INT _2 = LPAREN _3 = index _4 = COMMA _5 = index _6 = RPAREN
-    {                                        ( mkdt (dtint_lr_dsc _3 _5) )}
+    {( mkdt (dtint_lr_dsc _3 _5) )}
 | _1 = INT _2 = LPAREN _3 = index _4 = COMMA _5 = index _6 = RBRACKET
-    {     ( mkdt (dtint_lR_dsc _3 _5) )}
+    {( mkdt (dtint_lR_dsc _3 _5) )}
 | _1 = INT _2 = LBRACKET _3 = index _4 = COMMA _5 = index _6 = RPAREN
-    {     ( mkdt (dtint_Lr_dsc _3 _5) )}
+    {( mkdt (dtint_Lr_dsc _3 _5) )}
 | _1 = INT _2 = LBRACKET _3 = index _4 = COMMA _5 = index _6 = RBRACKET
-    {     ( mkdt (dtint_LR_dsc _3 _5) )}
+    {( mkdt (dtint_LR_dsc _3 _5) )}
 | _1 = named_dtype
-    {                   ( let (dts, name) = _1
+    {( let (dts, name) = _1
                                           in mkdt_nam (dts, name, []))}
 | _1 = named_dtype _2 = LPAREN _3 = open_comma_index_list
-    {     ( let (dts, name) = _1
+    {( let (dts, name) = _1
                                           in mkdt_nam (dts, name, _3) )}
 | _1 = exi_ivar_decls _2 = simple_dtype %prec prec_exi
-    {     ( mkdt (DTexi (_1, _2)) )}
+    {( mkdt (DTexi (_1, _2)) )}
 | _1 = LPAREN _2 = dtype _3 = RPAREN
-    {                          ( _2 )}
+    {( _2 )}
 
 tuple_dtype:
   _1 = rev_tuple_dtype
-    {                      ( mkdt_tup (List.rev _1) )}
+    {( mkdt_tup (List.rev _1) )}
 
 rev_tuple_dtype:
   _1 = simple_dtype
-    {                   ( [_1] )}
+    {( [_1] )}
 | _1 = rev_tuple_dtype _2 = TIMES _3 = simple_dtype
-    {     ( _3 :: _1 )}
+    {( _3 :: _1 )}
 
 metric:
   _1 = LT _2 = int_index_list _3 = GT
-    {                         ( _2 )}
+    {( _2 )}
 | _1 = LTGT
-    {           ( [] )}
+    {( [] )}
 
 int_index_list:
   _1 = int_index _2 = comma_int_index_list
-    {                                   ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 comma_int_index_list:
   _1 = COMMA _2 = int_index _3 = comma_int_index_list
-    {     ( _2 :: _3 )}
+    {( _2 :: _3 )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 dtype:
   _1 = tuple_dtype
-    {                   ( _1 )}
+    {( _1 )}
 | _1 = tuple_dtype _2 = MINUSGT _3 = dtype
-    {                               ( mkdt (DTfun (_1, _3)) )}
+    {( mkdt (DTfun (_1, _3)) )}
 | _1 = metric _2 = EQGT _3 = dtype
-    {                        ( mkdt (DTmet (_1, _3)) )}
+    {( mkdt (DTmet (_1, _3)) )}
 | _1 = uni_ivar_decls _2 = dtype
-    {                               ( mkdt (DTuni (_1, _2)) )}
+    {( mkdt (DTuni (_1, _2)) )}
 | _1 = tvar_para _2 = DOT _3 = dtype
-    {                          ( mkdt (DTlam (_1, _3)) )}
+    {( mkdt (DTlam (_1, _3)) )}
 
 dtype_opt:
   _1 = OF _2 = dtype
-    {                ( Some _2 )}
+    {( Some _2 )}
 | 
-    {                   ( None )}
+    {( None )}
 
 union_field_decl:
   _1 = IDENT _2 = dtype_opt
-    {                      ( { uf_nam = _1;
+    {( { uf_nam = _1;
 					    uf_arg = _2;
                                             uf_res = [];
                                             uf_qua = [] } )}
 | _1 = IDENT _2 = LPAREN _3 = open_comma_index_list _4 = dtype_opt
-    {     ( { uf_nam = _1;
+    {( { uf_nam = _1;
 					    uf_arg = _4;
                                             uf_res = _3;
                                             uf_qua = [] } )}
 | _1 = uni_ivar_decls _2 = IDENT _3 = dtype_opt
-    {     ( { uf_nam = _2;
+    {( { uf_nam = _2;
 					    uf_arg = _3;
                                             uf_res = [];
                                             uf_qua = _1 } )}
 | _1 = uni_ivar_decls _2 = IDENT _3 = LPAREN _4 = open_comma_index_list _5 = dtype_opt
-    {     ( { uf_nam = _2;
+    {( { uf_nam = _2;
 					    uf_arg = _5;
                                             uf_res = _4;
                                             uf_qua = _1 } )}
 
 union_field_decls:
   _1 = union_field_decl _2 = BAR _3 = union_field_decls
-    {     ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = union_field_decl
-    {                       ( [_1] )}
+    {( [_1] )}
 
 exp_bop1:
   _1 = AMPERAMPER
-    {                  ( INFop "&&" )}
+    {( INFop "&&" )}
 | _1 = BARBAR
-    {              ( INFop "||" )}
+    {( INFop "||" )}
 
 exp_bop2:
   _1 = LT
-    {           ( INFop "<" )}
+    {( INFop "<" )}
 | _1 = LTEQ
-    {            ( INFop "<=" )}
+    {( INFop "<=" )}
 | _1 = GT
-    {           ( INFop ">" )}
+    {( INFop ">" )}
 | _1 = GTEQ
-    {            ( INFop ">=" )}
+    {( INFop ">=" )}
 | _1 = LTGT
-    {            ( INFop "<>" )}
+    {( INFop "<>" )}
 | _1 = EQ
-    {           ( INFop "=" )}
+    {( INFop "=" )}
 
 exp_aop1:
   _1 = PLUS
-    {            ( INFop "+" )}
+    {( INFop "+" )}
 | _1 = MINUS
-    {             ( INFop "-" )}
+    {( INFop "-" )}
 
 exp_aop2:
   _1 = TIMES
-    {             ( INFop "*" )}
+    {( INFop "*" )}
 | _1 = DIV
-    {            ( INFop "/" )}
+    {( INFop "/" )}
 | _1 = PERCENT
-    {               ( INFop "%" )}
+    {( INFop "%" )}
 
 exp_lop:
   _1 = COLONCOLON
-    {                  ( INFop "cons" )}
+    {( INFop "cons" )}
 | _1 = APPEND
-    {              ( INFop "@" )}
+    {( INFop "@" )}
 
 simple_exp:
   _1 = IDENT
-    {             ( mkexp (Evar _1) )}
+    {( mkexp (Evar _1) )}
 | _1 = constant
-    {                ( mkexp (Ecst _1) )}
+    {( mkexp (Ecst _1) )}
 | _1 = TILDE _2 = simple_exp
-    {                       ( mkexp (Eapp (mkexp (Evar "uminus"),
+    {( mkexp (Eapp (mkexp (Evar "uminus"),
 					               _2)) )}
 | _1 = LET _2 = decls _3 = IN _4 = exp _5 = END
-    {                          ( mkexp (Elet (_2, _4)) )}
+    {( mkexp (Elet (_2, _4)) )}
 | _1 = LPAREN _2 = exp_list _3 = RPAREN
-    {                            ( mkexp_tup _2 )}
+    {( mkexp_tup _2 )}
 | _1 = LPAREN _2 = exp _3 = COLON _4 = dtype _5 = RPAREN
-    {                                  ( mkexp (Eann (_2, _4)) )}
+    {( mkexp (Eann (_2, _4)) )}
 | _1 = LBRACKET _2 = exp_list _3 = RBRACKET
-    {                                ( mkexp_list _2 )}
+    {( mkexp_list _2 )}
 
 app_exp:
   _1 = app_exp _2 = simple_exp
-    {                         ( mkexp (Eapp (_1, _2)) )}
+    {( mkexp (Eapp (_1, _2)) )}
 | _1 = simple_exp
-    {                  ( _1 )}
+    {( _1 )}
 
 exp:
   _1 = app_exp
-    {               ( _1 )}
+    {( _1 )}
 | _1 = exp _2 = exp_bop1 _3 = exp %prec prec_exp_bop1
-    {                                        ( mk_infix_exp _1 _2 _3 )}
+    {( mk_infix_exp _1 _2 _3 )}
 | _1 = exp _2 = exp_bop2 _3 = exp %prec prec_exp_bop2
-    {     ( mk_infix_exp _1 _2 _3 )}
+    {( mk_infix_exp _1 _2 _3 )}
 | _1 = exp _2 = exp_aop1 _3 = exp %prec prec_exp_aop1
-    {     ( mk_infix_exp _1 _2 _3 )}
+    {( mk_infix_exp _1 _2 _3 )}
 | _1 = exp _2 = exp_aop2 _3 = exp %prec prec_exp_aop2
-    {     ( mk_infix_exp _1 _2 _3 )}
+    {( mk_infix_exp _1 _2 _3 )}
 | _1 = exp _2 = exp_lop _3 = exp %prec prec_exp_lop
-    {     ( mk_infix_exp _1 _2 _3 )}
+    {( mk_infix_exp _1 _2 _3 )}
 | _1 = IF _2 = exp _3 = THEN _4 = exp _5 = ELSE _6 = exp %prec prec_if
-    {     ( mkexp_if (_2, _4, _6) )}
+    {( mkexp_if (_2, _4, _6) )}
 | _1 = CASE _2 = exp _3 = OF _4 = case_clauses
-    {                              ( mkexp (Ecas (_2, _4)) )}
+    {( mkexp (Ecas (_2, _4)) )}
 | _1 = FN _2 = case_clauses
-    {                      ( mkexp (Efn _2) )}
+    {( mkexp (Efn _2) )}
 
 exp_list:
   _1 = exp _2 = comma_exp_list
-    {                         ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 comma_exp_list:
   _1 = COMMA _2 = exp _3 = comma_exp_list
-    {                              ( _2 :: _3 )}
+    {( _2 :: _3 )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 pattern:
   _1 = simple_pattern
-    {                     ( _1 )}
+    {( _1 )}
 | _1 = simple_pattern _2 = COLONCOLON _3 = pattern
-    {                                      ( mkpat (Pcstr ("cons",
+    {( mkpat (Pcstr ("cons",
                                                         mkpat_tup [_1; _3])) )}
 | _1 = IDENT _2 = simple_pattern
-    {                          ( mkpat (Pcstr (_1, _2)) )}
+    {( mkpat (Pcstr (_1, _2)) )}
 | _1 = IDENT _2 = AS _3 = pattern
-    {                       ( mkpat (Pas (_1, _3)) )}
+    {( mkpat (Pas (_1, _3)) )}
 
 simple_pattern:
   _1 = IDENT
-    {             ( mkpat (Pvar _1) )}
+    {( mkpat (Pvar _1) )}
 | _1 = UNDERSCORE
-    {                  ( mkpat (Pany) )}
+    {( mkpat (Pany) )}
 | _1 = constant
-    {                ( mkpat (Pcst _1) )}
+    {( mkpat (Pcst _1) )}
 | _1 = LPAREN _2 = pattern_list _3 = RPAREN
-    {                                ( mkpat_tup _2 )}
+    {( mkpat_tup _2 )}
 | _1 = LBRACKET _2 = pattern_list _3 = RBRACKET
-    {                                   ( mkpat_list _2 )}
+    {( mkpat_list _2 )}
 
 pattern_list:
   _1 = pattern _2 = comma_pattern_list
-    {                                ( _1 :: _2 )}
+    {( _1 :: _2 )}
 | 
-    {                   ( [] )}
+    {( [] )}
 
 comma_pattern_list:
   _1 = COMMA _2 = pattern _3 = comma_pattern_list
-    {                                     ( _2 :: _3 )}
+    {( _2 :: _3 )}
 | 
-    {                                 ( [] )}
+    {( [] )}
 
 case_clause:
   _1 = pattern _2 = EQGT _3 = exp %prec prec_case
-    {                                     ( (_1, _3) )}
+    {( (_1, _3) )}
 
 case_clauses:
   _1 = case_clause _2 = BAR _3 = case_clauses
-    {                                   ( _1 :: _3 )}
+    {( _1 :: _3 )}
 | _1 = case_clause
-    {                     ( [_1] )}
+    {( [_1] )}
 
 %%
