@@ -178,6 +178,51 @@ let classtypeparams p f = function
       fprintf f "[%a] " (seplist p comma) params
 
 (* ------------------------------------------------------------------------- *)
+(* Creating a stretch from a located identifier. (This does not require the
+   input file to be currently opened.) In this variant, [parenthesize] is
+   false, [monsters] is empty. *)
+
+let stretch_of_id id (* : string located *) =
+  let open Lexing in
+  let raw_content, pos = Positions.decompose id in
+  let pos1 = Positions.start_of_position pos
+  and pos2 = Positions.end_of_position pos
+  and filename = Positions.filename_of_position pos in
+  assert (pos1 != Lexing.dummy_pos);
+  let padding = pos1.pos_cnum - pos1.pos_bol in
+  let content = String.make padding ' ' ^ raw_content in
+  Stretch.({
+    stretch_filename = filename;
+    stretch_linenum = pos1.pos_lnum;
+    stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
+    stretch_content = content;
+    stretch_raw_content = raw_content;
+    stretch_keywords = []
+  })
+
+(* When printing a stretch, the string [content] includes padding (that is,
+   whitespace) so as to preserve the column numbers of the source file,
+   whereas the string [raw_content] does not. When [X.locate_stretches]
+   is [None], the parameter [raw] controls the choice between them. When
+   [X.locate_stretches] is [Some _], we ignore [raw] and force the use of
+   the [content] string, so as to have correct column numbers. *)
+
+let stretch raw f stretch =
+  let content = stretch.Stretch.stretch_content
+  and raw_content = stretch.Stretch.stretch_raw_content in
+  match X.locate_stretches with
+  | Some basename ->
+      sharp f stretch.Stretch.stretch_linenum stretch.Stretch.stretch_filename;
+      output_string f content;
+      line := !line + stretch.Stretch.stretch_linecount;
+      (* The addition [_ + 2] anticipates the effect on the line
+         counter of the directive that we are just about to print. *)
+      sharp f (!line + 2) basename;
+      output_substring f whitespace 0 !indentation
+  | None ->
+      output_string f (if raw then raw_content else content)
+
+(* ------------------------------------------------------------------------- *)
 (* Expression printer. *)
 
 (* We use symbolic constants that stand for subsets of the
@@ -455,28 +500,6 @@ and exprk k f e =
   else
     fprintf f "(%a)" expr e
 
-(* When printing a stretch, the string [content] includes padding (that is,
-   whitespace) so as to preserve the column numbers of the source file,
-   whereas the string [raw_content] does not. When [X.locate_stretches]
-   is [None], the parameter [raw] controls the choice between them. When
-   [X.locate_stretches] is [Some _], we ignore [raw] and force the use of
-   the [content] string, so as to have correct column numbers. *)
-
-and stretch raw f stretch =
-  let content = stretch.Stretch.stretch_content
-  and raw_content = stretch.Stretch.stretch_raw_content in
-  match X.locate_stretches with
-  | Some basename ->
-      sharp f stretch.Stretch.stretch_linenum stretch.Stretch.stretch_filename;
-      output_string f content;
-      line := !line + stretch.Stretch.stretch_linecount;
-      (* The addition [_ + 2] anticipates the effect on the line
-         counter of the directive that we are just about to print. *)
-      sharp f (!line + 2) basename;
-      output_substring f whitespace 0 !indentation
-  | None ->
-      output_string f (if raw then raw_content else content)
-
 and branches k f = function
   | [] ->
       ()
@@ -506,7 +529,7 @@ and pat0 f = function
       var f x
   | PVarLocated x ->
       (* Turn [x] on the fly into a stretch and print that. *)
-      stretch true f (Lexer.stretch_of_id x)
+      stretch true f (stretch_of_id x)
   | PData (d, []) ->
       var f d
   | PTuple [] ->
