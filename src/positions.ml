@@ -52,9 +52,6 @@ let pmap f v =
     position  = v.position
   }
 
-let iter f { value = v } =
-  f v
-
 let dummy =
   (dummy_pos, dummy_pos)
 
@@ -85,24 +82,8 @@ let column p =
 let characters p1 p2 =
   (column p1, p2.pos_cnum - p1.pos_bol) (* intentionally [p1.pos_bol] *)
 
-let join x1 x2 =
-(
-  start_of_position (if x1 = dummy then x2 else x1),
-  end_of_position   (if x2 = dummy then x1 else x2)
-)
-
 let import x =
   x
-
-let join_located l1 l2 f =
-  {
-    value    = f l1.value l2.value;
-    position = join l1.position l2.position;
-  }
-
-let string_of_lex_pos p =
-  let c = p.pos_cnum - p.pos_bol in
-  (string_of_int p.pos_lnum)^":"^(string_of_int c)
 
 let string_of_pos p =
   let filename = filename_of_position p in
@@ -111,30 +92,8 @@ let string_of_pos p =
   let c1, c2 = characters (start_of_position p) (end_of_position p) in
   Printf.sprintf "File \"%s\", line %d, characters %d-%d" filename l c1 c2
 
-let pos_or_undef = function
-  | None -> dummy
-  | Some x -> x
-
 let cpos lexbuf =
   (lexeme_start_p lexbuf, lexeme_end_p lexbuf)
-
-let with_cpos lexbuf v =
-  with_pos (cpos lexbuf) v
-
-let string_of_cpos lexbuf =
-  string_of_pos (cpos lexbuf)
-
-let joinf f t1 t2 =
-  join (f t1) (f t2)
-
-let ljoinf f =
-  List.fold_left (fun p t -> join p (f t)) dummy
-
-let join_located_list ls f =
-  {
-    value     = f (List.map (fun l -> l.value) ls);
-    position  = ljoinf (fun x -> x.position) ls
-  }
 
 (* The functions that print error messages and warnings require a list of
    positions. The following auxiliary functions help build such lists. *)
