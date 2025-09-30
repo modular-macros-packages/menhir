@@ -1,0 +1,52 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
+(*                                                                            *)
+(******************************************************************************)
+
+open Printf
+open Lexing
+
+type range =
+  position * position
+
+let dummy =
+  (dummy_pos, dummy_pos)
+
+let[@inline] make x =
+  x
+
+let[@inline] startp (startp, _endp) =
+  startp
+
+let[@inline] endp (_startp, endp) =
+  endp
+
+let[@inline] filename (startp, _endp) =
+  startp.pos_fname
+
+let[@inline] linenum (startp, _endp) =
+  startp.pos_lnum
+
+let[@inline] linecount (startp, endp) =
+  endp.pos_lnum - startp.pos_lnum
+
+let[@inline] column (startp, _endp) =
+  startp.pos_cnum - startp.pos_bol
+
+let[@inline] end_column (startp, endp) =
+  endp.pos_cnum - startp.pos_bol (* intentionally [startp.pos_bol] *)
+
+let show range =
+  (* [filename] is hopefully not empty. *)
+  sprintf
+    "File \"%s\", line %d, characters %d-%d"
+    (filename range) (linenum range)
+    (column range) (end_column range)
+
+let current lexbuf =
+  (lexeme_start_p lexbuf, lexeme_end_p lexbuf)
