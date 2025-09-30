@@ -51,7 +51,7 @@ type producers =
 
 type branch =
   {
-    branch_position  : Positions.t;
+    branch_position  : Range.range;
     producers        : producers;
     action           : action;
     prec_annotation  : prec_annotation;
@@ -72,7 +72,7 @@ type branches =
 type rule =
   {
     branches    : branches;
-    positions   : Positions.t list;
+    positions   : Range.range list;
     inline_flag : bool;
     attributes  : attributes;
   }

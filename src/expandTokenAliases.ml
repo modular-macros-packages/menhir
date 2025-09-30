@@ -17,7 +17,7 @@ open Syntax
    aliases along the way. *)
 
 type aliasmap =
-  (terminal * Positions.t) StringMap.t
+  (terminal * Range.range) StringMap.t
 
 (* -------------------------------------------------------------------------- *)
 

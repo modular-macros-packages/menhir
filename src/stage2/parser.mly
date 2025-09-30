@@ -208,7 +208,7 @@ declaration:
 
 | rule_specific_token
     {
-      Error.error [Positions.import $loc]
+      Error.error [Range.make $loc]
         "syntax error inside a declaration.\n\
          Did you perhaps forget the %%%% that separates declarations and rules?"
     }
@@ -383,7 +383,7 @@ production:
     { producers,
       oprec,
       ParserAux.new_production_level(),
-      Positions.import $loc
+      Range.make $loc
     }
 
 /* ------------------------------------------------------------------------- */
@@ -648,7 +648,7 @@ action:
       | os ->
           XAPointFree os
       | exception Lexpointfree.InvalidPointFreeAction ->
-          Error.error [Positions.import $loc]
+          Error.error [Range.make $loc]
             "A point-free semantic action must consist \
              of a single OCaml identifier." (* or whitespace *)
     }
@@ -661,7 +661,7 @@ pattern:
 | UNDERSCORE
     { SemPatWildcard }
 | TILDE
-    { SemPatTilde (Positions.import $loc) }
+    { SemPatTilde (Range.make $loc) }
 | LPAREN ps = separated_list(COMMA, pattern) RPAREN
     { SemPatTuple ps }
 

@@ -208,7 +208,7 @@ let attributes (e : symbol_expression) : attributes =
 type context = {
 
   (* The position of the complete sequence expression. *)
-  pos: Positions.t;
+  pos: Range.range;
 
   (* The prefix of the production's right-hand side that has been built so far.
      This is reversed list of producers. Every producer carries an identifier,

@@ -53,7 +53,7 @@
       | None, [] ->
           Lexing.dummy_pos (* cannot happen *)
     in
-    [Positions.import (opening, closing)],
+    [Range.make (opening, closing)],
     (nto, terminals)
 
 %}

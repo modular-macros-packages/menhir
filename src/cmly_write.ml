@@ -30,10 +30,10 @@ let ocamltype_option (typo : Grammar.ocamltype option) : ocamltype option =
   | Some typ ->
       Some (ocamltype typ)
 
-let range (pos : Positions.t) : range =
+let range (pos : Range.range) : range =
   {
-    r_start = Positions.start_of_position pos;
-    r_end   = Positions.end_of_position pos;
+    r_start = Range.startp pos;
+    r_end   = Range.endp pos;
   }
 
 let located l = (Positions.value l, range (Positions.position l))

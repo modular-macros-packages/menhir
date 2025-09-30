@@ -39,7 +39,7 @@ module Code (G : sig
     val p2i: index -> int
     val rhs: index -> Symbol.t array
     val attributes: index -> attributes
-    val positions: index -> Positions.t list
+    val positions: index -> Positions.positions
     val print: index -> string
     val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
     val mapx: (index -> 'a) -> 'a list

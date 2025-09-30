@@ -90,7 +90,7 @@ module TokPrecedence = struct
         | UndefinedPrecedence ->
             ()
         | PrecedenceLevel (_, _, pos1, pos2) ->
-            Error.grammar_warning [Positions.import (pos1, pos2)]
+            Error.grammar_warning [Range.make (pos1, pos2)]
               "the precedence level assigned to %s is never useful." id
     ) grammar.tokens
 
@@ -302,7 +302,7 @@ module Terminal = struct
         tk_associativity = UndefinedAssoc;
         tk_ocamltype     = None;
         tk_is_declared   = true;
-        tk_position      = Positions.dummy;
+        tk_position      = Range.dummy;
         tk_attributes    = [];
         tk_alias         = None;
       }
@@ -710,7 +710,7 @@ module Production = struct
   let actions : action option array =
     Array.make n None
 
-  let positions : Positions.t list array =
+  let positions : Range.range list array =
     Array.make n []
 
   let rhs_attributes : attributes array array =
@@ -929,7 +929,7 @@ module Production = struct
      duplicated, at least one of its copies should be found useful for the
      warning to be suppressed. *)
 
-  let ever_useful : (Positions.t, unit) Hashtbl.t =
+  let ever_useful : (Range.range, unit) Hashtbl.t =
     (* assuming that generic hashing and equality on positions are OK *)
     Hashtbl.create 16
 

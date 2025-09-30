@@ -129,7 +129,7 @@ type token_properties =
   {
              tk_filename      : filename;
              tk_ocamltype     : ocamltype option;
-             tk_position      : Positions.t;
+             tk_position      : Range.range;
              tk_alias         : alias;
              tk_attributes    : attributes;
     mutable  tk_associativity : token_associativity;
@@ -199,7 +199,7 @@ and producer =
 and parameterized_branch =
   {
     (* The branch's position in a source file. *)
-    pb_position         : Positions.t;
+    pb_position         : Range.range;
     (* The producers. *)
     pb_producers        : producer list;
     (* The semantic action. *)
@@ -227,7 +227,7 @@ type parameterized_rule =
     (* The name of the nonterminal symbol that is being defined. *)
     pr_nt                : nonterminal;
     (* Positions in the source files. *)
-    pr_positions         : Positions.t list;
+    pr_positions         : Range.range list;
     (* Attributes attached with this nonterminal symbol. *)
     pr_attributes        : attributes;
     (* The parameters of this nonterminal symbol. *)
@@ -251,7 +251,7 @@ type parameterized_rule =
 type pattern =
   | SemPatVar of identifier located
   | SemPatWildcard
-  | SemPatTilde of Positions.t
+  | SemPatTilde of Range.range
   | SemPatTuple of pattern list
   (* Patterns: as in the manual. *)
 
@@ -379,7 +379,7 @@ type grammar =
     p_preludes           : string fragment list;
     p_postludes          : string fragment list;
     p_parameters         : string fragment list;
-    p_start_symbols      : Positions.t StringMap.t;
+    p_start_symbols      : Range.range StringMap.t;
     p_types              : (parameter * ocamltype located) list;
     p_tokens             : token_properties StringMap.t;
     p_on_error_reduce    : (parameter * on_error_reduce_level) list;

@@ -66,7 +66,7 @@ let logC =
 
 let print_positions f positions =
   List.iter (fun position ->
-    fprintf f "%s:\n" (Positions.string_of_pos position)
+    fprintf f "%s:\n" (Range.show position)
   ) positions
 
 let display continuation header positions format =

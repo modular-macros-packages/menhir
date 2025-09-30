@@ -287,17 +287,17 @@ let rename nonterminal filename =
 type symbol_kind =
 
   (* The nonterminal is declared public at a particular position. *)
-  | PublicNonTerminal of Positions.t
+  | PublicNonTerminal of Range.range
 
   (* The nonterminal is declared (nonpublic) at a particular position. *)
-  | PrivateNonTerminal of Positions.t
+  | PrivateNonTerminal of Range.range
 
   (* The symbol is a token. *)
   | Token of token_properties
 
   (* We do not know yet what the symbol means.
      This is defined in the sequel or it is free in the partial grammar. *)
-  | DontKnow of Positions.t
+  | DontKnow of Range.range
 
 type symbol_table =
     (symbol, symbol_kind) Hashtbl.t
@@ -392,16 +392,16 @@ let store_private_nonterminal tokens symbols symbol positions =
 
 let string_of_kind = function
   | PublicNonTerminal p ->
-      Printf.sprintf "public (%s)" (Positions.string_of_pos p)
+      Printf.sprintf "public (%s)" (Range.show p)
 
   | PrivateNonTerminal p ->
-      Printf.sprintf "private (%s)" (Positions.string_of_pos p)
+      Printf.sprintf "private (%s)" (Range.show p)
 
   | Token tk ->
       Printf.sprintf "token (%s)" tk.tk_filename
 
   | DontKnow p ->
-      Printf.sprintf "only used at (%s)" (Positions.string_of_pos p)
+      Printf.sprintf "only used at (%s)" (Range.show p)
 
 let string_of_symbol_table t =
   let b = Buffer.create 13 in

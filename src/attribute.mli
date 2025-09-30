@@ -17,7 +17,7 @@
 type attribute = {
   key:     key;
   payload: payload;
-  origin:  Positions.t;
+  origin:  Range.range;
 }
 
 and key =

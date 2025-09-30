@@ -12,7 +12,6 @@
 
 open Lexing
 open Parser
-open Positions
 open Keyword
 open Attribute
 
@@ -69,7 +68,7 @@ let overwrite content offset c1 c2 =
 type monster = {
 
   (* The position of the monster. *)
-  pos: Positions.t;
+  range: Range.range;
 
   (* This method is passed an array of (optional) names for the producers,
      that is, the elements of the production's right-hand side. It is also
@@ -109,37 +108,37 @@ let none : check =
    a mistake. (Plus, this simplifies our life, as we rewrite [$i] to [_i],
    and we would have to rewrite it to a different identifier otherwise.) *)
 
-let check_dollar pos i : check = fun dollars producers ->
+let check_dollar range i : check = fun dollars producers ->
   (* If [i] is out of range, say so. *)
   if not (0 <= i - 1 && i - 1 < Array.length producers) then
-    Error.error [pos] "$%d refers to a nonexistent symbol." i;
+    Error.error [range] "$%d refers to a nonexistent symbol." i;
   (* If [$i] could be referred to via a name, say so. *)
   producers.(i - 1) |> Option.iter (fun x ->
-    Error.error [pos] "please do not say: $%d. Instead, say: %s." i x
+    Error.error [range] "please do not say: $%d. Instead, say: %s." i x
   );
   (* If [$i] syntax is disallowed, say so. *)
   match dollars with
   | Settings.DollarsDisallowed ->
-      Error.error [pos] "please do not use $%d. Instead, name this value." i
+      Error.error [range] "please do not use $%d. Instead, name this value." i
   | Settings.DollarsAllowed ->
       ()
 
 (* We check that every reference to a producer [x] in a position keyword,
    such as [$startpos(x)], exists. *)
 
-let check_producer pos x : check = fun _ producers ->
+let check_producer range x : check = fun _ producers ->
   if not (List.mem (Some x) (Array.to_list producers)) then
-    Error.error [pos] "%s refers to a nonexistent symbol." x
+    Error.error [range] "%s refers to a nonexistent symbol." x
 
 (* ------------------------------------------------------------------------ *)
 
 (* The [$i] monster. *)
 
-let dollar pos i : monster =
-  let check : check = check_dollar pos i
+let dollar range i : monster =
+  let check : check = check_dollar range i
   and transform ofs1 content =
     (* [$i] is replaced with [_i]. Thus, it is no longer a keyword. *)
-    let pos = start_of_position pos in
+    let pos = Range.startp range in
     let ofs = pos.pos_cnum - ofs1 in
     overwrite content ofs '$' '_'
   and keyword =
@@ -147,20 +146,20 @@ let dollar pos i : monster =
   and oid =
     Some (Printf.sprintf "_%d" i)
   in
-  { pos; check; transform; keyword; oid }
+  { range; check; transform; keyword; oid }
 
 (* ------------------------------------------------------------------------ *)
 
 (* The position-keyword monster. The most horrible of all. *)
 
-let position pos
+let position range
   (where : string)
   (flavor : string)
   (i : string option) (x : string option)
 =
   let check_no_parameter () =
     if i <> None || x <> None then
-      Error.error [pos] "$%s%s does not take a parameter." where flavor
+      Error.error [range] "$%s%s does not take a parameter." where flavor
   in
   let ofslpar = (* offset of the opening parenthesis, if there is one *)
     1 + (* for the initial "$" *)
@@ -186,16 +185,16 @@ let position pos
   let subject, check =
     match i, x with
     | Some i, None ->
-        let ii = int_of_string (start_of_position pos) i in
+        let ii = int_of_string (Range.startp range) i in
         if ii = 0 && where = WhereEnd then
           (* [$endpos($0)] *)
           Before, none
         else
           (* [$startpos($i)] is rewritten to [$startpos(_i)]. *)
-          RightNamed ("_" ^ i), check_dollar pos ii
+          RightNamed ("_" ^ i), check_dollar range ii
     | None, Some x ->
         (* [$startpos(x)] *)
-        RightNamed x, check_producer pos x
+        RightNamed x, check_producer range x
     | None, None ->
         (* [$startpos] *)
         Left, none
@@ -203,7 +202,7 @@ let position pos
         assert false
   in
   let transform ofs1 content =
-    let pos = start_of_position pos in
+    let pos = Range.startp range in
     let ofs = pos.pos_cnum - ofs1 in
     overwrite content ofs '$' '_';
     let ofslpar = ofs + ofslpar in
@@ -223,7 +222,7 @@ let position pos
   and oid =
     None
   in
-  { pos; check; transform; keyword; oid }
+  { range; check; transform; keyword; oid }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -235,7 +234,7 @@ let no_monsters monsters =
   | [] ->
       ()
   | monster :: _ ->
-      Error.error [monster.pos]
+      Error.error [monster.range]
         "a Menhir keyword cannot be used in an OCaml header."
 
 (* ------------------------------------------------------------------------ *)
@@ -490,10 +489,10 @@ rule main = parse
     { if Hashtbl.mem reserved id then
         error2 lexbuf "this is an OCaml reserved word."
       else
-        LID (with_pos (cpos lexbuf) id)
+        LID (Positions.with_pos (Range.current lexbuf) id)
     }
 | (uppercase identchar *) as id
-    { UID (with_pos (cpos lexbuf) id) }
+    { UID (Positions.with_pos (Range.current lexbuf) id) }
 (* Quoted strings are used as aliases for tokens. *)
 (* A quoted string is stored as is -- with the quotes
    and with its escape sequences. *)
@@ -502,8 +501,8 @@ rule main = parse
       let openingpos = lexeme_start_p lexbuf in
       let content = record_string openingpos buffer lexbuf in
       let id = Printf.sprintf "\"%s\"" content in
-      let pos = import (openingpos, lexbuf.lex_curr_p) in
-      QID (with_pos pos id) }
+      let range = Range.make (openingpos, lexbuf.lex_curr_p) in
+      QID (Positions.with_pos range id) }
 | "//" [^ '\010' '\013']* newline (* skip C++ style comment *)
 | newline
     { new_line lexbuf; main lexbuf }
@@ -536,7 +535,7 @@ rule main = parse
     { let openingpos = lexeme_start_p lexbuf in
       let startpos = lexeme_end_p lexbuf in
       let closingpos = attribute openingpos lexbuf in
-      let origin = Positions.import (openingpos, lexeme_end_p lexbuf) in
+      let origin = Range.make (openingpos, lexeme_end_p lexbuf) in
       let payload = InputFile.chunk (startpos, closingpos) in
       let attr : attribute = { key; payload; origin } in
       if percent = "" then
@@ -615,10 +614,10 @@ and action percent openingpos monsters = parse
       action percent openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
     { let i = int_of_string (lexeme_start_p lexbuf) i in
-      let monster = dollar (cpos lexbuf) i in
+      let monster = dollar (Range.current lexbuf) i in
       action percent openingpos (monster :: monsters) lexbuf }
 | poskeyword
-    { let monster = position (cpos lexbuf) where flavor i x in
+    { let monster = position (Range.current lexbuf) where flavor i x in
       action percent openingpos (monster :: monsters) lexbuf }
 | previouserror
     { error2 lexbuf "$previouserror is no longer supported." }
@@ -658,10 +657,10 @@ and parentheses openingpos monsters = parse
       parentheses openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
     { let i = int_of_string (lexeme_start_p lexbuf) i in
-      let monster = dollar (cpos lexbuf) i in
+      let monster = dollar (Range.current lexbuf) i in
       parentheses openingpos (monster :: monsters) lexbuf }
 | poskeyword
-    { let monster = position (cpos lexbuf) where flavor i x in
+    { let monster = position (Range.current lexbuf) where flavor i x in
       parentheses openingpos (monster :: monsters) lexbuf }
 | previouserror
     { error2 lexbuf "$previouserror is no longer supported." }

@@ -382,7 +382,7 @@ production:
     { List.rev $1,
       $2,
       ParserAux.new_production_level(),
-      Positions.import (symbol_start_pos(), symbol_end_pos())
+      Range.make (symbol_start_pos(), symbol_end_pos())
     }
 
 producers:
@@ -397,9 +397,9 @@ producers:
 
 producer:
 |           actual attributes optional_semis
-    { Positions.import (symbol_start_pos(), symbol_end_pos()),    None, $1, $2 }
+    { Range.make (symbol_start_pos(), symbol_end_pos()),    None, $1, $2 }
 | LID EQUAL actual attributes optional_semis
-    { Positions.import (symbol_start_pos(), symbol_end_pos()), Some $1, $3, $4 }
+    { Range.make (symbol_start_pos(), symbol_end_pos()), Some $1, $3, $4 }
 
 /* ------------------------------------------------------------------------- */
 /* Semicolons used to be considered whitespace by our lexer, but are no longer.

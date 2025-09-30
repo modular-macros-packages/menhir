@@ -8,35 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* -------------------------------------------------------------------------- *)
-
-(** Abstract type for pairs of positions in the lexing stream. *)
-type t
-
-(** This value is used when an object does not come from
-    a particular input location. *)
-val dummy: t
-
-val import : Lexing.position * Lexing.position -> t
-
-val start_of_position: t -> Lexing.position
-
-val end_of_position: t -> Lexing.position
-
-(** [string_of_pos p] returns the standard (Emacs-like) representation
-    of the position [p]. *)
-val string_of_pos : t -> string
-
-(** [cpos lexbuf] returns the current position of the lexer. *)
-val cpos : Lexing.lexbuf -> t
-
-(* -------------------------------------------------------------------------- *)
+open Range
 
 (** Decoration of a value with a position. *)
 type 'a located =
     {
       value    : 'a;
-      position : t;
+      position : range;
     }
 
 (** [value dv] returns the raw value that underlies the
@@ -45,20 +23,20 @@ val value: 'a located -> 'a
 
 (** [position dv] returns the position that decorates the
     decorated value [dv]. *)
-val position: 'a located -> t
+val position: 'a located -> range
 
 (** [decompose dv] returns a pair of the value and position. *)
-val decompose: 'a located -> 'a * t
+val decompose: 'a located -> 'a * range
 
 (** [with_pos p v] decorates [v] with a position [p]. *)
-val with_pos : t -> 'a -> 'a located
+val with_pos : range -> 'a -> 'a located
 val with_loc : (Lexing.position * Lexing.position) -> 'a -> 'a located
 
 val unknown_pos : 'a -> 'a located
 
 (** [map f v] extends the decoration from [v] to [f v]. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
-val pmap: (t -> 'a -> 'b) -> 'a located -> 'b located
+val pmap: (range -> 'a -> 'b) -> 'a located -> 'b located
 
 val fragment : 'a located -> 'a Fragment.fragment
 
@@ -68,7 +46,7 @@ val fragment : 'a located -> 'a Fragment.fragment
    positions. The following auxiliary functions help build such lists. *)
 
 type positions =
-    t list
+    range list
 
 val one: Lexing.position -> positions
 

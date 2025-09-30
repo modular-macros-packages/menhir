@@ -17,7 +17,7 @@ open Syntax
 (* A few types used in the parser. *)
 
 type early_producer =
-  Positions.t *
+  Range.range *
   identifier located option *
   parameter *
   attributes
@@ -29,7 +29,7 @@ type early_production =
   early_producers *
   string located option * (* optional precedence *)
   production_level *
-  Positions.t
+  Range.range
 
 type early_productions =
   early_production list
@@ -72,11 +72,11 @@ val check_production_group: early_productions -> unit
 
 val normalize_producers: early_producers -> producer list
 
-(* [override pos oprec1 oprec2] decides which of the two optional
+(* [override range oprec1 oprec2] decides which of the two optional
    %prec declarations [oprec1] and [oprec2] applies to a
    production. It signals an error if the two are present. *)
 
-val override: Positions.t -> 'a option -> 'a option -> 'a option
+val override: Range.range -> 'a option -> 'a option -> 'a option
 
 (* [producer_names producers] returns an array [names] such that
    [names.(idx) = None] if the (idx + 1)-th producer is unnamed

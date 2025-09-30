@@ -336,14 +336,14 @@ exception Invalid
 let validate_nonterminal_symbol c (lid, startpos, endpos) =
   match Nonterminal.lookup lid with
   | exception Not_found ->
-      Error.signal c [Positions.import (startpos, endpos)]
+      Error.signal c [Range.make (startpos, endpos)]
         "\"%s\" is not a known non-terminal symbol." lid;
       raise Invalid
   | nt ->
       if Nonterminal.is_user_start nt then
         nt
       else begin
-        Error.signal c [Positions.import (startpos, endpos)]
+        Error.signal c [Range.make (startpos, endpos)]
           "\"%s\" is not a start symbol." lid;
         raise Invalid
       end
@@ -352,7 +352,7 @@ let validate_terminal_symbol c (uid, startpos, endpos) =
   try
     Terminal.lookup uid
   with Not_found ->
-    Error.signal c [Positions.import (startpos, endpos)]
+    Error.signal c [Range.make (startpos, endpos)]
       "\"%s\" is not a known terminal symbol." uid;
     raise Invalid
 
@@ -482,7 +482,7 @@ let read_messages strict filename : run or_comment list =
         match SentenceParser.entry SentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
             Error.error
-              [Positions.cpos lexbuf]
+              [Range.current lexbuf]
               "ill-formed sentence."
         | elements ->
             (* [elements] is a list of located raw sentences or comments.

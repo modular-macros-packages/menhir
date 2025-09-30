@@ -185,7 +185,7 @@ module Code (G : sig
     val print: index -> string
     val rhs: index -> Symbol.t array
     val attributes: index -> attributes
-    val positions: index -> Positions.t list
+    val positions: index -> Range.range list
     val error_free: index -> bool
     val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
     val mapx: (index -> 'a) -> 'a list

@@ -13,7 +13,7 @@ open Attribute
 open Syntax
 
 type early_producer =
-  Positions.t *
+  Range.range *
   identifier located option *
   parameter *
   attributes
@@ -25,7 +25,7 @@ type early_production =
   early_producers *
   string located option * (* optional precedence *)
   production_level *
-  Positions.t
+  Range.range
 
 type early_productions =
   early_production list

@@ -9,15 +9,12 @@
 (******************************************************************************)
 
 open Lexing
-
-type t =
-  (* Start and end positions. *)
-  position * position
+open Range
 
 type 'a located =
     {
       value    : 'a;
-      position : t;
+      position : range;
     }
 
 let value { value = v } =
@@ -35,10 +32,8 @@ let with_pos p v =
     position  = p;
   }
 
-let with_loc =
-  (* The location is converted from the type [position * position]
-     to the type [t]. *)
-  with_pos
+let with_loc p v =
+  with_pos (Range.make p) v
 
 let map f v =
   {
@@ -52,60 +47,28 @@ let pmap f v =
     position  = v.position
   }
 
-let dummy =
-  (dummy_pos, dummy_pos)
-
 let unknown_pos v =
   {
     value     = v;
     position  = dummy
   }
 
-let start_of_position (p, _) = p
-
-let end_of_position (_, p) = p
-
-let filename_of_position p =
-  (start_of_position p).pos_fname
-
 let fragment { value; position } =
-  let pos1 = start_of_position position
-  and pos2 = end_of_position position in
+  let pos1 = startp position
+  and pos2 = endp position in
   Fragment.make pos1 pos2 value
-
-let line p =
-  p.pos_lnum
-
-let column p =
-  p.pos_cnum - p.pos_bol
-
-let characters p1 p2 =
-  (column p1, p2.pos_cnum - p1.pos_bol) (* intentionally [p1.pos_bol] *)
-
-let import x =
-  x
-
-let string_of_pos p =
-  let filename = filename_of_position p in
-  (* [filename] is hopefully not "". *)
-  let l = line (start_of_position p) in
-  let c1, c2 = characters (start_of_position p) (end_of_position p) in
-  Printf.sprintf "File \"%s\", line %d, characters %d-%d" filename l c1 c2
-
-let cpos lexbuf =
-  (lexeme_start_p lexbuf, lexeme_end_p lexbuf)
 
 (* The functions that print error messages and warnings require a list of
    positions. The following auxiliary functions help build such lists. *)
 
 type positions =
-    t list
+    range list
 
 let one (pos : position) : positions =
-  [ import (pos, pos) ]
+  [ make (pos, pos) ]
 
 let lexbuf (lexbuf : lexbuf) : positions =
-  [ import (lexbuf.lex_start_p, lexbuf.lex_curr_p) ]
+  [ make (lexbuf.lex_start_p, lexbuf.lex_curr_p) ]
 
 let print (pos : position) =
   Printf.printf
