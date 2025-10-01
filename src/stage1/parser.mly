@@ -21,14 +21,14 @@
 
 open Syntax
 open Range
-open Positions
+open Located
 
 %}
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token PERCENTATTRIBUTE SEMI
-%token <string Positions.located> LID UID QID
+%token <string Located.located> LID UID QID
 %token <string Fragment.fragment> HEADER
 %token <string Fragment.fragment> ANGLED
 %token <string Fragment.fragment Lazy.t> PERCENTPERCENT
@@ -92,27 +92,27 @@ declaration:
 
 | TOKEN optional_ocamltype terminals
     { let ty, ts = $2, $3 in
-      List.map (Positions.map (fun (terminal, alias, attrs) ->
+      List.map (Located.map (fun (terminal, alias, attrs) ->
         DToken (ty, terminal, alias, attrs)
       )) ts }
 
 | START nonterminals
-    { List.map (Positions.map (fun nonterminal -> DStart nonterminal)) $2 }
+    { List.map (Located.map (fun nonterminal -> DStart nonterminal)) $2 }
 
 | TYPE ocamltype actuals
-    { List.map (Positions.map (fun nt -> DType ($2, nt)))
+    { List.map (Located.map (fun nt -> DType ($2, nt)))
         (List.map Parameters.locate $3) }
 
 | START ocamltype nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
     { let dstart nt = DStart nt
-      and dtype ntloc = Positions.map (fun _nt -> DType ($2, ParameterVar ntloc)) ntloc in (* ugly/weird *)
-      List.map (Positions.map dstart) $3 @
+      and dtype ntloc = Located.map (fun _nt -> DType ($2, ParameterVar ntloc)) ntloc in (* ugly/weird *)
+      List.map (Located.map dstart) $3 @
       List.map dtype $3 }
 
 | priority_keyword symbols
     { let prec = ParserAux.new_precedence_level (rhs_start_pos 1, rhs_end_pos 1) in
-      List.map (Positions.map (fun symbol -> DTokenProperties (symbol, $1, prec))) $2 }
+      List.map (Located.map (fun symbol -> DTokenProperties (symbol, $1, prec))) $2 }
 
 | PARAMETER ANGLED
     { [ locate dummy (DParameter $2) ] }
@@ -125,7 +125,7 @@ declaration:
 
 | ON_ERROR_REDUCE actuals
     { let prec = ParserAux.new_on_error_reduce_level() in
-      List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
+      List.map (Located.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.locate $2) }
 
 ocamltype:
@@ -192,8 +192,8 @@ terminals:
     { [] }
 | terminals optional_comma UID optional_alias attributes
     { let ts, uid, alias, attrs = $1, $3, $4, $5 in
-      let alias = Option.map Positions.value alias in
-      Positions.map (fun uid -> uid, alias, attrs) uid :: ts }
+      let alias = Option.map Located.value alias in
+      Located.map (fun uid -> uid, alias, attrs) uid :: ts }
 
 nonterminals:
   /* epsilon */
@@ -232,8 +232,8 @@ rule:
       let public, inline = $1 in
       { pr_public_flag = public;
         pr_inline_flag = inline;
-        pr_nt          = Positions.value $2;
-        pr_positions   = [ Positions.position $2 ];
+        pr_nt          = Located.value $2;
+        pr_positions   = [ Located.position $2 ];
         pr_attributes  = $3;
         pr_parameters  = $4;
         pr_branches    = List.flatten ($7 :: List.rev $8)
@@ -266,9 +266,9 @@ optional_formal_parameters:
 
 formal_parameters:
   symbol
-    { [ Positions.value $1 ] }
+    { [ Located.value $1 ] }
 | symbol COMMA formal_parameters
-    { Positions.value $1 :: $3 }
+    { Located.value $1 :: $3 }
 
 optional_actuals:
   /* epsilon */

@@ -10,7 +10,7 @@
 
 open Attribute
 open Syntax
-open Positions
+open Located
 
 (* ------------------------------------------------------------------------- *)
 (* This adds one declaration [decl], as found in file [filename], to
@@ -176,7 +176,7 @@ let rewrite_nonterminal (phi : renaming) nonterminal =
     nonterminal
 
 let rewrite_parameter phi parameter =
-  Parameters.map (Positions.map (rewrite_nonterminal phi)) parameter
+  Parameters.map (Located.map (rewrite_nonterminal phi)) parameter
 
 let rewrite_producer phi ((ido, parameter, attrs) : producer) =
   ido, rewrite_parameter phi parameter, attrs

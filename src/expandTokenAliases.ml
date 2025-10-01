@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Positions
+open Located
 open Syntax
 
 (* We first build an alias map, which records the token aliases declared

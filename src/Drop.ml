@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Attribute
-let value = Positions.value
+let value = Located.value
 (* The source. *)
 module S = Syntax
 (* The target. *)

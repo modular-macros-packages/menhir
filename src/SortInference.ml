@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 let error    = Error.error
-open Positions
+open Located
 open Syntax
 open SortUnification
 

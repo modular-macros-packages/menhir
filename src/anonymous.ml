@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Range
-open Positions
+open Located
 open Syntax
 
 (* For each anonymous rule, we define a fresh nonterminal symbol, and

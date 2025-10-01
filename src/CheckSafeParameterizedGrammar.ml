@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let value = Positions.value
+let value = Located.value
 open Syntax
 
 (* This test accepts a parameterized grammar, with the restriction that all

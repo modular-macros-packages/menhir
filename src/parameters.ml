@@ -11,7 +11,7 @@
 (* TEMPORARY clean up and write an .mli file *)
 
 open Syntax
-open Positions
+open Located
 
 let app p ps =
   match ps with

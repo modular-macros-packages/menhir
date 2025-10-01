@@ -16,10 +16,10 @@ type 'a located =
 let[@inline] locate p v =
   { p; v }
 
-let[@inline] position { p } =
+let[@inline] position { p; _ } =
   p
 
-let[@inline] value { v } =
+let[@inline] value { v; _ } =
   v
 
 let map f { p; v } =

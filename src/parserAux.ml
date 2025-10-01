@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Positions
+open Located
 open Attribute
 open Syntax
 

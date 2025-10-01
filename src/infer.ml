@@ -146,7 +146,7 @@ let actiondef grammar symbol branch =
     List.fold_left (fun formals producer ->
       let symbol = producer_symbol producer
       and lid = producer_identifier_located producer in
-      let id = Positions.value lid in
+      let id = Located.value lid in
       let startp, endp, starto, endo, loc =
         Printf.sprintf "_startpos_%s_" id,
         Printf.sprintf "_endpos_%s_" id,

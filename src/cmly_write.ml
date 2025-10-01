@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Attribute
-open Positions
+open Located
 open BasicSyntax
 open Grammar
 let n2i = Nonterminal.n2i

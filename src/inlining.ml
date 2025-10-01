@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let position = Positions.position
+open Located
 open Keyword
 type sw = subject * where
 open Attribute
@@ -211,10 +211,10 @@ let rename (used : StringSet.t) producers: Action.subst * producers =
   let phi, _used, producers =
     List.fold_left (fun (phi, used, producers) producer ->
       let id = producer_identifier_located producer in
-      let x = Positions.value id in
+      let x = value id in
       if StringSet.mem x used then
         let x' = fresh used x in
-        let id' = Positions.map (fun _x -> x') id in
+        let id' = Located.map (fun _x -> x') id in
         Action.extend x x' phi,
         StringSet.add x' used,
         { producer with producer_identifier = id' } :: producers

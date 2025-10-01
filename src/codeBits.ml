@@ -11,7 +11,7 @@
 (* This module provides a number of tiny functions that help produce
    [IL] code. *)
 
-open Positions
+open Located
 open IL
 
 (* A smart constructor for [PVarLocated]. *)

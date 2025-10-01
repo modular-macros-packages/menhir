@@ -14,6 +14,7 @@ open Lexing
 open Parser
 open Keyword
 open Attribute
+open Located
 
 (* ------------------------------------------------------------------------ *)
 
@@ -493,10 +494,10 @@ rule main = parse
     { if Hashtbl.mem reserved id then
         error lexbuf "this is an OCaml reserved word."
       else
-        LID (Positions.locate (Range.current lexbuf) id)
+        LID (locate (Range.current lexbuf) id)
     }
 | (uppercase identchar *) as id
-    { UID (Positions.locate (Range.current lexbuf) id) }
+    { UID (locate (Range.current lexbuf) id) }
 (* Quoted strings are used as aliases for tokens. *)
 (* A quoted string is stored as is -- with the quotes
    and with its escape sequences. *)
@@ -506,7 +507,7 @@ rule main = parse
       let content = record_string openingrange buffer lexbuf in
       let id = Printf.sprintf "\"%s\"" content in
       let range = Range.make (Range.startp openingrange, lexbuf.lex_curr_p) in
-      QID (Positions.locate range id) }
+      QID (locate range id) }
 | "//" [^ '\010' '\013']* newline (* skip C++ style comment *)
 | newline
     { new_line lexbuf; main lexbuf }

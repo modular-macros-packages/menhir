@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Printf
-open Positions
+open Located
 open Attribute
 open Syntax
 open BasicSyntax

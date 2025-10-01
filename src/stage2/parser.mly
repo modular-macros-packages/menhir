@@ -21,13 +21,13 @@
 %{
 
 open Syntax
-open Positions
+open Located
 
 (* An injection of symbol expressions into choice expressions. *)
 
 let inject (e : symbol_expression located) : expression =
   let range = position e in
-  Positions.map (fun e ->
+  Located.map (fun e ->
     let branch =
       Branch (
         locate range (ESingleton e),
@@ -73,7 +73,7 @@ let locate' locs v =
   PERCENTATTRIBUTE "%attribute"
   SEMI             ";"
 
-%token <string Positions.located>
+%token <string Located.located>
   LID              "lident"
   UID              "UIdent"
   QID              "\"alias\""
@@ -167,7 +167,7 @@ declaration:
     { [ locate' $loc (DCode h) ] }
 
 | TOKEN ty = ocamltype? ts = clist(terminal_alias_attrs)
-    { List.map (Positions.map (fun (terminal, alias, attrs) ->
+    { List.map (Located.map (fun (terminal, alias, attrs) ->
         DToken (ty, terminal, alias, attrs)
       )) ts }
 
@@ -176,21 +176,21 @@ declaration:
     {
       match t with
       | None ->
-          List.map (Positions.map (fun nonterminal -> DStart nonterminal)) nts
+          List.map (Located.map (fun nonterminal -> DStart nonterminal)) nts
       | Some t ->
          let dstart nt = DStart nt
-         and dtype ntloc = Positions.map (fun _nt -> DType (t, ParameterVar ntloc)) ntloc in (* ugly/weird *)
-         List.map (Positions.map dstart) nts @
+         and dtype ntloc = Located.map (fun _nt -> DType (t, ParameterVar ntloc)) ntloc in (* ugly/weird *)
+         List.map (Located.map dstart) nts @
          List.map dtype nts
     }
 
 | TYPE t = ocamltype ss = clist(strict_actual)
-    { List.map (Positions.map (fun nt -> DType (t, nt)))
+    { List.map (Located.map (fun nt -> DType (t, nt)))
         (List.map Parameters.locate ss) }
 
 | k = priority_keyword ss = clist(symbol)
     { let prec = ParserAux.new_precedence_level $loc(k) in
-      List.map (Positions.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
+      List.map (Located.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
 
 | PARAMETER t = ANGLED
     { [ locate' $loc (DParameter t) ] }
@@ -203,7 +203,7 @@ declaration:
 
 | ON_ERROR_REDUCE ss = clist(strict_actual)
     { let prec = ParserAux.new_on_error_reduce_level() in
-      List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
+      List.map (Located.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.locate ss) }
 
 | SEMI
@@ -275,8 +275,8 @@ symbol:
 
 %inline terminal_alias_attrs:
   id = UID alias = QID? attrs = ATTRIBUTE*
-    { let alias = Option.map Positions.value alias in
-      Positions.map (fun uid -> uid, alias, attrs) id }
+    { let alias = Option.map Located.value alias in
+      Located.map (fun uid -> uid, alias, attrs) id }
 
 %inline nonterminal:
   id = LID
@@ -312,10 +312,10 @@ old_rule:
       let rule = {
         pr_public_flag = public;
         pr_inline_flag = inline;
-        pr_nt          = Positions.value symbol;
-        pr_positions   = [ Positions.position symbol ];
+        pr_nt          = Located.value symbol;
+        pr_positions   = [ Located.position symbol ];
         pr_attributes  = attributes;
-        pr_parameters  = List.map Positions.value params;
+        pr_parameters  = List.map Located.value params;
         pr_branches    = branches
       }
       in rule

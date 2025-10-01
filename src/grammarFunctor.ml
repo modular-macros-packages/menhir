@@ -11,7 +11,7 @@
 open Attribute
 open BasicSyntax
 open Syntax
-open Positions
+open Located
 
 module Make (G : sig
 

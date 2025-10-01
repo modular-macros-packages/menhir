@@ -23,7 +23,7 @@ type ranges =
   Range.ranges
 
 type 'a located =
-  'a Positions.located
+  'a Located.located
 
 type 'a fragment =
   'a Fragment.fragment

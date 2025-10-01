@@ -101,7 +101,7 @@ type grammar =
 (* Accessors for the type [producer]. *)
 
 let producer_identifier { producer_identifier } : identifier =
-  Positions.value producer_identifier
+  Located.value producer_identifier
 
 let producer_identifier_located { producer_identifier } : identifier located =
   producer_identifier

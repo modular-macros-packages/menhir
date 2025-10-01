@@ -46,7 +46,7 @@ let parenthesize fragment =
 let content fragment =
   fragment.content
 
-open Positions
+open Located
 
 let convert v =
   let range = position v in

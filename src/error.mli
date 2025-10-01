@@ -11,7 +11,7 @@
 (* This module helps report errors. *)
 
 open Range
-open Positions
+open Located
 
 (* ---------------------------------------------------------------------------- *)
 

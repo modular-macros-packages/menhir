@@ -10,7 +10,7 @@
 
 type 'a fragment = 'a Fragment.fragment
 type ocamltype = OCamlType.ocamltype
-type 'a located = 'a Positions.located
+type 'a located = 'a Located.located
 
 (* Abstract syntax of the language used for code production. *)
 
