@@ -19,10 +19,15 @@ open Attribute
 
 (* Failing. *)
 
+(* [blame range format ...] reports an error at [range]. *)
+
+let blame range =
+  Error.error [range]
+
 (* [error lexbuf format ...] reports an error at the current token. *)
 
 let error lexbuf =
-  Error.error [Range.current lexbuf]
+  blame (Range.current lexbuf)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -34,7 +39,7 @@ let int_of_string range i =
   try
     int_of_string i
   with Failure _ ->
-    Error.error [range] "unreasonably large integer."
+    blame range "unreasonably large integer."
 
 (* ------------------------------------------------------------------------ *)
 
@@ -110,15 +115,15 @@ let none : check =
 let check_dollar range i : check = fun dollars producers ->
   (* If [i] is out of range, say so. *)
   if not (0 <= i - 1 && i - 1 < Array.length producers) then
-    Error.error [range] "$%d refers to a nonexistent symbol." i;
+    blame range "$%d refers to a nonexistent symbol." i;
   (* If [$i] could be referred to via a name, say so. *)
   producers.(i - 1) |> Option.iter (fun x ->
-    Error.error [range] "please do not say: $%d. Instead, say: %s." i x
+    blame range "please do not say: $%d. Instead, say: %s." i x
   );
   (* If [$i] syntax is disallowed, say so. *)
   match dollars with
   | Settings.DollarsDisallowed ->
-      Error.error [range] "please do not use $%d. Instead, name this value." i
+      blame range "please do not use $%d. Instead, name this value." i
   | Settings.DollarsAllowed ->
       ()
 
@@ -127,7 +132,7 @@ let check_dollar range i : check = fun dollars producers ->
 
 let check_producer range x : check = fun _ producers ->
   if not (List.mem (Some x) (Array.to_list producers)) then
-    Error.error [range] "%s refers to a nonexistent symbol." x
+    blame range "%s refers to a nonexistent symbol." x
 
 (* ------------------------------------------------------------------------ *)
 
@@ -158,7 +163,7 @@ let position range
 =
   let check_no_parameter () =
     if i <> None || x <> None then
-      Error.error [range] "$%s%s does not take a parameter." where flavor
+      blame range "$%s%s does not take a parameter." where flavor
   in
   let ofslpar = (* offset of the opening parenthesis, if there is one *)
     1 + (* for the initial "$" *)
@@ -233,7 +238,7 @@ let no_monsters monsters =
   | [] ->
       ()
   | monster :: _ ->
-      Error.error [monster.range]
+      blame monster.range
         "a Menhir keyword cannot be used in an OCaml header."
 
 (* ------------------------------------------------------------------------ *)
@@ -559,7 +564,7 @@ and comment openingrange = parse
 | "*/"
     { () }
 | eof
-    { Error.error [openingrange] "unterminated comment." }
+    { blame openingrange "unterminated comment." }
 | _
     { comment openingrange lexbuf }
 
@@ -585,7 +590,7 @@ and angled openingrange = parse
 | newline
     { new_line lexbuf; angled openingrange lexbuf }
 | eof
-    { Error.error [openingrange] "unterminated opening bracket." }
+    { blame openingrange "unterminated opening bracket." }
 | _
     { angled openingrange lexbuf }
 
@@ -608,7 +613,7 @@ and action percent openingrange monsters = parse
           lexeme_start_p lexbuf, monsters
       | _, _ ->
           (* This is not it. *)
-          Error.error [openingrange] "unbalanced opening brace."
+          blame openingrange "unbalanced opening brace."
     }
 | '('
     { let _, monsters = parentheses (Range.current lexbuf) monsters lexbuf in
@@ -638,7 +643,7 @@ and action percent openingrange monsters = parse
       action percent openingrange monsters lexbuf }
 | ')'
 | eof
-    { Error.error [openingrange] "unbalanced opening brace." }
+    { blame openingrange "unbalanced opening brace." }
 | _
     { action percent openingrange monsters lexbuf }
 
@@ -680,7 +685,7 @@ and parentheses openingrange monsters = parse
       parentheses openingrange monsters lexbuf }
 | '}'
 | eof
-    { Error.error [openingrange] "unbalanced opening parenthesis." }
+    { blame openingrange "unbalanced opening parenthesis." }
 | _
     { parentheses openingrange monsters lexbuf }
 
@@ -717,7 +722,7 @@ and attribute openingrange = parse
 | '}'
 | ')'
 | eof
-    { Error.error [openingrange] "unbalanced opening bracket." }
+    { blame openingrange "unbalanced opening bracket." }
 | _
     { attribute openingrange lexbuf }
 
@@ -744,7 +749,7 @@ and ocamlcomment openingrange = parse
     { new_line lexbuf;
       ocamlcomment openingrange lexbuf }
 | eof
-    { Error.error [openingrange] "unterminated OCaml comment." }
+    { blame openingrange "unterminated OCaml comment." }
 | _
     { ocamlcomment openingrange lexbuf }
 
@@ -764,7 +769,7 @@ and string openingrange = parse
        unless it is a newline. Pretty crude, but should work. *)
     { string openingrange lexbuf }
 | eof
-    { Error.error [openingrange] "unterminated OCaml string." }
+    { blame openingrange "unterminated OCaml string." }
 | _
     { string openingrange lexbuf }
 
@@ -790,7 +795,7 @@ and record_string openingrange buffer = parse
 | newline
     { error lexbuf "illegal newline in string." }
 | eof
-    { Error.error [openingrange] "unterminated string." }
+    { blame openingrange "unterminated string." }
 | _ as c
     { Buffer.add_char buffer c;
       record_string openingrange buffer lexbuf }
