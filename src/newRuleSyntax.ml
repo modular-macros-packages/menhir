@@ -85,7 +85,8 @@ let check_linearity (ps : pattern list) =
   let rec build (m : ranges StringMap.t) (p : pattern) =
     match p with
     | SemPatVar x ->
-        let x, pos = Positions.decompose x in
+        let x = Positions.value x
+        and pos = Positions.position x in
         StringMap.multiple_add x pos m
     | SemPatWildcard
     | SemPatTilde _ ->
@@ -373,7 +374,7 @@ and production_aux
   (e : seq_expression)
   (level : production_level)
 : parameterized_branch =
-  let e, pos = Positions.decompose e in
+  let e, pos = Positions.value e, Positions.position e in
   match e with
 
   | ECons (p, e1, e2) ->

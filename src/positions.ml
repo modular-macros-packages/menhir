@@ -16,8 +16,6 @@ type 'a located =
 let[@inline] position { p } = p
 let[@inline] value    { v } = v
 
-let decompose { v; p } = (v, p)
-
 let with_pos p v = { p; v}
 
 let with_loc p v =
