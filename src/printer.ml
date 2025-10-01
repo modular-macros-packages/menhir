@@ -514,7 +514,7 @@ and pat0 f = function
   | PVar x ->
       var f x
   | PVarLocated x ->
-      fragment f (Positions.fragment x)
+      fragment f (Fragment.convert x)
   | PData (d, []) ->
       var f d
   | PTuple [] ->

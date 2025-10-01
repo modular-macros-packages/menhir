@@ -40,3 +40,5 @@ val parenthesize : string fragment -> string fragment
 
 (**[content f] returns the content of the fragment [f]. *)
 val content : 'a fragment -> 'a
+
+val convert : 'a Positions.located -> 'a fragment

@@ -45,3 +45,9 @@ let parenthesize fragment =
 
 let content fragment =
   fragment.content
+
+open Positions
+
+let convert v =
+  let range = position v in
+  make (Range.startp range) (Range.endp range) (value v)

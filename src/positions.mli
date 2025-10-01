@@ -30,5 +30,3 @@ val position: 'a located -> range
 (**[map f] applies the transformation [f] to a decorated value
    while preserving its decoration. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
-
-val fragment : 'a located -> 'a Fragment.fragment
