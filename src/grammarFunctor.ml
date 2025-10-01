@@ -992,8 +992,8 @@ module Production = struct
       match prec_decl with
       | None ->
           scan prod
-      | Some { value = terminal } ->
-          PPrecDecl terminal
+      | Some terminal ->
+          PPrecDecl (value terminal)
     in
     match scan with
     | PNone ->

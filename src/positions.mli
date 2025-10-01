@@ -11,11 +11,7 @@
 open Range
 
 (** Decoration of a value with a position. *)
-type 'a located =
-    {
-      value    : 'a;
-      position : range;
-    }
+type 'a located
 
 (** [value dv] returns the raw value that underlies the
     decorated value [dv]. *)
@@ -37,5 +33,6 @@ val unknown_pos : 'a -> 'a located
 (** [map f v] extends the decoration from [v] to [f v]. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
 val pmap: (range -> 'a -> 'b) -> 'a located -> 'b located
+val xmap: ('a located -> 'b) -> 'a located -> 'b located
 
 val fragment : 'a located -> 'a Fragment.fragment

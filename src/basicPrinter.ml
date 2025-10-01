@@ -320,7 +320,7 @@ let print_branch f g branch =
   List.iter (print_producer sep f) branch.producers;
   (* Print the %prec annotation, if there is one. *)
   Option.iter (fun x ->
-    fprintf f " %%prec %s" x.value
+    fprintf f " %%prec %s" (value x)
   ) branch.prec_annotation;
   (* Newline, indentation, semantic action. *)
   fprintf f "\n    {";

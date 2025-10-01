@@ -306,20 +306,28 @@ let rec parameter (e : symbol_expression) : parameter =
 
 and nested_parameter (e : expression) : parameter =
   match Positions.value e with
-  | EChoice [ Branch ({ Positions.value = ESingleton e }, _) ] ->
-     (* A choice with only one branch, whose body is a trivial sequence
-        consisting of just a symbol, is simplified on the fly. This is
-        important, as it allows us to avoid falling into the default case
-        below, where an anonymous rule is generated. E.g., when we have an
-        application [f(x)] of a parameterized symbol [f] to a symbol [x], we
-        don't want an anonymous rule to be generated for [x]. That would be
-        wasteful and (more seriously) could cause the
-        grammar-expansion-termination check to fail. *)
-      parameter e
+  | EChoice [ Branch (branch, _) ] -> (
+      match Positions.value branch with
+      | ESingleton e ->
+          (* A choice with only one branch, whose body is a trivial sequence
+             consisting of just a symbol, is simplified on the fly. This is
+             important, as it allows us to avoid falling into the default case
+             below, where an anonymous rule is generated. For example, when we
+             have an application [f(x)] of a parameterized symbol [f] to a
+             symbol [x], we don't want an anonymous rule to be generated for
+             [x]. That would be wasteful and (more seriously) could cause the
+             grammar-expansion-termination check to fail. *)
+          parameter e
+      | _ ->
+          choice_expression e
+    )
   | EChoice _ ->
-      (* A choice expression is converted to an anonymous rule. *)
-      let pos = Positions.position e in
-      ParameterAnonymous (Positions.with_pos pos (productions e))
+      choice_expression e
+
+(* By default, a choice expression is converted to an anonymous rule. *)
+
+and choice_expression (e : expression) : parameter =
+  ParameterAnonymous (Positions.xmap productions e)
 
 (* Converting the head of a sequence, a pair [x = e1] of a variable [x] and
    a symbol expression [e1], to a producer. *)

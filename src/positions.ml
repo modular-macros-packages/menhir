@@ -11,48 +11,31 @@
 open Range
 
 type 'a located =
-    {
-      value    : 'a;
-      position : range;
-    }
+  { p : range; v : 'a }
 
-let value { value = v } =
-  v
+let[@inline] position { p } = p
+let[@inline] value    { v } = v
 
-let position { position = p } =
-  p
+let decompose { v; p } = (v, p)
 
-let decompose { value; position } =
-  (value, position)
-
-let with_pos p v =
-  {
-    value     = v;
-    position  = p;
-  }
+let with_pos p v = { p; v}
 
 let with_loc p v =
   with_pos (Range.make p) v
 
-let map f v =
-  {
-    value     = f v.value;
-    position  = v.position;
-  }
+let map f { p; v } =
+  let v = f v in { p; v }
 
-let pmap f v =
-  {
-    value     = f v.position v.value;
-    position  = v.position
-  }
+let pmap f { p; v } =
+  let v = f p v in { p; v }
+
+let xmap f { p; v } =
+  let v = f { p; v } in { p; v }
 
 let unknown_pos v =
-  {
-    value     = v;
-    position  = dummy
-  }
+  with_pos dummy v
 
-let fragment { value; position } =
-  let pos1 = startp position
-  and pos2 = endp position in
-  Fragment.make pos1 pos2 value
+let fragment { v; p } =
+  let pos1 = startp p
+  and pos2 = endp p in
+  Fragment.make pos1 pos2 v

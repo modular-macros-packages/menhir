@@ -17,7 +17,7 @@ open Positions
    the grammar [grammar]. *)
 
 let join_declaration filename (grammar : grammar) decl =
-  match decl.value with
+  match value decl with
 
   (* Preludes are stored in an arbitrary order. The order of
      preludes within a single source file is preserved. Same
@@ -58,7 +58,7 @@ let join_declaration filename (grammar : grammar) decl =
             tk_is_declared = true;
             tk_ocamltype   = ocamltype;
             tk_filename    = filename;
-            tk_position    = decl.position;
+            tk_position    = position decl;
             tk_attributes  = attributes;
             tk_alias       = alias;
           }
@@ -72,7 +72,7 @@ let join_declaration filename (grammar : grammar) decl =
             tk_ocamltype     = ocamltype;
             tk_associativity = UndefinedAssoc;
             tk_precedence    = UndefinedPrecedence;
-            tk_position      = decl.position;
+            tk_position      = position decl;
             tk_attributes    = attributes;
             tk_is_declared   = true;
             tk_alias         = alias;
@@ -86,7 +86,7 @@ let join_declaration filename (grammar : grammar) decl =
 
   | DStart nonterminal ->
       { grammar with
-        p_start_symbols = StringMap.add nonterminal decl.position grammar.p_start_symbols }
+        p_start_symbols = StringMap.add nonterminal (position decl) grammar.p_start_symbols }
 
   (* Type declarations for nonterminals. *)
 
@@ -121,7 +121,7 @@ let join_declaration filename (grammar : grammar) decl =
             tk_attributes    = [];
             tk_alias         = None;
             (* Will be updated later. *)
-            tk_position      = decl.position;
+            tk_position      = position decl;
           } in
           p, { grammar with
                p_tokens = StringMap.add terminal p grammar.p_tokens }
@@ -131,7 +131,7 @@ let join_declaration filename (grammar : grammar) decl =
 
       if token_properties.tk_associativity <> UndefinedAssoc then
         Error.error
-          [ decl.position; token_properties.tk_position ]
+          [ position decl; token_properties.tk_position ]
           "there are multiple precedence declarations for token %s." terminal;
 
       (* Record the new declaration. *)
@@ -452,11 +452,11 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
       let symbol, parameters = Parameters.unapp parameter in
       (* Process the reference to [symbol]. *)
       let symbols =
-        if List.mem symbol.value prule.pr_parameters then
+        if List.mem (value symbol) prule.pr_parameters then
           (* Rule parameters are bound locally, so they are not taken into account. *)
           symbols
         else
-          store_used_symbol symbol.position tokens symbols symbol.value
+          store_used_symbol (position symbol) tokens symbols (value symbol)
       in
       (* Process the parameters. *)
       List.fold_left store_except_rule_parameters symbols parameters
@@ -644,7 +644,7 @@ let check_parameterized_grammar_is_well_defined grammar =
        if not (StringMap.mem nonterminal grammar.p_rules) then
          Error.error [p] "the start symbol %s is undefined." nonterminal;
        if not (List.exists (function
-                            | ParameterVar { value = id }, _ -> id = nonterminal
+                            | ParameterVar x, _ -> value x = nonterminal
                             | _ -> false) grammar.p_types) then
          Error.error [p]
            "the type of the start symbol %s is unspecified." nonterminal;
@@ -715,14 +715,14 @@ let check_parameterized_grammar_is_well_defined grammar =
             (* Check the producers. *)
             (fun already_seen (id, p, _) ->
                let symbol, parameters = Parameters.unapp p in
-               let s = symbol.value and p = symbol.position in
+               let s = value symbol and p = position symbol in
                let already_seen =
                  (* Check the producer id is unique. *)
-                 if StringSet.mem id.value already_seen then
-                   Error.error [ id.position ]
-                        "there are multiple producers named %s in this sequence."
-                        id.value;
-                 StringSet.add id.value already_seen
+                 if StringSet.mem (value id) already_seen then
+                   Error.errorp id
+                     "there are multiple producers named %s in this sequence."
+                     (value id);
+                 StringSet.add (value id) already_seen
                in
 
                  (* Check that the producer is defined somewhere. *)
@@ -735,7 +735,7 @@ let check_parameterized_grammar_is_well_defined grammar =
             ) StringSet.empty producers);
 
            Option.iter (fun terminal ->
-             check_identifier_reference true terminal.value terminal.position
+             check_identifier_reference true (value terminal) (position terminal)
            ) pb_prec_annotation)
 
          prule.pr_branches;

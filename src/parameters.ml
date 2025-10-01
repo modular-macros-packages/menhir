@@ -55,23 +55,23 @@ let rec fold f init = function
       assert false
 
 let identifiers m p =
-  fold (fun accu x -> StringMap.add x.value x.position accu) m p
+  fold (fun accu x -> StringMap.add (value x) (position x) accu) m p
 
 let rec occurs (x : symbol) (p : parameter) =
   match p with
   | ParameterVar y ->
-      x = y.value
+      x = value y
   | ParameterApp (y, ps) ->
-      x = y.value || List.exists (occurs x) ps
+      x = value y || List.exists (occurs x) ps
   | ParameterAnonymous _ ->
       assert false
 
 let occurs_shallow (x : symbol) (p : parameter) =
   match p with
   | ParameterVar y ->
-      x = y.value
+      x = value y
   | ParameterApp (y, _) ->
-      assert (x <> y.value);
+      assert (x <> value y);
       false
   | ParameterAnonymous _ ->
       assert false
@@ -90,9 +90,9 @@ type t = parameter
 let rec equal x y =
   match x, y with
     | ParameterVar x, ParameterVar y ->
-        x.value = y.value
+        value x = value y
     | ParameterApp (p1, p2), ParameterApp (p1', p2') ->
-        p1.value = p1'.value && List.for_all2 equal p2 p2'
+        value p1 = value p1' && List.for_all2 equal p2 p2'
     | _ ->
         (* Anonymous rules are eliminated early on. *)
         false
@@ -100,7 +100,7 @@ let rec equal x y =
 let hash = function
   | ParameterVar x
   | ParameterApp (x, _) ->
-      Hashtbl.hash (Positions.value x)
+      Hashtbl.hash (value x)
   | ParameterAnonymous _ ->
       (* Anonymous rules are eliminated early on. *)
       assert false
@@ -108,9 +108,9 @@ let hash = function
 let position = function
   | ParameterVar x
   | ParameterApp (x, _) ->
-      Positions.position x
+      position x
   | ParameterAnonymous bs ->
-      Positions.position bs
+      position bs
 
 let with_pos p =
   Positions.with_pos (position p) p
@@ -118,11 +118,11 @@ let with_pos p =
 let rec print with_spaces = function
   | ParameterVar x
   | ParameterApp (x, []) ->
-      x.value
+      value x
   | ParameterApp (x, ps) ->
       let separator = if with_spaces then ", " else "," in
       Printf.sprintf "%s(%s)"
-        x.value
+        (value x)
         (MString.separated_list (print with_spaces) separator ps)
   | ParameterAnonymous _ ->
       assert false
