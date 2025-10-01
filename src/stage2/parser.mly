@@ -26,15 +26,21 @@ open Positions
 (* An injection of symbol expressions into choice expressions. *)
 
 let inject (e : symbol_expression located) : expression =
-  Positions.pmap (fun pos e ->
+  Positions.pmap (fun range e ->
     let branch =
       Branch (
-          Positions.locate pos (ESingleton e),
-          ParserAux.new_production_level()
+        locate range (ESingleton e),
+        ParserAux.new_production_level()
       )
     in
     EChoice [ branch ]
   ) e
+
+(* This variant of [locate] expects a pair of positions, such as $loc,
+   whereas [locate] expects a range. *)
+
+let locate' locs v =
+  locate (Range.make locs) v
 
 %}
 
@@ -157,7 +163,7 @@ grammar:
 declaration:
 
 | h = HEADER /* lexically delimited by %{ ... %} */
-    { [ with_loc $loc (DCode h) ] }
+    { [ locate' $loc (DCode h) ] }
 
 | TOKEN ty = ocamltype? ts = clist(terminal_alias_attrs)
     { List.map (Positions.map (fun (terminal, alias, attrs) ->
@@ -186,13 +192,13 @@ declaration:
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
 
 | PARAMETER t = ANGLED
-    { [ with_loc $loc (DParameter t) ] }
+    { [ locate' $loc (DParameter t) ] }
 
 | attr = GRAMMARATTRIBUTE
-    { [ with_loc $loc (DGrammarAttribute attr) ] }
+    { [ locate' $loc (DGrammarAttribute attr) ] }
 
 | PERCENTATTRIBUTE actuals = clist(strict_actual) attrs = ATTRIBUTE+
-    { [ with_loc $loc (DSymbolAttributes (actuals, attrs)) ] }
+    { [ locate' $loc (DSymbolAttributes (actuals, attrs)) ] }
 
 | ON_ERROR_REDUCE ss = clist(strict_actual)
     { let prec = ParserAux.new_on_error_reduce_level() in
@@ -401,7 +407,7 @@ production:
 
 producer:
 | id = ioption(terminated(LID, EQUAL)) p = actual attrs = ATTRIBUTE* SEMI*
-    { position (with_loc $loc ()), id, p, attrs }
+    { position (locate' $loc ()), id, p, attrs }
 
 /* ------------------------------------------------------------------------- */
 /* The ideal syntax of actual parameters includes:
@@ -719,6 +725,6 @@ preceded_or_separated_llist(delimiter, X):
 
 located(X):
   x = X
-    { with_loc $loc x }
+    { locate' $loc x }
 
 %%

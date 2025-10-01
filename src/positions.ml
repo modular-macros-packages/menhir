@@ -16,10 +16,7 @@ type 'a located =
 let[@inline] position { p } = p
 let[@inline] value    { v } = v
 
-let locate p v = { p; v}
-
-let with_loc p v =
-  locate (Range.make p) v
+let locate p v = { p; v }
 
 let map f { p; v } =
   let v = f v in { p; v }

@@ -23,7 +23,6 @@ val position: 'a located -> range
 
 (** [locate p v] decorates [v] with a position [p]. *)
 val locate : range -> 'a -> 'a located
-val with_loc : (Lexing.position * Lexing.position) -> 'a -> 'a located
 
 val unknown_pos : 'a -> 'a located
 
