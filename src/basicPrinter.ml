@@ -52,7 +52,7 @@ let print_ocamltype ty : string =
   Printf.sprintf " <%s>" (
     match ty with
     | Declared fragment ->
-        Fragment.content fragment
+        value fragment
     | Inferred t ->
         t
     )
@@ -189,12 +189,12 @@ let print_semantic_action f g branch =
 
 let print_preludes f g =
   List.iter (fun prelude ->
-    fprintf f "%%{%s%%}\n" (Fragment.content prelude)
+    fprintf f "%%{%s%%}\n" (value prelude)
   ) g.preludes
 
 let print_postludes f g =
   List.iter (fun postlude ->
-    fprintf f "%s\n" (Fragment.content postlude)
+    fprintf f "%s\n" (value postlude)
   ) g.postludes
 
 (* -------------------------------------------------------------------------- *)
@@ -211,7 +211,7 @@ let print_start_symbols f g =
 (* Printing %parameter declarations. *)
 
 let print_parameter f parameter =
-  fprintf f "%%parameter<%s>\n" (Fragment.content parameter)
+  fprintf f "%%parameter<%s>\n" (value parameter)
 
 let print_parameters f g =
   match mode with

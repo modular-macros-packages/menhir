@@ -116,7 +116,7 @@ let producer_names (producers : early_producers) =
   |> Array.of_list
 
 let validate_pointfree_action (fragment : string fragment) : string fragment option =
-  let s = Fragment.content fragment in
+  let s = value fragment in
   if Lexpointfree.validate_pointfree_action (Lexing.from_string s) then
     Some fragment (* a non-empty action *)
   else

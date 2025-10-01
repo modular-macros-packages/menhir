@@ -20,7 +20,7 @@ open Cmly_format
 let ocamltype (typ : Grammar.ocamltype) : ocamltype =
   match typ with
   | Grammar.Declared fragment ->
-      Fragment.content fragment
+      value fragment
   | Grammar.Inferred typ ->
       typ
 
@@ -266,8 +266,8 @@ let higher_syntax (g : Syntax.grammar) : higher_syntax = {
 let encode () : grammar =
   {
     g_basename     = Settings.base;
-    g_preludes     = List.map Fragment.content Front.grammar.preludes;
-    g_postludes    = List.map Fragment.content Front.grammar.postludes;
+    g_preludes     = List.map value Front.grammar.preludes;
+    g_postludes    = List.map value Front.grammar.postludes;
     g_terminals    = Terminal.init terminal;
     g_nonterminals = Nonterminal.init nonterminal;
     g_productions  = Production.init production;
@@ -275,7 +275,7 @@ let encode () : grammar =
     g_lr1_states   = Array.of_list (Lr1.map lr1_state);
     g_entry_points = Lr1.fold_entry entry_point [];
     g_attributes   = attributes Analysis.attributes;
-    g_parameters   = List.map Fragment.content Front.grammar.parameters;
+    g_parameters   = List.map value Front.grammar.parameters;
     g_start_symbols = StringSet.elements Front.grammar.start_symbols;
     g_on_error_reduce =
       List.map (fun (sym, lvl) -> (sym, production_level lvl))

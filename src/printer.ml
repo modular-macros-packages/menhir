@@ -10,7 +10,6 @@
 
 (* A pretty-printer for [IL]. *)
 
-open Fragment
 open OCamlType
 open IL
 
@@ -181,18 +180,18 @@ let classtypeparams p f = function
 
 (* ------------------------------------------------------------------------- *)
 
-(* [locate f ... body] invokes [body f], which is expected to print some
+(* [locate f range body] invokes [body f], which is expected to print some
    material, and optionally surrounds this invocation with line number
    directives and with horizontal padding. (Horizontal padding is useful in
    order to obtain correct column numbers in error messages.) *)
 
-let locate f filename linenum linecount column body =
+let locate f range body =
   match X.locate with
   | Some basename ->
-      sharp f linenum filename;
-      output_string f (String.make column ' ');
+      sharp f (Range.linenum range) (Range.filename range);
+      output_string f (String.make (Range.column range) ' ');
       body f;
-      line := !line + linecount;
+      line := !line + Range.linecount range;
       (* The addition [_ + 2] anticipates the effect on the line
          counter of the directive that we are just about to print. *)
       sharp f (!line + 2) basename;
@@ -201,9 +200,8 @@ let locate f filename linenum linecount column body =
       body f
 
 let fragment f (frag : string fragment) =
-  let { filename; linenum; linecount; column; content } = frag in
-  locate f filename linenum linecount column @@ fun f ->
-  output_string f content
+  locate f (Located.position frag) @@ fun f ->
+  output_string f (Located.value frag)
 
 let parenthesized_fragment f frag =
   fragment f (Fragment.parenthesize frag)
@@ -514,7 +512,7 @@ and pat0 f = function
   | PVar x ->
       var f x
   | PVarLocated x ->
-      fragment f (Fragment.convert x)
+      fragment f x
   | PData (d, []) ->
       var f d
   | PTuple [] ->

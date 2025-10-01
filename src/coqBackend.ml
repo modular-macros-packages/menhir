@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Printf
+let value = Located.value
 open Grammar
 
 module Run () = struct
@@ -49,7 +50,7 @@ module Run () = struct
     else
       match ty with
       | None -> "unit"
-      | Some (Declared s) -> Fragment.content s
+      | Some (Declared s) -> value s
       | Some (Inferred _) -> assert false (* We cannot infer Coq types *)
 
   let is_final_state node =
@@ -522,7 +523,7 @@ module Run () = struct
 
   let write_all f =
     if not Settings.coq_no_actions then
-      List.iter (fun s -> fprintf f "%s\n\n" (Fragment.content s))
+      List.iter (fun s -> fprintf f "%s\n\n" (value s))
         Front.grammar.BasicSyntax.preludes;
 
     fprintf f "From Coq.extraction Require Extraction.\n";
@@ -545,6 +546,6 @@ module Run () = struct
     write_theorems f;
 
     if not Settings.coq_no_actions then
-      List.iter (fun postlude -> fprintf f "\n\n%s" (Fragment.content postlude))
+      List.iter (fun postlude -> fprintf f "\n\n%s" (value postlude))
         Front.grammar.BasicSyntax.postludes
 end
