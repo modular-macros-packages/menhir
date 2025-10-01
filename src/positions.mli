@@ -39,6 +39,3 @@ val map: ('a -> 'b) -> 'a located -> 'b located
 val pmap: (range -> 'a -> 'b) -> 'a located -> 'b located
 
 val fragment : 'a located -> 'a Fragment.fragment
-
-(* Low-level printing function, for debugging. *)
-val print: Lexing.position -> unit

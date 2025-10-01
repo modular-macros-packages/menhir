@@ -8,7 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Lexing
 open Range
 
 type 'a located =
@@ -57,11 +56,3 @@ let fragment { value; position } =
   let pos1 = startp position
   and pos2 = endp position in
   Fragment.make pos1 pos2 value
-
-let print (pos : position) =
-  Printf.printf
-    "{ pos_fname = \"%s\"; pos_lnum = %d; pos_bol = %d; pos_cnum = %d }\n"
-      pos.pos_fname
-      pos.pos_lnum
-      pos.pos_bol
-      pos.pos_cnum
