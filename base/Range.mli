@@ -47,6 +47,11 @@ val linecount : range -> int
 (**[column range] is the column number of the start of the range [range]. *)
 val column : range -> int
 
+(**[decrement range] moves the start position of [range] by one towards
+   the left (assuming that this range does not start at the beginning of
+   a line). *)
+val decrement : range -> range
+
 (**[show range] is a string representation of the range [range]
    in an Emacs-like format. *)
 val show : range -> string

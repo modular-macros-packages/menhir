@@ -44,6 +44,14 @@ let[@inline] column (startp, _endp) =
 let[@inline] end_column (startp, endp) =
   endp.pos_cnum - startp.pos_bol (* intentionally [startp.pos_bol] *)
 
+let decrement (pos : position) : position =
+  let column = pos.pos_cnum in
+  let column = max 0 (column - 1) in
+  { pos with pos_cnum = column }
+
+let decrement ((startp, endp) : range) : range =
+  make (decrement startp, endp)
+
 let show range =
   (* [filename] is hopefully not empty. *)
   sprintf
