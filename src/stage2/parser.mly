@@ -26,7 +26,8 @@ open Positions
 (* An injection of symbol expressions into choice expressions. *)
 
 let inject (e : symbol_expression located) : expression =
-  Positions.pmap (fun range e ->
+  let range = position e in
+  Positions.map (fun e ->
     let branch =
       Branch (
         locate range (ESingleton e),

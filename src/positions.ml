@@ -25,9 +25,6 @@ let[@inline] value { v } =
 let map f { p; v } =
   let v = f v in { p; v }
 
-let pmap f { p; v } =
-  let v = f p v in { p; v }
-
 let xmap f { p; v } =
   let v = f { p; v } in { p; v }
 

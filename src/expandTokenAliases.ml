@@ -73,7 +73,8 @@ let dealias_terminal (aliasmap : aliasmap) pos (t : terminal) : terminal =
    (Visitors could be useful here!) *)
 
 let dealias_symbol aliasmap (sym : terminal Positions.located) =
-  Positions.pmap (dealias_terminal aliasmap) sym
+  let pos = Positions.position sym in
+  Positions.map (dealias_terminal aliasmap pos) sym
 
 let rec dealias_parameter aliasmap (param : parameter) =
   match param with
@@ -107,7 +108,8 @@ let dealias_rule aliasmap rule =
   { rule with pr_branches = dealias_branches aliasmap rule.pr_branches }
 
 let dealias_decl aliasmap (decl : declaration Positions.located) =
-  Positions.pmap (fun pos (decl : declaration) ->
+  let pos = Positions.position decl in
+  Positions.map (fun (decl : declaration) ->
     match decl with
     | DCode _
     | DParameter _
