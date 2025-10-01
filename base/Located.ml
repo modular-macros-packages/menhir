@@ -24,3 +24,6 @@ let[@inline] value { v; _ } =
 
 let map f { p; v } =
   let v = f v in { p; v }
+
+let parenthesize { p; v } =
+  locate (Range.decrement p) ("(" ^ v ^ ")")

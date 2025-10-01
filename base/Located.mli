@@ -17,7 +17,7 @@ type 'a located
 
 (**[locate p v] constructs a pair of the position [p] and value [v].
    In other words, it decorates the value [v] with the position [p]. *)
-val locate : range -> 'a -> 'a located
+val locate: range -> 'a -> 'a located
 
 (**[value] is the first pair projection.
    In other words, it maps a decorated value to a value. *)
@@ -30,3 +30,8 @@ val position: 'a located -> range
 (**[map f] applies the transformation [f] to a decorated value
    while preserving its decoration. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
+
+(**[parenthesize s] surrounds the decorated string [s] with a pair
+   of parentheses and decrements its range so that the pre-existing
+   content is still printed at the same column. *)
+val parenthesize: string located -> string located
