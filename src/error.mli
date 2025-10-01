@@ -10,6 +10,8 @@
 
 (* This module helps report errors. *)
 
+open Range
+
 (* ---------------------------------------------------------------------------- *)
 
 (* A mechanism to turn all display (logging, warnings, errors) on and off. *)
@@ -34,7 +36,7 @@ val logC: int -> (out_channel -> unit) -> unit
    automatically added at the beginning and end of the error message. The
    message should begin with a lowercase letter and end with a dot. *)
 
-val error: Positions.positions -> ('a, out_channel, unit, 'b) format4 -> 'a
+val error: ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [errorp] is like [error], but uses the position range carried by [v]. *)
 
@@ -42,7 +44,7 @@ val errorp: _ Positions.located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [warning] is like [error], except it does not exit. *)
 
-val warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
+val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -60,7 +62,7 @@ val new_category: unit -> category
    records the fact that an error of this category has occurred. This can be
    later detected by [exit_if category]. *)
 
-val signal: category -> Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
+val signal: category -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
 (* [exit_if category] exits with exit code 1 if [signal category] was
    previously called. Together, [signal] and [exit_if] allow reporting
@@ -85,4 +87,4 @@ val grammatical_error: category
    at some point use [exit_if grammatical_error] and stop the program if any
    errors have been reported. *)
 
-val grammar_warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
+val grammar_warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a

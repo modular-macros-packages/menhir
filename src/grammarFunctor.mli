@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Range
 open Fragment
 open Attribute
 
@@ -122,7 +123,7 @@ module Nonterminal : sig
      definition of [nt]. There can be more than one position because
      definitions can be split over multiple files. *)
 
-  val positions: t -> Positions.positions
+  val positions: t -> ranges
 
   (* [is_user_start nt] tells whether the nonterminal symbol [nt]
      is one of the start symbols that the user knows about. *)
@@ -438,7 +439,7 @@ module Production : sig
      definition of the corresponding start symbol is split over
      multiple files. *)
 
-  val positions: index -> Positions.positions
+  val positions: index -> ranges
 
   (* [rhs_attributes prod] returns an array of the attributes attached with
      each element in the right-hand side of the production [prod]. *)

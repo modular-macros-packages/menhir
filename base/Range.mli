@@ -42,6 +42,10 @@ val linecount : range -> int
 (**[column range] is the column number of the start of the range [range]. *)
 val column : range -> int
 
-(** [show range] is a string representation of the range [range]
-    in an Emacs-like format. *)
+(**[show range] is a string representation of the range [range]
+   in an Emacs-like format. *)
 val show : range -> string
+
+(**[ranges] is an abbreviation for [range list]. *)
+type ranges =
+  range list

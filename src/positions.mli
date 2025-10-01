@@ -40,15 +40,5 @@ val pmap: (range -> 'a -> 'b) -> 'a located -> 'b located
 
 val fragment : 'a located -> 'a Fragment.fragment
 
-(* -------------------------------------------------------------------------- *)
-
-(* The functions that print error messages and warnings require a list of
-   positions. The following auxiliary functions help build such lists. *)
-
-type positions =
-    range list
-
-val one: Lexing.position -> positions
-
 (* Low-level printing function, for debugging. *)
 val print: Lexing.position -> unit

@@ -50,3 +50,6 @@ let show range =
 
 let current lexbuf =
   (lexeme_start_p lexbuf, lexeme_end_p lexbuf)
+
+type ranges =
+  range list

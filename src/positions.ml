@@ -58,15 +58,6 @@ let fragment { value; position } =
   and pos2 = endp position in
   Fragment.make pos1 pos2 value
 
-(* The functions that print error messages and warnings require a list of
-   positions. The following auxiliary functions help build such lists. *)
-
-type positions =
-    range list
-
-let one (pos : position) : positions =
-  [ make (pos, pos) ]
-
 let print (pos : position) =
   Printf.printf
     "{ pos_fname = \"%s\"; pos_lnum = %d; pos_bol = %d; pos_cnum = %d }\n"

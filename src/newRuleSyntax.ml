@@ -82,7 +82,7 @@ let rec resolve_puns (e : seq_expression) : seq_expression =
 
 let check_linearity (ps : pattern list) =
 
-  let rec build (m : Positions.positions StringMap.t) (p : pattern) =
+  let rec build (m : ranges StringMap.t) (p : pattern) =
     match p with
     | SemPatVar x ->
         let x, pos = Positions.decompose x in
@@ -240,7 +240,7 @@ type context = {
      is no point in using [~], and the user could have used [_] instead. We
      issue a warning if the [seq_expression] does not end with a point-free
      semantic action. *)
-  tilde_used: Positions.positions;
+  tilde_used: ranges;
 
 }
 

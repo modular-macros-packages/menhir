@@ -23,13 +23,13 @@ type raw_sentence =
   raw_nonterminal option * raw_terminal list
 
 type located_raw_sentence =
-  Positions.positions * raw_sentence
+  Range.ranges * raw_sentence
 
 type sentence =
   Nonterminal.t option * Terminal.t list
 
 type located_sentence =
-  Positions.positions * sentence
+  Range.ranges * sentence
 
 type comment =
   string
