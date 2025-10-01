@@ -92,7 +92,7 @@ let join_declaration filename (grammar : grammar) decl =
 
   | DType (ocamltype, nonterminal) ->
       { grammar with
-          p_types = (nonterminal, with_pos (position decl) ocamltype)::grammar.p_types }
+          p_types = (nonterminal, locate (position decl) ocamltype)::grammar.p_types }
 
   (* Reductions on error for nonterminals. *)
 

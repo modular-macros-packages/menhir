@@ -89,7 +89,7 @@ let normalize_producer i (pos, opt_identifier, parameter, attrs) =
   let id =
     match opt_identifier with
       | Some id -> id
-      | None -> Positions.with_pos pos ("_" ^ string_of_int (i + 1))
+      | None -> Positions.locate pos ("_" ^ string_of_int (i + 1))
   in
   (id, parameter, attrs)
 

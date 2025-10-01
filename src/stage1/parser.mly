@@ -100,7 +100,7 @@ declaration:
 
 | TYPE ocamltype actuals
     { List.map (Positions.map (fun nt -> DType ($2, nt)))
-        (List.map Parameters.with_pos $3) }
+        (List.map Parameters.locate $3) }
 
 | START ocamltype nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
@@ -125,7 +125,7 @@ declaration:
 | ON_ERROR_REDUCE actuals
     { let prec = ParserAux.new_on_error_reduce_level() in
       List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
-        (List.map Parameters.with_pos $2) }
+        (List.map Parameters.locate $2) }
 
 ocamltype:
   ANGLED

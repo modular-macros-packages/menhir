@@ -186,7 +186,7 @@ let check_grammar env g =
 
   (* The start symbols must have sort [star]. *)
   StringMap.iter (fun nt position ->
-    let sym = Positions.with_pos position nt in
+    let sym = Positions.locate position nt in
     unify sym star (find nt env)
   ) g.p_start_symbols;
 

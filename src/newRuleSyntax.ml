@@ -34,7 +34,7 @@ let (>>) f g x =
 let return pos x : seq_expression =
   let action = Action.from_il_expr (IL.EVar x) in
   let raw_action _ _ = action in
-  Positions.with_pos pos (EAction (XATraditional raw_action, None, []))
+  Positions.locate pos (EAction (XATraditional raw_action, None, []))
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
@@ -62,7 +62,7 @@ let rec resolve_puns (e : seq_expression) : seq_expression =
     | ECons (SemPatTilde pos, (ESymbol (x1, [], _) as e1), e2)
       when ParserAux.valid_ocaml_identifier x1 ->
         (* This is a pun. Resolve it. *)
-        let x1 = Positions.with_pos pos (Positions.value x1) in (* optional *)
+        let x1 = Positions.locate pos (Positions.value x1) in (* optional *)
         ECons (SemPatVar x1, e1, resolve_puns e2)
     | ECons (p1, e1, e2) ->
         ECons (p1, e1, resolve_puns e2)
@@ -428,7 +428,7 @@ and production_aux
       let action = Action.from_il_expr e in
       let raw_action _ _ = action in
       let e = EAction (XATraditional raw_action, prec, attrs) in
-      let e = Positions.with_pos pos e in
+      let e = Positions.locate pos e in
       (* Reset [tilde_used], to avoid triggering the warning
          via our recursive call. *)
       let context = { context with tilde_used = [] } in
@@ -447,8 +447,8 @@ and production_aux
       (* No %prec annotation can be supplied when this sugar is used. *)
       (* No attribute can be supplied when this sugar is used. *)
       let x = semvar context in
-      let e = ECons (SemPatVar (Positions.with_pos pos x), e, return pos x) in
-      let e = Positions.with_pos pos e in
+      let e = ECons (SemPatVar (Positions.locate pos x), e, return pos x) in
+      let e = Positions.locate pos e in
       production_aux context e level
 
 and production (Branch (e, level) : branch) =

@@ -29,7 +29,7 @@ let inject (e : symbol_expression located) : expression =
   Positions.pmap (fun pos e ->
     let branch =
       Branch (
-          Positions.with_pos pos (ESingleton e),
+          Positions.locate pos (ESingleton e),
           ParserAux.new_production_level()
       )
     in
@@ -179,7 +179,7 @@ declaration:
 
 | TYPE t = ocamltype ss = clist(strict_actual)
     { List.map (Positions.map (fun nt -> DType (t, nt)))
-        (List.map Parameters.with_pos ss) }
+        (List.map Parameters.locate ss) }
 
 | k = priority_keyword ss = clist(symbol)
     { let prec = ParserAux.new_precedence_level $loc(k) in
@@ -197,7 +197,7 @@ declaration:
 | ON_ERROR_REDUCE ss = clist(strict_actual)
     { let prec = ParserAux.new_on_error_reduce_level() in
       List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
-        (List.map Parameters.with_pos ss) }
+        (List.map Parameters.locate ss) }
 
 | SEMI
     { [] }

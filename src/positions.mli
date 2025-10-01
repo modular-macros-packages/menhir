@@ -21,8 +21,8 @@ val value: 'a located -> 'a
     decorated value [dv]. *)
 val position: 'a located -> range
 
-(** [with_pos p v] decorates [v] with a position [p]. *)
-val with_pos : range -> 'a -> 'a located
+(** [locate p v] decorates [v] with a position [p]. *)
+val locate : range -> 'a -> 'a located
 val with_loc : (Lexing.position * Lexing.position) -> 'a -> 'a located
 
 val unknown_pos : 'a -> 'a located

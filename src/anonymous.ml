@@ -99,7 +99,7 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
   (* Record this definition. *)
   rules := rule :: !rules;
   (* Return the symbol that stands for it. *)
-  Parameters.app (Positions.with_pos pos symbol) (List.map var parameters)
+  Parameters.app (Positions.locate pos symbol) (List.map var parameters)
 
 (* ------------------------------------------------------------------------ *)
 

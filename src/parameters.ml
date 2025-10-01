@@ -112,8 +112,8 @@ let position = function
   | ParameterAnonymous bs ->
       position bs
 
-let with_pos p =
-  Positions.with_pos (position p) p
+let locate p =
+  Positions.locate (position p) p
 
 let rec print with_spaces = function
   | ParameterVar x
