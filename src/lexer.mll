@@ -22,8 +22,8 @@ open Attribute
 let error1 pos =
   Error.error (Positions.one pos)
 
-let error2 lexbuf =
-  Error.error (Positions.lexbuf lexbuf)
+let error lexbuf =
+  Error.error [Range.current lexbuf]
 
 (* ------------------------------------------------------------------------ *)
 
@@ -31,11 +31,11 @@ let error2 lexbuf =
    not a problem in practice, but causes false positives when fuzzing
    Menhir. We hide the problem by failing gracefully. *)
 
-let int_of_string (pos : Lexing.position) i =
+let int_of_string range i =
   try
     int_of_string i
   with Failure _ ->
-    error1 pos "unreasonably large integer."
+    Error.error [range] "unreasonably large integer."
 
 (* ------------------------------------------------------------------------ *)
 
@@ -185,7 +185,7 @@ let position range
   let subject, check =
     match i, x with
     | Some i, None ->
-        let ii = int_of_string (Range.startp range) i in
+        let ii = int_of_string range i in
         if ii = 0 && where = WhereEnd then
           (* [$endpos($0)] *)
           Before, none
@@ -442,7 +442,7 @@ let syntaxerror =
 rule main = parse
 | "%" (identchar+ as directive)
     { try Hashtbl.find directives directive
-      with Not_found -> error2 lexbuf "unknown directive: %s." directive }
+      with Not_found -> error lexbuf "unknown directive: %s." directive }
 | "%%"
     { (* The token [PERCENTPERCENT] carries a fragment that contains
          everything that follows %% in the input file. This string
@@ -487,7 +487,7 @@ rule main = parse
     { LET }
 | (lowercase identchar *) as id
     { if Hashtbl.mem reserved id then
-        error2 lexbuf "this is an OCaml reserved word."
+        error lexbuf "this is an OCaml reserved word."
       else
         LID (Positions.with_pos (Range.current lexbuf) id)
     }
@@ -548,7 +548,7 @@ rule main = parse
 | eof
     { EOF }
 | _
-    { error2 lexbuf "unexpected character(s)." }
+    { error lexbuf "unexpected character(s)." }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -613,16 +613,16 @@ and action percent openingpos monsters = parse
     { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
       action percent openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
-    { let i = int_of_string (lexeme_start_p lexbuf) i in
+    { let i = int_of_string (Range.current lexbuf) i in
       let monster = dollar (Range.current lexbuf) i in
       action percent openingpos (monster :: monsters) lexbuf }
 | poskeyword
     { let monster = position (Range.current lexbuf) where flavor i x in
       action percent openingpos (monster :: monsters) lexbuf }
 | previouserror
-    { error2 lexbuf "$previouserror is no longer supported." }
+    { error lexbuf "$previouserror is no longer supported." }
 | syntaxerror
-    { error2 lexbuf "$syntaxerror is no longer supported." }
+    { error lexbuf "$syntaxerror is no longer supported." }
 | '"'
     { string (lexeme_start_p lexbuf) lexbuf;
       action percent openingpos monsters lexbuf }
@@ -656,16 +656,16 @@ and parentheses openingpos monsters = parse
     { let _, monsters = action false (lexeme_start_p lexbuf) monsters lexbuf in
       parentheses openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
-    { let i = int_of_string (lexeme_start_p lexbuf) i in
+    { let i = int_of_string (Range.current lexbuf) i in
       let monster = dollar (Range.current lexbuf) i in
       parentheses openingpos (monster :: monsters) lexbuf }
 | poskeyword
     { let monster = position (Range.current lexbuf) where flavor i x in
       parentheses openingpos (monster :: monsters) lexbuf }
 | previouserror
-    { error2 lexbuf "$previouserror is no longer supported." }
+    { error lexbuf "$previouserror is no longer supported." }
 | syntaxerror
-    { error2 lexbuf "$syntaxerror is no longer supported." }
+    { error lexbuf "$syntaxerror is no longer supported." }
 | '"'
     { string (lexeme_start_p lexbuf) lexbuf; parentheses openingpos monsters lexbuf }
 | "'"
@@ -773,11 +773,11 @@ and record_string openingpos buffer = parse
        to use this string (unescaped) when we print a concrete sentence
        in a .messages file (see [Interpret]), and we want this sentence
        to fit on a single line. *)
-    { error2 lexbuf "'\\n' is not permitted in a token alias." }
+    { error lexbuf "'\\n' is not permitted in a token alias." }
 | '\\' _
-    { error2 lexbuf "illegal backslash escape in string." }
+    { error lexbuf "illegal backslash escape in string." }
 | newline
-    { error2 lexbuf "illegal newline in string." }
+    { error lexbuf "illegal newline in string." }
 | eof
     { error1 openingpos "unterminated string." }
 | _ as c

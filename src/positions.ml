@@ -67,9 +67,6 @@ type positions =
 let one (pos : position) : positions =
   [ make (pos, pos) ]
 
-let lexbuf (lexbuf : lexbuf) : positions =
-  [ make (lexbuf.lex_start_p, lexbuf.lex_curr_p) ]
-
 let print (pos : position) =
   Printf.printf
     "{ pos_fname = \"%s\"; pos_lnum = %d; pos_bol = %d; pos_cnum = %d }\n"

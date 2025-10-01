@@ -18,8 +18,8 @@
 
   (* A short-hand. *)
 
-  let error2 lexbuf =
-    Error.error (Positions.lexbuf lexbuf)
+  let error lexbuf =
+    Error.error [Range.current lexbuf]
 
 }
 
@@ -67,5 +67,5 @@ rule lex = parse
   | ':'
       { COLON }
   | _
-      { error2 lexbuf "unexpected character.\n\
+      { error lexbuf "unexpected character.\n\
                        (I believe I am reading a sentence, but may be off.)" }

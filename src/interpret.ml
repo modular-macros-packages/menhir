@@ -416,7 +416,7 @@ let setup () : unit -> sentence option =
   let read () =
     match SentenceParser.optional_sentence SentenceLexer.lex lexbuf with
     | exception Parsing.Parse_error ->
-        Error.error (Positions.lexbuf lexbuf) "ill-formed input sentence."
+        Error.error [Range.current lexbuf] "ill-formed input sentence."
     | osentence ->
         strictly validate_optional_sentence osentence
   in
@@ -508,7 +508,7 @@ let read_messages strict filename : run or_comment list =
             | []
             | [ _ ] ->
                 Error.error
-                  (Positions.one (Lexing.lexeme_end_p lexbuf))
+                  [Range.current lexbuf]
                   "missing a final message. I may be desynchronized."
             | (Segment, _, _) :: _
             | (Whitespace, _, _) :: (Whitespace, _, _) :: _ ->

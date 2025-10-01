@@ -36,7 +36,7 @@ let fail buffer lexbuf (s : int) =
   (* Hack: remove the final newline, because [Error.error] adds one. *)
   let message = String.sub message 0 (String.length message - 1) in
   (* Display our message and die. *)
-  Error.error (Positions.lexbuf lexbuf) "syntax error %s.\n%s" where message
+  Error.error [Range.current lexbuf] "syntax error %s.\n%s" where message
 
 (* The entry point. *)
 
