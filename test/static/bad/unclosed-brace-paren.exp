@@ -1,2 +1,2 @@
-File "unclosed-brace-paren.mly", line 3, characters 9-9:
+File "unclosed-brace-paren.mly", line 3, characters 9-10:
 Error: unbalanced opening parenthesis.

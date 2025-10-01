@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 174 distinct tests.
+;; 175 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -1405,6 +1405,16 @@
 
 (rule (alias test)
   (action (diff unspecified-start-type.exp unspecified-start-type.out)))
+
+(rule (target unterminated-C-style-comment.out)
+  (deps unterminated-C-style-comment.mly)
+  (action
+    (with-outputs-to unterminated-C-style-comment.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff unterminated-C-style-comment.exp unterminated-C-style-comment.out)))
 
 (rule (target uppercase-start.out) (deps uppercase-start.mly)
   (action

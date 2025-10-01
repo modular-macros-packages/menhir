@@ -17,10 +17,9 @@ open Attribute
 
 (* ------------------------------------------------------------------------ *)
 
-(* Short-hands. *)
+(* Failing. *)
 
-let error1 pos =
-  Error.error (Positions.one pos)
+(* [error lexbuf format ...] reports an error at the current token. *)
 
 let error lexbuf =
   Error.error [Range.current lexbuf]
@@ -498,10 +497,10 @@ rule main = parse
    and with its escape sequences. *)
 | '"'
     { let buffer = Buffer.create 16 in
-      let openingpos = lexeme_start_p lexbuf in
-      let content = record_string openingpos buffer lexbuf in
+      let openingrange = Range.current lexbuf in
+      let content = record_string openingrange buffer lexbuf in
       let id = Printf.sprintf "\"%s\"" content in
-      let range = Range.make (openingpos, lexbuf.lex_curr_p) in
+      let range = Range.make (Range.startp openingrange, lexbuf.lex_curr_p) in
       QID (Positions.with_pos range id) }
 | "//" [^ '\010' '\013']* newline (* skip C++ style comment *)
 | newline
@@ -509,33 +508,33 @@ rule main = parse
 | whitespace+
     { main lexbuf }
 | "/*"
-    { comment (lexeme_start_p lexbuf) lexbuf; main lexbuf }
+    { comment (Range.current lexbuf) lexbuf; main lexbuf }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; main lexbuf }
+    { ocamlcomment (Range.current lexbuf) lexbuf; main lexbuf }
 | "<"
-    { savestart lexbuf (angled (lexeme_end_p lexbuf)) }
+    { savestart lexbuf (angled (Range.current lexbuf)) }
 | "%{"
     { savestart lexbuf (fun lexbuf ->
-        let openingpos = lexeme_start_p lexbuf in
+        let openingrange = Range.current lexbuf in
         let startpos = lexeme_end_p lexbuf in
-        let closingpos, monsters = action true openingpos [] lexbuf in
+        let closingpos, monsters = action true openingrange [] lexbuf in
         no_monsters monsters;
         HEADER (fragment startpos closingpos)
       ) }
 | "{"
     { savestart lexbuf @@ fun lexbuf ->
-      let openingpos = lexeme_start_p lexbuf in
+      let openingrange = Range.current lexbuf in
       let startpos = lexeme_end_p lexbuf in
-      let closingpos, monsters = action false openingpos [] lexbuf in
+      let closingpos, monsters = action false openingrange [] lexbuf in
       ACTION (make_action startpos closingpos monsters)
         (* Partial application: [dollars] and [producers] are supplied by the
            parser once they are available. *)
     }
 | ('%'? as percent) "[@" (attributechar+ as key) whitespace*
-    { let openingpos = lexeme_start_p lexbuf in
+    { let openingrange = Range.current lexbuf in
       let startpos = lexeme_end_p lexbuf in
-      let closingpos = attribute openingpos lexbuf in
-      let origin = Range.make (openingpos, lexeme_end_p lexbuf) in
+      let closingpos = attribute openingrange lexbuf in
+      let origin = Range.make (Range.startp openingrange, lexeme_end_p lexbuf) in
       let payload = InputFile.chunk (startpos, closingpos) in
       let attr : attribute = { key; payload; origin } in
       if percent = "" then
@@ -554,15 +553,15 @@ rule main = parse
 
 (* Skip C style comments. *)
 
-and comment openingpos = parse
+and comment openingrange = parse
 | newline
-    { new_line lexbuf; comment openingpos lexbuf }
+    { new_line lexbuf; comment openingrange lexbuf }
 | "*/"
     { () }
 | eof
-    { error1 openingpos "unterminated comment." }
+    { Error.error [openingrange] "unterminated comment." }
 | _
-    { comment openingpos lexbuf }
+    { comment openingrange lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -571,22 +570,24 @@ and comment openingpos = parse
    variant types, so we must recognize them and *not* treat them as a
    closing bracket. *)
 
-and angled openingpos = parse
+and angled openingrange = parse
 | "->"
 | "[>"
-    { angled openingpos lexbuf }
+    { angled openingrange lexbuf }
 | '>'
-    { let closingpos = lexeme_start_p lexbuf in
+    { let openingpos = Range.endp openingrange
+      and closingpos = lexeme_start_p lexbuf in
       let fragment = fragment openingpos closingpos in
       ANGLED fragment }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; angled openingpos lexbuf }
+    { ocamlcomment (Range.current lexbuf) lexbuf;
+      angled openingrange lexbuf }
 | newline
-    { new_line lexbuf; angled openingpos lexbuf }
+    { new_line lexbuf; angled openingrange lexbuf }
 | eof
-    { error1 openingpos "unterminated opening bracket." }
+    { Error.error [openingrange] "unterminated opening bracket." }
 | _
-    { angled openingpos lexbuf }
+    { angled openingrange lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -595,10 +596,10 @@ and angled openingpos = parse
    curly brackets must be properly counted. Nested parentheses are also kept
    track of, so as to better report errors when they are not balanced. *)
 
-and action percent openingpos monsters = parse
+and action percent openingrange monsters = parse
 | '{'
-    { let _, monsters = action false (lexeme_start_p lexbuf) monsters lexbuf in
-      action percent openingpos monsters lexbuf }
+    { let _, monsters = action false (Range.current lexbuf) monsters lexbuf in
+      action percent openingrange monsters lexbuf }
 | ("}" | "%}") as delimiter
     { match percent, delimiter with
       | true, "%}"
@@ -607,78 +608,81 @@ and action percent openingpos monsters = parse
           lexeme_start_p lexbuf, monsters
       | _, _ ->
           (* This is not it. *)
-          error1 openingpos "unbalanced opening brace."
+          Error.error [openingrange] "unbalanced opening brace."
     }
 | '('
-    { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
-      action percent openingpos monsters lexbuf }
+    { let _, monsters = parentheses (Range.current lexbuf) monsters lexbuf in
+      action percent openingrange monsters lexbuf }
 | '$' (['0'-'9']+ as i)
     { let i = int_of_string (Range.current lexbuf) i in
       let monster = dollar (Range.current lexbuf) i in
-      action percent openingpos (monster :: monsters) lexbuf }
+      action percent openingrange (monster :: monsters) lexbuf }
 | poskeyword
     { let monster = position (Range.current lexbuf) where flavor i x in
-      action percent openingpos (monster :: monsters) lexbuf }
+      action percent openingrange (monster :: monsters) lexbuf }
 | previouserror
     { error lexbuf "$previouserror is no longer supported." }
 | syntaxerror
     { error lexbuf "$syntaxerror is no longer supported." }
 | '"'
-    { string (lexeme_start_p lexbuf) lexbuf;
-      action percent openingpos monsters lexbuf }
+    { string (Range.current lexbuf) lexbuf;
+      action percent openingrange monsters lexbuf }
 | "'"
     { char lexbuf;
-      action percent openingpos monsters lexbuf }
+      action percent openingrange monsters lexbuf }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf;
-      action percent openingpos monsters lexbuf }
+    { ocamlcomment (Range.current lexbuf) lexbuf;
+      action percent openingrange monsters lexbuf }
 | newline
     { new_line lexbuf;
-      action percent openingpos monsters lexbuf }
+      action percent openingrange monsters lexbuf }
 | ')'
 | eof
-    { error1 openingpos "unbalanced opening brace." }
+    { Error.error [openingrange] "unbalanced opening brace." }
 | _
-    { action percent openingpos monsters lexbuf }
+    { action percent openingrange monsters lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
 (* Inside a semantic action, we keep track of nested parentheses, so as to
    better report errors when they are not balanced. *)
 
-and parentheses openingpos monsters = parse
+and parentheses openingrange monsters = parse
 | '('
-    { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
-      parentheses openingpos monsters lexbuf }
+    { let _, monsters = parentheses (Range.current lexbuf) monsters lexbuf in
+      parentheses openingrange monsters lexbuf }
 | ')'
     { lexeme_start_p lexbuf, monsters }
 | '{'
-    { let _, monsters = action false (lexeme_start_p lexbuf) monsters lexbuf in
-      parentheses openingpos monsters lexbuf }
+    { let _, monsters = action false (Range.current lexbuf) monsters lexbuf in
+      parentheses openingrange monsters lexbuf }
 | '$' (['0'-'9']+ as i)
     { let i = int_of_string (Range.current lexbuf) i in
       let monster = dollar (Range.current lexbuf) i in
-      parentheses openingpos (monster :: monsters) lexbuf }
+      parentheses openingrange (monster :: monsters) lexbuf }
 | poskeyword
     { let monster = position (Range.current lexbuf) where flavor i x in
-      parentheses openingpos (monster :: monsters) lexbuf }
+      parentheses openingrange (monster :: monsters) lexbuf }
 | previouserror
     { error lexbuf "$previouserror is no longer supported." }
 | syntaxerror
     { error lexbuf "$syntaxerror is no longer supported." }
 | '"'
-    { string (lexeme_start_p lexbuf) lexbuf; parentheses openingpos monsters lexbuf }
+    { string (Range.current lexbuf) lexbuf;
+      parentheses openingrange monsters lexbuf }
 | "'"
-    { char lexbuf; parentheses openingpos monsters lexbuf }
+    { char lexbuf; parentheses openingrange monsters lexbuf }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; parentheses openingpos monsters lexbuf }
+    { ocamlcomment (Range.current lexbuf) lexbuf;
+      parentheses openingrange monsters lexbuf }
 | newline
-    { new_line lexbuf; parentheses openingpos monsters lexbuf }
+    { new_line lexbuf;
+      parentheses openingrange monsters lexbuf }
 | '}'
 | eof
-    { error1 openingpos "unbalanced opening parenthesis." }
+    { Error.error [openingrange] "unbalanced opening parenthesis." }
 | _
-    { parentheses openingpos monsters lexbuf }
+    { parentheses openingrange monsters lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -687,32 +691,35 @@ and parentheses openingpos monsters = parse
    brackets and nested parentheses are also kept track of, so as to better
    report errors when they are not balanced. *)
 
-and attribute openingpos = parse
+and attribute openingrange = parse
 | '['
-    { let _ = attribute (lexeme_start_p lexbuf) lexbuf in
-      attribute openingpos lexbuf }
+    { let _ = attribute (Range.current lexbuf) lexbuf in
+      attribute openingrange lexbuf }
 | ']'
     { lexeme_start_p lexbuf }
 | '{'
-    { let _, _ = action false (lexeme_start_p lexbuf) [] lexbuf in
-      attribute openingpos lexbuf }
+    { let _, _ = action false (Range.current lexbuf) [] lexbuf in
+      attribute openingrange lexbuf }
 | '('
-    { let _, _ = parentheses (lexeme_start_p lexbuf) [] lexbuf in
-      attribute openingpos lexbuf }
+    { let _, _ = parentheses (Range.current lexbuf) [] lexbuf in
+      attribute openingrange lexbuf }
 | '"'
-    { string (lexeme_start_p lexbuf) lexbuf; attribute openingpos lexbuf }
+    { string (Range.current lexbuf) lexbuf;
+      attribute openingrange lexbuf }
 | "'"
-    { char lexbuf; attribute openingpos lexbuf }
+    { char lexbuf; attribute openingrange lexbuf }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; attribute openingpos lexbuf }
+    { ocamlcomment (Range.current lexbuf) lexbuf;
+      attribute openingrange lexbuf }
 | newline
-    { new_line lexbuf; attribute openingpos lexbuf }
+    { new_line lexbuf;
+      attribute openingrange lexbuf }
 | '}'
 | ')'
 | eof
-    { error1 openingpos "unbalanced opening bracket." }
+    { Error.error [openingrange] "unbalanced opening bracket." }
 | _
-    { attribute openingpos lexbuf }
+    { attribute openingrange lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -722,52 +729,56 @@ and attribute openingpos = parse
    must be ignored; a character could contain a begin-of-string
    sequence.) *)
 
-and ocamlcomment openingpos = parse
+and ocamlcomment openingrange = parse
 | "*)"
     { () }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; ocamlcomment openingpos lexbuf }
+    { ocamlcomment (Range.current lexbuf) lexbuf;
+      ocamlcomment openingrange lexbuf }
 | '"'
-    { string (lexeme_start_p lexbuf) lexbuf; ocamlcomment openingpos lexbuf }
+    { string (Range.current lexbuf) lexbuf;
+      ocamlcomment openingrange lexbuf }
 | "'"
-    { char lexbuf; ocamlcomment openingpos lexbuf }
+    { char lexbuf; ocamlcomment openingrange lexbuf }
 | newline
-    { new_line lexbuf; ocamlcomment openingpos lexbuf }
+    { new_line lexbuf;
+      ocamlcomment openingrange lexbuf }
 | eof
-    { error1 openingpos "unterminated OCaml comment." }
+    { Error.error [openingrange] "unterminated OCaml comment." }
 | _
-    { ocamlcomment openingpos lexbuf }
+    { ocamlcomment openingrange lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
 (* Skip O'Caml strings. *)
 
-and string openingpos = parse
+and string openingrange = parse
 | '"'
     { () }
 | '\\' newline
 | newline
-    { new_line lexbuf; string openingpos lexbuf }
+    { new_line lexbuf;
+      string openingrange lexbuf }
 | '\\' _
     (* Upon finding a backslash, skip the character that follows,
        unless it is a newline. Pretty crude, but should work. *)
-    { string openingpos lexbuf }
+    { string openingrange lexbuf }
 | eof
-    { error1 openingpos "unterminated OCaml string." }
+    { Error.error [openingrange] "unterminated OCaml string." }
 | _
-    { string openingpos lexbuf }
+    { string openingrange lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
-(* Recording on OCaml string. (This is used for token aliases.) *)
+(* Recording an OCaml string. (This is used for token aliases.) *)
 
-and record_string openingpos buffer = parse
+and record_string openingrange buffer = parse
 | '"'
     { Buffer.contents buffer }
 | ('\\' ['\\' '\'' '"' 't' 'b' 'r' ' ']) as sequence
     { (* This escape sequence is recognized as such, but not decoded. *)
       Buffer.add_string buffer sequence;
-      record_string openingpos buffer lexbuf }
+      record_string openingrange buffer lexbuf }
 | '\\' 'n'
     (* We disallow this escape sequence in a token alias because we wish
        to use this string (unescaped) when we print a concrete sentence
@@ -779,10 +790,10 @@ and record_string openingpos buffer = parse
 | newline
     { error lexbuf "illegal newline in string." }
 | eof
-    { error1 openingpos "unterminated string." }
+    { Error.error [openingrange] "unterminated string." }
 | _ as c
     { Buffer.add_char buffer c;
-      record_string openingpos buffer lexbuf }
+      record_string openingrange buffer lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
