@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Attribute
+open Positions
 open BasicSyntax
 open Grammar
 let n2i = Nonterminal.n2i
@@ -36,7 +37,7 @@ let range (pos : Range.range) : range =
     r_end   = Range.endp pos;
   }
 
-let located l = (Positions.value l, range (Positions.position l))
+let located l = (value l, range (position l))
 
 let ranges =
   List.map range
@@ -197,7 +198,7 @@ let token (tk : Syntax.token_properties) = {
 
 let basic_producer (pr : BasicSyntax.producer) =
   (pr.BasicSyntax.producer_symbol,
-   Positions.value pr.BasicSyntax.producer_identifier,
+   value pr.BasicSyntax.producer_identifier,
    attributes pr.BasicSyntax.producer_attributes)
 
 let basic_branch (br : BasicSyntax.branch) = {
@@ -239,10 +240,10 @@ and parameter = function
   | Syntax.ParameterApp (sym, args) ->
     ParameterApp (located sym, List.map parameter args)
   | Syntax.ParameterAnonymous brs ->
-    ParameterAnonymous (located (Positions.map (List.map higher_branch) brs))
+    ParameterAnonymous (located (map (List.map higher_branch) brs))
 
 and higher_producer (id, param, attr) =
-  (parameter param, Positions.value id, attributes attr)
+  (parameter param, value id, attributes attr)
 
 let higher_rule (r : Syntax.parameterized_rule) = {
   r_parameters = r.Syntax.pr_parameters;
@@ -255,7 +256,7 @@ let higher_rule (r : Syntax.parameterized_rule) = {
 
 let higher_syntax (g : Syntax.grammar) : higher_syntax = {
   s_types  = (
-    let import_type (p,t) = (parameter p, ocamltype (Positions.value t)) in
+    let import_type (p,t) = (parameter p, ocamltype (value t)) in
     List.map import_type g.Syntax.p_types;
   );
   s_tokens = import_bindings token g.Syntax.p_tokens;

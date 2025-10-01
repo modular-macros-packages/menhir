@@ -113,7 +113,7 @@ let position = function
       position bs
 
 let locate p =
-  Positions.locate (position p) p
+  locate (position p) p
 
 let rec print with_spaces = function
   | ParameterVar x

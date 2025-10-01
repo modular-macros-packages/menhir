@@ -8,9 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let value    = Positions.value
-let position = Positions.position
 let error    = Error.error
+open Positions
 open Syntax
 open SortUnification
 
@@ -186,7 +185,7 @@ let check_grammar env g =
 
   (* The start symbols must have sort [star]. *)
   StringMap.iter (fun nt position ->
-    let sym = Positions.locate position nt in
+    let sym = locate position nt in
     unify sym star (find nt env)
   ) g.p_start_symbols;
 

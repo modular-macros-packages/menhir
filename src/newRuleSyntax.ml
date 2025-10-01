@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Range
+open Positions
 open Attribute
 open Syntax
 
@@ -35,7 +36,7 @@ let (>>) f g x =
 let return pos x : seq_expression =
   let action = Action.from_il_expr (IL.EVar x) in
   let raw_action _ _ = action in
-  Positions.locate pos (EAction (XATraditional raw_action, None, []))
+  locate pos (EAction (XATraditional raw_action, None, []))
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
@@ -58,12 +59,12 @@ let return pos x : seq_expression =
    for fresh variables and cannot cause a linearity violation. *)
 
 let rec resolve_puns (e : seq_expression) : seq_expression =
-  Positions.map (fun e ->
+  map (fun e ->
     match e with
     | ECons (SemPatTilde pos, (ESymbol (x1, [], _) as e1), e2)
       when ParserAux.valid_ocaml_identifier x1 ->
         (* This is a pun. Resolve it. *)
-        let x1 = Positions.locate pos (Positions.value x1) in (* optional *)
+        let x1 = locate pos (value x1) in (* optional *)
         ECons (SemPatVar x1, e1, resolve_puns e2)
     | ECons (p1, e1, e2) ->
         ECons (p1, e1, resolve_puns e2)
@@ -86,8 +87,8 @@ let check_linearity (ps : pattern list) =
   let rec build (m : ranges StringMap.t) (p : pattern) =
     match p with
     | SemPatVar x ->
-        let x = Positions.value x
-        and pos = Positions.position x in
+        let x = value x
+        and pos = position x in
         StringMap.multiple_add x pos m
     | SemPatWildcard
     | SemPatTilde _ ->
@@ -103,7 +104,7 @@ let check_linearity (ps : pattern list) =
   ) m
 
 let rec patterns (e : seq_expression) : pattern list =
-  let e = Positions.value e in
+  let e = value e in
   match e with
   | ECons (p, _, e) ->
       p :: patterns e
@@ -160,7 +161,7 @@ let pattern (x1 : identifier) (p : pattern) : IL.pattern =
   let rec pattern p =
     match p with
     | SemPatVar x ->
-        IL.PVar (Positions.value x)
+        IL.PVar (value x)
     | SemPatWildcard ->
         IL.PWildcard
     | SemPatTilde _ ->
@@ -261,7 +262,7 @@ let empty pos : context =
 (* Recording a user-supplied identifier. *)
 
 let user (x : identifier located) : identifier option =
-  Some (Positions.value x)
+  Some (value x)
 
 let auto : identifier option =
   None
@@ -307,9 +308,9 @@ let rec parameter (e : symbol_expression) : parameter =
 (* Converting an arbitrary expression to a parameter. *)
 
 and nested_parameter (e : expression) : parameter =
-  match Positions.value e with
+  match value e with
   | EChoice [ Branch (branch, _) ] -> (
-      match Positions.value branch with
+      match value branch with
       | ESingleton e ->
           (* A choice with only one branch, whose body is a trivial sequence
              consisting of just a symbol, is simplified on the fly. This is
@@ -330,7 +331,7 @@ and nested_parameter (e : expression) : parameter =
 
 and choice_expression (e : expression) : parameter =
   let branches = productions e in
-  ParameterAnonymous (Positions.locate (Positions.position e) branches)
+  ParameterAnonymous (locate (position e) branches)
 
 (* Converting the head of a sequence, a pair [x = e1] of a variable [x] and
    a symbol expression [e1], to a producer. *)
@@ -350,7 +351,7 @@ and extend (p : pattern) (e1 : symbol_expression) (context : context) : context 
         producers  = producer x1 e1     :: context.producers;
         uxs        = user x1            :: context.uxs;
         bindings   =                       context.bindings;
-        tuple      = Positions.value x1 :: context.tuple;
+        tuple      = value x1 :: context.tuple;
         tilde_used = context.tilde_used }
   | _ ->
       (* An arbitrary pattern [p] is used. We bind a variable [x1] to the
@@ -361,7 +362,7 @@ and extend (p : pattern) (e1 : symbol_expression) (context : context) : context 
       let tilde_used = tilde_used context.tilde_used p in
       let p : IL.pattern = pattern x1 p in
       let binding = Action.bind p x1 in
-      let x1 = Positions.locate dummy x1 in
+      let x1 = locate dummy x1 in
       { pos        =                   context.pos;
         producers  = producer x1 e1 :: context.producers;
         uxs        = auto           :: context.uxs;
@@ -376,7 +377,7 @@ and production_aux
   (e : seq_expression)
   (level : production_level)
 : parameterized_branch =
-  let e, pos = Positions.value e, Positions.position e in
+  let e, pos = value e, position e in
   match e with
 
   | ECons (p, e1, e2) ->
@@ -430,7 +431,7 @@ and production_aux
       let action = Action.from_il_expr e in
       let raw_action _ _ = action in
       let e = EAction (XATraditional raw_action, prec, attrs) in
-      let e = Positions.locate pos e in
+      let e = locate pos e in
       (* Reset [tilde_used], to avoid triggering the warning
          via our recursive call. *)
       let context = { context with tilde_used = [] } in
@@ -449,18 +450,18 @@ and production_aux
       (* No %prec annotation can be supplied when this sugar is used. *)
       (* No attribute can be supplied when this sugar is used. *)
       let x = semvar context in
-      let e = ECons (SemPatVar (Positions.locate pos x), e, return pos x) in
-      let e = Positions.locate pos e in
+      let e = ECons (SemPatVar (locate pos x), e, return pos x) in
+      let e = locate pos e in
       production_aux context e level
 
 and production (Branch (e, level) : branch) =
   let e = resolve_puns e in
   check_linearity e;
-  let pos = Positions.position e in
+  let pos = position e in
   production_aux (empty pos) e level
 
 and productions (e : expression) : parameterized_branch list =
-  match Positions.value e with
+  match value e with
   | EChoice branches ->
       List.map production branches
 
@@ -472,9 +473,9 @@ let rule (rule : rule) : parameterized_rule =
   {
     pr_public_flag = rule.rule_public;
     pr_inline_flag = rule.rule_inline;
-    pr_nt          = Positions.value rule.rule_lhs;
-    pr_positions   = [ Positions.position rule.rule_lhs ];
+    pr_nt          = value rule.rule_lhs;
+    pr_positions   = [ position rule.rule_lhs ];
     pr_attributes  = rule.rule_attributes;
-    pr_parameters  = List.map Positions.value rule.rule_formals;
+    pr_parameters  = List.map value rule.rule_formals;
     pr_branches    = productions rule.rule_rhs
   }

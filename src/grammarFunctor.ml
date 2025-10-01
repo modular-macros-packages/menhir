@@ -941,7 +941,7 @@ module Production = struct
     lazy (
       Option.iter (fun sym ->
         (* Mark this %prec declaration as useful. *)
-        let pos = Positions.position sym in
+        let pos = position sym in
         Hashtbl.add ever_useful pos ()
       ) osym
     ),
@@ -956,7 +956,7 @@ module Production = struct
       let osym = prec_decl.(prod) in
       Option.iter (fun sym ->
         (* Check whether this %prec declaration was useless. *)
-        let pos = Positions.position sym in
+        let pos = position sym in
         if not (Hashtbl.mem ever_useful pos) then begin
           Error.grammar_warning [pos] "this %%prec declaration is never useful.";
           Hashtbl.add ever_useful pos () (* hack: avoid two warnings at the same position *)

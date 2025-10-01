@@ -11,6 +11,7 @@
 (* This module helps report errors. *)
 
 open Range
+open Positions
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -40,7 +41,7 @@ val error: ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [errorp] is like [error], but uses the position range carried by [v]. *)
 
-val errorp: _ Positions.located -> ('a, out_channel, unit, 'b) format4 -> 'a
+val errorp: _ located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [warning] is like [error], except it does not exit. *)
 

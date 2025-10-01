@@ -11,14 +11,15 @@
 (* This module provides a number of tiny functions that help produce
    [IL] code. *)
 
+open Positions
 open IL
 
 (* A smart constructor for [PVarLocated]. *)
 
 let pvarlocated id =
-  let range = Positions.position id in
+  let range = position id in
   if Range.is_dummy range then
-    let x = Positions.value id in
+    let x = value id in
     PVar x
   else
     PVarLocated id

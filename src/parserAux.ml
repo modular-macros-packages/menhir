@@ -74,11 +74,11 @@ let check_production_group (right_hand_sides : early_productions) =
                                 (IdSet.diff ids ids')
                                 (IdSet.diff ids' ids))
           in
-          Error.error [Positions.position id]
+          Error.error [position id]
             "two productions that share a semantic action must define exactly\n\
              the same identifiers. Here, \"%s\" is defined\n\
              in one production, but not in all of them."
-            (Positions.value id)
+            (value id)
         with Not_found ->
           ()
       ) right_hand_sides
@@ -89,7 +89,7 @@ let normalize_producer i (pos, opt_identifier, parameter, attrs) =
   let id =
     match opt_identifier with
       | Some id -> id
-      | None -> Positions.locate pos ("_" ^ string_of_int (i + 1))
+      | None -> locate pos ("_" ^ string_of_int (i + 1))
   in
   (id, parameter, attrs)
 
@@ -112,7 +112,7 @@ let override pos o1 o2 =
    [$(idx + 1)]. *)
 let producer_names (producers : early_producers) =
   producers
-  |> List.map (fun (_, oid, _, _) -> Option.map Positions.value oid)
+  |> List.map (fun (_, oid, _, _) -> Option.map value oid)
   |> Array.of_list
 
 let validate_pointfree_action (fragment : string fragment) : string fragment option =
@@ -129,4 +129,4 @@ let validate_pointfree_action (fragment : string fragment) : string fragment opt
    and validate it thoroughly. *)
 
 let valid_ocaml_identifier (x : identifier located) : bool =
-  Lexpointfree.valid_ocaml_identifier (Lexing.from_string (Positions.value x))
+  Lexpointfree.valid_ocaml_identifier (Lexing.from_string (value x))

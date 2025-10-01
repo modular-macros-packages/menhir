@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Positions
 open Syntax
 
 (* We first build an alias map, which records the token aliases declared
@@ -24,17 +25,17 @@ type aliasmap =
 (* Extend an alias map with the token aliases present in a declaration. *)
 
 let collect_aliases_from_declaration (aliasmap : aliasmap) decl : aliasmap =
-  match Positions.value decl with
+  match value decl with
   | DToken (_, id, Some qid, _) ->
       begin match StringMap.find qid aliasmap with
       | exception Not_found ->
           (* Good: this alias does not exist yet. Record it. *)
-          StringMap.add qid (id, Positions.position decl) aliasmap
+          StringMap.add qid (id, position decl) aliasmap
       | id0, pos ->
           (* Oops: [qid] has already been declared as an alias for
              some other token. *)
           Error.error
-            [Positions.position decl; pos]
+            [position decl; pos]
             "%s cannot be declared as an alias for the symbol %s.\n\
              It has already been declared as an alias for %s."
             qid id id0
@@ -72,9 +73,9 @@ let dealias_terminal (aliasmap : aliasmap) pos (t : terminal) : terminal =
 (* Perform alias expansion throughout a partial grammar.
    (Visitors could be useful here!) *)
 
-let dealias_symbol aliasmap (sym : terminal Positions.located) =
-  let pos = Positions.position sym in
-  Positions.map (dealias_terminal aliasmap pos) sym
+let dealias_symbol aliasmap (sym : terminal located) =
+  let pos = position sym in
+  map (dealias_terminal aliasmap pos) sym
 
 let rec dealias_parameter aliasmap (param : parameter) =
   match param with
@@ -86,7 +87,7 @@ let rec dealias_parameter aliasmap (param : parameter) =
         dealias_parameters aliasmap params
       )
   | ParameterAnonymous branches ->
-      ParameterAnonymous (Positions.map (dealias_branches aliasmap) branches)
+      ParameterAnonymous (map (dealias_branches aliasmap) branches)
 
 and dealias_parameters aliasmap params =
   List.map (dealias_parameter aliasmap) params
@@ -107,9 +108,9 @@ and dealias_branches aliasmap branches =
 let dealias_rule aliasmap rule =
   { rule with pr_branches = dealias_branches aliasmap rule.pr_branches }
 
-let dealias_decl aliasmap (decl : declaration Positions.located) =
-  let pos = Positions.position decl in
-  Positions.map (fun (decl : declaration) ->
+let dealias_decl aliasmap (decl : declaration located) =
+  let pos = position decl in
+  map (fun (decl : declaration) ->
     match decl with
     | DCode _
     | DParameter _
