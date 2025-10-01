@@ -329,7 +329,8 @@ and nested_parameter (e : expression) : parameter =
 (* By default, a choice expression is converted to an anonymous rule. *)
 
 and choice_expression (e : expression) : parameter =
-  ParameterAnonymous (Positions.xmap productions e)
+  let branches = productions e in
+  ParameterAnonymous (Positions.locate (Positions.position e) branches)
 
 (* Converting the head of a sequence, a pair [x = e1] of a variable [x] and
    a symbol expression [e1], to a producer. *)

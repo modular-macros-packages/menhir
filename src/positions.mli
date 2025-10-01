@@ -31,6 +31,4 @@ val position: 'a located -> range
    while preserving its decoration. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
 
-val xmap: ('a located -> 'b) -> 'a located -> 'b located
-
 val fragment : 'a located -> 'a Fragment.fragment

@@ -25,9 +25,6 @@ let[@inline] value { v } =
 let map f { p; v } =
   let v = f v in { p; v }
 
-let xmap f { p; v } =
-  let v = f { p; v } in { p; v }
-
 let fragment { v; p } =
   let pos1 = startp p
   and pos2 = endp p in
