@@ -16,10 +16,9 @@ open IL
 (* A smart constructor for [PVarLocated]. *)
 
 let pvarlocated id =
-  let x, pos = Positions.decompose id in
-  let pos1 = Range.startp pos
-  and pos2 = Range.endp pos in
-  if pos1 == Lexing.dummy_pos || pos2 == Lexing.dummy_pos then
+  let range = Positions.position id in
+  if Range.is_dummy range then
+    let x = Positions.value id in
     PVar x
   else
     PVarLocated id

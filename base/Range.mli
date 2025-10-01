@@ -17,6 +17,11 @@ type range
 (**[dummy] is a dummy range. It is a pair of two dummy positions. *)
 val dummy : range
 
+(**[is_dummy range] determines whether [range] is a dummy range.
+   A range is considered a dummy range as soon as its start
+   position or end position is a dummy position. *)
+val is_dummy : range -> bool
+
 (**[make] converts a pair of positions to a range. *)
 val make : position * position -> range
 

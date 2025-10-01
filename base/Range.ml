@@ -17,6 +17,9 @@ type range =
 let dummy =
   (dummy_pos, dummy_pos)
 
+let is_dummy (startp, endp) =
+  startp == dummy_pos || endp == dummy_pos
+
 let[@inline] make x =
   x
 
