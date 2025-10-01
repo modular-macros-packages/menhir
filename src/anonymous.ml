@@ -8,6 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Range
+open Positions
 open Syntax
 
 (* For each anonymous rule, we define a fresh nonterminal symbol, and
@@ -22,7 +24,7 @@ open Syntax
 let rec fn_parameter accu (p : parameter) =
   (* [p] cannot be [ParameterAnonymous _]. *)
   let x, ps = Parameters.unapp p in
-  let accu = StringSet.add (Positions.value x) accu in
+  let accu = StringSet.add (value x) accu in
   fn_parameters accu ps
 
 and fn_parameters accu ps =
@@ -71,7 +73,7 @@ let rules =
    and return its name. *)
 
 let var (symbol : symbol) : parameter =
-  ParameterVar (Positions.unknown_pos symbol)
+  ParameterVar (locate dummy symbol)
 
 let anonymous pos (parameters : symbol list) (branches : parameterized_branch list) : parameter =
   (* Compute the free symbols of [branches]. They should form a subset
@@ -99,7 +101,7 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
   (* Record this definition. *)
   rules := rule :: !rules;
   (* Return the symbol that stands for it. *)
-  Parameters.app (Positions.locate pos symbol) (List.map var parameters)
+  Parameters.app (locate pos symbol) (List.map var parameters)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -112,8 +114,8 @@ let rec transform_parameter (parameters : symbol list) (p : parameter) : paramet
   | ParameterApp (x, ps) ->
       ParameterApp (x, List.map (transform_parameter parameters) ps)
   | ParameterAnonymous branches ->
-      let pos = Positions.position branches
-      and branches = Positions.value branches in
+      let pos = position branches
+      and branches = value branches in
       (* Do not forget the recursive invocation! *)
       let branches = List.map (transform_parameterized_branch parameters) branches in
       (* This is where the real work is done. *)

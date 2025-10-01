@@ -10,23 +10,24 @@
 
 open Range
 
-(** Decoration of a value with a position. *)
+(**A value of type ['a located] is a pair of a value of type ['a]
+   and a position of type [range]. In other words, it is a value
+   of type ['a], decorated with a position of type [range]. *)
 type 'a located
 
-(** [value dv] returns the raw value that underlies the
-    decorated value [dv]. *)
-val value: 'a located -> 'a
-
-(** [position dv] returns the position that decorates the
-    decorated value [dv]. *)
-val position: 'a located -> range
-
-(** [locate p v] decorates [v] with a position [p]. *)
+(**[locate p v] constructs a pair of the position [p] and value [v].
+   In other words, it decorates the value [v] with the position [p]. *)
 val locate : range -> 'a -> 'a located
 
-val unknown_pos : 'a -> 'a located
+(**[value] is the first pair projection.
+   In other words, it maps a decorated value to a value. *)
+val value: 'a located -> 'a
 
-(** [map f v] extends the decoration from [v] to [f v]. *)
+(**[position] is the second pair projection.
+   In other words, it maps a decorated value to a position. *)
+val position: 'a located -> range
+
+(**[map f v] extends the decoration from [v] to [f v]. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
 val pmap: (range -> 'a -> 'b) -> 'a located -> 'b located
 val xmap: ('a located -> 'b) -> 'a located -> 'b located

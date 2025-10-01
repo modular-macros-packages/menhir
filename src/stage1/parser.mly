@@ -20,6 +20,7 @@
 %{
 
 open Syntax
+open Range
 open Positions
 
 %}
@@ -87,7 +88,7 @@ declarations:
 
 declaration:
 | HEADER /* lexically delimited by %{ ... %} */
-    { [ unknown_pos (DCode $1) ] }
+    { [ locate dummy (DCode $1) ] }
 
 | TOKEN optional_ocamltype terminals
     { let ty, ts = $2, $3 in
@@ -114,13 +115,13 @@ declaration:
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, $1, prec))) $2 }
 
 | PARAMETER ANGLED
-    { [ unknown_pos (DParameter $2) ] }
+    { [ locate dummy (DParameter $2) ] }
 
 | GRAMMARATTRIBUTE
-    { [ unknown_pos (DGrammarAttribute $1) ] }
+    { [ locate dummy (DGrammarAttribute $1) ] }
 
 | PERCENTATTRIBUTE actuals attributes
-    { [ unknown_pos (DSymbolAttributes ($2, $3)) ] }
+    { [ locate dummy (DSymbolAttributes ($2, $3)) ] }
 
 | ON_ERROR_REDUCE actuals
     { let prec = ParserAux.new_on_error_reduce_level() in
@@ -305,11 +306,11 @@ optional_bar:
 
 modifier:
   QUESTION
-    { unknown_pos "option" }
+    { locate dummy "option" }
 | PLUS
-    { unknown_pos "nonempty_list" }
+    { locate dummy "nonempty_list" }
 | STAR
-    { unknown_pos "list" }
+    { locate dummy "list" }
 
 /* ------------------------------------------------------------------------- */
 /* A production group is a set of productions that share a semantic action.

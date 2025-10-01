@@ -13,10 +13,14 @@ open Range
 type 'a located =
   { p : range; v : 'a }
 
-let[@inline] position { p } = p
-let[@inline] value    { v } = v
+let[@inline] locate p v =
+  { p; v }
 
-let locate p v = { p; v }
+let[@inline] position { p } =
+  p
+
+let[@inline] value { v } =
+  v
 
 let map f { p; v } =
   let v = f v in { p; v }
@@ -26,9 +30,6 @@ let pmap f { p; v } =
 
 let xmap f { p; v } =
   let v = f { p; v } in { p; v }
-
-let unknown_pos v =
-  locate dummy v
 
 let fragment { v; p } =
   let pos1 = startp p

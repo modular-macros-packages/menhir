@@ -8,8 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let value    = Positions.value
-let unknown  = Positions.unknown_pos
+open Range
+open Positions
 open Attribute
 open Syntax
 open GroundSort
@@ -196,7 +196,7 @@ let sort param =
 (* We use an inefficient linear search, but that shouldn't be a problem. *)
 
 let global_attributes (nt : symbol) : attribute list =
-  let param = ParameterVar (unknown nt) in
+  let param = ParameterVar (locate dummy nt) in
   List.concat (List.map (fun (params, attrs) ->
     if List.exists (Parameters.equal param) params then attrs else []
   ) g.p_symbol_attributes)
@@ -345,7 +345,7 @@ let rec recognize (param : parameter) : parameter =
       let label : label = (x, inst) in
       enqueue label;
       let sym = mangle label in
-      Parameters.app (unknown sym) residuals
+      Parameters.app (locate dummy sym) residuals
 
 (* -------------------------------------------------------------------------- *)
 
@@ -411,7 +411,7 @@ let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols
              trouble. We avoid this problem by systematically renaming every
              formal parameter to a fresh unlikely name. *)
           let formal = freshen formal in
-          ParameterVar (unknown formal),
+          ParameterVar (locate dummy formal),
           formal :: residuals
     in
     Env.add formal param env, residuals
