@@ -271,7 +271,7 @@ let fragment pos1 pos2 =
   (* Read the specified chunk of the file. *)
   let content = InputFile.chunk (pos1, pos2) in
   (* Construct a fragment. *)
-  Fragment.make pos1 pos2 content
+  locate (Range.make (pos1, pos2)) content
 
 (* ------------------------------------------------------------------------ *)
 
@@ -302,9 +302,9 @@ let make_action pos1 pos2 monsters dollars producers =
   let ofs1 = pos1.pos_cnum in
   let content = transform ofs1 content monsters in
   (* Construct a fragment. *)
-  let fragment = Fragment.make pos1 pos2 content in
+  let fragment = locate (Range.make (pos1, pos2)) content in
   (* Add parentheses to delimit the semantic action. *)
-  let fragment = Fragment.parenthesize fragment in
+  let fragment = Located.parenthesize fragment in
   (* Record whether this action originates in Menhir's standard library. *)
   let standard = (pos1.pos_fname = Settings.stdlib_filename) in
   (* Build a semantic action. *)

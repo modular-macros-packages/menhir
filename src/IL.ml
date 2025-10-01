@@ -8,7 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type 'a fragment = 'a Fragment.fragment
 type ocamltype = OCamlType.ocamltype
 type 'a located = 'a Located.located
 
@@ -19,7 +18,7 @@ type interface =
 
 and interface_item =
     (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
-  | IIFunctor of string fragment list * interface
+  | IIFunctor of string located list * interface
     (* Exception declarations. *)
   | IIExcDecls of excdef list
     (* Algebraic data type declarations (mutually recursive). *)
@@ -239,7 +238,7 @@ and expr =
   | ERecordWrite of expr * string * expr
 
   (* Textual OCaml code. *)
-  | ETextual of string fragment
+  | ETextual of string located
 
   (* Comments. *)
   | EComment of string * expr
@@ -299,7 +298,7 @@ and structure =
 
 and structure_item =
     (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
-  | SIFunctor of string fragment list * structure
+  | SIFunctor of string located list * structure
     (* Exception definitions. *)
   | SIExcDefs of excdef list
     (* Algebraic data type definitions (mutually recursive). *)
@@ -307,7 +306,7 @@ and structure_item =
     (* Value definitions (mutually recursive or not, as per the flag). *)
   | SIValDefs of bool * valdef list
     (* Raw OCaml code. *)
-  | SIFragment of string fragment list
+  | SIFragment of string located list
     (* Sub-module definition. *)
   | SIModuleDef of string * modexpr
     (* Module inclusion. *)

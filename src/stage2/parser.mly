@@ -78,13 +78,13 @@ let locate' locs v =
   UID              "UIdent"
   QID              "\"alias\""
 
-%token <string Fragment.fragment>
+%token <string Located.located>
   HEADER           "%{ header %}"
 
-%token <string Fragment.fragment>
+%token <string Located.located>
   ANGLED           "<unit>"
 
-%token <string Fragment.fragment Lazy.t>
+%token <string Located.located Lazy.t>
   PERCENTPERCENT   "%%"
 
 %token <Syntax.raw_action>

@@ -29,9 +29,9 @@ open Located
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token PERCENTATTRIBUTE SEMI
 %token <string Located.located> LID UID QID
-%token <string Fragment.fragment> HEADER
-%token <string Fragment.fragment> ANGLED
-%token <string Fragment.fragment Lazy.t> PERCENTPERCENT
+%token <string Located.located> HEADER
+%token <string Located.located> ANGLED
+%token <string Located.located Lazy.t> PERCENTPERCENT
 %token <Syntax.raw_action> ACTION
 %token <Attribute.attribute> ATTRIBUTE GRAMMARATTRIBUTE
 /* For the new rule syntax: */

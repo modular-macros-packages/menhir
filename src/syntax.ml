@@ -25,11 +25,8 @@ type ranges =
 type 'a located =
   'a Located.located
 
-type 'a fragment =
-  'a Fragment.fragment
-
 type ocamltype = OCamlType.ocamltype =
-  | Declared of string fragment
+  | Declared of string located
   | Inferred of string
 
 (* ------------------------------------------------------------------------ *)
@@ -296,7 +293,7 @@ and symbol_expression =
 
 and extended_action =
   | XATraditional of raw_action
-  | XAPointFree of string fragment option
+  | XAPointFree of string located option
   (* A semantic action is either traditional { ... } or point-free.
      There are two forms of point-free actions, <> and <id>.
      In the latter case, [id] is an OCaml identifier. *)
@@ -320,11 +317,11 @@ type declaration =
 
     (* Raw OCaml code. *)
 
-  | DCode of string fragment
+  | DCode of string located
 
     (* Raw OCaml functor parameter. *)
 
-  | DParameter of string fragment
+  | DParameter of string located
 
     (* Terminal symbol (token) declaration. *)
 
@@ -361,7 +358,7 @@ type declaration =
 type partial_grammar =
   {
     pg_filename          : filename;
-    pg_postlude          : string fragment option;
+    pg_postlude          : string located option;
     pg_declarations      : declaration located list;
     pg_rules             : parameterized_rule list;
   }
@@ -382,9 +379,9 @@ type partial_grammar =
  *)
 type grammar =
   {
-    p_preludes           : string fragment list;
-    p_postludes          : string fragment list;
-    p_parameters         : string fragment list;
+    p_preludes           : string located list;
+    p_postludes          : string located list;
+    p_parameters         : string located list;
     p_start_symbols      : range StringMap.t;
     p_types              : (parameter * ocamltype located) list;
     p_tokens             : token_properties StringMap.t;

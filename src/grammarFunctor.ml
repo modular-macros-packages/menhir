@@ -28,7 +28,7 @@ end) () = struct
 open G
 
 type ocamltype = OCamlType.ocamltype =
-  | Declared of string fragment
+  | Declared of string located
   | Inferred of string
 
 (* ------------------------------------------------------------------------ *)

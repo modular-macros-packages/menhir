@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Fragment
+open Located
 open Keyword (* from sdk/ *)
 
 (** A semantic action is a piece of OCaml code together with information about
@@ -27,7 +27,7 @@ type t
     originates in Menhir's standard library. The list [keywords] is the list
     of Menhir keywords found in this semantic action. The set [xs] is the
     set of semantic-value variables that occur free in this action. *)
-val make: bool -> StringSet.t -> keyword list -> string fragment -> t
+val make: bool -> StringSet.t -> keyword list -> string located -> t
 
 (** [from_il_expr] builds an action out of an IL expression. Not every IL
    expression is accepted; only the expressions built by NewRuleSyntax are

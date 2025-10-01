@@ -89,7 +89,7 @@ val producer_names: early_producers -> identifier option array
    identifier. May raise [Lexpointfree.InvalidPointFreeAction]. Returns [None]
    if the action is empty and [Some _] if it is nonempty. *)
 
-val validate_pointfree_action: string fragment -> string fragment option
+val validate_pointfree_action: string located -> string located option
 
 (* Test whether a string is a valid OCaml lowercase identifier. *)
 

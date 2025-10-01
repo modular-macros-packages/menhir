@@ -199,12 +199,12 @@ let locate f range body =
   | None ->
       body f
 
-let fragment f (frag : string fragment) =
+let fragment f (frag : string located) =
   locate f (Located.position frag) @@ fun f ->
   output_string f (Located.value frag)
 
 let parenthesized_fragment f frag =
-  fragment f (Fragment.parenthesize frag)
+  fragment f (Located.parenthesize frag)
 
 (* ------------------------------------------------------------------------- *)
 (* Expression printer. *)

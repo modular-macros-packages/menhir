@@ -85,9 +85,9 @@ type rule =
 
 type grammar =
   {
-    preludes        : string fragment list;
-    postludes       : string fragment list;
-    parameters      : string fragment list;
+    preludes        : string located list;
+    postludes       : string located list;
+    parameters      : string located list;
     start_symbols   : StringSet.t;
     types           : ocamltype StringMap.t;
     tokens          : Syntax.token_properties StringMap.t;

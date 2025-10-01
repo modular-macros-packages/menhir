@@ -9,7 +9,6 @@
 (******************************************************************************)
 
 open Range
-open Fragment
 open Attribute
 
 (* The functor [Make] transforms an abstract syntax tree for the grammar into a
@@ -31,8 +30,10 @@ module Make (G : sig
 
 end) () : sig
 
+open Located
+
 type ocamltype = OCamlType.ocamltype =
-  | Declared of string fragment
+  | Declared of string located
   | Inferred of string
 
 (* ------------------------------------------------------------------------ *)

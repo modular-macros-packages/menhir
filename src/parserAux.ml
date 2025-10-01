@@ -115,7 +115,7 @@ let producer_names (producers : early_producers) =
   |> List.map (fun (_, oid, _, _) -> Option.map value oid)
   |> Array.of_list
 
-let validate_pointfree_action (fragment : string fragment) : string fragment option =
+let validate_pointfree_action (fragment : string located) : string located option =
   let s = value fragment in
   if Lexpointfree.validate_pointfree_action (Lexing.from_string s) then
     Some fragment (* a non-empty action *)
