@@ -37,23 +37,10 @@ let etuple = function
   | es ->
       ETuple es
 
-let ptuple = function
-  | [] ->
-      PUnit
-  | [ p ] ->
-      p
-  | ps ->
-      PTuple ps
-
 (* The unit type. *)
 
 let tunit =
   tname "unit"
-
-(* The Boolean type. *)
-
-let tbool =
-  tname "bool"
 
 (* The integer type. *)
 
@@ -64,11 +51,6 @@ let tint =
 
 let tstring =
   tname "string"
-
-(* The exception type. *)
-
-let texn =
-  tname "exn"
 
 (* The type of pairs. *)
 
@@ -195,6 +177,11 @@ let eletand (bindings, body) =
       let pats, exprs = List.split bindings in
       ELet ([ PTuple pats, ETuple exprs ], body)
 
+(* Boolean constants. *)
+
+let efalse : expr =
+  EData ("false", [])
+
 (* [eraisenotfound] is an expression that raises [Not_found]. *)
 
 let eraisenotfound =
@@ -202,6 +189,9 @@ let eraisenotfound =
 
 let eassert e =
   EApp (EVar "assert", [ e ])
+
+let eassertfalse =
+  eassert efalse
 
 (* [bottom] is an expression that has every type. Its semantics is
    irrelevant. *)
@@ -213,34 +203,6 @@ let eassert e =
 let bottom =
   EBottom
 
-(* Boolean constants. *)
-
-let efalse : expr =
-  EData ("false", [])
-
-let etrue : expr =
-  EData ("true", [])
-
-let eboolconst b =
-  if b then etrue else efalse
-
-(* Option constructors. *)
-
-let enone =
-  EData ("None", [])
-
-let esome e =
-  EData ("Some", [e])
-
-(* List constructors. *)
-
-let rec elist xs =
-  match xs with
-  | [] ->
-      EData ("[]", [])
-  | x :: xs ->
-      EData ("::", [ x; elist xs ])
-
 (* Integer constants as patterns. *)
 
 let pint k : pattern =
@@ -250,12 +212,6 @@ let pint k : pattern =
 
 let arrow typ body : typ =
   TypArrow (typ, body)
-
-let arrowif flag typ body : typ =
-  if flag then
-    arrow typ body
-  else
-    body
 
 let marrow typs body : typ =
   List.fold_right arrow typs body
@@ -274,12 +230,6 @@ let trace (format : string) (args : expr list) : (pattern * expr) list =
     [ PUnit, eprintf format args ]
   else
     []
-
-let tracecomment (comment : string) (body : expr) : expr =
-  if Settings.trace then
-    blet (trace comment [], body)
-  else
-    EComment (comment, body)
 
 (* ------------------------------------------------------------------------ *)
 (* Here is a bunch of naming conventions. Our names are chosen to minimize
@@ -346,13 +296,6 @@ let mapp me1 me2 =
 
 let mapp me1 mes2 =
   List.fold_left mapp me1 mes2
-
-let field modifiable name t =
-  {
-    modifiable = modifiable;
-    fieldname = name;
-    fieldtype = type2scheme t
-  }
 
 let branch branchpat branchbody =
   { branchpat; branchbody }

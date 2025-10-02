@@ -109,7 +109,7 @@ let assertfalsedef = {
       EFun ([ PUnit ],
         blet (
           [ PUnit, eprintf internal_failure []],
-          eassert efalse
+          eassertfalse
         )
       ),
       scheme [ "a" ] (arrow tunit (tvar "a"))
@@ -518,7 +518,7 @@ let must_not_return e msg =
       PWildcard, e;
       PUnit, EApp (EVar "prerr_string", [EStringConst msg]);
     ],
-    eassert efalse
+    eassertfalse
   )
 
 (* In the simplified strategy, a production that contains the [error] token

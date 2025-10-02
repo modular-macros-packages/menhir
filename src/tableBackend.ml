@@ -842,7 +842,7 @@ let terminal () =
           branch
             PWildcard
             (EComment ("This terminal symbol does not exist.",
-                       EApp (EVar "assert", [ efalse ])))
+                       eassertfalse))
         ]
       )
     )
@@ -869,7 +869,7 @@ let nonterminal () =
           branch
             PWildcard
             (EComment ("This nonterminal symbol does not exist.",
-                       EApp (EVar "assert", [ efalse ])))
+                       eassertfalse))
         ]
       )
     )

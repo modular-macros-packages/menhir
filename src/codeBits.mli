@@ -22,15 +22,12 @@ val tname: string -> typ
 (* Tuples. *)
 
 val etuple: expr list -> expr
-val ptuple: pattern list -> pattern
 
 (* Standard types. *)
 
 val tunit: typ
-val tbool: typ
 val tint: typ
 val tstring: typ
-val texn: typ
 val tposition: typ
 val tlocation: typ
 val tlexbuf: typ
@@ -69,24 +66,11 @@ val eraisenotfound: expr
 (** [eassert] builds a runtime assertion [assert e]. *)
 val eassert: expr -> expr
 
+val eassertfalse: expr
+
 (** [bottom] is an expression that has every type. Its semantics is
     irrelevant. *)
 val bottom: expr
-
-(* Boolean constants. *)
-
-val etrue: expr
-val efalse: expr
-val eboolconst: bool -> expr
-
-(* Option constructors. *)
-
-val enone: expr
-val esome: expr -> expr
-
-(* List constructors. *)
-
-val elist: expr list -> expr
 
 (* Integer constants as patterns. *)
 
@@ -95,7 +79,6 @@ val pint: int -> pattern
 (* These help build function types. *)
 
 val arrow: typ -> typ -> typ
-val arrowif: bool -> typ -> typ -> typ
 val marrow: typ list -> typ -> typ
 
 (* Tracing. *)
@@ -107,10 +90,6 @@ val eprintf: string -> expr list -> expr
 (**[trace format args] returns a list of (effectful) bindings which,
    when [--trace] is enabled, log a tracing message onto [stderr]. *)
 val trace: string -> expr list -> (pattern * expr) list
-
-(**[tracecomment c e] emits either a comment whose content is the string
-   [c] or a tracing message whose content is also [c]. *)
-val tracecomment: string -> expr -> expr
 
 (* These functions are used to generate names in menhir's namespace. *)
 val prefix: string -> string
@@ -127,9 +106,6 @@ val with_types: with_kind -> string -> (string list * string * typ) list -> modu
 
 (** Functor applications. *)
 val mapp: modexpr -> modexpr list -> modexpr
-
-(** Record fields. *)
-val field: bool -> string -> typ -> fielddef
 
 (** Branches. *)
 val branch: pattern -> expr -> branch

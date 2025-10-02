@@ -552,7 +552,7 @@ and nt_method_branches nt =
   (* For each production [prod] associated with [nt], there is one branch. *)
   Production.mapnt nt nt_method_branch @
   (* A default branch, which cannot be taken, is also needed. *)
-  branch PWildcard (eassert efalse) ::
+  branch PWildcard (eassertfalse) ::
   []
 
 and nt_method_branch prod =
@@ -599,7 +599,7 @@ and prod_method_arg csts i symbol : expr option =
           Some (
             EMatch (subtree,
               branch pat (evar v) ::
-              branch PWildcard (eassert efalse) ::
+              branch PWildcard (eassertfalse) ::
               []
             )
           )
