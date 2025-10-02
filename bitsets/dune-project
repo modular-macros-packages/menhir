@@ -1,4 +1,4 @@
-(lang dune 3.18)
+(lang dune 2.8)
 (name vendored_bitsets)
 (generate_opam_files true)
 (package
@@ -10,7 +10,6 @@
   (bug_reports https://github.com/fpottier/bitsets/issues)
   (synopsis "Several implementations of bit sets")
   (license "LGPL-2.0-only WITH OCaml-LGPL-linking-exception")
-  (maintenance_intent "(latest)")
   (depends
     (ocaml (>= 4.14))
     (monolith (and :with-test (>= 20250922)))
