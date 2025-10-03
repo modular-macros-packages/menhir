@@ -55,9 +55,8 @@ val tokengadtdata: string -> string
 val tokentypedef: BasicSyntax.grammar -> IL.interface
 val tokengadtdef: BasicSyntax.grammar -> IL.interface
 
-(* If [--only-tokens] is set, then [produce_tokentypes] writes the type
-   definitions to the [.ml] and [.mli] files and stops Menhir. Otherwise,
-   it does nothing. *)
+(* [produce_tokentypes] writes the type definitions to the [.ml] and
+   [.mli] files. It is usd when [--only-tokens] is set. *)
 
 val produce_tokentypes: BasicSyntax.grammar -> unit
 

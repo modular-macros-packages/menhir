@@ -192,44 +192,36 @@ let tokengadtdef grammar =
    do so and stop. *)
 
 let produce_tokentypes grammar =
-  match Settings.token_type_mode with
-  | Settings.TokenTypeOnly ->
 
-      (* Create both an .mli file and an .ml file. This is made
-         necessary by the fact that the two can be different
-         when there are functor parameters. *)
+  (* Create both an .mli file and an .ml file. This is made necessary
+     by the fact that the two can be different when there are functor
+     parameters. *)
 
-      let i =
-        tokentypedef grammar @
-        MList.ifnlazy Settings.inspection (fun () -> [
-              IIModule ("MenhirInterpreter", MTSigEnd (tokengadtdef grammar))
-            ])
-      in
-
-      let module P =
-        ILPrinter.Make (struct
-                        let f = open_out (Settings.base ^ ".mli")
-                        let print_line_directives = None
-                        let print_comments = Settings.comment
-                      end)
-      in
-      P.interface [
-        IIFunctor (grammar.parameters, i)
-      ];
-      let module P =
-        ILPrinter.Make (struct
-                        let f = open_out (Settings.base ^ ".ml")
-                        let print_line_directives = None
-                        let print_comments = Settings.comment
-                      end)
-      in
-      P.program [
-        SIFunctor (grammar.parameters,
-          interface_to_structure i
-        )
-      ];
-      exit 0
-
-  | Settings.CodeOnly _
-  | Settings.TokenTypeAndCode ->
-      ()
+  let i =
+    tokentypedef grammar @
+    MList.ifnlazy Settings.inspection (fun () -> [
+      IIModule ("MenhirInterpreter", MTSigEnd (tokengadtdef grammar))
+    ])
+  in
+  let module P =
+    ILPrinter.Make (struct
+      let f = open_out (Settings.base ^ ".mli")
+      let print_line_directives = None
+      let print_comments = Settings.comment
+    end)
+  in
+  P.interface [
+    IIFunctor (grammar.parameters, i)
+  ];
+  let module P =
+    ILPrinter.Make (struct
+      let f = open_out (Settings.base ^ ".ml")
+      let print_line_directives = None
+      let print_comments = Settings.comment
+    end)
+  in
+  P.program [
+    SIFunctor (grammar.parameters,
+      interface_to_structure i
+    )
+  ]

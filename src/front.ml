@@ -141,7 +141,13 @@ let grammar =
    the definition of the [token] type and stop. *)
 
 let () =
-  TokenType.produce_tokentypes grammar
+  match Settings.token_type_mode with
+  | Settings.TokenTypeOnly ->
+      TokenType.produce_tokentypes grammar;
+      exit 0
+  | Settings.CodeOnly _
+  | Settings.TokenTypeAndCode ->
+      ()
 
 (* ------------------------------------------------------------------------- *)
 
