@@ -241,7 +241,6 @@ let program grammar =
   in
 
   let def = {
-    valpublic = true;
     valpat = PTuple ps;
     valval = ELet (bindings1 @ bindings2, annotate bottom (TypTuple ts))
   }
@@ -253,12 +252,10 @@ let program grammar =
      defined by the prologue or postlogue. *)
 
   let begindef = {
-    valpublic = true;
     valpat = PVar "menhir_begin_marker";
     valval = EIntConst 0
   }
   and enddef = {
-    valpublic = true;
     valpat = PVar "menhir_end_marker";
     valval = EIntConst 0
   } in

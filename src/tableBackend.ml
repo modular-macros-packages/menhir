@@ -122,7 +122,6 @@ let size =
 (* Optionally, print a measure of each of the tables that we are defining. *)
 
 let define (name, expr) = {
-  valpublic = true;
   valpat = PVar name;
   valval = expr
 }
@@ -978,7 +977,6 @@ let first () =
    because we use unsafe casts, and a version mismatch could cause a crash. *)
 
 let versiondef = {
-  valpublic = true;
   valpat = PUnit;
   valval = EVar (staticVersion ^ ".require_" ^ Version.version);
 }

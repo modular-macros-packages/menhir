@@ -176,7 +176,6 @@ let tokspat toks =
    produce code for each branch. *)
 
 let destructuretokendef name codomain bindsemv branch = {
-  valpublic = false;
   valpat = PVar name;
   valval =
     annotate (
@@ -215,7 +214,6 @@ let stopdef =
   let s = "_s" in
   let args = if Settings.exn_carries_state then [ EVar s ] else [] in
   {
-    valpublic = false;
     valpat = PVar stop;
     valval =
       EFun ([PVar s],

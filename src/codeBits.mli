@@ -122,11 +122,8 @@ val pvar: string -> pattern
 (** A list of variables as patterns. *)
 val pvars: string list -> pattern list
 
-(** A private value definition. *)
+(** A value definition. *)
 val def: string -> expr -> valdef
-
-(** A public value definition. *)
-val defpublic: string -> expr -> valdef
 
 (** A single non-recursive value definition. *)
 val valdef: valdef -> structure_item

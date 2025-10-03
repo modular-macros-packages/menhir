@@ -381,7 +381,7 @@ and dcst_defs nt : structure =
   (* The public type of DCSTs for the nonterminal symbol [nt]. *)
   SITypeDefs [dcst_def nt] ::
   (* The public [choice] constructor for this type. *)
-  valdef (defpublic (dcst_choice_name nt) (evar ichoice)) ::
+  valdef (def (dcst_choice_name nt) (evar ichoice)) ::
   (* One constructor per production for this type,
      excluding productions that involve the [error] token. *)
   List.flatten (Production.mapnt nt dcst_constructor_def)
@@ -400,7 +400,7 @@ and dcst_constructor_def prod : structure =
     valdef (
       (* If [dcst_constructor_name prod] raises [Not_found] then the
          definition of this constructor is omitted altogether. *)
-      defpublic (dcst_constructor_name prod) (
+      def (dcst_constructor_name prod) (
         (* The constructor takes one formal parameter for each element in the
            right-hand side of the production [prod]. However, the parameters
            that correspond to terminal symbols without a semantic value are
@@ -680,7 +680,7 @@ and all_settle_defs () : structure =
      resolution algorithm. We use the entry state associated with [nt]
      as starting state. We use [#] as the lookahead symbol. *)
   List.map (fun (nt, state) ->
-    valdef (defpublic (settle_name nt) (settle_def state))
+    valdef (def (settle_name nt) (settle_def state))
   ) entry
 
 and settle_def (state : int) : expr =

@@ -102,7 +102,6 @@ let internal_failure =
   "Internal failure -- please contact the parser generator's developers."
 
 let assertfalsedef = {
-  valpublic = false;
   valpat = PVar assertfalse;
   valval =
     EAnnot (
@@ -449,7 +448,7 @@ let entrydef (nt : string) label defs =
   let lexer, lexbuf = EmitStackLang.(lexer, lexbuf) in
   let data = finaldataname (Nonterminal.lookup nt) in
   let semv = "v" in
-  defpublic nt (EFun (
+  def nt (EFun (
     [ pxvar lexer; pxvar lexbuf ],
     blet ([ pxvar stack, EUnit ],
     blet ([ PData (data, [pvar semv]), jump label ],

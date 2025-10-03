@@ -594,7 +594,6 @@ let compile_runs filename (runs : run or_comment list) : unit =
     )) [ default ] runs
   in
   let messagedef = {
-    valpublic = true;
     valpat = PVar name;
     valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
   } in

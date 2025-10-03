@@ -186,12 +186,6 @@ and typescheme = {
 
 and valdef = {
 
-  (* Whether the value is public. Public values cannot be
-     suppressed by the inliner. They serve as seeds for the
-     dead code analysis. *)
-
-  valpublic: bool;
-
   (* Definition's left-hand side. *)
   valpat: pattern;
 

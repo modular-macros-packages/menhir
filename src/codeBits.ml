@@ -313,10 +313,7 @@ let pvars xs =
   List.map pvar xs
 
 let def f body =
-  { valpublic = false; valpat = PVar f; valval = body }
-
-let defpublic f body =
-  { valpublic = true; valpat = PVar f; valval = body }
+  { valpat = PVar f; valval = body }
 
 let valdef def =
   SIValDefs (false, [ def ])
