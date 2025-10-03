@@ -400,7 +400,8 @@ let validate_entry c entry : targeted_sentence or_comment list =
    during validation of [x] by [validate]. *)
 
 let strictly validate x =
-  Error.with_new_category (fun c -> validate c x)
+  Error.with_new_category @@ fun c ->
+  validate c x
 
 (* --------------------------------------------------------------------------- *)
 
@@ -545,7 +546,7 @@ let message_table
     (runs : run or_comment list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
-  Error.with_new_category (fun c ->
+  Error.with_new_category @@ fun c ->
     foreach_targeted_sentence (fun table (sentence2, target) message ->
       let s = target2state target in
       match Lr1.NodeMap.find s table with
@@ -558,7 +559,6 @@ let message_table
       | exception Not_found ->
           Lr1.NodeMap.add s (sentence2, message) table
     ) Lr1.NodeMap.empty runs
-  )
 
 (* --------------------------------------------------------------------------- *)
 
@@ -718,8 +718,8 @@ let compare_errors filename1 filename2 =
      in an order that respects the left-hand file. Indeed, the
      left-hand file is processed by the following loop: *)
 
-  Error.with_new_category begin fun c ->
-    foreach_targeted_sentence begin fun () (sentence1, target1) message1 ->
+  Error.with_new_category @@ fun c ->
+    foreach_targeted_sentence (fun () (sentence1, target1) message1 ->
 
       let s = target2state target1 in
 
@@ -751,8 +751,7 @@ let compare_errors filename1 filename2 =
               (Lr1.number s) filename1 filename2
           end
 
-    end () runs1
-  end
+    ) () runs1
 
 let () =
   Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
