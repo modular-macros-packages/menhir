@@ -63,31 +63,31 @@ and with_kind =
 (**An exception definition. *)
 and excdef = {
 
-    (* Name of the exception. *)
     excname: string;
+    (**The name of this exception. *)
 
-    (* Optional equality. *)
     exceq: string option;
+    (**An optional equality. *)
 
-    (* Optional parameters. *)
     excparams: typ list;
+    (**Parameters. *)
 
   }
 
 (**A type definition. *)
 and typedef = {
 
-    (* Name of the data type. *)
     typename: string;
+    (**The name of this type. *)
 
-    (* Type parameters. *)
     typeparams: typeparams;
+    (**Type parameters. *)
 
-    (* Data constructors. *)
     typerhs: typedefrhs;
+    (**Data constructors. *)
 
-    (* Constraint. *)
     typeconstraint: (typ * typ) option
+    (**An optional type equality constraint. *)
 
   }
 
@@ -110,40 +110,40 @@ and typedefrhs =
 (**A record field definition. *)
 and fielddef = {
 
-    (* Whether the field is mutable. *)
-    modifiable: bool;
+  modifiable: bool;
+  (**Whether this field is mutable. *)
 
-    (* Name of the field. *)
-    fieldname: string;
+  fieldname: string;
+  (**The name of this field. *)
 
-    (* Type of the field. *)
-    fieldtype: typescheme
+  fieldtype: typescheme
+  (**The type of this field. *)
 
-  }
+}
 
 (**A data constructor definition. *)
 and datadef = {
 
-    (* Name of the data constructor. *)
-    dataname: string;
+  dataname: string;
+  (**The name of this data constructor. *)
 
-    (* Types of the value parameters. *)
-    datavalparams: typ list;
+  datavalparams: typ list;
+  (**The types of the value parameters. *)
 
-    (* Instantiated type parameters, if this is a GADT --
-       [None] if this is an ordinary ADT. *)
-    datatypeparams: typ list option;
+  datatypeparams: typ list option;
+  (**The instantiated type parameters that appear in the result type of this
+     constructor, if this is a GADT; [None] if this is an ordinary ADT. *)
 
-    (* A comment about this data constructor. *)
-    comment: string option;
+  comment: string option;
+  (**A comment about this data constructor. *)
 
-    (* An optional [@@unboxed] attribute. This attribute can be used only
-       if there is a single data constructor and it carries a single field.
-       This attribute is recognized by OCaml 4.04 and ignored by earlier
-       versions of OCaml. *)
-    unboxed: bool;
+  unboxed: bool;
+  (**An optional [@@unboxed] attribute. This attribute can be used only
+     if there is a single data constructor and it carries a single field.
+     This attribute is recognized by OCaml 4.04 and ignored by earlier
+     versions of OCaml. *)
 
-  }
+}
 
 (**A type. *)
 and typ =
@@ -169,31 +169,33 @@ and typ =
 (**A type scheme. *)
 and typescheme = {
 
-  (* Universal quantifiers, without leading quotes. *)
   quantifiers: string list;
+  (**Universal quantifiers, without leading quotes. *)
 
-  (* Whether the quantifiers are locally abstract. An OCaml locally abstract
+  locally_abstract: bool;
+  (**Whether the quantifiers are locally abstract. An OCaml locally abstract
      type is bound by [type a] and referred to as [a]. Such a reference is
      internally represented as a [TypApp] node. An ordinary type variable is
      bound by ['a] and referred to as ['a]. Such a reference is internally
      represented as a [TypVar] node. *)
-  locally_abstract: bool;
 
-  (* Body. *)
   body: typ;
+  (**Body. *)
 
-  }
+}
 
+(**A value definition. *)
 and valdef = {
 
-  (* Definition's left-hand side. *)
   valpat: pattern;
+  (**The left-hand side of the definition (a pattern). *)
 
-  (* Value to which it is bound. *)
   valval: expr
+  (**The right-hand side of the definition (an expression). *)
 
-  }
+}
 
+(**An expression. *)
 and expr =
 
   (* Variable. *)
@@ -208,8 +210,7 @@ and expr =
   (* Method call. *)
   | EMethodCall of expr * method_name
 
-  (* Local definitions. This is a nested sequence of [let]
-     definitions. *)
+  (* Local definitions. This is a nested sequence of [let] definitions. *)
   | ELet of (pattern * expr) list * expr
 
   (* Case analysis. *)
@@ -217,16 +218,16 @@ and expr =
   | EIfThen of expr * expr
   | EIfThenElse of expr * expr * expr
 
-  (* An expression that claims to be dead code. *)
+  (* An expression that claims to be statically dead code. *)
   | EDead
 
   (* A divergent expression. *)
   | EBottom
 
-  (* Raising exceptions. *)
+  (* Raising an exception. *)
   | ERaise of expr
 
-  (* Exception analysis. *)
+  (* Catching an exception. *)
   | ETry of expr * branch list
 
   (* Data construction. Tuples of length 1 are considered nonexistent,
@@ -255,22 +256,23 @@ and expr =
 
   (* Comments. *)
   | EComment of string * expr
-  | EPatComment of string * pattern * expr
 
   (* Arrays. *)
   | EArray of expr list
   | EArrayAccess of expr * expr
 
+(**A branch in a case analysis. *)
 and branch = {
 
-  (* Branch pattern. *)
   branchpat: pattern;
+  (**The branch's pattern. *)
 
-  (* Branch body. *)
   branchbody: expr;
+  (**The branch's body. *)
 
-  }
+}
 
+(**A pattern. *)
 and pattern =
 
   (* Wildcard. *)
@@ -294,21 +296,21 @@ and pattern =
   (* Type annotation. *)
   | PAnnot of pattern * typ
 
-(* Module expressions. *)
-
+(**A module expression. *)
 and modexpr =
-    | MVar of string
-    | MStruct of structure
-    | MApp of modexpr * modexpr
+  | MVar of string
+  | MStruct of structure
+  | MApp of modexpr * modexpr
 
-(* Structures. *)
-
+(**A program is a structure. *)
 and program =
     structure
 
+(**A structure. *)
 and structure =
     structure_item list
 
+(**A structure item.*)
 and structure_item =
     (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
   | SIFunctor of string located list * structure
@@ -336,19 +338,21 @@ and structure_item =
       (* self type annotation: *) typ option *
       (* content: *)              class_fields
 
-(* Objects. *)
-
+(**An optional [virtual] flag. *)
 and virtuality =
   | NonVirtual
   | Virtual
 
+(**An optional [private] flag. *)
 and privacy =
   | Public
   | Private
 
+(**Class fields in a class definition. *)
 and class_fields =
   class_field list
 
+(**A class field in a class definition. *)
 and class_field =
     (* Method definition. *)
   | CFMethod of privacy * method_name * expr
@@ -357,17 +361,21 @@ and class_field =
     (* Comment. *)
   | CFComment of string
 
+(**Class fields in a class type. *)
 and class_field_specs =
   class_field_spec list
 
+(**A class field in a class type. *)
 and class_field_spec =
     (* Method declaration. *)
   | CFSMethod of virtuality * method_name * typescheme
     (* Comment. *)
   | CFSComment of string
 
+(**A class name. *)
 and class_name =
   string
 
+(**A method name. *)
 and method_name =
   string

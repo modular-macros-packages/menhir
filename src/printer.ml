@@ -249,9 +249,8 @@ let andNotSeq = function
 
 let rec member e k =
   match e with
-  | EComment _
-  | EPatComment _ ->
-      true
+  | EComment (_, e) ->
+      member e k
   | EFun _
   | ETry _
   | EMatch _ ->
@@ -387,11 +386,6 @@ and exprk k f e =
           line := !line + LineCount.count 0 (Lexing.from_string c);
           fprintf f "(* %s *)%t%a" c nl (exprk k) e
         end
-        else
-          exprk k f e
-    | EPatComment (s, p, e) ->
-        if Settings.comment then
-          fprintf f "(* %s%a *)%t%a" s pat p nl (exprk k) e
         else
           exprk k f e
     | ELet (pes, body) ->
