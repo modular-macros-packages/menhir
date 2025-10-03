@@ -18,10 +18,11 @@ let mem, elements = Reg.Set.(mem, elements)
 let state = EmitStackLang.state
 (* Our target language: *)
 open IL
-open CodeBits
-let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics =
+open ILConstruction
+let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
+let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics, trace =
   CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit,
-              basics, mbasics)
+              basics, mbasics, trace)
 let exvar (r : register) = EVar (Reg.export r)
 let pxvar (r : register) = PVar (Reg.export r)
 let exvars rs = map exvar rs
@@ -492,7 +493,7 @@ let eactionparams action =
 let annotate e nt =
   match Nonterminal.ocamltype nt with
   | Some ty ->
-      CodeBits.annotate e (TypTextual ty)
+      ILConstruction.annotate e (TypTextual ty)
   | None ->
       e
       (* In principle, this won't happen. We check at the beginning of [Run]

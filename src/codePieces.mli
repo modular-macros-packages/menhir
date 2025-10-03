@@ -15,6 +15,17 @@
 open IL
 open Grammar
 
+(* -------------------------------------------------------------------------- *)
+
+(**[trace format args] returns a list of (effectful) bindings which,
+   when [--trace] is enabled, log a tracing message onto [stderr]. *)
+val trace: string -> expr list -> (pattern * expr) list
+
+(* These functions are used to generate names in menhir's namespace. *)
+val prefix: string -> string
+val dataprefix: string -> string
+val tvprefix: string -> string
+
 (* ------------------------------------------------------------------------ *)
 
 (* Naming conventions. *)

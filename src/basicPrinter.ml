@@ -180,7 +180,7 @@ let print_semantic_action f g branch =
           translates [$i] to [_i] (just like us!), so name captures will occur
           unless we restrict the use of [$i] to the outermost scope. (Reported
           by Kenji Maillard.) *)
-      let e = CodeBits.eletand (bindings, e) in
+      let e = ILConstruction.eletand (bindings, e) in
       ILPrinter.print_expr f e
 
 (* -------------------------------------------------------------------------- *)

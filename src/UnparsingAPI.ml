@@ -11,7 +11,7 @@
 open Printf
 open Attribute
 open IL
-open CodeBits
+open ILConstruction
 
 (* This module generates the code and the signature of the unparsing API. *)
 

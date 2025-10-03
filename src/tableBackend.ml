@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open CodeBits
+open ILConstruction
 open Grammar
 open IL
 open Interface

@@ -574,7 +574,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
   let name = "message" in
 
   let open IL in
-  let open CodeBits in
+  let open ILConstruction in
   let default = {
     branchpat  = PWildcard;
     branchbody = eraisenotfound

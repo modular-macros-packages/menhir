@@ -11,7 +11,7 @@
 open BasicSyntax
 open Keyword
 open IL
-open CodeBits
+open ILConstruction
 
 (* [posvar_ keyword] constructs the conventional name of the variable
    that stands for the position keyword [keyword]. *)

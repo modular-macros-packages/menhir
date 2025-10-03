@@ -14,7 +14,7 @@
 
 open BasicSyntax
 open IL
-open CodeBits
+open ILConstruction
 
 (* The name of the interpreter sub-module, when the table back-end
    is used. This name is later re-exported as [Interface.interpreter]. *)

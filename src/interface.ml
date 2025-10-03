@@ -10,7 +10,7 @@
 
 open BasicSyntax
 open IL
-open CodeBits
+open ILConstruction
 
 (* -------------------------------------------------------------------------- *)
 

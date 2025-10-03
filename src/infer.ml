@@ -11,7 +11,7 @@
 open Syntax
 open BasicSyntax
 open IL
-open CodeBits
+open ILConstruction
 open TokenType
 
 (* ------------------------------------------------------------------------- *)

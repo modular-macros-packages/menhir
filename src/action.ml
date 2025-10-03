@@ -79,7 +79,7 @@ and fv_aux accu e =
 
 let compose x a1 a2 =
   {
-    expr      = CodeBits.blet ([ IL.PVar x, a1.expr ], a2.expr);
+    expr      = ILConstruction.blet ([ IL.PVar x, a1.expr ], a2.expr);
     semvars   = StringSet.union a1.semvars (StringSet.remove x a2.semvars);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
     standard  = a1.standard && a2.standard;
@@ -89,7 +89,7 @@ let compose x a1 a2 =
 
 let rec bind p x a =
   {
-    expr      = CodeBits.blet ([ p, IL.EVar x ], a.expr);
+    expr      = ILConstruction.blet ([ p, IL.EVar x ], a.expr);
     semvars   = StringSet.add x (StringSet.diff a.semvars (bv p));
     keywords  = a.keywords;
     standard  = a.standard;
@@ -260,6 +260,6 @@ let rename f phi a =
      of nested [let] bindings, as that would cause a capture if the
      domain and codomain of [phi] have a nonempty intersection.) *)
   let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) (bindings phi) in
-  let expr = CodeBits.eletand (phi, a.expr) in
+  let expr = ILConstruction.eletand (phi, a.expr) in
 
   { expr; standard; semvars; keywords }

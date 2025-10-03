@@ -225,41 +225,6 @@ let eprintf format args =
     args
   )
 
-let trace (format : string) (args : expr list) : (pattern * expr) list =
-  if Settings.trace then
-    [ PUnit, eprintf format args ]
-  else
-    []
-
-(* ------------------------------------------------------------------------ *)
-(* Here is a bunch of naming conventions. Our names are chosen to minimize
-   the likelihood that a name in a semantic action is captured. In other
-   words, all global definitions as well as the parameters to [reduce]
-   are given far-fetched names, unless [--no-prefix] was specified. Note
-   that the prefix must begin with '_'. This allows avoiding warnings
-   about unused variables with ocaml 3.09 and later. *)
-
-let prefix name =
-  if Settings.noprefix then
-    name
-  else
-    (* This prefix must begin with an underscore. *)
-    "_menhir_" ^ name
-
-let dataprefix name =
-  if Settings.noprefix then
-    name
-  else
-    (* This prefix must begin with a capital letter. *)
-    "Menhir" ^ name
-
-let tvprefix name =
-  if Settings.noprefix then
-    name
-  else
-    (* This prefix must begin with an ordinary letter (not an underscore). *)
-    "ttv_" ^ name
-
 (* ------------------------------------------------------------------------ *)
 
 (* Converting an interface to a structure. Only exception and type definitions

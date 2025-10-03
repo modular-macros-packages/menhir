@@ -11,7 +11,7 @@
 open Printf
 open Grammar
 open Invariant
-let prefix = CodeBits.prefix
+let prefix = CodePieces.prefix
 open StackLang
 open StackLangBuilder
 
