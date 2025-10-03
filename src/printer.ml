@@ -56,13 +56,19 @@ let flush f =
   fprintf f "%!"
 
 (* ------------------------------------------------------------------------- *)
-(* Dealing with newlines and indentation. *)
-
-let maxindent =
-  120
+(* Emitting whitespace. *)
 
 let whitespace =
-  String.make maxindent ' '
+  ref (String.make 80 ' ')
+
+let output_whitespace f (n : int) =
+  assert (0 <= n);
+  if String.length !whitespace < n then
+    whitespace := String.make n ' ';
+  output_substring f !whitespace 0 n
+
+(* ------------------------------------------------------------------------- *)
+(* Dealing with newlines and indentation. *)
 
 let indentation =
   ref 0
@@ -81,13 +87,12 @@ let rawnl f =
 
 let nl f =
   rawnl f;
-  output_substring f whitespace 0 !indentation
+  output_whitespace f !indentation
 
 let indent ofs producer f x =
   let old_indentation = !indentation in
   let new_indentation = old_indentation + ofs in
-  if new_indentation <= maxindent then
-    indentation := new_indentation;
+  indentation := new_indentation;
   nl f;
   producer f x;
   indentation := old_indentation
@@ -188,13 +193,13 @@ let locate f range body =
   match X.locate with
   | Some basename ->
       sharp f (Range.linenum range) (Range.filename range);
-      output_string f (String.make (Range.column range) ' ');
+      output_whitespace f (Range.column range);
       body f;
       line := !line + Range.linecount range;
       (* The addition [_ + 2] anticipates the effect on the line
          counter of the directive that we are just about to print. *)
       sharp f (!line + 2) basename;
-      output_substring f whitespace 0 !indentation
+      output_whitespace f !indentation
   | None ->
       body f
 
