@@ -12,51 +12,38 @@
 
 open IL
 
-module PreliminaryMake (X : sig
+module Printer (X : sig
 
   (* We assume that the following types and functions are given. This
      allows us to work both with buffers of type [Buffer.t] and with
      output channels of type [out_channel]. *)
-
   type channel
   val fprintf: channel -> ('a, channel, unit) format -> 'a
   val output_substring: channel -> string -> int -> int -> unit
 
-  (* This is the channel that is being written to. *)
-
+  (* The channel that is being written to. *)
   val f: channel
 
-  (* [locate] controls the way we print OCaml source code fragments (types and
-     semantic actions). If it is [Some dstfilename], where [dstfilename] is
-     the name of the file that is being written, then we surround fragments
-     with OCaml line number directives of the form # <line number> <filename>.
-     If it is [None], then we don't. *)
-
-  (* Providing line number directives allows the OCaml typechecker to report
-     type errors in the .mly file, instead of in the generated .ml / .mli
-     files. Line number directives also affect the dynamic semantics of any
-     [assert] statements contained in semantic actions: when they are provided,
-     the [Assert_failure] exception carries a location in the .mly file. As a
-     general rule of thumb, line number directives should always be provided,
-     except perhaps where we think that they decrease readability (e.g., in a
-     generated .mli file). *)
-
+  (* Whether line directives should be printed. *)
   val locate: string option
 
 end) = struct
 open X
 
-let output_char f c =
+(* -------------------------------------------------------------------------- *)
+
+(* Basic output functions. *)
+
+(* These complement [fprintf] and [output_substring], declared above. *)
+
+let[@inline] output_char f c =
   fprintf f "%c" c
 
-let output_string f s =
+let[@inline] output_string f s =
   fprintf f "%s" s
 
-let flush f =
+let[@inline] flush f =
   fprintf f "%!"
-
-(* ------------------------------------------------------------------------- *)
-(* Emitting whitespace. *)
 
 let whitespace =
   ref (String.make 80 ' ')
@@ -67,7 +54,8 @@ let output_whitespace f (n : int) =
     whitespace := String.make n ' ';
   output_substring f !whitespace 0 n
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
 (* Dealing with newlines and indentation. *)
 
 let indentation =
@@ -85,9 +73,15 @@ let rawnl f =
   incr line;
   output_char f '\n'
 
+(* [nl] emits a newline. *)
+
 let nl f =
   rawnl f;
   output_whitespace f !indentation
+
+(* [indent ofs producer] increases the current indentation level by [ofs],
+   prints a newline, invokes [producer], then restores the previous
+   indentation level. *)
 
 let indent ofs producer f x =
   let old_indentation = !indentation in
@@ -97,12 +91,13 @@ let indent ofs producer f x =
   producer f x;
   indentation := old_indentation
 
-(* This produces a line number directive. *)
+(* [sharp] produces a line directive. *)
 
 let sharp f line file =
   fprintf f "%t# %d \"%s\"%t" rawnl line file rawnl
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
 (* Printers of atomic elements. *)
 
 let nothing _ =
@@ -145,7 +140,8 @@ let var f x =
 let bar f =
   output_string f " | "
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
 (* List printers. *)
 
 (* A list with a separator in front of every element. *)
@@ -182,36 +178,39 @@ let classtypeparams p f = function
   | _ :: _ as params ->
       fprintf f "[%a] " (seplist p comma) params
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
-(* [locate f range body] invokes [body f], which is expected to print some
-   material, and optionally surrounds this invocation with line number
-   directives and with horizontal padding. (Horizontal padding is useful in
-   order to obtain correct column numbers in error messages.) *)
+(* [fragment f frag] prints the text fragment [frag] and optionally surrounds
+   it with line number directives and with horizontal padding. Horizontal
+   padding is useful in order to obtain correct column numbers in error
+   messages.*)
 
-let locate f range body =
-  match X.locate with
+let fragment f (frag : string located) =
+  match locate with
   | Some basename ->
+      let range = Located.position frag in
+      (* Emit a line directive. *)
       sharp f (Range.linenum range) (Range.filename range);
+      (* Emit horizontal padding. *)
       output_whitespace f (Range.column range);
-      body f;
+      (* Print the text fragment and adjust the line counter. *)
+      output_string f (Located.value frag);
       line := !line + Range.linecount range;
+      (* Print a second line directive. *)
       (* The addition [_ + 2] anticipates the effect on the line
          counter of the directive that we are just about to print. *)
       sharp f (!line + 2) basename;
+      (* Emit indentation. *)
       output_whitespace f !indentation
   | None ->
-      body f
-
-let fragment f (frag : string located) =
-  locate f (Located.position frag) @@ fun f ->
-  output_string f (Located.value frag)
+      output_string f (Located.value frag)
 
 let parenthesized_fragment f frag =
   fragment f (Located.parenthesize frag)
 
-(* ------------------------------------------------------------------------- *)
-(* Expression printer. *)
+(* -------------------------------------------------------------------------- *)
+
+(* Expressions. *)
 
 (* We use symbolic constants that stand for subsets of the
    expression constructors. We do not use numeric levels
@@ -346,7 +345,6 @@ let rec member e k =
   | EArray _
   | EArrayAccess (_, _) ->
       true
-
 
 let rec exprlet k pes f e2 =
   match pes with
@@ -626,7 +624,7 @@ and scheme_without_quantifiers f scheme =
   | _ ->
       assert false (* AST cannot be printed *)
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Toplevel definition printer. *)
 
 (* The tuple of the arguments of a data constructor. *)
@@ -955,14 +953,14 @@ let expr e =
 
 end
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Instantiation with output channels. *)
 
 module Make (X : sig
   val f: out_channel
   val locate: string option
 end) = struct
-  include PreliminaryMake(struct
+  include Printer(struct
     type channel = out_channel
     include X
     let fprintf = Printf.fprintf
@@ -970,14 +968,14 @@ end) = struct
   end)
 end
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Instantiation with buffers. *)
 
 module MakeBuffered (X : sig
   val f: Buffer.t
   val locate: string option
 end) = struct
-  include PreliminaryMake(struct
+  include Printer(struct
     type channel = Buffer.t
     include X
     let fprintf = Printf.bprintf
@@ -985,7 +983,7 @@ end) = struct
   end)
 end
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Common instantiations. *)
 
 let print_expr f e =
