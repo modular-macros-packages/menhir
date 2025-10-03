@@ -358,37 +358,3 @@ and class_name =
 
 and method_name =
   string
-
-(* A type of parameters, with injections both into patterns (formal parameters)
-   and into expressions (actual parameters). *)
-
-type xparam =
-  | XVar of string
-  | XMagic of xparam
-
-let xvar x =
-  XVar x
-
-let xmagic xp =
-  XMagic xp
-
-let rec xparam2expr = function
-  | XVar x ->
-      EVar x
-  | XMagic xp ->
-      EMagic (xparam2expr xp)
-
-let rec xparam2pat = function
-  | XVar x ->
-      PVar x
-  | XMagic xp ->
-      xparam2pat xp (* no magic *)
-
-type xparams =
-  xparam list
-
-let xparams2exprs xps =
-  List.map xparam2expr xps
-
-let xparams2pats xps =
-  List.map xparam2pat xps
