@@ -49,7 +49,7 @@ let join_declaration filename (grammar : grammar) decl =
              signal an error. *)
 
           if token_property.tk_is_declared then
-            Error.errorp decl
+            Error.error [position decl]
               "the token %s has multiple definitions." terminal;
 
           (* Otherwise, update the previous definition. *)
@@ -719,7 +719,7 @@ let check_parameterized_grammar_is_well_defined grammar =
                let already_seen =
                  (* Check the producer id is unique. *)
                  if StringSet.mem (value id) already_seen then
-                   Error.errorp id
+                   Error.error [position id]
                      "there are multiple producers named %s in this sequence."
                      (value id);
                  StringSet.add (value id) already_seen

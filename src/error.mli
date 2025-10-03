@@ -11,7 +11,6 @@
 (* This module helps report errors. *)
 
 open Range
-open Located
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -38,10 +37,6 @@ val logC: int -> (out_channel -> unit) -> unit
    message should begin with a lowercase letter and end with a dot. *)
 
 val error: ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-(* [errorp] is like [error], but uses the position range carried by [v]. *)
-
-val errorp: _ located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [warning] is like [error], except it does not exit. *)
 
