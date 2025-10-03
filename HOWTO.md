@@ -100,9 +100,7 @@ following order:
 | Module                | Task |
 | --------------------- | ---- |
 | Settings              | parses the command line |
-| PreFront              | reads the grammar description files |
-| TokenType             | deals with `--only-tokens` and exits |
-| Front                 | deals with `--depend`, `--infer`, `--only-preprocess`, and exits |
+| Front                 | reads the grammar description files; deals with `--depend`, `--infer`, `--only-preprocess`, `--only-tokens`, and exits |
 | Grammar               | performs a number of analyses of the grammar |
 | Middle                | deals with `--random-sentence` and exits |
 | Lr0                   | constructs the LR(0) automaton |
