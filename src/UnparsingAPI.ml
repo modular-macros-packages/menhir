@@ -689,7 +689,7 @@ and settle_def (state : int) : expr =
     EApp (
       evar isettle, [
         (* A triple of a DCST, a state, and a terminal symbol. *)
-        etuple [
+        ETuple [
           evar t;
           EIntConst state;
           EIntConst Terminal.(t2i sharp)

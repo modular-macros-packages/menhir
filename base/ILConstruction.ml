@@ -8,26 +8,72 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module provides a number of tiny functions that help produce
-   [IL] code. *)
-
 open Located
 open IL
 
-(* A smart constructor for [PVarLocated]. *)
+(* -------------------------------------------------------------------------- *)
 
-let pvarlocated id =
-  let range = position id in
-  if Range.is_dummy range then
-    let x = value id in
-    PVar x
-  else
-    PVarLocated id
+(* Types. *)
 
 let tname name =
   TypApp (name, [])
 
-(* Tuples. *)
+let tunit =
+  tname "unit"
+
+let tint =
+  tname "int"
+
+let tstring =
+  tname "string"
+
+let tposition =
+  tname "Lexing.position"
+
+let tpair typ1 typ2 =
+  TypTuple [typ1; typ2]
+
+let tlocation =
+  tpair tposition tposition
+
+let tlexbuf =
+  tname "Lexing.lexbuf"
+
+let tobj =
+  tname "Obj.t"
+
+let toption ty =
+  TypApp ("option", [ty])
+
+let tvar x : typ =
+  TypVar x
+
+let arrow typ body : typ =
+  TypArrow (typ, body)
+
+let marrow typs body : typ =
+  List.fold_right arrow typs body
+
+let scheme quantifiers body =
+  let locally_abstract = false in
+  { quantifiers; body; locally_abstract }
+
+let local_scheme quantifiers body =
+  let locally_abstract = true in
+  { quantifiers; body; locally_abstract }
+
+let type2scheme t =
+  scheme [] t
+
+(* -------------------------------------------------------------------------- *)
+
+(* Expressions. *)
+
+let evar s =
+  EVar s
+
+let evars xs =
+  List.map evar xs
 
 let etuple = function
   | [] ->
@@ -37,92 +83,17 @@ let etuple = function
   | es ->
       ETuple es
 
-(* The unit type. *)
+(* In [annotate], the transformations that we perform on the fly are
+   intended to improve readability. *)
 
-let tunit =
-  tname "unit"
-
-(* The integer type. *)
-
-let tint =
-  tname "int"
-
-(* The string type. *)
-
-let tstring =
-  tname "string"
-
-(* The type of pairs. *)
-
-let tpair typ1 typ2 =
-  TypTuple [typ1; typ2]
-
-(* The type of lexer positions. *)
-
-let tposition =
-  tname "Lexing.position"
-
-(* The type of the $loc and $sloc keywords. *)
-
-(* A location is a pair of positions. This might change in the future. *)
-
-let tlocation =
-  tpair tposition tposition
-
-(* The type of lexer buffers. *)
-
-let tlexbuf =
-  tname "Lexing.lexbuf"
-
-(* The type of untyped semantic values. *)
-
-let tobj =
-  tname "Obj.t"
-
-(* The option type. *)
-
-let toption ty =
-  TypApp ("option", [ty])
-
-(* Building a type variable. *)
-
-let tvar x : typ =
-  TypVar x
-
-(* Building a type scheme. *)
-
-let scheme qs t =
-  {
-    quantifiers = qs;
-    body = t;
-    locally_abstract = false
-  }
-
-let local_scheme qs t =
-    {
-      quantifiers = qs;
-      body = t;
-      locally_abstract = true;
-    }
-
-(* Building a type scheme with no quantifiers out of a type. *)
-
-let type2scheme t =
-  scheme [] t
-
-(* Constraining an expression to have a (monomorphic) type. *)
-
-(* The transformations that we perform on the fly are intended to improve
-   readability. *)
-
-let rec annotate e t =
+let rec annotate e ty =
   match e with
   | EComment (c, e) ->
-      EComment (c, annotate e t)
+      EComment (c, annotate e ty)
   | ELet (bs, e) ->
-      ELet (bs, annotate e t)
+      ELet (bs, annotate e ty)
   | _ ->
-      EAnnot (e, type2scheme t)
+      EAnnot (e, type2scheme ty)
 
 (* [simplify] removes bindings of the form [let v = v in ...] and
    [let _ = v in ...]. *)
@@ -138,8 +109,6 @@ let rec simplify = function
       simplify bindings
   | binding :: bindings ->
       binding :: simplify bindings
-
-(* Building a [let] construct, with on-the-fly simplification. *)
 
 let rec blet (bindings, body) =
   let bindings = simplify bindings in
@@ -158,8 +127,6 @@ let rec blet (bindings, body) =
 let mlet formals actuals body =
   blet (List.combine formals actuals, body)
 
-(* Simulating a [let/and] construct using tuples. *)
-
 let eletand (bindings, body) =
   let bindings = simplify bindings in
   match bindings, body with
@@ -177,46 +144,17 @@ let eletand (bindings, body) =
       let pats, exprs = List.split bindings in
       ELet ([ PTuple pats, ETuple exprs ], body)
 
-(* Boolean constants. *)
-
-let efalse : expr =
-  EData ("false", [])
-
-(* [eraisenotfound] is an expression that raises [Not_found]. *)
-
 let eraisenotfound =
   ERaise (EData ("Not_found", []))
 
 let eassert e =
   EApp (EVar "assert", [ e ])
 
+let efalse : expr =
+  EData ("false", [])
+
 let eassertfalse =
   eassert efalse
-
-(* [bottom] is an expression that has every type. Its semantics is
-   irrelevant. *)
-
-(* We used to use [raise Not_found], but this causes a problem in Facebook's
-   Infer project, where this triggers a deprecation warning. So, we define
-   a divergent function insteead. *)
-
-let bottom =
-  EBottom
-
-(* Integer constants as patterns. *)
-
-let pint k : pattern =
-  PData (string_of_int k, [])
-
-(* These help build function types. *)
-
-let arrow typ body : typ =
-  TypArrow (typ, body)
-
-let marrow typs body : typ =
-  List.fold_right arrow typs body
-
-(* Tracing. *)
 
 let eprintf format args =
   EApp (
@@ -225,10 +163,33 @@ let eprintf format args =
     args
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* Converting an interface to a structure. Only exception and type definitions
-   go through. *)
+(* Patterns and branches. *)
+
+let pvar x =
+  PVar x
+
+let pvars xs =
+  List.map pvar xs
+
+let pint k : pattern =
+  PData (string_of_int k, [])
+
+let pvarlocated id =
+  let range = position id in
+  if Range.is_dummy range then
+    let x = value id in
+    PVar x
+  else
+    PVarLocated id
+
+let branch branchpat branchbody =
+  { branchpat; branchbody }
+
+(* -------------------------------------------------------------------------- *)
+
+(* Interfaces and structures. *)
 
 let rec interface_item_to_structure_item = function
   | IIExcDecls defs ->
@@ -248,34 +209,16 @@ let rec interface_item_to_structure_item = function
 and interface_to_structure i =
   List.flatten (List.map interface_item_to_structure_item i)
 
-(* Constructing a named module type together with a list of "with type"
-   constraints. *)
-
 let with_types wk name tys =
   List.fold_left (fun mt (params, name, ty) ->
     MTWithType (mt, params, name, wk, ty)
   ) (MTNamedModuleType name) tys
 
-let mapp me1 me2 =
+let mapp1 me1 me2 =
   MApp (me1, me2)
 
 let mapp me1 mes2 =
-  List.fold_left mapp me1 mes2
-
-let branch branchpat branchbody =
-  { branchpat; branchbody }
-
-let evar s =
-  EVar s
-
-let evars xs =
-  List.map evar xs
-
-let pvar x =
-  PVar x
-
-let pvars xs =
-  List.map pvar xs
+  List.fold_left mapp1 me1 mes2
 
 let def f body =
   { valpat = PVar f; valval = body }

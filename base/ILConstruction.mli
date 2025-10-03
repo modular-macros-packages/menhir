@@ -8,98 +8,67 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module provides a number of tiny functions that help produce
+(**This module provides a number of constructor functions that help produce
    [IL] code. *)
 
 open IL
 
-(** A smart constructor for [PVarLocated]. *)
-val pvarlocated: string located -> pattern
+(* -------------------------------------------------------------------------- *)
 
-(** A type name. *)
+(* Types. *)
+
+(**[tname] converts a type name to a type (applied to zero parameters). *)
 val tname: string -> typ
 
-(* Tuples. *)
-
-val etuple: expr list -> expr
-
-(* Standard types. *)
-
+(***The type [unit]. *)
 val tunit: typ
+
+(***The type [int]. *)
 val tint: typ
+
+(***The type [string]. *)
 val tstring: typ
+
+(***The type [position]. *)
 val tposition: typ
+
+(***The type [location] is the type of the keyword [$loc].
+    It is currently defined as [position * position], but
+    this might change in the future. *)
 val tlocation: typ
+
+(***The type [lexbuf]. *)
 val tlexbuf: typ
+
+(***The type [Obj.t]. *)
 val tobj: typ
+
+(***The type [option]. *)
 val toption: typ -> typ
 
-(** Building a type variable. *)
+(**A type variable. [tvar] is synonymous with [TypVar]. *)
 val tvar: string -> typ
 
-(** Building a type scheme. *)
-val scheme: string list -> typ -> typescheme
-
-(** Building a locally abstract type scheme. *)
-val local_scheme: string list -> typ -> typescheme
-
-(** Converting a type to a type scheme. *)
-val type2scheme: typ -> typescheme
-
-(** Constraining an expression to have a (monomorphic) type. *)
-val annotate: expr -> typ -> expr
-
-(** This function constructs a nested sequence of [let] definitions.
-   Certain simplifications are performed on the fly. *)
-val blet: (pattern * expr) list * expr -> expr
-
-(** [mlet] is like [blet], but takes separate lists of patterns and
-    expressions *)
-val mlet: pattern list -> expr list -> expr -> expr
-
-(** Simulating a [let/and] construct. *)
-val eletand: (pattern * expr) list * expr -> expr
-
-(** [eraisenotfound] is an expression that raises [Not_found]. *)
-val eraisenotfound: expr
-
-(** [eassert] builds a runtime assertion [assert e]. *)
-val eassert: expr -> expr
-
-val eassertfalse: expr
-
-(** [bottom] is an expression that has every type. Its semantics is
-    irrelevant. *)
-val bottom: expr
-
-(* Integer constants as patterns. *)
-
-val pint: int -> pattern
-
-(* These help build function types. *)
-
+(**A function type. *)
 val arrow: typ -> typ -> typ
+
+(**A multi-argument function type. *)
 val marrow: typ list -> typ -> typ
 
-(* Tracing. *)
+(**[scheme qs ty] builds a type scheme out of the quantifiers [qs] and
+   body [ty]. *)
+val scheme: string list -> typ -> typescheme
 
-(**[eprintf format args] constructs a call to [Printf.eprintf], which
-   log a tracing message onto [stderr]. *)
-val eprintf: string -> expr list -> expr
+(**[scheme qs ty] builds a type scheme out of the quantifiers [qs] and
+   body [ty]. The quantifiers are printed using the syntax [type a]. *)
+val local_scheme: string list -> typ -> typescheme
 
-(** Converting an interface to a structure. Only exception and type definitions
-    go through. *)
-val interface_to_structure: interface -> structure
+(**[type2scheme] converts a type to a type scheme (with no quantifiers). *)
+val type2scheme: typ -> typescheme
 
-(** Constructing a named module type together with a list of "with type"
-    constraints. *)
-val with_types: with_kind -> string -> (string list * string * typ) list -> module_type
+(* -------------------------------------------------------------------------- *)
 
-(** Functor applications. *)
-val mapp: modexpr -> modexpr list -> modexpr
-
-(** Branches. *)
-val branch: pattern -> expr -> branch
+(* Expressions. *)
 
 (** A variable as an expression. *)
 val evar: string -> expr
@@ -107,17 +76,85 @@ val evar: string -> expr
 (** A list of variables as expressions. *)
 val evars: string list -> expr list
 
+(**This smart constructor constructs a tuple expression. A tuple of length
+   zero is changed to [EUnit]. A tuple of length 1 is erased. *)
+val etuple: expr list -> expr
+
+(**[annotate e ty] annotates the expression [e] with the monomorphic
+   type [ty]. Certain simplifications are performed on the fly. *)
+val annotate: expr -> typ -> expr
+
+(**[blet pes e] constructs a nested sequence of [let] definitions.
+   Certain simplifications are performed on the fly. *)
+val blet: (pattern * expr) list * expr -> expr
+
+(**[mlet ps es e] constructs a nested sequence of [let] definitions.
+   Certain simplifications are performed on the fly.
+   It is like [blet], but takes separate lists of patterns and expressions. *)
+val mlet: pattern list -> expr list -> expr -> expr
+
+(**[eletand pes e] constructs a parallel [let] definition,
+   that is, a [let/and] construct.
+   This construct is not part of the syntax of IL,
+   so it is simulated using tuples. *)
+val eletand: (pattern * expr) list * expr -> expr
+
+(**[eraisenotfound] is an expression that raises [Not_found]. *)
+val eraisenotfound: expr
+
+(**[eassert e] is the runtime assertion [assert e]. *)
+val eassert: expr -> expr
+
+(**[eassertfalse] is the runtime assertion [assert false]. *)
+val eassertfalse: expr
+
+(**[eprintf format args] constructs a call to [Printf.eprintf], which
+   log a tracing message onto [stderr]. *)
+val eprintf: string -> expr list -> expr
+
+(* -------------------------------------------------------------------------- *)
+
+(* Patterns and branches. *)
+
 (** A variable as a pattern. *)
 val pvar: string -> pattern
 
 (** A list of variables as patterns. *)
 val pvars: string list -> pattern list
 
-(** A value definition. *)
+(**An integer literal pattern. *)
+val pint: int -> pattern
+
+(**This smart constructor for [PVarLocated] deals with the situation where
+   we have a dummy range. *)
+val pvarlocated: string located -> pattern
+
+(** Branches. *)
+val branch: pattern -> expr -> branch
+
+(* -------------------------------------------------------------------------- *)
+
+(* Interfaces and structures. *)
+
+(**[interface_to_structure] converts an interface to a structure. Only
+   exception and type definitions go through. The rest is filtered away. *)
+val interface_to_structure: interface -> structure
+
+(**[with_types] constructs a named module type together with a list of
+   [with type] constraints. *)
+val with_types:
+  with_kind -> string -> (string list * string * typ) list -> module_type
+
+(**[mapp] constructs a multiple functor applications. *)
+val mapp: modexpr -> modexpr list -> modexpr
+
+(**[def] constructs a value definition. *)
 val def: string -> expr -> valdef
 
-(** A single non-recursive value definition. *)
+(**[valdef] turns a value definition into a structure item.
+   This yields a single non-recursive value definition. *)
 val valdef: valdef -> structure_item
 
-(** A list of non-recursive value definitions. *)
+(**[valdefs] turns a list of value definitions into a list of structure items.
+   This yields a sequence of non-recursive value definitions. *)
 val valdefs: valdef list -> structure_item list

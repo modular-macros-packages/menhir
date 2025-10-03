@@ -242,7 +242,7 @@ let program grammar =
 
   let def = {
     valpat = PTuple ps;
-    valval = ELet (bindings1 @ bindings2, annotate bottom (TypTuple ts))
+    valval = ELet (bindings1 @ bindings2, annotate EBottom (TypTuple ts))
   }
   in
 

@@ -221,7 +221,7 @@ and expr =
   (* An expression that claims to be statically dead code. *)
   | EDead
 
-  (* A divergent expression. *)
+  (* A divergent expression, which has every type. *)
   | EBottom
 
   (* Raising an exception. *)
