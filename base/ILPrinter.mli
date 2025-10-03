@@ -10,17 +10,20 @@
 
 (**This module offers a pretty-printer for the language [IL]. *)
 
+open IL
+
+(**[Make] offers the most general interface to the pretty-printer. *)
 module Make (X : sig
 
-  (* This is the channel that is being written to. *)
-
+  (**The output channel that is written to. *)
   val f: out_channel
 
-  (* [print_line_directives] controls the way we print OCaml source code
+  (**[print_line_directives] controls the way we print OCaml source code
      fragments (types and semantic actions). If it is [Some dstfilename],
      where [dstfilename] is the name of the file that is being written, then
-     we surround fragments with OCaml line directives of the form # <line
-     number> <filename>. If it is [None], then we don't. *)
+     we surround fragments with OCaml line directives of the form
+     [# <line number> <filename>]. If it is [None], then we don't. *)
+  val print_line_directives: string option
 
   (* Providing line directives allows the OCaml typechecker to report type
      errors in the .mly file, instead of in the generated .ml / .mli files.
@@ -31,25 +34,27 @@ module Make (X : sig
      perhaps where we think that they decrease readability (e.g., in a
      generated .mli file). *)
 
-  val print_line_directives: string option
-
-  (* [print_comments] controls whether the comments carried by [EComment]
+  (**[print_comments] controls whether the comments carried by [EComment]
      are printed or erased. *)
-
   val print_comments: bool
 
 end) : sig
 
-  val program: IL.program -> unit
+  (**A printer of programs. *)
+  val program: program -> unit
 
-  val expr: IL.expr -> unit
+  (**A printer of expressions. *)
+  val expr: expr -> unit
 
-  val interface: IL.interface -> unit
+  (**A printer of interfaces. *)
+  val interface: interface -> unit
 
 end
 
-(* Common instantiations. In the following two functions, [locate]
-   is [None], so no line directives are printed. *)
+(**[print_expr] is a printer of expressions to an output channel. It does not
+   print any line directives or comments. It is a special case of {!Make}. *)
+val     print_expr: out_channel -> expr -> unit
 
-val     print_expr: out_channel -> IL.expr -> unit
-val string_of_expr:                IL.expr -> string
+(**[string_of_expr] is a printer of expressions to a string. It does not print
+   any line directives or comments. It is a special case of {!Make}. *)
+val string_of_expr:                expr -> string

@@ -207,7 +207,7 @@ let produce_tokentypes grammar =
       in
 
       let module P =
-        Printer.Make (struct
+        ILPrinter.Make (struct
                         let f = open_out (Settings.base ^ ".mli")
                         let print_line_directives = None
                         let print_comments = Settings.comment
@@ -217,7 +217,7 @@ let produce_tokentypes grammar =
         IIFunctor (grammar.parameters, i)
       ];
       let module P =
-        Printer.Make (struct
+        ILPrinter.Make (struct
                         let f = open_out (Settings.base ^ ".ml")
                         let print_line_directives = None
                         let print_comments = Settings.comment

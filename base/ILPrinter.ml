@@ -8,8 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* A pretty-printer for [IL]. *)
-
 open IL
 
 module Printer (X : sig
@@ -94,10 +92,14 @@ let indent ofs producer f x =
   producer f x;
   indentation := old_indentation
 
-(* [sharp] produces a line directive. *)
+(* [block format] prints material between an opening keyword and a closing
+   keyword, with indentation. [format] should contain just one [%a]. *)
 
-let sharp f line file =
-  fprintf f "%t# %d \"%s\"%t" rawnl line file rawnl
+let block format body f b =
+  fprintf f format (fun f b ->
+    indent 2 body f b;
+    nl f
+  ) b
 
 (* -------------------------------------------------------------------------- *)
 
@@ -181,7 +183,27 @@ let classtypeparams p f = function
   | _ :: _ as params ->
       fprintf f "[%a] " (seplist p comma) params
 
+(* A list of definitions, with [sep1] in front of the first definition and
+   [sep2] in front of the next definitions. *)
+
+let rec pdefs pdef sep1 sep2 f = function
+  | [] ->
+      ()
+  | [ def ] ->
+      fprintf f "%t%a" sep1 pdef def
+  | def :: defs ->
+      fprintf f "%t%a%t%t%a"
+        sep1 pdef def
+        (* Separate two successive items with two newlines. *)
+        nl nl
+        (pdefs pdef sep2 sep2) defs
+
 (* -------------------------------------------------------------------------- *)
+
+(* [sharp] produces a line directive. *)
+
+let sharp f line file =
+  fprintf f "%t# %d \"%s\"%t" rawnl line file rawnl
 
 (* [fragment f frag] prints the text fragment [frag] and optionally surrounds
    it with line number directives and with horizontal padding. Horizontal
@@ -628,7 +650,8 @@ and scheme_without_quantifiers f scheme =
       assert false (* AST cannot be printed *)
 
 (* -------------------------------------------------------------------------- *)
-(* Toplevel definition printer. *)
+
+(* Toplevel definitions. *)
 
 (* The tuple of the arguments of a data constructor. *)
 
@@ -669,11 +692,15 @@ let datadef typename f def =
   if def.unboxed then fprintf f " [@@unboxed]";
   datadefcomment f def.comment
 
+(* A record field definition. *)
+
 let fielddef f def =
   fprintf f "  %s%s: %a"
     (if def.modifiable then "mutable " else "")
     def.fieldname
     scheme def.fieldtype
+
+(* The right-hand side of a type definition. *)
 
 let typerhs typename f = function
   | TDefRecord [] ->
@@ -689,6 +716,8 @@ let typerhs typename f = function
   | TAbstract ->
       ()
 
+(* A type definition. *)
+
 let typeconstraint f = function
   | None ->
       ()
@@ -702,17 +731,10 @@ let typedef f def =
     (typerhs def.typename) def.typerhs
     typeconstraint def.typeconstraint
 
-let rec pdefs pdef sep1 sep2 f = function
-  | [] ->
-      ()
-  | [ def ] ->
-      fprintf f "%t%a" sep1 pdef def
-  | def :: defs ->
-      fprintf f "%t%a%t%t%a"
-        sep1 pdef def
-        (* Separate two successive items with two newlines. *)
-        nl nl
-        (pdefs pdef sep2 sep2) defs
+let typedefs =
+  pdefs typedef keytyp et
+
+(* A value definition. *)
 
 let valdef f = function
   | { valpat = PVar id; valval = EAnnot (e, ts) } ->
@@ -723,8 +745,7 @@ let valdef f = function
 let valdefs recursive =
   pdefs valdef (if recursive then letrec else letnonrec) et
 
-let typedefs =
-  pdefs typedef keytyp et
+(* An exception definition. *)
 
 let excdef in_intf f def =
   (* If we are in an interface, then the equality must not be printed. *)
@@ -742,13 +763,6 @@ let excdef in_intf f def =
 
 let excdefs in_intf =
   pdefs (excdef in_intf) exc exc
-
-let block format body f b =
-  (* [format] should contain just one [%a] *)
-  fprintf f format (fun f b ->
-    indent 2 body f b;
-    nl f
-  ) b
 
 (* Convention: each structure (or interface) item prints a newline before and
    after itself. *)
@@ -957,6 +971,7 @@ let expr e =
 end
 
 (* -------------------------------------------------------------------------- *)
+
 (* Instantiation with output channels. *)
 
 module Make (X : sig
@@ -973,6 +988,7 @@ end) = struct
 end
 
 (* -------------------------------------------------------------------------- *)
+
 (* Instantiation with buffers. *)
 
 module MakeBuffered (X : sig
@@ -989,6 +1005,7 @@ end) = struct
 end
 
 (* -------------------------------------------------------------------------- *)
+
 (* Common instantiations. *)
 
 let print_expr f e =
@@ -996,19 +1013,18 @@ let print_expr f e =
     Make (struct
       let f = f
       let print_line_directives = None
-    let print_comments = false
+      let print_comments = false
     end)
   in
   P.expr e
 
 let string_of_expr e =
-  MString.with_buffer 512 (fun b ->
-    let module P =
-      MakeBuffered (struct
-        let f = b
-        let print_line_directives = None
-        let print_comments = false
-      end)
-    in
-    P.expr e
-  )
+  MString.with_buffer 512 @@ fun b ->
+  let module P =
+    MakeBuffered (struct
+      let f = b
+      let print_line_directives = None
+      let print_comments = false
+    end)
+  in
+  P.expr e

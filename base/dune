@@ -29,4 +29,5 @@
 
 (ocamllex
   DecodeString
+  LineCount
 )

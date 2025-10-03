@@ -13,7 +13,7 @@
 (* Define an .ml file writer . *)
 
 let write program =
-  let module P = Printer.Make (struct
+  let module P = ILPrinter.Make (struct
     let filename = Settings.base ^ ".ml"
     let f = open_out filename
     let print_line_directives =

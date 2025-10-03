@@ -29,7 +29,6 @@
 
 (ocamllex
   lexer
-  lineCount
   lexmli
   lexdep
   chopInlined

@@ -608,7 +608,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
 
   (* Write this program to the standard output channel. *)
 
-  let module P = Printer.Make (struct
+  let module P = ILPrinter.Make (struct
     let f = stdout
     let print_line_directives = None
     let print_comments = Settings.comment

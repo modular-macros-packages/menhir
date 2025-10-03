@@ -146,7 +146,7 @@ let print_semantic_action f g branch =
       (* In the unit-action modes, we print a pair of empty braces, which is fine. *)
       ()
   | PrintNormal ->
-      Printer.print_expr f e
+      ILPrinter.print_expr f e
   | PrintForOCamlyacc ->
        (* In ocamlyacc-compatibility mode, the code must be wrapped in
           [let]-bindings whose right-hand side uses the [$i] keywords. *)
@@ -181,7 +181,7 @@ let print_semantic_action f g branch =
           unless we restrict the use of [$i] to the outermost scope. (Reported
           by Kenji Maillard.) *)
       let e = CodeBits.eletand (bindings, e) in
-      Printer.print_expr f e
+      ILPrinter.print_expr f e
 
 (* -------------------------------------------------------------------------- *)
 

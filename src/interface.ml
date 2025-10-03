@@ -202,7 +202,7 @@ let write grammar () =
      where [token_type_mode] is [TokenTypeOnly]. *)
   assert (Settings.token_type_mode <> Settings.TokenTypeOnly);
   let mli = open_out (Settings.base ^ ".mli") in
-  let module P = Printer.Make (struct
+  let module P = ILPrinter.Make (struct
     let f = mli
     let print_line_directives = None
     let print_comments = Settings.comment
