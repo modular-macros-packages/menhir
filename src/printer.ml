@@ -10,7 +10,6 @@
 
 (* A pretty-printer for [IL]. *)
 
-open OCamlType
 open IL
 
 module PreliminaryMake (X : sig

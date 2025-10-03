@@ -8,8 +8,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type ocamltype = OCamlType.ocamltype
-type 'a located = 'a Located.located
+type 'a located =
+  'a Located.located
+
+type ocamltype = OCamlType.ocamltype =
+  | Declared of string located
+  | Inferred of string
 
 (* Abstract syntax of the language used for code production. *)
 
