@@ -8,6 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module defines the abstract syntax of an "intermediate language",
+   named IL, which is really just a fragment of OCaml. This fragment is
+   tailored for the needs of Menhir and is not very general or pretty. *)
+
 type 'a located =
   'a Located.located
 
@@ -15,13 +19,15 @@ type ocamltype = OCamlType.ocamltype =
   | Declared of string located
   | Inferred of string
 
-(* Abstract syntax of the language used for code production. *)
-
+(**An interface. *)
 type interface =
   interface_item list
 
+(**An interface item. *)
 and interface_item =
-    (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
+    (* A functor, always named [Make]. If the list of functor parameters is
+       empty then the functor is omitted entirely; so [IIFunctor ([], i)]
+       is considered equivalent to just [i]. *)
   | IIFunctor of string located list * interface
     (* Exception declarations. *)
   | IIExcDecls of excdef list
@@ -43,15 +49,18 @@ and interface_item =
       (* self type annotation: *) typ option *
       (* content: *)              class_field_specs
 
+(**A module type. *)
 and module_type =
   | MTNamedModuleType of string
   | MTWithType of module_type * string list * string * with_kind * typ
   | MTSigEnd of interface
 
+(**Two variants of [with type] annotations. *)
 and with_kind =
   | WKNonDestructive (* = *)
   | WKDestructive   (* := *)
 
+(**An exception definition. *)
 and excdef = {
 
     (* Name of the exception. *)
@@ -65,9 +74,10 @@ and excdef = {
 
   }
 
+(**A type definition. *)
 and typedef = {
 
-    (* Name of the algebraic data type. *)
+    (* Name of the data type. *)
     typename: string;
 
     (* Type parameters. *)
@@ -81,21 +91,23 @@ and typedef = {
 
   }
 
+(**The type parameters in a type definition. *)
 and typeparams =
   typeparam list
 
-(* A type parameter is a type variable name, without the leading quote, which
-   will be added by the pretty-printer. It can also be "_". *)
-
+(**A type parameter is a type variable name, without a leading quote.
+   It can also be ["_"]. *)
 and typeparam =
   string
 
+(**The right-hand side of a type definition. *)
 and typedefrhs =
   | TDefRecord of fielddef list
   | TDefSum of datadef list
   | TAbbrev of typ
   | TAbstract
 
+(**A record field definition. *)
 and fielddef = {
 
     (* Whether the field is mutable. *)
@@ -109,6 +121,7 @@ and fielddef = {
 
   }
 
+(**A data constructor definition. *)
 and datadef = {
 
     (* Name of the data constructor. *)
@@ -132,6 +145,7 @@ and datadef = {
 
   }
 
+(**A type. *)
 and typ =
 
   (* Textual OCaml type. *)
@@ -152,6 +166,7 @@ and typ =
   (* Type sharing construct. *)
   | TypAs of typ * string
 
+(**A type scheme. *)
 and typescheme = {
 
   (* Universal quantifiers, without leading quotes. *)
