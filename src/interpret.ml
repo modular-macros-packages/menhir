@@ -610,7 +610,8 @@ let compile_runs filename (runs : run or_comment list) : unit =
 
   let module P = Printer.Make (struct
     let f = stdout
-    let locate = None
+    let print_line_directives = None
+    let print_comments = Settings.comment
   end) in
   P.program program
 

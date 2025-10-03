@@ -204,7 +204,8 @@ let write grammar () =
   let mli = open_out (Settings.base ^ ".mli") in
   let module P = Printer.Make (struct
     let f = mli
-    let locate = None
+    let print_line_directives = None
+    let print_comments = Settings.comment
   end) in
   P.interface (interface grammar);
   close_out mli

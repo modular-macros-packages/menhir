@@ -278,7 +278,8 @@ let write grammar filename () =
   let ml = open_out filename in
   let module P = Printer.Make (struct
     let f = ml
-    let locate = Some filename
+    let print_line_directives = Some filename
+    let print_comments = false
   end) in
   P.program (program grammar);
   close_out ml

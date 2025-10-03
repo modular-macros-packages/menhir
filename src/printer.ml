@@ -25,7 +25,10 @@ module Printer (X : sig
   val f: channel
 
   (* Whether line directives should be printed. *)
-  val locate: string option
+  val print_line_directives: string option
+
+  (* Whether comments should be printed. *)
+  val print_comments: bool
 
 end) = struct
 open X
@@ -186,7 +189,7 @@ let classtypeparams p f = function
    messages.*)
 
 let fragment f (frag : string located) =
-  match locate with
+  match print_line_directives with
   | Some basename ->
       let range = Located.position frag in
       (* Emit a line directive. *)
@@ -385,7 +388,7 @@ and exprk k f e =
   if member e k then
     match e with
     | EComment (c, e) ->
-        if Settings.comment then begin
+        if print_comments then begin
           line := !line + LineCount.count 0 (Lexing.from_string c);
           fprintf f "(* %s *)%t%a" c nl (exprk k) e
         end
@@ -958,7 +961,8 @@ end
 
 module Make (X : sig
   val f: out_channel
-  val locate: string option
+  val print_line_directives: string option
+  val print_comments: bool
 end) = struct
   include Printer(struct
     type channel = out_channel
@@ -973,7 +977,8 @@ end
 
 module MakeBuffered (X : sig
   val f: Buffer.t
-  val locate: string option
+  val print_line_directives: string option
+  val print_comments: bool
 end) = struct
   include Printer(struct
     type channel = Buffer.t
@@ -990,7 +995,8 @@ let print_expr f e =
   let module P =
     Make (struct
       let f = f
-      let locate = None
+      let print_line_directives = None
+    let print_comments = false
     end)
   in
   P.expr e
@@ -1000,7 +1006,8 @@ let string_of_expr e =
     let module P =
       MakeBuffered (struct
         let f = b
-        let locate = None
+        let print_line_directives = None
+        let print_comments = false
       end)
     in
     P.expr e

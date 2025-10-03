@@ -16,7 +16,7 @@ let write program =
   let module P = Printer.Make (struct
     let filename = Settings.base ^ ".ml"
     let f = open_out filename
-    let locate =
+    let print_line_directives =
       (* 2017/05/09: always include line number directives in generated .ml
          files. Indeed, they affect the semantics of [assert] instructions
          in the semantic actions. *)
@@ -27,6 +27,7 @@ let write program =
          bar.mly] will produce different files. Nevertheless, this seems
          useful/reasonable. *)
       Some filename
+    let print_comments = Settings.comment
   end) in
   P.program program
 
