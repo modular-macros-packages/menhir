@@ -90,8 +90,8 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
      Also, it does not carry any attributes; this is consistent
      with the fact that %inline symbols cannot carry attributes. *)
   let rule = {
-    pr_public_flag = false;
-    pr_inline_flag = true;
+    pr_public = false;
+    pr_inline = true;
     pr_nt          = symbol;
     pr_positions   = [ pos ]; (* this list is not allowed to be empty *)
     pr_attributes  = [];

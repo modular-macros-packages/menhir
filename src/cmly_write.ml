@@ -249,9 +249,9 @@ and higher_producer (id, param, attr) =
 let higher_rule (r : Syntax.parameterized_rule) = {
   r_parameters = r.Syntax.pr_parameters;
   r_branches   = List.map higher_branch r.Syntax.pr_branches;
-  r_inline     = r.Syntax.pr_inline_flag;
+  r_inline     = r.Syntax.pr_inline;
   r_positions  = List.map range r.Syntax.pr_positions;
-  r_public     = r.Syntax.pr_public_flag;
+  r_public     = r.Syntax.pr_public;
   r_attributes = attributes r.Syntax.pr_attributes;
 }
 

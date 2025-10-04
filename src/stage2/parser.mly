@@ -310,8 +310,8 @@ old_rule:
     {
       let public, inline = flags in
       let rule = {
-        pr_public_flag = public;
-        pr_inline_flag = inline;
+        pr_public = public;
+        pr_inline = inline;
         pr_nt          = Located.value symbol;
         pr_positions   = [ Located.position symbol ];
         pr_attributes  = attributes;

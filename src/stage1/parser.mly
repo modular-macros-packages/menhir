@@ -230,8 +230,8 @@ rule:
   production_group production_groups
     {
       let public, inline = $1 in
-      { pr_public_flag = public;
-        pr_inline_flag = inline;
+      { pr_public = public;
+        pr_inline = inline;
         pr_nt          = Located.value $2;
         pr_positions   = [ Located.position $2 ];
         pr_attributes  = $3;

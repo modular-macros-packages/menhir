@@ -33,7 +33,7 @@ type ocamltype = OCamlType.ocamltype =
   | Declared of string located
   | Inferred of string
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Terminals and nonterminal symbols. *)
 
@@ -77,13 +77,13 @@ type identifier =
 type filename =
   string
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (**A semantic action. *)
 type action =
   Action.t
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 open Attribute
 
@@ -102,7 +102,7 @@ open Attribute
    After expanding away parameterized nonterminal symbols, things become
    a bit simpler, as %attribute declarations are desugared away. *)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Information about terminal symbols. (Only after joining.) *)
 
@@ -129,50 +129,67 @@ type precedence_level =
 (**The properties of a terminal symbol. *)
 type properties =
   {
+
     tk_ocamltype     : ocamltype option;
+    (**The OCaml type of this terminal symbol can be provided via a [%type]
+       declaration. It is optional. *)
+
     tk_position      : range;
+    (**The position where this terminal symbol is declared. *)
+
     tk_alias         : alias;
+    (**A "token alias" can be declared for this terminal symbol. It is
+       optional. *)
+
     tk_attributes    : attributes;
+    (**The attributes attached with this terminal symbol. *)
+
     tk_associativity : associativity;
+    (**The associativity status of this terminal symbol. *)
+
     tk_precedence    : precedence_level;
+    (**The precedence level of this terminal symbol. *)
+
     tk_is_declared   : bool;
+    (**Whether a declaration of this terminal symbol has been found.
+       When no declaration exists for a terminal symbol, then it is
+       considered a "pseudo-token". In such a case, it is really just
+       a name for a precedence level; it can appear in a [%prec]
+       annotation. *)
+
   }
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* A [%prec] annotation is optional. A production can carry at most one.
+(**A [%prec] annotation is optional. A production can carry at most one.
    If there is one, it is a symbol name. See [ParserAux]. *)
-
 type prec_annotation =
   symbol located option
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* A "production level" is used to solve reduce/reduce conflicts. It reflects
+(**A "production level" is used to solve reduce/reduce conflicts. It reflects
    which production appears first in the grammar. See [ParserAux]. *)
-
 type production_level =
   | ProductionLevel of InputFile.file * int
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* A level is attached to every [%on_error_reduce] declaration. It is used
+(**A level is attached to every [%on_error_reduce] declaration. It is used
    to decide what to do when several such declarations are applicable in a
    single state. *)
-
 type on_error_reduce_level =
   production_level (* we re-use the above type, to save code *)
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
-(* The old rule syntax. Although old, still used internally. The new syntax
+(**The old rule syntax. Although old, still used internally. The new syntax
    is translated down to it. *)
 
-(* A parameter is either just a symbol or an application of a symbol to a
+(**A parameter is either just a symbol or an application of a symbol to a
    nonempty tuple of parameters. Before anonymous rules have been eliminated,
    it can also be an anonymous rule, represented as a list of branches. *)
-
 type parameter =
   | ParameterVar of symbol located
   | ParameterApp of symbol located * parameters
@@ -181,64 +198,76 @@ type parameter =
 and parameters =
   parameter list
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* A producer is a pair of identifier and a parameter. In concrete syntax, it
+(**A producer is a pair of identifier and a parameter. In concrete syntax, it
    could be [e = expr], for instance. The identifier [e] is always present.
    (A use of the keyword [$i] in a semantic action is turned by the lexer
    and parser into a reference to an identifier [_i].) A producer carries
    a number of attributes. *)
-
 and producer =
   identifier located * parameter * attributes
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* A branch (a production) is a sequence of producers followed with
-   a semantic action. *)
-
+(**A branch (the right-hand side of a production) is a sequence of producers
+   followed with a semantic action. *)
 and parameterized_branch =
   {
-    (* The branch's position in a source file. *)
+
     pb_position         : range;
-    (* The producers. *)
+    (**The branch's position in a source file. *)
+
     pb_producers        : producer list;
-    (* The semantic action. *)
+    (**The producers. *)
+
     pb_action           : action;
-    (* An optional [%prec] annotation. *)
+    (**The semantic action. *)
+
     pb_prec_annotation  : prec_annotation;
-    (* The branch's production level. *)
+    (**An optional [%prec] annotation. *)
+
     pb_production_level : production_level;
-    (* Attributes attached with this branch. *)
+    (**The branch's production level. *)
+
     pb_attributes       : attributes;
+    (**The attributes attached with this branch. *)
+
   }
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* A rule is the definition of a nonterminal symbol. *)
+(**A rule is the definition of a nonterminal symbol.
 
-(* A rule has a header and several branches (productions). *)
-
+   A rule has a header and several branches (productions). *)
 type parameterized_rule =
   {
-    (* Is the [%public] keyword present? *)
-    pr_public_flag       : bool;
-    (* Is the [%inline] keyword present? *)
-    pr_inline_flag       : bool;
-    (* The name of the nonterminal symbol that is being defined. *)
-    pr_nt                : nonterminal;
-    (* Positions in the source files. *)
-    pr_positions         : ranges;
-    (* Attributes attached with this nonterminal symbol. *)
-    pr_attributes        : attributes;
-    (* The parameters of this nonterminal symbol. *)
-    pr_parameters        : symbols;
-    (* The productions. *)
-    pr_branches          : parameterized_branch list;
+
+    pr_public     : bool;
+    (**Is the [%public] keyword present? *)
+
+    pr_inline     : bool;
+    (**Is the [%inline] keyword present? *)
+
+    pr_nt         : nonterminal;
+    (**The name of the nonterminal symbol that is being defined. *)
+
+    pr_positions  : ranges;
+    (**Positions in the source files. *)
+
+    pr_attributes : attributes;
+    (**Attributes attached with this nonterminal symbol. *)
+
+    pr_parameters : symbols;
+    (**The parameters of this nonterminal symbol. *)
+
+    pr_branches   : parameterized_branch list;
+    (**The productions. *)
+
   }
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* The new rule syntax. *)
 
@@ -308,8 +337,8 @@ type rule =
     rule_rhs: expression;
   }
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* A declaration. (Only before joining.) *)
 
@@ -351,7 +380,7 @@ type declaration =
 
   | DOnErrorReduce of parameter * on_error_reduce_level
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A partial grammar. (Only before joining.) *)
 
@@ -363,8 +392,8 @@ type partial_grammar =
     pg_rules             : parameterized_rule list;
   }
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* A grammar. (Only after joining.) *)
 

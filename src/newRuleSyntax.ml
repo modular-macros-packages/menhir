@@ -474,8 +474,8 @@ and productions (e : expression) : parameterized_branch list =
 
 let rule (rule : rule) : parameterized_rule =
   {
-    pr_public_flag = rule.rule_public;
-    pr_inline_flag = rule.rule_inline;
+    pr_public = rule.rule_public;
+    pr_inline = rule.rule_inline;
     pr_nt          = value rule.rule_lhs;
     pr_positions   = [ position rule.rule_lhs ];
     pr_attributes  = rule.rule_attributes;

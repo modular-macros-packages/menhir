@@ -442,7 +442,7 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
       (* Store the symbol declaration. *)
       (* A nonterminal symbol is considered public if it is declared using
          %public or %start. *)
-      if prule.pr_public_flag
+      if prule.pr_public
         || StringMap.mem prule.pr_nt grammar.p_start_symbols then
         store_public_nonterminal tokens symbols prule.pr_nt prule.pr_positions
       else
@@ -520,7 +520,7 @@ let merge_rules symbols pgs =
                     Error.error positions
                       "the symbol %s is defined with arities %d and %d."
                          r.pr_nt ra ra'
-                  else if r.pr_inline_flag <> r'.pr_inline_flag then
+                  else if r.pr_inline <> r'.pr_inline then
                     Error.error positions
                          "not all definitions of %s are marked %%inline." r.pr_nt
                   else
@@ -563,7 +563,7 @@ let join grammar pgrammar =
 
 (* If a rule is marked %inline, then it must not carry an attribute. *)
 let check_inline_attribute prule =
-  match prule.pr_inline_flag, prule.pr_attributes with
+  match prule.pr_inline, prule.pr_attributes with
   | true, attr :: _ ->
       Error.error
         [attr.origin]
@@ -710,7 +710,7 @@ let check_parameterized_grammar_is_well_defined grammar =
          prule.pr_branches;
 
          (* It is forbidden to use %inline on a %start symbol. *)
-         if (prule.pr_inline_flag
+         if (prule.pr_inline
              && StringMap.mem k grammar.p_start_symbols) then
            Error.error prule.pr_positions
                 "%s cannot be both a start symbol and inlined." k;

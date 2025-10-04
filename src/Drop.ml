@@ -53,7 +53,7 @@ let drop_rule (rule : S.parameterized_rule) : T.rule =
   {
     T.branches = List.map drop_branch rule.S.pr_branches;
     T.positions = rule.S.pr_positions;
-    T.inline_flag = rule.S.pr_inline_flag;
+    T.inline_flag = rule.S.pr_inline;
     T.attributes = rule.S.pr_attributes;
   }
 
