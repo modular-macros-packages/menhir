@@ -504,7 +504,7 @@ let actionbody prod =
   and nt = Production.nt prod in
   annotate (EComment (
     Production.print prod,
-    Action.to_il_expr action
+    Action.expr action
   )) nt
 
 (* [must_not_return e msg] has the same semantics as [e] if [e] raises

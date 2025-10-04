@@ -251,7 +251,7 @@ let reducebody prod =
     Production.action prod
   in
   let act =
-    annotate (Action.to_il_expr action) (semvtypent nt)
+    annotate (Action.expr action) (semvtypent nt)
   in
 
   EComment (

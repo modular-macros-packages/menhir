@@ -17,13 +17,6 @@ type t = {
   expr: expr;
   (**The code for this semantic action. *)
 
-  priority: int;
-  (**This priority level is used in [Infer] to sort semantic actions.
-     Actions with a lower priority level are processed first by OCaml's
-     type-checker, so type errors are less likely to be reported inside
-     them. Via inlining, several actions can be combined into one; in
-     that case, we take a maximum. *)
-
   semvars: StringSet.t;
   (**The free variables that this semantic action can use in order to
      refer to a semantic value. *)
@@ -33,70 +26,54 @@ type t = {
      can be thought of as free variables that refer to positions. They must
      be renamed during inlining. *)
 
+  priority: int;
+  (**This priority level is used in [Infer] to sort semantic actions.
+     Actions with a lower priority level are processed first by OCaml's
+     type-checker, so type errors are less likely to be reported inside
+     them. Via inlining, several actions can be combined into one; in
+     that case, we take a maximum. *)
+
 }
 
 (* -------------------------------------------------------------------------- *)
 
-(* Constructors. *)
+(* Construction. *)
 
 let make priority semvars keywords expr =
   let keywords = KeywordSet.of_list keywords in
-  { expr; priority; semvars; keywords }
+  { expr; semvars; keywords; priority }
 
 (* -------------------------------------------------------------------------- *)
 
 (* Building [let x = a1 in a2]. *)
 
 let compose x a1 a2 =
-  {
-    expr      = blet ([ PVar x, a1.expr ], a2.expr);
-    semvars   = StringSet.union a1.semvars (StringSet.remove x a2.semvars);
-    keywords  = KeywordSet.union a1.keywords a2.keywords;
-    priority  = max a1.priority a2.priority;
-  }
+  let expr      = blet ([ PVar x, a1.expr ], a2.expr)
+  and semvars   = StringSet.(union a1.semvars (remove x a2.semvars))
+  and keywords  = KeywordSet.union a1.keywords a2.keywords
+  and priority  = max a1.priority a2.priority in
+  { expr; semvars; keywords; priority }
 
 (* Building [let p = x in a]. *)
 
-let rec bind p x a =
-  {
-    expr      = blet ([ p, EVar x ], a.expr);
-    semvars   = StringSet.add x (StringSet.diff a.semvars (bv p));
-    keywords  = a.keywords;
-    priority  = a.priority;
-  }
-
-(* We are lazy and write an incomplete and somewhat ad hoc [bv] function for
-   IL patterns. See also [NewRuleSyntax.bv]. *)
-
-and bv p =
-  bv_aux StringSet.empty p
-
-and bv_aux accu p =
-  match p with
-  | PWildcard
-  | PUnit ->
-      accu
-  | PVar x ->
-      StringSet.add x accu
-  | PTuple ps ->
-      List.fold_left bv_aux accu ps
-  | _ ->
-      assert false (* unsupported *)
+let bind bvp p x a =
+  let expr      = blet ([ p, EVar x ], a.expr)
+  and semvars   = StringSet.(add x (diff a.semvars (of_list bvp)))
+  and keywords  = a.keywords
+  and priority  = a.priority in
+  { expr; semvars; keywords; priority }
 
 (* -------------------------------------------------------------------------- *)
 
 (* Accessors. *)
 
-let to_il_expr action =
+let[@inline] expr action =
   action.expr
 
-let[@inline] priority action =
-  action.priority
-
-let semvars action =
+let[@inline] semvars action =
   action.semvars
 
-let keywords action =
+let[@inline] keywords action =
   action.keywords
 
 let has_beforeend action =
@@ -104,14 +81,15 @@ let has_beforeend action =
 
 let posvars action =
   KeywordSet.fold (fun keyword accu ->
-    match keyword with
-    | Position (s, w, f) ->
-        let x = Keyword.posvar s w f in
-        StringSet.add x accu
+    let x = kposvar keyword in
+    StringSet.add x accu
   ) (keywords action) StringSet.empty
 
 let vars action =
   StringSet.union (semvars action) (posvars action)
+
+let[@inline] priority action =
+  action.priority
 
 (* -------------------------------------------------------------------------- *)
 
@@ -119,13 +97,11 @@ let vars action =
 
 let define keyword keywords f action =
   assert (KeywordSet.mem keyword action.keywords);
-  {
-    expr      = f action.expr;
-    priority  = action.priority;
-    semvars   = action.semvars;
-    keywords  = KeywordSet.union
-                  keywords (KeywordSet.remove keyword action.keywords)
-  }
+  let expr      = f action.expr
+  and semvars   = action.semvars
+  and keywords  = KeywordSet.(union keywords (remove keyword action.keywords))
+  and priority  = action.priority in
+  { expr; semvars; keywords; priority }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -198,12 +174,9 @@ let rename_keyword f (phi : subst ref) keyword : keyword =
         | None ->
             apply_subject !phi subject, where
       in
-      phi :=
-        extend_posvar
-          (Keyword.posvar subject where flavor)
-          (Keyword.posvar subject' where' flavor)
-          !phi;
-      Position (subject', where', flavor)
+      let keyword' = Position (subject', where', flavor) in
+      phi := extend_posvar (kposvar keyword) (kposvar keyword') !phi;
+      keyword'
 
 let rename f phi a =
 

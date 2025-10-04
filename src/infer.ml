@@ -201,7 +201,7 @@ let actiondef grammar symbol branch =
 
   let body =
     annotate_expr grammar
-      (Action.to_il_expr branch.action)
+      (Action.expr branch.action)
       symbol
   in
 

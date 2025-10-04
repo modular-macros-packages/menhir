@@ -362,7 +362,8 @@ and extend (p : pattern) (e1 : symbol_expression) (context : context) : context 
       let x1 = semvar context in
       let tilde_used = tilde_used context.tilde_used p in
       let p : IL.pattern = pattern x1 p in
-      let binding = Action.bind p x1 in
+      let bvp = bv [] p in
+      let binding = Action.bind bvp p x1 in
       let x1 = locate dummy x1 in
       { pos        =                   context.pos;
         producers  = producer x1 e1 :: context.producers;

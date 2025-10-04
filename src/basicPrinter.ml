@@ -140,7 +140,7 @@ let attributes_printed : bool =
 (* Printing a semantic action. *)
 
 let print_semantic_action f g branch =
-  let e = Action.to_il_expr branch.action in
+  let e = Action.expr branch.action in
   match mode with
   | PrintUnitActions _ ->
       (* In the unit-action modes, we print a pair of empty braces, which is fine. *)
