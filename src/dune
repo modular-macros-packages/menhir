@@ -17,6 +17,8 @@
   ))
 )
 
+;; Copy the content of the StackLang subdirectory into this directory.
+
 (copy_files# StackLang/*.{ml,mli})
 
 ;; The following parsers are built by ocamlyacc.
