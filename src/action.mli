@@ -8,31 +8,41 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Located
 open Keyword (* from sdk/ *)
 
-(** A semantic action is a piece of OCaml code together with information about
-   the free variables that appear in this code (which refer to semantic
-   values) and information about the keywords that appear in this code. The
-   code can be represented internally as a piece of text or (more generally)
-   as an IL expression. *)
+(**This module defines the type of semantic actions and offers a number of
+   operations on this type.*)
+
+(**A semantic action is a piece of code together with information about the
+   free variables and keywords that appear in this code.
+
+   The code in a semantic action is normally OCaml code; however, when
+   [--coq] is used, it is Coq code. This code is represented internally
+   as an IL expression.
+
+   An action carries a set of semantic variables [semvars]. These variables
+   refer to semantic values and may appear free in the code of the semantic
+   action.
+
+   An action carries a set of keywords. These are the keywords that appear
+   in the code of the semantic action. They are normally found by the lexer
+   while scanning this code.
+
+   An action has an integer priority. This priority influences the order in
+   which semantic actions are presented to the OCaml type-checker. This can
+   influence the type error messages that appear when an action is ill-typed. *)
 type t
 
 (* -------------------------------------------------------------------------- *)
 
 (* Constructors. *)
 
-(** [make standard xs keywords fragment] builds an action out of the text
-    fragment [fragment]. The flag [standard] indicates whether this action
-    originates in Menhir's standard library. The list [keywords] is the list
-    of Menhir keywords found in this semantic action. The set [xs] is the
-    set of semantic-value variables that occur free in this action. *)
-val make: bool -> StringSet.t -> keyword list -> string located -> t
-
-(** [from_il_expr] builds an action out of an IL expression. Not every IL
-   expression is accepted; only the expressions built by NewRuleSyntax are
-   accepted. *)
-val from_il_expr: IL.expr -> t
+(** [make priority semvars keywords expr] builds an action out of the
+    expression [expr]. [priority] is this action's priority. [semvars] is
+    the set of semantic value variables that this action is allowed to
+    mention. [keywords] is the list of the keywords that appear in this
+    action. *)
+val make: int -> StringSet.t -> keyword list -> IL.expr -> t
 
 (** [compose x a1 a2] builds the action [let x = a1 in a2]. This combinator is
    used during inlining (that is, while eliminating %inlined symbols). *)
@@ -51,10 +61,8 @@ val bind: IL.pattern -> string -> t -> t
 (** [to_il_expr] converts an action to an IL expression. *)
 val to_il_expr: t -> IL.expr
 
-(** [is_standard a] indicates whether the action [a] originates from Menhir's
-   standard library. Via inlining, several actions can be combined into one;
-   in that case, we take a conjunction *)
-val is_standard: t -> bool
+(** [priority a] is the priority of the action [a]. *)
+val priority: t -> int
 
 (** [semvars a] is a superset of the free variables that may appear in the
    action [a] to denote a semantic value. *)

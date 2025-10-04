@@ -34,7 +34,8 @@ let (>>) f g x =
 (* No %prec annotation or attribute can be supplied when this form is used. *)
 
 let return pos x : seq_expression =
-  let action = Action.from_il_expr (IL.EVar x) in
+  let semvars = StringSet.singleton x in
+  let action = Action.make 0 semvars [] (IL.EVar x) in
   let raw_action _ _ = action in
   locate pos (EAction (XATraditional raw_action, None, []))
 
@@ -415,6 +416,7 @@ and production_aux
         the error to be reported in the source file. *)
 
       (* Build the tuple as an IL expression. *)
+      let semvars = StringSet.of_list (tuple context) in
       let tuple = ILConstruction.(etuple (evars (tuple context))) in
       (* Build an application of [id] to this tuple. *)
       (* We abuse the abstract syntax of IL and build an application node,
@@ -428,7 +430,7 @@ and production_aux
             tuple
       in
       (* Build a traditional semantic action. *)
-      let action = Action.from_il_expr e in
+      let action = Action.make 0 semvars [] e in
       let raw_action _ _ = action in
       let e = EAction (XATraditional raw_action, prec, attrs) in
       let e = locate pos e in

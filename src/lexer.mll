@@ -305,10 +305,11 @@ let make_action pos1 pos2 monsters dollars producers =
   let fragment = locate (Range.make (pos1, pos2)) content in
   (* Add parentheses to delimit the semantic action. *)
   let fragment = Located.parenthesize fragment in
-  (* Record whether this action originates in Menhir's standard library. *)
-  let standard = (pos1.pos_fname = Settings.stdlib_filename) in
+  (* Test whether this action originates in Menhir's standard library.
+     If so, give it priority 0; otherwise, give it priority 1. *)
+  let priority = if pos1.pos_fname = Settings.stdlib_filename then 0 else 1 in
   (* Build a semantic action. *)
-  Action.make standard ids keywords fragment
+  Action.make priority ids keywords (IL.ETextual fragment)
 
 (* ------------------------------------------------------------------------ *)
 

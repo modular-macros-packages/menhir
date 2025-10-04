@@ -9,25 +9,29 @@
 (******************************************************************************)
 
 open Keyword
+open IL
+open ILConstruction
 
 type t = {
 
-  (* The code for this semantic action. *)
-  expr: IL.expr;
+  expr: expr;
+  (**The code for this semantic action. *)
 
-  (* This Boolean flag indicates whether this semantic action originates from
-     Menhir's standard library. Via inlining, several semantic actions can be
-     combined into one; in that case, we take a conjunction. *)
-  standard: bool;
+  priority: int;
+  (**This priority level is used in [Infer] to sort semantic actions.
+     Actions with a lower priority level are processed first by OCaml's
+     type-checker, so type errors are less likely to be reported inside
+     them. Via inlining, several actions can be combined into one; in
+     that case, we take a maximum. *)
 
-  (* A superset of the free variables that this semantic action can use in
-     order to refer to a semantic value. *)
   semvars: StringSet.t;
+  (**The free variables that this semantic action can use in order to
+     refer to a semantic value. *)
 
-  (* The set of keywords that appear in this semantic action. They can be
-     thought of as free variables that refer to positions. They must be
-     renamed during inlining. *)
   keywords  : KeywordSet.t;
+  (**The set of keywords that appear in this semantic action. These keywords
+     can be thought of as free variables that refer to positions. They must
+     be renamed during inlining. *)
 
 }
 
@@ -35,43 +39,9 @@ type t = {
 
 (* Constructors. *)
 
-let make standard semvars keywords fragment =
-  let expr = IL.ETextual fragment
-  and keywords = KeywordSet.of_list keywords in
-  { expr; standard; semvars; keywords }
-
-let rec from_il_expr e =
-  {
-    expr      = e;
-    standard  = true;
-    semvars   = fv e;
-    keywords  = KeywordSet.empty;
-  }
-
-(* We are lazy and write an incomplete and somewhat ad hoc [fv] function for
-   IL expressions. *)
-
-and fv e =
-  fv_aux StringSet.empty e
-
-and fv_aux accu e =
-  IL.(match e with
-  | EVar x ->
-      StringSet.add x accu
-  | ETextual _ ->
-      (* Considering the manner in which [Action.from_il_expr] is used in the
-         module NewRuleSyntax, this piece of text is expected to stand for a
-         data constructor, not a semantic value, so we can take its set of
-         free variables to be empty. This is rather ad hoc and fragile. *)
-      accu
-  | ETuple es ->
-      List.fold_left fv_aux accu es
-  | EApp (e, es) ->
-      List.fold_left fv_aux accu (e :: es)
-  | EUnit ->
-      accu
-  | _ ->
-      assert false (* unsupported *))
+let make priority semvars keywords expr =
+  let keywords = KeywordSet.of_list keywords in
+  { expr; priority; semvars; keywords }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -79,20 +49,20 @@ and fv_aux accu e =
 
 let compose x a1 a2 =
   {
-    expr      = ILConstruction.blet ([ IL.PVar x, a1.expr ], a2.expr);
+    expr      = blet ([ PVar x, a1.expr ], a2.expr);
     semvars   = StringSet.union a1.semvars (StringSet.remove x a2.semvars);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
-    standard  = a1.standard && a2.standard;
+    priority  = max a1.priority a2.priority;
   }
 
 (* Building [let p = x in a]. *)
 
 let rec bind p x a =
   {
-    expr      = ILConstruction.blet ([ p, IL.EVar x ], a.expr);
+    expr      = blet ([ p, EVar x ], a.expr);
     semvars   = StringSet.add x (StringSet.diff a.semvars (bv p));
     keywords  = a.keywords;
-    standard  = a.standard;
+    priority  = a.priority;
   }
 
 (* We are lazy and write an incomplete and somewhat ad hoc [bv] function for
@@ -102,7 +72,7 @@ and bv p =
   bv_aux StringSet.empty p
 
 and bv_aux accu p =
-  IL.(match p with
+  match p with
   | PWildcard
   | PUnit ->
       accu
@@ -111,7 +81,7 @@ and bv_aux accu p =
   | PTuple ps ->
       List.fold_left bv_aux accu ps
   | _ ->
-      assert false (* unsupported *))
+      assert false (* unsupported *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -120,8 +90,8 @@ and bv_aux accu p =
 let to_il_expr action =
   action.expr
 
-let is_standard action =
-  action.standard
+let[@inline] priority action =
+  action.priority
 
 let semvars action =
   action.semvars
@@ -151,7 +121,7 @@ let define keyword keywords f action =
   assert (KeywordSet.mem keyword action.keywords);
   {
     expr      = f action.expr;
-    standard  = action.standard;
+    priority  = action.priority;
     semvars   = action.semvars;
     keywords  = KeywordSet.union
                   keywords (KeywordSet.remove keyword action.keywords)
@@ -243,7 +213,7 @@ let rename f phi a =
   let keywords = KeywordSet.map (rename_keyword f phi) keywords in
   let phi = !phi in
 
-  let standard = a.standard in
+  let priority = a.priority in
 
   (* Restrict [phi.semvar] to the set [a.semvars], in order to avoid
      generating [let] bindings that would be both useless and harmful:
@@ -259,7 +229,7 @@ let rename f phi a =
      a set of *simultaneous* [let] bindings. (We cannot use a series
      of nested [let] bindings, as that would cause a capture if the
      domain and codomain of [phi] have a nonempty intersection.) *)
-  let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) (bindings phi) in
-  let expr = ILConstruction.eletand (phi, a.expr) in
+  let phi = List.map (fun (x, y) -> PVar x, EVar y) (bindings phi) in
+  let expr = eletand (phi, a.expr) in
 
-  { expr; standard; semvars; keywords }
+  { expr; priority; semvars; keywords }

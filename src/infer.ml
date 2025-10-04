@@ -215,20 +215,27 @@ let actiondef grammar symbol branch =
 
 let program grammar =
 
-  (* Turn the grammar into a bunch of function definitions. Grammar
+  (* Turn the grammar into a bunch of function definitions. *)
+
+  let bindings =
+    StringMap.fold (fun symbol rule bindings ->
+      List.fold_left (fun bindings branch ->
+        let binding = (PWildcard, actiondef grammar symbol branch)
+        and priority = Action.priority branch.action in
+        (priority, binding) :: bindings
+      ) bindings rule.branches
+    ) grammar.rules []
+  in
+
+  let compare (p1, _) (p2, _) = Int.compare p1 p2 in
+  let bindings =
+    List.sort compare bindings
+    |> List.map snd
+  in
+
+  (* Grammar
      productions that derive from the standard library are reflected
      first, so that type errors are not reported in them. *)
-
-  let bindings1, bindings2 =
-    StringMap.fold (fun symbol rule (bindings1, bindings2) ->
-      List.fold_left (fun (bindings1, bindings2) branch ->
-        if Action.is_standard branch.action then
-          (PWildcard, actiondef grammar symbol branch) :: bindings1, bindings2
-        else
-          bindings1, (PWildcard, actiondef grammar symbol branch) :: bindings2
-      ) (bindings1, bindings2) rule.branches
-    ) grammar.rules ([], [])
-  in
 
   (* Create entry points whose types are the unknowns that we are looking for.
      Mentioning just the type variable [ntvar nt] suffices here. *)
@@ -242,7 +249,7 @@ let program grammar =
 
   let def = {
     valpat = PTuple ps;
-    valval = ELet (bindings1 @ bindings2, annotate EBottom (TypTuple ts))
+    valval = ELet (bindings, annotate EBottom (TypTuple ts))
   }
   in
 
