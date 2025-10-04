@@ -125,7 +125,7 @@ type token_associativity =
 type precedence_level =
   | UndefinedPrecedence
   | PrecedenceLevel of
-      InputFile.input_file * int *
+      InputFile.file * int *
       Lexing.position * Lexing.position
 
 type token_properties =
@@ -154,7 +154,7 @@ type prec_annotation =
    which production appears first in the grammar. See [ParserAux]. *)
 
 type production_level =
-  | ProductionLevel of InputFile.input_file * int
+  | ProductionLevel of InputFile.file * int
 
 (* ------------------------------------------------------------------------ *)
 

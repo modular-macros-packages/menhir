@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* ---------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* The identity of the current input file. *)
 
@@ -26,7 +26,7 @@
    there). For this reason, we define a type [input_file] which includes
    the file's name as well as its index on the command line. *)
 
-type input_file = {
+type file = {
   input_file_name: string;
   input_file_index: int
 }
@@ -55,14 +55,7 @@ let compare_input_files file1 file2 =
 let current_input_file =
   ref dummy_input_file
 
-(* This declares that a new file is being processed. *)
-let new_input_file name : unit =
-  current_input_file := {
-    input_file_name = name;
-    input_file_index = !current_input_file.input_file_index + 1
-  }
-
-let get_input_file () : input_file =
+let get_input_file () : file =
   assert (!current_input_file != dummy_input_file);
   !current_input_file
 
@@ -70,7 +63,7 @@ let get_file_name input =
   assert (input != dummy_input_file);
   input.input_file_name
 
-(* ---------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* The contents of the current input file. *)
 
@@ -87,8 +80,12 @@ let file_contents =
 let get_file_contents () =
   get_initialized_ref file_contents
 
-let with_file_contents contents f =
-  file_contents := Some contents;
+let with_file_content filename content f =
+  current_input_file := {
+    input_file_name = filename;
+    input_file_index = !current_input_file.input_file_index + 1
+  };
+  file_contents := Some content;
   let result = f() in
   file_contents := None; (* avoid memory leak *)
   result

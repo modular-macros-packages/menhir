@@ -14,16 +14,14 @@
 
 (* Reading a grammar from a file. *)
 
-let load_grammar_from_contents filename contents =
-  InputFile.new_input_file filename;
-  InputFile.with_file_contents contents (fun () ->
-    let open Lexing in
-    let lexbuf = Lexing.from_string contents in
-    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
-    (* the grammar: *)
-    { (Driver.grammar Lexer.main lexbuf)
-      with Syntax.pg_filename = filename }
-  )
+let load_grammar_from_contents filename content =
+  InputFile.with_file_content filename content @@ fun () ->
+  let open Lexing in
+  let lexbuf = Lexing.from_string content in
+  lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
+  (* the grammar: *)
+  { (Driver.grammar Lexer.main lexbuf)
+    with Syntax.pg_filename = filename }
 
 let check_filename filename =
   let validExt = Settings.extension in
