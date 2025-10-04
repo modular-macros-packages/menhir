@@ -140,7 +140,7 @@ type token_properties =
              tk_attributes    : attributes;
     mutable  tk_associativity : token_associativity;
     mutable  tk_precedence    : precedence_level;
-    mutable  tk_is_declared   : bool;
+             tk_is_declared   : bool;
   }
 
 (* ------------------------------------------------------------------------ *)
