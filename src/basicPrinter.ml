@@ -72,7 +72,7 @@ let print_ocamltype ty : string =
 
 (* Printing the type of a terminal symbol. *)
 
-let print_token_type (prop : token_properties) =
+let print_token_type (prop : properties) =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc
@@ -276,7 +276,7 @@ let print_tokens f g =
         print_attributes prop.tk_attributes
   ) g.tokens;
   (* Sort the tokens wrt. precedence, and group them into levels. *)
-  let levels : (string * token_properties) list list =
+  let levels : (string * properties) list list =
     MList.group compare_tokens (StringMap.bindings g.tokens)
   in
   (* Print the precedence declarations: %left, %right, %nonassoc. *)

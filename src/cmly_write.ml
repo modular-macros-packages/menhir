@@ -178,7 +178,7 @@ let precedence_level pl =
 let production_level (Syntax.ProductionLevel (input, level)) =
   priority_level input level
 
-let token_associativity = function
+let associativity = function
   | Syntax.LeftAssoc      -> LeftAssoc
   | Syntax.RightAssoc     -> RightAssoc
   | Syntax.NonAssoc       -> NonAssoc
@@ -187,12 +187,12 @@ let token_associativity = function
 let import_bindings f map =
   List.map (fun (k, v) -> (k, f v)) (StringMap.bindings map)
 
-let token (tk : Syntax.token_properties) = {
+let token (tk : Syntax.properties) = {
   tk_ocamltype = ocamltype_option tk.Syntax.tk_ocamltype;
   tk_position = range tk.Syntax.tk_position;
   tk_alias = tk.Syntax.tk_alias;
   tk_attributes = attributes tk.Syntax.tk_attributes;
-  tk_associativity = token_associativity tk.Syntax.tk_associativity;
+  tk_associativity = associativity tk.Syntax.tk_associativity;
   tk_precedence = precedence_level tk.Syntax.tk_precedence;
   tk_is_declared = tk.Syntax.tk_is_declared;
 }

@@ -294,7 +294,7 @@ module Terminal = struct
   let non_error tok =
     tok <> error
 
-  let token_properties =
+  let properties =
     let not_so_dummy_properties = (* applicable to [error] and [#] *)
       {
         tk_precedence    = UndefinedPrecedence;
@@ -321,13 +321,13 @@ module Terminal = struct
       )
 
   let precedence_level tok =
-    TokPrecedence.levelip (print tok) token_properties.(tok)
+    TokPrecedence.levelip (print tok) properties.(tok)
 
   let associativity tok =
-    token_properties.(tok).tk_associativity
+    properties.(tok).tk_associativity
 
   let ocamltype tok =
-    token_properties.(tok).tk_ocamltype
+    properties.(tok).tk_ocamltype
 
   let init f =
     Array.init n f
@@ -360,7 +360,7 @@ module Terminal = struct
   let tokens_without_an_alias =
     let accu = ref [] in
     iter_real begin fun tok ->
-      let properties = token_properties.(tok) in
+      let properties = properties.(tok) in
       if properties.tk_alias = None then
         accu := tok :: !accu
     end;
@@ -369,7 +369,7 @@ module Terminal = struct
   let () =
     if verbose && Settings.require_aliases then
       tokens_without_an_alias |> List.iter begin fun tok ->
-        let properties = token_properties.(tok) in
+        let properties = properties.(tok) in
         let pos = properties.tk_position in
         Error.grammar_warning [pos]
           "no alias has been defined for the token %s."
@@ -380,7 +380,7 @@ module Terminal = struct
     tokens_without_an_alias = []
 
   let alias tok =
-    token_properties.(tok).tk_alias
+    properties.(tok).tk_alias
 
   let unquoted_alias tok =
     alias tok
@@ -405,7 +405,7 @@ module Terminal = struct
       None
 
   let attributes tok =
-    token_properties.(tok).tk_attributes
+    properties.(tok).tk_attributes
 
 end
 

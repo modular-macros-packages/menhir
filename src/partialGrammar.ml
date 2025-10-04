@@ -106,7 +106,7 @@ let join_declaration (grammar : grammar) decl =
          if none existed (but without deeming the token to have been
          declared). *)
 
-      let token_properties =
+      let properties =
         try
           StringMap.find terminal grammar.p_tokens
         with Not_found ->
@@ -124,20 +124,20 @@ let join_declaration (grammar : grammar) decl =
 
       (* Reject duplicate precedence declarations. *)
 
-      if token_properties.tk_associativity <> UndefinedAssoc then
+      if properties.tk_associativity <> UndefinedAssoc then
         Error.error
-          [ position decl; token_properties.tk_position ]
+          [ position decl; properties.tk_position ]
           "there are multiple precedence declarations for token %s." terminal;
 
       (* Record the new declaration. *)
 
-      let token_properties =
-        { token_properties with
+      let properties =
+        { properties with
           tk_precedence = prec;
           tk_associativity = assoc }
       in
       { grammar with p_tokens =
-          StringMap.add terminal token_properties grammar.p_tokens }
+          StringMap.add terminal properties grammar.p_tokens }
 
   | DGrammarAttribute attr ->
       { grammar with
@@ -292,7 +292,7 @@ type symbol_kind =
   | PrivateNonTerminal of Range.range
 
   (* The symbol is a token. *)
-  | Token of token_properties
+  | Token of properties
 
   (* We do not know yet what the symbol means.
      This is defined in the sequel or it is free in the partial grammar. *)

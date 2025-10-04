@@ -23,7 +23,7 @@ open Syntax
    following places:
 
    - with the grammar:          field [gr_attributes] of [grammar]
-   - with a terminal symbol:    field [tk_attributes] of [token_properties]
+   - with a terminal symbol:    field [tk_attributes] of [properties]
    - with a nonterminal symbol: field [attributes] of [rule]
    - with a producer:           field [producer_attributes] of [producer]
    - with a branch:             field [br_attributes] of [branch]           *)
@@ -90,7 +90,7 @@ type grammar =
     parameters      : string located list;
     start_symbols   : StringSet.t;
     types           : ocamltype StringMap.t;
-    tokens          : Syntax.token_properties StringMap.t;
+    tokens          : Syntax.properties StringMap.t;
     on_error_reduce : on_error_reduce_level StringMap.t;
     gr_attributes   : attributes;
     rules           : rule StringMap.t;

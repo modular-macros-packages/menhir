@@ -106,14 +106,14 @@ open Attribute
 
 (* Information about terminal symbols. (Only after joining.) *)
 
-(**Associativity. *)
-type token_associativity =
+(**The associativity status of a terminal symbol. *)
+type associativity =
   | LeftAssoc
   | RightAssoc
   | NonAssoc
   | UndefinedAssoc
 
-(**Precedence levels.
+(**The precedence level of a terminal symbol.
 
    The special value [UndefinedPrecedence] is used for the special tokens
    [error] and [#]. It is also used for pseudo-tokens (which are not declared,
@@ -126,14 +126,14 @@ type precedence_level =
   | UndefinedPrecedence
   | PrecedenceLevel of (InputFile.file * int) located
 
-(**Properties of a token (which, here, means a terminal symbol). *)
-type token_properties =
+(**The properties of a terminal symbol. *)
+type properties =
   {
     tk_ocamltype     : ocamltype option;
     tk_position      : range;
     tk_alias         : alias;
     tk_attributes    : attributes;
-    tk_associativity : token_associativity;
+    tk_associativity : associativity;
     tk_precedence    : precedence_level;
     tk_is_declared   : bool;
   }
@@ -333,7 +333,7 @@ type declaration =
 
     (* Priority and associativity declaration. *)
 
-  | DTokenProperties of terminal * token_associativity * precedence_level
+  | DTokenProperties of terminal * associativity * precedence_level
 
     (* Type declaration. *)
 
@@ -384,7 +384,7 @@ type grammar =
     p_parameters         : string located list;
     p_start_symbols      : range StringMap.t;
     p_types              : (parameter * ocamltype located) list;
-    p_tokens             : token_properties StringMap.t;
+    p_tokens             : properties StringMap.t;
     p_on_error_reduce    : (parameter * on_error_reduce_level) list;
     p_grammar_attributes : attributes;
     p_symbol_attributes  : (parameter list * attributes) list;
