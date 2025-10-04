@@ -11,9 +11,9 @@
 (**Attributes allow the user to annotate the grammar with information that is
    ignored by Menhir, but can be exploited by other tools, via the SDK. *)
 
-(**An attribute consists of a key, a payload, and a position in the source
-   code. The payload string is an uninterpreted piece of text. The position is
-   used only as part of error messages. *)
+(**An attribute consists of a key, a payload, and an origin (a range)
+   in the source code. The payload string is an uninterpreted piece of
+   text. The origin is used only as part of error messages. *)
 type attribute = {
   key:     key;
   payload: payload;
@@ -28,10 +28,6 @@ and payload =
 
 type attributes =
   attribute list
-
-(**[attribute_has_key key attr] determines whether the attribute [attr] has
-   key [key]. *)
-val attribute_has_key : key -> attribute -> bool
 
 (**[find_attribute key attrs] looks for an attribute that carries the key
    [key] in the list [attrs] and returns its payload. If no such attribute
