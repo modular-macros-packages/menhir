@@ -10515,7 +10515,7 @@ else
        )} [@name some_r]
 | vb = VFE_BEGIN e = expr ve = VFE_END _3 = DOT vb_inlined1 = VFE_BEGIN e_inlined1 = expr ve_inlined1 = VFE_END
     {let vfe1 =
-  let (ve, e, vb) = (ve_inlined1, e_inlined1, vb_inlined1) in
+  let (e, vb, ve) = (e_inlined1, vb_inlined1, ve_inlined1) in
   ( vb, e, ve )
 in
 let _endpos_vfe1_ = _endpos_ve_inlined1_ in
@@ -10537,7 +10537,7 @@ else
        )} [@name none_r]
 | i = int_literal vb = VFE_BEGIN e = expr ve = VFE_END _3 = DOT vb_inlined1 = VFE_BEGIN e_inlined1 = expr ve_inlined1 = VFE_END
     {let vfe1 =
-  let (ve, e, vb) = (ve_inlined1, e_inlined1, vb_inlined1) in
+  let (e, vb, ve) = (e_inlined1, vb_inlined1, ve_inlined1) in
   ( vb, e, ve )
 in
 let _endpos_vfe1_ = _endpos_ve_inlined1_ in

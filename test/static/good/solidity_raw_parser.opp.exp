@@ -722,7 +722,7 @@ let _3 =
 in
 let _2 = ( [] ) in
 let _1 =
-  let (_endpos__3_, _3, _2) = (_endpos__3_inlined1_, _3_inlined1, _2_inlined1) in
+  let (_endpos__3_, _2, _3) = (_endpos__3_inlined1_, _2_inlined1, _3_inlined1) in
   let _4 = ( [] ) in
   let _endpos__4_ = _endpos__3_ in
   let _endpos = _endpos__4_ in
@@ -764,7 +764,7 @@ let _3 =
 in
 let _2 = ( [] ) in
 let _1 =
-  let (_endpos__3_, _3, _2) = (_endpos__3_inlined1_, _3_inlined1, _2_inlined1) in
+  let (_endpos__3_, _2, _3) = (_endpos__3_inlined1_, _2_inlined1, _3_inlined1) in
   let _4 = ( [] ) in
   let _endpos__4_ = _endpos__3_ in
   let _endpos = _endpos__4_ in
@@ -809,7 +809,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_endpos__3_, _3, _2) = (_endpos__3_inlined1_, _3_inlined1, _2_inlined1) in
+  let (_endpos__3_, _2, _3) = (_endpos__3_inlined1_, _2_inlined1, _3_inlined1) in
   let _4 = ( [] ) in
   let _endpos__4_ = _endpos__3_ in
   let _endpos = _endpos__4_ in
@@ -854,7 +854,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_endpos__3_, _3, _2) = (_endpos__3_inlined1_, _3_inlined1, _2_inlined1) in
+  let (_endpos__3_, _2, _3) = (_endpos__3_inlined1_, _2_inlined1, _3_inlined1) in
   let _4 = ( [] ) in
   let _endpos__4_ = _endpos__3_ in
   let _endpos = _endpos__4_ in
@@ -896,7 +896,7 @@ let _3 =
 in
 let _2 = ( [] ) in
 let _1 =
-  let (_endpos__4_, _3_inlined1, _3, _2) = (_endpos__4_inlined1_, _3_inlined2, _3_inlined1, _2_inlined1) in
+  let (_endpos__4_, _2, _3, _3_inlined1) = (_endpos__4_inlined1_, _2_inlined1, _3_inlined1, _3_inlined2) in
   let _4 =
     let _3 = _3_inlined1 in
     ( _3 )
@@ -940,7 +940,7 @@ let _3 =
 in
 let _2 = ( [] ) in
 let _1 =
-  let (_endpos__4_, _3_inlined1, _3, _2) = (_endpos__4_inlined1_, _3_inlined2, _3_inlined1, _2_inlined1) in
+  let (_endpos__4_, _2, _3, _3_inlined1) = (_endpos__4_inlined1_, _2_inlined1, _3_inlined1, _3_inlined2) in
   let _4 =
     let _3 = _3_inlined1 in
     ( _3 )
@@ -987,7 +987,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_endpos__4_, _3_inlined1, _3, _2) = (_endpos__4_inlined1_, _3_inlined2, _3_inlined1, _2_inlined1) in
+  let (_endpos__4_, _2, _3, _3_inlined1) = (_endpos__4_inlined1_, _2_inlined1, _3_inlined1, _3_inlined2) in
   let _4 =
     let _3 = _3_inlined1 in
     ( _3 )
@@ -1034,7 +1034,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_endpos__4_, _3_inlined1, _3, _2) = (_endpos__4_inlined1_, _3_inlined2, _3_inlined1, _2_inlined1) in
+  let (_endpos__4_, _2, _3, _3_inlined1) = (_endpos__4_inlined1_, _2_inlined1, _3_inlined1, _3_inlined2) in
   let _4 =
     let _3 = _3_inlined1 in
     ( _3 )
@@ -1099,7 +1099,7 @@ let _loc = (_startpos, _endpos) in
             fun_body = _5; } _3)) )}
 | _1 = FUNCTION _2 = parameters _1_inlined1 = function_type_modifiers _1_inlined2 = long_ident_raw _3 = list_extra_anonymous_function_modifier_ _4 = returns_opt _5 = function_body_opt
     {let _3 =
-  let (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2, _1_inlined1) in
+  let (_endpos__1_inlined1_, _startpos__1_inlined1_, _1, _1_inlined1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined1, _1_inlined2) in
   let _2 =
     let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
     let _1 =
@@ -1128,9 +1128,9 @@ let _loc = (_startpos, _endpos) in
             fun_body = _5; } _3)) )}
 | _1 = FUNCTION _2 = parameters _1_inlined1 = function_type_modifiers _1_inlined2 = long_ident _2_inlined1 = LPAREN _3_inlined1 = expression_list _4_inlined1 = RPAREN _3 = list_extra_anonymous_function_modifier_ _4 = returns_opt _5 = function_body_opt
     {let _3 =
-  let (_1_inlined1, _1) = (_1_inlined2, _1_inlined1) in
+  let (_1, _1_inlined1) = (_1_inlined1, _1_inlined2) in
   let _2 =
-    let (_3, _1) = (_3_inlined1, _1_inlined1) in
+    let (_1, _3) = (_1_inlined1, _3_inlined1) in
     ( Invocation (_1, Some (_3)) )
   in
   ( _1 @ (_2 :: _3) )

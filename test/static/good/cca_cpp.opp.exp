@@ -3902,7 +3902,7 @@ in
 | _1 = RBRACE _2 = ELSE _1_inlined1 = IF _1_inlined2 = CONSTEXPR _3 = LPAREN c = condition _6 = RPAREN l = LBRACE sl_opt = statement_seq_opt
     {let x =
   let o =
-    let (_endpos__1_inlined1_, _startpos__1_inlined1_, _startpos__1_) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _startpos__1_inlined1_) in
+    let (_endpos__1_inlined1_, _startpos__1_, _startpos__1_inlined1_) = (_endpos__1_inlined2_, _startpos__1_inlined1_, _startpos__1_inlined2_) in
     let sl = ( list_opt_to_list sl_opt ) in
     let _endpos_sl_ = _endpos_sl_opt_ in
     let i_opt = ( None ) in
@@ -3939,7 +3939,7 @@ in
 | _1 = RBRACE _2 = ELSE _1_inlined1 = IF _1_inlined2 = CONSTEXPR _3 = LPAREN x = init_statement c = condition _6 = RPAREN l = LBRACE sl_opt = statement_seq_opt
     {let x =
   let o =
-    let (_endpos__1_inlined1_, _startpos__1_inlined1_, _startpos__1_) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _startpos__1_inlined1_) in
+    let (_endpos__1_inlined1_, _startpos__1_, _startpos__1_inlined1_) = (_endpos__1_inlined2_, _startpos__1_inlined1_, _startpos__1_inlined2_) in
     let sl = ( list_opt_to_list sl_opt ) in
     let _endpos_sl_ = _endpos_sl_opt_ in
     let i_opt = ( Some x ) in
@@ -4075,7 +4075,7 @@ in
 | _1 = RBRACE _2 = ELSE _1_inlined1 = IF _1_inlined2 = CONSTEXPR _3 = LPAREN c = condition _6 = RPAREN l = LBRACE sl_opt = statement_seq_opt xs = nonempty_list_odd_else_stmt_
     {let x =
   let o =
-    let (_endpos__1_inlined1_, _startpos__1_inlined1_, _startpos__1_) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _startpos__1_inlined1_) in
+    let (_endpos__1_inlined1_, _startpos__1_, _startpos__1_inlined1_) = (_endpos__1_inlined2_, _startpos__1_inlined1_, _startpos__1_inlined2_) in
     let sl = ( list_opt_to_list sl_opt ) in
     let _endpos_sl_ = _endpos_sl_opt_ in
     let i_opt = ( None ) in
@@ -4112,7 +4112,7 @@ in
 | _1 = RBRACE _2 = ELSE _1_inlined1 = IF _1_inlined2 = CONSTEXPR _3 = LPAREN x = init_statement c = condition _6 = RPAREN l = LBRACE sl_opt = statement_seq_opt xs = nonempty_list_odd_else_stmt_
     {let x =
   let o =
-    let (_endpos__1_inlined1_, _startpos__1_inlined1_, _startpos__1_) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _startpos__1_inlined1_) in
+    let (_endpos__1_inlined1_, _startpos__1_, _startpos__1_inlined1_) = (_endpos__1_inlined2_, _startpos__1_inlined1_, _startpos__1_inlined2_) in
     let sl = ( list_opt_to_list sl_opt ) in
     let _endpos_sl_ = _endpos_sl_opt_ in
     let i_opt = ( Some x ) in
@@ -26650,7 +26650,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq]
 | p = pp_ifx dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -26686,7 +26686,7 @@ let _startpos = _startpos_p_ in
     )} [@name none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_ifx dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator x = virt_specifier_seq
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -26795,7 +26795,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq_some_virt_specifier_seq]
 | p = pp_ifx dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator r = requires_clause
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -26855,7 +26855,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq]
 | p = pp_ifx dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_t_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -26888,7 +26888,7 @@ let _startpos = _startpos_p_ in
     )} [@name none_attribute_specifier_seq]
 | p = pp_ifx dl = declaration_seq t = template_head x = attribute_specifier_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -27123,7 +27123,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (pp_if_group()) (p::dl@[f]) )} [@name some_attribute_specifier_seq]
 | p = pp_ifx dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -27156,7 +27156,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (pp_if_group()) (p::dl@[f]) )} [@name none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_ifx dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator x = virt_specifier_seq
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -27256,7 +27256,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (pp_if_group()) (p::dl@[f]) )} [@name some_attribute_specifier_seq_some_virt_specifier_seq]
 | p = pp_ifx dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator r = requires_clause
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -27310,7 +27310,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (pp_if_group()) (p::dl@[f]) )} [@name some_attribute_specifier_seq]
 | p = pp_ifx dl = declaration_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_dl_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -27340,7 +27340,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (pp_if_group()) (p::dl@[f]) )} [@name none_attribute_specifier_seq]
 | p = pp_ifx dl = declaration_seq x = attribute_specifier_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -29048,7 +29048,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq]
 | p = pp_elif dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -29084,7 +29084,7 @@ let _startpos = _startpos_p_ in
     )} [@name none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_elif dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator x = virt_specifier_seq
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -29193,7 +29193,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq_some_virt_specifier_seq]
 | p = pp_elif dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator r = requires_clause
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -29253,7 +29253,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq]
 | p = pp_elif dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_t_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -29286,7 +29286,7 @@ let _startpos = _startpos_p_ in
     )} [@name none_attribute_specifier_seq]
 | p = pp_elif dl = declaration_seq t = template_head x = attribute_specifier_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -29521,7 +29521,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_elif_group p) (p::dl@[f]) )} [@name some_attribute_specifier_seq]
 | p = pp_elif dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -29554,7 +29554,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_elif_group p) (p::dl@[f]) )} [@name none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_elif dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator x = virt_specifier_seq
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -29654,7 +29654,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_elif_group p) (p::dl@[f]) )} [@name some_attribute_specifier_seq_some_virt_specifier_seq]
 | p = pp_elif dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator r = requires_clause
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -29708,7 +29708,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_elif_group p) (p::dl@[f]) )} [@name some_attribute_specifier_seq]
 | p = pp_elif dl = declaration_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_dl_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -29738,7 +29738,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_elif_group p) (p::dl@[f]) )} [@name none_attribute_specifier_seq]
 | p = pp_elif dl = declaration_seq x = attribute_specifier_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -31452,7 +31452,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq]
 | p = pp_else dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -31488,7 +31488,7 @@ let _startpos = _startpos_p_ in
     )} [@name none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_else dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator x = virt_specifier_seq
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -31597,7 +31597,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq_some_virt_specifier_seq]
 | p = pp_else dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = declarator r = requires_clause
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_t_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -31657,7 +31657,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_attribute_specifier_seq]
 | p = pp_else dl = declaration_seq t = template_head dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_t_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_t_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -31690,7 +31690,7 @@ let _startpos = _startpos_p_ in
     )} [@name none_attribute_specifier_seq]
 | p = pp_else dl = declaration_seq t = template_head x = attribute_specifier_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -31925,7 +31925,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_else_group p) (p::dl@[f]) )} [@name some_attribute_specifier_seq]
 | p = pp_else dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -31958,7 +31958,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_else_group p) (p::dl@[f]) )} [@name none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_else dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator x = virt_specifier_seq
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -32058,7 +32058,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_else_group p) (p::dl@[f]) )} [@name some_attribute_specifier_seq_some_virt_specifier_seq]
 | p = pp_else dl = declaration_seq dl_inlined1 = decl_specifier_seq d = declarator r = requires_clause
     {let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -32112,7 +32112,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_else_group p) (p::dl@[f]) )} [@name some_attribute_specifier_seq]
 | p = pp_else dl = declaration_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_dl_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -32142,7 +32142,7 @@ let _startpos = _startpos_p_ in
 ( mknode ~pvec:[1; (List.length dl)+1] _startpos _endpos (_pp_else_group p) (p::dl@[f]) )} [@name none_attribute_specifier_seq]
 | p = pp_else dl = declaration_seq x = attribute_specifier_seq dl_inlined1 = decl_specifier_seq d = pp_dtor_if_section_broken p_inlined1 = parameter_declaration_clause _5 = RPAREN
     {let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -51340,7 +51340,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( None ) in
 let _endpos_c_opt_ = _endpos_d_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -51377,7 +51377,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( Some x ) in
 let _endpos_c_opt_ = _endpos_x_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( None ) in
     ( vl_opt )
@@ -51414,7 +51414,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( None ) in
 let _endpos_c_opt_ = _endpos_x_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -51454,7 +51454,7 @@ let _startpos = _startpos_p_ in
 in
 let _endpos_c_opt_ = _endpos_x_inlined1_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -51647,7 +51647,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( None ) in
 let _endpos_c_opt_ = _endpos_r_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -51678,7 +51678,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( Some x ) in
 let _endpos_c_opt_ = _endpos_x_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, dl) = (_startpos_dl_inlined1_, _endpos_dl_, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -51774,7 +51774,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( None ) in
 let _endpos_c_opt_ = _endpos__5_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_dl_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -51808,7 +51808,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( Some x ) in
 let _endpos_c_opt_ = _endpos_x_ in
 let f =
-  let (_startpos_dl_, _endpos__0_, p, dl) = (_startpos_dl_inlined1_, _endpos_dl_, p_inlined1, dl_inlined1) in
+  let (_endpos__0_, _startpos_dl_, dl, p) = (_endpos_dl_, _startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( None ) in
     ( a_opt )
@@ -51842,7 +51842,7 @@ let _startpos = _startpos_p_ in
     {let c_opt = ( None ) in
 let _endpos_c_opt_ = _endpos__5_ in
 let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -51879,7 +51879,7 @@ let _startpos = _startpos_p_ in
 in
 let _endpos_c_opt_ = _endpos_x_inlined1_ in
 let f =
-  let (_startpos_dl_, p, dl) = (_startpos_dl_inlined1_, p_inlined1, dl_inlined1) in
+  let (_startpos_dl_, dl, p) = (_startpos_dl_inlined1_, dl_inlined1, p_inlined1) in
   let al_opt =
     let a_opt = ( Some x ) in
     ( a_opt )
@@ -63709,7 +63709,7 @@ in
 ( (List.hd il)#add_suffix ","; a1::a0::il )}
 | il = __initializer_list _2 = COMMA i = IDENT_AGM lp = LPAREN ml = macro_arg_list _3 = RPAREN i_inlined1 = IDENT_AGM lp_inlined1 = LPAREN ml_inlined1 = macro_arg_list _3_inlined1 = RPAREN
     {let a1 =
-  let (_endpos_lp_, _startpos_lp_, _startpos_i_, _endpos__3_, ml, lp, i) = (_endpos_lp_inlined1_, _startpos_lp_inlined1_, _startpos_i_inlined1_, _endpos__3_inlined1_, ml_inlined1, lp_inlined1, i_inlined1) in
+  let (_endpos__3_, _endpos_lp_, _startpos_i_, _startpos_lp_, i, lp, ml) = (_endpos__3_inlined1_, _endpos_lp_inlined1_, _startpos_i_inlined1_, _startpos_lp_inlined1_, i_inlined1, lp_inlined1, ml_inlined1) in
   let ml = ( 
       ignore lp;
       begin
@@ -72295,7 +72295,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_ifx x = mem_decl_seq t = template_head d = declarator x_inlined1 = virt_specifier_seq
     {let f =
-  let (_endpos_x_, _endpos__0_, x) = (_endpos_x_inlined1_, _endpos_t_, x_inlined1) in
+  let (_endpos__0_, _endpos_x_, x) = (_endpos_t_, _endpos_x_inlined1_, x_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -72379,7 +72379,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_some_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_ifx x = mem_decl_seq t = template_head x_inlined1 = attribute_specifier_seq d = declarator x_inlined2 = virt_specifier_seq
     {let f =
-  let (_endpos_x_inlined1_, _endpos_x_, _startpos_x_, x_inlined1, x) = (_endpos_x_inlined2_, _endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined2, x_inlined1) in
+  let (_endpos_x_, _endpos_x_inlined1_, _startpos_x_, x, x_inlined1) = (_endpos_x_inlined1_, _endpos_x_inlined2_, _startpos_x_inlined1_, x_inlined1, x_inlined2) in
   let vl_opt =
     let x = x_inlined1 in
     let vl_opt = ( Some x ) in
@@ -72536,7 +72536,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_ifx x = mem_decl_seq t = template_head dl = decl_specifier_seq d = declarator x_inlined1 = virt_specifier_seq
     {let f =
-  let (_endpos_x_, _endpos__0_, x) = (_endpos_x_inlined1_, _endpos_t_, x_inlined1) in
+  let (_endpos__0_, _endpos_x_, x) = (_endpos_t_, _endpos_x_inlined1_, x_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -72620,7 +72620,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_some_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_ifx x = mem_decl_seq t = template_head x_inlined1 = attribute_specifier_seq dl = decl_specifier_seq d = declarator x_inlined2 = virt_specifier_seq
     {let f =
-  let (_endpos_x_inlined1_, _endpos_x_, _startpos_x_, x_inlined1, x) = (_endpos_x_inlined2_, _endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined2, x_inlined1) in
+  let (_endpos_x_, _endpos_x_inlined1_, _startpos_x_, x, x_inlined1) = (_endpos_x_inlined1_, _endpos_x_inlined2_, _startpos_x_inlined1_, x_inlined1, x_inlined2) in
   let vl_opt =
     let x = x_inlined1 in
     let vl_opt = ( Some x ) in
@@ -74822,7 +74822,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_elif x = mem_decl_seq t = template_head d = declarator x_inlined1 = virt_specifier_seq
     {let f =
-  let (_endpos_x_, _endpos__0_, x) = (_endpos_x_inlined1_, _endpos_t_, x_inlined1) in
+  let (_endpos__0_, _endpos_x_, x) = (_endpos_t_, _endpos_x_inlined1_, x_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -74906,7 +74906,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_some_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_elif x = mem_decl_seq t = template_head x_inlined1 = attribute_specifier_seq d = declarator x_inlined2 = virt_specifier_seq
     {let f =
-  let (_endpos_x_inlined1_, _endpos_x_, _startpos_x_, x_inlined1, x) = (_endpos_x_inlined2_, _endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined2, x_inlined1) in
+  let (_endpos_x_, _endpos_x_inlined1_, _startpos_x_, x, x_inlined1) = (_endpos_x_inlined1_, _endpos_x_inlined2_, _startpos_x_inlined1_, x_inlined1, x_inlined2) in
   let vl_opt =
     let x = x_inlined1 in
     let vl_opt = ( Some x ) in
@@ -75063,7 +75063,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_elif x = mem_decl_seq t = template_head dl = decl_specifier_seq d = declarator x_inlined1 = virt_specifier_seq
     {let f =
-  let (_endpos_x_, _endpos__0_, x) = (_endpos_x_inlined1_, _endpos_t_, x_inlined1) in
+  let (_endpos__0_, _endpos_x_, x) = (_endpos_t_, _endpos_x_inlined1_, x_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -75147,7 +75147,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_some_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_elif x = mem_decl_seq t = template_head x_inlined1 = attribute_specifier_seq dl = decl_specifier_seq d = declarator x_inlined2 = virt_specifier_seq
     {let f =
-  let (_endpos_x_inlined1_, _endpos_x_, _startpos_x_, x_inlined1, x) = (_endpos_x_inlined2_, _endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined2, x_inlined1) in
+  let (_endpos_x_, _endpos_x_inlined1_, _startpos_x_, x, x_inlined1) = (_endpos_x_inlined1_, _endpos_x_inlined2_, _startpos_x_inlined1_, x_inlined1, x_inlined2) in
   let vl_opt =
     let x = x_inlined1 in
     let vl_opt = ( Some x ) in
@@ -77349,7 +77349,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_else x = mem_decl_seq t = template_head d = declarator x_inlined1 = virt_specifier_seq
     {let f =
-  let (_endpos_x_, _endpos__0_, x) = (_endpos_x_inlined1_, _endpos_t_, x_inlined1) in
+  let (_endpos__0_, _endpos_x_, x) = (_endpos_t_, _endpos_x_inlined1_, x_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -77433,7 +77433,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_some_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_else x = mem_decl_seq t = template_head x_inlined1 = attribute_specifier_seq d = declarator x_inlined2 = virt_specifier_seq
     {let f =
-  let (_endpos_x_inlined1_, _endpos_x_, _startpos_x_, x_inlined1, x) = (_endpos_x_inlined2_, _endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined2, x_inlined1) in
+  let (_endpos_x_, _endpos_x_inlined1_, _startpos_x_, x, x_inlined1) = (_endpos_x_inlined1_, _endpos_x_inlined2_, _startpos_x_inlined1_, x_inlined1, x_inlined2) in
   let vl_opt =
     let x = x_inlined1 in
     let vl_opt = ( Some x ) in
@@ -77590,7 +77590,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_none_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_else x = mem_decl_seq t = template_head dl = decl_specifier_seq d = declarator x_inlined1 = virt_specifier_seq
     {let f =
-  let (_endpos_x_, _endpos__0_, x) = (_endpos_x_inlined1_, _endpos_t_, x_inlined1) in
+  let (_endpos__0_, _endpos_x_, x) = (_endpos_t_, _endpos_x_inlined1_, x_inlined1) in
   let vl_opt =
     let vl_opt = ( Some x ) in
     ( vl_opt )
@@ -77674,7 +77674,7 @@ let _startpos = _startpos_p_ in
     )} [@name some_mem_decl_seq_some_attribute_specifier_seq_none_virt_specifier_seq]
 | p = pp_else x = mem_decl_seq t = template_head x_inlined1 = attribute_specifier_seq dl = decl_specifier_seq d = declarator x_inlined2 = virt_specifier_seq
     {let f =
-  let (_endpos_x_inlined1_, _endpos_x_, _startpos_x_, x_inlined1, x) = (_endpos_x_inlined2_, _endpos_x_inlined1_, _startpos_x_inlined1_, x_inlined2, x_inlined1) in
+  let (_endpos_x_, _endpos_x_inlined1_, _startpos_x_, x, x_inlined1) = (_endpos_x_inlined1_, _endpos_x_inlined2_, _startpos_x_inlined1_, x_inlined1, x_inlined2) in
   let vl_opt =
     let x = x_inlined1 in
     let vl_opt = ( Some x ) in

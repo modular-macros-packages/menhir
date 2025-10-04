@@ -348,7 +348,7 @@ in
     {let _4 = ( None ) in
 let _2 = ( [] ) in
 let _1 =
-  let (_3, _2) = (_3_inlined1, _2_inlined1) in
+  let (_2, _3) = (_2_inlined1, _3_inlined1) in
   let _4 = ( None ) in
   ( let (fun_params, fun_modifiers, fun_return) = (_2, _3, _4) in
         FunctionType {
@@ -365,7 +365,7 @@ in
     {let _4 = ( Some (_2) ) in
 let _2 = ( [] ) in
 let _1 =
-  let (_3, _2) = (_3_inlined1, _2_inlined1) in
+  let (_2, _3) = (_2_inlined1, _3_inlined1) in
   let _4 = ( None ) in
   ( let (fun_params, fun_modifiers, fun_return) = (_2, _3, _4) in
         FunctionType {
@@ -385,7 +385,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_3, _2) = (_3_inlined1, _2_inlined1) in
+  let (_2, _3) = (_2_inlined1, _3_inlined1) in
   let _4 = ( None ) in
   ( let (fun_params, fun_modifiers, fun_return) = (_2, _3, _4) in
         FunctionType {
@@ -405,7 +405,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_3, _2) = (_3_inlined1, _2_inlined1) in
+  let (_2, _3) = (_2_inlined1, _3_inlined1) in
   let _4 = ( None ) in
   ( let (fun_params, fun_modifiers, fun_return) = (_2, _3, _4) in
         FunctionType {
@@ -422,7 +422,7 @@ in
     {let _4 = ( None ) in
 let _2 = ( [] ) in
 let _1 =
-  let (_2_inlined1, _3, _2) = (_2_inlined2, _3_inlined1, _2_inlined1) in
+  let (_2, _2_inlined1, _3) = (_2_inlined1, _2_inlined2, _3_inlined1) in
   let _4 =
     let _2 = _2_inlined1 in
     ( Some (_2) )
@@ -442,7 +442,7 @@ in
     {let _4 = ( Some (_2) ) in
 let _2 = ( [] ) in
 let _1 =
-  let (_2_inlined1, _3, _2) = (_2_inlined2, _3_inlined1, _2_inlined1) in
+  let (_2, _2_inlined1, _3) = (_2_inlined1, _2_inlined2, _3_inlined1) in
   let _4 =
     let _2 = _2_inlined1 in
     ( Some (_2) )
@@ -465,7 +465,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_2_inlined1, _3, _2) = (_2_inlined2, _3_inlined1, _2_inlined1) in
+  let (_2, _2_inlined1, _3) = (_2_inlined1, _2_inlined2, _3_inlined1) in
   let _4 =
     let _2 = _2_inlined1 in
     ( Some (_2) )
@@ -488,7 +488,7 @@ let _2 =
   ( _1 )
 in
 let _1 =
-  let (_2_inlined1, _3, _2) = (_2_inlined2, _3_inlined1, _2_inlined1) in
+  let (_2, _2_inlined1, _3) = (_2_inlined1, _2_inlined2, _3_inlined1) in
   let _4 =
     let _2 = _2_inlined1 in
     ( Some (_2) )
@@ -545,7 +545,7 @@ in
 | _1 = FUNCTION _2 = parameter_list _1_inlined1 = function_type_modifier_list _2_inlined1 = modifier_invocation _3 = extra_anonymous_function_modifier_list _5 = maybe_function_body
     {let _4 = ( None ) in
 let _3 =
-  let (_2, _1) = (_2_inlined1, _1_inlined1) in
+  let (_1, _2) = (_1_inlined1, _2_inlined1) in
   ( _1 @ (_2 :: _3) )
 in
 ( FunctionDefinition {
@@ -560,7 +560,7 @@ in
   ( Some (_2) )
 in
 let _3 =
-  let (_2, _1) = (_2_inlined1, _1_inlined1) in
+  let (_1, _2) = (_1_inlined1, _2_inlined1) in
   ( _1 @ (_2 :: _3) )
 in
 ( FunctionDefinition {

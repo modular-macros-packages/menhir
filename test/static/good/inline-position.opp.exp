@@ -61,7 +61,7 @@ let _startpos = _startpos_x_ in
 a4:
   a = A a_inlined1 = A b_inlined1 = B b = B
     {let x =
-  let (_endpos_b_, _endpos_a_, _startpos_a_, b, a) = (_endpos_b_inlined1_, _endpos_a_inlined1_, _startpos_a_inlined1_, b_inlined1, a_inlined1) in
+  let (_endpos_a_, _endpos_b_, _startpos_a_, a, b) = (_endpos_a_inlined1_, _endpos_b_inlined1_, _startpos_a_inlined1_, a_inlined1, b_inlined1) in
   let _endpos = _endpos_b_ in
   let _startpos = _startpos_a_ in
   (

@@ -7344,7 +7344,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
 | _1 = LPAREN a = annotations n = name ts0 = type_arguments _5 = DOT a_inlined1 = annotations u_inlined1 = unann_class_or_interface_type _8 = RPAREN u = unary_expression_not_plus_minus_or_lambda_expression
     {let d = ( [] ) in
 let c =
-  let (_endpos_u_, _startpos_a_, u, a) = (_endpos_u_inlined1_, _startpos_a_inlined1_, u_inlined1, a_inlined1) in
+  let (_endpos_u_, _startpos_a_, a, u) = (_endpos_u_inlined1_, _startpos_a_inlined1_, a_inlined1, u_inlined1) in
   let _endpos = _endpos_u_ in
   let _startpos = _startpos_a_ in
   let _endofs = _endpos.Lexing.pos_cnum in
@@ -7384,7 +7384,7 @@ let _startofs = _startpos.Lexing.pos_cnum in
   ( a )
 in
 let c =
-  let (_endpos_u_, _startpos_a_, u, a) = (_endpos_u_inlined1_, _startpos_a_inlined1_, u_inlined1, a_inlined1) in
+  let (_endpos_u_, _startpos_a_, a, u) = (_endpos_u_inlined1_, _startpos_a_inlined1_, a_inlined1, u_inlined1) in
   let _endpos = _endpos_u_ in
   let _startpos = _startpos_a_ in
   let _endofs = _endpos.Lexing.pos_cnum in

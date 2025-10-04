@@ -3275,7 +3275,7 @@ let _startpos = _startpos_p_ in
 ( mknode _startpos _endpos L.TfPortDeclaration (p::(i @ t)) )}
 | p = port_direction_reset p_inlined1 = packed_dimension_list t = tf_variable_identifier_list _4 = SEMICOLON
     {let i =
-  let (_endpos_p_, _startpos_p_, _endpos__0_, p) = (_endpos_p_inlined1_, _startpos_p_inlined1_, _endpos_p_, p_inlined1) in
+  let (_endpos__0_, _endpos_p_, _startpos_p_, p) = (_endpos_p_, _endpos_p_inlined1_, _startpos_p_inlined1_, p_inlined1) in
   let i =
     let s = ( [] ) in
     let (_endpos_s_, _startpos_s_) = (_endpos__0_, _endpos__0_) in
@@ -12736,7 +12736,7 @@ in
 ( p @ (v::i) )}
 | _1 = LOCAL p = port_direction _1_inlined1 = VAR p_inlined1 = packed_dimension_list
     {let i =
-  let (_endpos_p_, _startpos_p_, _endpos__0_, p) = (_endpos_p_inlined1_, _startpos_p_inlined1_, _endpos__1_inlined1_, p_inlined1) in
+  let (_endpos__0_, _endpos_p_, _startpos_p_, p) = (_endpos__1_inlined1_, _endpos_p_inlined1_, _startpos_p_inlined1_, p_inlined1) in
   let i =
     let s = ( [] ) in
     let (_endpos_s_, _startpos_s_) = (_endpos__0_, _endpos__0_) in
@@ -12889,7 +12889,7 @@ in
 ( p @ [i] )}
 | _1 = LOCAL p = port_direction p_inlined1 = packed_dimension_list
     {let i =
-  let (_endpos_p_, _startpos_p_, _endpos__0_, p) = (_endpos_p_inlined1_, _startpos_p_inlined1_, _endpos_p_, p_inlined1) in
+  let (_endpos__0_, _endpos_p_, _startpos_p_, p) = (_endpos_p_, _endpos_p_inlined1_, _startpos_p_inlined1_, p_inlined1) in
   let s = ( [] ) in
   let (_endpos_s_, _startpos_s_) = (_endpos__0_, _endpos__0_) in
   let _endpos = _endpos_p_ in
