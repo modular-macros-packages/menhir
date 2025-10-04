@@ -102,7 +102,7 @@ type lr1_state_def = {
 
   lr1_transitions: (symbol * lr1) list;
   (**The outgoing transitions of this state. Each outgoing transition
-     isrepresented as a pair of a label (a symbol) and a target state.
+     is represented as a pair of a label (a symbol) and a target state.
 
      The fields [lr1_transitions] and [lr1_reductions] describe the
      deterministic automaton that is obtained after conflict resolution.
