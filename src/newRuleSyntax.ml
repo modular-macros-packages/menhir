@@ -391,7 +391,7 @@ and production_aux
       (* An action expression. This is the end of the sequence. *)
       tilde_used_warning context.tilde_used;
       (* Check that the semantic action seems well-formed. *)
-      let action = raw_action Settings.DollarsDisallowed (uxs context) in
+      let action = raw_action `DollarsDisallowed (uxs context) in
       (* Build and return a complete production. *)
       {
         pb_position         = context.pos;

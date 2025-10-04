@@ -64,13 +64,14 @@
   (name main)
   (libraries
     base
+    front
     unix
     vendored_bitsets
     vendored_fix
     vendored_pprint
     menhirLib menhirSdk
   )
-  (flags :standard -open Base -open MenhirSdk)
+  (flags :standard -open Base -open MenhirSdk -open Front)
   (link_deps parserMessages.check)
 )
 

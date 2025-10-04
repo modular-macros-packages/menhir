@@ -324,11 +324,10 @@ let coq_lib_path =
   ref (Some "MenhirLib")
 
 type dollars =
-  | DollarsDisallowed
-  | DollarsAllowed
+  [`DollarsDisallowed | `DollarsAllowed]
 
 let dollars =
-  ref DollarsAllowed
+  ref `DollarsAllowed
 
 let require_aliases =
   ref false
@@ -427,7 +426,7 @@ let options = Arg.align [
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
   "--no-code-generation", Arg.Unit (set_backend `NoBackend), " Do not produce any code";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
-  "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
+  "--no-dollars", Arg.Unit (fun () -> dollars := `DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";

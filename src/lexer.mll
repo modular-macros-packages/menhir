@@ -123,9 +123,9 @@ let check_dollar range i : check = fun dollars producers ->
   );
   (* If [$i] syntax is disallowed, say so. *)
   match dollars with
-  | Settings.DollarsDisallowed ->
+  | `DollarsDisallowed ->
       blame range "please do not use $%d. Instead, name this value." i
-  | Settings.DollarsAllowed ->
+  | `DollarsAllowed ->
       ()
 
 (* We check that every reference to a producer [x] in a position keyword,

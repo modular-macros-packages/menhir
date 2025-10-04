@@ -251,8 +251,7 @@ val coq_lib_path: string option
 
 (** This flag tells whether [$i] notation in semantic actions is allowed. *)
 type dollars =
-  | DollarsDisallowed
-  | DollarsAllowed
+  [`DollarsDisallowed | `DollarsAllowed]
 
 (** This flag tells whether [$i] notation in semantic actions is allowed. *)
 val dollars: dollars

@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Keyword (* from sdk/ *)
+open Keyword
 
 (**This module defines the type of semantic actions and offers a number of
    operations on this type.*)
