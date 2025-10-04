@@ -79,8 +79,7 @@ type filename =
 
 (* ------------------------------------------------------------------------ *)
 
-(* OCaml semantic actions. *)
-
+(**A semantic action. *)
 type action =
   Action.t
 
@@ -88,10 +87,10 @@ type action =
 
 open Attribute
 
-(* Attributes allow the user to annotate the grammar with information that is
+(**Attributes allow the user to annotate the grammar with information that is
    ignored by Menhir, but can be exploited by other tools, via the SDK. *)
 
-(* Attributes can be attached in the following places:
+(**Attributes can be attached in the following places:
 
    - with the grammar:         %[@bar ...]
    - with a terminal symbol:   %token FOO [@bar ...]
@@ -105,40 +104,38 @@ open Attribute
 
 (* ------------------------------------------------------------------------ *)
 
-(* Information about tokens. (Only after joining.) *)
+(* Information about terminal symbols. (Only after joining.) *)
 
-(* Associativity. *)
-
+(**Associativity. *)
 type token_associativity =
   | LeftAssoc
   | RightAssoc
   | NonAssoc
   | UndefinedAssoc
 
-(* Precedence levels. *)
+(**Precedence levels.
 
-(* The special value [UndefinedPrecedence] is used for the special tokens
+   The special value [UndefinedPrecedence] is used for the special tokens
    [error] and [#]. It is also used for pseudo-tokens (which are not declared,
    but appear in a [%prec] annotation). A normal token receives a precedence
-   level of the form [PrecedenceLevel (file, level, pos1, pos2)], where [file]
+   level of the form [PrecedenceLevel (file, level)], where [file]
    is an input file and [level] is an integer level. Within each file, later
    declarations receive greater levels, which represent higher priority. Two
-   declarations that originate in different files are incomparable. The
-   positions [pos1] and [pos2] allow locating certain warnings. *)
-
+   declarations that originate in different files are incomparable. *)
 type precedence_level =
   | UndefinedPrecedence
   | PrecedenceLevel of (InputFile.file * int) located
 
+(**Properties of a token (which, here, means a terminal symbol). *)
 type token_properties =
   {
-             tk_ocamltype     : ocamltype option;
-             tk_position      : range;
-             tk_alias         : alias;
-             tk_attributes    : attributes;
-    mutable  tk_associativity : token_associativity;
-    mutable  tk_precedence    : precedence_level;
-             tk_is_declared   : bool;
+    tk_ocamltype     : ocamltype option;
+    tk_position      : range;
+    tk_alias         : alias;
+    tk_attributes    : attributes;
+    tk_associativity : token_associativity;
+    tk_precedence    : precedence_level;
+    tk_is_declared   : bool;
   }
 
 (* ------------------------------------------------------------------------ *)

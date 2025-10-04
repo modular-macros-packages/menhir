@@ -106,11 +106,11 @@ let join_declaration (grammar : grammar) decl =
          if none existed (but without deeming the token to have been
          declared). *)
 
-      let token_properties, grammar =
+      let token_properties =
         try
-          StringMap.find terminal grammar.p_tokens, grammar
+          StringMap.find terminal grammar.p_tokens
         with Not_found ->
-          let p = {
+          {
             tk_ocamltype     = None;
             tk_associativity = UndefinedAssoc;
             tk_precedence    = prec;
@@ -119,9 +119,7 @@ let join_declaration (grammar : grammar) decl =
             tk_alias         = None;
             (* Will be updated later. *)
             tk_position      = position decl;
-          } in
-          p, { grammar with
-               p_tokens = StringMap.add terminal p grammar.p_tokens }
+          }
       in
 
       (* Reject duplicate precedence declarations. *)
@@ -133,9 +131,13 @@ let join_declaration (grammar : grammar) decl =
 
       (* Record the new declaration. *)
 
-      token_properties.tk_precedence <- prec;
-      token_properties.tk_associativity <- assoc;
-      grammar
+      let token_properties =
+        { token_properties with
+          tk_precedence = prec;
+          tk_associativity = assoc }
+      in
+      { grammar with p_tokens =
+          StringMap.add terminal token_properties grammar.p_tokens }
 
   | DGrammarAttribute attr ->
       { grammar with
