@@ -98,6 +98,17 @@ let count p a =
   done;
   !c
 
+(* [compare] appears in OCaml 5.4. *)
+
+let compare cmp a b =
+  let len_a = length a and len_b = length b in
+  let diff = len_a - len_b in
+  if diff <> 0 then (if diff < 0 then -1 else 1) else
+  let i = ref 0 and c = ref 0 in
+  while !i < len_a && !c = 0
+  do c := cmp (unsafe_get a !i) (unsafe_get b !i); incr i done;
+  !c
+
 (* To keep compatibility with OCaml 4.03, we copy [Array.for_all2],
    which appeared in 4.11. *)
 
