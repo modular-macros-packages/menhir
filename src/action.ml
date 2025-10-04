@@ -105,25 +105,24 @@ let define keyword keywords f action =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Simultaneous substitutions are represented as association lists, where no
-   name appears twice in the domain. We distinguish renamings that affect
-   semantic-value variables and renamings that affect position-keyword
-   variables. The two are unfortunately somewhat linked because our
-   position-keyword variables are named after semantic-value variables;
-   this is quite a mess. *)
+(* A simultaneous substitution is represented as a pair of finite maps. We
+   distinguish a renaming that applies to semantic-value variables and a
+   renaming that applies to position-keyword variables. The two are
+   unfortunately somewhat linked because our position-keyword variables are
+   named after semantic-value variables; this is quite a mess. *)
 
 type subst =
   {
-    semvar: (string * string) list;
-    posvar: (string * string) list;
+    semvar: string StringMap.t;
+    posvar: string StringMap.t;
   }
 
 let empty =
-  { semvar = []; posvar = [] }
+  { semvar = StringMap.empty; posvar = StringMap.empty }
 
 let extend1 x y var =
-  assert (not (List.mem_assoc x var));
-  if x <> y then (x, y) :: var else var
+  assert (not (StringMap.mem x var));
+  if x <> y then StringMap.add x y var else var
 
 let extend_semvar x y { semvar; posvar } =
   { semvar = extend1 x y semvar; posvar }
@@ -134,9 +133,9 @@ let extend_posvar x y { semvar; posvar } =
 let extend = extend_semvar
 
 let apply1 var x =
-  try List.assoc x var with Not_found -> x
+  try StringMap.find x var with Not_found -> x
 
-let apply_semvar phi x =
+let[@inline] apply_semvar phi x =
   apply1 phi.semvar x
 
 let apply_subject phi subject =
@@ -147,11 +146,18 @@ let apply_subject phi subject =
   | RightNamed x ->
       RightNamed (apply_semvar phi x)
 
+let def (x, y) =
+  PVar x, EVar y
+
+let bindings var =
+  var |> StringMap.bindings |> List.map def
+
 let bindings phi =
-  phi.posvar @ phi.semvar
+  bindings phi.posvar @
+  bindings phi.semvar
 
 let restrict1 xs var =
-  List.filter (fun (x, _y) -> StringSet.mem x xs) var
+  StringMap.filter (fun x _y -> StringSet.mem x xs) var
 
 let restrict_semvar xs { semvar; posvar } =
   { semvar = restrict1 xs semvar; posvar }
@@ -202,7 +208,6 @@ let rename f phi a =
      a set of *simultaneous* [let] bindings. (We cannot use a series
      of nested [let] bindings, as that would cause a capture if the
      domain and codomain of [phi] have a nonempty intersection.) *)
-  let phi = List.map (fun (x, y) -> PVar x, EVar y) (bindings phi) in
-  let expr = eletand (phi, a.expr) in
+  let expr = eletand (bindings phi, a.expr) in
 
   { expr; priority; semvars; keywords }
