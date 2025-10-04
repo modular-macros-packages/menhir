@@ -149,18 +149,16 @@ let apply_subject phi subject =
 let def (x, y) =
   PVar x, EVar y
 
-let bindings var =
+let[@inline] bindings var =
   var |> StringMap.bindings |> List.map def
 
-let bindings phi =
+let[@inline] bindings phi =
   bindings phi.posvar @
   bindings phi.semvar
 
-let restrict1 xs var =
-  StringMap.filter (fun x _y -> StringSet.mem x xs) var
-
-let restrict_semvar xs { semvar; posvar } =
-  { semvar = restrict1 xs semvar; posvar }
+let[@inline] restrict_semvar xs { semvar; posvar } =
+  let semvar = StringMap.filter (fun x _y -> StringSet.mem x xs) semvar in
+  { semvar; posvar }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -192,8 +190,6 @@ let rename f phi a =
   let keywords = KeywordSet.map (rename_keyword f phi) keywords in
   let phi = !phi in
 
-  let priority = a.priority in
-
   (* Restrict [phi.semvar] to the set [a.semvars], in order to avoid
      generating [let] bindings that would be both useless and harmful:
      if [x] is not free in [e], then we do not want to generate
@@ -210,4 +206,4 @@ let rename f phi a =
      domain and codomain of [phi] have a nonempty intersection.) *)
   let expr = eletand (bindings phi, a.expr) in
 
-  { expr; priority; semvars; keywords }
+  { a with expr; semvars; keywords }
