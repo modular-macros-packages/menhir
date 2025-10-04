@@ -8,7 +8,7 @@
     :standard
     -safe-string
     -g
-    -w @1..66-4-9-41-44-45-60
+    -w @1..74-4-9-41-44-45-60-67-70
   ))
   (release (flags
     :standard
