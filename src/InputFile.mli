@@ -19,7 +19,7 @@ open Lexing
 type file
 
 (**[name file] returns the name of the input file [file]. *)
-val name : file -> string
+val name: file -> string
 
 (**[equal] determines whether two input files are the same file. *)
 val equal: file -> file -> bool
