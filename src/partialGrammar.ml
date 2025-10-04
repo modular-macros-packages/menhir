@@ -16,7 +16,7 @@ open Located
 (* This adds one declaration [decl], as found in file [filename], to
    the grammar [grammar]. *)
 
-let join_declaration filename (grammar : grammar) decl =
+let join_declaration (grammar : grammar) decl =
   match value decl with
 
   (* Preludes are stored in an arbitrary order. The order of
@@ -57,7 +57,6 @@ let join_declaration filename (grammar : grammar) decl =
           { token_property with
             tk_is_declared = true;
             tk_ocamltype   = ocamltype;
-            tk_filename    = filename;
             tk_position    = position decl;
             tk_attributes  = attributes;
             tk_alias       = alias;
@@ -68,7 +67,6 @@ let join_declaration filename (grammar : grammar) decl =
           (* If no previous definition exists, create one. *)
 
           {
-            tk_filename      = filename;
             tk_ocamltype     = ocamltype;
             tk_associativity = UndefinedAssoc;
             tk_precedence    = UndefinedPrecedence;
@@ -113,7 +111,6 @@ let join_declaration filename (grammar : grammar) decl =
           StringMap.find terminal grammar.p_tokens, grammar
         with Not_found ->
           let p = {
-            tk_filename      = filename;
             tk_ocamltype     = None;
             tk_associativity = UndefinedAssoc;
             tk_precedence    = prec;
@@ -388,35 +385,6 @@ let store_private_nonterminal tokens symbols symbol positions =
   non_terminal_is_not_a_token tokens symbol positions;
   store_symbol symbols symbol (PrivateNonTerminal (List.hd positions))
 
-(* for debugging, presumably:
-
-let string_of_kind = function
-  | PublicNonTerminal p ->
-      Printf.sprintf "public (%s)" (Range.show p)
-
-  | PrivateNonTerminal p ->
-      Printf.sprintf "private (%s)" (Range.show p)
-
-  | Token tk ->
-      Printf.sprintf "token (%s)" tk.tk_filename
-
-  | DontKnow p ->
-      Printf.sprintf "only used at (%s)" (Range.show p)
-
-let string_of_symbol_table t =
-  let b = Buffer.create 13 in
-  let m = 1 + Hashtbl.fold (fun k v acu -> max (String.length k) acu) t 0 in
-  let fill_blank s =
-    let s' = String.make m ' ' in
-      String.blit s 0 s' 0 (String.length s);
-      s'
-  in
-    Hashtbl.iter (fun k v -> Buffer.add_string b
-                    (Printf.sprintf "%s: %s\n"
-                       (fill_blank k) (string_of_kind v))) t;
-    Buffer.contents b
-*)
-
 let is_private_symbol t x =
   try
     match Hashtbl.find t x with
@@ -588,9 +556,8 @@ let empty_grammar =
   }
 
 let join grammar pgrammar =
-  let filename = pgrammar.pg_filename in
-    List.fold_left (join_declaration filename) grammar pgrammar.pg_declarations
-    |> join_postlude pgrammar.pg_postlude
+  List.fold_left join_declaration grammar pgrammar.pg_declarations
+  |> join_postlude pgrammar.pg_postlude
 
 (* If a rule is marked %inline, then it must not carry an attribute. *)
 let check_inline_attribute prule =

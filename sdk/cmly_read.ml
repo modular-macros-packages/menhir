@@ -232,7 +232,6 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
         | NonAssoc
         | UndefinedAssoc
 
-      let filename      t = t.tk_filename
       let ocamltype     t = t.tk_ocamltype
       let position      t = t.tk_position
       let alias         t = t.tk_alias

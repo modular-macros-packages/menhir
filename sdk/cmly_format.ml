@@ -193,7 +193,6 @@ type ('param, 'symbol) surface_rule = {
 }
 
 type surface_token = {
-  tk_filename      : string;
   tk_ocamltype     : ocamltype option;
   tk_position      : range;
   tk_alias         : string option;

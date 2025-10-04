@@ -134,7 +134,6 @@ type precedence_level =
 
 type token_properties =
   {
-             tk_filename      : filename;
              tk_ocamltype     : ocamltype option;
              tk_position      : range;
              tk_alias         : alias;

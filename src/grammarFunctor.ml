@@ -297,7 +297,6 @@ module Terminal = struct
   let token_properties =
     let not_so_dummy_properties = (* applicable to [error] and [#] *)
       {
-        tk_filename      = "__primitives__";
         tk_precedence    = UndefinedPrecedence;
         tk_associativity = UndefinedAssoc;
         tk_ocamltype     = None;

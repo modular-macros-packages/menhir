@@ -186,7 +186,6 @@ let import_bindings f map =
   List.map (fun (k, v) -> (k, f v)) (StringMap.bindings map)
 
 let token (tk : Syntax.token_properties) = {
-  tk_filename = tk.Syntax.tk_filename;
   tk_ocamltype = ocamltype_option tk.Syntax.tk_ocamltype;
   tk_position = range tk.Syntax.tk_position;
   tk_alias = tk.Syntax.tk_alias;

@@ -26,6 +26,11 @@
 
   (Contributed by Frédéric Bour; reviewed by François Pottier.)
 
+* Some incompatible changes have been made in `MenhirSdk`:
+
+  + In the signature `GRAMMAR`, the function
+    `Token.filename` has been removed.
+
 * The ancient code back-end has been removed.
   The command line switch `--code-ancient` is no longer supported.
 

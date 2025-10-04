@@ -128,7 +128,6 @@ module type GRAMMAR = sig
         | NonAssoc
         | UndefinedAssoc
 
-      val filename      : t -> filename
       val ocamltype     : t -> ocamltype option
       val position      : t -> Range.t
       val alias         : t -> string option
