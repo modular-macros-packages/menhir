@@ -89,8 +89,8 @@ module TokPrecedence = struct
         match properties.tk_precedence with
         | UndefinedPrecedence ->
             ()
-        | PrecedenceLevel (_, _, pos1, pos2) ->
-            Error.grammar_warning [Range.make (pos1, pos2)]
+        | PrecedenceLevel mv ->
+            Error.grammar_warning [position mv]
               "the precedence level assigned to %s is never useful." id
     ) grammar.tokens
 
@@ -1792,7 +1792,9 @@ module Precedence = struct
       | UndefinedPrecedence, _
       | _, UndefinedPrecedence ->
           Ic
-      | PrecedenceLevel (m1, l1, _, _), PrecedenceLevel (m2, l2, _, _) ->
+      | PrecedenceLevel ml1, PrecedenceLevel ml2 ->
+          let m1, l1 = value ml1
+          and m2, l2 = value ml2 in
           if not (InputFile.equal m1 m2) then
             Ic
           else

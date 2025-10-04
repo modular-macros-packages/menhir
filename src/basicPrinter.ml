@@ -263,8 +263,8 @@ let compare_tokens (_token, prop) (_token', prop') =
       -1
   | PrecedenceLevel _, UndefinedPrecedence ->
       1
-  | PrecedenceLevel (m, v, _, _), PrecedenceLevel (m', v', _, _) ->
-      compare_pairs InputFile.compare Int.compare (m, v) (m', v')
+  | PrecedenceLevel mv, PrecedenceLevel mv' ->
+      compare_pairs InputFile.compare Int.compare (value mv) (value mv')
 
 let print_tokens f g =
   (* Print the %token declarations. *)

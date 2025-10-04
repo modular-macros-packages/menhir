@@ -167,14 +167,16 @@ let priority_level input level = {
   pl_level = level;
 }
 
-let precedence_level = function
-  | Syntax.UndefinedPrecedence -> None
-  | Syntax.PrecedenceLevel (input, level, r_start, r_end) ->
-    Some (priority_level input level, {r_start; r_end})
+let precedence_level pl =
+  match pl with
+  | Syntax.UndefinedPrecedence ->
+      None
+  | Syntax.PrecedenceLevel il ->
+      let input, level = value il in
+      Some (priority_level input level, range (position il))
 
 let production_level (Syntax.ProductionLevel (input, level)) =
   priority_level input level
-
 
 let token_associativity = function
   | Syntax.LeftAssoc      -> LeftAssoc

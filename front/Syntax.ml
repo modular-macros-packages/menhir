@@ -128,9 +128,7 @@ type token_associativity =
 
 type precedence_level =
   | UndefinedPrecedence
-  | PrecedenceLevel of
-      InputFile.file * int *
-      Lexing.position * Lexing.position
+  | PrecedenceLevel of (InputFile.file * int) located
 
 type token_properties =
   {
