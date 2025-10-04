@@ -61,6 +61,10 @@ type keyword =
    keyword is replaced with. *)
 val posvar: subject -> where -> flavor -> string
 
+(**[kposvar] maps a [Position] keyword to the name of the variable
+   that the keyword is replaced with. *)
+val kposvar: keyword -> string
+
 (**Sets of keywords. *)
 module KeywordSet : sig
   include Set.S with type elt = keyword

@@ -86,6 +86,11 @@ let posvar s w f =
   | _ ->
       assert false
 
+let kposvar keyword =
+  match keyword with
+  | Position (s, w, f) ->
+      posvar s w f
+
 (* ------------------------------------------------------------------------- *)
 (* Sets of keywords. *)
 
