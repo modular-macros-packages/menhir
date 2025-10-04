@@ -8,13 +8,17 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The type [partial_grammar] describes the abstract syntax that is produced
-   by the parsers (yacc-parser and fancy-parser).
+(**This module defines the abstract syntax of Menhir's input files, whose
+   extension is [.mly].
 
-   The type [grammar] describes the abstract syntax that is obtained after one
-   or more partial grammars are joined (see [PartialGrammar]). It differs in
-   that declarations are organized in a more useful way and a number of
-   well-formedness checks have been performed. *)
+   The type [partial_grammar] describes the abstract syntax of a partial
+   grammar, that is, just a fragment of a grammar. This syntax is produced by
+   the parser. An [.mly] file represents a partial grammar. Several partial
+   grammars can be joined so as to obtain a complete grammar.
+
+   The type [grammar] describes the abstract syntax of a complete grammar. It
+   differs from [partial_grammar] in that declarations are organized in a more
+   useful way and a number of well-formedness checks have been performed. *)
 
 type range =
   Range.range
@@ -31,21 +35,25 @@ type ocamltype = OCamlType.ocamltype =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Terminals and nonterminal symbols are strings. *)
+(* Terminals and nonterminal symbols. *)
 
+(**A terminal symbol. *)
 type terminal =
   string
 
+(**A nonterminal symbol. *)
 type nonterminal =
   string
 
+(**A terminal or nonterminal symbol. *)
 type symbol =
   string
 
+(**A list of symbols. *)
 type symbols =
   symbol list
 
-(* In a somewhat fragile convention, in a partial grammar, a reference to a
+(**In a somewhat fragile convention, in a partial grammar, a reference to a
    terminal symbol either is a normal identifier [LID], in which case it is
    the name of the terminal symbol, or is a quoted identifier [QID], in which
    case it is a token alias.
@@ -58,18 +66,14 @@ type symbols =
    we keep track of the aliases that have been declared (they can be found
    via the field [tk_alias]), but we never use them, since they have been
    eliminated up front. *)
-
 type alias =
   string option
 
-(* Identifiers (which are used to refer to a symbol's semantic value) are
-   strings. *)
-
+(**An identifier is used to refer to a symbol's semantic value. *)
 type identifier =
   string
 
-(* A file name is a string. *)
-
+(**A file name. *)
 type filename =
   string
 
