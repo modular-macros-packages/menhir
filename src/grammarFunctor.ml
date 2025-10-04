@@ -723,7 +723,7 @@ module Production = struct
     (* The start productions receive a level that pretends that they
        originate in a fictitious "builtin" file. So, a reduce/reduce
        conflict that involves a start production will not be solved. *)
-    let dummy = ProductionLevel (InputFile.builtin_input_file, 0) in
+    let dummy = ProductionLevel (InputFile.builtin, 0) in
     Array.make n dummy
 
   let attributes : attributes array =
@@ -1794,7 +1794,7 @@ module Precedence = struct
       | _, UndefinedPrecedence ->
           Ic
       | PrecedenceLevel (m1, l1, _, _), PrecedenceLevel (m2, l2, _, _) ->
-          if not (InputFile.same_input_file m1 m2) then
+          if not (InputFile.equal m1 m2) then
             Ic
           else
             if l1 > l2 then
@@ -1807,7 +1807,7 @@ module Precedence = struct
   let production_order p1 p2 =
     match p1, p2 with
       | ProductionLevel (m1, l1), ProductionLevel (m2, l2) ->
-          if not (InputFile.same_input_file m1 m2) then
+          if not (InputFile.equal m1 m2) then
             Ic
           else
             if l1 > l2 then

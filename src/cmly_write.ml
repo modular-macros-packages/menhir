@@ -163,7 +163,7 @@ let entry_point prod node nt _typ accu : (nonterminal * production * lr1) list =
   (n2i nt, p2i prod, Lr1.number node) :: accu
 
 let priority_level input level = {
-  pl_input_file = InputFile.get_file_name input;
+  pl_input_file = InputFile.name input;
   pl_level = level;
 }
 

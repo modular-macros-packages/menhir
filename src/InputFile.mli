@@ -8,46 +8,41 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Lexing
+
 (**This module defines a type of input files, which is used to record the
-   origin of certain elements (productions, declarations, etc.). It has
-   global state: it keeps track of which input file is currently being read. *)
+   origin of certain elements (productions, declarations, etc.). Some of its
+   operations involve global state: they keep track of which input file is
+   currently being read. *)
 
 (**An input file. *)
 type file
 
-(* [get_input_file()] indicates which input file is currently being read. *)
+(**[name file] returns the name of the input file [file]. *)
+val name : file -> string
 
-val get_input_file: unit -> file
+(**[equal] determines whether two input files are the same file. *)
+val equal: file -> file -> bool
 
-(**[get_file_name] extracts a file name out of an input file. *)
-val get_file_name : file -> string
+(**[compare] is a total order on input files. It reflects the ordering of
+   these files on Menhir's command line. Ideally, it should NOT be used. *)
+val compare: file -> file -> int
 
-(* This fictitious "built-in" input file is used as the origin of the start
+(**The fictitious input file [builtin] is used as the origin of the start
    productions. This technical detail is probably irrelevant entirely. *)
+val builtin: file
 
-val builtin_input_file: file
-
-(* This equality test for input files is used (for instance) when determining
-   which of two productions has greater priority. *)
-
-val same_input_file: file -> file -> bool
-
-(* This ordering between input files reflects their ordering on the command
-   line. Ideally, it should NOT be used. *)
-
-val compare_input_files: file -> file -> int
-
-(* -------------------------------------------------------------------------- *)
-
-(* The contents of the current input file. *)
-
-(**[with_file_content filename contents f] records that the current input
-   file has name [filename] and content [content] while the action [f] runs.
-   The function [f] can then call {!chunk} to retrieve certain segments of
-   [content]. *)
+(**[with_file_content name content f] creates a fresh input file with name
+   [name] and makes it the current input file while the action [f()] runs. The
+   function [f] may call {!current} to obtain the current input file, and may
+   call {!chunk} to retrieve a segment of [content]. *)
 val with_file_content: string -> string -> (unit -> 'a) -> 'a
 
-(* [chunk pos1 pos2] extracts a chunk out of the current input file, delimited
-   by the positions [pos1] and [pos2]. *)
+(**[current()] indicates which input file is currently being read. It can be
+   called only while a call to [with_file_content] is ongoing. *)
+val current: unit -> file
 
-val chunk: (Lexing.position * Lexing.position) -> string
+(**[chunk pos1 pos2] extracts a chunk out of the current input file, delimited
+   by the positions [pos1] and [pos2]. It can be called only while a call to
+   [with_file_content] is ongoing. *)
+val chunk: position * position -> string

@@ -8,9 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* -------------------------------------------------------------------------- *)
-
-(* The identity of the current input file. *)
+open Lexing
 
 (* 2011/10/19: do not use [Filename.basename]. The [#] annotations that
    we insert in the [.ml] file must retain their full path. This does
@@ -26,75 +24,53 @@
    there). For this reason, we define a type [input_file] which includes
    the file's name as well as its index on the command line. *)
 
-type file = {
-  input_file_name: string;
-  input_file_index: int
-}
+(* An input file has a name and an index (which is used by [compare]). *)
 
-let builtin_input_file = {
-  input_file_name = "<builtin>";
-  input_file_index = -1
-}
+type file = { name: string; index: int }
 
-let dummy_input_file = {
-  input_file_name = "<dummy>";
-  input_file_index = 0
-}
+let[@inline] name input =
+  input.name
 
-let same_input_file file1 file2 =
-  file1.input_file_index = file2.input_file_index
+let[@inline] equal file1 file2 =
+  file1.index = file2.index
     (* could also use physical equality [file1 == file2] *)
 
-let compare_input_files file1 file2 =
-  Generic.compare file1.input_file_index file2.input_file_index
+let[@inline] compare file1 file2 =
+  Int.compare file1.index file2.index
     (* Ideally, this function should NOT be used, as it reflects the
        order of the input files on the command line. As of 2016/08/25,
        it is used by [BasicPrinter], for lack of a better
        solution. *)
 
-let current_input_file =
-  ref dummy_input_file
+let builtin =
+  let name = "<builtin>"
+  and index = -1 in
+  { name; index }
 
-let get_input_file () : file =
-  assert (!current_input_file != dummy_input_file);
-  !current_input_file
+(* Global state. *)
 
-let get_file_name input =
-  assert (input != dummy_input_file);
-  input.input_file_name
+let current : (file * string) option ref =
+  ref None
 
-(* -------------------------------------------------------------------------- *)
+let next : int ref =
+  ref 0
 
-(* The contents of the current input file. *)
-
-let get_initialized_ref ref =
-  match !ref with
-  | None ->
-      assert false
-  | Some contents ->
-      contents
-
-let file_contents =
-  ref (None : string option)
-
-let get_file_contents () =
-  get_initialized_ref file_contents
-
-let with_file_content filename content f =
-  current_input_file := {
-    input_file_name = filename;
-    input_file_index = !current_input_file.input_file_index + 1
-  };
-  file_contents := Some content;
+let with_file_content name content f =
+  assert (!current = None);
+  let index = MInt.postincrement next in
+  let file = { name; index } in
+  current := Some (file, content);
   let result = f() in
-  file_contents := None; (* avoid memory leak *)
+  current := None; (* avoid memory leak *)
   result
-
-open Lexing
 
 let chunk (pos1, pos2) =
   let ofs1 = pos1.pos_cnum
   and ofs2 = pos2.pos_cnum in
-  let contents = get_file_contents() in
+  let _file, content = Option.get !current in
   let len = ofs2 - ofs1 in
-  String.sub contents ofs1 len
+  String.sub content ofs1 len
+
+let[@inline] current () =
+  let file, _content = Option.get !current in
+  file
