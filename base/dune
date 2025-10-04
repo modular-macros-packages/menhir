@@ -19,7 +19,7 @@
   (dev (flags
     :standard
     -g
-    -w @A-4-44-67-70
+    -w @1..74-4-44-67-70
   ))
   (release (flags
     :standard -noassert
