@@ -72,12 +72,7 @@ end = struct
     MString.padded_index Lr1.n tag
 
   let compare (tag1 : tag) (tag2 : tag) =
-    compare tag1 tag2
-
-  module Int = struct
-    type t = int
-    let compare (x : t) (y : t) = x - y
-  end
+    Int.compare tag1 tag2
 
   module Set = Set.Make(Int)
   module Map = Map.Make(Int)

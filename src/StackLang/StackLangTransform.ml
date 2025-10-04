@@ -1409,8 +1409,21 @@ let _ =
    and a printer for conditions (for debugging purposes only). *)
 
 module Condition = struct
+
   type t = condition
-  let compare = Generic.compare (* again brittle but convenient *)
+
+  let compare c1 c2 =
+    match c1, c2 with
+    | CondNone, CondNone   ->  0
+    | CondNone, _          -> -1
+    | _, CondNone          -> +1
+    | CondTag _, CondTok _ -> -1
+    | CondTok _, CondTag _ -> +1
+    | CondTag tag1, CondTag tag2 ->
+        Tag.compare tag1 tag2
+    | CondTok tok1, CondTok tok2 ->
+        T.compare tok1 tok2
+
   let print condition =
     match condition with
     | CondNone ->
@@ -1419,6 +1432,7 @@ module Condition = struct
         sprintf "CondTag %s" (Tag.print tag)
     | CondTok t ->
         sprintf "CondTok %s" (T.print t)
+
 end
 
 (* -------------------------------------------------------------------------- *)

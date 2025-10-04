@@ -301,11 +301,7 @@ module Lr1StateAsOrderedType = struct
   let compare (k1, toksr1) (k2, toksr2) =
     let c = k1 - k2 in
     if c <> 0 then c
-    else Generic.compare toksr1 toksr2
-      (* In principle, we should use [Array.compare TerminalSet.compare],
-         but the function [Array.compare] does not exist, and we happen
-         to know that [TerminalSet.compare] is OCaml's generic comparison,
-         so the whole comparison can be carried using generic comparison. *)
+    else MArray.compare TerminalSet.compare toksr1 toksr2
 end
 
 (* An encoded LR(1) state can be turned into a concrete representation,
