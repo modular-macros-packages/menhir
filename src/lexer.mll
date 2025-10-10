@@ -332,6 +332,7 @@ let reserved =
     "do";
     "done";
     "downto";
+    "effect";
     "else";
     "end";
     "exception";
@@ -353,11 +354,11 @@ let reserved =
     "module";
     "mutable";
     "new";
+    "nonrec";
     "object";
     "of";
     "open";
     "or";
-    "parser";
     "private";
     "rec";
     "sig";
@@ -372,10 +373,10 @@ let reserved =
     "when";
     "while";
     "with";
-    "mod";
-    "land";
     "lor";
     "lxor";
+    "mod";
+    "land";
     "lsl";
     "lsr";
     "asr";
