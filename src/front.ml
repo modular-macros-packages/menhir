@@ -43,7 +43,7 @@ let grammars : Syntax.partial_grammar list =
        file. Instead, its text is built into the Menhir executable: it is
        found in the string [Standard_mly.contents]. We parse it just as if
        it had been read from a file, and pretend that the file name is
-       [Settings.stdlib_filename]. This file name can appear in generated
+       "<standard.mly>". This file name can appear in generated
        parsers, because Menhir produces # directives that point back to
        source (.mly) files. *)
     (* Note that the [let] construct below is required in order to ensure
