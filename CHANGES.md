@@ -2,6 +2,8 @@
 
 ## 2025/09/XX
 
+* OCaml 4.04 or newer is now required.
+
 * The new command line switch `--no-code-generation` causes Menhir to stop
   without generating any code: in other words, no back-end is invoked. The
   analyses in Menhir's front-end are still performed. If requested via the

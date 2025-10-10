@@ -146,7 +146,6 @@ houblix:
 # in two parts.
 
 OLD_VERSIONS := \
-  4.03.0 \
   4.04.2 \
   4.05.0 \
   4.06.1 \
