@@ -644,9 +644,6 @@ let () =
 (* ------------------------------------------------------------------------- *)
 (* Export the settings. *)
 
-let stdlib_filename =
-  "<standard.mly>"
-
 let filenames =
   StringSet.elements !filenames
 

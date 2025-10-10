@@ -138,9 +138,6 @@ val timings: out_channel option
    This name can contain a path. *)
 val base: string
 
-(** The filename of the standard library. *)
-val stdlib_filename : string
-
 (**This setting determines Menhir should behave as an interpreter of sentences
    provided by the user on the standard input channel. Two interpretation
    modes exist. In the mode [`Normal], Menhir interprets the sentence and

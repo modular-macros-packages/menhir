@@ -95,11 +95,10 @@ type monster = {
 
 }
 
-(* The reason why we parameterize [check] over [Settings.dollars], instead
-   of reading this setting directly, is that [NewRuleSyntax] calls [check]
-   and wants to disallow dollars. *)
 and check =
-  Settings.dollars -> string option array -> unit
+  [`DollarsDisallowed | `DollarsAllowed] ->
+  string option array ->
+  unit
 
 (* No check. *)
 
@@ -286,6 +285,11 @@ let transform ofs1 content monsters : string =
       List.iter (fun monster -> monster.transform ofs1 content) monsters;
       Bytes.unsafe_to_string content
 
+(* This reference can be modified from the outside. Ugly but convenient.
+   It determines the priority of the semantic actions that we construct. *)
+let priority =
+  ref 0
+
 let make_action pos1 pos2 monsters dollars producers =
   (* Check that the monsters are well-formed. *)
   List.iter (fun monster -> monster.check dollars producers) monsters;
@@ -305,11 +309,8 @@ let make_action pos1 pos2 monsters dollars producers =
   let fragment = locate (Range.make (pos1, pos2)) content in
   (* Add parentheses to delimit the semantic action. *)
   let fragment = Located.parenthesize fragment in
-  (* Test whether this action originates in Menhir's standard library.
-     If so, give it priority 0; otherwise, give it priority 1. *)
-  let priority = if pos1.pos_fname = Settings.stdlib_filename then 0 else 1 in
   (* Build a semantic action. *)
-  Action.make priority ids keywords (IL.ETextual fragment)
+  Action.make !priority ids keywords (IL.ETextual fragment)
 
 (* ------------------------------------------------------------------------ *)
 

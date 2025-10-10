@@ -20,6 +20,7 @@ let load_grammar_from_contents filename content =
     with Syntax.pg_filename = filename }
 
 let load_grammar_from_file filename : Syntax.partial_grammar =
+  Lexer.priority := 1;
   try
     let contents = IO.read_whole_file filename in
     load_grammar_from_contents filename contents
@@ -48,8 +49,9 @@ let grammars : Syntax.partial_grammar list =
     (* Note that the [let] construct below is required in order to ensure
        that the standard library is read first. *)
     let standard_library =
+      Lexer.priority := 0;
       load_grammar_from_contents
-        Settings.stdlib_filename
+        "<standard.mly>"
         Standard_mly.contents
     in
     standard_library :: grammars()
