@@ -14,9 +14,6 @@ include Set.S
   with type elt = string
    and type t = Set.Make(String).t
 
-(**[map f s] applies the transformation [f] to the set [s]. *)
-val map: (elt -> elt) -> t -> t
-
 (**[print] prints a set of strings as a comma-separated list,
    without opening and closing delimiters. *)
 val print: t -> string

@@ -10,9 +10,5 @@
 
 include Set.Make(String)
 
-(* [map] appears in OCaml 4.04. *)
-let map f xs =
-  fold (fun x accu -> add (f x) accu) xs empty
-
 let print s =
   MString.separated_iter (fun s -> s) ", " (fun f -> iter f s)
