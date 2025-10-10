@@ -2,8 +2,6 @@
 
 ## 2025/09/XX
 
-* OCaml 4.04 or newer is now required.
-
 * The new command line switch `--no-code-generation` causes Menhir to stop
   without generating any code: in other words, no back-end is invoked. The
   analyses in Menhir's front-end are still performed. If requested via the
@@ -32,6 +30,11 @@
 
   + In the signature `GRAMMAR`, the function
     `Token.filename` has been removed.
+
+* The words `effect` and `nonrec` are now reserved.
+  The word `parser` is no longer reserved.
+
+* OCaml 4.04 or newer is now required.
 
 * The ancient code back-end has been removed.
   The command line switch `--code-ancient` is no longer supported.
