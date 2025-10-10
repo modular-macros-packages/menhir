@@ -532,16 +532,6 @@ let backend =
         as backend ->
           backend
 
-let extension =
-  match backend with
-  | `CoqBackend ->
-      ".vy"
-  | `ReferenceInterpreter
-  | `CodeBackend
-  | `TableBackend
-  | `NoBackend ->
-      ".mly"
-
 let print_backend backend =
   match backend with
   | `ReferenceInterpreter ->
@@ -667,7 +657,7 @@ let base =
         fprintf stderr "%s\n" usage;
         exit 1
     | [ filename ] ->
-        Filename.chop_suffix filename extension
+        Filename.remove_extension filename
     | _ ->
         fprintf stderr "Error: you must specify --base when providing multiple input files.\n";
         exit 1

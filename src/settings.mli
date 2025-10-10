@@ -19,9 +19,6 @@ val backend: [
   | `NoBackend
 ]
 
-(** The file name extension that is expected for sources files. *)
-val extension: string
-
 (** The list of file names that appear on the command line. *)
 val filenames: string list
 

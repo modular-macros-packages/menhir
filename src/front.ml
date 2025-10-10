@@ -19,15 +19,7 @@ let load_grammar_from_contents filename content =
   { (Driver.grammar Lexer.main lexbuf)
     with Syntax.pg_filename = filename }
 
-let check_filename filename =
-  let validExt = Settings.extension in
-  if not (Filename.check_suffix filename validExt) then
-    Error.error []
-      "argument file names should end in %s. \"%s\" is not accepted."
-      validExt filename
-
 let load_grammar_from_file filename : Syntax.partial_grammar =
-  check_filename filename;
   try
     let contents = IO.read_whole_file filename in
     load_grammar_from_contents filename contents
