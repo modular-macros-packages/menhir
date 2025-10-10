@@ -611,7 +611,7 @@ print_expr:
 | _1 = annot _2 = nonempty_print_expr
     {( _2 )}
 
-effect:
+effetto:
   _1 = ASSIGN _2 = annot _3 = ID _4 = annot _5 = alg_expr
     {( let (a,pend,p) = _5 in (Ast.UPDATE ((_3,rhs_pos 3),a),pend,p) )}
 | _1 = ASSIGN _2 = annot _3 = LABEL _4 = annot _5 = alg_expr
@@ -695,19 +695,19 @@ expecting '$DEL alg_expression kappa_expression'")) )}
        pend,p) )}
 
 partial_effect_list:
-  _1 = effect _2 = SEMICOLON _3 = annot
+  _1 = effetto _2 = SEMICOLON _3 = annot
     {( let (e,_,_) = _1 in ([e],end_pos 2,_3) )}
-| _1 = effect
+| _1 = effetto
     {( let (e,p,a) = _1 in ([e],p,a) )}
-| _1 = effect _2 = SEMICOLON _3 = annot _4 = partial_effect_list
+| _1 = effetto _2 = SEMICOLON _3 = annot _4 = partial_effect_list
     {( let (e,_,_) = _1 in let (l,pend,a) = _4 in (e::l,pend,a) )}
 
 effect_list:
   _1 = OP_PAR _2 = annot _3 = partial_effect_list _4 = CL_PAR _5 = annot
     {( _3 )}
-| _1 = effect _2 = SEMICOLON _3 = annot
+| _1 = effetto _2 = SEMICOLON _3 = annot
     {( let (e,_,_) = _1 in ([e],end_pos 2,_3) )}
-| _1 = effect _2 = SEMICOLON _3 = annot _4 = effect_list
+| _1 = effetto _2 = SEMICOLON _3 = annot _4 = effect_list
     {( let (e,_,_) = _1 in let (l,pend,a) = _4 in (e::l,pend,a) )}
 
 standalone_effect_list:
@@ -787,7 +787,7 @@ interactive_command:
     {( Ast.RUN (Locality.dummy_annot Alg_expr.FALSE) )}
 | _1 = annot _2 = RUN _3 = annot _4 = bool_expr _5 = SEMICOLON
     {( let (pause,_,_) = _4 in Ast.RUN pause )}
-| _1 = annot _2 = effect _3 = SEMICOLON
+| _1 = annot _2 = effetto _3 = SEMICOLON
     {( let (eff,_,_) = _2 in Ast.MODIFY [eff] )}
 | _1 = annot _2 = EOF
     {( Ast.QUIT )}

@@ -39,8 +39,8 @@ nullable(interface) = true
 nullable(interactive_command) = false
 nullable(init_declaration) = false
 nullable(id_list) = false
+nullable(effetto) = false
 nullable(effect_list) = false
-nullable(effect) = false
 nullable(counter_test) = false
 nullable(counter_modif) = false
 nullable(constant) = false
@@ -97,8 +97,8 @@ first(interface) = error ID
 first(interactive_command) = error TRACK STOP SPECIES_OF SPACE SNAPSHOT RUN PRINTF PLOTENTRY NEWLINE INTRO FLUX EOF DELETE COMMENT ASSIGN APPLY
 first(init_declaration) = error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 first(id_list) = ID
+first(effetto) = TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO FLUX DELETE ASSIGN APPLY
 first(effect_list) = TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY OP_PAR INTRO FLUX DELETE ASSIGN APPLY
-first(effect) = TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO FLUX DELETE ASSIGN APPLY
 first(counter_test) = GREATER EQUAL
 first(counter_modif) = PLUS MINUS
 first(constant) = TMAX INT INFINITY FLOAT EMAX CPUTIME
@@ -155,8 +155,8 @@ minimal(interface) = (* 0 *)
 minimal(interactive_command) = (* 1 *) EOF
 minimal(init_declaration) = (* 2 *) INFINITY DOT
 minimal(id_list) = (* 1 *) ID
+minimal(effetto) = (* 1 *) SNAPSHOT
 minimal(effect_list) = (* 2 *) SNAPSHOT SEMICOLON
-minimal(effect) = (* 1 *) SNAPSHOT
 minimal(counter_test) = (* 2 *) EQUAL INT
 minimal(counter_modif) = (* 3 *) PLUS EQUAL INT
 minimal(constant) = (* 1 *) INFINITY
@@ -213,8 +213,8 @@ maximal(interface) = infinity
 maximal(interactive_command) = infinity
 maximal(init_declaration) = infinity
 maximal(id_list) = infinity
+maximal(effetto) = infinity
 maximal(effect_list) = infinity
-maximal(effect) = infinity
 maximal(counter_test) = infinity
 maximal(counter_modif) = infinity
 maximal(constant) = 1
@@ -271,8 +271,8 @@ follow(interface) = CL_PAR
 follow(interactive_command) = #
 follow(init_declaration) = TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 follow(id_list) = TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
+follow(effetto) = SEMICOLON EOF CL_PAR
 follow(effect_list) = TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
-follow(effect) = SEMICOLON EOF CL_PAR
 follow(counter_test) = SPACE NEWLINE DIV COMMENT CL_CUR
 follow(counter_modif) = SPACE NEWLINE COMMENT CL_CUR
 follow(constant) = TRUE TOKEN TMAX TIME THEN TAN STRING SQRT SPACE SMALLER SINUS SIGNATURE SEMICOLON RAR POW PLUS PLOT PIPE PERT OR OP_PAR OP_CUR OBS NULL_EVENT NEWLINE MULT MOD MINUS MIN MAX LRAR LOG LET LABEL INT INIT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIV DIFF CPUTIME COSINUS CONFIG COMMENT COMMA COLON CL_PAR CL_CUR AND ABS
@@ -296,10 +296,10 @@ The grammar is not SLR(1) -- 4 states have a conflict.
 The construction mode is pager.
 Built an LR(1) automaton with 580 states.
 193 out of 580 states have a default reduction.
-The action table is 47560 entries; 5778 non-zero; 2732 compressed.
-The action table occupies roughly 5552 bytes.
-The goto table is 35960 entries; 895 non-zero; 1592 compressed.
-The goto table occupies roughly 3272 bytes.
+The action table is 47560 entries; 5778 non-zero; 2721 compressed.
+The action table occupies roughly 5536 bytes.
+The goto table is 35960 entries; 895 non-zero; 1558 compressed.
+The goto table occupies roughly 3208 bytes.
 The error table occupies roughly 5984 bytes.
 The default_reduction table occupies roughly 616 bytes.
 The lhs table occupies roughly 248 bytes.

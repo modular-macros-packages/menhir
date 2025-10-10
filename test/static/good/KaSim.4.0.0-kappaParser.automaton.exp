@@ -21,8 +21,8 @@ interactive_command' -> . interactive_command [ # ]
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
 -- On interactive_command shift to state 250
+-- On effetto shift to state 244
 -- On effect_list shift to state 251
--- On effect shift to state 246
 ## Reductions:
 
 State 1:
@@ -39,8 +39,8 @@ State 2:
 ## Known stack suffix:
 ## TRACK
 ## LR(1) items:
-effect -> TRACK . LABEL boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
-effect -> TRACK . pattern boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> TRACK . LABEL boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> TRACK . pattern boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On PLUS shift to state 3
 -- On OP_PAR shift to state 4
@@ -758,7 +758,7 @@ State 65:
 ## Known stack suffix:
 ## TRACK LABEL
 ## LR(1) items:
-effect -> TRACK LABEL . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> TRACK LABEL . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 66
 -- On FALSE shift to state 67
@@ -789,17 +789,17 @@ State 68:
 ## Known stack suffix:
 ## TRACK LABEL boolean
 ## LR(1) items:
-effect -> TRACK LABEL boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> TRACK LABEL boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> TRACK LABEL boolean
+--   reduce production effetto -> TRACK LABEL boolean
 
 State 69:
 ## Known stack suffix:
 ## TRACK pattern
 ## LR(1) items:
-effect -> TRACK pattern . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> TRACK pattern . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 66
 -- On FALSE shift to state 67
@@ -810,17 +810,17 @@ State 70:
 ## Known stack suffix:
 ## TRACK pattern boolean
 ## LR(1) items:
-effect -> TRACK pattern boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> TRACK pattern boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> TRACK pattern boolean
+--   reduce production effetto -> TRACK pattern boolean
 
 State 71:
 ## Known stack suffix:
 ## STOP
 ## LR(1) items:
-effect -> STOP . print_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> STOP . print_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -2982,11 +2982,11 @@ State 170:
 ## Known stack suffix:
 ## STOP print_expr
 ## LR(1) items:
-effect -> STOP print_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> STOP print_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> STOP print_expr
+--   reduce production effetto -> STOP print_expr
 
 State 171:
 ## Known stack suffix:
@@ -3002,7 +3002,7 @@ State 172:
 ## Known stack suffix:
 ## SPECIES_OF
 ## LR(1) items:
-effect -> SPECIES_OF . nonempty_print_expr non_empty_mixture boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> SPECIES_OF . nonempty_print_expr non_empty_mixture boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -3040,7 +3040,7 @@ State 173:
 ## Known stack suffix:
 ## SPECIES_OF nonempty_print_expr
 ## LR(1) items:
-effect -> SPECIES_OF nonempty_print_expr . non_empty_mixture boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> SPECIES_OF nonempty_print_expr . non_empty_mixture boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On ID shift to state 174
 -- On non_empty_mixture shift to state 175
@@ -3060,7 +3060,7 @@ State 175:
 ## Known stack suffix:
 ## SPECIES_OF nonempty_print_expr non_empty_mixture
 ## LR(1) items:
-effect -> SPECIES_OF nonempty_print_expr non_empty_mixture . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> SPECIES_OF nonempty_print_expr non_empty_mixture . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 66
 -- On FALSE shift to state 67
@@ -3071,17 +3071,17 @@ State 176:
 ## Known stack suffix:
 ## SPECIES_OF nonempty_print_expr non_empty_mixture boolean
 ## LR(1) items:
-effect -> SPECIES_OF nonempty_print_expr non_empty_mixture boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> SPECIES_OF nonempty_print_expr non_empty_mixture boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> SPECIES_OF nonempty_print_expr non_empty_mixture boolean
+--   reduce production effetto -> SPECIES_OF nonempty_print_expr non_empty_mixture boolean
 
 State 177:
 ## Known stack suffix:
 ## SNAPSHOT
 ## LR(1) items:
-effect -> SNAPSHOT . print_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> SNAPSHOT . print_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -3122,11 +3122,11 @@ State 178:
 ## Known stack suffix:
 ## SNAPSHOT print_expr
 ## LR(1) items:
-effect -> SNAPSHOT print_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> SNAPSHOT print_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> SNAPSHOT print_expr
+--   reduce production effetto -> SNAPSHOT print_expr
 
 State 179:
 ## Known stack suffix:
@@ -3211,7 +3211,7 @@ State 183:
 ## Known stack suffix:
 ## PRINTF
 ## LR(1) items:
-effect -> PRINTF . print_expr SMALLER print_expr GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> PRINTF . print_expr SMALLER print_expr GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -3252,7 +3252,7 @@ State 184:
 ## Known stack suffix:
 ## PRINTF print_expr
 ## LR(1) items:
-effect -> PRINTF print_expr . SMALLER print_expr GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> PRINTF print_expr . SMALLER print_expr GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On SMALLER shift to state 185
 ## Reductions:
@@ -3261,7 +3261,7 @@ State 185:
 ## Known stack suffix:
 ## PRINTF print_expr SMALLER
 ## LR(1) items:
-effect -> PRINTF print_expr SMALLER . print_expr GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> PRINTF print_expr SMALLER . print_expr GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -3302,7 +3302,7 @@ State 186:
 ## Known stack suffix:
 ## PRINTF print_expr SMALLER print_expr
 ## LR(1) items:
-effect -> PRINTF print_expr SMALLER print_expr . GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> PRINTF print_expr SMALLER print_expr . GREATER [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On GREATER shift to state 187
 ## Reductions:
@@ -3311,21 +3311,21 @@ State 187:
 ## Known stack suffix:
 ## PRINTF print_expr SMALLER print_expr GREATER
 ## LR(1) items:
-effect -> PRINTF print_expr SMALLER print_expr GREATER . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> PRINTF print_expr SMALLER print_expr GREATER . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> PRINTF print_expr SMALLER print_expr GREATER
+--   reduce production effetto -> PRINTF print_expr SMALLER print_expr GREATER
 
 State 188:
 ## Known stack suffix:
 ## PLOTENTRY
 ## LR(1) items:
-effect -> PLOTENTRY . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> PLOTENTRY . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> PLOTENTRY
+--   reduce production effetto -> PLOTENTRY
 
 State 189:
 ## Known stack suffix:
@@ -3346,16 +3346,16 @@ effect_list -> OP_PAR . effect_list CL_PAR [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
 -- On DELETE shift to state 202
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
--- On effect_list shift to state 244
--- On effect shift to state 246
+-- On effetto shift to state 244
+-- On effect_list shift to state 247
 ## Reductions:
 
 State 190:
 ## Known stack suffix:
 ## INTRO
 ## LR(1) items:
-effect -> INTRO . alg_expr non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
-effect -> INTRO . error [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> INTRO . alg_expr non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> INTRO . error [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On error shift to state 191
 -- On TRUE shift to state 88
@@ -3398,11 +3398,11 @@ State 191:
 ## Known stack suffix:
 ## INTRO error
 ## LR(1) items:
-effect -> INTRO error . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> INTRO error . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> INTRO error
+--   reduce production effetto -> INTRO error
 
 State 192:
 ## Known stack suffix:
@@ -3412,7 +3412,7 @@ bool_expr -> alg_expr . GREATER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . SMALLER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . EQUAL alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
-effect -> INTRO alg_expr . non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> INTRO alg_expr . non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On SMALLER shift to state 145
 -- On ID shift to state 174
@@ -3426,17 +3426,17 @@ State 193:
 ## Known stack suffix:
 ## INTRO alg_expr non_empty_mixture
 ## LR(1) items:
-effect -> INTRO alg_expr non_empty_mixture . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> INTRO alg_expr non_empty_mixture . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> INTRO alg_expr non_empty_mixture
+--   reduce production effetto -> INTRO alg_expr non_empty_mixture
 
 State 194:
 ## Known stack suffix:
 ## ID
 ## LR(1) items:
-effect -> ID . LAR alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ID . LAR alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On LAR shift to state 195
 ## Reductions:
@@ -3445,7 +3445,7 @@ State 195:
 ## Known stack suffix:
 ## ID LAR
 ## LR(1) items:
-effect -> ID LAR . alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ID LAR . alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 88
 -- On TMAX shift to state 72
@@ -3491,7 +3491,7 @@ bool_expr -> alg_expr . GREATER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . SMALLER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . EQUAL alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
-effect -> ID LAR alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ID LAR alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On SMALLER shift to state 145
 -- On GREATER shift to state 148
@@ -3499,14 +3499,14 @@ effect -> ID LAR alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On DIFF shift to state 152
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> ID LAR alg_expr
+--   reduce production effetto -> ID LAR alg_expr
 
 State 197:
 ## Known stack suffix:
 ## FLUX
 ## LR(1) items:
-effect -> FLUX . nonempty_print_expr boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
-effect -> FLUX . nonempty_print_expr STRING boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX . nonempty_print_expr boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX . nonempty_print_expr STRING boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -3544,8 +3544,8 @@ State 198:
 ## Known stack suffix:
 ## FLUX nonempty_print_expr
 ## LR(1) items:
-effect -> FLUX nonempty_print_expr . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
-effect -> FLUX nonempty_print_expr . STRING boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX nonempty_print_expr . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX nonempty_print_expr . STRING boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 66
 -- On STRING shift to state 199
@@ -3557,7 +3557,7 @@ State 199:
 ## Known stack suffix:
 ## FLUX nonempty_print_expr STRING
 ## LR(1) items:
-effect -> FLUX nonempty_print_expr STRING . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX nonempty_print_expr STRING . boolean [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 66
 -- On FALSE shift to state 67
@@ -3568,28 +3568,28 @@ State 200:
 ## Known stack suffix:
 ## FLUX nonempty_print_expr STRING boolean
 ## LR(1) items:
-effect -> FLUX nonempty_print_expr STRING boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX nonempty_print_expr STRING boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> FLUX nonempty_print_expr STRING boolean
+--   reduce production effetto -> FLUX nonempty_print_expr STRING boolean
 
 State 201:
 ## Known stack suffix:
 ## FLUX nonempty_print_expr boolean
 ## LR(1) items:
-effect -> FLUX nonempty_print_expr boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> FLUX nonempty_print_expr boolean . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> FLUX nonempty_print_expr boolean
+--   reduce production effetto -> FLUX nonempty_print_expr boolean
 
 State 202:
 ## Known stack suffix:
 ## DELETE
 ## LR(1) items:
-effect -> DELETE . alg_expr non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
-effect -> DELETE . error [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> DELETE . alg_expr non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> DELETE . error [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On error shift to state 203
 -- On TRUE shift to state 88
@@ -3632,11 +3632,11 @@ State 203:
 ## Known stack suffix:
 ## DELETE error
 ## LR(1) items:
-effect -> DELETE error . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> DELETE error . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> DELETE error
+--   reduce production effetto -> DELETE error
 
 State 204:
 ## Known stack suffix:
@@ -3646,7 +3646,7 @@ bool_expr -> alg_expr . GREATER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . SMALLER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . EQUAL alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
-effect -> DELETE alg_expr . non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> DELETE alg_expr . non_empty_mixture [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On SMALLER shift to state 145
 -- On ID shift to state 174
@@ -3660,18 +3660,18 @@ State 205:
 ## Known stack suffix:
 ## DELETE alg_expr non_empty_mixture
 ## LR(1) items:
-effect -> DELETE alg_expr non_empty_mixture . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> DELETE alg_expr non_empty_mixture . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> DELETE alg_expr non_empty_mixture
+--   reduce production effetto -> DELETE alg_expr non_empty_mixture
 
 State 206:
 ## Known stack suffix:
 ## ASSIGN
 ## LR(1) items:
-effect -> ASSIGN . ID alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
-effect -> ASSIGN . LABEL alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ASSIGN . ID alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ASSIGN . LABEL alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On LABEL shift to state 207
 -- On ID shift to state 209
@@ -3681,7 +3681,7 @@ State 207:
 ## Known stack suffix:
 ## ASSIGN LABEL
 ## LR(1) items:
-effect -> ASSIGN LABEL . alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ASSIGN LABEL . alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 88
 -- On TMAX shift to state 72
@@ -3727,7 +3727,7 @@ bool_expr -> alg_expr . GREATER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . SMALLER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . EQUAL alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
-effect -> ASSIGN LABEL alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ASSIGN LABEL alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On SMALLER shift to state 145
 -- On GREATER shift to state 148
@@ -3735,13 +3735,13 @@ effect -> ASSIGN LABEL alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On DIFF shift to state 152
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> ASSIGN LABEL alg_expr
+--   reduce production effetto -> ASSIGN LABEL alg_expr
 
 State 209:
 ## Known stack suffix:
 ## ASSIGN ID
 ## LR(1) items:
-effect -> ASSIGN ID . alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ASSIGN ID . alg_expr [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 88
 -- On TMAX shift to state 72
@@ -3787,7 +3787,7 @@ bool_expr -> alg_expr . GREATER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . SMALLER alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . EQUAL alg_expr [ THEN OR AND ]
 bool_expr -> alg_expr . DIFF alg_expr [ THEN OR AND ]
-effect -> ASSIGN ID alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> ASSIGN ID alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On SMALLER shift to state 145
 -- On GREATER shift to state 148
@@ -3795,13 +3795,13 @@ effect -> ASSIGN ID alg_expr . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 -- On DIFF shift to state 152
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> ASSIGN ID alg_expr
+--   reduce production effetto -> ASSIGN ID alg_expr
 
 State 211:
 ## Known stack suffix:
 ## APPLY
 ## LR(1) items:
-effect -> APPLY . small_alg_expr rule_content [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> APPLY . small_alg_expr rule_content [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 72
 -- On TIME shift to state 73
@@ -3835,7 +3835,7 @@ State 212:
 ## Known stack suffix:
 ## APPLY small_alg_expr
 ## LR(1) items:
-effect -> APPLY small_alg_expr . rule_content [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> APPLY small_alg_expr . rule_content [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On PLUS shift to state 3
 -- On PIPE shift to state 213
@@ -4313,11 +4313,11 @@ State 237:
 ## Known stack suffix:
 ## APPLY small_alg_expr rule_content
 ## LR(1) items:
-effect -> APPLY small_alg_expr rule_content . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
+effetto -> APPLY small_alg_expr rule_content . [ UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
---   reduce production effect -> APPLY small_alg_expr rule_content
+--   reduce production effetto -> APPLY small_alg_expr rule_content
 
 State 238:
 ## Known stack suffix:
@@ -4403,40 +4403,21 @@ rule_content -> pattern token_expr arrow pattern token_expr . [ UNTIL SEMICOLON 
 
 State 244:
 ## Known stack suffix:
-## OP_PAR effect_list
+## effetto
 ## LR(1) items:
-effect_list -> OP_PAR effect_list . CL_PAR [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
+effect_list -> effetto . [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
+effect_list -> effetto . SEMICOLON effect_list [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
--- On CL_PAR shift to state 245
+-- On SEMICOLON shift to state 245
 ## Reductions:
+-- On UNTIL REPEAT NEWLINE EOF CL_PAR
+--   reduce production effect_list -> effetto
 
 State 245:
 ## Known stack suffix:
-## OP_PAR effect_list CL_PAR
+## effetto SEMICOLON
 ## LR(1) items:
-effect_list -> OP_PAR effect_list CL_PAR . [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
-## Transitions:
-## Reductions:
--- On UNTIL REPEAT NEWLINE EOF CL_PAR
---   reduce production effect_list -> OP_PAR effect_list CL_PAR
-
-State 246:
-## Known stack suffix:
-## effect
-## LR(1) items:
-effect_list -> effect . [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
-effect_list -> effect . SEMICOLON effect_list [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
-## Transitions:
--- On SEMICOLON shift to state 247
-## Reductions:
--- On UNTIL REPEAT NEWLINE EOF CL_PAR
---   reduce production effect_list -> effect
-
-State 247:
-## Known stack suffix:
-## effect SEMICOLON
-## LR(1) items:
-effect_list -> effect SEMICOLON . effect_list [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
+effect_list -> effetto SEMICOLON . effect_list [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 -- On TRACK shift to state 2
 -- On STOP shift to state 71
@@ -4451,19 +4432,38 @@ effect_list -> effect SEMICOLON . effect_list [ UNTIL REPEAT NEWLINE EOF CL_PAR 
 -- On DELETE shift to state 202
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
--- On effect_list shift to state 248
--- On effect shift to state 246
+-- On effetto shift to state 244
+-- On effect_list shift to state 246
+## Reductions:
+
+State 246:
+## Known stack suffix:
+## effetto SEMICOLON effect_list
+## LR(1) items:
+effect_list -> effetto SEMICOLON effect_list . [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
+## Transitions:
+## Reductions:
+-- On UNTIL REPEAT NEWLINE EOF CL_PAR
+--   reduce production effect_list -> effetto SEMICOLON effect_list
+
+State 247:
+## Known stack suffix:
+## OP_PAR effect_list
+## LR(1) items:
+effect_list -> OP_PAR effect_list . CL_PAR [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
+## Transitions:
+-- On CL_PAR shift to state 248
 ## Reductions:
 
 State 248:
 ## Known stack suffix:
-## effect SEMICOLON effect_list
+## OP_PAR effect_list CL_PAR
 ## LR(1) items:
-effect_list -> effect SEMICOLON effect_list . [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
+effect_list -> OP_PAR effect_list CL_PAR . [ UNTIL REPEAT NEWLINE EOF CL_PAR ]
 ## Transitions:
 ## Reductions:
 -- On UNTIL REPEAT NEWLINE EOF CL_PAR
---   reduce production effect_list -> effect SEMICOLON effect_list
+--   reduce production effect_list -> OP_PAR effect_list CL_PAR
 
 State 249:
 ## Known stack suffix:
@@ -4602,8 +4602,8 @@ standalone_effect_list' -> . standalone_effect_list [ # ]
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
 -- On standalone_effect_list shift to state 258
+-- On effetto shift to state 244
 -- On effect_list shift to state 259
--- On effect shift to state 246
 ## Reductions:
 
 State 258:
@@ -5183,8 +5183,8 @@ perturbation_declaration -> REPEAT bool_expr DO . effect_list UNTIL bool_expr [ 
 -- On DELETE shift to state 202
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
+-- On effetto shift to state 244
 -- On effect_list shift to state 288
--- On effect shift to state 246
 ## Reductions:
 
 State 288:
@@ -5350,8 +5350,8 @@ perturbation_declaration -> perturbation_alarm DO . effect_list perturbation_pos
 -- On DELETE shift to state 202
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
+-- On effetto shift to state 244
 -- On effect_list shift to state 296
--- On effect shift to state 246
 ## Reductions:
 
 State 296:
@@ -5529,8 +5529,8 @@ perturbation_declaration -> perturbation_alarm bool_expr SET . effect_list [ NEW
 -- On DELETE shift to state 202
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
+-- On effetto shift to state 244
 -- On effect_list shift to state 304
--- On effect shift to state 246
 ## Reductions:
 
 State 304:
@@ -5562,8 +5562,8 @@ perturbation_declaration -> perturbation_alarm bool_expr DO . effect_list pertur
 -- On DELETE shift to state 202
 -- On ASSIGN shift to state 206
 -- On APPLY shift to state 211
+-- On effetto shift to state 244
 -- On effect_list shift to state 306
--- On effect shift to state 246
 ## Reductions:
 
 State 306:

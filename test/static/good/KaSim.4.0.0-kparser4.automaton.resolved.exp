@@ -107,7 +107,7 @@ State 9:
 ## LR(1) items:
 interactive_command -> annot . RUN annot SEMICOLON [ # ]
 interactive_command -> annot . RUN annot bool_expr SEMICOLON [ # ]
-interactive_command -> annot . effect SEMICOLON [ # ]
+interactive_command -> annot . effetto SEMICOLON [ # ]
 interactive_command -> annot . EOF [ # ]
 ## Transitions:
 -- On TRACK shift to state 10
@@ -123,15 +123,15 @@ interactive_command -> annot . EOF [ # ]
 -- On DELETE shift to state 344
 -- On ASSIGN shift to state 349
 -- On APPLY shift to state 357
--- On effect shift to state 386
+-- On effetto shift to state 386
 ## Reductions:
 
 State 10:
 ## Known stack suffix:
 ## TRACK
 ## LR(1) items:
-effect -> TRACK . annot LABEL annot boolean annot [ SEMICOLON EOF CL_PAR ]
-effect -> TRACK . annot pattern boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK . annot LABEL annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK . annot pattern boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -145,8 +145,8 @@ State 11:
 ## Known stack suffix:
 ## TRACK annot
 ## LR(1) items:
-effect -> TRACK annot . LABEL annot boolean annot [ SEMICOLON EOF CL_PAR ]
-effect -> TRACK annot . pattern boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot . LABEL annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot . pattern boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On LABEL shift to state 12
 -- On ID shift to state 18
@@ -159,7 +159,7 @@ State 12:
 ## Known stack suffix:
 ## TRACK annot LABEL
 ## LR(1) items:
-effect -> TRACK annot LABEL . annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot LABEL . annot boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -173,7 +173,7 @@ State 13:
 ## Known stack suffix:
 ## TRACK annot LABEL annot
 ## LR(1) items:
-effect -> TRACK annot LABEL annot . boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot LABEL annot . boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 14
 -- On FALSE shift to state 15
@@ -202,7 +202,7 @@ State 16:
 ## Known stack suffix:
 ## TRACK annot LABEL annot boolean
 ## LR(1) items:
-effect -> TRACK annot LABEL annot boolean . annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot LABEL annot boolean . annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -216,10 +216,10 @@ State 17:
 ## Known stack suffix:
 ## TRACK annot LABEL annot boolean annot
 ## LR(1) items:
-effect -> TRACK annot LABEL annot boolean annot . [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot LABEL annot boolean annot . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> TRACK annot LABEL annot boolean annot
+-- After reading the next token, reduce production effetto -> TRACK annot LABEL annot boolean annot
 
 State 18:
 ## Known stack suffix:
@@ -1827,7 +1827,7 @@ State 152:
 ## Known stack suffix:
 ## TRACK annot pattern
 ## LR(1) items:
-effect -> TRACK annot pattern . boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot pattern . boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 14
 -- On FALSE shift to state 15
@@ -1838,7 +1838,7 @@ State 153:
 ## Known stack suffix:
 ## TRACK annot pattern boolean
 ## LR(1) items:
-effect -> TRACK annot pattern boolean . annot [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot pattern boolean . annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -1852,10 +1852,10 @@ State 154:
 ## Known stack suffix:
 ## TRACK annot pattern boolean annot
 ## LR(1) items:
-effect -> TRACK annot pattern boolean annot . [ SEMICOLON EOF CL_PAR ]
+effetto -> TRACK annot pattern boolean annot . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> TRACK annot pattern boolean annot
+-- After reading the next token, reduce production effetto -> TRACK annot pattern boolean annot
 
 State 155:
 ## Known stack suffix:
@@ -1908,7 +1908,7 @@ State 159:
 ## Known stack suffix:
 ## STOP
 ## LR(1) items:
-effect -> STOP . print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> STOP . print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -1923,10 +1923,10 @@ State 160:
 ## Known stack suffix:
 ## STOP print_expr
 ## LR(1) items:
-effect -> STOP print_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> STOP print_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> STOP print_expr
+-- After reading the next token, reduce production effetto -> STOP print_expr
 
 State 161:
 ## Known stack suffix:
@@ -4645,7 +4645,7 @@ State 309:
 ## Known stack suffix:
 ## SPECIES_OF
 ## LR(1) items:
-effect -> SPECIES_OF . annot pattern boolean annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF . annot pattern boolean annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4659,7 +4659,7 @@ State 310:
 ## Known stack suffix:
 ## SPECIES_OF annot
 ## LR(1) items:
-effect -> SPECIES_OF annot . pattern boolean annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF annot . pattern boolean annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On ID shift to state 18
 -- On DOT shift to state 150
@@ -4671,7 +4671,7 @@ State 311:
 ## Known stack suffix:
 ## SPECIES_OF annot pattern
 ## LR(1) items:
-effect -> SPECIES_OF annot pattern . boolean annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF annot pattern . boolean annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 14
 -- On FALSE shift to state 15
@@ -4682,7 +4682,7 @@ State 312:
 ## Known stack suffix:
 ## SPECIES_OF annot pattern boolean
 ## LR(1) items:
-effect -> SPECIES_OF annot pattern boolean . annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF annot pattern boolean . annot GREATER print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4696,7 +4696,7 @@ State 313:
 ## Known stack suffix:
 ## SPECIES_OF annot pattern boolean annot
 ## LR(1) items:
-effect -> SPECIES_OF annot pattern boolean annot . GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF annot pattern boolean annot . GREATER print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On GREATER shift to state 314
 ## Reductions:
@@ -4705,7 +4705,7 @@ State 314:
 ## Known stack suffix:
 ## SPECIES_OF annot pattern boolean annot GREATER
 ## LR(1) items:
-effect -> SPECIES_OF annot pattern boolean annot GREATER . print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF annot pattern boolean annot GREATER . print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4720,16 +4720,16 @@ State 315:
 ## Known stack suffix:
 ## SPECIES_OF annot pattern boolean annot GREATER print_expr
 ## LR(1) items:
-effect -> SPECIES_OF annot pattern boolean annot GREATER print_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> SPECIES_OF annot pattern boolean annot GREATER print_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> SPECIES_OF annot pattern boolean annot GREATER print_expr
+-- After reading the next token, reduce production effetto -> SPECIES_OF annot pattern boolean annot GREATER print_expr
 
 State 316:
 ## Known stack suffix:
 ## SNAPSHOT
 ## LR(1) items:
-effect -> SNAPSHOT . print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> SNAPSHOT . print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4744,10 +4744,10 @@ State 317:
 ## Known stack suffix:
 ## SNAPSHOT print_expr
 ## LR(1) items:
-effect -> SNAPSHOT print_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> SNAPSHOT print_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> SNAPSHOT print_expr
+-- After reading the next token, reduce production effetto -> SNAPSHOT print_expr
 
 State 318:
 ## Known stack suffix:
@@ -4843,8 +4843,8 @@ State 323:
 ## Known stack suffix:
 ## PRINTF
 ## LR(1) items:
-effect -> PRINTF . print_expr GREATER print_expr [ SEMICOLON EOF CL_PAR ]
-effect -> PRINTF . print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> PRINTF . print_expr GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> PRINTF . print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4859,19 +4859,19 @@ State 324:
 ## Known stack suffix:
 ## PRINTF print_expr
 ## LR(1) items:
-effect -> PRINTF print_expr . GREATER print_expr [ SEMICOLON EOF CL_PAR ]
-effect -> PRINTF print_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> PRINTF print_expr . GREATER print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> PRINTF print_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On GREATER shift to state 325
 ## Reductions:
 -- On SEMICOLON EOF CL_PAR
---   reduce production effect -> PRINTF print_expr
+--   reduce production effetto -> PRINTF print_expr
 
 State 325:
 ## Known stack suffix:
 ## PRINTF print_expr GREATER
 ## LR(1) items:
-effect -> PRINTF print_expr GREATER . print_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> PRINTF print_expr GREATER . print_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4886,16 +4886,16 @@ State 326:
 ## Known stack suffix:
 ## PRINTF print_expr GREATER print_expr
 ## LR(1) items:
-effect -> PRINTF print_expr GREATER print_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> PRINTF print_expr GREATER print_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> PRINTF print_expr GREATER print_expr
+-- After reading the next token, reduce production effetto -> PRINTF print_expr GREATER print_expr
 
 State 327:
 ## Known stack suffix:
 ## PLOTENTRY
 ## LR(1) items:
-effect -> PLOTENTRY . annot [ SEMICOLON EOF CL_PAR ]
+effetto -> PLOTENTRY . annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -4909,17 +4909,17 @@ State 328:
 ## Known stack suffix:
 ## PLOTENTRY annot
 ## LR(1) items:
-effect -> PLOTENTRY annot . [ SEMICOLON EOF CL_PAR ]
+effetto -> PLOTENTRY annot . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> PLOTENTRY annot
+-- After reading the next token, reduce production effetto -> PLOTENTRY annot
 
 State 329:
 ## Known stack suffix:
 ## INTRO
 ## LR(1) items:
-effect -> INTRO . annot alg_expr pattern [ SEMICOLON EOF CL_PAR ]
-effect -> INTRO . annot error [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO . annot alg_expr pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO . annot error [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
@@ -4933,8 +4933,8 @@ State 330:
 ## Known stack suffix:
 ## INTRO annot
 ## LR(1) items:
-effect -> INTRO annot . alg_expr pattern [ SEMICOLON EOF CL_PAR ]
-effect -> INTRO annot . error [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO annot . alg_expr pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO annot . error [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On error shift to state 331
 -- On TRUE shift to state 179
@@ -4982,16 +4982,16 @@ State 331:
 ## Known stack suffix:
 ## INTRO annot error
 ## LR(1) items:
-effect -> INTRO annot error . [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO annot error . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> INTRO annot error
+-- After reading the next token, reduce production effetto -> INTRO annot error
 
 State 332:
 ## Known stack suffix:
 ## INTRO annot alg_expr
 ## LR(1) items:
-effect -> INTRO annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On ID shift to state 18
 -- On DOT shift to state 150
@@ -5003,17 +5003,17 @@ State 333:
 ## Known stack suffix:
 ## INTRO annot alg_expr pattern
 ## LR(1) items:
-effect -> INTRO annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
+effetto -> INTRO annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> INTRO annot alg_expr pattern
+-- After reading the next token, reduce production effetto -> INTRO annot alg_expr pattern
 
 State 334:
 ## Known stack suffix:
 ## FLUX
 ## LR(1) items:
-effect -> FLUX . annot nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
-effect -> FLUX . annot nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX . annot nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX . annot nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5027,8 +5027,8 @@ State 335:
 ## Known stack suffix:
 ## FLUX annot
 ## LR(1) items:
-effect -> FLUX annot . nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
-effect -> FLUX annot . nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot . nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot . nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -5070,8 +5070,8 @@ State 336:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr . boolean annot [ SEMICOLON EOF CL_PAR ]
-effect -> FLUX annot nonempty_print_expr . STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr . boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr . STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 14
 -- On STRING shift to state 337
@@ -5083,7 +5083,7 @@ State 337:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr STRING
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr STRING . annot boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr STRING . annot boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5097,7 +5097,7 @@ State 338:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr STRING annot
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr STRING annot . boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr STRING annot . boolean annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 14
 -- On FALSE shift to state 15
@@ -5108,7 +5108,7 @@ State 339:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr STRING annot boolean
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr STRING annot boolean . annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr STRING annot boolean . annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5122,16 +5122,16 @@ State 340:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr STRING annot boolean annot
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr STRING annot boolean annot . [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr STRING annot boolean annot . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> FLUX annot nonempty_print_expr STRING annot boolean annot
+-- After reading the next token, reduce production effetto -> FLUX annot nonempty_print_expr STRING annot boolean annot
 
 State 341:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr boolean
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr boolean . annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr boolean . annot [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5145,10 +5145,10 @@ State 342:
 ## Known stack suffix:
 ## FLUX annot nonempty_print_expr boolean annot
 ## LR(1) items:
-effect -> FLUX annot nonempty_print_expr boolean annot . [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr boolean annot . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> FLUX annot nonempty_print_expr boolean annot
+-- After reading the next token, reduce production effetto -> FLUX annot nonempty_print_expr boolean annot
 
 State 343:
 ## Known stack suffix:
@@ -5163,8 +5163,8 @@ State 344:
 ## Known stack suffix:
 ## DELETE
 ## LR(1) items:
-effect -> DELETE . annot alg_expr pattern [ SEMICOLON EOF CL_PAR ]
-effect -> DELETE . annot error [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE . annot alg_expr pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE . annot error [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
@@ -5178,8 +5178,8 @@ State 345:
 ## Known stack suffix:
 ## DELETE annot
 ## LR(1) items:
-effect -> DELETE annot . alg_expr pattern [ SEMICOLON EOF CL_PAR ]
-effect -> DELETE annot . error [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE annot . alg_expr pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE annot . error [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On error shift to state 346
 -- On TRUE shift to state 179
@@ -5227,16 +5227,16 @@ State 346:
 ## Known stack suffix:
 ## DELETE annot error
 ## LR(1) items:
-effect -> DELETE annot error . [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE annot error . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> DELETE annot error
+-- After reading the next token, reduce production effetto -> DELETE annot error
 
 State 347:
 ## Known stack suffix:
 ## DELETE annot alg_expr
 ## LR(1) items:
-effect -> DELETE annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On ID shift to state 18
 -- On DOT shift to state 150
@@ -5248,17 +5248,17 @@ State 348:
 ## Known stack suffix:
 ## DELETE annot alg_expr pattern
 ## LR(1) items:
-effect -> DELETE annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> DELETE annot alg_expr pattern
+-- After reading the next token, reduce production effetto -> DELETE annot alg_expr pattern
 
 State 349:
 ## Known stack suffix:
 ## ASSIGN
 ## LR(1) items:
-effect -> ASSIGN . annot ID annot alg_expr [ SEMICOLON EOF CL_PAR ]
-effect -> ASSIGN . annot LABEL annot alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN . annot ID annot alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN . annot LABEL annot alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5272,8 +5272,8 @@ State 350:
 ## Known stack suffix:
 ## ASSIGN annot
 ## LR(1) items:
-effect -> ASSIGN annot . ID annot alg_expr [ SEMICOLON EOF CL_PAR ]
-effect -> ASSIGN annot . LABEL annot alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot . ID annot alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot . LABEL annot alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On LABEL shift to state 351
 -- On ID shift to state 354
@@ -5283,7 +5283,7 @@ State 351:
 ## Known stack suffix:
 ## ASSIGN annot LABEL
 ## LR(1) items:
-effect -> ASSIGN annot LABEL . annot alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot LABEL . annot alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5297,7 +5297,7 @@ State 352:
 ## Known stack suffix:
 ## ASSIGN annot LABEL annot
 ## LR(1) items:
-effect -> ASSIGN annot LABEL annot . alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot LABEL annot . alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
@@ -5344,16 +5344,16 @@ State 353:
 ## Known stack suffix:
 ## ASSIGN annot LABEL annot alg_expr
 ## LR(1) items:
-effect -> ASSIGN annot LABEL annot alg_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot LABEL annot alg_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> ASSIGN annot LABEL annot alg_expr
+-- After reading the next token, reduce production effetto -> ASSIGN annot LABEL annot alg_expr
 
 State 354:
 ## Known stack suffix:
 ## ASSIGN annot ID
 ## LR(1) items:
-effect -> ASSIGN annot ID . annot alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot ID . annot alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5367,7 +5367,7 @@ State 355:
 ## Known stack suffix:
 ## ASSIGN annot ID annot
 ## LR(1) items:
-effect -> ASSIGN annot ID annot . alg_expr [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot ID annot . alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
@@ -5414,16 +5414,16 @@ State 356:
 ## Known stack suffix:
 ## ASSIGN annot ID annot alg_expr
 ## LR(1) items:
-effect -> ASSIGN annot ID annot alg_expr . [ SEMICOLON EOF CL_PAR ]
+effetto -> ASSIGN annot ID annot alg_expr . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> ASSIGN annot ID annot alg_expr
+-- After reading the next token, reduce production effetto -> ASSIGN annot ID annot alg_expr
 
 State 357:
 ## Known stack suffix:
 ## APPLY
 ## LR(1) items:
-effect -> APPLY . annot alg_expr rule_content [ SEMICOLON EOF CL_PAR ]
+effetto -> APPLY . annot alg_expr rule_content [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -5437,7 +5437,7 @@ State 358:
 ## Known stack suffix:
 ## APPLY annot
 ## LR(1) items:
-effect -> APPLY annot . alg_expr rule_content [ SEMICOLON EOF CL_PAR ]
+effetto -> APPLY annot . alg_expr rule_content [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
@@ -5484,7 +5484,7 @@ State 359:
 ## Known stack suffix:
 ## APPLY annot alg_expr
 ## LR(1) items:
-effect -> APPLY annot alg_expr . rule_content [ SEMICOLON EOF CL_PAR ]
+effetto -> APPLY annot alg_expr . rule_content [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On RAR shift to state 360
 -- On PIPE shift to state 361
@@ -5842,10 +5842,10 @@ State 382:
 ## Known stack suffix:
 ## APPLY annot alg_expr rule_content
 ## LR(1) items:
-effect -> APPLY annot alg_expr rule_content . [ SEMICOLON EOF CL_PAR ]
+effetto -> APPLY annot alg_expr rule_content . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production effect -> APPLY annot alg_expr rule_content
+-- After reading the next token, reduce production effetto -> APPLY annot alg_expr rule_content
 
 State 383:
 ## Known stack suffix:
@@ -5886,21 +5886,21 @@ rule_content -> arrow annot rule_side . [ SEMICOLON EOF CL_PAR ]
 
 State 386:
 ## Known stack suffix:
-## annot effect
+## annot effetto
 ## LR(1) items:
-interactive_command -> annot effect . SEMICOLON [ # ]
+interactive_command -> annot effetto . SEMICOLON [ # ]
 ## Transitions:
 -- On SEMICOLON shift to state 387
 ## Reductions:
 
 State 387:
 ## Known stack suffix:
-## annot effect SEMICOLON
+## annot effetto SEMICOLON
 ## LR(1) items:
-interactive_command -> annot effect SEMICOLON . [ # ]
+interactive_command -> annot effetto SEMICOLON . [ # ]
 ## Transitions:
 ## Default reduction:
--- Without reading the next token, reduce production interactive_command -> annot effect SEMICOLON
+-- Without reading the next token, reduce production interactive_command -> annot effetto SEMICOLON
 
 State 388:
 ## Known stack suffix:
@@ -6428,8 +6428,8 @@ perturbation_declaration -> perturbation_alarm DO annot . effect_list perturbati
 -- On DELETE shift to state 344
 -- On ASSIGN shift to state 349
 -- On APPLY shift to state 357
--- On effect_list shift to state 429
--- On effect shift to state 434
+-- On effetto shift to state 429
+-- On effect_list shift to state 433
 ## Reductions:
 
 State 420:
@@ -6464,7 +6464,7 @@ effect_list -> OP_PAR annot . partial_effect_list CL_PAR annot [ TOKEN SIGNATURE
 -- On ASSIGN shift to state 349
 -- On APPLY shift to state 357
 -- On partial_effect_list shift to state 422
--- On effect shift to state 425
+-- On effetto shift to state 425
 ## Reductions:
 
 State 422:
@@ -6501,23 +6501,23 @@ effect_list -> OP_PAR annot partial_effect_list CL_PAR annot . [ TOKEN SIGNATURE
 
 State 425:
 ## Known stack suffix:
-## effect
+## effetto
 ## LR(1) items:
-partial_effect_list -> effect . SEMICOLON annot [ EOF CL_PAR ]
-partial_effect_list -> effect . [ EOF CL_PAR ]
-partial_effect_list -> effect . SEMICOLON annot partial_effect_list [ EOF CL_PAR ]
+partial_effect_list -> effetto . SEMICOLON annot [ EOF CL_PAR ]
+partial_effect_list -> effetto . [ EOF CL_PAR ]
+partial_effect_list -> effetto . SEMICOLON annot partial_effect_list [ EOF CL_PAR ]
 ## Transitions:
 -- On SEMICOLON shift to state 426
 ## Reductions:
 -- On EOF CL_PAR
---   reduce production partial_effect_list -> effect
+--   reduce production partial_effect_list -> effetto
 
 State 426:
 ## Known stack suffix:
-## effect SEMICOLON
+## effetto SEMICOLON
 ## LR(1) items:
-partial_effect_list -> effect SEMICOLON . annot [ EOF CL_PAR ]
-partial_effect_list -> effect SEMICOLON . annot partial_effect_list [ EOF CL_PAR ]
+partial_effect_list -> effetto SEMICOLON . annot [ EOF CL_PAR ]
+partial_effect_list -> effetto SEMICOLON . annot partial_effect_list [ EOF CL_PAR ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -6529,10 +6529,10 @@ partial_effect_list -> effect SEMICOLON . annot partial_effect_list [ EOF CL_PAR
 
 State 427:
 ## Known stack suffix:
-## effect SEMICOLON annot
+## effetto SEMICOLON annot
 ## LR(1) items:
-partial_effect_list -> effect SEMICOLON annot . [ EOF CL_PAR ]
-partial_effect_list -> effect SEMICOLON annot . partial_effect_list [ EOF CL_PAR ]
+partial_effect_list -> effetto SEMICOLON annot . [ EOF CL_PAR ]
+partial_effect_list -> effetto SEMICOLON annot . partial_effect_list [ EOF CL_PAR ]
 ## Transitions:
 -- On TRACK shift to state 10
 -- On STOP shift to state 159
@@ -6546,33 +6546,92 @@ partial_effect_list -> effect SEMICOLON annot . partial_effect_list [ EOF CL_PAR
 -- On ASSIGN shift to state 349
 -- On APPLY shift to state 357
 -- On partial_effect_list shift to state 428
--- On effect shift to state 425
+-- On effetto shift to state 425
 ## Reductions:
 -- On EOF CL_PAR
---   reduce production partial_effect_list -> effect SEMICOLON annot
+--   reduce production partial_effect_list -> effetto SEMICOLON annot
 
 State 428:
 ## Known stack suffix:
-## effect SEMICOLON annot partial_effect_list
+## effetto SEMICOLON annot partial_effect_list
 ## LR(1) items:
-partial_effect_list -> effect SEMICOLON annot partial_effect_list . [ EOF CL_PAR ]
+partial_effect_list -> effetto SEMICOLON annot partial_effect_list . [ EOF CL_PAR ]
 ## Transitions:
 ## Default reduction:
--- After reading the next token, reduce production partial_effect_list -> effect SEMICOLON annot partial_effect_list
+-- After reading the next token, reduce production partial_effect_list -> effetto SEMICOLON annot partial_effect_list
 
 State 429:
+## Known stack suffix:
+## effetto
+## LR(1) items:
+effect_list -> effetto . SEMICOLON annot [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+effect_list -> effetto . SEMICOLON annot effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+## Transitions:
+-- On SEMICOLON shift to state 430
+## Reductions:
+
+State 430:
+## Known stack suffix:
+## effetto SEMICOLON
+## LR(1) items:
+effect_list -> effetto SEMICOLON . annot [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+effect_list -> effetto SEMICOLON . annot effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+## Transitions:
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 431
+## Reductions:
+-- On TRACK TOKEN STOP SPECIES_OF SNAPSHOT SIGNATURE REPEAT RAR PRINTF PLOTENTRY PLOT PIPE PERT OP_PAR OBS LRAR LET LABEL INTRO INIT ID FLUX EOF DOT DELETE CONFIG ASSIGN APPLY
+--   reduce production annot ->
+
+State 431:
+## Known stack suffix:
+## effetto SEMICOLON annot
+## LR(1) items:
+effect_list -> effetto SEMICOLON annot . [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+effect_list -> effetto SEMICOLON annot . effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+## Transitions:
+-- On TRACK shift to state 10
+-- On STOP shift to state 159
+-- On SPECIES_OF shift to state 309
+-- On SNAPSHOT shift to state 316
+-- On PRINTF shift to state 323
+-- On PLOTENTRY shift to state 327
+-- On OP_PAR shift to state 420
+-- On INTRO shift to state 329
+-- On FLUX shift to state 334
+-- On DELETE shift to state 344
+-- On ASSIGN shift to state 349
+-- On APPLY shift to state 357
+-- On effetto shift to state 429
+-- On effect_list shift to state 432
+## Reductions:
+-- On TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
+--   reduce production effect_list -> effetto SEMICOLON annot
+
+State 432:
+## Known stack suffix:
+## effetto SEMICOLON annot effect_list
+## LR(1) items:
+effect_list -> effetto SEMICOLON annot effect_list . [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production effect_list -> effetto SEMICOLON annot effect_list
+
+State 433:
 ## Known stack suffix:
 ## perturbation_alarm DO annot effect_list
 ## LR(1) items:
 perturbation_declaration -> perturbation_alarm DO annot effect_list . perturbation_post [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On REPEAT shift to state 430
--- On perturbation_post shift to state 433
+-- On REPEAT shift to state 434
+-- On perturbation_post shift to state 437
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production perturbation_post ->
 
-State 430:
+State 434:
 ## Known stack suffix:
 ## REPEAT
 ## LR(1) items:
@@ -6581,12 +6640,12 @@ perturbation_post -> REPEAT . annot bool_expr [ TOKEN SIGNATURE RAR PLOT PIPE PE
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 431
+-- On annot shift to state 435
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 431:
+State 435:
 ## Known stack suffix:
 ## REPEAT annot
 ## LR(1) items:
@@ -6625,14 +6684,14 @@ perturbation_post -> REPEAT annot . bool_expr [ TOKEN SIGNATURE RAR PLOT PIPE PE
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
--- On bool_expr shift to state 432
+-- On bool_expr shift to state 436
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 252
 ## Reductions:
 
-State 432:
+State 436:
 ## Known stack suffix:
 ## REPEAT annot bool_expr
 ## LR(1) items:
@@ -6641,7 +6700,7 @@ perturbation_post -> REPEAT annot bool_expr . [ TOKEN SIGNATURE RAR PLOT PIPE PE
 ## Default reduction:
 -- After reading the next token, reduce production perturbation_post -> REPEAT annot bool_expr
 
-State 433:
+State 437:
 ## Known stack suffix:
 ## perturbation_alarm DO annot effect_list perturbation_post
 ## LR(1) items:
@@ -6649,65 +6708,6 @@ perturbation_declaration -> perturbation_alarm DO annot effect_list perturbation
 ## Transitions:
 ## Default reduction:
 -- After reading the next token, reduce production perturbation_declaration -> perturbation_alarm DO annot effect_list perturbation_post
-
-State 434:
-## Known stack suffix:
-## effect
-## LR(1) items:
-effect_list -> effect . SEMICOLON annot [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-effect_list -> effect . SEMICOLON annot effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-## Transitions:
--- On SEMICOLON shift to state 435
-## Reductions:
-
-State 435:
-## Known stack suffix:
-## effect SEMICOLON
-## LR(1) items:
-effect_list -> effect SEMICOLON . annot [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-effect_list -> effect SEMICOLON . annot effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-## Transitions:
--- On SPACE shift to state 2
--- On NEWLINE shift to state 3
--- On COMMENT shift to state 4
--- On annot shift to state 436
-## Reductions:
--- On TRACK TOKEN STOP SPECIES_OF SNAPSHOT SIGNATURE REPEAT RAR PRINTF PLOTENTRY PLOT PIPE PERT OP_PAR OBS LRAR LET LABEL INTRO INIT ID FLUX EOF DOT DELETE CONFIG ASSIGN APPLY
---   reduce production annot ->
-
-State 436:
-## Known stack suffix:
-## effect SEMICOLON annot
-## LR(1) items:
-effect_list -> effect SEMICOLON annot . [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-effect_list -> effect SEMICOLON annot . effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-## Transitions:
--- On TRACK shift to state 10
--- On STOP shift to state 159
--- On SPECIES_OF shift to state 309
--- On SNAPSHOT shift to state 316
--- On PRINTF shift to state 323
--- On PLOTENTRY shift to state 327
--- On OP_PAR shift to state 420
--- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On effect_list shift to state 437
--- On effect shift to state 434
-## Reductions:
--- On TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
---   reduce production effect_list -> effect SEMICOLON annot
-
-State 437:
-## Known stack suffix:
-## effect SEMICOLON annot effect_list
-## LR(1) items:
-effect_list -> effect SEMICOLON annot effect_list . [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-## Transitions:
-## Default reduction:
--- After reading the next token, reduce production effect_list -> effect SEMICOLON annot effect_list
 
 State 438:
 ## Known stack suffix:
@@ -6750,8 +6750,8 @@ perturbation_declaration -> perturbation_alarm bool_expr DO annot . effect_list 
 -- On DELETE shift to state 344
 -- On ASSIGN shift to state 349
 -- On APPLY shift to state 357
+-- On effetto shift to state 429
 -- On effect_list shift to state 441
--- On effect shift to state 434
 ## Reductions:
 
 State 441:
@@ -6760,7 +6760,7 @@ State 441:
 ## LR(1) items:
 perturbation_declaration -> perturbation_alarm bool_expr DO annot effect_list . perturbation_post [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On REPEAT shift to state 430
+-- On REPEAT shift to state 434
 -- On perturbation_post shift to state 442
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
@@ -8813,7 +8813,7 @@ standalone_effect_list -> annot . partial_effect_list EOF [ # ]
 -- On ASSIGN shift to state 349
 -- On APPLY shift to state 357
 -- On partial_effect_list shift to state 578
--- On effect shift to state 425
+-- On effetto shift to state 425
 ## Reductions:
 
 State 578:

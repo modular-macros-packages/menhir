@@ -33,8 +33,8 @@ nullable(interface_expression) = true
 nullable(interactive_command) = false
 nullable(instruction) = false
 nullable(init_declaration) = false
+nullable(effetto) = false
 nullable(effect_list) = false
-nullable(effect) = false
 nullable(counter_test) = false
 nullable(constant) = false
 nullable(boolean) = false
@@ -77,8 +77,8 @@ first(interface_expression) = ID
 first(interactive_command) = error TRACK STOP SPECIES_OF SNAPSHOT RUN PRINTF PLOTENTRY OP_PAR INTRO ID FLUX EOF DELETE ASSIGN APPLY
 first(instruction) = TOKEN SIGNATURE PLOT PERT OBS LET INIT CONFIG
 first(init_declaration) = TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
+first(effetto) = TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO ID FLUX DELETE ASSIGN APPLY
 first(effect_list) = TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY OP_PAR INTRO ID FLUX DELETE ASSIGN APPLY
-first(effect) = TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO ID FLUX DELETE ASSIGN APPLY
 first(counter_test) = TYPE
 first(constant) = TMAX INT INFINITY FLOAT EMAX CPUTIME
 first(boolean) = TRUE FALSE
@@ -121,8 +121,8 @@ minimal(interface_expression) = (* 0 *)
 minimal(interactive_command) = (* 1 *) EOF
 minimal(instruction) = (* 2 *) TOKEN ID
 minimal(init_declaration) = (* 2 *) INFINITY ID
+minimal(effetto) = (* 1 *) SNAPSHOT
 minimal(effect_list) = (* 1 *) SNAPSHOT
-minimal(effect) = (* 1 *) SNAPSHOT
 minimal(counter_test) = (* 2 *) TYPE INT
 minimal(constant) = (* 1 *) INFINITY
 minimal(boolean) = (* 1 *) TRUE
@@ -165,8 +165,8 @@ maximal(interface_expression) = infinity
 maximal(interactive_command) = infinity
 maximal(instruction) = infinity
 maximal(init_declaration) = infinity
+maximal(effetto) = infinity
 maximal(effect_list) = infinity
-maximal(effect) = infinity
 maximal(counter_test) = 3
 maximal(constant) = 1
 maximal(boolean) = 1
@@ -209,8 +209,8 @@ follow(interface_expression) = CL_PAR
 follow(interactive_command) = #
 follow(instruction) = NEWLINE EOF
 follow(init_declaration) = NEWLINE EOF
+follow(effetto) = UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
 follow(effect_list) = UNTIL REPEAT NEWLINE EOF CL_PAR
-follow(effect) = UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
 follow(counter_test) = PLUS COMMA CL_PAR
 follow(constant) = UNTIL TYPE TRUE TMAX TIME THEN TAN STRING SQRT SMALLER SINUS SET SEMICOLON REPEAT POW PLUS PIPE OR OP_PAR OP_CUR NULL_EVENT NEWLINE MULT MODULO MINUS MIN MAX LOG LABEL KAPPA_RAR KAPPA_LRAR INT INFINITY ID GREATER FLOAT FALSE EXPONENT EVENT EQUAL EOF EMAX ELSE DOT DO DIV DIFF CPUTIME COSINUS COMMA CL_PAR CL_CUR AND ABS
 follow(boolean) = UNTIL SEMICOLON REPEAT NEWLINE EOF CL_PAR
@@ -227,8 +227,8 @@ The construction mode is pager.
 Built an LR(1) automaton with 400 states.
 90 shift/reduce conflicts were silently solved.
 156 out of 400 states have a default reduction.
-The action table is 33200 entries; 3111 non-zero; 2217 compressed.
-The action table occupies roughly 4528 bytes.
+The action table is 33200 entries; 3111 non-zero; 2231 compressed.
+The action table occupies roughly 4552 bytes.
 The goto table is 19200 entries; 672 non-zero; 1280 compressed.
 The goto table occupies roughly 2648 bytes.
 The error table occupies roughly 4184 bytes.

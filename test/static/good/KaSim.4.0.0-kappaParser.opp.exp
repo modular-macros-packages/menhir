@@ -144,10 +144,10 @@ start_rule:
 						 ::r.Ast.observables}
 		      | Ast.PLOT expr ->
 			 {r with Ast.observables = expr::r.Ast.observables}
-		      | Ast.PERT ((alarm,pre,effect,opt),pos) ->
+		      | Ast.PERT ((alarm,pre,effetto,opt),pos) ->
 			 {r with
 			  Ast.perturbations =
-			   ((alarm,pre,effect,opt),pos)::r.Ast.perturbations}
+			   ((alarm,pre,effetto,opt),pos)::r.Ast.perturbations}
 		      | Ast.CONFIG (param_name,value_list) ->
 			 {r with
 			  Ast.configurations = (param_name,value_list)::r.Ast.configurations}
@@ -231,8 +231,8 @@ perturbation_declaration:
 	      (fun f -> Format.pp_print_string
 			  f "deprecated KaSim3 syntax");
               let () = if List.exists
-			  (fun effect ->
-			   match effect with
+			  (fun effetto ->
+			   match effetto with
 			   | (Ast.CFLOWLABEL _ | Ast.CFLOWMIX _
 			      | Ast.DIN _ | Ast.DINOFF _
 			      | Ast.SPECIES_OF _) -> true
@@ -264,12 +264,12 @@ standalone_effect_list:
 effect_list:
   _1 = OP_PAR _2 = effect_list _3 = CL_PAR
     {(_2)}
-| _1 = effect
+| _1 = effetto
     {([_1])}
-| _1 = effect _2 = SEMICOLON _3 = effect_list
+| _1 = effetto _2 = SEMICOLON _3 = effect_list
     {(_1::_3)}
 
-effect:
+effetto:
   _1 = ASSIGN _2 = ID _3 = alg_expr
     {(Ast.UPDATE ((_2,rhs_pos 2),_3))}
 | _1 = ASSIGN _2 = LABEL _3 = alg_expr
