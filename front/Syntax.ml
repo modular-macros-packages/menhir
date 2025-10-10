@@ -269,121 +269,128 @@ type parameterized_rule =
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(* The new rule syntax. *)
+(**The new rule syntax. *)
 
-(* In the user's eyes, this replaces the old rule syntax, which corresponds to
-   the types [parameter], [producer], [parameterized_branch], and
-   [parameterized_rule] above. *)
+(**In the user's eyes, the new rule syntax replaces (or complements)
+   the old rule syntax, which corresponds to the types [parameter],
+   [producer], [parameterized_branch], and [parameterized_rule]
+   above. *)
 
-(* Internally, the new rule syntax is translated down to the old rule syntax;
-   see [NewRuleSyntax]. This is done on the fly during parsing. *)
+(**Internally, the new rule syntax is translated down to the old rule
+   syntax; see the module [NewRuleSyntax]. This is done on the fly
+   during parsing. *)
 
+(**A pattern. See the manual. *)
 type pattern =
   | SemPatVar of identifier located
   | SemPatWildcard
   | SemPatTilde of range
   | SemPatTuple of pattern list
-  (* Patterns: as in the manual. *)
 
+(**The ugly type [raw_action] is produced by the lexer for an [ACTION] token. *)
 type raw_action =
   [`DollarsDisallowed | `DollarsAllowed] ->
   identifier option array ->
   action
-  (* Ugly type produced by the lexer for an ACTION token. *)
 
+(**A toplevel expression is a choice expression. *)
 type expression =
   choice_expression located
-  (* A toplevel expression is a choice expression. *)
 
+(**A choice expression is a list of branches. *)
 and choice_expression =
   | EChoice of branch list
-  (* A choice expression is a list of branches. *)
 
+(**A branch is a sequence expression
+   and an ugly [production_level]. *)
 and branch =
   | Branch of seq_expression * production_level
-  (* A branch is a sequence expression,
-     plus an ugly [production_level]. *)
 
 and seq_expression =
   raw_seq_expression located
 
+(**A sequence is either a cons [p = e1; e2]
+   or a lone symbol expression [e]
+   or a semantic action. *)
 and raw_seq_expression =
   | ECons of pattern * symbol_expression * seq_expression
   | ESingleton of symbol_expression
   | EAction of extended_action * prec_annotation * attributes
-  (* A sequence is either a cons [p = e1; e2]
-     or a lone symbol expression [e]
-     or a semantic action. *)
 
+(**A symbol expression is a symbol,
+   possibly accompanied with actual parameters and attributes. *)
 and symbol_expression =
   | ESymbol of symbol located * expression list * attributes
-  (* A symbol expression is a symbol,
-     possibly accompanied with actual parameters and attributes. *)
 
+(**A semantic action is either traditional { ... } or point-free.
+   There are two forms of point-free actions, <> and <id>.
+   In the latter case, [id] is an OCaml identifier. *)
 and extended_action =
   | XATraditional of raw_action
   | XAPointFree of string located option
-  (* A semantic action is either traditional { ... } or point-free.
-     There are two forms of point-free actions, <> and <id>.
-     In the latter case, [id] is an OCaml identifier. *)
 
+(**The type [rule] in the new rule syntax corresponds roughly to the type
+   [parameterized_rule] in the old rule syntax. *)
 type rule =
   {
+
     rule_public: bool;
+    (**Is the [%public] keyword present? *)
+
     rule_inline: bool;
+    (**Is the [%inline] keyword present? *)
+
     rule_lhs: symbol located;
+    (**The name of the nonterminal symbol that is being defined. *)
+
     rule_attributes: attributes;
+    (**Attributes attached with this nonterminal symbol. *)
+
     rule_formals: symbol located list;
+    (**The parameters of this nonterminal symbol. *)
+
     rule_rhs: expression;
+    (**The productions. *)
+
   }
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(* A declaration. (Only before joining.) *)
-
+(**A declaration. (Only before joining.) *)
 type declaration =
 
-    (* Raw OCaml code. *)
-
   | DCode of string located
-
-    (* Raw OCaml functor parameter. *)
+    (**Raw OCaml code. *)
 
   | DParameter of string located
-
-    (* Terminal symbol (token) declaration. *)
+    (**Raw OCaml functor parameter. *)
 
   | DToken of ocamltype option * terminal * alias * attributes
-
-    (* Start symbol declaration. *)
+    (**Terminal symbol (token) declaration. *)
 
   | DStart of nonterminal
-
-    (* Priority and associativity declaration. *)
+    (**Start symbol declaration. *)
 
   | DTokenProperties of terminal * associativity * precedence_level
-
-    (* Type declaration. *)
+    (**Priority and associativity declaration. *)
 
   | DType of ocamltype * parameter
+    (**Type declaration. *)
 
-    (* Grammar-level attribute declaration. *)
 
   | DGrammarAttribute of attribute
-
-    (* Attributes shared among multiple symbols, i.e., [%attribute]. *)
+    (**Grammar-level attribute declaration. *)
 
   | DSymbolAttributes of parameter list * attributes
-
-    (* On-error-reduce declaration. *)
+    (**Attributes shared among multiple symbols, i.e., [%attribute]. *)
 
   | DOnErrorReduce of parameter * on_error_reduce_level
+    (**On-error-reduce declaration. *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* A partial grammar. (Only before joining.) *)
-
+(**A partial grammar. (Only before joining.) *)
 type partial_grammar =
   {
     pg_filename          : filename;
@@ -395,17 +402,16 @@ type partial_grammar =
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(* A grammar. (Only after joining.) *)
+(**A grammar. (Only after joining.)
 
-(* The differences with partial grammars (above) are as follows:
+   The differences with partial grammars (above) are as follows:
    1. the file name is gone (there could be several file names, anyway).
    2. there can be several postludes.
    3. declarations are organized by kind: preludes, postludes,
       functor %parameters, %start symbols, %types, %tokens, %on_error_reduce,
       grammar attributes, %attributes.
    4. rules are stored in a map, indexed by symbol names, instead of a list.
-   5. token aliases have been replaced with ordinary named terminal symbols.
- *)
+   5. token aliases have been replaced with ordinary named terminal symbols. *)
 type grammar =
   {
     p_preludes           : string located list;
