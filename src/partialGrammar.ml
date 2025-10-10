@@ -255,7 +255,11 @@ let rewrite_grammar phi grammar =
 (* To rename (internalize) a nonterminal, we prefix it with its filename.
    This guarantees that names are unique. *)
 
-let is_valid_nonterminal_character = function
+(* [valid c] determines whether the character [c] can appear in the name
+   of a nonterminal symbol. *)
+
+let valid c =
+  match c with
   | 'A' .. 'Z'
   | 'a' .. 'z'
   | '_'
@@ -268,19 +272,16 @@ let is_valid_nonterminal_character = function
       false
 
 let restrict filename =
-  let m = Bytes.of_string (Filename.chop_suffix filename Settings.extension) in
-  for i = 0 to Bytes.length m - 1 do
-    if not (is_valid_nonterminal_character (Bytes.get m i)) then
-      Bytes.set m i '_'
-  done;
-  Bytes.unsafe_to_string m
+  filename
+  |> Filename.remove_extension
+  |> String.map (fun c -> if valid c then c else '_')
 
 let rename nonterminal filename =
   let name = restrict filename ^ "_" ^ nonterminal in
-    if used_name name then
-      fresh ~hint:name ()
-    else
-      (use_name name; name)
+  if used_name name then
+    fresh ~hint:name ()
+  else
+    (use_name name; name)
 
 (* ------------------------------------------------------------------------- *)
 type symbol_kind =
