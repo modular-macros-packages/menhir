@@ -15,11 +15,7 @@
 (* Reading a grammar from a file. *)
 
 let load_grammar_from_contents filename content =
-  InputFile.with_file_content filename content @@ fun () ->
-  let open Lexing in
-  let lexbuf = Lexing.from_string content in
-  lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
-  (* the grammar: *)
+  InputFile.with_file_content filename content @@ fun lexbuf ->
   { (Driver.grammar Lexer.main lexbuf)
     with Syntax.pg_filename = filename }
 

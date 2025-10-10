@@ -33,10 +33,12 @@ val compare: file -> file -> int
 val builtin: file
 
 (**[with_file_content name content f] creates a fresh input file with name
-   [name] and makes it the current input file while the action [f()] runs. The
-   function [f] may call {!current} to obtain the current input file, and may
-   call {!chunk} to retrieve a segment of [content]. *)
-val with_file_content: string -> string -> (unit -> 'a) -> 'a
+   [name] and makes it the current input file while the action [f] runs. The
+   function [f] is applied to a fresh lexing buffer that has been initialized
+   with [name] and [content]. The function [f] may call {!current} to obtain
+   the current input file, and may call {!chunk} to retrieve a segment of
+   [content]. *)
+val with_file_content: string -> string -> (lexbuf -> 'a) -> 'a
 
 (**[current()] indicates which input file is currently being read. It can be
    called only while a call to [with_file_content] is ongoing. *)

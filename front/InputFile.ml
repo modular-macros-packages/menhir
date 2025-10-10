@@ -60,7 +60,9 @@ let with_file_content name content f =
   let index = MInt.postincrement next in
   let file = { name; index } in
   current := Some (file, content);
-  let result = f() in
+  let lexbuf = from_string content in
+  lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = name };
+  let result = f lexbuf in
   current := None; (* avoid memory leak *)
   result
 
