@@ -90,6 +90,12 @@ let padded_index n i =
 
 (* Analysis. *)
 
+let longest_valid_prefix valid s =
+  let n = String.length s in
+  let i = ref 0 in
+  while !i < n && valid s.[!i] do incr i done;
+  String.sub s 0 !i
+
 (* [longest_run c s] computes the length of the longest run of consecutive
    characters equal to [c] in the string [s]. *)
 
