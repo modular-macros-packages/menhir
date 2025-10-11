@@ -186,7 +186,7 @@ declaration:
 
 | TYPE t = ocamltype ss = clist(strict_actual)
     { List.map (Located.map (fun nt -> DType (t, nt)))
-        (List.map Parameters.locate ss) }
+        (List.map Parameter.locate ss) }
 
 | k = priority_keyword ss = clist(symbol)
     { let prec = ParserAux.new_precedence_level $loc(k) in
@@ -204,7 +204,7 @@ declaration:
 | ON_ERROR_REDUCE ss = clist(strict_actual)
     { let prec = ParserAux.new_on_error_reduce_level() in
       List.map (Located.map (fun nt -> DOnErrorReduce (nt, prec)))
-        (List.map Parameters.locate ss) }
+        (List.map Parameter.locate ss) }
 
 | SEMI
     { [] }
@@ -435,10 +435,10 @@ producer:
 %inline generic_actual(A, B):
 (* 1- *)
   symbol = symbol actuals = plist(A)
-    { Parameters.apply symbol actuals }
+    { Parameter.apply symbol actuals }
 (* 2- *)
 | p = B m = located(modifier)
-    { Parameters.apply m [p] }
+    { Parameter.apply m [p] }
 
 strict_actual:
   p = generic_actual(strict_actual, strict_actual)

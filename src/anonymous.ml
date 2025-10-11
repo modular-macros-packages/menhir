@@ -22,7 +22,7 @@ open Syntax
 
 let rec fn_parameter accu (p : parameter) =
   (* [p] cannot be [ParamAnonymous _]. *)
-  let x, ps = Parameters.destruct p in
+  let x, ps = Parameter.destruct p in
   let accu = StringSet.add (value x) accu in
   fn_parameters accu ps
 
@@ -97,7 +97,7 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
   (* Record this definition. *)
   rules := rule :: !rules;
   (* Return the symbol that stands for it. *)
-  Parameters.apply (locate pos symbol) (List.map Parameters.var parameters)
+  Parameter.apply (locate pos symbol) (List.map Parameter.var parameters)
 
 (* ------------------------------------------------------------------------ *)
 

@@ -49,9 +49,9 @@ module Label = struct
   type t = label
   let equal (nt1, inst1) (nt2, inst2) =
     nt1 = nt2 &&
-    List.for_all2 (Option.equal Parameters.equal) inst1 inst2
+    List.for_all2 (Option.equal Parameter.equal) inst1 inst2
   let hash (nt, inst) =
-    Hashtbl.hash (nt, MList.hash (Option.hash Parameters.hash) inst)
+    Hashtbl.hash (nt, MList.hash (Option.hash Parameter.hash) inst)
 end
 
 (* -------------------------------------------------------------------------- *)
@@ -70,7 +70,7 @@ let mangle_po (po : parameter option) =
          we put an underscore in its place. *)
       "_"
   | Some p ->
-      Parameters.print "," p
+      Parameter.print "," p
 
 let mangle_inst (pos : instantiation) =
   MString.separated_list mangle_po "," pos
@@ -119,7 +119,7 @@ let subst_symbol env sym : parameter =
     ParamVar sym
 
 let subst_parameter env param : parameter =
-  Parameters.subst (subst_symbol env) param
+  Parameter.subst (subst_symbol env) param
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
@@ -171,9 +171,9 @@ let sort param =
 (* We use an inefficient linear search, but that shouldn't be a problem. *)
 
 let global_attributes (nt : symbol) : attribute list =
-  let param = Parameters.var nt in
+  let param = Parameter.var nt in
   List.concat (List.map (fun (params, attrs) ->
-    if List.exists (Parameters.equal param) params then attrs else []
+    if List.exists (Parameter.equal param) params then attrs else []
   ) g.p_symbol_attributes)
 
 (* -------------------------------------------------------------------------- *)
@@ -320,7 +320,7 @@ let rec recognize (param : parameter) : parameter =
       let label : label = (x, inst) in
       enqueue label;
       let sym = mangle label in
-      Parameters.apply (locate dummy sym) residuals
+      Parameter.apply (locate dummy sym) residuals
 
 (* -------------------------------------------------------------------------- *)
 
@@ -386,7 +386,7 @@ let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols
              trouble. We avoid this problem by systematically renaming every
              formal parameter to a fresh unlikely name. *)
           let formal = freshen formal in
-          Parameters.var formal,
+          Parameter.var formal,
           formal :: residuals
     in
     Env.add formal param env, residuals
@@ -492,7 +492,7 @@ let unthingify_parameter rules thing =
   | SourceParameterOfHigherSort param ->
       (* This parameter has higher sort. It must be a symbol.
          Keep it if it still appears in the expanded grammar. *)
-      let symbol, params = Parameters.destruct param in
+      let symbol, params = Parameter.destruct param in
       assert (params = []);
       let symbol = value symbol in
       if StringMap.mem symbol rules then Some param else None

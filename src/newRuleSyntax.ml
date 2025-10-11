@@ -304,7 +304,7 @@ let rec parameter (e : symbol_expression) : parameter =
   | ESymbol (sym, args, _attrs) ->
       (* Converting a symbol expression is easy. Note, however, that the
          arguments [args] are arbitrary expressions. *)
-      Parameters.apply sym (List.map nested_parameter args)
+      Parameter.apply sym (List.map nested_parameter args)
 
 (* Converting an arbitrary expression to a parameter. *)
 

@@ -21,7 +21,7 @@ module T = BasicSyntax
 
 let drop_parameter (param : S.parameter) : S.symbol =
   (* The grammar should not have any parameterized symbols. *)
-  value (Parameters.head param)
+  value (Parameter.head param)
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
   {
@@ -68,7 +68,7 @@ let drop_declarations
      declaration. To do this, we first build a map of symbols to info *and*
      position... *)
   List.fold_left (fun accu (param, info) ->
-    let head = Parameters.head param in
+    let head = Parameter.head param in
     let symbol = value head in
     begin match StringMap.find symbol accu with
     | exception Not_found ->

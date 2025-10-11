@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 (* This test accepts a parameterized grammar, with the restriction that all
-   parameters must have sort [*]. Parameters of higher sort must be eliminated
+   parameters must have sort [*]. Parameter of higher sort must be eliminated
    prior to running this test: see [SelectiveExpansion]. *)
 
 (* This test succeeds if and only if the expansion of this grammar is safe,

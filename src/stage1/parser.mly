@@ -101,7 +101,7 @@ declaration:
 
 | TYPE ocamltype actuals
     { List.map (Located.map (fun nt -> DType ($2, nt)))
-        (List.map Parameters.locate $3) }
+        (List.map Parameter.locate $3) }
 
 | START ocamltype nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
@@ -126,7 +126,7 @@ declaration:
 | ON_ERROR_REDUCE actuals
     { let prec = ParserAux.new_on_error_reduce_level() in
       List.map (Located.map (fun nt -> DOnErrorReduce (nt, prec)))
-        (List.map Parameters.locate $2) }
+        (List.map Parameter.locate $2) }
 
 ocamltype:
   ANGLED
@@ -253,7 +253,7 @@ flags:
     { true, true }
 
 /* ------------------------------------------------------------------------- */
-/* Parameters are surroundered with parentheses and delimited by commas.
+/* Parameter are surroundered with parentheses and delimited by commas.
    The syntax of actual parameters allows applications, whereas the syntax
    of formal parameters does not. It also allows use of the "?", "+", and
    "*" shortcuts. */
@@ -284,9 +284,9 @@ actuals_comma:
 
 actual:
   symbol optional_actuals
-    { Parameters.apply $1 $2 }
+    { Parameter.apply $1 $2 }
 | actual modifier
-    { Parameters.apply $2 [$1] }
+    { Parameter.apply $2 [$1] }
 
 actuals:
   /* epsilon */
