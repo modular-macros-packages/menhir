@@ -67,23 +67,32 @@ let grammars : Syntax.partial_grammar list =
   List.map EliminateAnonymousRules.transform grammars
 
 (* Remove all uses of token aliases. *)
+
 let grammars =
   let module E = ExpandTokenAliases.Make(Error) in
   E.transform grammars
 
 (* ------------------------------------------------------------------------- *)
 
-(* If several grammar files were specified, merge them. *)
+(* If several grammar files were provided on the command line, merge them.   *)
 
 let grammar : Syntax.grammar =
+  let module J = JoinGrammars.Make(Error) in
+  J.join grammars
+
+(* We now have a single grammar. *)
+
+(* Check that the grammar is well-formed. *)
+
+let () =
   let module X = struct
     let ignore_unused_token t =
       Settings.ignore_all_unused_tokens ||
       Settings.token_type_mode = Settings.TokenTypeOnly ||
       StringSet.mem t Settings.ignored_unused_tokens
   end in
-  let module P = CheckAndJoinGrammars.Make(Error)(X) in
-  P.join grammars
+  let module C = CheckGrammar.Make(Error)(X) in
+  C.check grammar
 
 (* ------------------------------------------------------------------------- *)
 
