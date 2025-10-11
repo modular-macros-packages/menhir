@@ -82,7 +82,7 @@ let grammar : Syntax.grammar =
       Settings.token_type_mode = Settings.TokenTypeOnly ||
       StringSet.mem t Settings.ignored_unused_tokens
   end in
-  let module P = PartialGrammar.Make(Error)(X) in
+  let module P = CheckAndJoinGrammars.Make(Error)(X) in
   P.join grammars
 
 (* ------------------------------------------------------------------------- *)

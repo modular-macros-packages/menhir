@@ -196,8 +196,8 @@ let rewrite_parameter phi parameter =
 let rewrite_producer phi ((ido, parameter, attrs) : producer) =
   ido, rewrite_parameter phi parameter, attrs
 
-let rewrite_branch phi ({ pb_producers = producers } as branch) =
-  { branch with pb_producers = List.map (rewrite_producer phi) producers }
+let rewrite_branch phi branch =
+  { branch with pb_producers = List.map (rewrite_producer phi) branch.pb_producers }
 
 let rewrite_branches phi branches =
   match phi with
@@ -699,9 +699,9 @@ let check_parameterized_grammar_is_well_defined grammar =
               );
 
          (* Check each branch. *)
-         List.iter (fun { pb_producers = producers;
-                pb_prec_annotation;
-              } -> ignore (List.fold_left
+         List.iter (fun branch ->
+           let producers = branch.pb_producers in
+           ignore (List.fold_left
 
             (* Check the producers. *)
             (fun already_seen (id, p, _) ->
@@ -719,7 +719,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 
             ) StringSet.empty producers);
 
-           Option.iter (check_identifier_reference true) pb_prec_annotation)
+           Option.iter (check_identifier_reference true) branch.pb_prec_annotation)
 
          prule.pr_branches;
 

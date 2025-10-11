@@ -26,7 +26,8 @@ end) (X : sig
 
 end) : sig
 
-  (**[join] combines several partial grammars to form a single grammar. *)
+  (**[join] combines several partial grammars to form a single grammar.
+     At the same time, it performs many well-formedness checks. *)
   val join : partial_grammar list -> grammar
 
 end
