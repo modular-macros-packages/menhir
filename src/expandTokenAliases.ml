@@ -79,8 +79,8 @@ let dealias_symbol aliasmap (sym : terminal located) =
 
 let rec dealias_parameter aliasmap (param : parameter) =
   match param with
-  | ParameterVar sym ->
-      ParameterVar (dealias_symbol aliasmap sym)
+  | ParamVar sym ->
+      ParamVar (dealias_symbol aliasmap sym)
   | ParameterApp (sym, params) ->
       ParameterApp (
         dealias_symbol aliasmap sym,

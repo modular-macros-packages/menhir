@@ -110,7 +110,7 @@ let allocate (xs : 'a list) : ('a * variable) list * variable list =
 
 let rec check_parameter env (param : parameter) (expected : variable) =
   match param with
-  | ParameterVar sym ->
+  | ParamVar sym ->
       let x = value sym in
       unify sym expected (find x env)
   | ParameterApp (sym, actuals) ->

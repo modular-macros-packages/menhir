@@ -614,7 +614,7 @@ let check_parameterized_grammar_is_well_defined grammar =
        if not (StringMap.mem nonterminal grammar.p_rules) then
          Error.error [p] "the start symbol %s is undefined." nonterminal;
        if not (List.exists (function
-                            | ParameterVar x, _ -> value x = nonterminal
+                            | ParamVar x, _ -> value x = nonterminal
                             | _ -> false) grammar.p_types) then
          Error.error [p]
            "the type of the start symbol %s is unspecified." nonterminal;

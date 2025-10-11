@@ -116,11 +116,11 @@ let subst_symbol env sym : parameter =
     Env.find (value sym) env
   with Not_found ->
     (* [x] is not a formal parameter. It is a toplevel symbol. *)
-    ParameterVar sym
+    ParamVar sym
 
 let apply (param : parameter) (params : parameters) : parameter =
   match param with
-  | ParameterVar sym ->
+  | ParamVar sym ->
       assert (params <> []);
       ParameterApp (sym, params)
   | ParameterApp _ ->
@@ -134,7 +134,7 @@ let apply (param : parameter) (params : parameters) : parameter =
 
 let rec subst_parameter env param : parameter =
   match param with
-  | ParameterVar sym ->
+  | ParamVar sym ->
       subst_symbol env sym
   | ParameterApp (sym, params) ->
       assert (params <> []);
@@ -178,7 +178,7 @@ let sort symbol =
 
 let sort param =
   match param with
-  | ParameterVar sym ->
+  | ParamVar sym ->
       sort sym
   | ParameterApp (_, params) ->
       assert (params <> []);
@@ -196,7 +196,7 @@ let sort param =
 (* We use an inefficient linear search, but that shouldn't be a problem. *)
 
 let global_attributes (nt : symbol) : attribute list =
-  let param = ParameterVar (locate dummy nt) in
+  let param = ParamVar (locate dummy nt) in
   List.concat (List.map (fun (params, attrs) ->
     if List.exists (Parameters.equal param) params then attrs else []
   ) g.p_symbol_attributes)
@@ -306,7 +306,7 @@ let rec recognize (param : parameter) : parameter =
   match param with
   | ParameterAnonymous _ ->
       assert false
-  | ParameterVar _ ->
+  | ParamVar _ ->
       param
   | ParameterApp (sym, ps) ->
       assert (ps <> []);
@@ -327,7 +327,7 @@ let rec recognize (param : parameter) : parameter =
             inst, residuals
         | ExpandHigherSort ->
             (* Expansion of only the parameters of higher sort. *)
-            let ss : sort list = domain (sort (ParameterVar sym)) in
+            let ss : sort list = domain (sort (ParamVar sym)) in
             assert (List.length ps = List.length ss);
             let pss = List.combine ps ss in
             let inst =
@@ -411,7 +411,7 @@ let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols
              trouble. We avoid this problem by systematically renaming every
              formal parameter to a fresh unlikely name. *)
           let formal = freshen formal in
-          ParameterVar (locate dummy formal),
+          ParamVar (locate dummy formal),
           formal :: residuals
     in
     Env.add formal param env, residuals

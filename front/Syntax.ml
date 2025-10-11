@@ -191,7 +191,7 @@ type on_error_reduce_level =
    nonempty tuple of parameters. Before anonymous rules have been eliminated,
    it can also be an anonymous rule, represented as a list of branches. *)
 type parameter =
-  | ParameterVar of symbol located
+  | ParamVar of symbol located
   | ParameterApp of symbol located * parameters
   | ParameterAnonymous of parameterized_branch list located
 

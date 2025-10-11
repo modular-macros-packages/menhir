@@ -21,7 +21,7 @@ module T = BasicSyntax
 
 let drop_parameter (param : S.parameter) : S.symbol =
   match param with
-  | S.ParameterVar sym ->
+  | S.ParamVar sym ->
       value sym
   | S.ParameterApp _ ->
       (* The grammar should not have any parameterized symbols. *)

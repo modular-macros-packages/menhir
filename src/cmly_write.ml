@@ -236,7 +236,7 @@ let rec higher_branch (br : Syntax.parameterized_branch) = {
 }
 
 and parameter = function
-  | Syntax.ParameterVar sym ->
+  | Syntax.ParamVar sym ->
     ParameterVar (located sym)
   | Syntax.ParameterApp (sym, args) ->
     ParameterApp (located sym, List.map parameter args)

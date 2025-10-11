@@ -148,7 +148,7 @@ type edge =
 
 let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
   match param with
-  | ParameterVar _ ->
+  | ParamVar _ ->
       (* This is not an application. No successors. *)
       ()
   | ParameterApp (sym, params) ->

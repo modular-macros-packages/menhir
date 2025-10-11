@@ -179,7 +179,7 @@ declaration:
           List.map (Located.map (fun nonterminal -> DStart nonterminal)) nts
       | Some t ->
          let dstart nt = DStart nt
-         and dtype ntloc = Located.map (fun _nt -> DType (t, ParameterVar ntloc)) ntloc in (* ugly/weird *)
+         and dtype ntloc = Located.map (fun _nt -> DType (t, ParamVar ntloc)) ntloc in (* ugly/weird *)
          List.map (Located.map dstart) nts @
          List.map dtype nts
     }

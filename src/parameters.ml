@@ -10,18 +10,18 @@
 
 (* TEMPORARY clean up and write an .mli file *)
 
-open Syntax
 open Located
+open Syntax
 
 let app p ps =
   match ps with
   | [] ->
-      ParameterVar p
+      ParamVar p
   | _ ->
       ParameterApp (p, ps)
 
 let unapp = function
-  | ParameterVar x ->
+  | ParamVar x ->
       (x, [])
   | ParameterApp (p, ps) ->
       (p, ps)
@@ -30,15 +30,15 @@ let unapp = function
       assert false
 
 let unvar = function
-  | ParameterVar x ->
+  | ParamVar x ->
       x
   | ParameterApp _
   | ParameterAnonymous _ ->
       assert false
 
 let rec map f = function
-  | ParameterVar x ->
-      ParameterVar (f x)
+  | ParamVar x ->
+      ParamVar (f x)
   | ParameterApp (p, ps) ->
       ParameterApp (f p, List.map (map f) ps)
   | ParameterAnonymous _ ->
@@ -46,7 +46,7 @@ let rec map f = function
       assert false
 
 let rec fold f init = function
-  | ParameterVar x ->
+  | ParamVar x ->
       f init x
   | ParameterApp (p, ps) ->
       f (List.fold_left (fold f) init ps) p
@@ -59,7 +59,7 @@ let identifiers m p =
 
 let rec occurs (x : symbol) (p : parameter) =
   match p with
-  | ParameterVar y ->
+  | ParamVar y ->
       x = value y
   | ParameterApp (y, ps) ->
       x = value y || List.exists (occurs x) ps
@@ -68,7 +68,7 @@ let rec occurs (x : symbol) (p : parameter) =
 
 let occurs_shallow (x : symbol) (p : parameter) =
   match p with
-  | ParameterVar y ->
+  | ParamVar y ->
       x = value y
   | ParameterApp (y, _) ->
       assert (x <> value y);
@@ -78,7 +78,7 @@ let occurs_shallow (x : symbol) (p : parameter) =
 
 let occurs_deep (x : symbol) (p : parameter) =
   match p with
-  | ParameterVar _ ->
+  | ParamVar _ ->
       false
   | ParameterApp (_, ps) ->
       List.exists (occurs x) ps
@@ -89,7 +89,7 @@ type t = parameter
 
 let rec equal x y =
   match x, y with
-    | ParameterVar x, ParameterVar y ->
+    | ParamVar x, ParamVar y ->
         value x = value y
     | ParameterApp (p1, p2), ParameterApp (p1', p2') ->
         value p1 = value p1' && List.for_all2 equal p2 p2'
@@ -98,7 +98,7 @@ let rec equal x y =
         false
 
 let hash = function
-  | ParameterVar x
+  | ParamVar x
   | ParameterApp (x, _) ->
       Hashtbl.hash (value x)
   | ParameterAnonymous _ ->
@@ -106,7 +106,7 @@ let hash = function
       assert false
 
 let position = function
-  | ParameterVar x
+  | ParamVar x
   | ParameterApp (x, _) ->
       position x
   | ParameterAnonymous bs ->
@@ -116,7 +116,7 @@ let locate p =
   locate (position p) p
 
 let rec print with_spaces = function
-  | ParameterVar x
+  | ParamVar x
   | ParameterApp (x, []) ->
       value x
   | ParameterApp (x, ps) ->

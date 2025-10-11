@@ -106,7 +106,7 @@ declaration:
 | START ocamltype nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
     { let dstart nt = DStart nt
-      and dtype ntloc = Located.map (fun _nt -> DType ($2, ParameterVar ntloc)) ntloc in (* ugly/weird *)
+      and dtype ntloc = Located.map (fun _nt -> DType ($2, ParamVar ntloc)) ntloc in (* ugly/weird *)
       List.map (Located.map dstart) $3 @
       List.map dtype $3 }
 

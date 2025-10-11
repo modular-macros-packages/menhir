@@ -73,7 +73,7 @@ let rules =
    and return its name. *)
 
 let var (symbol : symbol) : parameter =
-  ParameterVar (locate dummy symbol)
+  ParamVar (locate dummy symbol)
 
 let anonymous pos (parameters : symbol list) (branches : parameterized_branch list) : parameter =
   (* Compute the free symbols of [branches]. They should form a subset
@@ -109,7 +109,7 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
 
 let rec transform_parameter (parameters : symbol list) (p : parameter) : parameter =
   match p with
-  | ParameterVar _ ->
+  | ParamVar _ ->
       p
   | ParameterApp (x, ps) ->
       ParameterApp (x, List.map (transform_parameter parameters) ps)
