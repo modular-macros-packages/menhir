@@ -64,7 +64,7 @@ let () =
 (* Eliminate anonymous rules. *)
 
 let grammars : Syntax.partial_grammar list =
-  List.map Anonymous.transform_partial_grammar grammars
+  List.map EliminateAnonymousRules.transform grammars
 
 (* ------------------------------------------------------------------------- *)
 

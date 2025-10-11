@@ -11,14 +11,14 @@
 open Located
 open Syntax
 
-(* For each anonymous rule, we define a fresh nonterminal symbol, and
-   replace the anonymous rule with a reference to this symbol. If the
-   anonymous rule appears inside a parameterized rule, then we must
-   define a parameterized nonterminal symbol. *)
+(* For each anonymous rule, we define a fresh nonterminal symbol, and replace
+   the anonymous rule with a reference to this symbol. If the anonymous rule
+   appears inside a parameterized rule, then we must define a parameterized
+   nonterminal symbol. *)
 
 (* ------------------------------------------------------------------------ *)
 
-(* Computing the free names of some syntactic categories. *)
+(* These functions compute the free names in several syntactic categories.  *)
 
 let rec fn_parameter accu (p : parameter) =
   (* [p] cannot be [ParamAnonymous _]. *)
@@ -40,8 +40,8 @@ let fn_branches accu branches =
 
 (* ------------------------------------------------------------------------ *)
 
-(* This functor makes it easy to share mutable internal state between
-   the functions that follow. *)
+(* This functor makes it easy to share mutable internal state between the
+   functions that follow. *)
 
 module Run () = struct
 
@@ -49,87 +49,82 @@ module Run () = struct
 
 (* A fresh name generator. *)
 
-let fresh : unit -> string =
-  let next = ref 0 in
-  fun () ->
-    Printf.sprintf "__anonymous_%d" (MInt.postincrement next)
+let next =
+  ref 0
+
+let fresh () =
+  Printf.sprintf "__anonymous_%d" (MInt.postincrement next)
 
 (* ------------------------------------------------------------------------ *)
 
-(* A rule accumulator. Used to collect the fresh definitions that we
-   produce. *)
+(* This accumulator collects the fresh rules that we produce. *)
 
 let rules =
   ref []
 
 (* ------------------------------------------------------------------------ *)
 
-(* [anonymous pos parameters branches] deals with an anonymous rule,
-   at position [pos], which appears inside a possibly-parameterized
-   rule whose parameters are [parameters], and whose body is
-   [branches]. We assume that [branches] does not itself contain any
-   anonymous rules. As a side effect, we create a fresh definition,
-   and return its name. *)
+(* [anonymous xs branches] deals with an anonymous rule, which appears inside
+   a possibly-parameterized rule whose parameters are [xs], and whose body is
+   [branches]. We assume that [branches] does not itself contain any anonymous
+   rules. As a side effect, we create a fresh definition, and return its
+   name. *)
 
-let anonymous pos (parameters : symbol list) (branches : parameterized_branch list) : parameter =
-  (* Compute the free symbols of [branches]. They should form a subset
-     of [parameters], although we have not yet checked this. We create
-     a definition that is parameterized only over the parameters that
-     actually occur free in the definition -- i.e., a definition without
-     useless parameters. This seems important, as (in some situations)
-     it avoids duplication and leads to fewer states in the automaton. *)
+let anonymous xs (branches : parameterized_branch list located) : parameter =
+  let pos, branches = position branches, value branches in
+  (* Compute the free symbols of [branches]. They should form a subset of
+     [xs], although we have not yet checked this. We create a definition that
+     is parameterized only over the parameters that actually occur free in the
+     definition -- i.e., a definition without useless parameters. This seems
+     important, as (in some situations) it avoids duplication and leads to
+     fewer states in the automaton. *)
   let used = fn_branches StringSet.empty branches in
-  let parameters = List.filter (fun x -> StringSet.mem x used) parameters in
+  let xs = List.filter (fun x -> StringSet.mem x used) xs in
   (* Generate a fresh non-terminal symbol. *)
   let symbol = fresh() in
   (* Construct its definition. Note that it is implicitly marked %inline.
      Also, it does not carry any attributes; this is consistent
      with the fact that %inline symbols cannot carry attributes. *)
   let rule = {
-    pr_public = false;
-    pr_inline = true;
+    pr_public      = false;
+    pr_inline      = true;
     pr_nt          = symbol;
-    pr_positions   = [ pos ]; (* this list is not allowed to be empty *)
+    pr_positions   = [ pos ]; (* this list must not be empty *)
     pr_attributes  = [];
-    pr_parameters  = parameters;
+    pr_parameters  = xs;
     pr_branches    = branches
   } in
   (* Record this definition. *)
   rules := rule :: !rules;
   (* Return the symbol that stands for it. *)
-  Parameter.apply (locate pos symbol) (List.map Parameter.var parameters)
+  Parameter.apply (locate pos symbol) (List.map Parameter.var xs)
 
 (* ------------------------------------------------------------------------ *)
 
 (* Traversal code. *)
 
-let rec transform_parameter (parameters : symbol list) (p : parameter) : parameter =
+let rec transform_parameter xs (p : parameter) =
   match p with
-  | ParamVar _ ->
-      p
+  | ParamVar x ->
+      ParamVar x
   | ParamApp (x, ps) ->
-      ParamApp (x, List.map (transform_parameter parameters) ps)
+      ParamApp (x, List.map (transform_parameter xs) ps)
   | ParamAnonymous branches ->
-      let pos = position branches
-      and branches = value branches in
       (* Do not forget the recursive invocation! *)
-      let branches = List.map (transform_parameterized_branch parameters) branches in
+      let branches = Located.map (List.map (transform_branch xs)) branches in
       (* This is where the real work is done. *)
-      anonymous pos parameters branches
+      anonymous xs branches
 
-and transform_producer parameters ((x, p, attrs) : producer) =
-  x, transform_parameter parameters p, attrs
+and transform_producer xs ((x, p, attrs) : producer) =
+  x, transform_parameter xs p, attrs
 
-and transform_parameterized_branch parameters branch =
-  let pb_producers =
-    List.map (transform_producer parameters) branch.pb_producers
-  in
+and transform_branch xs branch =
+  let pb_producers = List.map (transform_producer xs) branch.pb_producers in
   { branch with pb_producers }
 
-let transform_parameterized_rule rule =
-  let pr_branches =
-    List.map (transform_parameterized_branch rule.pr_parameters) rule.pr_branches
-  in
+let transform_rule rule =
+  let xs = rule.pr_parameters in
+  let pr_branches = List.map (transform_branch xs) rule.pr_branches in
   { rule with pr_branches }
 
 end
@@ -138,8 +133,8 @@ end
 
 (* The main entry point invokes the functor and reads its result. *)
 
-let transform_partial_grammar g =
+let transform g =
   let module R = Run() in
-  let pg_rules = List.map R.transform_parameterized_rule g.pg_rules in
+  let pg_rules = List.map R.transform_rule g.pg_rules in
   let pg_rules = !R.rules @ pg_rules in
   { g with pg_rules }

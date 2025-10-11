@@ -10,4 +10,6 @@
 
 open Syntax
 
-val transform_partial_grammar: partial_grammar -> partial_grammar
+(**[transform] eliminates all anonymous rules in a partial grammar. Thus, the
+   result grammar does not use the constructor [ParameterAnonymous] any more. *)
+val transform: partial_grammar -> partial_grammar
