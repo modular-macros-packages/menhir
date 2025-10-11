@@ -131,6 +131,6 @@ let dealias_grammars aliasmap gs =
 
 (* The two phases above are combined as follows. *)
 
-let dealias_grammars gs =
+let transform gs =
   let aliasmap = collect_aliases_from_grammars gs in
   dealias_grammars aliasmap gs

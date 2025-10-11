@@ -66,12 +66,16 @@ let () =
 let grammars : Syntax.partial_grammar list =
   List.map EliminateAnonymousRules.transform grammars
 
+(* Remove all uses of token aliases. *)
+let grammars =
+  ExpandTokenAliases.transform grammars
+
 (* ------------------------------------------------------------------------- *)
 
 (* If several grammar files were specified, merge them. *)
 
 let grammar : Syntax.grammar =
-  PartialGrammar.join_partial_grammars grammars
+  PartialGrammar.join grammars
 
 (* ------------------------------------------------------------------------- *)
 

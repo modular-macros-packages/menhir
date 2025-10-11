@@ -733,9 +733,7 @@ let check_parameterized_grammar_is_well_defined grammar =
         ) grammar.p_tokens
   end
 
-let join_partial_grammars pgs =
-  (* Prior to joining the partial grammars, remove all uses of token aliases. *)
-  let pgs = ExpandTokenAliases.dealias_grammars pgs in
+let join pgs =
   (* Join the partial grammars. *)
   let grammar = List.fold_left join empty_grammar pgs in
   let symbols = List.map (symbols_of grammar) pgs in

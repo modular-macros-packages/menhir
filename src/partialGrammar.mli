@@ -10,5 +10,5 @@
 
 open Syntax
 
-val join_partial_grammars :
-  partial_grammar list -> grammar
+(**[join] combines several partial grammars to form a single grammar. *)
+val join : partial_grammar list -> grammar
