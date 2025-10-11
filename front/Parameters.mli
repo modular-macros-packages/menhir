@@ -34,9 +34,8 @@ val iter : (symbol located -> unit) -> parameter -> unit
    the parameter [p]. *)
 val map : (symbol -> symbol) -> parameter -> parameter
 
+(**[occurs s p] tests whether the symbol [s] appears in the parameter [p]. *)
 val occurs : symbol -> parameter -> bool
-val occurs_shallow : symbol -> parameter -> bool
-val occurs_deep : symbol -> parameter -> bool
 
 type t = parameter
 val equal : t -> t -> bool

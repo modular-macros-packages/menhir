@@ -53,25 +53,6 @@ let rec occurs x p =
   | ParamAnonymous _ ->
       assert false
 
-let occurs_shallow x p =
-  match p with
-  | ParamVar y ->
-      x = value y
-  | ParamApp (y, _) ->
-      assert (x <> value y);
-      false
-  | ParamAnonymous _ ->
-      assert false
-
-let occurs_deep (x : symbol) (p : parameter) =
-  match p with
-  | ParamVar _ ->
-      false
-  | ParamApp (_, ps) ->
-      List.exists (occurs x) ps
-  | ParamAnonymous _ ->
-      assert false
-
 type t = parameter
 
 let rec equal x y =

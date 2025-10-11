@@ -135,12 +135,11 @@ let used : formal -> bool =
    symbol G does not use its [j]-th parameter, then the edge of F/i to G/j
    should not be created, nor should the applications inside K be inspected. *)
 
-(* The code below has quadratic complexity because [Parameters.occurs_deep]
-   is expensive. In principle, we could achieve linear complexity by first
-   annotating subterm (bottom-up) with a Boolean flag that indicates whether
-   [x] occurs (shallowly/deeply) in it; that would allow us to implement
-   [occurs_deep] in constant time. However, in practice, quadratic complexity
-   is probably good enough. *)
+(* The code below has quadratic complexity because we perform repeated occurs
+   checks. In principle, we could achieve linear complexity by first
+   annotating each subterm (bottom-up) with information that indicates whether
+   [x] occurs in it and where (at the root, or deeply). In practice, quadratic
+   complexity is good enough. *)
 
 type edge =
   | Safe
@@ -162,9 +161,12 @@ let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) 
           (* If [x] occurs in the [i]-th actual parameter of this application,
              then there is an edge to the formal [nt, i]. Whether it is a safe
              or dangerous edge depends on whether [x] occurs shallow or deep. *)
-          if Parameters.occurs_shallow x param then
+          let head, children = Parameters.destruct param in
+          if x = value head then
+            (* [x] occurs shallow. *)
             f Safe (nt, i)
-          else if Parameters.occurs_deep x param then
+          else if List.exists (Parameters.occurs x) children then
+            (* [x] occurs deep. *)
             f Dangerous (nt, i)
         end
       ) params
