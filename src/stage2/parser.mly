@@ -438,7 +438,7 @@ producer:
     { Parameters.apply symbol actuals }
 (* 2- *)
 | p = B m = located(modifier)
-    { ParamApp (m, [ p ]) }
+    { Parameters.apply m [p] }
 
 strict_actual:
   p = generic_actual(strict_actual, strict_actual)

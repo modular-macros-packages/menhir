@@ -145,7 +145,7 @@ open G
    so they must not be used within a rule. (The sort environment would have
    to be extended with information about the formal parameters.) *)
 
-let sort symbol =
+let symbol_sort symbol =
   try
     StringMap.find (value symbol) sorts
   with Not_found ->
@@ -154,7 +154,7 @@ let sort symbol =
 let sort param =
   match param with
   | ParamVar sym ->
-      sort sym
+      symbol_sort sym
   | ParamApp (_, params) ->
       assert (params <> []);
       (* An application always has sort [*]. *)
@@ -302,7 +302,7 @@ let rec recognize (param : parameter) : parameter =
             inst, residuals
         | ExpandHigherSort ->
             (* Expansion of only the parameters of higher sort. *)
-            let ss : sort list = domain (sort (ParamVar sym)) in
+            let ss : sort list = domain (symbol_sort sym) in
             assert (List.length ps = List.length ss);
             let pss = List.combine ps ss in
             let inst =
