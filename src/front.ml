@@ -68,7 +68,8 @@ let grammars : Syntax.partial_grammar list =
 
 (* Remove all uses of token aliases. *)
 let grammars =
-  ExpandTokenAliases.transform grammars
+  let module E = ExpandTokenAliases.Make(Error) in
+  E.transform grammars
 
 (* ------------------------------------------------------------------------- *)
 
