@@ -8,8 +8,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Range
 open Located
 open Syntax
+
+let var x =
+  ParamVar (locate dummy x)
 
 let apply p ps =
   match ps with

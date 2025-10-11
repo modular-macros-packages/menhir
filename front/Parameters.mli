@@ -16,6 +16,9 @@
 
 open Syntax
 
+(**[var] converts a symbol to a parameter. A dummy location is used. *)
+val var : symbol -> parameter
+
 (**[apply s ps] constructs an application of the symbol [s] to the
    parameters [ps]. The list [ps] can be empty. This smart constructor
    should be preferred to a direct use of the constructor [ParamApp],

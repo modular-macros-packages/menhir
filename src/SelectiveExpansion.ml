@@ -171,7 +171,7 @@ let sort param =
 (* We use an inefficient linear search, but that shouldn't be a problem. *)
 
 let global_attributes (nt : symbol) : attribute list =
-  let param = ParamVar (locate dummy nt) in
+  let param = Parameters.var nt in
   List.concat (List.map (fun (params, attrs) ->
     if List.exists (Parameters.equal param) params then attrs else []
   ) g.p_symbol_attributes)
@@ -386,7 +386,7 @@ let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols
              trouble. We avoid this problem by systematically renaming every
              formal parameter to a fresh unlikely name. *)
           let formal = freshen formal in
-          ParamVar (locate dummy formal),
+          Parameters.var formal,
           formal :: residuals
     in
     Env.add formal param env, residuals

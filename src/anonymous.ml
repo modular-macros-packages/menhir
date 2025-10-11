@@ -8,7 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Range
 open Located
 open Syntax
 
@@ -72,9 +71,6 @@ let rules =
    anonymous rules. As a side effect, we create a fresh definition,
    and return its name. *)
 
-let var (symbol : symbol) : parameter =
-  ParamVar (locate dummy symbol)
-
 let anonymous pos (parameters : symbol list) (branches : parameterized_branch list) : parameter =
   (* Compute the free symbols of [branches]. They should form a subset
      of [parameters], although we have not yet checked this. We create
@@ -101,7 +97,7 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
   (* Record this definition. *)
   rules := rule :: !rules;
   (* Return the symbol that stands for it. *)
-  Parameters.apply (locate pos symbol) (List.map var parameters)
+  Parameters.apply (locate pos symbol) (List.map Parameters.var parameters)
 
 (* ------------------------------------------------------------------------ *)
 
