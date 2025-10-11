@@ -19,11 +19,6 @@ module T = BasicSyntax
 
 (* Most of the translation is straightforward. *)
 
-let head (param : S.parameter) : S.symbol S.located =
-  let head, children = Parameters.destruct param in
-  assert (children = []);
-  head
-
 let drop_parameter (param : S.parameter) : S.symbol =
   match param with
   | S.ParamVar sym ->
@@ -79,7 +74,7 @@ let drop_declarations
      declaration. To do this, we first build a map of symbols to info *and*
      position... *)
   List.fold_left (fun accu (param, info) ->
-    let head = head param in
+    let head = Parameters.head param in
     let symbol = value head in
     begin match StringMap.find symbol accu with
     | exception Not_found ->

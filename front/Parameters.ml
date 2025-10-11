@@ -27,6 +27,11 @@ let destruct p =
   | ParamAnonymous _ ->
       assert false
 
+let head p =
+  let x, ps = destruct p in
+  assert (ps = []);
+  x
+
 let rec iter f = function
   | ParamVar x ->
       f x

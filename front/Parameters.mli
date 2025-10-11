@@ -26,6 +26,10 @@ val apply : symbol located -> parameters -> parameter
    [s] to a list of parameters [ps]. *)
 val destruct : parameter -> symbol located * parameters
 
+(**[head p] destructs the parameter [p] into a symbol [s] applied to an empty
+   list of parameters. If the list of parameters is not empty then it fails. *)
+val head : parameter -> symbol located
+
 (**[iter f p] applies the action [f] to every symbol that appears in the
    parameter [p]. *)
 val iter : (symbol located -> unit) -> parameter -> unit
