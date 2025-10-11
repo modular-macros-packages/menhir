@@ -122,9 +122,6 @@
 * For Frédéric, add option `--lax` to tolerate reduce/reduce conflicts,
   solving them in an arbitrary way.
 
-* When `--no-code-generation` or `--interpret` is used, Menhir should accept
-  both `.vy` and `.mly` file extensions.
-
 * Place a comment at the beginning of the generated code, indicating by which
   version of Menhir it was introduced, and with which command line. (All
   back-ends must do so. Arrange to share the code that does this.)
