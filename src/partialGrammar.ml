@@ -175,7 +175,7 @@ let rewrite_nonterminal (phi : renaming) nonterminal =
     nonterminal
 
 let rewrite_parameter phi parameter =
-  Parameters.map (rewrite_nonterminal phi) parameter
+  Parameters.map (Located.map (rewrite_nonterminal phi)) parameter
 
 let rewrite_producer phi ((ido, parameter, attrs) : producer) =
   ido, rewrite_parameter phi parameter, attrs

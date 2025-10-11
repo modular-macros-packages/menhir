@@ -45,9 +45,9 @@ let rec iter f p =
 let rec map f p =
   match p with
   | ParamVar x ->
-      ParamVar (Located.map f x)
+      ParamVar (f x)
   | ParamApp (x, ps) ->
-      ParamApp (Located.map f x, List.map (map f) ps)
+      ParamApp (f x, List.map (map f) ps)
   | ParamAnonymous _ ->
       assert false
 

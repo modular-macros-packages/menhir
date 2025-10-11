@@ -78,16 +78,7 @@ let dealias_symbol aliasmap (sym : terminal located) =
   map (dealias_terminal aliasmap pos) sym
 
 let rec dealias_parameter aliasmap (param : parameter) =
-  match param with
-  | ParamVar sym ->
-      ParamVar (dealias_symbol aliasmap sym)
-  | ParamApp (sym, params) ->
-      ParamApp (
-        dealias_symbol aliasmap sym,
-        dealias_parameters aliasmap params
-      )
-  | ParamAnonymous branches ->
-      ParamAnonymous (map (dealias_branches aliasmap) branches)
+  Parameters.map (dealias_symbol aliasmap) param
 
 and dealias_parameters aliasmap params =
   List.map (dealias_parameter aliasmap) params

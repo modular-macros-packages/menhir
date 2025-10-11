@@ -36,7 +36,7 @@ val iter : (symbol located -> unit) -> parameter -> unit
 
 (**[map f p] applies the transformation [f] to every symbol that appears in
    the parameter [p]. *)
-val map : (symbol -> symbol) -> parameter -> parameter
+val map : (symbol located -> symbol located) -> parameter -> parameter
 
 (**[occurs s p] tests whether the symbol [s] appears in the parameter [p]. *)
 val occurs : symbol -> parameter -> bool
