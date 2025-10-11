@@ -148,8 +148,15 @@ let join_declaration (grammar : grammar) decl : grammar =
       { grammar with
         p_symbol_attributes = (actuals, attrs) :: grammar.p_symbol_attributes }
 
+(* [join_declarations decls grammar] adds the declarations [decls] to the
+   grammar [grammar]. *)
+
+let join_declarations decls grammar =
+  List.fold_left join_declaration grammar decls
+
 (* -------------------------------------------------------------------------- *)
-(* This stores an optional postlude into a grammar.
+
+(* [join_postlude] adds an optional postlude to a grammar.
    Postludes are stored in an arbitrary order. *)
 
 let join_postlude postlude grammar =
@@ -160,6 +167,7 @@ let join_postlude postlude grammar =
       { grammar with p_postludes = postlude :: grammar.p_postludes }
 
 (* -------------------------------------------------------------------------- *)
+
 (* We rewrite definitions when nonterminals are renamed. The
    renaming [phi] is an association list of names to names. *)
 
@@ -417,7 +425,7 @@ let iter_on_only_used_symbols f t =
        | _ -> ())
     t
 
-let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
+let symbols_of grammar (pg : Syntax.partial_grammar) =
   let tokens = grammar.p_tokens in
   let symbols_of_rule symbols prule =
     let rec store_except_rule_parameters symbols parameter =
@@ -450,7 +458,7 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
       else
         store_private_nonterminal tokens symbols prule.pr_nt prule.pr_positions
   in
-    List.fold_left symbols_of_rule (empty_symbol_table ()) pgrammar.pg_rules
+    List.fold_left symbols_of_rule (empty_symbol_table ()) pg.pg_rules
 
 let merge_rules symbols pgs =
 
@@ -545,7 +553,7 @@ let merge_rules symbols pgs =
               StringMap.add r.pr_nt r rules) rules rpg.pg_rules)
       StringMap.empty rpgs
 
-let empty_grammar =
+let empty : grammar =
   {
     p_preludes                = [];
     p_postludes               = [];
@@ -559,17 +567,19 @@ let empty_grammar =
     p_symbol_attributes       = [];
   }
 
-let join grammar pgrammar =
-  List.fold_left join_declaration grammar pgrammar.pg_declarations
-  |> join_postlude pgrammar.pg_postlude
+(* [join grammar pg] adds the declarations and postludes of the partial
+   grammar [pg] to the grammar [grammar]. *)
+
+let join grammar pg =
+  grammar
+  |> join_declarations pg.pg_declarations
+  |> join_postlude pg.pg_postlude
 
 let join pgs =
-  (* Join the partial grammars. *)
-  let grammar = List.fold_left join empty_grammar pgs in
+  let grammar = List.fold_left join empty pgs in
   let symbols = List.map (symbols_of grammar) pgs in
   let tpgs = List.combine symbols pgs in
   let rules = merge_rules symbols tpgs in
-  let grammar = { grammar with p_rules = rules } in
-  grammar
+  { grammar with p_rules = rules }
 
 end (* Make *)
