@@ -146,32 +146,26 @@ type edge =
   | Dangerous
 
 let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
-  match param with
-  | ParamVar _ ->
-      (* This is not an application. No successors. *)
-      ()
-  | ParamApp (sym, params) ->
-      let nt = value sym in
-      List.iteri (fun i param ->
-        (* If it is known that [nt] does not use its [i]-th parameter, then
-           there is nothing to do here. *)
-        if used (nt, i) then begin
-          (* Check, recursively, the applications that appear inside [param]. *)
-          successors_parameter f x param;
-          (* If [x] occurs in the [i]-th actual parameter of this application,
-             then there is an edge to the formal [nt, i]. Whether it is a safe
-             or dangerous edge depends on whether [x] occurs shallow or deep. *)
-          let head, children = Parameters.destruct param in
-          if x = value head then
-            (* [x] occurs shallow. *)
-            f Safe (nt, i)
-          else if List.exists (Parameters.occurs x) children then
-            (* [x] occurs deep. *)
-            f Dangerous (nt, i)
-        end
-      ) params
-  | ParamAnonymous _ ->
-      assert false
+  let sym, params = Parameters.destruct param in
+  let nt = value sym in
+  List.iteri (fun i param ->
+    (* If it is known that [nt] does not use its [i]-th parameter, then
+       there is nothing to do here. *)
+    if used (nt, i) then begin
+      (* Check, recursively, the applications that appear inside [param]. *)
+      successors_parameter f x param;
+      (* If [x] occurs in the [i]-th actual parameter of this application,
+         then there is an edge to the formal [nt, i]. Whether it is a safe
+         or dangerous edge depends on whether [x] occurs shallow or deep. *)
+      let head, children = Parameters.destruct param in
+      if x = value head then
+        (* [x] occurs shallow. *)
+        f Safe (nt, i)
+      else if List.exists (Parameters.occurs x) children then
+        (* [x] occurs deep. *)
+        f Dangerous (nt, i)
+    end
+  ) params
 
 let successors_producer f x ((_, param, _) : producer) =
   successors_parameter f x param
