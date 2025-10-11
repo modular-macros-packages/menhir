@@ -187,9 +187,17 @@ type on_error_reduce_level =
 (**The old rule syntax. Although old, still used internally. The new syntax
    is translated down to it. *)
 
-(**A parameter is either just a symbol or an application of a symbol to a
-   nonempty tuple of parameters. Before anonymous rules have been eliminated,
-   it can also be an anonymous rule, represented as a list of branches. *)
+(**A parameter is either a symbol or an application of a symbol to a
+   nonempty tuple of parameters. These two cases correspond to the
+   constructors [ParamVar] and [ParamApp].
+
+   Although it might seem tempting to fuse these constructors into one, one
+   must not do so. Indeed, every application must have sort [*], whereas a
+   variable can have an arbitrary sort. Therefore, a variable should not be
+   viewed as an application of a variable to zero arguments.
+
+   Before anonymous rules have been eliminated, a parameter can also be
+   an anonymous rule, represented as a list of branches. *)
 type parameter =
   | ParamVar of symbol located
   | ParamApp of symbol located * parameters
