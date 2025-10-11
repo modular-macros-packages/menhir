@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Attribute
-let value = Located.value
+let value, position = Located.(value, position)
 (* The source. *)
 module S = Syntax
 (* The target. *)
@@ -18,6 +18,11 @@ module T = BasicSyntax
 (* -------------------------------------------------------------------------- *)
 
 (* Most of the translation is straightforward. *)
+
+let head (param : S.parameter) : S.symbol S.located =
+  let head, children = Parameters.destruct param in
+  assert (children = []);
+  head
 
 let drop_parameter (param : S.parameter) : S.symbol =
   match param with
@@ -74,16 +79,17 @@ let drop_declarations
      declaration. To do this, we first build a map of symbols to info *and*
      position... *)
   List.fold_left (fun accu (param, info) ->
-    let symbol = drop_parameter param in
+    let head = head param in
+    let symbol = value head in
     begin match StringMap.find symbol accu with
     | exception Not_found ->
         ()
-    | (_, position) ->
-        Error.error [position; Parameters.position param]
+    | (_, pos) ->
+        Error.error [pos; position head]
           "there are multiple %s declarations for the symbol %s."
           kind symbol
     end;
-    StringMap.add symbol (f info, Parameters.position param) accu
+    StringMap.add symbol (f info, position head) accu
   ) StringMap.empty decls
   (* ... then drop the positions. *)
   |> StringMap.map (fun (info, _) -> info)
