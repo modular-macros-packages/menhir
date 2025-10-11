@@ -37,9 +37,14 @@ val map : (symbol -> symbol) -> parameter -> parameter
 (**[occurs s p] tests whether the symbol [s] appears in the parameter [p]. *)
 val occurs : symbol -> parameter -> bool
 
-type t = parameter
-val equal : t -> t -> bool
-val hash : t -> int
-val position : parameter -> range
+(**[equal] tests whether two parameters are equal.
+   The position information is ignored. *)
+val equal : parameter -> parameter -> bool
+
+(**[hash] hashes a parameter.
+   The position information is ignored.
+   [hash] is compatible with {!equal}. *)
+val hash : parameter -> int
+
 val locate : parameter -> parameter located
 val print : bool -> parameter -> string

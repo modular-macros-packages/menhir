@@ -631,16 +631,17 @@ let check_parameterized_grammar_is_well_defined grammar =
   let rec check (kind : string) (must_be_nonterminal : bool) (p : Syntax.parameter) =
     (* Destructure head and arguments. *)
     let head, ps = Parameters.destruct p in
-    let head = value head in
+    let head = value head
+    and pos = position head in
     (* Check if [head] is a nonterminal or terminal symbol. *)
     let is_nonterminal = StringMap.mem head grammar.p_rules
     and is_terminal = StringMap.mem head grammar.p_tokens || List.mem head reserved in
     (* If [head] is not satisfactory, error. *)
     if not (is_terminal || is_nonterminal) then
-      Error.error [Parameters.position p]
+      Error.error [pos]
              "%s is undefined." head;
     if (must_be_nonterminal && not is_nonterminal) then
-      Error.error [Parameters.position p]
+      Error.error [pos]
              "%s is a terminal symbol,\n\
               but %s declarations are applicable only to nonterminal symbols."
              (Parameters.print true p) kind;

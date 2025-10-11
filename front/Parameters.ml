@@ -53,8 +53,6 @@ let rec occurs x p =
   | ParamAnonymous _ ->
       assert false
 
-type t = parameter
-
 let rec equal x y =
   match x, y with
     | ParamVar x, ParamVar y ->
