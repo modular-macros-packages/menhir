@@ -19,72 +19,75 @@ module Make (Error : sig
 end) = struct
 
 (* ------------------------------------------------------------------------- *)
-(* This adds one declaration [decl], as found in file [filename], to
-   the grammar [grammar]. *)
 
-let join_declaration (grammar : grammar) decl =
+(* [update_properties] updates an existing token-property record with
+   the information found in a %token declaration at position [pos].
+   This information includes [ocamltype], [t], [alias], and [attrs]. *)
+
+let update_properties properties pos ocamltype t alias attrs =
+  (* If the previous definition was a %token declaration (as opposed to
+     a %left, %right, or %nonassoc specification), signal an error. *)
+  if properties.tk_is_declared then
+    Error.error [pos] "the token %s has multiple definitions." t;
+  (* Otherwise, update the previous definition. *)
+  { properties with
+    tk_is_declared = true;
+    tk_position    = pos;
+    tk_ocamltype   = ocamltype;
+    tk_alias       = alias;
+    tk_attributes  = attrs }
+
+(* [create_properties] creates a new token-property record based on the
+   information found in a %token declaration. *)
+
+let create_properties pos ocamltype t alias attrs =
+  ignore t;
+  { tk_associativity = UndefinedAssoc;
+    tk_precedence    = UndefinedPrecedence;
+    tk_is_declared   = true;
+    tk_position      = pos;
+    tk_ocamltype     = ocamltype;
+    tk_alias         = alias;
+    tk_attributes    = attrs }
+
+(* ------------------------------------------------------------------------- *)
+
+(* [join_declaration grammar decl] adds the declaration [decl] to the
+   grammar [grammar]. *)
+
+let join_declaration (grammar : grammar) decl : grammar =
   match value decl with
 
-  (* Preludes are stored in an arbitrary order. The order of
-     preludes within a single source file is preserved. Same
-     treatment for functor parameters. *)
+  (* We store preludes (code fragments) in the joined grammar in an
+     arbitrary order, yet we preserve the order of two preludes that
+     originate in the same source file is preserved. *)
 
   | DCode code ->
       { grammar with p_preludes = grammar.p_preludes @ [ code ] }
+
+  (* Functor parameters are treated in the same way. *)
+
   | DParameter fragment ->
       { grammar with p_parameters = grammar.p_parameters @ [ fragment ] }
 
-  (* Token declarations are recorded. Things are made somewhat
-     difficult by the fact that %token and %left-%right-%nonassoc
-     declarations are independent. *)
+  (* Token declarations are recorded. Things are made somewhat difficult by
+     the fact that %token and %left-%right-%nonassoc declarations are
+     independent. *)
 
   (* If a token carries an alias, it is recorded in the field [tk_alias]. *)
 
-  | DToken (ocamltype, terminal, alias, attributes) ->
-      let token_property =
-        try
-
-          (* Retrieve any previous definition for this token. *)
-
-          let token_property =
-            StringMap.find terminal grammar.p_tokens
-          in
-
-          (* If the previous definition was actually a %token declaration
-             (as opposed to a %left, %right, or %nonassoc specification),
-             signal an error. *)
-
-          if token_property.tk_is_declared then
-            Error.error [position decl]
-              "the token %s has multiple definitions." terminal;
-
-          (* Otherwise, update the previous definition. *)
-
-          { token_property with
-            tk_is_declared = true;
-            tk_ocamltype   = ocamltype;
-            tk_position    = position decl;
-            tk_attributes  = attributes;
-            tk_alias       = alias;
-          }
-
-        with Not_found ->
-
-          (* If no previous definition exists, create one. *)
-
-          {
-            tk_ocamltype     = ocamltype;
-            tk_associativity = UndefinedAssoc;
-            tk_precedence    = UndefinedPrecedence;
-            tk_position      = position decl;
-            tk_attributes    = attributes;
-            tk_is_declared   = true;
-            tk_alias         = alias;
-          }
-
+  | DToken (ocamltype, t, alias, attrs) ->
+      (* Create or update a token-property record for the token [t]. *)
+      let properties =
+        match StringMap.find t grammar.p_tokens with
+        | exception Not_found ->
+            create_properties (position decl) ocamltype t alias attrs
+        | properties ->
+            update_properties properties (position decl) ocamltype t alias attrs
       in
+      (* Store this token-property record. *)
       { grammar with
-        p_tokens = StringMap.add terminal token_property grammar.p_tokens }
+        p_tokens = StringMap.add t properties grammar.p_tokens }
 
   (* Start symbols. *)
 
