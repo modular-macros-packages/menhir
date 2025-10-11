@@ -292,7 +292,7 @@ actuals:
   /* epsilon */
     { [] }
 | actuals optional_comma actual
-    { $3::$1 }
+    { $1 @ [$3] }
 
 optional_bar:
   /* epsilon */ %prec no_optional_bar
