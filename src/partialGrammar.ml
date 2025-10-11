@@ -175,7 +175,7 @@ let rewrite_nonterminal (phi : renaming) nonterminal =
     nonterminal
 
 let rewrite_parameter phi parameter =
-  Parameters.map (Located.map (rewrite_nonterminal phi)) parameter
+  Parameters.map (rewrite_nonterminal phi) parameter
 
 let rewrite_producer phi ((ido, parameter, attrs) : producer) =
   ido, rewrite_parameter phi parameter, attrs
@@ -420,7 +420,7 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
   let tokens = grammar.p_tokens in
   let symbols_of_rule symbols prule =
     let rec store_except_rule_parameters symbols parameter =
-      let symbol, parameters = Parameters.unapp parameter in
+      let symbol, parameters = Parameters.destruct parameter in
       (* Process the reference to [symbol]. *)
       let symbols =
         if List.mem (value symbol) prule.pr_parameters then
@@ -578,7 +578,11 @@ let check_inline_attribute prule =
 let reserved =
   [ "error" ]
 
-let check_identifier_reference mark_token_as_used grammar prule is_prec s p =
+let check_identifier_reference
+  mark_token_as_used grammar prule is_prec
+  (s : symbol located) =
+  let s = value s
+  and p = position s in
   if not is_prec && List.mem s prule.pr_parameters then
     (* A parameter of this rule. *)
     ()
@@ -626,7 +630,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 
   let rec check (kind : string) (must_be_nonterminal : bool) (p : Syntax.parameter) =
     (* Destructure head and arguments. *)
-    let head, ps = Parameters.unapp p in
+    let head, ps = Parameters.destruct p in
     let head = value head in
     (* Check if [head] is a nonterminal or terminal symbol. *)
     let is_nonterminal = StringMap.mem head grammar.p_rules
@@ -684,8 +688,6 @@ let check_parameterized_grammar_is_well_defined grammar =
 
             (* Check the producers. *)
             (fun already_seen (id, p, _) ->
-               let symbol, parameters = Parameters.unapp p in
-               let s = value symbol and p = position symbol in
                let already_seen =
                  (* Check the producer id is unique. *)
                  if StringSet.mem (value id) already_seen then
@@ -694,19 +696,13 @@ let check_parameterized_grammar_is_well_defined grammar =
                      (value id);
                  StringSet.add (value id) already_seen
                in
-
-                 (* Check that the producer is defined somewhere. *)
-                 check_identifier_reference false s p;
-                 StringMap.iter (check_identifier_reference false)
-                   (Parameters.identifiers parameters);
-
-                 already_seen
+               (* Check that the producer is defined somewhere. *)
+               Parameters.iter (check_identifier_reference false) p;
+               already_seen
 
             ) StringSet.empty producers);
 
-           Option.iter (fun terminal ->
-             check_identifier_reference true (value terminal) (position terminal)
-           ) pb_prec_annotation)
+           Option.iter (check_identifier_reference true) pb_prec_annotation)
 
          prule.pr_branches;
 

@@ -151,7 +151,7 @@ let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) 
   | ParamVar _ ->
       (* This is not an application. No successors. *)
       ()
-  | ParameterApp (sym, params) ->
+  | ParamApp (sym, params) ->
       let nt = value sym in
       List.iteri (fun i param ->
         (* If it is known that [nt] does not use its [i]-th parameter, then
@@ -168,7 +168,7 @@ let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) 
             f Dangerous (nt, i)
         end
       ) params
-  | ParameterAnonymous _ ->
+  | ParamAnonymous _ ->
       assert false
 
 let successors_producer f x ((_, param, _) : producer) =

@@ -122,13 +122,13 @@ let apply (param : parameter) (params : parameters) : parameter =
   match param with
   | ParamVar sym ->
       assert (params <> []);
-      ParameterApp (sym, params)
-  | ParameterApp _ ->
+      ParamApp (sym, params)
+  | ParamApp _ ->
       (* In a well-sorted grammar, only a variable can have higher
          sort. Here, [param] must have higher sort, so [param] must
          be a variable. This case cannot arise. *)
       assert false
-  | ParameterAnonymous _ ->
+  | ParamAnonymous _ ->
       (* Anonymous rules are eliminated early on. *)
       assert false
 
@@ -136,10 +136,10 @@ let rec subst_parameter env param : parameter =
   match param with
   | ParamVar sym ->
       subst_symbol env sym
-  | ParameterApp (sym, params) ->
+  | ParamApp (sym, params) ->
       assert (params <> []);
       apply (subst_symbol env sym) (subst_parameters env params)
-  | ParameterAnonymous _ ->
+  | ParamAnonymous _ ->
       (* Anonymous rules are eliminated early on. *)
       assert false
 
@@ -180,11 +180,11 @@ let sort param =
   match param with
   | ParamVar sym ->
       sort sym
-  | ParameterApp (_, params) ->
+  | ParamApp (_, params) ->
       assert (params <> []);
       (* An application always has sort [*]. *)
       star
-  | ParameterAnonymous _ ->
+  | ParamAnonymous _ ->
       assert false
 
 (* -------------------------------------------------------------------------- *)
@@ -304,11 +304,11 @@ let mangle : label -> nonterminal =
 let rec recognize (param : parameter) : parameter =
   (* [param] must have sort [star], in an appropriate sort environment. *)
   match param with
-  | ParameterAnonymous _ ->
+  | ParamAnonymous _ ->
       assert false
   | ParamVar _ ->
       param
-  | ParameterApp (sym, ps) ->
+  | ParamApp (sym, ps) ->
       assert (ps <> []);
       let x = value sym in
       (* This symbol is applied to at least one argument, so cannot be
@@ -513,12 +513,14 @@ let unthingify_parameter rules thing =
   match thing with
   | TargetParameterOfSortStar param ->
       (* This parameter has sort [star]. Keep it. *)
-     Some param
+      Some param
   | SourceParameterOfHigherSort param ->
       (* This parameter has higher sort. It must be a symbol.
          Keep it if it still appears in the expanded grammar. *)
-     let symbol = value (Parameters.unvar param) in
-     if StringMap.mem symbol rules then Some param else None
+      let symbol, params = Parameters.destruct param in
+      assert (params = []);
+      let symbol = value symbol in
+      if StringMap.mem symbol rules then Some param else None
 
 let unthingify_attribute_declaration rules (params, attrs) =
   (MList.filter_map (unthingify_parameter rules) params, attrs)

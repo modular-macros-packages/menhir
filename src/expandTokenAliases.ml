@@ -81,13 +81,13 @@ let rec dealias_parameter aliasmap (param : parameter) =
   match param with
   | ParamVar sym ->
       ParamVar (dealias_symbol aliasmap sym)
-  | ParameterApp (sym, params) ->
-      ParameterApp (
+  | ParamApp (sym, params) ->
+      ParamApp (
         dealias_symbol aliasmap sym,
         dealias_parameters aliasmap params
       )
-  | ParameterAnonymous branches ->
-      ParameterAnonymous (map (dealias_branches aliasmap) branches)
+  | ParamAnonymous branches ->
+      ParamAnonymous (map (dealias_branches aliasmap) branches)
 
 and dealias_parameters aliasmap params =
   List.map (dealias_parameter aliasmap) params

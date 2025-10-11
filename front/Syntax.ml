@@ -192,8 +192,8 @@ type on_error_reduce_level =
    it can also be an anonymous rule, represented as a list of branches. *)
 type parameter =
   | ParamVar of symbol located
-  | ParameterApp of symbol located * parameters
-  | ParameterAnonymous of parameterized_branch list located
+  | ParamApp of symbol located * parameters
+  | ParamAnonymous of parameterized_branch list located
 
 and parameters =
   parameter list

@@ -332,7 +332,7 @@ and nested_parameter (e : expression) : parameter =
 
 and choice_expression (e : expression) : parameter =
   let branches = productions e in
-  ParameterAnonymous (locate (position e) branches)
+  ParamAnonymous (locate (position e) branches)
 
 (* Converting the head of a sequence, a pair [x = e1] of a variable [x] and
    a symbol expression [e1], to a producer. *)

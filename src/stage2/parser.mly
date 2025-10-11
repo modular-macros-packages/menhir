@@ -438,7 +438,7 @@ producer:
     { Parameters.apply symbol actuals }
 (* 2- *)
 | p = B m = located(modifier)
-    { ParameterApp (m, [ p ]) }
+    { ParamApp (m, [ p ]) }
 
 strict_actual:
   p = generic_actual(strict_actual, strict_actual)
@@ -454,7 +454,7 @@ lax_actual:
 (* 3- *)
 | /* leading bar disallowed */
   branches = located(branches)
-    { ParameterAnonymous branches }
+    { ParamAnonymous branches }
     (* 2016/05/18: we used to eliminate anonymous rules on the fly during
        parsing. However, when an anonymous rule appears in a parameterized
        definition, the fresh nonterminal symbol that is created should be

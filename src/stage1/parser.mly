@@ -286,7 +286,7 @@ actual:
   symbol optional_actuals
     { Parameters.apply $1 $2 }
 | actual modifier
-    { ParameterApp ($2, [ $1 ]) }
+    { ParamApp ($2, [ $1 ]) }
 
 actuals:
   /* epsilon */

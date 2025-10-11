@@ -238,9 +238,9 @@ let rec higher_branch (br : Syntax.parameterized_branch) = {
 and parameter = function
   | Syntax.ParamVar sym ->
     ParameterVar (located sym)
-  | Syntax.ParameterApp (sym, args) ->
+  | Syntax.ParamApp (sym, args) ->
     ParameterApp (located sym, List.map parameter args)
-  | Syntax.ParameterAnonymous brs ->
+  | Syntax.ParamAnonymous brs ->
     ParameterAnonymous (located (map (List.map higher_branch) brs))
 
 and higher_producer (id, param, attr) =

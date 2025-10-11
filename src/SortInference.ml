@@ -113,7 +113,7 @@ let rec check_parameter env (param : parameter) (expected : variable) =
   | ParamVar sym ->
       let x = value sym in
       unify sym expected (find x env)
-  | ParameterApp (sym, actuals) ->
+  | ParamApp (sym, actuals) ->
       let x = value sym in
       (* This application has sort [star]. *)
       unify sym expected star;
@@ -140,7 +140,7 @@ let rec check_parameter env (param : parameter) (expected : variable) =
       in
       (* Check the sort of each actual parameter. *)
       List.iter2 (check_parameter env) actuals expected
-  | ParameterAnonymous _ ->
+  | ParamAnonymous _ ->
       (* Anonymous rules have been eliminated already. *)
       assert false
 

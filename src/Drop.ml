@@ -23,10 +23,10 @@ let drop_parameter (param : S.parameter) : S.symbol =
   match param with
   | S.ParamVar sym ->
       value sym
-  | S.ParameterApp _ ->
+  | S.ParamApp _ ->
       (* The grammar should not have any parameterized symbols. *)
       assert false
-  | S.ParameterAnonymous _ ->
+  | S.ParamAnonymous _ ->
       assert false
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =

@@ -22,8 +22,8 @@ open Syntax
 (* Computing the free names of some syntactic categories. *)
 
 let rec fn_parameter accu (p : parameter) =
-  (* [p] cannot be [ParameterAnonymous _]. *)
-  let x, ps = Parameters.unapp p in
+  (* [p] cannot be [ParamAnonymous _]. *)
+  let x, ps = Parameters.destruct p in
   let accu = StringSet.add (value x) accu in
   fn_parameters accu ps
 
@@ -111,9 +111,9 @@ let rec transform_parameter (parameters : symbol list) (p : parameter) : paramet
   match p with
   | ParamVar _ ->
       p
-  | ParameterApp (x, ps) ->
-      ParameterApp (x, List.map (transform_parameter parameters) ps)
-  | ParameterAnonymous branches ->
+  | ParamApp (x, ps) ->
+      ParamApp (x, List.map (transform_parameter parameters) ps)
+  | ParamAnonymous branches ->
       let pos = position branches
       and branches = value branches in
       (* Do not forget the recursive invocation! *)
