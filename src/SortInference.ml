@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let error    = Error.error
+let error = Error.error
 open Located
 open Syntax
 open SortUnification
