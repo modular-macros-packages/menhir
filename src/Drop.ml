@@ -20,14 +20,8 @@ module T = BasicSyntax
 (* Most of the translation is straightforward. *)
 
 let drop_parameter (param : S.parameter) : S.symbol =
-  match param with
-  | S.ParamVar sym ->
-      value sym
-  | S.ParamApp _ ->
-      (* The grammar should not have any parameterized symbols. *)
-      assert false
-  | S.ParamAnonymous _ ->
-      assert false
+  (* The grammar should not have any parameterized symbols. *)
+  value (Parameters.head param)
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
   {
