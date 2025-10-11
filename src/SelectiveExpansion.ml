@@ -345,7 +345,7 @@ let rec recognize (param : parameter) : parameter =
       let label : label = (x, inst) in
       enqueue label;
       let sym = mangle label in
-      Parameters.app (locate dummy sym) residuals
+      Parameters.apply (locate dummy sym) residuals
 
 (* -------------------------------------------------------------------------- *)
 

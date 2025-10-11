@@ -435,7 +435,7 @@ producer:
 %inline generic_actual(A, B):
 (* 1- *)
   symbol = symbol actuals = plist(A)
-    { Parameters.app symbol actuals }
+    { Parameters.apply symbol actuals }
 (* 2- *)
 | p = B m = located(modifier)
     { ParameterApp (m, [ p ]) }

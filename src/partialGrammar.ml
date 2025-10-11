@@ -698,7 +698,7 @@ let check_parameterized_grammar_is_well_defined grammar =
                  (* Check that the producer is defined somewhere. *)
                  check_identifier_reference false s p;
                  StringMap.iter (check_identifier_reference false)
-                   (List.fold_left Parameters.identifiers StringMap.empty parameters);
+                   (Parameters.identifiers parameters);
 
                  already_seen
 

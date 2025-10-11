@@ -284,7 +284,7 @@ actuals_comma:
 
 actual:
   symbol optional_actuals
-    { Parameters.app $1 $2 }
+    { Parameters.apply $1 $2 }
 | actual modifier
     { ParameterApp ($2, [ $1 ]) }
 

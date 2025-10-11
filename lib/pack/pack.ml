@@ -1,3 +1,13 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU Library General Public License version 2, with a    *)
+(*   special exception on linking, as described in the file LICENSE.          *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* This script finds the names of the modules in MenhirLib by reading the file
    menhirLib.mlpack. It then finds the source files for these modules in the
    parent directory (lib/), and concatenates them to create menhirLib.{ml,mli}

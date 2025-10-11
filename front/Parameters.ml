@@ -8,12 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* TEMPORARY clean up and write an .mli file *)
-
 open Located
 open Syntax
 
-let app p ps =
+let apply p ps =
   match ps with
   | [] ->
       ParamVar p
@@ -56,6 +54,9 @@ let rec fold f init = function
 
 let identifiers m p =
   fold (fun accu x -> StringMap.add (value x) (position x) accu) m p
+
+let identifiers ps =
+  List.fold_left identifiers StringMap.empty ps
 
 let rec occurs (x : symbol) (p : parameter) =
   match p with
