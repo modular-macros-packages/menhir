@@ -119,18 +119,11 @@ let subst_symbol env sym : parameter =
     ParamVar sym
 
 let apply (param : parameter) (params : parameters) : parameter =
-  match param with
-  | ParamVar sym ->
-      assert (params <> []);
-      ParamApp (sym, params)
-  | ParamApp _ ->
-      (* In a well-sorted grammar, only a variable can have higher
-         sort. Here, [param] must have higher sort, so [param] must
-         be a variable. This case cannot arise. *)
-      assert false
-  | ParamAnonymous _ ->
-      (* Anonymous rules are eliminated early on. *)
-      assert false
+  (* In a well-sorted grammar, only a variable can have higher
+     sort. Here, [param] must have higher sort, so [param] must
+     be a variable. *)
+  let x = Parameters.head param in
+  Parameters.apply x params
 
 let rec subst_parameter env param : parameter =
   match param with
