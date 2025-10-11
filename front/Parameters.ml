@@ -51,6 +51,20 @@ let rec map f p =
   | ParamAnonymous _ ->
       assert false
 
+let[@inline] apply' (p : parameter) (ps : parameters) : parameter =
+  (* In a well-sorted grammar, only a variable can have higher sort.
+     Here, [p] must have higher sort, so it must be a variable. *)
+  apply (head p) ps
+
+let rec subst f p =
+  match p with
+  | ParamVar x ->
+      f x
+  | ParamApp (x, ps) ->
+      apply' (f x) (List.map (subst f) ps)
+  | ParamAnonymous _ ->
+      assert false
+
 let rec occurs x p =
   match p with
   | ParamVar y ->

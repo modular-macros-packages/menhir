@@ -118,26 +118,8 @@ let subst_symbol env sym : parameter =
     (* [x] is not a formal parameter. It is a toplevel symbol. *)
     ParamVar sym
 
-let apply (param : parameter) (params : parameters) : parameter =
-  (* In a well-sorted grammar, only a variable can have higher
-     sort. Here, [param] must have higher sort, so [param] must
-     be a variable. *)
-  let x = Parameters.head param in
-  Parameters.apply x params
-
-let rec subst_parameter env param : parameter =
-  match param with
-  | ParamVar sym ->
-      subst_symbol env sym
-  | ParamApp (sym, params) ->
-      assert (params <> []);
-      apply (subst_symbol env sym) (subst_parameters env params)
-  | ParamAnonymous _ ->
-      (* Anonymous rules are eliminated early on. *)
-      assert false
-
-and subst_parameters env params =
-  List.map (subst_parameter env) params
+let subst_parameter env param : parameter =
+  Parameters.subst (subst_symbol env) param
 
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)

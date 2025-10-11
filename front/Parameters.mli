@@ -38,6 +38,11 @@ val iter : (symbol located -> unit) -> parameter -> unit
    the parameter [p]. *)
 val map : (symbol located -> symbol located) -> parameter -> parameter
 
+(**[subst f p] applies the substitution [f] to the parameter [p]. The
+   substitution [f] must be sort-preserving; in particular, a variable of
+   higher sort must be mapped to a variable of the same sort. *)
+val subst : (symbol located -> parameter) -> parameter -> parameter
+
 (**[occurs s p] tests whether the symbol [s] appears in the parameter [p]. *)
 val occurs : symbol -> parameter -> bool
 
