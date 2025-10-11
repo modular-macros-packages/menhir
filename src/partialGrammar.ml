@@ -12,6 +12,22 @@ open Attribute
 open Syntax
 open Located
 
+module Make (Error : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end) (X : sig
+
+  (**[ignore_unused_token t] returns [true] if an ignored-token warning
+     about the token [t] should be suppressed. *)
+  val ignore_unused_token : terminal -> bool
+
+end) = struct
+
 (* ------------------------------------------------------------------------- *)
 (* This adds one declaration [decl], as found in file [filename], to
    the grammar [grammar]. *)
@@ -719,19 +735,11 @@ let check_parameterized_grammar_is_well_defined grammar =
       ) grammar.p_rules;
 
   (* Check that every token is used. *)
-  if not Settings.ignore_all_unused_tokens then begin
-    match Settings.token_type_mode with
-    | Settings.TokenTypeOnly ->
-        ()
-    | Settings.TokenTypeAndCode
-    | Settings.CodeOnly _ ->
-        StringMap.iter (fun token { tk_position = p } ->
-          if not (StringSet.mem token !used_tokens
-               || StringSet.mem token Settings.ignored_unused_tokens) then
-            Error.warning [p]
-              "the token %s is unused." token
-        ) grammar.p_tokens
-  end
+      StringMap.iter (fun t properties ->
+        if not (X.ignore_unused_token t || StringSet.mem t !used_tokens) then
+          Error.warning [properties.tk_position]
+            "the token %s is unused." t
+      ) grammar.p_tokens
 
 let join pgs =
   (* Join the partial grammars. *)
@@ -743,3 +751,5 @@ let join pgs =
   (* Check well-formedness. *)
   check_parameterized_grammar_is_well_defined grammar;
   grammar
+
+end (* Make *)

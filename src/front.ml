@@ -76,7 +76,14 @@ let grammars =
 (* If several grammar files were specified, merge them. *)
 
 let grammar : Syntax.grammar =
-  PartialGrammar.join grammars
+  let module X = struct
+    let ignore_unused_token t =
+      Settings.ignore_all_unused_tokens ||
+      Settings.token_type_mode = Settings.TokenTypeOnly ||
+      StringSet.mem t Settings.ignored_unused_tokens
+  end in
+  let module P = PartialGrammar.Make(Error)(X) in
+  P.join grammars
 
 (* ------------------------------------------------------------------------- *)
 
