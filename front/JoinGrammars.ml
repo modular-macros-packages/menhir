@@ -18,7 +18,7 @@ module Make (Error : sig
 
 end) = struct
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* [update_properties] updates an existing token-property record with
    the information found in a %token declaration at position [pos].
@@ -50,12 +50,27 @@ let create_properties pos ocamltype t alias attrs =
     tk_alias         = alias;
     tk_attributes    = attrs }
 
-(* ------------------------------------------------------------------------- *)
+(* [implicit_properties] creates a new token-property record that contains
+   no information except a position. The token is considered not declared.
+   This is used when a %left, %right or %nonassoc declaration is encountered
+   and the token that is named in it has never been encountered before. *)
+
+let implicit_properties pos =
+  { tk_associativity = UndefinedAssoc;
+    tk_precedence    = UndefinedPrecedence;
+    tk_is_declared   = false;
+    tk_position      = pos;
+    tk_ocamltype     = None;
+    tk_alias         = None;
+    tk_attributes    = [] }
+
+(* -------------------------------------------------------------------------- *)
 
 (* [join_declaration grammar decl] adds the declaration [decl] to the
    grammar [grammar]. *)
 
 let join_declaration (grammar : grammar) decl : grammar =
+  let pos = position decl in
   match value decl with
 
   (* We store preludes (code fragments) in the joined grammar in an
@@ -81,9 +96,9 @@ let join_declaration (grammar : grammar) decl : grammar =
       let properties =
         match StringMap.find t grammar.p_tokens with
         | exception Not_found ->
-            create_properties (position decl) ocamltype t alias attrs
+            create_properties pos ocamltype t alias attrs
         | properties ->
-            update_properties properties (position decl) ocamltype t alias attrs
+            update_properties properties pos ocamltype t alias attrs
       in
       (* Store this token-property record. *)
       { grammar with
@@ -91,62 +106,39 @@ let join_declaration (grammar : grammar) decl : grammar =
 
   (* Start symbols. *)
 
-  | DStart nonterminal ->
+  | DStart nt ->
       { grammar with
-        p_start_symbols = StringMap.add nonterminal (position decl) grammar.p_start_symbols }
+        p_start_symbols = StringMap.add nt pos grammar.p_start_symbols }
 
   (* Type declarations for nonterminals. *)
 
-  | DType (ocamltype, nonterminal) ->
+  | DType (ocamltype, nt) ->
       { grammar with
-          p_types = (nonterminal, locate (position decl) ocamltype)::grammar.p_types }
+        p_types = (nt, locate pos ocamltype) :: grammar.p_types }
 
   (* Reductions on error for nonterminals. *)
 
-  | DOnErrorReduce (nonterminal, prec) ->
+  | DOnErrorReduce (nt, prec) ->
       { grammar with
-        p_on_error_reduce = (nonterminal, prec) :: grammar.p_on_error_reduce }
+        p_on_error_reduce = (nt, prec) :: grammar.p_on_error_reduce }
 
   (* Token associativity and precedence. *)
 
-  | DTokenProperties (terminal, assoc, prec) ->
-
-      (* Retrieve the property record for this token, creating one
-         if none existed (but without deeming the token to have been
-         declared). *)
-
+  | DTokenProperties (t, assoc, prec) ->
+      (* Retrieve the property record for this token, creating one if none
+         existed (the token is then deemed not declared). *)
       let properties =
-        try
-          StringMap.find terminal grammar.p_tokens
-        with Not_found ->
-          {
-            tk_ocamltype     = None;
-            tk_associativity = UndefinedAssoc;
-            tk_precedence    = prec;
-            tk_is_declared   = false;
-            tk_attributes    = [];
-            tk_alias         = None;
-            (* Will be updated later. *)
-            tk_position      = position decl;
-          }
+        try  StringMap.find t grammar.p_tokens
+        with Not_found -> implicit_properties pos
       in
-
       (* Reject duplicate precedence declarations. *)
-
       if properties.tk_associativity <> UndefinedAssoc then
-        Error.error
-          [ position decl; properties.tk_position ]
-          "there are multiple precedence declarations for token %s." terminal;
-
+        Error.error [ pos; properties.tk_position ]
+          "there are multiple precedence declarations for token %s." t;
       (* Record the new declaration. *)
-
-      let properties =
-        { properties with
-          tk_precedence = prec;
-          tk_associativity = assoc }
-      in
-      { grammar with p_tokens =
-          StringMap.add terminal properties grammar.p_tokens }
+      let tk_associativity = assoc and tk_precedence = prec in
+      let properties = { properties with tk_associativity; tk_precedence } in
+      { grammar with p_tokens = StringMap.add t properties grammar.p_tokens }
 
   | DGrammarAttribute attr ->
       { grammar with
@@ -156,7 +148,7 @@ let join_declaration (grammar : grammar) decl : grammar =
       { grammar with
         p_symbol_attributes = (actuals, attrs) :: grammar.p_symbol_attributes }
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* This stores an optional postlude into a grammar.
    Postludes are stored in an arbitrary order. *)
 
@@ -167,7 +159,7 @@ let join_postlude postlude grammar =
   | Some postlude ->
       { grammar with p_postludes = postlude :: grammar.p_postludes }
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* We rewrite definitions when nonterminals are renamed. The
    renaming [phi] is an association list of names to names. *)
 
@@ -177,11 +169,11 @@ type renaming =
 let identity_renaming =
   []
 
-let rewrite_nonterminal (phi : renaming) nonterminal =
+let rewrite_nonterminal (phi : renaming) nt =
   try
-    List.assoc nonterminal phi
+    List.assoc nt phi
   with Not_found ->
-    nonterminal
+    nt
 
 let rewrite_parameter phi parameter =
   Parameter.map (Located.map (rewrite_nonterminal phi)) parameter
@@ -260,7 +252,7 @@ let rewrite_grammar phi grammar =
   else
     { grammar with pg_rules = rewrite_rules phi grammar.pg_rules }
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* To rename (internalize) a nonterminal, we prefix it with its filename.
    This guarantees that names are unique. *)
 
@@ -285,14 +277,14 @@ let restrict filename =
   |> Filename.remove_extension
   |> String.map (fun c -> if valid c then c else '_')
 
-let rename nonterminal filename =
-  let name = restrict filename ^ "_" ^ nonterminal in
+let rename nt filename =
+  let name = restrict filename ^ "_" ^ nt in
   if used_name name then
     fresh ~hint:name ()
   else
     (use_name name; name)
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 type symbol_kind =
 
   (* The nonterminal is declared public at a particular position. *)
