@@ -172,7 +172,7 @@ old_versions:
 	  for v in $(OLD_VERSIONS) ; do \
 	    echo "(context (opam (switch $$v)))" ; \
 	  done) > dune-workspace.versions
-	@ dune build --workspace dune-workspace.versions lib sdk src
+	@ dune build --workspace dune-workspace.versions @install
 
 new_versions:
 	@(echo "(lang dune 2.0)" && \
@@ -272,6 +272,8 @@ MENHIRLIB_FILES   := \
 # Those in coq-menhirlib/ carry the "Coq library" header & license.
 # Every other file carries the "regular" header & license.
 
+SRCDIRS         := base front src
+LIBDIRS         := lib sdk cst
 HEADACHE        := headache
 SRCHEAD         := $(CURRENT)/headers/regular-header
 LIBHEAD         := $(CURRENT)/headers/library-header
@@ -281,17 +283,13 @@ FIND            := $(shell if command -v gfind >/dev/null ; then echo gfind ; el
 
 .PHONY: headache
 headache:
-	@ cd base && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
-	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ cd src && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
-	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ cd sdk && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
-	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ for file in $(MENHIRCST_FILES) ; do \
-	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
+	@ for d in $(SRCDIRS) ; do \
+	    (cd $$d && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
+	      -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";") ; \
 	  done
-	@ for file in cst/*.{ml,mli} ; do \
-	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
+	@ for d in $(LIBDIRS) ; do \
+	    (cd $$d && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
+	      -exec $(HEADACHE) -h $(LIBHEAD) "{}" ";") ; \
 	  done
 	@ for file in coq-menhirlib/src/*.v ; do \
 	    $(HEADACHE) -h $(COQLIBHEAD) -c $(HEADACHECOQCONF) $$file ; \
