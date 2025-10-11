@@ -32,7 +32,8 @@ let head p =
   assert (ps = []);
   x
 
-let rec iter f = function
+let rec iter f p =
+  match p with
   | ParamVar x ->
       f x
   | ParamApp (x, ps) ->
@@ -41,7 +42,8 @@ let rec iter f = function
   | ParamAnonymous _ ->
       assert false
 
-let rec map f = function
+let rec map f p =
+  match p with
   | ParamVar x ->
       ParamVar (Located.map f x)
   | ParamApp (x, ps) ->
@@ -67,14 +69,19 @@ let rec equal x y =
     | _ ->
         false
 
-let hash = function
+let hash p =
+  match p with
   | ParamVar x
   | ParamApp (x, _) ->
       Hashtbl.hash (value x)
   | ParamAnonymous _ ->
       assert false
 
-let position = function
+(* [position] is not exposed to the user, but is used by [locate]. It must
+   accept an arbitrary parameter, which can be [ParamAnonymous _]. *)
+
+let position p =
+  match p with
   | ParamVar x
   | ParamApp (x, _) ->
       position x
@@ -84,14 +91,14 @@ let position = function
 let locate p =
   locate (position p) p
 
-let rec print with_spaces = function
+let rec print separator p =
+  match p with
   | ParamVar x
   | ParamApp (x, []) ->
       value x
   | ParamApp (x, ps) ->
-      let separator = if with_spaces then ", " else "," in
       Printf.sprintf "%s(%s)"
         (value x)
-        (MString.separated_list (print with_spaces) separator ps)
+        (MString.separated_list (print separator) separator ps)
   | ParamAnonymous _ ->
       assert false

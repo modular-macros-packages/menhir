@@ -70,7 +70,7 @@ let mangle_po (po : parameter option) =
          we put an underscore in its place. *)
       "_"
   | Some p ->
-      Parameters.print false p
+      Parameters.print "," p
 
 let mangle_inst (pos : instantiation) =
   MString.separated_list mangle_po "," pos

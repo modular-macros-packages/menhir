@@ -644,7 +644,7 @@ let check_parameterized_grammar_is_well_defined grammar =
       Error.error [pos]
              "%s is a terminal symbol,\n\
               but %s declarations are applicable only to nonterminal symbols."
-             (Parameters.print true p) kind;
+             (Parameters.print ", " p) kind;
     (* Then, check the arguments. *)
     List.iter (check kind false) ps
   in

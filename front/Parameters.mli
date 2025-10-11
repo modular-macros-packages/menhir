@@ -12,7 +12,7 @@
 
    Because the constructor [ParamAnonynous] is eliminated very early on, most
    of these functions cannot deal with this constructor. The only functions
-   that can deal with it are {!apply}, {!locate}, and {!position}. *)
+   that can deal with it are {!apply} and {!locate}. *)
 
 open Syntax
 
@@ -50,5 +50,11 @@ val equal : parameter -> parameter -> bool
    [hash] is compatible with {!equal}. *)
 val hash : parameter -> int
 
+(**[locate] transforms a parameter into a located parameter. It exploits the
+   position information that is already present in a parameter. *)
 val locate : parameter -> parameter located
-val print : bool -> parameter -> string
+
+(**[print sep p] converts the parameter [p] into a string. The separator
+   [sep] is used to separate the actual parameters in an application. It
+   should typically be a comma, possibly with a space. *)
+val print : string -> parameter -> string
