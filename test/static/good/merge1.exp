@@ -1,31 +1,34 @@
-File "merge2.mly", line 3, characters 0-1:
-Warning: symbol X is unreachable from any of the start symbol(s).
-Grammar has 3 nonterminal symbols, among which 1 start symbols.
+Grammar has 4 nonterminal symbols, among which 1 start symbols.
 Grammar has 3 terminal symbols.
-Grammar has 4 productions.
+Grammar has 5 productions.
 nullable(main) = false
 nullable(liste(B)) = false
 nullable(foo) = true
+nullable(X) = false
 first(main) = B A
 first(liste(B)) = B A
 first(foo) = 
+first(X) = C
 minimal(main) = (* 2 *) A B
 minimal(liste(B)) = (* 2 *) A B
 minimal(foo) = (* 0 *)
+minimal(X) = (* 1 *) C
 maximal(main) = infinity
 maximal(liste(B)) = infinity
 maximal(foo) = 0
+maximal(X) = 1
 follow(main) = #
 follow(liste(B)) = #
 follow(foo) = B
-Built an LR(0) automaton with 9 states.
+follow(X) = B A
+Built an LR(0) automaton with 10 states.
 The grammar is SLR(1).
 The construction mode is pager.
-Built an LR(1) automaton with 9 states.
-5 out of 9 states have a default reduction.
-The action table is 36 entries; 6 non-zero; 13 compressed.
+Built an LR(1) automaton with 10 states.
+6 out of 10 states have a default reduction.
+The action table is 40 entries; 6 non-zero; 14 compressed.
 The action table occupies roughly 104 bytes.
-The goto table is 36 entries; 4 non-zero; 13 compressed.
+The goto table is 50 entries; 5 non-zero; 15 compressed.
 The goto table occupies roughly 104 bytes.
 The error table occupies roughly 40 bytes.
 The default_reduction table occupies roughly 40 bytes.
