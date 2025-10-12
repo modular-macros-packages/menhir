@@ -304,8 +304,6 @@ let rewrite_grammar phi grammar =
   { grammar with pg_rules = rewrite_rules phi grammar.pg_rules }
 
 (* -------------------------------------------------------------------------- *)
-(* To rename (internalize) a nonterminal, we prefix it with its filename.
-   This guarantees that names are unique. *)
 
 (* [valid c] determines whether the character [c] can appear in the name
    of a nonterminal symbol. *)
@@ -323,73 +321,89 @@ let valid c =
   | _ ->
       false
 
-let restrict filename =
+(* [sanitize filename] removes the extension of the file name [filename]
+   and replaces invalid characters with an underscore character. *)
+
+let sanitize filename =
   filename
   |> Filename.remove_extension
   |> String.map (fun c -> if valid c then c else '_')
 
+(* To rename a nonterminal symbol, our first attempt is to prefix it with
+   (a sanitized version of) its filename. If this does not work then we
+   use [fresh]. *)
+
 let rename nt filename =
-  let name = restrict filename ^ "_" ^ nt in
-  if used name then
-    fresh name
-  else
-    use name
+  let nt' = sanitize filename ^ "_" ^ nt in
+  if not (used nt') then use nt'
+  else fresh nt'
 
 (* -------------------------------------------------------------------------- *)
-type symbol_kind =
 
-  (* The nonterminal is declared public at a particular position. *)
-  | PublicNonTerminal of Range.range
+(* Before we can operate on a partial grammar, we must build a symbol table,
+   which maps a symbol to a symbol kind. We build one symbol table for each
+   partial grammar.  *)
 
-  (* The nonterminal is declared (nonpublic) at a particular position. *)
-  | PrivateNonTerminal of Range.range
+type kind =
 
-  (* The symbol is a token. *)
-  | Token of properties
+  | NTPublic of Range.range
+      (**This nonterminal symbol is declared public at a certain position. *)
 
-  (* We do not know yet what the symbol means.
-     This is defined in the sequel or it is free in the partial grammar. *)
-  | DontKnow of Range.range
+  | NTPrivate of Range.range
+      (**This nonterminal symbol is declared (private) at a certain position. *)
 
-type symbol_table =
-    (symbol, symbol_kind) Hashtbl.t
+  | Terminal of properties
+      (**This is a terminal symbol. *)
 
-let find_symbol (symbols : symbol_table) symbol =
-  Hashtbl.find symbols symbol
+  | Unknown of Range.range
+      (**We do not know yet what this symbol means. Perhaps we have not
+         encountered its definition yet; perhaps it is not defined at
+         all in this partial grammar. *)
 
-let add_in_symbol_table (symbols : symbol_table) symbol kind =
-  let _ = use symbol in
-  Hashtbl.add symbols symbol kind;
-  symbols
+(* These functions access a (mutable) symbol table. *)
 
-let replace_in_symbol_table (symbols : symbol_table) symbol kind =
-  Hashtbl.replace symbols symbol kind;
-  symbols
+module T : sig
+  type table (* mutable *)
+  val create : unit -> table
+  val find : table -> string -> kind (* can raise [Not_found] *)
+  val add : table -> string -> kind -> unit
+  val replace : table -> string -> kind -> unit
+  val iter : (string -> kind -> unit) -> table -> unit
+  val fold : (string -> kind -> 's -> 's) -> table -> 's -> 's
+end = struct
+  include Hashtbl
+  type table = (symbol, kind) t
+  let create () = create 13
+  let add table symbol kind =
+    let (_ : string) = use symbol in
+    add table symbol kind
+  let replace table symbol kind =
+    assert (mem table symbol);
+    assert (used symbol);
+    replace table symbol kind
+end
 
-let empty_symbol_table () : symbol_table =
-  Hashtbl.create 13
-
-let store_symbol (symbols : symbol_table) symbol kind =
-  match find_symbol symbols symbol, kind with
+let store_symbol (symbols : T.table) symbol kind =
+  match T.find symbols symbol, kind with
 
   (* The symbol is not known so far. Add it. *)
   | exception Not_found ->
-      add_in_symbol_table symbols symbol kind
+      T.add symbols symbol kind
 
   (* There are two definitions of this symbol in one grammatical unit
      (that is, one .mly file), and at least one of them is private.
      This is forbidden. *)
-  | PrivateNonTerminal p, PrivateNonTerminal p'
-  | PublicNonTerminal p, PrivateNonTerminal p'
-  | PrivateNonTerminal p, PublicNonTerminal p' ->
+  | NTPrivate p, NTPrivate p'
+  | NTPublic p, NTPrivate p'
+  | NTPrivate p, NTPublic p' ->
       Error.error [ p; p']
         "the nonterminal symbol %s is multiply defined.\n\
          Only %%public symbols can have split definitions."
         symbol
 
   (* The symbol is known to be a token but declared as a nonterminal.*)
-  | Token tkp, (PrivateNonTerminal p | PublicNonTerminal p)
-  | (PrivateNonTerminal p | PublicNonTerminal p), Token tkp ->
+  | Terminal tkp, (NTPrivate p | NTPublic p)
+  | (NTPrivate p | NTPublic p), Terminal tkp ->
       Error.error [ p; tkp.tk_position ]
            "the identifier %s is a reference to a token."
            symbol
@@ -398,21 +412,21 @@ let store_symbol (symbols : symbol_table) symbol kind =
      As of 2017/03/29, splitting the definition of a %public nonterminal
      symbol is permitted. (It used to be permitted over multiple units,
      but forbidden within a single unit.) *)
-  | _, DontKnow _
-  | Token _, Token _
-  | PublicNonTerminal _, PublicNonTerminal _ ->
-      symbols
+  | _, Unknown _
+  | Terminal _, Terminal _
+  | NTPublic _, NTPublic _ ->
+      ()
 
   (* We learn that the symbol is a nonterminal or a token. *)
-  | DontKnow _, _ ->
-      replace_in_symbol_table symbols symbol kind
+  | Unknown _, _ ->
+      T.replace symbols symbol kind
 
 let store_used_symbol position tokens symbols symbol =
   let kind =
     try
-      Token (StringMap.find symbol tokens)
+      Terminal (StringMap.find symbol tokens)
     with Not_found ->
-      DontKnow position
+      Unknown position
   in
   store_symbol symbols symbol kind
 
@@ -433,17 +447,17 @@ let non_terminal_is_not_a_token tokens symbol positions =
 let store_public_nonterminal tokens symbols symbol positions =
   non_terminal_is_not_reserved symbol positions;
   non_terminal_is_not_a_token tokens symbol positions;
-  store_symbol symbols symbol (PublicNonTerminal (List.hd positions))
+  store_symbol symbols symbol (NTPublic (List.hd positions))
 
 let store_private_nonterminal tokens symbols symbol positions =
   non_terminal_is_not_reserved symbol positions;
   non_terminal_is_not_a_token tokens symbol positions;
-  store_symbol symbols symbol (PrivateNonTerminal (List.hd positions))
+  store_symbol symbols symbol (NTPrivate (List.hd positions))
 
 let is_private_symbol t x =
   try
-    match Hashtbl.find t x with
-      | PrivateNonTerminal _ ->
+    match T.find t x with
+      | NTPrivate _ ->
           true
       | _ ->
           false
@@ -451,46 +465,47 @@ let is_private_symbol t x =
     false
 
 let fold_on_private_symbols f init t =
-  Hashtbl.fold
-    (fun k -> function PrivateNonTerminal _ -> (fun acu -> f acu k)
+  T.fold
+    (fun k -> function NTPrivate _ -> (fun acu -> f acu k)
        | _ -> (fun acu -> acu))
     t init
 
 let fold_on_public_symbols f init t =
-  Hashtbl.fold
-    (fun k -> function PublicNonTerminal _ -> (fun acu -> f acu k)
+  T.fold
+    (fun k -> function NTPublic _ -> (fun acu -> f acu k)
        | _ -> (fun acu -> acu))
     t init
 
 let iter_on_only_used_symbols f t =
-  Hashtbl.iter
-    (fun k -> function DontKnow pos -> f k pos
+  T.iter
+    (fun k -> function Unknown pos -> f k pos
        | _ -> ())
     t
 
-let symbols_of grammar (pg : Syntax.partial_grammar) =
+let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
+  let symbols = T.create() in
   let tokens = grammar.p_tokens in
-  let symbols_of_rule symbols prule =
-    let rec store_except_rule_parameters symbols parameter =
+  let symbols_of_rule prule =
+    let rec store_except_rule_parameters parameter =
       let symbol, parameters = Parameter.destruct parameter in
       (* Process the reference to [symbol]. *)
-      let symbols =
+      let () =
         if List.mem (value symbol) prule.pr_parameters then
           (* Rule parameters are bound locally, so they are not taken into account. *)
-          symbols
+          ()
         else
           store_used_symbol (position symbol) tokens symbols (value symbol)
       in
       (* Process the parameters. *)
-      List.fold_left store_except_rule_parameters symbols parameters
+      List.iter store_except_rule_parameters parameters
     in
 
     (* Analyse each branch. *)
-    let symbols = List.fold_left (fun symbols branch ->
-      List.fold_left (fun symbols (_, p, _) ->
-        store_except_rule_parameters symbols p
-      ) symbols branch.pb_producers
-    ) symbols prule.pr_branches
+    let () = List.iter (fun branch ->
+      List.iter (fun (_, p, _) ->
+        store_except_rule_parameters p
+      ) branch.pb_producers
+    ) prule.pr_branches
     in
       (* Store the symbol declaration. *)
       (* A nonterminal symbol is considered public if it is declared using
@@ -501,9 +516,12 @@ let symbols_of grammar (pg : Syntax.partial_grammar) =
       else
         store_private_nonterminal tokens symbols prule.pr_nt prule.pr_positions
   in
-    List.fold_left symbols_of_rule (empty_symbol_table ()) pg.pg_rules
+  List.iter symbols_of_rule pg.pg_rules;
+  symbols
 
-let merge_rules symbols pgs =
+(* -------------------------------------------------------------------------- *)
+
+let merge_rules (symbols : T.table list) (pgs : (T.table * partial_grammar) list) =
 
   (* Retrieve all the public symbols. *)
   let public_symbols =
@@ -536,11 +554,11 @@ let merge_rules symbols pgs =
     List.fold_left detect_private_symbol_clashes (StringSet.empty, StringSet.empty) symbols
   in
   let rpgs = List.map
-    (fun (symbol_table, pg) ->
+    (fun (table, pg) ->
        let renaming =
          StringSet.fold
            (fun x phi ->
-              if is_private_symbol symbol_table x then begin
+              if is_private_symbol table x then begin
                   let x' = rename x pg.pg_filename in
                     Printf.fprintf stderr
                       "Note: the nonterminal symbol %s (from %s) is renamed %s.\n"
