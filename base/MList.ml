@@ -90,6 +90,16 @@ let group cmp xs =
       let ys1, yss = group1 cmp x1 xs in
       ys1 :: yss
 
+let foreach_duplicate cmp xs yield =
+  (* For each group [g] in the list [xs], *)
+  group cmp xs |> List.iter @@ fun g ->
+  (* If this group has at least two elements, *)
+  match g with
+  | [] | [_] -> ()
+  | x :: _ :: _ ->
+      (* then yield an element. *)
+      yield x
+
 let rec find_map f = function
   | [] ->
       None

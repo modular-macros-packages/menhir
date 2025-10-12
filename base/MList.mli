@@ -59,6 +59,11 @@ val leq_join : ('a -> 'b -> 'b) -> 'a list -> 'b list -> 'b list
    adjacent equivalent elements. Every group is a nonempty list. *)
 val group: ('a -> 'a -> int) -> 'a list -> 'a list list
 
+(**[foreach_duplicate cmp xs yield] applies [yield] to (one copy of) each
+   duplicate element in the list [xs]. The ordering [cmp] is used internally
+   to sort the list [xs]. *)
+val foreach_duplicate: ('a -> 'a -> int) -> 'a list -> ('a -> unit) -> unit
+
 (**[find_map f xs] applies [f] to the elements of [xs] in order and returns
    the first result of the form [Some y], if there is one. If there is none,
    it returns [None]. *)
