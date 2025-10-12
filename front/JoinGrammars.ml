@@ -369,7 +369,8 @@ module T : sig
   val add : table -> string -> kind -> unit
   val replace : table -> string -> kind -> unit
   val iter : (string -> kind -> unit) -> table -> unit
-  val fold : (string -> kind -> 's -> 's) -> table -> 's -> 's
+  val public_symbols : table -> StringSet.t
+  val private_symbols : table -> StringSet.t
 end = struct
   include Hashtbl
   type table = (symbol, kind) t
@@ -381,6 +382,22 @@ end = struct
     assert (mem table symbol);
     assert (used symbol);
     replace table symbol kind
+  let public_symbols table =
+    let accu = ref (StringSet.singleton "error") in
+    iter (fun symbol kind ->
+      match kind with
+      | NTPublic _ -> accu := StringSet.add symbol !accu
+      | _          -> ()
+    ) table;
+    !accu
+  let private_symbols table =
+    let accu = ref StringSet.empty in
+    iter (fun symbol kind ->
+      match kind with
+      | NTPrivate _ -> accu := StringSet.add symbol !accu
+      | _           -> ()
+    ) table;
+    !accu
 end
 
 (* [store_symbol table symbol kind] extends the table [table] with a
@@ -490,12 +507,6 @@ let is_private_symbol table x =
   | _                   -> false
   | exception Not_found -> false
 
-let fold_on_private_symbols f init table =
-  T.fold
-    (fun k -> function NTPrivate _ -> (fun acu -> f acu k)
-       | _ -> (fun acu -> acu))
-    table init
-
 let iter_on_only_used_symbols f table =
   T.iter
     (fun k -> function Unknown pos -> f k pos
@@ -537,19 +548,18 @@ let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
 
 (* -------------------------------------------------------------------------- *)
 
-let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list) =
+let empty, union, inter = StringSet.(empty, union, inter)
+
+let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list) = (* TODO redundant *)
 
   (* Retrieve all the public symbols of all partial grammars. *)
 
-  let public = ref (StringSet.singleton "error") in
-  let () =
-    tables |> List.iter @@ fun table ->
-    table |> T.iter @@ fun symbol kind ->
-    match kind with
-    | NTPublic _ -> public := StringSet.add symbol !public
-    | _          -> ()
+  let public =
+    List.fold_left (fun public table ->
+      union public (T.public_symbols table)
+    ) empty tables
   in
-  let is_public symbol = StringSet.mem symbol !public in
+  let is_public symbol = StringSet.mem symbol public in
 
   (* We check the references in each grammar can be bound to
      a public symbol. *)
@@ -562,18 +572,18 @@ let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list)
       tables
   in
   (* Detect private symbol clashes and rename them if necessary. *)
-  let detect_private_symbol_clashes =
-    fold_on_private_symbols
-      (fun (defined, clashes) symbol ->
-         if StringSet.mem symbol defined
-           || is_public symbol then
-           (defined, StringSet.add symbol clashes)
-         else
-           (StringSet.add symbol defined, clashes))
+  let defined = ref public
+  and clashes = ref empty in
+  let examine table =
+    let local = T.private_symbols table in
+    (* Any local symbol that is either public or previously defined
+       in another partial grammar is a clash. *)
+    clashes := union !clashes (inter local !defined);
+    defined := union !defined local
   in
-  let _private_symbols, clashes =
-    List.fold_left detect_private_symbol_clashes (StringSet.empty, StringSet.empty) tables
-  in
+  List.iter examine tables;
+  let clashes = !clashes in
+
   let rpgs = List.map
     (fun (table, pg) ->
        let renaming =
