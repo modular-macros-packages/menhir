@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let accumulate = MList.accumulate
 open Located
 open Syntax
 
@@ -242,9 +243,8 @@ end = struct
     try find nt phi
     with Not_found -> nt
   let fresh nts =
-    List.fold_left (fun phi nt ->
-      add nt (fresh nt) phi
-    ) empty nts
+    accumulate empty nts @@ fun phi nt ->
+    add nt (fresh nt) phi
   let zip nts nts' =
     assert (List.length nts = List.length nts');
     List.fold_right2 add nts nts' empty
@@ -531,32 +531,28 @@ let build (tokens : tokens) (start_symbols : start_symbols) (g : partial_grammar
 
 (* -------------------------------------------------------------------------- *)
 
-let empty, union, inter, diff = StringSet.(empty, union, inter, diff)
+let empty, union, inter, diff, big_union =
+  StringSet.(empty, union, inter, diff, big_union)
 
-let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list) = (* TODO redundant *)
+(* [every_unknown_symbol_is_public public table] checks that every symbol
+   that is mapped to [Unknown _] in the table [table] appears in the set
+   [public]. This set contains all public symbols of all partial grammars. *)
 
-  (* Retrieve all the public symbols of all partial grammars. *)
+let every_unknown_symbol_is_public public table =
+  let undefined = diff (T.unknown_symbols table) public in
+  undefined |> StringSet.iter @@ fun symbol ->
+  match T.find table symbol with
+  | Unknown pos ->
+      Error.error [ pos ] "%s is undefined." symbol
+  | _ ->
+      assert false
 
-  let public =
-    List.fold_left (fun public table ->
-      union public (T.public_symbols table)
-    ) empty tables
-  in
+(* [clashes public tables] computes the set of symbols that are private in
+   one partial grammar yet are also declared public (in some other partial
+   grammar). These symbols must be renamed (in every partial grammar where
+   they are used as a private symbol). *)
 
-  (* We check the references in each grammar can be bound to
-     a public symbol. *)
-  let () =
-    tables |> List.iter @@ fun table ->
-    let undefined = diff (T.unknown_symbols table) public in
-    undefined |> StringSet.iter @@ fun symbol ->
-    match T.find table symbol with
-    | Unknown pos ->
-        Error.error [ pos ] "%s is undefined." symbol
-    | _ ->
-        assert false
-  in
-
-  (* Detect private symbol clashes and rename them if necessary. *)
+let clashes public tables =
   let defined = ref public
   and clashes = ref empty in
   let examine table =
@@ -567,65 +563,100 @@ let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list)
     defined := union !defined local
   in
   List.iter examine tables;
-  let clashes = !clashes in
+  !clashes
 
-  let rpgs =
-    pgs |> List.map @@ fun (table, pg) ->
-    let phi =
-      StringSet.fold (fun x phi ->
-        match T.find table x with
-        | NTPrivate pos ->
-            let x' = rename x pg.pg_filename in
-            Error.note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
-            R.add x x' phi
-        | _ | exception Not_found ->
-            phi
-      ) clashes R.empty
-    in
-    rewrite_grammar phi pg
+(* [rename_private_symbols clashes grammars] renames the clashing private
+   symbols in each partial grammar in the list [grammars], producing a new
+   list of grammars. A private symbol is clashing if it appears in the set
+   [clashes]. The parameter [grammars] is in fact a list of pairs of a
+   partial grammar and its symbol table. *)
+
+type pgt =
+  partial_grammar * T.table
+
+type pgts =
+  pgt list
+
+let rename_private_symbols clashes (grammars : pgts) : partial_grammar list =
+  (* For each partial grammar, *)
+  grammars |> List.map @@ fun (grammar, table) ->
+  (* Construct a renaming of the private symbols in this grammar, *)
+  let phi =
+    StringSet.fold (fun x phi ->
+      match T.find table x with
+      | NTPrivate pos ->
+          let x' = rename x grammar.pg_filename in
+          Error.note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
+          R.add x x' phi
+      | _ | exception Not_found ->
+          phi
+    ) clashes R.empty
   in
+  (* and apply this renaming to this partial grammar. *)
+  rewrite_grammar phi grammar
 
-    (* Merge public nonterminal definitions
-       and copy private nonterminal definitions. Since the clashes between
-       private symbols have already been resolved, these copies are safe. *)
-    List.fold_left
-      (fun rules rpg -> List.fold_left
-         (fun rules r ->
-            let r =
-              try
-                let r' = StringMap.find r.pr_nt rules in
-                let positions = r.pr_positions @ r'.pr_positions in
-                let ra, ra' =
-                  List.length r.pr_parameters,
-                  List.length r'.pr_parameters
-                in
-                  (* The arity of the parameterized symbols must be constant.*)
-                  if ra <> ra' then
-                    Error.error positions
-                      "the symbol %s is defined with arities %d and %d."
-                         r.pr_nt ra ra'
-                  else if r.pr_inline <> r'.pr_inline then
-                    Error.error positions
-                         "not all definitions of %s are marked %%inline." r.pr_nt
-                  else
-                    (* We combine the different branches. The parameters
-                       could have different names, we rename them with
-                       the fresh names assigned earlier (see the next
-                       comment). *)
-                    let phi = R.zip r.pr_parameters r'.pr_parameters in
-                    let rbr = rewrite_branches phi r.pr_branches in
-                      { r' with
-                          pr_positions = positions;
-                          pr_branches  = rbr @ r'.pr_branches;
-                          pr_attributes = r.pr_attributes @ r'.pr_attributes;
-                      }
-              with Not_found ->
-                (* We alphaconvert the rule in order to avoid the capture of
-                   private symbols coming from another unit. *)
-                avoid r.pr_parameters r
-            in
-              StringMap.add r.pr_nt r rules) rules rpg.pg_rules)
-      StringMap.empty rpgs
+type rules =
+  parameterized_rule StringMap.t
+
+let merge_rules (grammars : pgts) : rules =
+  let tables : T.table list = List.map snd grammars in
+
+  (* Retrieve all the public symbols of all partial grammars. *)
+  let public = tables |> List.map T.public_symbols |> big_union in
+
+  (* Every symbol that is unknown in a partial grammar should be declared
+     public (in some other partial grammar). *)
+  List.iter (every_unknown_symbol_is_public public) tables;
+
+  (* Compute which private symbols must be renamed. *)
+  let clashes = clashes public tables in
+
+  (* Rename the private symbols that must be renamed. We do not update
+     the symbol tables, so they must not be used any more. *)
+  let grammars = rename_private_symbols clashes grammars in
+
+  (* Merge the definitions of public nonterminal symbols and copy the
+     definitions of private nonterminal symbols. Since all name clashes
+     have been resolved already, these copies are safe. *)
+  (* For each partial grammar, *)
+  accumulate StringMap.empty grammars @@ fun rules grammar ->
+  (* For each rule in this partial grammar, *)
+  accumulate rules grammar.pg_rules @@ fun rules rule ->
+  let r =
+    try
+      let r' = StringMap.find rule.pr_nt rules in
+      let positions = rule.pr_positions @ r'.pr_positions in
+      let ra, ra' =
+        List.length rule.pr_parameters,
+        List.length r'.pr_parameters
+      in
+        (* The arity of the parameterized symbols must be constant.*)
+        if ra <> ra' then
+          Error.error positions
+            "the symbol %s is defined with arities %d and %d."
+               rule.pr_nt ra ra'
+        else if rule.pr_inline <> r'.pr_inline then
+          Error.error positions
+               "not all definitions of %s are marked %%inline." rule.pr_nt
+        else
+          (* We combine the different branches. The parameters
+             could have different names, we rename them with
+             the fresh names assigned earlier (see the next
+             comment). *)
+          let phi = R.zip rule.pr_parameters r'.pr_parameters in
+          let rbr = rewrite_branches phi rule.pr_branches in
+            { r' with
+                pr_positions = positions;
+                pr_branches  = rbr @ r'.pr_branches;
+                pr_attributes = rule.pr_attributes @ r'.pr_attributes;
+            }
+    with Not_found ->
+      (* We alphaconvert the rule in order to avoid the capture of
+         private symbols coming from another unit. *)
+      (* TODO useless? *)
+      avoid rule.pr_parameters rule
+  in
+  StringMap.add r.pr_nt r rules
 
 let empty : grammar =
   {
@@ -652,9 +683,9 @@ let join grammar pg =
 let join pgs =
   List.iter check pgs;
   let grammar = List.fold_left join empty pgs in
-  let symbols = List.map (build grammar.p_tokens grammar.p_start_symbols) pgs in
-  let tpgs = List.combine symbols pgs in
-  let rules = merge_rules symbols tpgs in
+  let tables = List.map (build grammar.p_tokens grammar.p_start_symbols) pgs in
+  let tpgs = List.combine pgs tables in
+  let rules = merge_rules tpgs in
   { grammar with p_rules = rules }
 
 end (* Make *)
