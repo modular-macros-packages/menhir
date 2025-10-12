@@ -12,3 +12,6 @@ include Set.Make(String)
 
 let print s =
   MString.separated_iter (fun s -> s) ", " (fun f -> iter f s)
+
+let big_union ss =
+  List.fold_left union empty ss

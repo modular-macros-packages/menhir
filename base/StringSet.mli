@@ -17,3 +17,6 @@ include Set.S
 (**[print] prints a set of strings as a comma-separated list,
    without opening and closing delimiters. *)
 val print: t -> string
+
+(**[big_union] computes the union of a list of sets. *)
+val big_union: t list -> t
