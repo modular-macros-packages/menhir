@@ -87,6 +87,12 @@ let warning positions format =
     "Warning: "
     positions format
 
+let note positions format =
+  display
+    (fun _ -> ())
+    "Note: "
+    positions format
+
 (* ---------------------------------------------------------------------------- *)
 
 (* Delayed error reports -- where multiple errors can be reported at once. *)

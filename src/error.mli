@@ -42,6 +42,10 @@ val error: ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
+(* [note] is like [warning], but prints "Note:" instead of "Warning:". *)
+
+val note: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
 (* ---------------------------------------------------------------------------- *)
 
 (* Delayed error reports -- where multiple errors can be reported at once. *)
