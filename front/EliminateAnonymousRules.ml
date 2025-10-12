@@ -18,28 +18,6 @@ open Syntax
 
 (* ------------------------------------------------------------------------ *)
 
-(* These functions compute the free names in several syntactic categories.  *)
-
-let rec fn_parameter accu (p : parameter) =
-  (* [p] cannot be [ParamAnonymous _]. *)
-  let x, ps = Parameter.destruct p in
-  let accu = StringSet.add (value x) accu in
-  fn_parameters accu ps
-
-and fn_parameters accu ps =
-  List.fold_left fn_parameter accu ps
-
-let fn_producer accu ((_, p, _) : producer) =
-  fn_parameter accu p
-
-let fn_branch accu branch =
-  List.fold_left fn_producer accu branch.pb_producers
-
-let fn_branches accu branches =
-  List.fold_left fn_branch accu branches
-
-(* ------------------------------------------------------------------------ *)
-
 (* This functor makes it easy to share mutable internal state between the
    functions that follow. *)
 
@@ -78,7 +56,7 @@ let anonymous xs (branches : parameterized_branch list located) : parameter =
      definition -- i.e., a definition without useless parameters. This seems
      important, as (in some situations) it avoids duplication and leads to
      fewer states in the automaton. *)
-  let used = fn_branches StringSet.empty branches in
+  let used = FreeNames.branches branches in
   let xs = List.filter (fun x -> StringSet.mem x used) xs in
   (* Generate a fresh non-terminal symbol. *)
   let symbol = fresh() in
