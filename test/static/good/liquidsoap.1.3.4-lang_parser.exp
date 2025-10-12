@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from liquidsoap.1.3.4-lang_parser.mly) is renamed liquidsoap_1_3_4_lang_parser_list.
+File "liquidsoap.1.3.4-lang_parser.mly", line 526, characters 0-4:
+Note: the nonterminal symbol list is renamed liquidsoap_1_3_4_lang_parser_list.
+
 File "liquidsoap.1.3.4-lang_parser.mly", line 205, characters 21-31:
 Warning: the token PP_COMMENT is unused.
 File "liquidsoap.1.3.4-lang_parser.mly", line 203, characters 15-21:

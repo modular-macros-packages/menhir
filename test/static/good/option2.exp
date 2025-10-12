@@ -1,4 +1,6 @@
-Note: the nonterminal symbol option (from option2.mly) is renamed option2_option.
+File "option2.mly", line 9, characters 0-6:
+Note: the nonterminal symbol option is renamed option2_option.
+
 Grammar has 2 nonterminal symbols, among which 1 start symbols.
 Grammar has 1 terminal symbols.
 Grammar has 2 productions.

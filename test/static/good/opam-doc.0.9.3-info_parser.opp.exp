@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from opam-doc.0.9.3-info_parser.mly) is renamed opam_doc_0_9_3_info_parser_list.
+File "opam-doc.0.9.3-info_parser.mly", line 413, characters 0-4:
+Note: the nonterminal symbol list is renamed opam_doc_0_9_3_info_parser_list.
+
 File "opam-doc.0.9.3-info_parser.mly", line 160, characters 7-10:
 Warning: the token EOF is unused.
 File "opam-doc.0.9.3-info_parser.mly", line 169, characters 10-21:

@@ -1,3 +1,6 @@
+File "option2.mly", line 9, characters 0-6:
+Note: the nonterminal symbol option is renamed option2_option.
+
 %start main
 %token FOO
 %type <unit> main
@@ -12,4 +15,3 @@ option2_option:
     {( () )}
 
 %%
-Note: the nonterminal symbol option (from option2.mly) is renamed option2_option.

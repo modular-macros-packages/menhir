@@ -1,4 +1,6 @@
-Note: the nonterminal symbol option (from psmt2-frontend.0.1-smtlib_parser.mly) is renamed psmt2_frontend_0_1_smtlib_parser_option.
+File "psmt2-frontend.0.1-smtlib_parser.mly", line 187, characters 0-6:
+Note: the nonterminal symbol option is renamed psmt2_frontend_0_1_smtlib_parser_option.
+
 Grammar has 51 nonterminal symbols, among which 3 start symbols.
 Grammar has 92 terminal symbols.
 Grammar has 172 productions.

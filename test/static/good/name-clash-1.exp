@@ -1,5 +1,9 @@
-Note: the nonterminal symbol a (from name-clash-1.mly) is renamed name_clash_1_a1.
-Note: the nonterminal symbol a (from name-clash-2.mly) is renamed name_clash_2_a.
+File "name-clash-1.mly", line 9, characters 0-1:
+Note: the nonterminal symbol a is renamed name_clash_1_a1.
+
+File "name-clash-2.mly", line 9, characters 0-1:
+Note: the nonterminal symbol a is renamed name_clash_2_a.
+
 Grammar has 4 nonterminal symbols, among which 2 start symbols.
 Grammar has 2 terminal symbols.
 Grammar has 4 productions.

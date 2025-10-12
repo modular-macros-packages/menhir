@@ -1,4 +1,6 @@
-Note: the nonterminal symbol option (from regstab.2.0.0-parser.mly) is renamed regstab_2_0_0_parser_option.
+File "regstab.2.0.0-parser.mly", line 217, characters 0-6:
+Note: the nonterminal symbol option is renamed regstab_2_0_0_parser_option.
+
 File "regstab.2.0.0-parser.mly", line 193, characters 7-9:
 Warning: the token LE is unused.
 File "regstab.2.0.0-parser.mly", line 193, characters 10-12:

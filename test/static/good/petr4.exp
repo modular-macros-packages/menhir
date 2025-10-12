@@ -1,8 +1,18 @@
-Note: the nonterminal symbol list (from petr4.mly) is renamed petr4_list.
-Note: the nonterminal symbol nonempty_list (from petr4.mly) is renamed petr4_nonempty_list.
-Note: the nonterminal symbol option (from petr4.mly) is renamed petr4_option.
-Note: the nonterminal symbol separated_list (from petr4.mly) is renamed petr4_separated_list.
-Note: the nonterminal symbol separated_nonempty_list (from petr4.mly) is renamed petr4_separated_nonempty_list.
+File "petr4.mly", line 181, characters 0-4:
+Note: the nonterminal symbol list is renamed petr4_list.
+
+File "petr4.mly", line 169, characters 0-13:
+Note: the nonterminal symbol nonempty_list is renamed petr4_nonempty_list.
+
+File "petr4.mly", line 186, characters 8-14:
+Note: the nonterminal symbol option is renamed petr4_option.
+
+File "petr4.mly", line 157, characters 0-14:
+Note: the nonterminal symbol separated_list is renamed petr4_separated_list.
+
+File "petr4.mly", line 133, characters 0-23:
+Note: the nonterminal symbol separated_nonempty_list is renamed petr4_separated_nonempty_list.
+
 Grammar has 163 nonterminal symbols, among which 3 start symbols.
 Grammar has 89 terminal symbols.
 Grammar has 475 productions.

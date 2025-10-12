@@ -1,3 +1,6 @@
+File "fp.mly", line 92, characters 0-4:
+Note: the nonterminal symbol list is renamed fp_list.
+
 %{
 open Fp;;
 %}
@@ -135,4 +138,3 @@ fctlist:
 
 
 
-Note: the nonterminal symbol list (from fp.mly) is renamed fp_list.

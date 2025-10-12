@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from octavius.1.2.0-octParser.mly) is renamed octavius_1_2_0_octParser_list.
+File "octavius.1.2.0-octParser.mly", line 438, characters 0-4:
+Note: the nonterminal symbol list is renamed octavius_1_2_0_octParser_list.
+
 File "octavius.1.2.0-octParser.mly", line 187, characters 7-10:
 Warning: the token EOF is unused.
 File "octavius.1.2.0-octParser.mly", line 202, characters 10-22:

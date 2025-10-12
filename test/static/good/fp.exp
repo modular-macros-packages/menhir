@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from fp.mly) is renamed fp_list.
+File "fp.mly", line 92, characters 0-4:
+Note: the nonterminal symbol list is renamed fp_list.
+
 Grammar has 7 nonterminal symbols, among which 3 start symbols.
 Grammar has 33 terminal symbols.
 Grammar has 35 productions.

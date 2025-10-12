@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from boomerang-bparser.mly) is renamed boomerang_bparser_list.
+File "boomerang-bparser.mly", line 699, characters 0-4:
+Note: the nonterminal symbol list is renamed boomerang_bparser_list.
+
 File "boomerang-bparser.mly", line 207, characters 54-63:
 Warning: the token BACKSLASH is unused.
 File "boomerang-bparser.mly", line 203, characters 24-29:

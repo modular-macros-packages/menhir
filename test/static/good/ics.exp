@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from ics.mly) is renamed ics_list.
+File "ics.mly", line 190, characters 0-4:
+Note: the nonterminal symbol list is renamed ics_list.
+
 File "ics.mly", line 47, characters 13-19:
 Warning: the token ACLBRA is unused.
 File "ics.mly", line 47, characters 7-12:

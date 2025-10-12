@@ -1,3 +1,6 @@
+File "psmt2-frontend.0.1-smtlib_parser.mly", line 187, characters 0-6:
+Note: the nonterminal symbol option is renamed psmt2_frontend_0_1_smtlib_parser_option.
+
 %{
    open Smtlib_syntax
 
@@ -780,4 +783,3 @@ commands:
 %%
 
 
-Note: the nonterminal symbol option (from psmt2-frontend.0.1-smtlib_parser.mly) is renamed psmt2_frontend_0_1_smtlib_parser_option.

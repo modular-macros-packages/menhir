@@ -1,4 +1,6 @@
-Note: the nonterminal symbol option (from yaparser.mly) is renamed yaparser_option.
+File "yaparser.mly", line 162, characters 0-6:
+Note: the nonterminal symbol option is renamed yaparser_option.
+
 File "yaparser.mly", line 85, characters 7-10:
 Warning: the token EOF is unused.
 File "yaparser.mly", line 96, characters 7-16:

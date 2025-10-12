@@ -1,4 +1,6 @@
-Note: the nonterminal symbol a (from private-and-public-2.mly) is renamed private_and_public_2_a.
+File "private-and-public-2.mly", line 4, characters 0-1:
+Note: the nonterminal symbol a is renamed private_and_public_2_a.
+
 Grammar has 4 nonterminal symbols, among which 1 start symbols.
 Grammar has 1 terminal symbols.
 Grammar has 4 productions.

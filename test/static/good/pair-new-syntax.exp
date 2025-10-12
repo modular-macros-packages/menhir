@@ -1,4 +1,6 @@
-Note: the nonterminal symbol pair (from pair-new-syntax.mly) is renamed pair_new_syntax_pair.
+File "pair-new-syntax.mly", line 7, characters 4-8:
+Note: the nonterminal symbol pair is renamed pair_new_syntax_pair.
+
 Grammar has 3 nonterminal symbols, among which 1 start symbols.
 Grammar has 5 terminal symbols.
 Grammar has 3 productions.

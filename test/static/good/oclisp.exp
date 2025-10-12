@@ -1,4 +1,6 @@
-Note: the nonterminal symbol list (from oclisp.mly) is renamed oclisp_list.
+File "oclisp.mly", line 18, characters 0-4:
+Note: the nonterminal symbol list is renamed oclisp_list.
+
 File "oclisp.mly", line 2, characters 25-28:
 Warning: the token EOF is unused.
 Grammar has 5 nonterminal symbols, among which 1 start symbols.
