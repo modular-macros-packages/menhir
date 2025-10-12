@@ -16,6 +16,9 @@ module Make (Error : sig
   (**[error ranges format ...] reports an error and aborts. *)
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
+  (**[note ranges format ...] emits an information message. It does not abort.*)
+  val note: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
 end) = struct
 
 (* -------------------------------------------------------------------------- *)
@@ -368,9 +371,9 @@ module T : sig
   val find : table -> string -> kind (* can raise [Not_found] *)
   val add : table -> string -> kind -> unit
   val replace : table -> string -> kind -> unit
-  val iter : (string -> kind -> unit) -> table -> unit
   val public_symbols : table -> StringSet.t
   val private_symbols : table -> StringSet.t
+  val unknown_symbols : table -> StringSet.t
 end = struct
   include Hashtbl
   type table = (symbol, kind) t
@@ -382,22 +385,21 @@ end = struct
     assert (mem table symbol);
     assert (used symbol);
     replace table symbol kind
-  let public_symbols table =
-    let accu = ref (StringSet.singleton "error") in
-    iter (fun symbol kind ->
-      match kind with
-      | NTPublic _ -> accu := StringSet.add symbol !accu
-      | _          -> ()
-    ) table;
-    !accu
-  let private_symbols table =
+  let gather (p : kind -> bool) table =
     let accu = ref StringSet.empty in
     iter (fun symbol kind ->
-      match kind with
-      | NTPrivate _ -> accu := StringSet.add symbol !accu
-      | _           -> ()
+      if p kind then accu := StringSet.add symbol !accu
     ) table;
     !accu
+  let public_symbols table =
+    let is_public = function NTPublic _ -> true | _ -> false in
+    StringSet.add "error" (gather is_public table)
+  let private_symbols table =
+    let is_private = function NTPrivate _ -> true | _ -> false in
+    gather is_private table
+  let unknown_symbols table =
+    let is_unknown = function Unknown _ -> true | _ -> false in
+    gather is_unknown table
 end
 
 (* [store_symbol table symbol kind] extends the table [table] with a
@@ -499,20 +501,6 @@ let store_private_nonterminal tokens table symbol positions =
   non_terminal_is_not_a_token tokens symbol positions;
   store_symbol table symbol (NTPrivate (List.hd positions))
 
-(* This tests whether [x] is known to be a private nonterminal symbol. *)
-
-let is_private_symbol table x =
-  match T.find table x with
-  | NTPrivate _         -> true
-  | _                   -> false
-  | exception Not_found -> false
-
-let iter_on_only_used_symbols f table =
-  T.iter
-    (fun k -> function Unknown pos -> f k pos
-       | _ -> ())
-    table
-
 let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
   let table = T.create() in
   let tokens = grammar.p_tokens in
@@ -548,7 +536,7 @@ let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
 
 (* -------------------------------------------------------------------------- *)
 
-let empty, union, inter = StringSet.(empty, union, inter)
+let empty, union, inter, diff = StringSet.(empty, union, inter, diff)
 
 let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list) = (* TODO redundant *)
 
@@ -559,18 +547,20 @@ let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list)
       union public (T.public_symbols table)
     ) empty tables
   in
-  let is_public symbol = StringSet.mem symbol public in
 
   (* We check the references in each grammar can be bound to
      a public symbol. *)
-  let _ =
-    List.iter
-      (iter_on_only_used_symbols
-         (fun k pos -> if not (is_public k) then
-            Error.error [ pos ]
-              "%s is undefined." k))
-      tables
+  let () =
+    tables |> List.iter @@ fun table ->
+    let undefined = diff (T.unknown_symbols table) public in
+    undefined |> StringSet.iter @@ fun symbol ->
+    match T.find table symbol with
+    | Unknown pos ->
+        Error.error [ pos ] "%s is undefined." symbol
+    | _ ->
+        assert false
   in
+
   (* Detect private symbol clashes and rename them if necessary. *)
   let defined = ref public
   and clashes = ref empty in
@@ -584,23 +574,20 @@ let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list)
   List.iter examine tables;
   let clashes = !clashes in
 
-  let rpgs = List.map
-    (fun (table, pg) ->
-       let renaming =
-         StringSet.fold
-           (fun x phi ->
-              if is_private_symbol table x then begin
-                  let x' = rename x pg.pg_filename in
-                    Printf.fprintf stderr
-                      "Note: the nonterminal symbol %s (from %s) is renamed %s.\n"
-                      x pg.pg_filename x';
-                    R.add x x' phi
-                end
-              else phi)
-           clashes R.empty
-       in
-         rewrite_grammar renaming pg)
-    pgs
+  let rpgs =
+    pgs |> List.map @@ fun (table, pg) ->
+    let phi =
+      StringSet.fold (fun x phi ->
+        match T.find table x with
+        | NTPrivate pos ->
+            let x' = rename x pg.pg_filename in
+            Error.note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
+            R.add x x' phi
+        | _ | exception Not_found ->
+            phi
+      ) clashes R.empty
+    in
+    rewrite_grammar phi pg
   in
 
     (* Merge public nonterminal definitions

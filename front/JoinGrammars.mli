@@ -15,6 +15,9 @@ module Make (Error : sig
   (**[error ranges format ...] reports an error and aborts. *)
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
+  (**[note ranges format ...] emits an information message. It does not abort.*)
+  val note: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
 end) : sig
 
   (**[join] combines several partial grammars to form a single grammar. *)
