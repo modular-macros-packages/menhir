@@ -247,6 +247,10 @@ end = struct
     List.fold_right2 add nts nts' empty
 end
 
+(* -------------------------------------------------------------------------- *)
+
+(* Applying a renaming to various syntactic categories. *)
+
 let rewrite_nonterminal =
   R.apply
 
@@ -266,42 +270,38 @@ let rewrite_branches phi branches =
   List.map (rewrite_branch phi) branches
 
 let rewrite_branches phi branches =
-  if R.is_empty phi then branches (* fast path *)
-  else rewrite_branches phi branches
+  if R.is_empty phi then branches else (* fast path *)
+  rewrite_branches phi branches
 
-(* Alpha conversion of [prule]. We rename bound parameters using
-   fresh names. *)
-let alphaconvert_rule parameters prule =
-  let phi = R.fresh parameters in
-  { prule with
-    pr_parameters  = List.map (rewrite_nonterminal phi) prule.pr_parameters;
-    pr_branches    = rewrite_branches phi prule.pr_branches
-  }
+(* [avoid xs rule] expects [xs] to form a subset of [rule.pr_parameters].
+   The parameters in the list [xs] are renamed to fresh names. *)
 
-(* Rewrite a rule taking bound names into account. We rename parameters
-   to avoid capture. *)
-let rewrite_rule (phi : R.renaming) prule =
-  let ids = R.support phi in
-  let captured_parameters =
-    List.filter (fun p -> StringSet.mem p ids) prule.pr_parameters
-  in
-  let prule =
-    alphaconvert_rule captured_parameters prule
-  in
-    { prule with
-        pr_nt = rewrite_nonterminal phi prule.pr_nt;
-        pr_branches = rewrite_branches phi prule.pr_branches }
+let avoid xs (rule : parameterized_rule) : parameterized_rule =
+  if xs = [] then rule else (* fast path *)
+  let phi = R.fresh xs in
+  { rule with
+    pr_parameters  = List.map (rewrite_nonterminal phi) rule.pr_parameters;
+    pr_branches    = rewrite_branches phi rule.pr_branches }
+
+(* Applying a renaming to a rule can force us to rename some of the rule's
+   parameters so as to avoid capture. *)
+
+let rewrite_rule phi rule =
+  let mem xs x = StringSet.mem x xs in
+  let captured = List.filter (mem (R.support phi)) rule.pr_parameters in
+  let rule = avoid captured rule in
+  { rule with
+    pr_nt = rewrite_nonterminal phi rule.pr_nt;
+    pr_branches = rewrite_branches phi rule.pr_branches }
 
 let rewrite_rules phi rules =
   List.map (rewrite_rule phi) rules
 
 let rewrite_grammar phi grammar =
-  (* We assume that [phi] affects only private symbols, so it does
-     not affect the start symbols. *)
-  if R.is_empty phi then
-    grammar
-  else
-    { grammar with pg_rules = rewrite_rules phi grammar.pg_rules }
+  (* We assume that [phi] affects only private symbols, so it does not affect
+     the start symbols, which are automatically considered public. *)
+  if R.is_empty phi then grammar else (* fast path *)
+  { grammar with pg_rules = rewrite_rules phi grammar.pg_rules }
 
 (* -------------------------------------------------------------------------- *)
 (* To rename (internalize) a nonterminal, we prefix it with its filename.
@@ -591,7 +591,7 @@ let merge_rules symbols pgs =
               with Not_found ->
                 (* We alphaconvert the rule in order to avoid the capture of
                    private symbols coming from another unit. *)
-                alphaconvert_rule r.pr_parameters r
+                avoid r.pr_parameters r
             in
               StringMap.add r.pr_nt r rules) rules rpg.pg_rules)
       StringMap.empty rpgs
