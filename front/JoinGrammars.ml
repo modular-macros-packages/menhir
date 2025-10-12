@@ -168,77 +168,120 @@ let join_postlude postlude grammar =
 
 (* -------------------------------------------------------------------------- *)
 
-(* We rewrite definitions when nonterminals are renamed. The
-   renaming [phi] is an association list of names to names. *)
+(* Before allowing renamings of parameters in a parameterized rule, we check
+   that every parameterized rule has distinct parameters. (This is new as of
+   2025/10/12.) This allows us to include a sanity check (an assertion) in
+   the function [R.add] below. It also lets us produce a better error
+   message when a rule has two parameters with the same name. *)
 
-type renaming =
-   (nonterminal * nonterminal) list
+let check_rule (rule : parameterized_rule) =
+  MList.foreach_duplicate String.compare rule.pr_parameters @@ fun x ->
+    Error.error rule.pr_positions
+      "several parameters of this rule are named \"%s\"." x
 
-let identity_renaming =
-  []
+let check (grammar : partial_grammar) =
+  List.iter check_rule grammar.pg_rules
 
-let rewrite_nonterminal (phi : renaming) nt =
-  try
-    List.assoc nt phi
-  with Not_found ->
-    nt
+(* -------------------------------------------------------------------------- *)
 
-let rewrite_parameter phi parameter =
-  Parameter.map (Located.map (rewrite_nonterminal phi)) parameter
+(* Joining two partial grammars can require renaming nonterminal symbols.
+   Only symbols that are not marked %public can be renamed. We sometimes
+   also need to rename the parameters of a parameterized rule. *)
 
-let rewrite_producer phi ((ido, parameter, attrs) : producer) =
-  ido, rewrite_parameter phi parameter, attrs
+(* The functions [use] and [used] keep track of the names that have been
+   used already (and must not be used again). *)
+
+let (use : nonterminal -> nonterminal), (used : nonterminal -> bool) =
+  let used = ref StringSet.empty in
+  let use nt = used := StringSet.add nt !used; nt
+  and used nt = StringSet.mem nt !used in
+  use, used
+
+(* The function [fresh] generates a fresh name (which has not been used
+   already) and records the fact that this name has been used. Its argument
+   is used as a base for the new name. *)
+
+let fresh : string -> nonterminal =
+  let c = ref 0 in
+  let rec fresh base =
+    let nt = base ^ string_of_int (MInt.preincrement c) in
+    if used nt then fresh base (* try again *)
+    else use nt
+  in fresh
+
+(* A renaming [phi] is a finite map of nonterminals to nonterminals. *)
+
+module R : sig
+
+  type renaming
+  val empty : renaming
+  val is_empty : renaming -> bool
+  val add : nonterminal -> nonterminal -> renaming -> renaming
+  val apply : renaming -> nonterminal -> nonterminal
+
+  (**[zip nts nts'] builds a renaming of the names [nts] to the names
+     [nts']. The two lists must have the same length. *)
+  val zip : nonterminal list -> nonterminal list -> renaming
+
+  (**[fresh nts] builds a renaming of the names [nts] to fresh names. *)
+  val fresh : nonterminal list -> renaming
+
+  (**[support phi] is the union of the domain and codomain of [phi]. *)
+  val support : renaming -> StringSet.t
+
+end = struct
+  include StringMap
+  type renaming = nonterminal t
+  let add nt nt' phi =
+    assert (not (mem nt phi));
+    add nt nt' phi
+  let apply phi nt =
+    try find nt phi
+    with Not_found -> nt
+  let fresh nts =
+    List.fold_left (fun phi nt ->
+      add nt (fresh nt) phi
+    ) empty nts
+  let zip nts nts' =
+    assert (List.length nts = List.length nts');
+    List.fold_right2 add nts nts' empty
+end
+
+let rewrite_nonterminal =
+  R.apply
+
+let rewrite_parameter phi param =
+  Parameter.map (Located.map (rewrite_nonterminal phi)) param
+
+let rewrite_producer phi ((ido, param, attrs) : producer) =
+  ido, rewrite_parameter phi param, attrs
+
+let rewrite_producers phi producers =
+  List.map (rewrite_producer phi) producers
 
 let rewrite_branch phi branch =
-  { branch with pb_producers = List.map (rewrite_producer phi) branch.pb_producers }
+  { branch with pb_producers = rewrite_producers phi branch.pb_producers }
 
 let rewrite_branches phi branches =
-  match phi with
-  | [] ->
-      branches
-  | _ ->
-      List.map (rewrite_branch phi) branches
+  List.map (rewrite_branch phi) branches
 
-let fresh_counter = ref 0
-
-let names = ref StringSet.empty
-
-let use_name name =
-  names := StringSet.add name !names
-
-let used_name name =
-  StringSet.mem name !names
-
-let rec fresh ?(hint = "v") () =
-  let name =
-    incr fresh_counter;
-    hint ^ string_of_int !fresh_counter
-  in
-    if used_name name then
-      fresh ~hint ()
-    else (
-      use_name name;
-      name
-    )
+let rewrite_branches phi branches =
+  if R.is_empty phi then branches (* fast path *)
+  else rewrite_branches phi branches
 
 (* Alpha conversion of [prule]. We rename bound parameters using
    fresh names. *)
 let alphaconvert_rule parameters prule =
-  let phi =
-    List.combine parameters (List.map (fun x -> fresh ~hint:x ()) parameters)
-  in
-    { prule with
-        pr_parameters  = List.map (rewrite_nonterminal phi) prule.pr_parameters;
-        pr_branches    = rewrite_branches phi prule.pr_branches
-    }
+  let phi = R.fresh parameters in
+  { prule with
+    pr_parameters  = List.map (rewrite_nonterminal phi) prule.pr_parameters;
+    pr_branches    = rewrite_branches phi prule.pr_branches
+  }
 
 (* Rewrite a rule taking bound names into account. We rename parameters
    to avoid capture. *)
-let rewrite_rule phi prule =
-  let ids =
-    List.fold_left (fun acu (f, d) -> StringSet.add f (StringSet.add d acu))
-      StringSet.empty phi
-  in
+let rewrite_rule (phi : R.renaming) prule =
+  let ids = R.support phi in
   let captured_parameters =
     List.filter (fun p -> StringSet.mem p ids) prule.pr_parameters
   in
@@ -255,7 +298,7 @@ let rewrite_rules phi rules =
 let rewrite_grammar phi grammar =
   (* We assume that [phi] affects only private symbols, so it does
      not affect the start symbols. *)
-  if phi = identity_renaming then
+  if R.is_empty phi then
     grammar
   else
     { grammar with pg_rules = rewrite_rules phi grammar.pg_rules }
@@ -287,10 +330,10 @@ let restrict filename =
 
 let rename nt filename =
   let name = restrict filename ^ "_" ^ nt in
-  if used_name name then
-    fresh ~hint:name ()
+  if used name then
+    fresh name
   else
-    (use_name name; name)
+    use name
 
 (* -------------------------------------------------------------------------- *)
 type symbol_kind =
@@ -315,7 +358,7 @@ let find_symbol (symbols : symbol_table) symbol =
   Hashtbl.find symbols symbol
 
 let add_in_symbol_table (symbols : symbol_table) symbol kind =
-  use_name symbol;
+  let _ = use symbol in
   Hashtbl.add symbols symbol kind;
   symbols
 
@@ -502,10 +545,10 @@ let merge_rules symbols pgs =
                     Printf.fprintf stderr
                       "Note: the nonterminal symbol %s (from %s) is renamed %s.\n"
                       x pg.pg_filename x';
-                    (x, x') :: phi
+                    R.add x x' phi
                 end
               else phi)
-           clashes []
+           clashes R.empty
        in
          rewrite_grammar renaming pg)
     pgs
@@ -538,7 +581,7 @@ let merge_rules symbols pgs =
                        could have different names, we rename them with
                        the fresh names assigned earlier (see the next
                        comment). *)
-                    let phi = List.combine r.pr_parameters r'.pr_parameters in
+                    let phi = R.zip r.pr_parameters r'.pr_parameters in
                     let rbr = rewrite_branches phi r.pr_branches in
                       { r' with
                           pr_positions = positions;
@@ -576,6 +619,7 @@ let join grammar pg =
   |> join_postlude pg.pg_postlude
 
 let join pgs =
+  List.iter check pgs;
   let grammar = List.fold_left join empty pgs in
   let symbols = List.map (symbols_of grammar) pgs in
   let tpgs = List.combine symbols pgs in

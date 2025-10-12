@@ -139,14 +139,7 @@ let check_parameterized_grammar_is_well_defined grammar =
          in
 
          (* The formal parameters of each rule must have distinct names. *)
-         prule.pr_parameters
-           |> MList.group compare
-           |> List.iter (fun xs ->
-               if List.length xs > 1 then
-                 let x = List.hd xs in
-                 Error.error prule.pr_positions
-                   "several parameters of this rule are named \"%s\"." x
-              );
+         (* This has already been checked in JoinGrammars. *)
 
          (* Check each branch. *)
          List.iter (fun branch ->
