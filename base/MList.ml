@@ -14,6 +14,9 @@ let[@inline] return x =
 let[@inline] bind xs k =
   List.flatten (List.map k xs)
 
+let[@inline] accumulate s xs f =
+  List.fold_left f s xs
+
 let single xs =
   match xs with
   | [ x ] ->

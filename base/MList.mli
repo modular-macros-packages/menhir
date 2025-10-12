@@ -17,6 +17,11 @@ val return : 'a -> 'a list
    a list of lists of results, which is flattened to a list of results. *)
 val bind : 'a list -> ('a -> 'b list) -> 'b list
 
+(**[accumulate] is a variant of [fold_left] that takes the initial state
+   and the list first, then the function. This allows writing a loop body
+   in a more natural form. *)
+val accumulate: 's -> 'a list -> ('s -> 'a -> 's) -> 's
+
 (**If [xs] is a singleton list then [single xs] is its single element. *)
 val single: 'a list -> 'a
 
