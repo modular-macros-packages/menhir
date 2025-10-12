@@ -1,0 +1,24 @@
+File "merge2.mly", line 3, characters 0-1:
+Warning: symbol X is unreachable from any of the start symbol(s).
+%start main
+%token A
+%token B
+%token C
+%type <unit> main
+%%
+
+foo:
+  
+    {()}
+
+main:
+  _1 = liste_B_
+    {()}
+
+liste_B_:
+  _1 = B _2 = B _3 = liste_B_
+    {()}
+| _1 = A _2 = foo _3 = B
+    {()}
+
+%%

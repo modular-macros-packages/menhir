@@ -595,8 +595,36 @@ let rename_private_symbols clashes (grammars : pgts) : partial_grammar list =
   (* and apply this renaming to this partial grammar. *)
   rewrite_grammar phi grammar
 
+(* [merge_rules nt rule rule'] merges two rules whose left-hand side is
+   the nonterminal symbol [nt]. The result is a single rule. *)
+
+let merge_rules nt rule rule' : parameterized_rule =
+  assert (rule.pr_nt = nt && rule'.pr_nt = nt);
+  let positions = rule.pr_positions @ rule'.pr_positions in
+  (* Check that the two rules have the same number of parameters. *)
+  let n, n' = List.(length rule.pr_parameters, length rule'.pr_parameters) in
+  if n <> n' then
+    Error.error positions
+      "the symbol %s is defined with arities %d and %d."
+      nt n n';
+  (* Check that the two rules have the same %inline status. *)
+  if rule.pr_inline <> rule'.pr_inline then
+    Error.error positions
+      "not all definitions of %s are marked %%inline." nt;
+  (* Combine the branches. The parameters could have different names in
+     the two rules, so a renaming may be necessary. *)
+  let phi = R.zip rule.pr_parameters rule'.pr_parameters in
+  let branches = rewrite_branches phi rule.pr_branches in
+  { rule' with
+    pr_positions = positions;
+    pr_branches  = branches @ rule'.pr_branches;
+    pr_attributes = rule.pr_attributes @ rule'.pr_attributes }
+
 type rules =
   parameterized_rule StringMap.t
+
+let extend (rules : rules) nt rule =
+  StringMap.add nt rule rules
 
 let merge_rules (grammars : pgts) : rules =
   let tables : T.table list = List.map snd grammars in
@@ -620,40 +648,20 @@ let merge_rules (grammars : pgts) : rules =
      have been resolved already, these copies are safe. *)
   (* For each partial grammar, *)
   accumulate StringMap.empty grammars @@ fun rules grammar ->
-  (* For each rule in this partial grammar, *)
+  (* For each rule in this partial grammar, defining a symbol [nt], *)
   accumulate rules grammar.pg_rules @@ fun rules rule ->
-  let r =
-    try
-      let r' = StringMap.find rule.pr_nt rules in
-      let positions = rule.pr_positions @ r'.pr_positions in
-      let ra, ra' =
-        List.length rule.pr_parameters,
-        List.length r'.pr_parameters
-      in
-        (* The arity of the parameterized symbols must be constant.*)
-        if ra <> ra' then
-          Error.error positions
-            "the symbol %s is defined with arities %d and %d."
-               rule.pr_nt ra ra'
-        else if rule.pr_inline <> r'.pr_inline then
-          Error.error positions
-               "not all definitions of %s are marked %%inline." rule.pr_nt
-        else
-          (* We combine the different branches. The parameters
-             could have different names, we rename them with
-             the fresh names assigned earlier (see the next
-             comment). *)
-          let phi = R.zip rule.pr_parameters r'.pr_parameters in
-          let rbr = rewrite_branches phi rule.pr_branches in
-            { r' with
-                pr_positions = positions;
-                pr_branches  = rbr @ r'.pr_branches;
-                pr_attributes = rule.pr_attributes @ r'.pr_attributes;
-            }
-    with Not_found ->
+  let nt = rule.pr_nt in
+  (* Extend our current set of rules with a definition of [nt], *)
+  extend rules nt @@
+  (* whose right-hand side is the following. *)
+  match StringMap.find nt rules with
+  | exception Not_found ->
+      (* There is no previous definition of [nt]. Just keep this rule. *)
       rule
-  in
-  StringMap.add r.pr_nt r rules
+  | rule' ->
+      (* There is a previous definition of [nt]. Merge the previous rule
+         and this new rule. *)
+      merge_rules nt rule rule'
 
 let empty : grammar =
   {

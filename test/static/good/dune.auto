@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 403 distinct tests.
+;; 404 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -17836,6 +17836,71 @@
   (action
     (diff memcad_1_0_0-mc_parser_stripped.ml.log.exp
       memcad_1_0_0-mc_parser_stripped.ml.log)))
+
+(rule (target merge1.opp.out) (deps merge1.mly merge2.mly)
+  (action
+    (with-outputs-to merge1.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --base merge1 --only-preprocess %{deps})))))
+
+(rule (alias quick) (action (diff merge1.opp.exp merge1.opp.out)))
+
+(rule
+  (targets merge1.out merge1.automaton merge1.automaton.resolved
+    merge1.conflicts merge1.timings)
+  (deps merge1.mly merge2.mly)
+  (action
+    (with-outputs-to merge1.out
+      (with-accepted-exit-codes 0
+        (run menhir --base merge1 --table --dump --dump-resolved --explain
+          -lg 2 -la 2 -lc 2 --timings-to merge1.timings %{deps})))))
+
+(rule (alias quick) (action (diff merge1.exp merge1.out)))
+
+(rule (alias quick) (action (diff merge1.automaton.exp merge1.automaton)))
+
+(rule (alias quick)
+  (action (diff merge1.automaton.resolved.exp merge1.automaton.resolved)))
+
+(rule (alias quick) (action (diff merge1.conflicts.exp merge1.conflicts)))
+
+(rule (target merge1_stripped.mly) (deps merge1.mly merge2.mly)
+  (action
+    (with-stderr-to merge1_stripped.ignored
+      (with-stdout-to merge1_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --base merge1 --only-preprocess-uu %{deps}))))))
+
+(rule
+  (targets merge1_stripped.log merge1_stripped.mli merge1_stripped.ml
+    merge1_stripped.stacklang merge1_stripped.timings merge1_stripped.scount
+    merge1_stripped.dcount)
+  (deps merge1_stripped.mly)
+  (action
+    (with-outputs-to merge1_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to merge1_stripped.timings %{deps})))))
+
+(alias (name quick) (deps
+                      merge1_stripped.stacklang))
+
+(rule (targets merge1_stripped.cmi merge1_stripped.mli.log)
+  (deps merge1_stripped.mli)
+  (action
+    (with-stdout-to merge1_stripped.mli.dtimings
+      (with-stderr-to merge1_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -c merge1_stripped.mli)))))
+
+(rule (targets merge1_stripped.cmo merge1_stripped.ml.log)
+  (deps merge1_stripped.ml merge1_stripped.cmi)
+  (action
+    (with-stdout-to merge1_stripped.ml.dtimings
+      (with-stderr-to merge1_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -c merge1_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff merge1_stripped.ml.log.exp merge1_stripped.ml.log)))
 
 (rule (target metaocaml.opp.out) (deps metaocaml.mly)
   (action
