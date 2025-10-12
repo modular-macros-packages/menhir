@@ -383,30 +383,36 @@ end = struct
     replace table symbol kind
 end
 
-let store_symbol (symbols : T.table) symbol kind =
-  match T.find symbols symbol, kind with
+(* [store_symbol table symbol kind] extends the table [table] with a
+   mapping of the symbol [symbol] to the kind [kind]. Various errors
+   are detected at this point. If a previous mapping of this symbol
+   to [Unknown _] existed then it is replaced. *)
+
+let store_symbol (table : T.table) symbol kind =
+  match T.find table symbol, kind with
 
   (* The symbol is not known so far. Add it. *)
   | exception Not_found ->
-      T.add symbols symbol kind
+      T.add table symbol kind
 
   (* There are two definitions of this symbol in one grammatical unit
      (that is, one .mly file), and at least one of them is private.
      This is forbidden. *)
-  | NTPrivate p, NTPrivate p'
-  | NTPublic p, NTPrivate p'
-  | NTPrivate p, NTPublic p' ->
-      Error.error [ p; p']
+  | NTPrivate pos, NTPrivate pos'
+  | NTPublic pos, NTPrivate pos'
+  | NTPrivate pos, NTPublic pos' ->
+      Error.error [ pos; pos']
         "the nonterminal symbol %s is multiply defined.\n\
          Only %%public symbols can have split definitions."
         symbol
 
-  (* The symbol is known to be a token but declared as a nonterminal.*)
-  | Terminal tkp, (NTPrivate p | NTPublic p)
-  | (NTPrivate p | NTPublic p), Terminal tkp ->
-      Error.error [ p; tkp.tk_position ]
-           "the identifier %s is a reference to a token."
-           symbol
+  (* The symbol is known to be a terminal symbol but is now declared
+     as a nonterminal symbol. *)
+  | Terminal properties, (NTPrivate pos | NTPublic pos)
+  | (NTPrivate pos | NTPublic pos), Terminal properties ->
+      Error.error [ pos; properties.tk_position ]
+        "the identifier %s is a reference to a token."
+        symbol
 
   (* In the following cases, we do not gain any piece of information.
      As of 2017/03/29, splitting the definition of a %public nonterminal
@@ -419,16 +425,30 @@ let store_symbol (symbols : T.table) symbol kind =
 
   (* We learn that the symbol is a nonterminal or a token. *)
   | Unknown _, _ ->
-      T.replace symbols symbol kind
+      T.replace table symbol kind
 
-let store_used_symbol position tokens symbols symbol =
-  let kind =
-    try
-      Terminal (StringMap.find symbol tokens)
-    with Not_found ->
-      Unknown position
-  in
-  store_symbol symbols symbol kind
+(* [tokens] maps the terminal symbols of a grammar to property records. *)
+
+type tokens =
+  properties StringMap.t
+
+(* [initial_kind tokens pos symbol] constructs a kind for the symbol
+   [symbol], which has just been encountered at position [pos]. *)
+
+let initial_kind (tokens : tokens) pos symbol =
+  try
+    Terminal (StringMap.find symbol tokens)
+  with Not_found ->
+    Unknown pos
+
+(* [initial_encounter] records a first encounter of the symbol [symbol]. *)
+
+let initial_encounter tokens table (symbol : symbol located) =
+  let pos, symbol = position symbol, value symbol in
+  store_symbol table symbol (initial_kind tokens pos symbol)
+
+(* This checks that [symbol], which is used as a nonterminal symbol,
+   is not a reserved word. *)
 
 let non_terminal_is_not_reserved symbol positions =
   if symbol = "error" then
@@ -436,66 +456,62 @@ let non_terminal_is_not_reserved symbol positions =
       "%s is reserved and thus cannot be used \
        as a non-terminal symbol." symbol
 
-let non_terminal_is_not_a_token tokens symbol positions =
-  try
-    let tkp = StringMap.find symbol tokens in
-      Error.error (positions @ [ tkp.tk_position ])
-         "the identifier %s is a reference to a token."
-         symbol
-  with Not_found -> ()
+(* This checks that [symbol], which is used as a nonterminal symbol,
+   is not already known to be a terminal symbol. *)
 
-let store_public_nonterminal tokens symbols symbol positions =
+let non_terminal_is_not_a_token (tokens : tokens) symbol positions =
+  match StringMap.find symbol tokens with
+  | exception Not_found ->
+      ()
+  | properties ->
+      Error.error (positions @ [ properties.tk_position ])
+        "the identifier %s is a reference to a token."
+        symbol
+
+(* This records that [symbol] is used as a public nonterminal symbol.  *)
+
+let store_public_nonterminal tokens table symbol positions =
   non_terminal_is_not_reserved symbol positions;
   non_terminal_is_not_a_token tokens symbol positions;
-  store_symbol symbols symbol (NTPublic (List.hd positions))
+  store_symbol table symbol (NTPublic (List.hd positions))
 
-let store_private_nonterminal tokens symbols symbol positions =
+(* This records that [symbol] is used as a private nonterminal symbol.  *)
+
+let store_private_nonterminal tokens table symbol positions =
   non_terminal_is_not_reserved symbol positions;
   non_terminal_is_not_a_token tokens symbol positions;
-  store_symbol symbols symbol (NTPrivate (List.hd positions))
+  store_symbol table symbol (NTPrivate (List.hd positions))
 
-let is_private_symbol t x =
-  try
-    match T.find t x with
-      | NTPrivate _ ->
-          true
-      | _ ->
-          false
-  with Not_found ->
-    false
+(* This tests whether [x] is known to be a private nonterminal symbol. *)
 
-let fold_on_private_symbols f init t =
+let is_private_symbol table x =
+  match T.find table x with
+  | NTPrivate _         -> true
+  | _                   -> false
+  | exception Not_found -> false
+
+let fold_on_private_symbols f init table =
   T.fold
     (fun k -> function NTPrivate _ -> (fun acu -> f acu k)
        | _ -> (fun acu -> acu))
-    t init
+    table init
 
-let fold_on_public_symbols f init t =
-  T.fold
-    (fun k -> function NTPublic _ -> (fun acu -> f acu k)
-       | _ -> (fun acu -> acu))
-    t init
-
-let iter_on_only_used_symbols f t =
+let iter_on_only_used_symbols f table =
   T.iter
     (fun k -> function Unknown pos -> f k pos
        | _ -> ())
-    t
+    table
 
 let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
-  let symbols = T.create() in
+  let table = T.create() in
   let tokens = grammar.p_tokens in
   let symbols_of_rule prule =
     let rec store_except_rule_parameters parameter =
       let symbol, parameters = Parameter.destruct parameter in
       (* Process the reference to [symbol]. *)
-      let () =
-        if List.mem (value symbol) prule.pr_parameters then
-          (* Rule parameters are bound locally, so they are not taken into account. *)
-          ()
-        else
-          store_used_symbol (position symbol) tokens symbols (value symbol)
-      in
+      (* Rule parameters are bound locally, so they are not taken into account. *)
+      if not (List.mem (value symbol) prule.pr_parameters) then
+        initial_encounter tokens table symbol;
       (* Process the parameters. *)
       List.iter store_except_rule_parameters parameters
     in
@@ -512,46 +528,51 @@ let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
          %public or %start. *)
       if prule.pr_public
         || StringMap.mem prule.pr_nt grammar.p_start_symbols then
-        store_public_nonterminal tokens symbols prule.pr_nt prule.pr_positions
+        store_public_nonterminal tokens table prule.pr_nt prule.pr_positions
       else
-        store_private_nonterminal tokens symbols prule.pr_nt prule.pr_positions
+        store_private_nonterminal tokens table prule.pr_nt prule.pr_positions
   in
   List.iter symbols_of_rule pg.pg_rules;
-  symbols
+  table
 
 (* -------------------------------------------------------------------------- *)
 
-let merge_rules (symbols : T.table list) (pgs : (T.table * partial_grammar) list) =
+let merge_rules (tables : T.table list) (pgs : (T.table * partial_grammar) list) =
 
-  (* Retrieve all the public symbols. *)
-  let public_symbols =
-    List.fold_left (fold_on_public_symbols (fun s k -> StringSet.add k s))
-      (StringSet.singleton "error")
-      symbols
+  (* Retrieve all the public symbols of all partial grammars. *)
+
+  let public = ref (StringSet.singleton "error") in
+  let () =
+    tables |> List.iter @@ fun table ->
+    table |> T.iter @@ fun symbol kind ->
+    match kind with
+    | NTPublic _ -> public := StringSet.add symbol !public
+    | _          -> ()
   in
+  let is_public symbol = StringSet.mem symbol !public in
 
   (* We check the references in each grammar can be bound to
      a public symbol. *)
   let _ =
     List.iter
       (iter_on_only_used_symbols
-         (fun k pos -> if not (StringSet.mem k public_symbols) then
+         (fun k pos -> if not (is_public k) then
             Error.error [ pos ]
               "%s is undefined." k))
-      symbols
+      tables
   in
   (* Detect private symbol clashes and rename them if necessary. *)
   let detect_private_symbol_clashes =
     fold_on_private_symbols
       (fun (defined, clashes) symbol ->
          if StringSet.mem symbol defined
-           || StringSet.mem symbol public_symbols then
+           || is_public symbol then
            (defined, StringSet.add symbol clashes)
          else
            (StringSet.add symbol defined, clashes))
   in
   let _private_symbols, clashes =
-    List.fold_left detect_private_symbol_clashes (StringSet.empty, StringSet.empty) symbols
+    List.fold_left detect_private_symbol_clashes (StringSet.empty, StringSet.empty) tables
   in
   let rpgs = List.map
     (fun (table, pg) ->
