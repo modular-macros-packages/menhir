@@ -11,6 +11,10 @@
 (**This module provides a number of utility functions that have something to
    do with integers. *)
 
+(**[preincrement r] increments the integer reference [r] and returns its
+   updated value. *)
+val preincrement: int ref -> int
+
 (**[postincrement r] increments the integer reference [r] and returns its
    original value. *)
 val postincrement: int ref -> int

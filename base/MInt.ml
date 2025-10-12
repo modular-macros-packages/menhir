@@ -8,6 +8,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let[@inline] preincrement r =
+  let x = !r in
+  let x' = x + 1 in
+  r := x';
+  x'
+
 let[@inline] postincrement r =
   let x = !r in
   r := x + 1;
