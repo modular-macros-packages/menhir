@@ -651,10 +651,7 @@ let merge_rules (grammars : pgts) : rules =
                 pr_attributes = rule.pr_attributes @ r'.pr_attributes;
             }
     with Not_found ->
-      (* We alphaconvert the rule in order to avoid the capture of
-         private symbols coming from another unit. *)
-      (* TODO useless? *)
-      avoid rule.pr_parameters rule
+      rule
   in
   StringMap.add r.pr_nt r rules
 
