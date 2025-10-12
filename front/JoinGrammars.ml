@@ -487,51 +487,46 @@ let non_terminal_is_not_a_token (tokens : tokens) symbol positions =
         "the identifier %s is a reference to a token."
         symbol
 
-(* This records that [symbol] is used as a public nonterminal symbol.  *)
+(* [store_nonterminal tokens table symbol positions public] records the fact
+   that [symbol] is used as a nonterminal symbol. The parameter [public]
+   determines whether this symbol should be considered public or private. *)
 
-let store_public_nonterminal tokens table symbol positions =
+let store_nonterminal tokens table symbol positions public =
   non_terminal_is_not_reserved symbol positions;
   non_terminal_is_not_a_token tokens symbol positions;
-  store_symbol table symbol (NTPublic (List.hd positions))
+  let pos = List.hd positions in
+  let kind = if public then NTPublic pos else NTPrivate pos in
+  store_symbol table symbol kind
 
-(* This records that [symbol] is used as a private nonterminal symbol.  *)
+(* [build tokens start_symbols g] builds a symbol table for the partial
+   grammar [g]. [tokens] and [start_symbols] are the terminal symbols
+   and the start symbols found in ALL partial grammars. *)
 
-let store_private_nonterminal tokens table symbol positions =
-  non_terminal_is_not_reserved symbol positions;
-  non_terminal_is_not_a_token tokens symbol positions;
-  store_symbol table symbol (NTPrivate (List.hd positions))
+type start_symbols =
+  range StringMap.t
 
-let symbols_of grammar (pg : Syntax.partial_grammar) : T.table =
+let build (tokens : tokens) (start_symbols : start_symbols) (g : partial_grammar)
+: T.table =
   let table = T.create() in
-  let tokens = grammar.p_tokens in
-  let symbols_of_rule prule =
-    let rec store_except_rule_parameters parameter =
-      let symbol, parameters = Parameter.destruct parameter in
-      (* Process the reference to [symbol]. *)
-      (* Rule parameters are bound locally, so they are not taken into account. *)
-      if not (List.mem (value symbol) prule.pr_parameters) then
-        initial_encounter tokens table symbol;
-      (* Process the parameters. *)
-      List.iter store_except_rule_parameters parameters
-    in
-
-    (* Analyse each branch. *)
-    let () = List.iter (fun branch ->
-      List.iter (fun (_, p, _) ->
-        store_except_rule_parameters p
-      ) branch.pb_producers
-    ) prule.pr_branches
-    in
-      (* Store the symbol declaration. *)
-      (* A nonterminal symbol is considered public if it is declared using
-         %public or %start. *)
-      if prule.pr_public
-        || StringMap.mem prule.pr_nt grammar.p_start_symbols then
-        store_public_nonterminal tokens table prule.pr_nt prule.pr_positions
-      else
-        store_private_nonterminal tokens table prule.pr_nt prule.pr_positions
+  let () =
+    (* For each rule, *)
+    g.pg_rules |> List.iter @@ fun prule ->
+    (* Process the left-hand side of this rule. This nonterminal symbol is
+       considered public if it is marked %public or if it is a start symbol. *)
+    let nt = prule.pr_nt in
+    let public = prule.pr_public || StringMap.mem nt start_symbols in
+    store_nonterminal tokens table nt prule.pr_positions public;
+    (* For each branch in this rule, *)
+    prule.pr_branches |> List.iter @@ fun branch ->
+    (* For each symbol in the right-hand side, *)
+    branch.pb_producers |> List.iter @@ fun (_, param, _) ->
+    param |> Parameter.iter @@ fun symbol ->
+    (* If this symbol is a parameter of this rule, then it is a local name;
+       it should not be added to the symbol table. Otherwise, remember that
+       this symbol has been encountered. *)
+    if not (List.mem (value symbol) prule.pr_parameters) then
+      initial_encounter tokens table symbol
   in
-  List.iter symbols_of_rule pg.pg_rules;
   table
 
 (* -------------------------------------------------------------------------- *)
@@ -657,7 +652,7 @@ let join grammar pg =
 let join pgs =
   List.iter check pgs;
   let grammar = List.fold_left join empty pgs in
-  let symbols = List.map (symbols_of grammar) pgs in
+  let symbols = List.map (build grammar.p_tokens grammar.p_start_symbols) pgs in
   let tpgs = List.combine symbols pgs in
   let rules = merge_rules symbols tpgs in
   { grammar with p_rules = rules }
