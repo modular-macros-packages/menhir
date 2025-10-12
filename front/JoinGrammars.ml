@@ -170,6 +170,14 @@ let join_postlude postlude grammar =
   | Some postlude ->
       { grammar with p_postludes = postlude :: grammar.p_postludes }
 
+(* [join grammar pg] adds the declarations and postludes of the partial
+   grammar [pg] to the grammar [grammar]. *)
+
+let join grammar pg =
+  grammar
+  |> join_declarations pg.pg_declarations
+  |> join_postlude pg.pg_postlude
+
 (* -------------------------------------------------------------------------- *)
 
 (* Before allowing renamings of parameters in a parameterized rule, we check
@@ -565,35 +573,30 @@ let clashes public tables =
   List.iter examine tables;
   !clashes
 
-(* [rename_private_symbols clashes grammars] renames the clashing private
-   symbols in each partial grammar in the list [grammars], producing a new
-   list of grammars. A private symbol is clashing if it appears in the set
-   [clashes]. The parameter [grammars] is in fact a list of pairs of a
-   partial grammar and its symbol table. *)
+(* [rename_private_symbols clashes grammars tables] renames the clashing
+   private symbols in each partial grammar in the list [grammars], producing a
+   new list of grammars. A private symbol is clashing if it appears in the set
+   [clashes]. [tables] is a list of the symbol tables for the grammars in the
+   list [grammars]. *)
 
-type pgt =
-  partial_grammar * T.table
-
-type pgts =
-  pgt list
-
-let rename_private_symbols clashes (grammars : pgts) : partial_grammar list =
-  (* For each partial grammar, *)
-  grammars |> List.map @@ fun (grammar, table) ->
-  (* Construct a renaming of the private symbols in this grammar, *)
-  let phi =
-    StringSet.fold (fun x phi ->
-      match T.find table x with
-      | NTPrivate pos ->
-          let x' = rename x grammar.pg_filename in
-          Error.note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
-          R.add x x' phi
-      | _ | exception Not_found ->
-          phi
-    ) clashes R.empty
-  in
-  (* and apply this renaming to this partial grammar. *)
-  rewrite_grammar phi grammar
+let rename_private_symbols clashes grammars tables : partial_grammar list =
+  (* For each partial grammar (and accompanying symbol table), *)
+  List.map2 (fun grammar table ->
+    (* Construct a renaming of the private symbols in this grammar, *)
+    let phi =
+      StringSet.fold (fun x phi ->
+        match T.find table x with
+        | NTPrivate pos ->
+            let x' = rename x grammar.pg_filename in
+            Error.note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
+            R.add x x' phi
+        | _ | exception Not_found ->
+            phi
+      ) clashes R.empty
+    in
+    (* and apply this renaming to this partial grammar. *)
+    rewrite_grammar phi grammar
+  ) grammars tables
 
 (* [merge_rules nt rule rule'] merges two rules whose left-hand side is
    the nonterminal symbol [nt]. The result is a single rule. *)
@@ -633,8 +636,11 @@ type rules =
 let extend (rules : rules) nt rule =
   StringMap.add nt rule rules
 
-let merge_rules (grammars : pgts) : rules =
-  let tables : T.table list = List.map snd grammars in
+(* [collect_all_rules] collects all rules in the partial grammars [grammars],
+   whose symbol tables form the list [tables]. The result is a single set of
+   rules. *)
+
+let collect_all_rules grammars tables : rules =
 
   (* Retrieve all the public symbols of all partial grammars. *)
   let public = tables |> List.map T.public_symbols |> big_union in
@@ -648,7 +654,7 @@ let merge_rules (grammars : pgts) : rules =
 
   (* Rename the private symbols that must be renamed. We do not update
      the symbol tables, so they must not be used any more. *)
-  let grammars = rename_private_symbols clashes grammars in
+  let grammars = rename_private_symbols clashes grammars tables in
 
   (* Merge the definitions of public nonterminal symbols and copy the
      definitions of private nonterminal symbols. Since all name clashes
@@ -670,6 +676,8 @@ let merge_rules (grammars : pgts) : rules =
          and this new rule. *)
       merge_rules nt rule rule'
 
+(* The empty grammar. *)
+
 let empty : grammar =
   {
     p_preludes                = [];
@@ -684,20 +692,22 @@ let empty : grammar =
     p_symbol_attributes       = [];
   }
 
-(* [join grammar pg] adds the declarations and postludes of the partial
-   grammar [pg] to the grammar [grammar]. *)
+(* We are at last ready to put everything together. *)
 
-let join grammar pg =
-  grammar
-  |> join_declarations pg.pg_declarations
-  |> join_postlude pg.pg_postlude
-
-let join pgs =
-  List.iter check pgs;
-  let grammar = List.fold_left join empty pgs in
-  let tables = List.map (build grammar.p_tokens grammar.p_start_symbols) pgs in
-  let tpgs = List.combine pgs tables in
-  let rules = merge_rules tpgs in
+let join grammars =
+  (* Check that every parameterized rule has distinct parameters. *)
+  List.iter check grammars;
+  (* Construct a unified grammar, which does not yet have any rules. *)
+  let grammar = List.fold_left join empty grammars in
+  (* Nevertheless, this step is useful, as it gives us the knowledge of all
+     tokens and all start symbols. *)
+  let tokens = grammar.p_tokens
+  and start_symbols = grammar.p_start_symbols in
+  (* Build a symbol table for each partial grammar. *)
+  let tables = List.map (build tokens start_symbols) grammars in
+  (* Now collect and merge all rules in all partial grammars. *)
+  let rules = collect_all_rules grammars tables in
+  (* Done! *)
   { grammar with p_rules = rules }
 
 end (* Make *)
