@@ -19,10 +19,15 @@ let filter p m =
   ) m empty
 
 let restrict domain m =
-  filter (fun k _ -> StringSet.mem k domain) m
+  filter (fun key _v -> StringSet.mem key domain) m
 
 let domain m =
-  fold (fun key _ acu -> StringSet.add key acu) m StringSet.empty
+  fold (fun key _v accu -> StringSet.add key accu) m StringSet.empty
+
+let support m =
+  fold (fun key v accu ->
+    StringSet.add key (StringSet.add v accu)
+  ) m StringSet.empty
 
 let multiple_add k v m =
   let vs =

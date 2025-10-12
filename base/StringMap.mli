@@ -25,6 +25,9 @@ val filter: (string -> 'a -> bool) -> 'a t -> 'a t
 (**[domain m] returns the domain of the map [m]. *)
 val domain: 'a t -> StringSet.t
 
+(**[support m] is the union of the domain and codomain of the map [m]. *)
+val support: string t -> StringSet.t
+
 (**[multiple_add k v m] adds the key-value pair [k, v] to the map [m],
    which maps keys to *lists* of values. The list currently associated
    with [k] is extended with the value [v]. *)
