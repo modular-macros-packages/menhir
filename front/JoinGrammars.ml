@@ -276,23 +276,23 @@ let rewrite_branches phi branches =
   if R.is_empty phi then branches else (* fast path *)
   rewrite_branches phi branches
 
-(* [avoid xs rule] expects [xs] to form a subset of [rule.pr_parameters].
-   The parameters in the list [xs] are renamed to fresh names. *)
+(* [avoid bad rule] renames some of the parameters of the rule [rule] with
+   fresh names so as to avoid the bad names in the set [bad]. *)
 
-let avoid xs (rule : parameterized_rule) : parameterized_rule =
-  if xs = [] then rule else (* fast path *)
-  let phi = R.fresh xs in
+let avoid bad (rule : parameterized_rule) : parameterized_rule =
+  let xs = rule.pr_parameters in
+  let captured = List.filter (fun x -> StringSet.mem x bad) xs in
+  if captured = [] then rule else (* fast path *)
+  let phi = R.fresh captured in
   { rule with
-    pr_parameters  = List.map (rewrite_nonterminal phi) rule.pr_parameters;
+    pr_parameters  = List.map (rewrite_nonterminal phi) xs;
     pr_branches    = rewrite_branches phi rule.pr_branches }
 
 (* Applying a renaming to a rule can force us to rename some of the rule's
    parameters so as to avoid capture. *)
 
 let rewrite_rule phi rule =
-  let mem xs x = StringSet.mem x xs in
-  let captured = List.filter (mem (R.support phi)) rule.pr_parameters in
-  let rule = avoid captured rule in
+  let rule = avoid (R.support phi) rule in
   { rule with
     pr_nt = rewrite_nonterminal phi rule.pr_nt;
     pr_branches = rewrite_branches phi rule.pr_branches }
@@ -611,8 +611,15 @@ let merge_rules nt rule rule' : parameterized_rule =
   if rule.pr_inline <> rule'.pr_inline then
     Error.error positions
       "not all definitions of %s are marked %%inline." nt;
-  (* Combine the branches. The parameters could have different names in
-     the two rules, so a renaming may be necessary. *)
+  (* Combine the branches. The parameters could have different names in the
+     two rules, so a renaming may be necessary. *)
+  (* We want to rename the parameters of [rule] to those of [rule'], or
+     vice-versa. However, one cannot always do so straight ahead: a name
+     capture can take place if a name that serves as a parameter in one rule
+     appears free in the other rule. So, we first rename the parameters of
+     [rule'] so as to avoid the free names of [rule]. Then we can rename
+     the parameters of [rule] to those of [rule'] without fear of capture. *)
+  let rule' = avoid (FreeNames.rule rule) rule' in
   let phi = R.zip rule.pr_parameters rule'.pr_parameters in
   let branches = rewrite_branches phi rule.pr_branches in
   { rule' with
