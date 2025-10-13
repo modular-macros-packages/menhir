@@ -1,2 +1,2 @@
-File "producer-with-a-positional-name.mly", line 4, characters 5-7:
+File "producer-with-a-positional-name.mly", line 4, characters 3-9:
 Error: there are multiple producers named _1 in this sequence.
