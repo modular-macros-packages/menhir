@@ -10,15 +10,10 @@
 
 (**This module implements sort unification. *)
 
-(**The syntax of ground sorts is defined in the module [Sort]. Here,
-   this syntax is extended with sort variables. *)
+(**The syntax of ground sorts is defined in the module [Sort].
+   Here, this syntax is extended with sort variables. *)
 
-type 'a structure =
-  | Arrow of 'a list
-
-type sort =
-  | TVar of int
-  | TNode of sort structure
+type sort
 
 (* -------------------------------------------------------------------------- *)
 
