@@ -8,16 +8,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module implements sort inference. *)
+(* This module has global state (a generator of unification variables; a
+   memoized generator of names for unification variables). This global state
+   currently cannot be reset. This should not be a problem, as this is
+   almost not observable. (If this module was heavily used and never reset
+   then we might end up running out of memory or out of names.) *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* The syntax of sorts is:
-
-     sort ::= (sort, ..., sort) -> *
-
-   where the arity (the number of sorts on the left-hand side of the arrow)
-   can be zero. *)
+(* This is the syntax of sorts in the form expected by the unification
+   algorithm in [Unifier]. *)
 
 module S = struct
 
@@ -46,25 +46,26 @@ include S
 
 (* -------------------------------------------------------------------------- *)
 
-(* Instantiate the unification algorithm with the above signature. *)
+(* Instantiate the unification algorithm. *)
 
 include Unifier.Make(S)
 
-type sort = term =
-  | TVar of int
-  | TNode of sort structure
+(* A sort (with unification variables) is a deep term. *)
+
+type usort =
+  term
 
 (* -------------------------------------------------------------------------- *)
 
 (* Sort constructors. *)
 
-let arrow (args : variable list) : variable =
+let[@inline] arrow (args : variable list) : variable =
   fresh (Some (Arrow args))
 
 let star : variable =
   arrow []
 
-let fresh () =
+let[@inline] fresh () =
   fresh None
 
 (* Sort accessors. *)
@@ -116,7 +117,7 @@ let make_name () : int -> string =
 
 (* A printer. *)
 
-let rec print name (b : Buffer.t) (sort : sort) =
+let rec print name (b : Buffer.t) (sort : usort) =
   match sort with
   | TVar x ->
       Printf.bprintf b "%s" (name x)
