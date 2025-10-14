@@ -8,7 +8,9 @@
   (name base)
   (libraries
     unix
+    vendored_fix
     vendored_bitsets
+    vendored_pprint
   )
 )
 

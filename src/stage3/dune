@@ -54,10 +54,8 @@
     base
     front
     unix
-    vendored_bitsets
-    vendored_fix
-    vendored_pprint
-    menhirLib menhirSdk
+    menhirLib
+    menhirSdk
   )
   (flags :standard -open Base -open MenhirSdk -open Front)
   (link_deps (alias bootstrap))
