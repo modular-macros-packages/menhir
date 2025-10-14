@@ -8,16 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module implements sort inference. *)
+(**This module implements sort unification. *)
 
-(* -------------------------------------------------------------------------- *)
-
-(* The syntax of sorts is:
-
-     sort ::= (sort, ..., sort) -> *
-
-   where the arity (the number of sorts on the left-hand side of the arrow)
-   can be zero. See [Sort]. *)
+(**The syntax of ground sorts is defined in the module [Sort]. Here,
+   this syntax is extended with sort variables. *)
 
 type 'a structure =
   | Arrow of 'a list

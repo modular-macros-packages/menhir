@@ -9,11 +9,13 @@
 (******************************************************************************)
 
 type sort =
-  | GArrow of sort list
+  | Arrow of sort list
 
 let star =
-  GArrow []
+  Arrow []
 
-let domain sort =
-  let GArrow sorts = sort in
+let[@inline] arrow sorts =
+  Arrow sorts
+
+let[@inline] domain (Arrow sorts) =
   sorts

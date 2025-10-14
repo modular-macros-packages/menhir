@@ -84,11 +84,12 @@ let rec ground s =
   match s with
   | TVar _ ->
       (* All variables are replaced with [*]. *)
-      Sort.GArrow []
+      Sort.star
   | TNode (Arrow ss) ->
-      Sort.GArrow (List.map ground ss)
+      Sort.arrow (List.map ground ss)
 
-let rec unground (Sort.GArrow ss) =
+let rec unground s =
+  let ss = Sort.domain s in
   TNode (Arrow (List.map unground ss))
 
 (* -------------------------------------------------------------------------- *)
