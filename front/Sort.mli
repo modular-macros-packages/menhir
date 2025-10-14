@@ -8,16 +8,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The syntax of sorts is:
+(**This modules defines the syntax of sorts. *)
 
-     sort ::= (sort, ..., sort) -> *
-
-   where the arity (the number of sorts on the left-hand side of the arrow)
-   can be zero. *)
-
+(**The syntax of sorts, on paper, would be [sort ::= (sort, ..., sort) -> *].
+   The arity of a sort [GArrow sorts] is the length of the list [sorts]. This
+   arity can be zero. *)
 type sort =
   | GArrow of sort list
 
+(**[star] is the base sort. It is the sort of arity zero, [GArrow []]. *)
 val star: sort
 
+(**The domain of the sort [GArrow sorts] is the list [sorts]. *)
 val domain: sort -> sort list

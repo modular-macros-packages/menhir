@@ -12,7 +12,7 @@ open Range
 open Located
 open Attribute
 open Syntax
-open GroundSort
+open Sort
 
 (* -------------------------------------------------------------------------- *)
 

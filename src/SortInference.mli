@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Syntax
-open GroundSort
+open Sort
 
 (* [infer_grammar g] performs sort inference for the grammar [g],
    rejecting the grammar if it is ill-sorted. It returns a map of
