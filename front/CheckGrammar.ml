@@ -14,9 +14,6 @@ open Syntax
 
 module Make (Error : sig
 
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
@@ -44,6 +41,25 @@ open G
 
 (* -------------------------------------------------------------------------- *)
 
+(* As of 2025/10/15, we systematically use [signal] instead of [error]. This
+   lets us report more than one error. *)
+
+(* For each symbol [s], we report at most one error of the form "the symbol
+   [s] is undefined". Otherwise, a flood of redundant errors could appear. *)
+
+let should_report_undefined_symbol : symbol -> bool =
+  let reported = ref StringSet.empty in
+  fun symbol ->
+    not (StringSet.mem symbol !reported) &&
+    let () = reported := StringSet.add symbol !reported in
+    true
+
+let undefined pos symbol =
+  if should_report_undefined_symbol symbol then
+    Error.signal [pos] "%s is undefined." symbol
+
+(* -------------------------------------------------------------------------- *)
+
 (* Check that every start symbol has a definition as a nonterminal symbol
    and has a %type declaration. *)
 
@@ -53,9 +69,9 @@ let is_named nt (param, _ocamltype) =
 let () =
   grammar.p_start_symbols |> StringMap.iter @@ fun nt pos ->
   if not (StringMap.mem nt grammar.p_rules) then
-    Error.error [pos] "the start symbol %s is undefined." nt;
-  if not (List.exists (is_named nt) grammar.p_types) then
-    Error.error [pos] "the type of the start symbol %s is unspecified." nt
+    undefined pos nt
+  else if not (List.exists (is_named nt) grammar.p_types) then
+    Error.signal [pos] "the type of the start symbol %s is unspecified." nt
 
 (* -------------------------------------------------------------------------- *)
 
@@ -82,22 +98,20 @@ let rec check_decl (kind : string) (must_be_nonterminal : bool) param =
   in
   (* If [head] is not satisfactory, fail. *)
   if not (is_terminal || is_nonterminal) then
-    Error.error [pos]
-      "%s is undefined." head
-  ;
-  if (must_be_nonterminal && not is_nonterminal) then
-    Error.error [pos]
+    undefined pos head
+  else if (must_be_nonterminal && not is_nonterminal) then
+    Error.signal [pos]
       "%s is a terminal symbol,\n\
        but %s declarations are applicable only to nonterminal symbols."
       (Parameter.print ", " param) kind
-  ;
   (* Then, check the children. *)
-  List.iter (check_decl kind false) params
+  else
+    List.iter (check_decl kind false) params
 
 (* A variant. *)
 
 let check_decl' kind must_be_nonterminal (param, _) =
-    check_decl kind must_be_nonterminal param
+  check_decl kind must_be_nonterminal param
 
 (* Special cases. *)
 
@@ -162,15 +176,15 @@ let check_symbol rule prec (symbol : symbol located) =
           (* A pseudo-token, declared by %left, %right or %nonassoc, cannot
              be used as a normal identifier. It can appear only in a %prec
              annotation. *)
-          Error.error [ pos ]
+          Error.signal [ pos ]
             "The symbol %s has not been declared by %%token,\n\
              so cannot be used here." symbol
     | exception Not_found ->
         (* An unknown symbol. *)
         if prec then
-          Error.error [ pos ] "The terminal symbol %s is undefined." symbol
+          Error.signal [ pos ] "The terminal symbol %s is undefined." symbol
         else
-          Error.error [ pos ] "The symbol %s is undefined." symbol
+          Error.signal [ pos ] "The symbol %s is undefined." symbol
 
 (* -------------------------------------------------------------------------- *)
 
@@ -189,19 +203,19 @@ let check_branch rule branch =
      no two producers define the same variable. *)
   let cmp (x1, _, _) (x2, _, _) = String.compare (value x1) (value x2) in
   MList.foreach_duplicate cmp producers @@ fun (x, _, _) ->
-  Error.error [branch.pb_position]
+  Error.signal [branch.pb_position]
     "there are multiple producers named %s in this sequence."
     (value x)
 
 let check_rule_has_distinct_formal_parameters rule =
   MList.foreach_duplicate String.compare rule.pr_parameters @@ fun x ->
-    Error.error rule.pr_positions
+    Error.signal rule.pr_positions
       "several parameters of this rule are named \"%s\"." x
 
 let check_inline_rule_has_no_attribute rule =
   match rule.pr_inline, rule.pr_attributes with
   | true, attr :: _ ->
-      Error.error [attr.origin]
+      Error.signal [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          It cannot carry an attribute."
         rule.pr_nt
@@ -218,7 +232,7 @@ let check_rule nt rule =
   List.iter (check_branch rule) rule.pr_branches;
   (* It is forbidden to use %inline on a %start symbol. *)
   if (rule.pr_inline && StringMap.mem nt grammar.p_start_symbols) then
-     Error.error rule.pr_positions
+     Error.signal rule.pr_positions
        "%s cannot be both a start symbol and inlined." nt;
   (* If a rule is marked %inline, then it must not carry an attribute. *)
   check_inline_rule_has_no_attribute rule
