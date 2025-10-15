@@ -38,13 +38,19 @@ val logC: int -> (out_channel -> unit) -> unit
 
 val error: ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
-(* [warning] is like [error], except it does not exit. *)
+(* [warning] is like [error], except it prints "Warning: " instead of
+   "Error: " and it does not exit. *)
 
 val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
-(* [note] is like [warning], but prints "Note:" instead of "Warning:". *)
+(* [note] is like [warning], but prints "Note: " instead of "Warning: ". *)
 
 val note: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+(* [log format ...] is like [warning], but prints nothing instead of
+   "Warning: ". A newline "\n" is still appended to the message. *)
+
+val log: ('a, out_channel, unit, unit) format4 -> 'a
 
 (* ---------------------------------------------------------------------------- *)
 

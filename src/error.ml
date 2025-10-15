@@ -47,18 +47,18 @@ let () =
 
 (* Logging and log levels. *)
 
-let log kind verbosity msg =
+let selective_log kind verbosity msg =
   if kind >= verbosity && !enabled then
     Printf.fprintf stderr "%t%!" msg
 
 let logG =
-  log Settings.logG
+  selective_log Settings.logG
 
 let logA =
-  log Settings.logA
+  selective_log Settings.logA
 
 let logC =
-  log Settings.logC
+  selective_log Settings.logC
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -92,6 +92,12 @@ let note positions format =
     (fun _ -> ())
     "Note: "
     positions format
+
+let log format =
+  display
+    (fun _ -> ())
+    ""
+    [] format
 
 (* ---------------------------------------------------------------------------- *)
 
