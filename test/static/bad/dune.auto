@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 175 distinct tests.
+;; 176 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -710,6 +710,14 @@
   (action
     (diff multiple-type-definition-modules-1.exp
       multiple-type-definition-modules-1.out)))
+
+(rule (target multiple_problems.out) (deps multiple_problems.mly)
+  (action
+    (with-outputs-to multiple_problems.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias test)
+  (action (diff multiple_problems.exp multiple_problems.out)))
 
 (rule (target new-syntax-parentheses.out) (deps new-syntax-parentheses.mly)
   (action

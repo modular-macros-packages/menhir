@@ -1,2 +1,5 @@
+File "multiple-token.mly", line 1, characters 7-10:
 File "multiple-token.mly", line 2, characters 7-10:
 Error: the token FOO has multiple definitions.
+File "multiple-token.mly", line 2, characters 7-10:
+Warning: the token FOO is unused.

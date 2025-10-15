@@ -1,2 +1,2 @@
 File "invalid-token-in-prec.mly", line 4, characters 9-10:
-Error: The terminal symbol F is undefined.
+Error: The symbol F is undefined.

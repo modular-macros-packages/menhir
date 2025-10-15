@@ -1,2 +1,2 @@
 File "undefined-start.mly", line 1, characters 12-13:
-Error: a is undefined.
+Error: The symbol a is undefined.
