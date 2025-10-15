@@ -11,10 +11,10 @@
 open Syntax
 open Sort
 
-(* [infer_grammar g] performs sort inference for the grammar [g],
-   rejecting the grammar if it is ill-sorted. It returns a map of
-   (terminal and nonterminal) symbols to ground sorts. *)
+(**A sort assignment is a map of (terminal and nonterminal) symbols to sorts. *)
+type sorts =
+  sort StringMap.t
 
-type sorts = sort StringMap.t
-
+(**[infer g] performs sort inference for the grammar [g]. If the grammar is
+   well-sorted, it returns a sort assignment. Otherwise, it fails. *)
 val infer: grammar -> sorts
