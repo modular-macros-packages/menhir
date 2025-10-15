@@ -41,14 +41,3 @@ rule validate_pointfree_action = parse
     { false }
 | _
     { raise InvalidPointFreeAction }
-
-(* See [ParserAux.valid_ocaml_identifier]. *)
-
-and valid_ocaml_identifier = parse
-| "_" eof
-    { false }
-| lowercase identchar* eof
-    { true }
-| _
-| eof
-    { false }

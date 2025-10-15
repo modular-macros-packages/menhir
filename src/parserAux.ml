@@ -130,4 +130,4 @@ let validate_pointfree_action (fragment : string located) : string located optio
    and validate it thoroughly. *)
 
 let valid_ocaml_identifier (x : identifier located) : bool =
-  Lexpointfree.valid_ocaml_identifier (Lexing.from_string (value x))
+  Lex.valid_ocaml_identifier (Lexing.from_string (value x))

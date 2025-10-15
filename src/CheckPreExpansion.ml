@@ -20,7 +20,7 @@ module Make (Error : sig
 end) = struct
 
   let valid_ocaml_identifier (x : string) : bool =
-    Lexpointfree.valid_ocaml_identifier (Lexing.from_string x)
+    Lex.valid_ocaml_identifier (Lexing.from_string x)
 
   let check_attribute attr =
     if attr.key = "name" && not (valid_ocaml_identifier attr.payload) then
