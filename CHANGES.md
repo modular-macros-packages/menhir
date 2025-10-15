@@ -1,6 +1,9 @@
 # Changes
 
-## 2025/09/XX
+## 2025/10/XX
+
+* Menhir can now report several well-formedness issues (undefined symbols,
+  unused tokens, etc.) in one run, instead of stopping at the first issue.
 
 * The new command line switch `--no-code-generation` causes Menhir to stop
   without generating any code: in other words, no back-end is invoked. The
