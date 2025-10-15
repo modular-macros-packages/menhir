@@ -11,10 +11,29 @@
 open Syntax
 open Sort
 
-(**A sort assignment is a map of (terminal and nonterminal) symbols to sorts. *)
+(**A sort assignment is a map of (terminal and nonterminal) symbols
+   to sorts. *)
 type sorts =
   sort StringMap.t
 
-(**[infer g] performs sort inference for the grammar [g]. If the grammar is
-   well-sorted, it returns a sort assignment. Otherwise, it fails. *)
-val infer: grammar -> sorts
+module Make (Error : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+  (**[log format ...] emits an information message. *)
+  val log: ('a, out_channel, unit, unit) format4 -> 'a
+
+end) (V : sig
+
+  (**If [verbose] is [true] then the sort of every symbol is displayed
+     through [Error.log]. *)
+  val verbose : bool
+
+end) : sig
+
+  (**[infer g] performs sort inference for the grammar [g]. If the grammar is
+     well-sorted, it returns a sort assignment. Otherwise, it fails. *)
+  val infer: grammar -> sorts
+
+end

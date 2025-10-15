@@ -99,7 +99,11 @@ let () =
 (* Check that the grammar is well-sorted; infer the sort of every symbol. *)
 
 let sorts =
-  SortInference.infer grammar
+  let module V = struct
+    let verbose = Settings.logG >= 3
+  end in
+  let module S = SortInference.Make(Error)(V) in
+  S.infer grammar
 
 (* ------------------------------------------------------------------------- *)
 

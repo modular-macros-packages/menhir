@@ -8,10 +8,56 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let error = Error.error
 open Located
 open Syntax
+open Sort
 open SortUnification
+
+(* -------------------------------------------------------------------------- *)
+
+(* An environment maps (terminal and nonterminal) symbols to unification
+   variables. *)
+
+type symbol =
+  string
+
+module Env =
+  StringMap
+
+type env =
+  variable Env.t
+
+let find x env : variable =
+  try
+    Env.find x env
+  with Not_found ->
+    assert false (* unbound terminal or nonterminal symbol *)
+
+let extend env (xvs : (symbol * variable) list) =
+  List.fold_left (fun env (x, v) ->
+    Env.add x v env
+  ) env xvs
+
+type sorts =
+  sort Env.t
+
+(* -------------------------------------------------------------------------- *)
+
+module Make (Error : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+  (**[log format ...] emits an information message. *)
+  val log: ('a, out_channel, unit, unit) format4 -> 'a
+
+end) (V : sig
+
+  (**If [verbose] is [true] then the sort of every symbol is displayed
+     through [Error.log]. *)
+  val verbose : bool
+
+end) = struct
 
 (* -------------------------------------------------------------------------- *)
 
@@ -25,7 +71,7 @@ open SortUnification
 let check_arity sym arity1 arity2 =
   let plural = max arity1 arity2 > 1 in
   if arity1 <> arity2 then
-    error [position sym]
+    Error.error [position sym]
       "does the symbol \"%s\" expect %d or %d argument%s?"
       (value sym)
       (min arity1 arity2)
@@ -52,43 +98,18 @@ let unify sym sort1 sort2 =
   with
   | Unify (v1, v2) ->
       let print v = print (decode v) in
-      error [position sym]
+      Error.error [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s is not compatible with the sort %s."
         (value sym) (print sort1) (print sort2) (print v1) (print v2)
   | Occurs (v1, v2) ->
       let print v = print (decode v) in
-      error [position sym]
+      Error.error [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s cannot be unified with the sort %s."
         (value sym) (print sort1) (print sort2) (print v1) (print v2)
-
-(* -------------------------------------------------------------------------- *)
-
-(* An environment maps (terminal and nonterminal) symbols to unification
-   variables. *)
-
-type symbol =
-  string
-
-module Env =
-  StringMap
-
-type env =
-  variable Env.t
-
-let find x env : variable =
-  try
-    Env.find x env
-  with Not_found ->
-    assert false (* unbound terminal or nonterminal symbol *)
-
-let extend env (xvs : (symbol * variable) list) =
-  List.fold_left (fun env (x, v) ->
-    Env.add x v env
-  ) env xvs
 
 (* -------------------------------------------------------------------------- *)
 
@@ -210,9 +231,6 @@ let check_grammar env g =
 
 (* -------------------------------------------------------------------------- *)
 
-type sorts =
-  Sort.sort Env.t
-
 let infer (g : grammar) : sorts =
 
   (* For each (terminal or nonterminal) symbol, allocate a unification
@@ -254,12 +272,14 @@ let infer (g : grammar) : sorts =
 
   let env = Env.map ground env in
 
-  (* At log level 3, display the inferred sort of every symbol. *)
+  (* If requested, display the inferred sort of every symbol. *)
 
-  Error.logG 3 (fun f ->
-    Env.iter (fun x gsort ->
-      Printf.fprintf f "%s :: %s\n" x (print (unground gsort))
-    ) env
-  );
+  let () =
+    if V.verbose then
+      env |> Env.iter @@ fun x gsort ->
+      Error.log "%s :: %s" x (print (unground gsort))
+  in
 
   env
+
+end (* Make *)
