@@ -110,7 +110,13 @@ let sorts =
 (* Perform other pre-expansion checks. *)
 
 let () =
-  CheckPreExpansion.check grammar
+  let c = Error.new_category() in
+  let module C =
+    CheckPreExpansion.Make(struct
+      let signal format = Error.signal c format
+    end) in
+  C.check grammar;
+  Error.exit_if c
 
 let grammar_before_expansion =
   grammar
