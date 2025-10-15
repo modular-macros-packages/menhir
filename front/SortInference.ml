@@ -34,9 +34,8 @@ let find x env : variable =
     assert false (* unbound terminal or nonterminal symbol *)
 
 let extend env (xvs : (symbol * variable) list) =
-  List.fold_left (fun env (x, v) ->
-    Env.add x v env
-  ) env xvs
+  MList.accumulate env xvs @@ fun env (x, v) ->
+  Env.add x v env
 
 type sorts =
   sort Env.t
@@ -63,6 +62,8 @@ end) = struct
 
 (* Error handling. *)
 
+(* The following functions are the only places where [Error.error] is called. *)
+
 (* In [check_arity], in principle, [arity1] is the expected arity and [arity2]
    is the actual arity. This distinction does not make much sense, though, as
    we do not know which is wrong, the declaration site or the use site. So, we
@@ -88,9 +89,9 @@ let unify_cannot_fail sort1 sort2 =
       (* If the caller is right, this unification step cannot fail! *)
       assert false
 
-(* In [unify], in principle, [sort1] is the expected sort and [sort2] is the
-   actual sort. Again, this distinction does not make much sense, so we
-   display a neutral error message. *)
+(* In [unify], in principle, [sort1] is the expected sort and [sort2] is
+   the actual sort. Again, this distinction does not make much sense, so
+   we display a neutral error message. *)
 
 let unify sym sort1 sort2 =
   try
@@ -123,11 +124,11 @@ let allocate (xs : 'a list) : ('a * variable) list * variable list =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [check_parameter env param expected] checks that the parameter [param] has
-   sort [expected]. A parameter is either a symbol or an application of a
-   symbol to a number of parameters. Every application is total -- the
-   language does not have partial applications. The sort of every application
-   is [star], but the sort of a variable is unrestricted. *)
+(* [check_parameter env param expected] checks that the parameter [param]
+   has sort [expected]. A parameter is either a symbol or an application
+   of a symbol to a number of parameters. Every application is total: the
+   language does not have partial applications. The sort of every
+   application is [star], but the sort of a variable is unrestricted. *)
 
 let rec check_parameter env (param : parameter) (expected : variable) =
   match param with
@@ -145,9 +146,8 @@ let rec check_parameter env (param : parameter) (expected : variable) =
          We could avoid this case distinction and always use the latter
          method, but the former method, when applicable, yields better error
          messages. If [sym] is a toplevel (nonterminal or terminal) symbol,
-         then we will be in the first case, as we have been careful to
-         initially assign an arrow sort of appropriate arity to each such
-         symbol. *)
+         then we will be in the first case, as we have initially assigned an
+         arrow sort of appropriate arity to each such symbol. *)
       let v = find x env in
       let expected =
         match domain v with
@@ -210,7 +210,7 @@ let check_grammar env g =
     unify sym star (find nt env)
   ) g.p_start_symbols;
 
-  (* Every symbol that appears in a [%type] declaration must have sort [star]. *)
+  (* A symbol that appears in a [%type] declaration must have sort [star]. *)
   List.iter (fun (param, _) ->
     check_parameter env param star
   ) g.p_types;
@@ -230,6 +230,8 @@ let check_grammar env g =
   ) g.p_symbol_attributes
 
 (* -------------------------------------------------------------------------- *)
+
+(* The main function. *)
 
 let infer (g : grammar) : sorts =
 
@@ -261,7 +263,7 @@ let infer (g : grammar) : sorts =
 
   check_grammar env g;
 
-  (* Decode the environment, so our user doesn't have to deal with
+  (* Decode the environment, so the user doesn't have to deal with
      unification variables. *)
 
   let env = Env.map decode env in
