@@ -12,7 +12,14 @@ open Attribute
 open Located
 open Syntax
 
-module Make (Error : sig
+module Make (E : sig
+
+  (**[can_complain_about symbol] determines whether it is permitted to report
+     an error, using [signal], about the symbol [symbol]. This function
+     typically returns [true] if queried about a certain symbol for this time,
+     and returns [false] if queried again about the same symbol. This lets us
+     avoid flooding the user with multiple reports about a single symbol. *)
+  val can_complain_about : symbol -> bool
 
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
@@ -28,6 +35,7 @@ end) (X : sig
   val ignore_unused_token : terminal -> bool
 
 end) = struct
+open E
 
 let reserved =
   [ "error" ]
@@ -41,22 +49,12 @@ open G
 
 (* -------------------------------------------------------------------------- *)
 
-(* As of 2025/10/15, we systematically use [signal] instead of [error]. This
-   lets us report more than one error. *)
-
-(* For each symbol [s], we report at most one error of the form "the symbol
-   [s] is undefined". Otherwise, a flood of redundant errors could appear. *)
-
-let should_report_undefined_symbol : symbol -> bool =
-  let reported = ref StringSet.empty in
-  fun symbol ->
-    not (StringSet.mem symbol !reported) &&
-    let () = reported := StringSet.add symbol !reported in
-    true
+(* As of 2025/10/15, we systematically use [signal] instead of [error].
+   This lets us report more than one error. *)
 
 let undefined pos symbol =
-  if should_report_undefined_symbol symbol then
-    Error.signal [pos] "%s is undefined." symbol
+  if can_complain_about symbol then
+    signal [pos] "The symbol %s is undefined." symbol
 
 (* -------------------------------------------------------------------------- *)
 
@@ -71,7 +69,7 @@ let () =
   if not (StringMap.mem nt grammar.p_rules) then
     undefined pos nt
   else if not (List.exists (is_named nt) grammar.p_types) then
-    Error.signal [pos] "the type of the start symbol %s is unspecified." nt
+    signal [pos] "the type of the start symbol %s is unspecified." nt
 
 (* -------------------------------------------------------------------------- *)
 
@@ -100,7 +98,7 @@ let rec check_decl (kind : string) (must_be_nonterminal : bool) param =
   if not (is_terminal || is_nonterminal) then
     undefined pos head
   else if (must_be_nonterminal && not is_nonterminal) then
-    Error.signal [pos]
+    signal [pos]
       "%s is a terminal symbol,\n\
        but %s declarations are applicable only to nonterminal symbols."
       (Parameter.print ", " param) kind
@@ -172,19 +170,17 @@ let check_symbol rule prec (symbol : symbol located) =
     | properties ->
         (* A token or pseudo-token. Mark it as used. *)
         mark symbol;
-        if not prec && not properties.tk_is_declared then
+        if not prec && not properties.tk_is_declared
+        && can_complain_about symbol then
           (* A pseudo-token, declared by %left, %right or %nonassoc, cannot
              be used as a normal identifier. It can appear only in a %prec
              annotation. *)
-          Error.signal [ pos ]
+          signal [ pos ]
             "The symbol %s has not been declared by %%token,\n\
              so cannot be used here." symbol
     | exception Not_found ->
         (* An unknown symbol. *)
-        if prec then
-          Error.signal [ pos ] "The terminal symbol %s is undefined." symbol
-        else
-          Error.signal [ pos ] "The symbol %s is undefined." symbol
+        undefined pos symbol
 
 (* -------------------------------------------------------------------------- *)
 
@@ -203,19 +199,19 @@ let check_branch rule branch =
      no two producers define the same variable. *)
   let cmp (x1, _, _) (x2, _, _) = String.compare (value x1) (value x2) in
   MList.foreach_duplicate cmp producers @@ fun (x, _, _) ->
-  Error.signal [branch.pb_position]
+  signal [branch.pb_position]
     "there are multiple producers named %s in this sequence."
     (value x)
 
 let check_rule_has_distinct_formal_parameters rule =
   MList.foreach_duplicate String.compare rule.pr_parameters @@ fun x ->
-    Error.signal rule.pr_positions
+    signal rule.pr_positions
       "several parameters of this rule are named \"%s\"." x
 
 let check_inline_rule_has_no_attribute rule =
   match rule.pr_inline, rule.pr_attributes with
   | true, attr :: _ ->
-      Error.signal [attr.origin]
+      signal [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          It cannot carry an attribute."
         rule.pr_nt
@@ -232,7 +228,7 @@ let check_rule nt rule =
   List.iter (check_branch rule) rule.pr_branches;
   (* It is forbidden to use %inline on a %start symbol. *)
   if (rule.pr_inline && StringMap.mem nt grammar.p_start_symbols) then
-     Error.signal rule.pr_positions
+     signal rule.pr_positions
        "%s cannot be both a start symbol and inlined." nt;
   (* If a rule is marked %inline, then it must not carry an attribute. *)
   check_inline_rule_has_no_attribute rule
@@ -252,7 +248,7 @@ let () =
 let () =
   grammar.p_tokens |> StringMap.iter @@ fun t properties ->
   if not (X.ignore_unused_token t || StringSet.mem t !used) then
-    Error.warning [properties.tk_position]
+    warning [properties.tk_position]
       "the token %s is unused." t
 
 (* -------------------------------------------------------------------------- *)
@@ -266,7 +262,7 @@ let valid_ocaml_identifier (x : string) : bool =
 
 let check_attribute attr =
   if attr.key = "name" && not (valid_ocaml_identifier attr.payload) then
-    Error.signal [attr.origin]
+    signal [attr.origin]
       "the name of a production must be a valid OCaml identifier"
 
 let check_branch branch =

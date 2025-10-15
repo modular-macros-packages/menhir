@@ -76,20 +76,31 @@ let grammars =
 
 (* If several grammar files were provided on the command line, merge them.   *)
 
+(* Then, check that the resulting grammar is well-formed. *)
+
 let grammar : Syntax.grammar =
-  let module J = JoinGrammars.Make(Error) in
-  J.join grammars
 
-(* We now have a single grammar. *)
-
-(* Check that the grammar is well-formed. *)
-
-let () =
   let c = Error.new_category() in
   let module E = struct
     include Error
     let signal format = Error.signal c format
+    (* For each symbol [s], we report at most one error about this symbol. *)
+    let can_complain_about : string -> bool =
+      let reported = ref StringSet.empty in
+      fun symbol ->
+        not (StringSet.mem symbol !reported) &&
+        let () = reported := StringSet.add symbol !reported in
+        true
   end in
+
+  let module J = JoinGrammars.Make(E) in
+  let grammar = J.join grammars in
+  (* We do NOT exit here if an error has been signaled. Thus we allow
+     CheckGrammar to run: this allows us to signal even more errors
+     and to blur the distinction between JoinGrammars and CheckGrammars
+     as far as the user is concerned. *)
+  (* Error.exit_if c; *)
+
   let module X = struct
     let ignore_unused_token t =
       Settings.ignore_all_unused_tokens ||
@@ -98,7 +109,9 @@ let () =
   end in
   let module C = CheckGrammar.Make(E)(X) in
   C.check grammar;
-  Error.exit_if c
+  Error.exit_if c;
+
+  grammar
 
 (* ------------------------------------------------------------------------- *)
 

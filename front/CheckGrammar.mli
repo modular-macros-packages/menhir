@@ -10,7 +10,14 @@
 
 open Syntax
 
-module Make (Error : sig
+module Make (E : sig
+
+  (**[can_complain_about symbol] determines whether it is permitted to report
+     an error, using [signal], about the symbol [symbol]. This function must
+     return [true] if queried about a certain symbol for the first time, and
+     can return [false] if queried again about the same symbol. This lets us
+     avoid flooding the user with multiple reports about a single symbol. *)
+  val can_complain_about : symbol -> bool
 
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
@@ -31,9 +38,9 @@ end) : sig
      [g]. Multiple warnings and errors can be reported via [warning] and
      [signal].
 
-     [check g] does not raise an exception or exit the process when an error
-     is reported. It is up to the caller to notice that at least one error
-     has been reported and to take appropriate action. *)
+     [check] does not raise an exception or abort when an error is signaled.
+     It is up to the caller to notice that [signal] has been called and to
+     take appropriate action. *)
   val check : grammar -> unit
 
 end

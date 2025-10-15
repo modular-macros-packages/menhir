@@ -12,15 +12,32 @@ let accumulate = MList.accumulate
 open Located
 open Syntax
 
-module Make (Error : sig
+module Make (E : sig
+
+  (**[can_complain_about symbol] determines whether it is permitted to report
+     an error, using [signal], about the symbol [symbol]. This function
+     typically returns [true] if queried about a certain symbol for this time,
+     and returns [false] if queried again about the same symbol. This lets us
+     avoid flooding the user with multiple reports about a single symbol. *)
+  val can_complain_about : symbol -> bool
 
   (**[error ranges format ...] reports an error and aborts. *)
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+  (**[signal ranges format ...] reports an error, but does not abort.
+     Therefore, it is possible to report several errors. *)
+  val signal: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
   (**[note ranges format ...] emits an information message. It does not abort.*)
   val note: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
 end) = struct
+open E
+
+(* -------------------------------------------------------------------------- *)
+
+(* As of 2025/10/15, we use [signal] instead of [error] in many places.
+   This lets us report more than one error. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -31,9 +48,10 @@ end) = struct
 let update_properties properties pos ocamltype t alias attrs =
   (* If the previous definition was a %token declaration (as opposed to
      a %left, %right, or %nonassoc specification), signal an error. *)
-  if properties.tk_is_declared then
-    Error.error [pos] "the token %s has multiple definitions." t;
-  (* Otherwise, update the previous definition. *)
+  if properties.tk_is_declared && can_complain_about t then
+    signal [properties.tk_position; pos]
+      "the token %s has multiple definitions." t;
+  (* Update the previous definition. *)
   { properties with
     tk_is_declared = true;
     tk_position    = pos;
@@ -136,8 +154,9 @@ let join_declaration (grammar : grammar) decl : grammar =
         with Not_found -> implicit_properties pos
       in
       (* Reject duplicate precedence declarations. *)
-      if properties.tk_associativity <> UndefinedAssoc then
-        Error.error [ pos; properties.tk_position ]
+      if properties.tk_associativity <> UndefinedAssoc
+      && can_complain_about t then
+        signal [ pos; properties.tk_position ]
           "there are multiple precedence declarations for token %s." t;
       (* Record the new declaration. *)
       let tk_associativity = assoc and tk_precedence = prec in
@@ -182,13 +201,14 @@ let join grammar pg =
 
 (* Before allowing renamings of parameters in a parameterized rule, we check
    that every parameterized rule has distinct parameters. (This is new as of
-   2025/10/12.) This allows us to include a sanity check (an assertion) in
-   the function [R.add] below. It also lets us produce a better error
-   message when a rule has two parameters with the same name. *)
+   2025/10/12.) This error is intentionally fatal. This allows us to include
+   a sanity check (an assertion) in the function [R.add] below. It also lets
+   us produce a better error message when a rule has two parameters with the
+   same name. *)
 
 let check_rule (rule : parameterized_rule) =
   MList.foreach_duplicate String.compare rule.pr_parameters @@ fun x ->
-    Error.error rule.pr_positions
+    error rule.pr_positions
       "several parameters of this rule are named \"%s\"." x
 
 let check (grammar : partial_grammar) =
@@ -428,18 +448,20 @@ let store_symbol (table : T.table) symbol kind =
   | NTPrivate pos, NTPrivate pos'
   | NTPublic pos, NTPrivate pos'
   | NTPrivate pos, NTPublic pos' ->
-      Error.error [ pos; pos']
-        "the nonterminal symbol %s is multiply defined.\n\
-         Only %%public symbols can have split definitions."
-        symbol
+      if can_complain_about symbol then
+        signal [ pos; pos']
+          "the nonterminal symbol %s is multiply defined.\n\
+           Only %%public symbols can have split definitions."
+          symbol
 
   (* The symbol is known to be a terminal symbol but is now declared
      as a nonterminal symbol. *)
   | Terminal properties, (NTPrivate pos | NTPublic pos)
   | (NTPrivate pos | NTPublic pos), Terminal properties ->
-      Error.error [ pos; properties.tk_position ]
-        "the identifier %s is a reference to a token."
-        symbol
+      if can_complain_about symbol then
+        signal [ pos; properties.tk_position ]
+          "the identifier %s is a reference to a token."
+          symbol
 
   (* In the following cases, we do not gain any piece of information.
      As of 2017/03/29, splitting the definition of a %public nonterminal
@@ -479,9 +501,10 @@ let initial_encounter tokens table (symbol : symbol located) =
 
 let non_terminal_is_not_reserved symbol positions =
   if symbol = "error" then
-    Error.error positions
-      "%s is reserved and thus cannot be used \
-       as a non-terminal symbol." symbol
+    if can_complain_about symbol then
+      error positions
+        "%s is reserved and thus cannot be used \
+         as a non-terminal symbol." symbol
 
 (* This checks that [symbol], which is used as a nonterminal symbol,
    is not already known to be a terminal symbol. *)
@@ -491,9 +514,10 @@ let non_terminal_is_not_a_token (tokens : tokens) symbol positions =
   | exception Not_found ->
       ()
   | properties ->
-      Error.error (positions @ [ properties.tk_position ])
-        "the identifier %s is a reference to a token."
-        symbol
+      if can_complain_about symbol then
+        signal (positions @ [ properties.tk_position ])
+          "the identifier %s is a reference to a token."
+          symbol
 
 (* [store_nonterminal tokens table symbol positions public] records the fact
    that [symbol] is used as a nonterminal symbol. The parameter [public]
@@ -551,7 +575,8 @@ let every_unknown_symbol_is_public public table =
   undefined |> StringSet.iter @@ fun symbol ->
   match T.find table symbol with
   | Unknown pos ->
-      Error.error [ pos ] "%s is undefined." symbol
+      if can_complain_about symbol then
+        signal [ pos ] "The symbol %s is undefined." symbol
   | _ ->
       assert false
 
@@ -588,7 +613,7 @@ let rename_private_symbols clashes grammars tables : partial_grammar list =
         match T.find table x with
         | NTPrivate pos ->
             let x' = rename x grammar.pg_filename in
-            Error.note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
+            note [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
             R.add x x' phi
         | _ | exception Not_found ->
             phi
@@ -604,15 +629,17 @@ let rename_private_symbols clashes grammars tables : partial_grammar list =
 let merge_rules nt rule rule' : parameterized_rule =
   assert (rule.pr_nt = nt && rule'.pr_nt = nt);
   let positions = rule.pr_positions @ rule'.pr_positions in
-  (* Check that the two rules have the same number of parameters. *)
+  (* Check that the two rules have the same number of parameters.
+     This error is intentionally fatal. This allows us to use [R.zip]
+     without worrying that the two lists might have different lengths. *)
   let n, n' = List.(length rule.pr_parameters, length rule'.pr_parameters) in
   if n <> n' then
-    Error.error positions
+    error positions
       "the symbol %s is defined with arities %d and %d."
       nt n n';
   (* Check that the two rules have the same %inline status. *)
-  if rule.pr_inline <> rule'.pr_inline then
-    Error.error positions
+  if rule.pr_inline <> rule'.pr_inline && can_complain_about nt then
+    signal positions
       "not all definitions of %s are marked %%inline." nt;
   (* Combine the branches. The parameters could have different names in the
      two rules, so a renaming may be necessary. *)
