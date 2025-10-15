@@ -20,6 +20,10 @@ module Make (Error : sig
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
+  (**[signal ranges format ...] reports an error, but does not abort.
+     Therefore, it is possible to report several errors. *)
+  val signal: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
 end) (X : sig
 
   (**[ignore_unused_token t] returns [true] if an ignored-token warning
@@ -236,6 +240,29 @@ let () =
   if not (X.ignore_unused_token t || StringSet.mem t !used) then
     Error.warning [properties.tk_position]
       "the token %s is unused." t
+
+(* -------------------------------------------------------------------------- *)
+
+(* Check that the [@name] attributes carried by productions are valid OCaml
+   identifiers. This property is required by the unparsing API. We require
+   this property even if [--unparsing] is off. *)
+
+let valid_ocaml_identifier (x : string) : bool =
+  Lex.valid_ocaml_identifier (Lexing.from_string x)
+
+let check_attribute attr =
+  if attr.key = "name" && not (valid_ocaml_identifier attr.payload) then
+    Error.signal [attr.origin]
+      "the name of a production must be a valid OCaml identifier"
+
+let check_branch branch =
+  List.iter check_attribute branch.pb_attributes
+
+let check_rule _nt rule =
+  List.iter check_branch rule.pr_branches
+
+let () =
+  StringMap.iter check_rule grammar.p_rules
 
 (* -------------------------------------------------------------------------- *)
 

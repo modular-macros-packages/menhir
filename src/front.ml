@@ -85,14 +85,20 @@ let grammar : Syntax.grammar =
 (* Check that the grammar is well-formed. *)
 
 let () =
+  let c = Error.new_category() in
+  let module E = struct
+    include Error
+    let signal format = Error.signal c format
+  end in
   let module X = struct
     let ignore_unused_token t =
       Settings.ignore_all_unused_tokens ||
       Settings.token_type_mode = Settings.TokenTypeOnly ||
       StringSet.mem t Settings.ignored_unused_tokens
   end in
-  let module C = CheckGrammar.Make(Error)(X) in
-  C.check grammar
+  let module C = CheckGrammar.Make(E)(X) in
+  C.check grammar;
+  Error.exit_if c
 
 (* ------------------------------------------------------------------------- *)
 
@@ -107,16 +113,7 @@ let sorts =
 
 (* ------------------------------------------------------------------------- *)
 
-(* Perform other pre-expansion checks. *)
-
-let () =
-  let c = Error.new_category() in
-  let module C =
-    CheckPreExpansion.Make(struct
-      let signal format = Error.signal c format
-    end) in
-  C.check grammar;
-  Error.exit_if c
+(* This is the grammar before expansion. *)
 
 let grammar_before_expansion =
   grammar

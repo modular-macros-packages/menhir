@@ -18,6 +18,10 @@ module Make (Error : sig
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
+  (**[signal ranges format ...] reports an error, but does not abort.
+     Therefore, it is possible to report several errors. *)
+  val signal: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
 end) (X : sig
 
   (**[ignore_unused_token t] returns [true] if an ignored-token warning
