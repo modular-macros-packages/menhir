@@ -355,8 +355,7 @@ let subst_producers env producers =
 let subst_branch inst env branch =
   { branch with
     pb_producers = subst_producers env branch.pb_producers;
-    pb_attributes = subst_attributes inst branch.pb_attributes;
-  }
+    pb_attributes = subst_attributes inst branch.pb_attributes }
 
 let subst_branches inst env branches =
   List.map (subst_branch inst env) branches
@@ -417,8 +416,8 @@ let instantiation_env (formals : symbols) (inst : instantiation) : env * symbols
    evident here but is lost afterwards. *)
 
 let visit label =
-  if not (marked label) then begin
-    mark label;
+  if not (marked label) then
+    let () = mark label in
     let (nt, inst) = label in
     let rule = StringMap.find nt g.p_rules in
     let formals = rule.pr_parameters in
@@ -432,7 +431,6 @@ let visit label =
         (if formals = [] then [] else global_attributes nt) @
         rule.pr_attributes
     }
-  end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -443,11 +441,10 @@ let visit label =
    the start symbols. *)
 
 let () =
-  StringMap.iter (fun nt prule ->
-    if prule.pr_parameters = [] then
-      let label = (nt, []) in
-      enqueue label
-  ) g.p_rules
+  g.p_rules |> StringMap.iter @@ fun nt prule ->
+  if prule.pr_parameters = [] then
+    let label = (nt, []) in
+    enqueue label
 
 (* -------------------------------------------------------------------------- *)
 
@@ -531,7 +528,7 @@ let g =
     p_symbol_attributes;
     p_rules }
 
-end (* of the functor *)
+end (* Run *)
 
 (* -------------------------------------------------------------------------- *)
 
