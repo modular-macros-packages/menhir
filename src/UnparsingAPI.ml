@@ -1011,7 +1011,10 @@ let unparsing_API (grammar : grammar) : interface =
         |> List.map producer2symbol
         |> Array.of_list
       let attributes (_nt, branch) = branch.br_attributes
-      let error_free (_nt, branch) = error_free branch
+      let error_free_producer producer =
+        producer.prod_symbol <> "error"
+      let error_free (_nt, branch) =
+        List.for_all error_free_producer branch.producers
       let mapnt nt f =
         assert (StringMap.mem nt grammar.rules);
         let rule = StringMap.find nt grammar.rules in

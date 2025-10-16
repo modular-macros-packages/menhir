@@ -107,41 +107,6 @@ let ocamltype_of_start_symbol grammar symbol : ocamltype =
     (* Every start symbol should have a type. *)
     assert false
 
-(* [is_inline_symbol grammar symbol] tells whether [symbol] is a nonterminal
-   symbol (as opposed to a terminal symbol) and is marked %inline. *)
-
-let is_inline_symbol grammar symbol : bool =
-  match StringMap.find symbol grammar.rules with
-  | rule ->
-      (* This is a nonterminal symbol. Test its %inline flag. *)
-      rule.inline_flag
-  | exception Not_found ->
-      (* This is a terminal symbol. *)
-      false
-
-(* [is_inline_symbol grammar producer] tells whether [producer] represents a
-   nonterminal symbol (as opposed to a terminal) and is marked %inline. *)
-
-let is_inline_producer grammar producer =
-  is_inline_symbol grammar producer.prod_symbol
-
-(* -------------------------------------------------------------------------- *)
-
-(* [names producers] is the set of names of the producers [producers]. The
-   name of a producer is the OCaml variable that is used to name its semantic
-   value. *)
-
-(* This function checks on the fly that no two producers carry the same name.
-   This check should never fail if we have performed appropriate renamings.
-   It is a debugging aid. *)
-
-let names (producers : producers) : StringSet.t =
-  List.fold_left (fun ids producer ->
-    let id = prod_id producer in
-    assert (not (StringSet.mem id ids));
-    StringSet.add id ids
-  ) StringSet.empty producers
-
 (* -------------------------------------------------------------------------- *)
 
 (* Productions. *)
@@ -156,12 +121,3 @@ and print_production_rhs producers =
   MString.with_buffer 80 @@ fun b ->
   producers |> List.iter @@ fun producer ->
   Printf.bprintf b " %s" producer.prod_symbol
-
-(* [error_free branch] determines whether the branch [branch] does *not*
-   contain the [error] token. *)
-
-let rec error_free branch =
-  List.for_all error_free_producer branch.producers
-
-and error_free_producer producer =
-  producer.prod_symbol <> "error"

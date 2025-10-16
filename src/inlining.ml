@@ -26,6 +26,35 @@ let take = MList.take
 
 (* -------------------------------------------------------------------------- *)
 
+(* [names producers] is the set of names of the producers [producers]. The
+   name of a producer is the OCaml variable that is used to name its semantic
+   value. *)
+
+let names producers =
+  producers |> List.map prod_id |> StringSet.of_list
+
+(* -------------------------------------------------------------------------- *)
+
+(* [is_inline_symbol grammar symbol] tells whether [symbol] is a nonterminal
+   symbol (as opposed to a terminal symbol) and is marked %inline. *)
+
+let is_inline_symbol grammar symbol : bool =
+  match StringMap.find symbol grammar.rules with
+  | rule ->
+      (* This is a nonterminal symbol. Test its %inline flag. *)
+      rule.inline_flag
+  | exception Not_found ->
+      (* This is a terminal symbol. *)
+      false
+
+(* [is_inline_symbol grammar producer] tells whether [producer] represents a
+   nonterminal symbol (as opposed to a terminal) and is marked %inline. *)
+
+let is_inline_producer grammar producer =
+  is_inline_symbol grammar producer.prod_symbol
+
+(* -------------------------------------------------------------------------- *)
+
 (* [search p i xs] searches the list [xs] for an element [x] that satisfies [p].
    If successful, then it returns a pair of: - [i] plus the offset of [x] in the
    list, and - the element [x]. *)

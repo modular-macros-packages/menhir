@@ -20,8 +20,4 @@ val nonterminals : grammar -> nonterminal list
 val is_nonterminal : grammar -> symbol -> bool
 val ocamltype_of_symbol : grammar -> symbol -> ocamltype option
 val ocamltype_of_start_symbol : grammar -> symbol -> ocamltype
-val is_inline_symbol : grammar -> symbol -> bool
-val is_inline_producer : grammar -> producer -> bool
-val names : producers -> StringSet.t
 val print_production : nonterminal -> branch -> string
-val error_free : branch -> bool
