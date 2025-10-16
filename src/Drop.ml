@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let accumulate = MList.accumulate
 open Attribute
 let value = Located.value
 (* The source. *)
@@ -24,32 +25,26 @@ let drop_parameter (param : S.parameter) : S.symbol =
   value (Parameter.head param)
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
-  {
-    T.producer_identifier = id;
+  { T.producer_identifier = id;
     T.producer_symbol     = drop_parameter param;
-    T.producer_attributes = attrs
-  }
+    T.producer_attributes = attrs }
 
 let drop_branch (branch : S.parameterized_branch) : T.branch =
-  {
-    T.branch_position  = branch.S.pb_position;
+  { T.branch_position  = branch.S.pb_position;
     T.producers        = List.map drop_producer branch.S.pb_producers;
     T.action           = branch.S.pb_action;
     T.prec_annotation  = branch.S.pb_prec_annotation;
     T.production_level = branch.S.pb_production_level;
-    T.br_attributes    = branch.S.pb_attributes;
-  }
+    T.br_attributes    = branch.S.pb_attributes }
 
 let drop_rule (rule : S.parameterized_rule) : T.rule =
   (* The grammar should not have any parameterized symbols. *)
   assert (rule.S.pr_parameters = []);
   (* The [%public] flag is dropped. *)
-  {
-    T.branches = List.map drop_branch rule.S.pr_branches;
+  { T.branches = List.map drop_branch rule.S.pr_branches;
     T.positions = rule.S.pr_positions;
     T.inline_flag = rule.S.pr_inline;
-    T.attributes = rule.S.pr_attributes;
-  }
+    T.attributes = rule.S.pr_attributes }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -59,7 +54,7 @@ let drop_rule (rule : S.parameterized_rule) : T.rule =
 let drop_declarations
   (f : 'info1 -> 'info2) (decls : (S.parameter * 'info1) list)
 : 'info2 StringMap.t =
-  MList.accumulate StringMap.empty decls @@ fun accu (param, info) ->
+  accumulate StringMap.empty decls @@ fun accu (param, info) ->
   let symbol = value (Parameter.head param) in
   StringMap.add symbol (f info) accu
 
@@ -93,14 +88,12 @@ let add_attribute (g : T.grammar) param attr : T.grammar =
           assert false
 
 let add_attributes g (params, attrs) =
-  List.fold_left (fun g param ->
-    List.fold_left (fun g attr ->
-      add_attribute g param attr
-    ) g attrs
-  ) g params
+  accumulate g params @@ fun g param ->
+  accumulate g attrs @@ fun g attr ->
+  add_attribute g param attr
 
 let add_attributes (decls : (S.parameter list * attributes) list) g =
-  List.fold_left add_attributes g decls
+  accumulate g decls add_attributes
 
 (* -------------------------------------------------------------------------- *)
 
