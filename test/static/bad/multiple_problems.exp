@@ -1,10 +1,10 @@
-File "multiple_problems.mly", line 23, characters 18-24:
+File "multiple_problems.mly", line 26, characters 18-24:
 Error: The symbol RPAREN is undefined.
-File "multiple_problems.mly", line 25, characters 22-25:
+File "multiple_problems.mly", line 28, characters 22-25:
 Error: The symbol exp is undefined.
-File "multiple_problems.mly", line 21, characters 6-9:
+File "multiple_problems.mly", line 24, characters 6-9:
 Error: The symbol int is undefined.
-File "multiple_problems.mly", line 27, characters 12-17:
+File "multiple_problems.mly", line 30, characters 12-17:
 Error: The symbol MINUS has not been declared by %token,
 so cannot be used here.
 File "multiple_problems.mly", line 1, characters 13-16:
@@ -12,3 +12,6 @@ Warning: the token INT is unused.
 File "multiple_problems.mly", line 10, characters 13-17:
 File "multiple_problems.mly", line 12, characters 13-17:
 Error: there are multiple %type declarations for the symbol main.
+File "multiple_problems.mly", line 14, characters 17-21:
+File "multiple_problems.mly", line 15, characters 17-21:
+Error: there are multiple %on_error_reduce declarations for the symbol list(exp).

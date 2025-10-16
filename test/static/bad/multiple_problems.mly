@@ -11,6 +11,9 @@
 %type  <int> exp       (* exp does not exist *)
 %type  <int> main      (* redundant *)
 
+%on_error_reduce list(exp)
+%on_error_reduce list(exp) (* redundant *)
+
 %%
 
 main:
