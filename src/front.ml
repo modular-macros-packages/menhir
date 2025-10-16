@@ -137,11 +137,11 @@ let grammar_before_expansion =
    to obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar : BasicSyntax.grammar =
-  let module S = SelectiveExpansion in
+  let open SelectiveExpansion in
   (* First, perform a selective expansion: expand away all parameters of
      higher sort, keeping the parameters of sort [*]. This process always
      terminates. *)
-  let grammar1 = S.expand S.ExpandHigherSort sorts grammar in
+  let grammar1 = expand ExpandHigherSort sorts grammar in
   (* This "first-order parameterized grammar" can then be submitted to
      the termination check. *)
   let module C = CheckSafeExpansion.Make(Error) in
@@ -150,7 +150,7 @@ let grammar : BasicSyntax.grammar =
      and start over from [grammar]. This is required in order to get correct
      names. (Expanding [grammar1] would yield an equivalent grammar, with
      more complicated names, reflecting the two steps of expansion.) *)
-  let grammar = S.expand S.ExpandAll sorts grammar in
+  let grammar = expand ExpandAll sorts grammar in
   (* This yields an unparameterized grammar. *)
   Drop.drop grammar
 
