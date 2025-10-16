@@ -9,6 +9,7 @@
 
 %start <int> main
 %type  <int> exp       (* exp does not exist *)
+%type  <int> main      (* redundant *)
 
 %%
 
