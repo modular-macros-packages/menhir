@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open PlainSyntax
-open BasicSyntax
+open PlainSyntaxAccessors
 open IL
 open ILConstruction
 

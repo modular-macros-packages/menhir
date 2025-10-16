@@ -10,7 +10,7 @@
 
 open Printf
 open Attribute
-open BasicSyntax
+open PlainSyntaxAccessors
 open IL
 open ILConstruction
 

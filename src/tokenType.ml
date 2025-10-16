@@ -13,7 +13,7 @@
    it emits the type definition and exits. *)
 
 open PlainSyntax
-open BasicSyntax
+open PlainSyntaxAccessors
 open IL
 open ILConstruction
 

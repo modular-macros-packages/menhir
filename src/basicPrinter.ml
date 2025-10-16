@@ -12,7 +12,7 @@ open Printf
 open Located
 open Attribute
 open PlainSyntax
-open BasicSyntax
+open PlainSyntaxAccessors
 open Settings
 
 (* When the original grammar is split over several files, it may be IMPOSSIBLE

@@ -13,7 +13,7 @@ open Keyword
 type sw = subject * where
 open Attribute
 open PlainSyntax
-open BasicSyntax
+open PlainSyntaxAccessors
 let drop = MList.drop
 let take = MList.take
 

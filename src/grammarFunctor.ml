@@ -10,7 +10,7 @@
 
 open Attribute
 open PlainSyntax
-open BasicSyntax
+open PlainSyntaxAccessors
 open Syntax
 open Located
 

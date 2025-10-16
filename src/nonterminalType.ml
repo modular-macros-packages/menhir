@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open BasicSyntax
+open PlainSyntaxAccessors
 open IL
 
 (* This is the conventional name of the nonterminal GADT, which describes the
