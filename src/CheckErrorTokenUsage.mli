@@ -11,9 +11,9 @@
 open BasicSyntax
 
 (**Under the simplified strategy, [filter_grammar] warns when the [error]
-   token used elsewhere than at the end of a production, and returns a grammar
-   where the faulty productions have been removed. Under the legacy strategy,
-   [filter_grammar] is an identity function. *)
+   token is used elsewhere than at the end of a production, and returns a
+   grammar where the faulty productions have been removed. Under the legacy
+   strategy, [filter_grammar] is an identity function. *)
 val filter_grammar : grammar -> grammar
 
 (* Why do we do this? The simplified strategy does not query the lexer for a
