@@ -394,7 +394,7 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
      once it is inlined into the caller. *)
 
   let startp, endp, beforeendp =
-    let name = producers |> Array.of_list |> Array.map Producer.id in
+    let name = producers |> Array.of_list |> Array.map prod_id in
     let ncallee = List.length callee.producers in
     define_positions name nprefix ncallee
   in
@@ -405,7 +405,7 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
      caller's semantic action should refer to the semantic value produced by
      the callee's semantic action. *)
 
-  let x = Producer.id producer in
+  let x = prod_id producer in
   let caller_action, callee_action =
     Action.rename (rename_sw_outer (x, startp, endp)) Action.empty caller.action,
     Action.rename (rename_sw_inner beforeendp) phi callee.action
@@ -510,7 +510,7 @@ module Inline (G : sig val grammar: grammar end) = struct
           check_no_prod_attributes producer;
           let symbol = producer.prod_symbol in
           expand_symbol symbol
-          |> get_branches
+          |> rule_branches
           |> inline_branches caller site
           |> expand_branches expand_symbol i
 

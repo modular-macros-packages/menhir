@@ -769,9 +769,9 @@ module Production = struct
       let producers = Array.of_list branch.producers in
       let rhs = Array.map prod_symbol producers in
       table.(k) <- (nt, rhs);
-      identifiers.(k) <- Array.map Producer.id producers;
+      identifiers.(k) <- Array.map prod_id producers;
       actions.(k) <- Some branch.action;
-      rhs_attributes.(k) <- Array.map Producer.attributes producers;
+      rhs_attributes.(k) <- Array.map prod_attributes producers;
       production_level.(k) <- branch.production_level;
       prec_decl.(k) <- branch.prec_annotation;
       positions.(k) <- [ branch.branch_position ];

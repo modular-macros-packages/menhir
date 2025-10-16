@@ -152,7 +152,7 @@ let print_semantic_action f g branch =
           [let]-bindings whose right-hand side uses the [$i] keywords. *)
       let bindings =
         List.mapi (fun i producer ->
-          let id = Producer.id producer
+          let id = prod_id producer
           and symbol = producer.prod_symbol in
           (* Test if [symbol] is a terminal symbol whose type is [unit]. *)
           let is_unit_token =
@@ -310,7 +310,7 @@ let print_types f g =
 let print_producer sep f producer =
   fprintf f "%s%s%s%a"
     (sep())
-    (print_binding (Producer.id producer))
+    (print_binding (prod_id producer))
     (MString.normalize producer.prod_symbol)
     print_attributes producer.prod_attributes
 

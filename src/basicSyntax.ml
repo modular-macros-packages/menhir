@@ -11,25 +11,13 @@
 open Located
 open PlainSyntax
 
-(* -------------------------------------------------------------------------- *)
+let prod_id producer : identifier =
+  value producer.prod_id
 
-(* Accessors for the type [producer]. *)
+let prod_attributes producer =
+  producer.prod_attributes
 
-module Producer = struct
-
-  let[@inline] id producer : identifier =
-    value producer.prod_id
-
-  let[@inline] attributes producer =
-    producer.prod_attributes
-
-end
-
-(* -------------------------------------------------------------------------- *)
-
-(* A getter and a transformer for the field [branches] of the type [rule]. *)
-
-let get_branches rule =
+let rule_branches rule =
   rule.branches
 
 let transform_branches f rule =
@@ -155,7 +143,7 @@ let is_inline_producer grammar producer =
 
 let names (producers : producers) : StringSet.t =
   List.fold_left (fun ids producer ->
-    let id = Producer.id producer in
+    let id = prod_id producer in
     assert (not (StringSet.mem id ids));
     StringSet.add id ids
   ) StringSet.empty producers
