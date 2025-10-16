@@ -231,7 +231,7 @@ module T = Fix.SCC.Run(G)
    source and destination of every dangerous edge and ensuring that they lie
    in distinct components. *)
 
-let () =
+let (finished : unit) =
   G.iter (fun source ->
     successors (fun edge target ->
       match edge with
@@ -257,6 +257,6 @@ end (* of the functor *)
 
 let check g =
   let module T = Run(struct let g = g end) in
-  ()
+  T.finished
 
 end (* Make *)
