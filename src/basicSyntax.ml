@@ -153,11 +153,9 @@ let rec print_production nt branch =
   Printf.sprintf "%s ->%s" nt (print_production_rhs branch.producers)
 
 and print_production_rhs producers =
-  let b = Buffer.create 80 in
-  List.iter (fun producer ->
-    Printf.bprintf b " %s" producer.prod_symbol
-  ) producers;
-  Buffer.contents b
+  MString.with_buffer 80 @@ fun b ->
+  producers |> List.iter @@ fun producer ->
+  Printf.bprintf b " %s" producer.prod_symbol
 
 (* [error_free branch] determines whether the branch [branch] does *not*
    contain the [error] token. *)
