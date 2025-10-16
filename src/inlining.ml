@@ -509,8 +509,8 @@ module Inline (G : sig val grammar: grammar end) = struct
              Then, we continue looking for inlining sites. *)
           check_no_prod_attributes producer;
           let symbol = producer.prod_symbol in
-          expand_symbol symbol
-          |> rule_branches
+          let rule = expand_symbol symbol in
+          rule.branches
           |> inline_branches caller site
           |> expand_branches expand_symbol i
 
@@ -520,8 +520,8 @@ module Inline (G : sig val grammar: grammar end) = struct
     (* Find the rule that defines this symbol. Then, transform this rule
        by applying [expand_branches] to its branches. The left-to-right
        sweep begins at index 0. *)
-    find symbol
-    |> transform_branches (expand_branches expand_symbol 0)
+    let rule = find symbol in
+    { rule with branches = expand_branches expand_symbol 0 rule.branches }
 
   (* Apply [defensive_fix] to obtain a closed function [expand_symbol]. *)
 

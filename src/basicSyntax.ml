@@ -17,12 +17,6 @@ let prod_id producer : identifier =
 let prod_attributes producer =
   producer.prod_attributes
 
-let rule_branches rule =
-  rule.branches
-
-let transform_branches f rule =
-  { rule with branches = f rule.branches }
-
 (* -------------------------------------------------------------------------- *)
 
 (* Terminal symbols. *)

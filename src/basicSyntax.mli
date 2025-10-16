@@ -2,8 +2,6 @@ open Attribute
 open PlainSyntax
 val prod_id : producer -> identifier
 val prod_attributes : producer -> attributes
-val rule_branches : rule -> branches
-val transform_branches : (branches -> branches) -> rule -> rule
 val tokens : grammar -> terminal list
 val typed_tokens : grammar -> (terminal * ocamltype option) list
 val ocamltype_of_token : grammar -> symbol -> ocamltype option
