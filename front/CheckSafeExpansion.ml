@@ -32,16 +32,16 @@ let debug = false
 
 (* -------------------------------------------------------------------------- *)
 
-(* For syntactic convenience, the code is wrapped in a functor. *)
+(* This local module helps share parameters and mutable state. *)
 
 module Run (G : sig val g : grammar end) = struct
 open G
 
 (* -------------------------------------------------------------------------- *)
 
-(* We build a graph whose vertices are all formal parameters of all rules. A
-   formal parameter is represented as a pair of a nonterminal symbol and a
-   0-based integer index (the number of this parameter within this rule).
+(* We build a graph whose vertices are all formal parameters of all rules.
+   A formal parameter is represented as a pair of a nonterminal symbol and
+   a 0-based integer index (the number of this parameter within this rule).
    We use OCaml's generic equality and hash functions at this type. *)
 
 type formal =
@@ -153,30 +153,29 @@ type edge =
   | Safe
   | Dangerous
 
-let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
+let rec successors_param (f : edge -> formal -> unit) x (param : parameter) =
   let sym, params = Parameter.destruct param in
   let nt = value sym in
-  List.iteri (fun i param ->
-    (* If it is known that [nt] does not use its [i]-th parameter, then
-       there is nothing to do here. *)
-    if used (nt, i) then begin
-      (* Check, recursively, the applications that appear inside [param]. *)
-      successors_parameter f x param;
-      (* If [x] occurs in the [i]-th actual parameter of this application,
-         then there is an edge to the formal [nt, i]. Whether it is a safe
-         or dangerous edge depends on whether [x] occurs shallow or deep. *)
-      let head, children = Parameter.destruct param in
-      if x = value head then
-        (* [x] occurs shallow. *)
-        f Safe (nt, i)
-      else if List.exists (Parameter.occurs x) children then
-        (* [x] occurs deep. *)
-        f Dangerous (nt, i)
-    end
-  ) params
+  params |> List.iteri @@ fun i param ->
+  (* If it is known that [nt] does not use its [i]-th parameter, then
+     there is nothing to do here. *)
+  if used (nt, i) then begin
+    (* Check, recursively, the applications that appear inside [param]. *)
+    successors_param f x param;
+    (* If [x] occurs in the [i]-th actual parameter of this application,
+       then there is an edge to the formal [nt, i]. Whether it is a safe
+       or dangerous edge depends on whether [x] occurs shallow or deep. *)
+    let head, children = Parameter.destruct param in
+    if x = value head then
+      (* [x] occurs shallow. *)
+      f Safe (nt, i)
+    else if List.exists (Parameter.occurs x) children then
+      (* [x] occurs deep. *)
+      f Dangerous (nt, i)
+  end
 
 let successors_producer f x ((_, param, _) : producer) =
-  successors_parameter f x param
+  successors_param f x param
 
 let successors_branch f x (branch : parameterized_branch) =
   List.iter (successors_producer f x) branch.pb_producers
@@ -212,8 +211,8 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Compute its strongly connected components, ignoring the distinction between
-   safe and dangerous edges. *)
+(* Compute its strongly connected components, ignoring the distinction
+   between safe and dangerous edges. *)
 
 module T = Fix.SCC.Run(G)
 
@@ -232,8 +231,8 @@ module T = Fix.SCC.Run(G)
    in distinct components. *)
 
 let (finished : unit) =
-  G.iter (fun source ->
-    successors (fun edge target ->
+  G.iter @@ fun source ->
+    source |> successors @@ fun edge target ->
       match edge with
       | Safe ->
           ()
@@ -245,9 +244,6 @@ let (finished : unit) =
                cannot be expanded away: expansion would not terminate.\n\
                The %s formal parameter of \"%s\" grows without bound."
               (MString.nth (i + 1)) nt
-
-    ) source
-  )
 
 end (* of the functor *)
 
