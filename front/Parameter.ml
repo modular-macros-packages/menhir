@@ -12,6 +12,8 @@ open Range
 open Located
 open Syntax
 
+type t = parameter
+
 let var x =
   ParamVar (locate dummy x)
 
@@ -94,9 +96,6 @@ let hash p =
       Hashtbl.hash (value x)
   | ParamAnonymous _ ->
       assert false
-
-(* [position] is not exposed to the user, but is used by [locate]. It must
-   accept an arbitrary parameter, which can be [ParamAnonymous _]. *)
 
 let position p =
   match p with
