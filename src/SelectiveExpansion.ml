@@ -227,14 +227,22 @@ let emit, rules =
    (normalized) result. This is succinctly expressed by combining a claim
    and a memoizer. *)
 
+(* [fail name] causes a fatal failure. This failure has never been observed
+   in practice. *)
+
+let fail name =
+  Printf.eprintf "Error: internal name clash over %s.\n" name;
+  assert false
+
 (* [new_claim()] creates a new service for claiming names. It returns a
    function [claim] of type [int -> unit] such that the call [claim x]
    succeeds if and only if [claim x] has never been called before. *)
+
 let new_claim () : (string -> unit) =
   let names = ref StringSet.empty in
   let claim name =
     if StringSet.mem name !names then
-      Error.error [] "internal name clash over %s" name;
+      fail name;
     names := StringSet.add name !names
   in
   claim
