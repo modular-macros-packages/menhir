@@ -37,9 +37,6 @@ let extend env (xvs : (symbol * variable) list) =
   MList.accumulate env xvs @@ fun env (x, v) ->
   Env.add x v env
 
-type sorts =
-  sort Env.t
-
 (* -------------------------------------------------------------------------- *)
 
 module Make (E : sig

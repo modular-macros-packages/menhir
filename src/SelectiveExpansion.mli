@@ -8,8 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This transformation expands away some or all of the parameterized
+   nonterminal symbols in a grammar. *)
+
 open Syntax
-open SortInference
+open Sort
 
 (* [expand sorts g] expands away some or all of the parameterized nonterminal
    symbols in the grammar [g], producing a new grammar. [sorts] is the sort

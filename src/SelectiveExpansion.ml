@@ -130,7 +130,7 @@ module Run (G : sig
   (* Expansion mode. *)
   val mode: mode
   (* Sort information. *)
-  val sorts: SortInference.sorts
+  val sorts: sorts
   (* The grammar [g] whose expansion is desired. *)
   val g : grammar
 end) = struct

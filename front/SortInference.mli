@@ -11,11 +11,6 @@
 open Syntax
 open Sort
 
-(**A sort assignment is a map of (terminal and nonterminal) symbols
-   to sorts. *)
-type sorts =
-  sort StringMap.t
-
 module Make (E : sig
 
   (**[error ranges format ...] reports an error and aborts. *)

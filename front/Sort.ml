@@ -19,3 +19,6 @@ let[@inline] arrow sorts =
 
 let[@inline] domain (Arrow sorts) =
   sorts
+
+type sorts =
+  sort StringMap.t

@@ -23,3 +23,8 @@ val arrow: sort list -> sort
 
 (**The domain of the sort [arrow sorts] is the list [sorts]. *)
 val domain: sort -> sort list
+
+(**A sort assignment is a map of (terminal and nonterminal) symbols
+   to sorts. *)
+type sorts =
+  sort StringMap.t
