@@ -9,18 +9,21 @@
 (******************************************************************************)
 
 open Attribute
+open Range
 open Syntax
 
-(* This is the abstract syntax for an unparameterized grammar, that is, a
-   grammar that does not have any parameterized nonterminal symbols. Such a
-   grammar is obtained as the result of an expansion phase, which takes
-   place in two steps, implemented in [SelectiveExpansion] and [Drop]. *)
+(**This is the abstract syntax for a plain grammar, that is, a grammar that
+   does not have any parameterized nonterminal symbols. *)
 
-(* In an unparameterized grammar, %attribute declarations can be desugared
-   away. This is also done during the above-mentioned expansion phase.
+(* A plain grammar is obtained as the result of an expansion phase, which
+   takes place in several steps, implemented in [SelectiveExpansion] and
+   [Drop]. *)
 
-   Thus, in an unparameterized grammar, attributes can be attached in the
-   following places:
+(* In a plain grammar, %attribute declarations can be desugared away. This is
+   also done by [Drop].
+
+   Thus, in a plain grammar, attributes can be attached in the following
+   places:
 
    - with the grammar:          field [gr_attributes] of [grammar]
    - with a terminal symbol:    field [tk_attributes] of [properties]
@@ -30,10 +33,9 @@ open Syntax
 
 (* ------------------------------------------------------------------------ *)
 
-(* A producer is a pair of a (located) identifier and a symbol. In concrete
+(**A producer is a pair of a (located) identifier and a symbol. In concrete
    syntax, it could be [e = expr], for instance. It carries a number of
    attributes. *)
-
 type producer =
   {
     producer_identifier : identifier located;
@@ -46,12 +48,11 @@ type producers =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A branch contains a series of producers and a semantic action. It is the
+(**A branch contains a series of producers and a semantic action. It is the
    same as in the surface syntax; see [Syntax]. *)
-
 type branch =
   {
-    branch_position  : Range.range;
+    branch_position  : range;
     producers        : producers;
     action           : action;
     prec_annotation  : prec_annotation;
@@ -64,25 +65,24 @@ type branches =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A rule consists mainly of several branches. In contrast with the surface
-   syntax, it has no parameters. *)
+(**A rule consists mainly of several branches. In contrast with the surface
+   syntax, it has no parameters.
 
-(* The [%inline] flag is no longer relevant after [NonTerminalInlining]. *)
-
+   The [%inline] flag is no longer relevant after %inline symbols have been
+   eliminated. *)
 type rule =
   {
     branches    : branches;
-    positions   : Range.range list;
+    positions   : range list;
     inline_flag : bool;
     attributes  : attributes;
   }
 
 (* ------------------------------------------------------------------------ *)
 
-(* A grammar is essentially the same as in the surface syntax; see [Syntax].
+(**A grammar is essentially the same as in the surface syntax; see [Syntax].
    The main difference is that [%attribute] declarations, represented by
    the field [p_symbol_attributes] in the surface syntax, have disappeared. *)
-
 type grammar =
   {
     preludes        : string located list;
