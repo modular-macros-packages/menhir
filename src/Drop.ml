@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Attribute
-let value, position = Located.(value, position)
+let value = Located.value
 (* The source. *)
 module S = Syntax
 (* The target. *)
@@ -53,41 +53,21 @@ let drop_rule (rule : S.parameterized_rule) : T.rule =
 
 (* -------------------------------------------------------------------------- *)
 
-(* We must store [%type] declarations and [%on_error_reduce] declarations in
-   StringMaps, whereas so far they were represented as lists. *)
+(* We must store [%type] declarations and [%on_error_reduce] declarations
+   in maps, whereas so far they were represented as lists. *)
 
 let drop_declarations
-  (kind : string)
-  (f : 'info1 -> 'info2)
-  (decls : (S.parameter * 'info1) list)
+  (f : 'info1 -> 'info2) (decls : (S.parameter * 'info1) list)
 : 'info2 StringMap.t =
+  MList.accumulate StringMap.empty decls @@ fun accu (param, info) ->
+  let symbol = value (Parameter.head param) in
+  StringMap.add symbol (f info) accu
 
-  (* Now is as good a time as any to check against multiple declarations
-     concerning a single nonterminal symbol. Indeed, if we did not rule out
-     this situation, then we would have to keep only one (arbitrarily chosen)
-     declaration. To do this, we first build a map of symbols to info *and*
-     position... *)
-  List.fold_left (fun accu (param, info) ->
-    let head = Parameter.head param in
-    let symbol = value head in
-    begin match StringMap.find symbol accu with
-    | exception Not_found ->
-        ()
-    | (_, pos) ->
-        Error.error [pos; position head]
-          "there are multiple %s declarations for the symbol %s."
-          kind symbol
-    end;
-    StringMap.add symbol (f info, position head) accu
-  ) StringMap.empty decls
-  (* ... then drop the positions. *)
-  |> StringMap.map (fun (info, _) -> info)
+let drop_type_declarations decls =
+  drop_declarations value decls
 
-let drop_type_declarations =
-  drop_declarations "%type" value
-
-let drop_on_error_reduce_declarations =
-  drop_declarations "%on_error_reduce" (fun x -> x)
+let drop_on_error_reduce_declarations decls =
+  drop_declarations (fun x -> x) decls
 
 (* -------------------------------------------------------------------------- *)
 
