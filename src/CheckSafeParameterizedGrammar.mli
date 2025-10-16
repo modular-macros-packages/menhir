@@ -8,11 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This test accepts a parameterized grammar, with the restriction that all
-   parameters must have sort [*]. Parameter of higher sort must be eliminated
-   prior to running this test: see [SelectiveExpansion]. *)
+(**This module offers a termination test for the expansion of parameterized
+   nonterminal symbols. *)
 
-(* This test succeeds if and only if the expansion of this grammar is safe,
-   that is, terminates. *)
+open Syntax
 
-val check: Syntax.grammar -> unit
+(**[test] accepts a parameterized grammar, where all parameters must have
+   sort [*]. (Parameters of higher sort must be eliminated prior to running
+   this test: see [SelectiveExpansion].) The test succeeds if and only if
+   the expansion of this grammar is safe, that is, expansion terminates. *)
+val check: grammar -> unit
