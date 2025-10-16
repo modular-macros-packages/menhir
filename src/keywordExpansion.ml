@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open PlainSyntax
 open BasicSyntax
 open Keyword
 open IL
@@ -63,8 +64,8 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
        [symbol] is not nullable, then we know that the start and end positions
        must differ, so we optimize this case. *)
     let producer = List.nth producers i in
-    let symbol = producer_symbol producer
-    and x = producer_identifier producer in
+    let symbol = producer.prod_symbol
+    and x = Producer.id producer in
     let startp = Position (RightNamed x, WhereStart, FlavorPosition)
     and   endp = Position (RightNamed x, WhereEnd,   FlavorPosition) in
     if not (nullable symbol) then
@@ -165,7 +166,7 @@ let expand_startend producers n keyword action =
          nonzero length and [$endpos($0)] otherwise. *)
       define keyword (fun e -> e) (
         if n > 0 then
-          let x = producer_identifier (List.hd producers) in
+          let x = Producer.id (List.hd producers) in
           Position (RightNamed x, WhereStart, flavor)
         else
           Position (Before, WhereEnd, flavor)
@@ -177,7 +178,7 @@ let expand_startend producers n keyword action =
          nonzero length and [$endpos($0)] otherwise. *)
       define keyword (fun e -> e) (
         if n > 0 then
-          let x = producer_identifier (List.hd (List.rev producers)) in
+          let x = Producer.id (List.hd (List.rev producers)) in
           Position (RightNamed x, WhereEnd, flavor)
         else
           Position (Before, WhereEnd, flavor)

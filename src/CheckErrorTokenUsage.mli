@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open BasicSyntax
+open PlainSyntax
 
 (**Under the simplified strategy, [filter_grammar] warns when the [error]
    token is used elsewhere than at the end of a production, and returns a

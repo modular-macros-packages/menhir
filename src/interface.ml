@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open PlainSyntax
 open BasicSyntax
 open IL
 open ILConstruction

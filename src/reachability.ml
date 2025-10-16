@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open BasicSyntax
+open PlainSyntax
 
 let rec visit grammar visited symbol =
   try
@@ -27,7 +27,7 @@ and visitb grammar visited { producers = symbols } =
   List.fold_left (visits grammar) visited symbols
 
 and visits grammar visited producer =
-  visit grammar visited (producer_symbol producer)
+  visit grammar visited producer.prod_symbol
 
 let trim grammar =
   if StringSet.cardinal grammar.start_symbols = 0 then

@@ -12,7 +12,7 @@ open Located
 open Keyword
 type sw = subject * where
 open Attribute
-open Syntax
+open PlainSyntax
 open BasicSyntax
 let drop = MList.drop
 let take = MList.take
@@ -58,13 +58,13 @@ let find grammar symbol : rule =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [check_no_producer_attributes] checks that a producer, which represents a
+(* [check_no_prod_attributes] checks that a producer, which represents a
    use site of an %inline symbol, does not carry any attributes. This ensures
    that we need not worry about propagating producer attributes through
    inlining. *)
 
-let check_no_producer_attributes producer =
-  match producer_attributes producer with
+let check_no_prod_attributes producer =
+  match producer.prod_attributes with
   | [] ->
       ()
   | attr :: _ ->
@@ -72,7 +72,7 @@ let check_no_producer_attributes producer =
         [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          A use of it cannot carry an attribute."
-        (producer_symbol producer)
+        producer.prod_symbol
 
 (* [combine_name_attributes] combines the [@name] attributes of the caller and
    callee, as described below. It produces a list of zero or one attribute. *)
@@ -137,7 +137,7 @@ let check_prec_inline caller producer nsuffix callee =
     (* The callee has a %prec annotation. *)
     (* Check condition 1. *)
     if nsuffix > 0 then begin
-      let symbol = producer_symbol producer in
+      let symbol = producer.prod_symbol in
       Error.error [ position callee_prec; caller.branch_position ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
@@ -146,7 +146,7 @@ let check_prec_inline caller producer nsuffix callee =
     end;
     (* Check condition 2. *)
     caller.prec_annotation |> Option.iter (fun caller_prec ->
-      let symbol = producer_symbol producer in
+      let symbol = producer.prod_symbol in
       Error.error [ position callee_prec; position caller_prec ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
@@ -210,14 +210,14 @@ let rec fresh names x =
 let rename (used : StringSet.t) producers: Action.subst * producers =
   let phi, _used, producers =
     List.fold_left (fun (phi, used, producers) producer ->
-      let id = producer_identifier_located producer in
+      let id = producer.prod_id  in
       let x = value id in
       if StringSet.mem x used then
         let x' = fresh used x in
         let id' = Located.map (fun _x -> x') id in
         Action.extend x x' phi,
         StringSet.add x' used,
-        { producer with producer_identifier = id' } :: producers
+        { producer with prod_id = id' } :: producers
       else
         (phi, StringSet.add x used, producer :: producers)
     ) (Action.empty, used, []) producers
@@ -394,7 +394,7 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
      once it is inlined into the caller. *)
 
   let startp, endp, beforeendp =
-    let name = producers |> Array.of_list |> Array.map producer_identifier in
+    let name = producers |> Array.of_list |> Array.map Producer.id in
     let ncallee = List.length callee.producers in
     define_positions name nprefix ncallee
   in
@@ -405,7 +405,7 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
      caller's semantic action should refer to the semantic value produced by
      the callee's semantic action. *)
 
-  let x = producer_identifier producer in
+  let x = Producer.id producer in
   let caller_action, callee_action =
     Action.rename (rename_sw_outer (x, startp, endp)) Action.empty caller.action,
     Action.rename (rename_sw_inner beforeendp) phi callee.action
@@ -507,8 +507,8 @@ module Inline (G : sig val grammar: grammar end) = struct
              definition (via a recursive call to [expand_symbol]), yielding
              a set of branches, which we inline into the branch [caller].
              Then, we continue looking for inlining sites. *)
-          check_no_producer_attributes producer;
-          let symbol = producer_symbol producer in
+          check_no_prod_attributes producer;
+          let symbol = producer.prod_symbol in
           expand_symbol symbol
           |> get_branches
           |> inline_branches caller site

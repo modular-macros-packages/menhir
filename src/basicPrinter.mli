@@ -19,5 +19,4 @@
    If, furthermore, the [mode] parameter requests ``unit tokens'', then the
    types carried by tokens are changed to unit. *)
 
-val print: Settings.print_mode -> out_channel -> BasicSyntax.grammar -> unit
-
+val print: Settings.print_mode -> out_channel -> PlainSyntax.grammar -> unit

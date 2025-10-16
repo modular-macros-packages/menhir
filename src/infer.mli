@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open BasicSyntax
+open PlainSyntax
 
 (* [ntvar symbol] is the name of the type variable associated with a
    nonterminal symbol. *)

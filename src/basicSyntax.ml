@@ -8,109 +8,22 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Attribute
-open Range
-open Syntax
-
-(**This is the abstract syntax for a plain grammar, that is, a grammar that
-   does not have any parameterized nonterminal symbols. *)
-
-(* A plain grammar is obtained as the result of an expansion phase, which
-   takes place in several steps, implemented in [SelectiveExpansion] and
-   [Drop]. *)
-
-(* In a plain grammar, %attribute declarations can be desugared away. This is
-   also done by [Drop].
-
-   Thus, in a plain grammar, attributes can be attached in the following
-   places:
-
-   - with the grammar:          field [gr_attributes] of [grammar]
-   - with a terminal symbol:    field [tk_attributes] of [properties]
-   - with a nonterminal symbol: field [attributes] of [rule]
-   - with a producer:           field [producer_attributes] of [producer]
-   - with a branch:             field [br_attributes] of [branch]           *)
-
-(* ------------------------------------------------------------------------ *)
-
-(**A producer is a pair of a (located) identifier and a symbol. In concrete
-   syntax, it could be [e = expr], for instance. It carries a number of
-   attributes. *)
-type producer =
-  {
-    producer_identifier : identifier located;
-    producer_symbol     : symbol;
-    producer_attributes : attributes;
-  }
-
-type producers =
-  producer list
-
-(* ------------------------------------------------------------------------ *)
-
-(**A branch contains a series of producers and a semantic action. It is the
-   same as in the surface syntax; see [Syntax]. *)
-type branch =
-  {
-    branch_position  : range;
-    producers        : producers;
-    action           : action;
-    prec_annotation  : prec_annotation;
-    production_level : production_level;
-    br_attributes    : attributes;
-  }
-
-type branches =
-  branch list
-
-(* ------------------------------------------------------------------------ *)
-
-(**A rule consists mainly of several branches. In contrast with the surface
-   syntax, it has no parameters.
-
-   The [%inline] flag is no longer relevant after %inline symbols have been
-   eliminated. *)
-type rule =
-  {
-    branches    : branches;
-    positions   : range list;
-    inline_flag : bool;
-    attributes  : attributes;
-  }
-
-(* ------------------------------------------------------------------------ *)
-
-(**A grammar is essentially the same as in the surface syntax; see [Syntax].
-   The main difference is that [%attribute] declarations, represented by
-   the field [p_symbol_attributes] in the surface syntax, have disappeared. *)
-type grammar =
-  {
-    preludes        : string located list;
-    postludes       : string located list;
-    parameters      : string located list;
-    start_symbols   : StringSet.t;
-    types           : ocamltype StringMap.t;
-    tokens          : Syntax.properties StringMap.t;
-    on_error_reduce : on_error_reduce_level StringMap.t;
-    gr_attributes   : attributes;
-    rules           : rule StringMap.t;
-  }
+open Located
+open PlainSyntax
 
 (* -------------------------------------------------------------------------- *)
 
 (* Accessors for the type [producer]. *)
 
-let producer_identifier { producer_identifier } : identifier =
-  Located.value producer_identifier
+module Producer = struct
 
-let producer_identifier_located { producer_identifier } : identifier located =
-  producer_identifier
+  let[@inline] id producer : identifier =
+    value producer.prod_id
 
-let producer_symbol { producer_symbol } =
-  producer_symbol
+  let[@inline] attributes producer =
+    producer.prod_attributes
 
-let producer_attributes { producer_attributes } =
-  producer_attributes
+end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -228,7 +141,7 @@ let is_inline_symbol grammar symbol : bool =
    nonterminal symbol (as opposed to a terminal) and is marked %inline. *)
 
 let is_inline_producer grammar producer =
-  is_inline_symbol grammar (producer_symbol producer)
+  is_inline_symbol grammar producer.prod_symbol
 
 (* -------------------------------------------------------------------------- *)
 
@@ -242,7 +155,7 @@ let is_inline_producer grammar producer =
 
 let names (producers : producers) : StringSet.t =
   List.fold_left (fun ids producer ->
-    let id = producer_identifier producer in
+    let id = Producer.id producer in
     assert (not (StringSet.mem id ids));
     StringSet.add id ids
   ) StringSet.empty producers
@@ -260,7 +173,7 @@ let rec print_production nt branch =
 and print_production_rhs producers =
   let b = Buffer.create 80 in
   List.iter (fun producer ->
-    Printf.bprintf b " %s" producer.producer_symbol
+    Printf.bprintf b " %s" producer.prod_symbol
   ) producers;
   Buffer.contents b
 
@@ -271,4 +184,4 @@ let rec error_free branch =
   List.for_all error_free_producer branch.producers
 
 and error_free_producer producer =
-  producer.producer_symbol <> "error"
+  producer.prod_symbol <> "error"

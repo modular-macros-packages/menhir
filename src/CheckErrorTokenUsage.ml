@@ -8,13 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open BasicSyntax
+open PlainSyntax
 
 let keep_branch branch : bool =
   let n = List.length branch.producers in
   let warned = ref false in
   branch.producers |> List.iteri begin fun i producer ->
-    if i < n - 1 && producer.producer_symbol = "error" && not !warned then begin
+    if i < n - 1 && producer.prod_symbol = "error" && not !warned then begin
       warned := true;
       Error.grammar_warning [branch.branch_position]
         "when --strategy simplified is selected,\n\

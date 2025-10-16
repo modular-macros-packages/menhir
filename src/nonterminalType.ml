@@ -38,7 +38,7 @@ let nonterminalgadtdef grammar =
 
       (* The ordering of this list matters. We want the data constructors
          to respect the internal ordering (as determined by [nonterminals]
-         in [BasicSyntax]) of the nonterminal symbols. This may
+         in [PlainSyntax]) of the nonterminal symbols. This may
          be exploited in the table back-end to allow an unsafe conversion
          of a data constructor to an integer code. See [n2i] in
          [InspectionTableInterpreter]. *)

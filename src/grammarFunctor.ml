@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Attribute
+open PlainSyntax
 open BasicSyntax
 open Syntax
 open Located
@@ -16,7 +17,7 @@ open Located
 module Make (G : sig
 
   (* An abstract syntax tree for the grammar. *)
-  val grammar: BasicSyntax.grammar
+  val grammar: PlainSyntax.grammar
 
   (* This flag indicates whether it is OK to produce warnings, verbose
      information, etc., when this functor is invoked. If it is set to
@@ -759,18 +760,18 @@ module Production = struct
 
   (* Create the non-start productions, populating the above arrays. *)
 
-  let producer_symbol producer =
-    Symbol.lookup (producer_symbol producer)
+  let prod_symbol producer =
+    Symbol.lookup producer.prod_symbol
 
   let (_ : int) = StringMap.fold (fun nonterminal { branches } k ->
     let nt = Nonterminal.lookup nonterminal in
     let k' = List.fold_left (fun k branch ->
       let producers = Array.of_list branch.producers in
-      let rhs = Array.map producer_symbol producers in
+      let rhs = Array.map prod_symbol producers in
       table.(k) <- (nt, rhs);
-      identifiers.(k) <- Array.map producer_identifier producers;
+      identifiers.(k) <- Array.map Producer.id producers;
       actions.(k) <- Some branch.action;
-      rhs_attributes.(k) <- Array.map producer_attributes producers;
+      rhs_attributes.(k) <- Array.map Producer.attributes producers;
       production_level.(k) <- branch.production_level;
       prec_decl.(k) <- branch.prec_annotation;
       positions.(k) <- [ branch.branch_position ];

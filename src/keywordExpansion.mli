@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open BasicSyntax
+open PlainSyntax
 
 (* [expand_grammar] expands away the keywords [$startpos] and [$endpos], as
    well as the entire [ofs] family of keywords. Doing this early simplifies

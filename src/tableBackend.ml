@@ -16,7 +16,7 @@ open Printf
 open TokenType
 open NonterminalType
 open CodePieces
-open BasicSyntax
+open PlainSyntax
 
 module Run () = struct
 

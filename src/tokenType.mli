@@ -52,13 +52,13 @@ val tokengadtdata: string -> string
 (* The definitions of the token type and of the token GADT, for use by the
    code generators. Each of these lists defines zero or one type. *)
 
-val tokentypedef: BasicSyntax.grammar -> IL.interface
-val tokengadtdef: BasicSyntax.grammar -> IL.interface
+val tokentypedef: PlainSyntax.grammar -> IL.interface
+val tokengadtdef: PlainSyntax.grammar -> IL.interface
 
 (* [produce_tokentypes] writes the type definitions to the [.ml] and
    [.mli] files. It is usd when [--only-tokens] is set. *)
 
-val produce_tokentypes: BasicSyntax.grammar -> unit
+val produce_tokentypes: PlainSyntax.grammar -> unit
 
 (* The name of the interpreter sub-module, when the table back-end
    is used. *)

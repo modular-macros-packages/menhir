@@ -956,7 +956,7 @@ let celltypedefs =
    the prelude, postlude, and semantic actions lie outside of this area.
    We could disable other warnings as well if desired. *)
 
-open BasicSyntax
+open PlainSyntax
 
 let grammar =
   Front.grammar

@@ -136,7 +136,7 @@ let grammar_before_expansion =
 (* Expand away all applications of parameterized nonterminal symbols, so as
    to obtain a grammar without parameterized nonterminal symbols. *)
 
-let grammar : BasicSyntax.grammar =
+let grammar : PlainSyntax.grammar =
   let open SelectiveExpansion in
   (* First, perform a selective expansion: expand away all parameters of
      higher sort, keeping the parameters of sort [*]. This process always

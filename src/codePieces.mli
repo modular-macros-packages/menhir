@@ -122,4 +122,4 @@ val call_stop: int -> expr
 
 val basics: string
 
-val mbasics: BasicSyntax.grammar -> structure
+val mbasics: PlainSyntax.grammar -> structure

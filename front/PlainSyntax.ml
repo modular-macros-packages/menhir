@@ -17,6 +17,22 @@
 
 (* ------------------------------------------------------------------------ *)
 
+(* In a plain grammar, %attribute declarations can be desugared away. This is
+   also done by [Drop].
+
+   Thus, in a plain grammar, attributes can be attached in the following
+   places:
+
+   - with the grammar:          field [gr_attributes] of [grammar]
+   - with a terminal symbol:    field [tk_attributes] of [properties]
+   - with a nonterminal symbol: field [attributes] of [rule]
+   - with a producer:           field [prod_attributes] of [producer]
+   - with a branch:             field [br_attributes] of [branch]           *)
+
+open Attribute
+
+(* ------------------------------------------------------------------------ *)
+
 (* We repeat all of the following type definitions here, because we
    want the clients of this module to say just [open PlainSyntax],
    without having to also say [open Syntax]. *)
@@ -31,11 +47,23 @@ type ocamltype = Syntax.ocamltype =
   | Declared of string located
   | Inferred of string
 
-type identifier =
-  Syntax.identifier
+type terminal =
+  Syntax.terminal
+
+type nonterminal =
+  Syntax.nonterminal
 
 type symbol =
   Syntax.symbol
+
+type symbols =
+  Syntax.symbols
+
+type alias =
+  Syntax.alias
+
+type identifier =
+  Syntax.identifier
 
 type action =
   Syntax.action
@@ -50,6 +78,17 @@ type precedence_level = Syntax.precedence_level =
   | UndefinedPrecedence
   | PrecedenceLevel of (InputFile.file * int) located
 
+type properties = Syntax.properties =
+  {
+    tk_ocamltype     : ocamltype option;
+    tk_position      : range;
+    tk_alias         : alias;
+    tk_attributes    : attributes;
+    tk_associativity : associativity;
+    tk_precedence    : precedence_level;
+    tk_is_declared   : bool;
+  }
+
 type prec_annotation =
   Syntax.prec_annotation
 
@@ -61,30 +100,14 @@ type on_error_reduce_level =
 
 (* ------------------------------------------------------------------------ *)
 
-(* In a plain grammar, %attribute declarations can be desugared away. This is
-   also done by [Drop].
-
-   Thus, in a plain grammar, attributes can be attached in the following
-   places:
-
-   - with the grammar:          field [gr_attributes] of [grammar]
-   - with a terminal symbol:    field [tk_attributes] of [properties]
-   - with a nonterminal symbol: field [attributes] of [rule]
-   - with a producer:           field [producer_attributes] of [producer]
-   - with a branch:             field [br_attributes] of [branch]           *)
-
-open Attribute
-
-(* ------------------------------------------------------------------------ *)
-
 (**A producer is a pair of a (located) identifier and a symbol. In concrete
    syntax, it could be [e = expr], for instance. It carries a number of
    attributes. *)
 type producer =
   {
-    producer_identifier : identifier located;
-    producer_symbol     : symbol;
-    producer_attributes : attributes;
+    prod_id         : identifier located;
+    prod_symbol     : symbol;
+    prod_attributes : attributes;
   }
 
 type producers =
@@ -134,7 +157,7 @@ type grammar =
     parameters      : string located list;
     start_symbols   : StringSet.t;
     types           : ocamltype StringMap.t;
-    tokens          : Syntax.properties StringMap.t;
+    tokens          : properties StringMap.t;
     on_error_reduce : on_error_reduce_level StringMap.t;
     gr_attributes   : attributes;
     rules           : rule StringMap.t;

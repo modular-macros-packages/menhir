@@ -94,4 +94,4 @@ end)
   val unparsing_API : unit -> interface
 end
 
-val unparsing_API : BasicSyntax.grammar -> interface
+val unparsing_API : PlainSyntax.grammar -> interface

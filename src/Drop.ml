@@ -14,7 +14,7 @@ let value = Located.value
 (* The source. *)
 module S = Syntax
 (* The target. *)
-module T = BasicSyntax
+module T = PlainSyntax
 
 (* -------------------------------------------------------------------------- *)
 
@@ -25,9 +25,9 @@ let drop_parameter (param : S.parameter) : S.symbol =
   value (Parameter.head param)
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
-  { T.producer_identifier = id;
-    T.producer_symbol     = drop_parameter param;
-    T.producer_attributes = attrs }
+  { T.prod_id = id;
+    T.prod_symbol     = drop_parameter param;
+    T.prod_attributes = attrs }
 
 let drop_branch (branch : S.parameterized_branch) : T.branch =
   { T.branch_position  = branch.S.pb_position;

@@ -22,10 +22,10 @@ val grammar_before_expansion : Syntax.grammar
 (**This is the grammar as it exists after parameterized nonterminal symbols
    have been expanded and before nonterminal symbols marked with [%inline]
    have been eliminated. *)
-val grammar_before_inlining : BasicSyntax.grammar
+val grammar_before_inlining : PlainSyntax.grammar
 
 (**This is the grammar that the back-end works with. *)
-val grammar: BasicSyntax.grammar
+val grammar: PlainSyntax.grammar
 
 (**This flag tells whether the semantic actions have been type-checked. It is
    set if and only if either [--infer] or [--infer-read-reply] is in use. Note

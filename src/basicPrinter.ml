@@ -11,7 +11,7 @@
 open Printf
 open Located
 open Attribute
-open Syntax
+open PlainSyntax
 open BasicSyntax
 open Settings
 
@@ -152,8 +152,8 @@ let print_semantic_action f g branch =
           [let]-bindings whose right-hand side uses the [$i] keywords. *)
       let bindings =
         List.mapi (fun i producer ->
-          let id = producer_identifier producer
-          and symbol = producer_symbol producer in
+          let id = Producer.id producer
+          and symbol = producer.prod_symbol in
           (* Test if [symbol] is a terminal symbol whose type is [unit]. *)
           let is_unit_token =
             try
@@ -310,9 +310,9 @@ let print_types f g =
 let print_producer sep f producer =
   fprintf f "%s%s%s%a"
     (sep())
-    (print_binding (producer_identifier producer))
-    (MString.normalize (producer_symbol producer))
-    print_attributes (producer_attributes producer)
+    (print_binding (Producer.id producer))
+    (MString.normalize producer.prod_symbol)
+    print_attributes producer.prod_attributes
 
 let print_branch f g branch =
   (* Print the producers. *)

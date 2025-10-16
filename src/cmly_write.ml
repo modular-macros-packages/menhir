@@ -10,7 +10,7 @@
 
 open Attribute
 open Located
-open BasicSyntax
+open PlainSyntax
 open Grammar
 let n2i = Nonterminal.n2i
 let t2i = Terminal.t2i
@@ -197,30 +197,30 @@ let token (tk : Syntax.properties) = {
   tk_is_declared = tk.Syntax.tk_is_declared;
 }
 
-let basic_producer (pr : BasicSyntax.producer) =
-  (pr.BasicSyntax.producer_symbol,
-   value pr.BasicSyntax.producer_identifier,
-   attributes pr.BasicSyntax.producer_attributes)
+let basic_producer (pr : PlainSyntax.producer) =
+  (pr.PlainSyntax.prod_symbol,
+   value pr.PlainSyntax.prod_id,
+   attributes pr.PlainSyntax.prod_attributes)
 
-let basic_branch (br : BasicSyntax.branch) = {
-  br_position         = range br.BasicSyntax.branch_position;
-  br_producers        = List.map basic_producer br.BasicSyntax.producers;
-  br_action           = action br.BasicSyntax.action;
+let basic_branch (br : PlainSyntax.branch) = {
+  br_position         = range br.PlainSyntax.branch_position;
+  br_producers        = List.map basic_producer br.PlainSyntax.producers;
+  br_action           = action br.PlainSyntax.action;
   br_prec_annotation  = Option.map located br.prec_annotation;
-  br_production_level = production_level br.BasicSyntax.production_level;
-  br_attributes       = attributes br.BasicSyntax.br_attributes;
+  br_production_level = production_level br.PlainSyntax.production_level;
+  br_attributes       = attributes br.PlainSyntax.br_attributes;
 }
 
-let basic_rule (rule : BasicSyntax.rule) = {
+let basic_rule (rule : PlainSyntax.rule) = {
   r_parameters = ();
-  r_branches   = List.map basic_branch rule.BasicSyntax.branches;
-  r_inline     = rule.BasicSyntax.inline_flag;
-  r_positions  = List.map range rule.BasicSyntax.positions;
+  r_branches   = List.map basic_branch rule.PlainSyntax.branches;
+  r_inline     = rule.PlainSyntax.inline_flag;
+  r_positions  = List.map range rule.PlainSyntax.positions;
   r_public     = false;
-  r_attributes = attributes rule.BasicSyntax.attributes;
+  r_attributes = attributes rule.PlainSyntax.attributes;
 }
 
-let basic_syntax (g : BasicSyntax.grammar) : ground_syntax = {
+let basic_syntax (g : PlainSyntax.grammar) : ground_syntax = {
   s_types  = import_bindings ocamltype g.types;
   s_tokens = import_bindings token g.tokens;
   s_rules  = import_bindings basic_rule g.rules;

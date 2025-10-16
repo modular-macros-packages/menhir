@@ -8,8 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Syntax
-open BasicSyntax
+open PlainSyntax
 open IL
 open ILConstruction
 open TokenType
@@ -144,8 +143,8 @@ let actiondef grammar symbol branch =
 
   let formals =
     List.fold_left (fun formals producer ->
-      let symbol = producer_symbol producer
-      and lid = producer_identifier_located producer in
+      let symbol = producer.prod_symbol
+      and lid = producer.prod_id in
       let id = Located.value lid in
       let startp, endp, starto, endo, loc =
         Printf.sprintf "_startpos_%s_" id,

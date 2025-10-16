@@ -12,5 +12,5 @@
    of nonterminals that are reachable, via productions, from the
    start nonterminals. *)
 
-val trim: BasicSyntax.grammar -> BasicSyntax.grammar
+val trim: PlainSyntax.grammar -> PlainSyntax.grammar
 

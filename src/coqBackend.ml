@@ -111,7 +111,7 @@ module Run () = struct
           | _ -> ())
         (Production.rhs prod));
 
-    if Front.grammar.BasicSyntax.parameters <> [] then
+    if Front.grammar.PlainSyntax.parameters <> [] then
       Error.error [] "the Coq back-end does not support %%parameter."
 
   let write_tokens f =
@@ -524,7 +524,7 @@ module Run () = struct
   let write_all f =
     if not Settings.coq_no_actions then
       List.iter (fun s -> fprintf f "%s\n\n" (value s))
-        Front.grammar.BasicSyntax.preludes;
+        Front.grammar.PlainSyntax.preludes;
 
     fprintf f "From Coq.extraction Require Extraction.\n";
     fprintf f "From Coq.Lists Require List.\n";
@@ -547,5 +547,5 @@ module Run () = struct
 
     if not Settings.coq_no_actions then
       List.iter (fun postlude -> fprintf f "\n\n%s" (value postlude))
-        Front.grammar.BasicSyntax.postludes
+        Front.grammar.PlainSyntax.postludes
 end

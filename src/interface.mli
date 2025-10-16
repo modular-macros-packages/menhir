@@ -17,7 +17,7 @@ val excdef: IL.excdef
 
 (* The type of the entry point for the start symbol [nt]. *)
 
-val entrytypescheme: BasicSyntax.grammar -> string -> IL.typescheme
+val entrytypescheme: PlainSyntax.grammar -> string -> IL.typescheme
 
 (* The name of the interpreter sub-module, when the table back-end
    is used. *)
@@ -38,5 +38,5 @@ val inspection: string
 
 (* This writes the interface of the generated parser to the [.mli] file. *)
 
-val write: BasicSyntax.grammar -> unit -> unit
+val write: PlainSyntax.grammar -> unit -> unit
 

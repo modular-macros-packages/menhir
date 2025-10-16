@@ -10,6 +10,7 @@
 
 open Printf
 open Attribute
+open BasicSyntax
 open IL
 open ILConstruction
 
@@ -972,8 +973,7 @@ end
    dependency of [UnparsingAPI] on [Grammar]. It will hopefully be removed at
    some point in the future (see TODO.md). *)
 
-open Syntax
-open BasicSyntax
+open PlainSyntax
 
 let unparsing_API (grammar : grammar) : interface =
   let module G = struct
@@ -998,7 +998,7 @@ let unparsing_API (grammar : grammar) : interface =
         | T of Terminal.t
     end
     let producer2symbol producer =
-      let symbol = producer.producer_symbol in
+      let symbol = producer.prod_symbol in
       if is_nonterminal grammar symbol then
         Symbol.N symbol
       else
