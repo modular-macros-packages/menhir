@@ -11,12 +11,13 @@
 let value, position = Located.(value, position)
 open Syntax
 
-module Make (Error : sig
+module Make (E : sig
 
   (**[error ranges format ...] reports an error and aborts. *)
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 end) = struct
+open E
 
 (* -------------------------------------------------------------------------- *)
 
@@ -43,7 +44,7 @@ let scan_declaration env (decl : declaration located) : env =
       | tloc' ->
           (* Oops: [qid] has already been declared as an alias for
              some other token. *)
-          Error.error
+          error
             [position tloc; position tloc']
             "%s cannot be declared as an alias for the symbol %s.\n\
              It has already been declared as an alias for %s."
@@ -75,7 +76,7 @@ let transform_terminal pos (env : env) (t : terminal) : terminal =
     | id ->
         value id
     | exception Not_found ->
-        Error.error [pos] "the token alias %s was never declared." t
+        error [pos] "the token alias %s was never declared." t
   else
     t
 

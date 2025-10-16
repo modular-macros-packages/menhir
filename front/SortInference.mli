@@ -16,7 +16,7 @@ open Sort
 type sorts =
   sort StringMap.t
 
-module Make (Error : sig
+module Make (E : sig
 
   (**[error ranges format ...] reports an error and aborts. *)
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a

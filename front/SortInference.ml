@@ -42,7 +42,7 @@ type sorts =
 
 (* -------------------------------------------------------------------------- *)
 
-module Make (Error : sig
+module Make (E : sig
 
   (**[error ranges format ...] reports an error and aborts. *)
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
@@ -57,12 +57,13 @@ end) (V : sig
   val verbose : bool
 
 end) = struct
+open E
 
 (* -------------------------------------------------------------------------- *)
 
 (* Error handling. *)
 
-(* The following functions are the only places where [Error.error] is called. *)
+(* The following functions are the only places where [error] is called. *)
 
 (* In [check_arity], in principle, [arity1] is the expected arity and [arity2]
    is the actual arity. This distinction does not make much sense, though, as
@@ -72,7 +73,7 @@ end) = struct
 let check_arity sym arity1 arity2 =
   let plural = max arity1 arity2 > 1 in
   if arity1 <> arity2 then
-    Error.error [position sym]
+    error [position sym]
       "does the symbol \"%s\" expect %d or %d argument%s?"
       (value sym)
       (min arity1 arity2)
@@ -99,14 +100,14 @@ let unify sym sort1 sort2 =
   with
   | Unify (v1, v2) ->
       let print v = print (decode v) in
-      Error.error [position sym]
+      error [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s is not compatible with the sort %s."
         (value sym) (print sort1) (print sort2) (print v1) (print v2)
   | Occurs (v1, v2) ->
       let print v = print (decode v) in
-      Error.error [position sym]
+      error [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s cannot be unified with the sort %s."
@@ -279,7 +280,7 @@ let infer (g : grammar) : sorts =
   let () =
     if V.verbose then
       env |> Env.iter @@ fun x gsort ->
-      Error.log "%s :: %s" x (print (unground gsort))
+      log "%s :: %s" x (print (unground gsort))
   in
 
   env
