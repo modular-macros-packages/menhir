@@ -144,7 +144,8 @@ let grammar : BasicSyntax.grammar =
   let grammar1 = S.expand S.ExpandHigherSort sorts grammar in
   (* This "first-order parameterized grammar" can then be submitted to
      the termination check. *)
-  CheckSafeParameterizedGrammar.check grammar1;
+  let module C = CheckSafeParameterizedGrammar.Make(Error) in
+  C.check grammar1;
   (* If it passes the check, then full expansion is safe. We drop [grammar1]
      and start over from [grammar]. This is required in order to get correct
      names. (Expanding [grammar1] would yield an equivalent grammar, with

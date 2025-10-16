@@ -11,6 +11,14 @@
 let value = Located.value
 open Syntax
 
+module Make (E : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+end) = struct
+open E
+
 (* This test accepts a parameterized grammar, with the restriction that all
    parameters must have sort [*]. This implies that the head of every
    application must be a toplevel nonterminal symbol: it cannot be a formal
@@ -232,7 +240,7 @@ let () =
       | Dangerous ->
           if T.representative source = T.representative target then
             let (nt, i) = source in
-            Error.error []
+            error []
               "the parameterized nonterminal symbols in this grammar\n\
                cannot be expanded away: expansion would not terminate.\n\
                The %s formal parameter of \"%s\" grows without bound."
@@ -250,3 +258,5 @@ end (* of the functor *)
 let check g =
   let module T = Run(struct let g = g end) in
   ()
+
+end (* Make *)
