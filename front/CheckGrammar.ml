@@ -276,6 +276,37 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Check that no two %type declarations bear on the same nonterminal symbol.  *)
+
+(* Apply the same check on %on_error_reduce declarations. *)
+
+(* Before 2025/10/16, this check was performed only after the expansion of
+   parameterized nonterminal symbols. *)
+
+module H =
+  Hashtbl.Make(Parameter)
+
+let check_declarations (kind : string) (decls : (parameter * _) list) =
+  let table = H.create 32 in
+  decls |> List.iter @@ fun decl ->
+  let param, _ = decl in
+  match H.find table param with
+  | exception Not_found ->
+      H.add table param param
+  | param' ->
+      (* We cannot easily use [can_complain_about] because the thing
+         at hand is a parameter, not a symbol. Never mind. *)
+      let positions = Parameter.([position param; position param']) in
+      signal positions
+        "there are multiple %s declarations for the symbol %s."
+        kind (Parameter.print ", " param)
+
+let () =
+  check_declarations "%type" grammar.p_types;
+  check_declarations "%on_error_reduce" grammar.p_on_error_reduce
+
+(* -------------------------------------------------------------------------- *)
+
 let finished =
   ()
 
