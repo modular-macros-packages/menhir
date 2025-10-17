@@ -8,9 +8,18 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This extremely simple analysis restricts a grammar to the set
-   of nonterminals that are reachable, via productions, from the
-   start nonterminals. *)
+open PlainSyntax
 
-val trim: PlainSyntax.grammar -> PlainSyntax.grammar
+module Make (E : sig
 
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end) : sig
+
+  (**This extremely simple analysis restricts a grammar to the set of
+     nonterminal symbols that are reachable, via the productions, from
+     the start symbols. *)
+  val trim: grammar -> grammar
+
+end

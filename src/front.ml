@@ -184,7 +184,9 @@ let () =
 (* Perform reachability analysis. *)
 
 let grammar =
-  Reachability.trim grammar
+  let module E = struct let warning = Error.grammar_warning end in
+  let module T = Reachability.Make(E) in
+  T.trim grammar
 
 let () =
   Time.tick "Trimming"
