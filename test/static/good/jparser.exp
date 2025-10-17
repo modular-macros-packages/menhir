@@ -17,13 +17,13 @@ Warning: the token QUOTE is unused.
 File "jparser.mly", line 249, characters 7-17:
 Warning: the token UNDERSCORE is unused.
 File "jparser.mly", line 404, characters 0-13:
-Warning: symbol exp_posts_npv is unreachable from any of the start symbol(s).
+Warning: symbol exp_posts_npv is unreachable from any of the start symbols.
 File "jparser.mly", line 841, characters 0-18:
-Warning: symbol lvariable_npv_list is unreachable from any of the start symbol(s).
+Warning: symbol lvariable_npv_list is unreachable from any of the start symbols.
 File "jparser.mly", line 388, characters 0-8:
-Warning: symbol spec_npv is unreachable from any of the start symbol(s).
+Warning: symbol spec_npv is unreachable from any of the start symbols.
 File "jparser.mly", line 390, characters 0-9:
-Warning: symbol specs_npv is unreachable from any of the start symbol(s).
+Warning: symbol specs_npv is unreachable from any of the start symbols.
 Grammar has 144 nonterminal symbols, among which 8 start symbols.
 Grammar has 153 terminal symbols.
 Grammar has 407 productions.

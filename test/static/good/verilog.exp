@@ -1,5 +1,5 @@
 File "verilog.mly", line 2347, characters 0-13:
-Warning: symbol unused_tokens is unreachable from any of the start symbol(s).
+Warning: symbol unused_tokens is unreachable from the start symbol.
 Grammar has 223 nonterminal symbols, among which 1 start symbols.
 Grammar has 308 terminal symbols.
 Grammar has 3490 productions.

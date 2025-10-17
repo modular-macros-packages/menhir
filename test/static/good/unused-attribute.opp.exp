@@ -1,5 +1,5 @@
 File "<standard.mly>", line 214, characters 8-12:
-Warning: symbol list(B) is unreachable from any of the start symbol(s).
+Warning: symbol list(B) is unreachable from the start symbol.
 %start main
 %token A
 %token B

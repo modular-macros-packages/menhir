@@ -1,5 +1,5 @@
 File "on-error-reduce-unreachable.mly", line 10, characters 0-3:
-Warning: symbol bar is unreachable from any of the start symbol(s).
+Warning: symbol bar is unreachable from the start symbol.
 Grammar has 1 nonterminal symbols, among which 1 start symbols.
 Grammar has 2 terminal symbols.
 Grammar has 1 productions.

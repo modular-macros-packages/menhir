@@ -17,9 +17,9 @@ Warning: the token RANK is unused.
 File "K3Parser.mly", line 97, characters 20-23:
 Warning: the token TOP is unused.
 File "K3Parser.mly", line 733, characters 0-15:
-Warning: symbol identifier_list is unreachable from any of the start symbol(s).
+Warning: symbol identifier_list is unreachable from any of the start symbols.
 File "K3Parser.mly", line 728, characters 0-12:
-Warning: symbol integer_list is unreachable from any of the start symbol(s).
+Warning: symbol integer_list is unreachable from any of the start symbols.
 Grammar has 53 nonterminal symbols, among which 4 start symbols.
 Grammar has 120 terminal symbols.
 Grammar has 303 productions.

@@ -1,5 +1,5 @@
 File "on-error-reduce-unreachable.mly", line 10, characters 0-3:
-Warning: symbol bar is unreachable from any of the start symbol(s).
+Warning: symbol bar is unreachable from the start symbol.
 %start main
 %token A
 %token B

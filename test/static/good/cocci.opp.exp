@@ -1,5 +1,5 @@
 File "cocci.mly", line 137, characters 0-6:
-Warning: symbol reinit is unreachable from any of the start symbol(s).
+Warning: symbol reinit is unreachable from any of the start symbols.
 %{
 
 (* Not clear how to allow function declarations to specify a return type

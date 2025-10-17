@@ -3,7 +3,7 @@ Warning: the token HASH is unused.
 File "netsem.mly", line 111, characters 35-42:
 Warning: the token T_TIMED is unused.
 File "netsem.mly", line 848, characters 0-8:
-Warning: symbol ipportop is unreachable from any of the start symbol(s).
+Warning: symbol ipportop is unreachable from any of the start symbols.
 Grammar has 98 nonterminal symbols, among which 2 start symbols.
 Grammar has 302 terminal symbols.
 Grammar has 446 productions.

@@ -1,5 +1,5 @@
 File "touist.3.5.0-parser.mly", line 144, characters 0-10:
-Warning: symbol comma_list(expr_smt) is unreachable from any of the start symbol(s).
+Warning: symbol comma_list(expr_smt) is unreachable from any of the start symbols.
 %{
   open Types.Ast
   open Err

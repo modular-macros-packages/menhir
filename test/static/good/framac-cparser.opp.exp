@@ -69,7 +69,7 @@ the error token may appear only at the end of a production
 (and the semantic action must abort the parser).
 This production will be ignored.
 File "framac-cparser.mly", line 463, characters 0-8:
-Warning: symbol location is unreachable from any of the start symbol(s).
+Warning: symbol location is unreachable from any of the start symbols.
 %{
 
 open Cabs

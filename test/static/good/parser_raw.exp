@@ -29,9 +29,9 @@ Warning: the token WHILE_LWT is unused.
 File "parser_raw.mly", line 658, characters 6-17:
 Warning: the token prec_escape is unused.
 File "parser_raw.mly", line 713, characters 0-15:
-Warning: symbol parse_core_type is unreachable from any of the start symbol(s).
+Warning: symbol parse_core_type is unreachable from any of the start symbols.
 File "parser_raw.mly", line 719, characters 0-13:
-Warning: symbol parse_pattern is unreachable from any of the start symbol(s).
+Warning: symbol parse_pattern is unreachable from any of the start symbols.
 Grammar has 205 nonterminal symbols, among which 3 start symbols.
 Grammar has 129 terminal symbols.
 Grammar has 702 productions.

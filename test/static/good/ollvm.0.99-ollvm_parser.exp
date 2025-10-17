@@ -1,5 +1,5 @@
 File "ollvm.0.99-ollvm_parser.mly", line 169, characters 0-14:
-Warning: symbol instr_metadata is unreachable from any of the start symbol(s).
+Warning: symbol instr_metadata is unreachable from the start symbol.
 Grammar has 92 nonterminal symbols, among which 1 start symbols.
 Grammar has 211 terminal symbols.
 Grammar has 341 productions.

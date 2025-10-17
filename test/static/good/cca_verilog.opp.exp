@@ -39,11 +39,11 @@ the error token may appear only at the end of a production
 (and the semantic action must abort the parser).
 This production will be ignored.
 File "cca_verilog.mly", line 2339, characters 0-17:
-Warning: symbol cellpin_item_tail is unreachable from any of the start symbol(s).
+Warning: symbol cellpin_item_tail is unreachable from any of the start symbols.
 File "cca_verilog.mly", line 1792, characters 0-16:
-Warning: symbol module_item_tail is unreachable from any of the start symbol(s).
+Warning: symbol module_item_tail is unreachable from any of the start symbols.
 File "cca_verilog.mly", line 1051, characters 0-9:
-Warning: symbol port_tail is unreachable from any of the start symbol(s).
+Warning: symbol port_tail is unreachable from any of the start symbols.
 %parameter<Stat : Parser_aux.STATE_T>
 %{
 module P = Printer

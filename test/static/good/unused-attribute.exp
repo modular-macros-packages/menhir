@@ -1,5 +1,5 @@
 File "<standard.mly>", line 214, characters 8-12:
-Warning: symbol list(B) is unreachable from any of the start symbol(s).
+Warning: symbol list(B) is unreachable from the start symbol.
 Grammar has 2 nonterminal symbols, among which 1 start symbols.
 Grammar has 3 terminal symbols.
 Grammar has 3 productions.

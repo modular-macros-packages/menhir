@@ -1,7 +1,7 @@
 File "nml-ip-parser.mly", line 252, characters 25-28:
 Warning: the token VAL is unused.
 File "nml-ip-parser.mly", line 1114, characters 0-8:
-Warning: symbol opt_semi is unreachable from any of the start symbol(s).
+Warning: symbol opt_semi is unreachable from any of the start symbols.
 %{
 
 open Symbol

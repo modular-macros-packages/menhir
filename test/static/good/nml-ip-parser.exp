@@ -1,7 +1,7 @@
 File "nml-ip-parser.mly", line 252, characters 25-28:
 Warning: the token VAL is unused.
 File "nml-ip-parser.mly", line 1114, characters 0-8:
-Warning: symbol opt_semi is unreachable from any of the start symbol(s).
+Warning: symbol opt_semi is unreachable from any of the start symbols.
 Grammar has 65 nonterminal symbols, among which 2 start symbols.
 Grammar has 115 terminal symbols.
 Grammar has 300 productions.

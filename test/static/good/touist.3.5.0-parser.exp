@@ -1,5 +1,5 @@
 File "touist.3.5.0-parser.mly", line 144, characters 0-10:
-Warning: symbol comma_list(expr_smt) is unreachable from any of the start symbol(s).
+Warning: symbol comma_list(expr_smt) is unreachable from any of the start symbols.
 Grammar has 26 nonterminal symbols, among which 3 start symbols.
 Grammar has 67 terminal symbols.
 Grammar has 159 productions.

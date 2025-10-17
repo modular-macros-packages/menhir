@@ -7,9 +7,9 @@ Warning: the token TargetConst is unused.
 File "lem.mly", line 161, characters 30-40:
 Warning: the token TargetType is unused.
 File "lem.mly", line 1149, characters 0-20:
-Warning: symbol semi_backtickstrings is unreachable from any of the start symbol(s).
+Warning: symbol semi_backtickstrings is unreachable from the start symbol.
 File "lem.mly", line 1141, characters 0-25:
-Warning: symbol semi_backtickstrings_help is unreachable from any of the start symbol(s).
+Warning: symbol semi_backtickstrings_help is unreachable from the start symbol.
 Grammar has 123 nonterminal symbols, among which 1 start symbols.
 Grammar has 116 terminal symbols.
 Grammar has 366 productions.

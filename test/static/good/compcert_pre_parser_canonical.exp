@@ -8,7 +8,7 @@ File "compcert_pre_parser_canonical.mly", line 150, characters 0-6:
 Note: the nonterminal symbol option is renamed compcert_pre_parser_canonical_option.
 
 File "<standard.mly>", line 109, characters 8-14:
-Warning: symbol option(abstract_declarator(type_name)) is unreachable from any of the start symbol(s).
+Warning: symbol option(abstract_declarator(type_name)) is unreachable from the start symbol.
 Grammar has 138 nonterminal symbols, among which 1 start symbols.
 Grammar has 96 terminal symbols.
 Grammar has 353 productions.

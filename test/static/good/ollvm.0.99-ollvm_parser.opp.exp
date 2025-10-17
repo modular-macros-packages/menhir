@@ -1,5 +1,5 @@
 File "ollvm.0.99-ollvm_parser.mly", line 169, characters 0-14:
-Warning: symbol instr_metadata is unreachable from any of the start symbol(s).
+Warning: symbol instr_metadata is unreachable from the start symbol.
 %{
 
 open Ollvm_ast

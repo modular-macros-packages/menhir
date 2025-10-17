@@ -81,7 +81,7 @@ Warning: the token THEN is unused.
 File "cil-formatparse.mly", line 242, characters 19-26:
 Warning: the token TYPEDEF is unused.
 File "cil-formatparse.mly", line 338, characters 0-10:
-Warning: symbol initialize is unreachable from any of the start symbol(s).
+Warning: symbol initialize is unreachable from any of the start symbols.
 %{
 open Cil
 open Pretty

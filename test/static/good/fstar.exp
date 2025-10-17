@@ -103,19 +103,19 @@ Warning: the token UNATIVEINT is unused.
 File "fstar.mly", line 95, characters 15-25:
 Warning: the token WHITESPACE is unused.
 File "fstar.mly", line 982, characters 0-11:
-Warning: symbol atomicTerms is unreachable from any of the start symbol(s).
+Warning: symbol atomicTerms is unreachable from the start symbol.
 File "fstar.mly", line 317, characters 0-16:
-Warning: symbol compositePattern is unreachable from any of the start symbol(s).
+Warning: symbol compositePattern is unreachable from the start symbol.
 File "fstar.mly", line 986, characters 0-8:
-Warning: symbol consTerm is unreachable from any of the start symbol(s).
+Warning: symbol consTerm is unreachable from the start symbol.
 File "fstar.mly", line 248, characters 0-9:
-Warning: symbol ident_opt is unreachable from any of the start symbol(s).
+Warning: symbol ident_opt is unreachable from the start symbol.
 File "fstar.mly", line 864, characters 0-18:
-Warning: symbol moreRecdFieldTypes is unreachable from any of the start symbol(s).
+Warning: symbol moreRecdFieldTypes is unreachable from the start symbol.
 File "fstar.mly", line 868, characters 0-13:
-Warning: symbol recdFieldType is unreachable from any of the start symbol(s).
+Warning: symbol recdFieldType is unreachable from the start symbol.
 File "fstar.mly", line 860, characters 0-14:
-Warning: symbol recdFieldTypes is unreachable from any of the start symbol(s).
+Warning: symbol recdFieldTypes is unreachable from the start symbol.
 Grammar has 125 nonterminal symbols, among which 1 start symbols.
 Grammar has 151 terminal symbols.
 Grammar has 276 productions.

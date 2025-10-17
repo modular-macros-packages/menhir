@@ -5,11 +5,11 @@ Warning: the token MINUS is unused.
 File "webidl.1.4-parser04.mly", line 24, characters 13-18:
 Warning: the token OTHER is unused.
 File "webidl.1.4-parser00.mly", line 29, characters 8-30:
-Warning: symbol attributeSerializetion is unreachable from any of the start symbol(s).
+Warning: symbol attributeSerializetion is unreachable from any of the start symbols.
 File "webidl.1.4-parser00.mly", line 32, characters 8-17:
-Warning: symbol commnaEnd is unreachable from any of the start symbol(s).
+Warning: symbol commnaEnd is unreachable from any of the start symbols.
 File "webidl.1.4-parser00.mly", line 35, characters 8-34:
-Warning: symbol emptyExtendedAttributeList is unreachable from any of the start symbol(s).
+Warning: symbol emptyExtendedAttributeList is unreachable from any of the start symbols.
 Grammar has 101 nonterminal symbols, among which 2 start symbols.
 Grammar has 86 terminal symbols.
 Grammar has 238 productions.

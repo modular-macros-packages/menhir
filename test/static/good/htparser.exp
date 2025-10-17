@@ -17,15 +17,15 @@ Warning: the token PPLUS is unused.
 File "htparser.mly", line 140, characters 7-19:
 Warning: the token Unrecognized is unused.
 File "htparser.mly", line 704, characters 0-10:
-Warning: symbol apply_term is unreachable from any of the start symbol(s).
+Warning: symbol apply_term is unreachable from the start symbol.
 File "htparser.mly", line 259, characters 0-11:
-Warning: symbol hof_formula is unreachable from any of the start symbol(s).
+Warning: symbol hof_formula is unreachable from the start symbol.
 File "htparser.mly", line 708, characters 0-11:
-Warning: symbol lambda_term is unreachable from any of the start symbol(s).
+Warning: symbol lambda_term is unreachable from the start symbol.
 File "htparser.mly", line 690, characters 0-15:
-Warning: symbol quantified_term is unreachable from any of the start symbol(s).
+Warning: symbol quantified_term is unreachable from the start symbol.
 File "htparser.mly", line 649, characters 0-4:
-Warning: symbol term is unreachable from any of the start symbol(s).
+Warning: symbol term is unreachable from the start symbol.
 Grammar has 99 nonterminal symbols, among which 1 start symbols.
 Grammar has 61 terminal symbols.
 Grammar has 225 productions.

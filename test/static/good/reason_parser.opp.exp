@@ -20,7 +20,7 @@ the error token may appear only at the end of a production
 (and the semantic action must abort the parser).
 This production will be ignored.
 File "reason_parser.mly", line 1280, characters 8-14:
-Warning: symbol as_loc(structure_item) is unreachable from any of the start symbol(s).
+Warning: symbol as_loc(structure_item) is unreachable from any of the start symbols.
 %{
 open Migrate_parsetree.OCaml_404.Ast
 open Syntax_util

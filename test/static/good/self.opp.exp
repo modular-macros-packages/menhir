@@ -1,7 +1,7 @@
 File "self.mly", line 11, characters 0-1:
-Warning: symbol b is unreachable from any of the start symbol(s).
+Warning: symbol b is unreachable from the start symbol.
 File "self.mly", line 9, characters 0-1:
-Warning: symbol s is unreachable from any of the start symbol(s).
+Warning: symbol s is unreachable from the start symbol.
 %start dummy
 %token A
 %type <unit> dummy

@@ -9,7 +9,7 @@ Warning: the token prec_expr is unused.
 File "jocaml.mly", line 292, characters 6-15:
 Warning: the token prec_proc is unused.
 File "jocaml.mly", line 718, characters 0-14:
-Warning: symbol def_parameters is unreachable from any of the start symbol(s).
+Warning: symbol def_parameters is unreachable from any of the start symbols.
 %{
 open Location
 open Asttypes

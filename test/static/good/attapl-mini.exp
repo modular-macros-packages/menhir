@@ -23,11 +23,11 @@ Warning: the token TYPE is unused.
 File "attapl-mini.mly", line 53, characters 7-11:
 Warning: the token WITH is unused.
 File "attapl-mini.mly", line 245, characters 0-7:
-Warning: symbol opt_bar is unreachable from any of the start symbol(s).
+Warning: symbol opt_bar is unreachable from the start symbol.
 File "attapl-mini.mly", line 202, characters 0-13:
-Warning: symbol record_fields is unreachable from any of the start symbol(s).
+Warning: symbol record_fields is unreachable from the start symbol.
 File "attapl-mini.mly", line 78, characters 0-6:
-Warning: symbol scheme is unreachable from any of the start symbol(s).
+Warning: symbol scheme is unreachable from the start symbol.
 Grammar has 28 nonterminal symbols, among which 1 start symbols.
 Grammar has 44 terminal symbols.
 Grammar has 71 productions.

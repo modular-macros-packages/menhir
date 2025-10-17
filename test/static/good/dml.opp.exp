@@ -41,9 +41,9 @@ Warning: the token UNIT is unused.
 File "dml.mly", line 48, characters 6-19:
 Warning: the token prec_ind_bop1 is unused.
 File "dml.mly", line 205, characters 0-15:
-Warning: symbol open_tvar_decls is unreachable from any of the start symbol(s).
+Warning: symbol open_tvar_decls is unreachable from the start symbol.
 File "dml.mly", line 210, characters 0-10:
-Warning: symbol tvar_decls is unreachable from any of the start symbol(s).
+Warning: symbol tvar_decls is unreachable from the start symbol.
 %{
 
 open Dmlsyn

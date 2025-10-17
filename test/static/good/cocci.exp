@@ -1,5 +1,5 @@
 File "cocci.mly", line 137, characters 0-6:
-Warning: symbol reinit is unreachable from any of the start symbol(s).
+Warning: symbol reinit is unreachable from any of the start symbols.
 Grammar has 198 nonterminal symbols, among which 7 start symbols.
 Grammar has 139 terminal symbols.
 Grammar has 616 productions.
