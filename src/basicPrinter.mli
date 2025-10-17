@@ -10,6 +10,13 @@
 
 (* This is a pretty-printer for grammars. *)
 
+open PlainSyntax
+
+type print_mode =
+    | PrintNormal
+    | PrintForOCamlyacc
+    | PrintUnitActions of bool       (** if true, declare unit tokens *)
+
 (* If the [mode] parameter requests ``unit actions'', then semantic actions
    are dropped: that is, they are replaced with trivial semantic actions that
    return unit. Accordingly, all [%type] declarations are changed to unit. The
@@ -19,4 +26,4 @@
    If, furthermore, the [mode] parameter requests ``unit tokens'', then the
    types carried by tokens are changed to unit. *)
 
-val print: Settings.print_mode -> out_channel -> PlainSyntax.grammar -> unit
+val print: print_mode -> out_channel -> grammar -> unit

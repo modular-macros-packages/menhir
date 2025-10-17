@@ -13,7 +13,6 @@ open Located
 open Attribute
 open PlainSyntax
 open PlainSyntaxAccessors
-open Settings
 
 (* When the original grammar is split over several files, it may be IMPOSSIBLE
    to print it out into a single file, as that would introduce a total ordering
@@ -41,7 +40,12 @@ open Settings
 
  *)
 
-module Print (X : sig val mode : Settings.print_mode end) = struct
+type print_mode =
+    | PrintNormal
+    | PrintForOCamlyacc
+    | PrintUnitActions of bool       (** if true, declare unit tokens *)
+
+module Print (X : sig val mode : print_mode end) = struct
 open X
 
 (* -------------------------------------------------------------------------- *)

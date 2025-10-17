@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Printf
+open BasicPrinter
 
 let error format =
   ksprintf (fun s -> prerr_string s; exit 1) format
@@ -95,14 +96,9 @@ let trace =
 let noprefix =
   ref false
 
-type print_mode =
-    | PrintNormal
-    | PrintForOCamlyacc
-    | PrintUnitActions of bool       (* if true, declare unit tokens *)
-
 type preprocess_mode =
-    | PMNormal                       (* preprocess and continue *)
-    | PMOnlyPreprocess of print_mode (* preprocess, print grammar, stop *)
+    | PMNormal
+    | PMOnlyPreprocess of print_mode
 
 let preprocess_mode =
   ref PMNormal

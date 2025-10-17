@@ -60,14 +60,11 @@ val automaton_graph: bool
 (** Whether tracing instructions should be generated. *)
 val trace: bool
 
-type print_mode =
-    | PrintNormal
-    | PrintForOCamlyacc
-    | PrintUnitActions of bool       (** if true, declare unit tokens *)
-
 type preprocess_mode =
-    | PMNormal                       (** preprocess and continue *)
-    | PMOnlyPreprocess of print_mode (** preprocess, print grammar, stop *)
+    | PMNormal
+      (** preprocess and continue *)
+    | PMOnlyPreprocess of BasicPrinter.print_mode
+      (** preprocess, print grammar, stop *)
 
 (** Whether one should stop and print the grammar after joining and
    expanding the grammar. *)
