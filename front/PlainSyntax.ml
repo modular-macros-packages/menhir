@@ -40,6 +40,9 @@ open Attribute
 type range =
   Syntax.range
 
+type ranges =
+  Syntax.ranges
+
 type 'a located =
   'a Syntax.located
 
