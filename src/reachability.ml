@@ -12,6 +12,9 @@ open PlainSyntax
 
 module Make (E : sig
 
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
@@ -20,6 +23,15 @@ open E
 
 module Run (G : sig val grammar : grammar end) = struct
 open G
+
+(* Check that at least one start symbol has been declared: otherwise, the
+   resulting grammar would be empty. This check cannot be performed earlier
+   (e.g., as part of CheckGrammar) because, when [--only-tokens] is used,
+   we must tolerate the absence of a start symbol. *)
+
+let () =
+  if StringSet.is_empty grammar.start_symbols then
+    error [] "no start symbol has been declared."
 
 let rec visit_symbol visited symbol =
   match StringMap.find symbol grammar.rules with
