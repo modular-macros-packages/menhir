@@ -10,6 +10,7 @@
 
 %token A
 
+%start<unit> start
 %%
 
 start:
