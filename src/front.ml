@@ -269,7 +269,7 @@ let grammar =
 let () =
   match Settings.preprocess_mode with
   | Settings.PMOnlyPreprocess mode ->
-      BasicPrinter.print mode stdout grammar;
+      PlainSyntaxPrinter.print mode stdout grammar;
       exit 0
   | Settings.PMNormal ->
       ()

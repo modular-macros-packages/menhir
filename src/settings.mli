@@ -63,7 +63,7 @@ val trace: bool
 type preprocess_mode =
     | PMNormal
       (** preprocess and continue *)
-    | PMOnlyPreprocess of BasicPrinter.print_mode
+    | PMOnlyPreprocess of PlainSyntaxPrinter.print_mode
       (** preprocess, print grammar, stop *)
 
 (** Whether one should stop and print the grammar after joining and

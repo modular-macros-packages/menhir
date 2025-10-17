@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 open Printf
-open BasicPrinter
+open PlainSyntaxPrinter
 
 let error format =
   ksprintf (fun s -> prerr_string s; exit 1) format
