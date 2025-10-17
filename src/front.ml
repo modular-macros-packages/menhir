@@ -188,7 +188,7 @@ let grammar =
     let error = Error.error
     let warning = Error.grammar_warning
   end in
-  let module T = Reachability.Make(E) in
+  let module T = Trim.Make(E) in
   T.trim grammar
 
 let () =

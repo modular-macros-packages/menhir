@@ -43,13 +43,15 @@ let rec visit_symbol visited symbol =
         visited
       else
         let visited = StringSet.add symbol visited in
-        List.fold_left (visit_branch) visited rule.branches
+        List.fold_left visit_branch visited rule.branches
 
-and visit_branch visited { producers = symbols } =
-  List.fold_left (visit_producer) visited symbols
+and visit_branch visited branch =
+  List.fold_left visit_producer visited branch.producers
 
 and visit_producer visited producer =
   visit_symbol visited producer.prod_symbol
+
+(* Compute the reachable symbols. *)
 
 let reachable =
   StringSet.fold (fun symbol visited ->
@@ -62,12 +64,16 @@ let roots =
   else
     "any of the start symbols"
 
+(* Warn about each unreachable symbol. *)
+
 let () =
   grammar.rules |> StringMap.iter @@ fun symbol rule ->
   if not (StringSet.mem symbol reachable) then
     warning rule.positions
       "symbol %s is unreachable from %s."
       symbol roots
+
+(* Construct a trimmed grammar. *)
 
 let grammar =
   { grammar with
