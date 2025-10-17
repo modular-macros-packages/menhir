@@ -18,7 +18,9 @@ open PlainSyntaxAccessors
    to print it out into a single file, as that would introduce a total ordering
    (between rules, between priority declarations, between %on_error_reduce
    declarations) that did not exist originally. We currently do not warn about
-   this problem. Nobody has ever complained about it. *)
+   this problem. Nobody has ever complained about it. We use the function
+   [InputFile.compare], whose use is discouraged, in order to obtain a total
+   order on precedence levels, and we obey this order when printing. *)
 
 type mode =
   | PrintNormal
@@ -33,13 +35,12 @@ open X
 (* Printing an OCaml type. *)
 
 let print_ocamltype ty : string =
-  Printf.sprintf " <%s>" (
+  sprintf " <%s>" @@
     match ty with
     | Declared fragment ->
         value fragment
     | Inferred t ->
         t
-    )
 
 let print_ocamltype ty : string =
   let s = print_ocamltype ty in
@@ -57,15 +58,16 @@ let print_ocamltype ty : string =
 (* Printing the type of a terminal symbol. *)
 
 let print_token_type (prop : properties) =
-  match mode with
-  | PrintNormal
-  | PrintForOCamlyacc
-  | PrintUnitActions false ->
-      Option.value
-        (Option.map print_ocamltype prop.tk_ocamltype)
-        ~default:""
-  | PrintUnitActions true ->
-      "" (* omitted ocamltype after %token means <unit> *)
+  match prop.tk_ocamltype, mode with
+  | None   , _
+  | Some  _, PrintUnitActions true ->
+      (* When %token is not followed by a type,
+         this means that the type is [unit]. *)
+      ""
+  | Some ty, PrintNormal
+  | Some ty, PrintForOCamlyacc
+  | Some ty, PrintUnitActions false ->
+      print_ocamltype ty
 
 (* -------------------------------------------------------------------------- *)
 
@@ -94,8 +96,8 @@ let print_binding id =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Testing whether it is permitted to print OCaml code (semantic actions,
-   prelude, postlude). *)
+(* Testing whether it is permitted to print OCaml code
+   (semantic actions, prelude, postlude). *)
 
 let if_ocaml_code_permitted f x =
   match mode with
@@ -127,7 +129,7 @@ let print_semantic_action f g branch =
   let e = Action.expr branch.action in
   match mode with
   | PrintUnitActions _ ->
-      (* In the unit-action modes, we print a pair of empty braces, which is fine. *)
+      (* In the unit-action modes, we print a pair of empty braces. *)
       ()
   | PrintNormal ->
       ILPrinter.print_expr f e
@@ -172,23 +174,20 @@ let print_semantic_action f g branch =
 (* Printing preludes and postludes. *)
 
 let print_preludes f g =
-  List.iter (fun prelude ->
-    fprintf f "%%{%s%%}\n" (value prelude)
-  ) g.preludes
+  g.preludes |> List.iter @@ fun prelude ->
+  fprintf f "%%{%s%%}\n" (value prelude)
 
 let print_postludes f g =
-  List.iter (fun postlude ->
-    fprintf f "%s\n" (value postlude)
-  ) g.postludes
+  g.postludes |> List.iter @@ fun postlude ->
+  fprintf f "%s\n" (value postlude)
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing %start declarations. *)
 
 let print_start_symbols f g =
-  StringSet.iter (fun symbol ->
-    fprintf f "%%start %s\n" (MString.normalize symbol)
-  ) g.start_symbols
+  g.start_symbols |> StringSet.iter @@ fun symbol ->
+  fprintf f "%%start %s\n" (MString.normalize symbol)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -226,11 +225,11 @@ let print_attributes f attrs =
 
 let print_assoc = function
   | LeftAssoc ->
-      Printf.sprintf "%%left"
+      sprintf "%%left"
   | RightAssoc ->
-      Printf.sprintf "%%right"
+      sprintf "%%right"
   | NonAssoc ->
-      Printf.sprintf "%%nonassoc"
+      sprintf "%%nonassoc"
   | UndefinedAssoc ->
       ""
 
@@ -250,42 +249,42 @@ let compare_tokens (_token, prop) (_token', prop') =
   | PrecedenceLevel mv, PrecedenceLevel mv' ->
       compare_pairs InputFile.compare Int.compare (value mv) (value mv')
 
-let print_tokens f g =
-  (* Print the %token declarations. *)
-  StringMap.iter (fun token prop ->
-    if prop.tk_is_declared then
-      fprintf f "%%token%s %s%a\n"
-        (print_token_type prop)
-        token
-        print_attributes prop.tk_attributes
-  ) g.tokens;
+let print_token_declarations f g =
+  g.tokens |> StringMap.iter @@ fun token prop ->
+  if prop.tk_is_declared then
+    fprintf f "%%token%s %s%a\n"
+      (print_token_type prop)
+      token
+      print_attributes prop.tk_attributes
+
+let print_precedence_declarations f g =
   (* Sort the tokens wrt. precedence, and group them into levels. *)
-  let levels : (string * properties) list list =
-    MList.group compare_tokens (StringMap.bindings g.tokens)
-  in
+  let levels = MList.group compare_tokens (StringMap.bindings g.tokens) in
   (* Print the precedence declarations: %left, %right, %nonassoc. *)
-  List.iter (fun level ->
-    let (_token, prop) = try List.hd level with Failure _ -> assert false in
-    (* Do nothing about the tokens that have no precedence. *)
-    if prop.tk_precedence <> UndefinedPrecedence then begin
-      fprintf f "%s" (print_assoc prop.tk_associativity);
-      List.iter (fun (token, _prop) ->
-        fprintf f " %s" token
-      ) level;
-      fprintf f "\n"
-    end
-  ) levels
+  levels |> List.iter @@ fun (level : (string * properties) list) ->
+  let (_token, prop) = List.hd level in
+  (* Do nothing about the tokens that have no precedence. *)
+  if prop.tk_precedence <> UndefinedPrecedence then begin
+    fprintf f "%s" (print_assoc prop.tk_associativity);
+    List.iter (fun (token, _prop) ->
+      fprintf f " %s" token
+    ) level;
+    fprintf f "\n"
+  end
+
+let print_tokens f g =
+  print_token_declarations f g;
+  print_precedence_declarations f g
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing %type declarations. *)
 
 let print_types f g =
-  StringMap.iter (fun symbol ty ->
-    fprintf f "%%type%s %s\n"
-      (print_nonterminal_type ty)
-      (MString.normalize symbol)
-  ) g.types
+  g.types |> StringMap.iter @@ fun symbol ty ->
+  fprintf f "%%type%s %s\n"
+    (print_nonterminal_type ty)
+    (MString.normalize symbol)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -325,13 +324,13 @@ let print_branch f g branch =
    should not be exploited. (In previous versions of Menhir, the function passed
    to [List.sort] was not transitive, so it did not make any sense!) *)
 
-let compare_branch_production_levels bpl bpl' =
+let compare_production_levels bpl bpl' =
   match bpl, bpl' with
   | ProductionLevel (m, l), ProductionLevel (m', l') ->
       compare_pairs InputFile.compare Int.compare (m, l) (m', l')
 
 let compare_branches (b : branch) (b' : branch) =
-  compare_branch_production_levels b.production_level b'.production_level
+  compare_production_levels b.production_level b'.production_level
 
 let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
   match r.branches, r'.branches with
@@ -350,10 +349,9 @@ let print_rule f g (nt, r) =
   (* Menhir accepts a leading "|", but bison does not. Let's not print it.
      So, we print a bar-separated list. *)
   let sep = MString.this_then_that ("  ") ("| ") in
-  List.iter (fun br ->
-    fprintf f "%s" (sep());
-    print_branch f g br
-  ) r.branches
+  r.branches |> List.iter @@ fun br ->
+  fprintf f "%s" (sep());
+  print_branch f g br
 
 let print_rules f g =
   let rules = List.sort compare_rules (StringMap.bindings g.rules) in
@@ -364,19 +362,14 @@ let print_rules f g =
 (* Printing %on_error_reduce declarations. *)
 
 let print_on_error_reduce_declarations f g =
-  let cmp (_nt, oel) (_nt', oel') =
-    compare_branch_production_levels oel oel'
-  in
-  let levels : (string * on_error_reduce_level) list list =
-    MList.group cmp (StringMap.bindings g.on_error_reduce)
-  in
-  List.iter (fun level ->
-    fprintf f "%%on_error_reduce";
-    List.iter (fun (nt, _level) ->
-      fprintf f " %s" (MString.normalize nt)
-    ) level;
-    fprintf f "\n"
-  ) levels
+  let cmp (_nt, oel) (_nt', oel') = compare_production_levels oel oel' in
+  MList.group cmp (StringMap.bindings g.on_error_reduce)
+  |> List.iter @@ fun level ->
+  fprintf f "%%on_error_reduce";
+  List.iter (fun (nt, _level) ->
+    fprintf f " %s" (MString.normalize nt)
+  ) level;
+  fprintf f "\n"
 
 let print_on_error_reduce_declarations f g =
   match mode with
