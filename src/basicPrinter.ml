@@ -24,22 +24,6 @@ open PlainSyntaxAccessors
 
 (* The printing mode. *)
 
-(* [PrintNormal] is the normal mode: the result is a Menhir grammar.
-
-   [PrintForOCamlyacc] is close to the normal mode, but attempts to produce
-   ocamlyacc-compatible output. This means, in particular, that we cannot bind
-   identifiers to semantic values, but must use [$i] instead.
-
-   [PrintUnitActions _] causes all OCaml code to be suppressed: the semantic
-   actions are replaced with unit actions, preludes and postludes disappear,
-   %parameter declarations disappear. Every %type declaration carries the
-   [unit] type.
-
-   [PrintUnitActions true] in addition declares that every token carries a
-   semantic value of type [unit].
-
- *)
-
 type print_mode =
     | PrintNormal
     | PrintForOCamlyacc
