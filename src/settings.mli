@@ -22,13 +22,14 @@ val backend: [
 (** The list of file names that appear on the command line. *)
 val filenames: string list
 
-type token_type_mode =
-  | TokenTypeAndCode   (** produce the definition of the [token] type and code for the parser *)
-  | TokenTypeOnly      (** produce the type definition only *)
-  | CodeOnly of string (** produce the code only, by relying on an external token type *)
+(**[mode] influences the generation of the types [token] and [_ terminal]
+   as well as the manner in which the data constructors of these types are
+   qualified. See [TokenType]. *)
+val mode: TokenType.mode
 
-(** How to deal with the type of tokens. *)
-val token_type_mode: token_type_mode
+(**If [token_type_only] is true then Menhir stops after generating the
+   definition of the type [token]. This corresponds to [--only-tokens]. *)
+val token_type_only: bool
 
 type construction_mode =
   | ModeCanonical     (** --canonical: canonical Knuth LR(1) automaton *)

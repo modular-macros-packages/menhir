@@ -779,7 +779,7 @@ let incremental_api : IL.valdef list =
    the terminal GADT. *)
 
 let eterminal (t : Terminal.t) : expr =
-  EData (tokengadtdata (Terminal.print t), [])
+  EData (tokengadtdata Settings.mode (Terminal.print t), [])
 
 (* [enonterminal nt] is a value of type ['a nonterminal] (for some
    ['a]) that encodes the nonterminal symbol [nt]. It is just a data
@@ -1001,7 +1001,7 @@ let inspection_API () =
 
   SIModuleDef (symbols, MStruct (
     interface_to_structure (
-      tokengadtdef grammar @
+      tokengadtdef Settings.mode grammar @
       nonterminalgadtdef grammar
     )
   )) ::

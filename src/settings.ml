@@ -26,16 +26,15 @@ let set_backend b () =
 let use_ancient_code_backend () =
   error "Error: --code-ancient is no longer supported.\n"
 
-type token_type_mode =
-  | TokenTypeAndCode   (* produce the definition of the [token] type and code for the parser *)
-  | TokenTypeOnly      (* produce the type definition only *)
-  | CodeOnly of string (* produce the code only; import token type from specified module *)
+let mode =
+  ref TokenType.DefineTokenType
 
-let token_type_mode =
-  ref TokenTypeAndCode
+let token_type_only =
+  ref false
 
-let tokentypeonly () =
-  token_type_mode := TokenTypeOnly
+let only_tokens () =
+  mode := TokenType.DefineTokenType;
+  token_type_only := true
 
 let is_uppercase_ascii c =
   c >= 'A' && c <= 'Z'
@@ -50,7 +49,8 @@ let codeonly m =
     fprintf stderr "Error: %s is not a valid OCaml module name.\n" m;
     exit 1
   end;
-  token_type_mode := CodeOnly m
+  mode := TokenType.UseExternalTokenType m;
+  token_type_only := false
 
 let version =
   ref false
@@ -437,7 +437,7 @@ let options = Arg.align [
                          " Print grammar with unit actions and exit";
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens";
-  "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
+  "--only-tokens", Arg.Unit only_tokens, " Generate token type definition only, no code";
   "--pack-classic", Arg.Set pack_classic, " (undocumented)";
   "--unparsing", Arg.Set unparsing, " Generate the unparsing API";
   "--random-seed", Arg.Int Random.init, "<seed> Set the random seed";
@@ -657,8 +657,11 @@ let base =
   else
     !base
 
-let token_type_mode =
-  !token_type_mode
+let mode =
+  !mode
+
+let token_type_only =
+  !token_type_only
 
 let construction_mode =
   !construction_mode

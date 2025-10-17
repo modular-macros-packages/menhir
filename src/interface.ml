@@ -89,7 +89,7 @@ let inspection =
 
 let monolithic_api grammar =
 
-  TokenType.tokentypedef grammar @
+  TokenType.tokentypedef Settings.mode grammar @
 
   IIComment "This exception is raised by the monolithic API functions." ::
   IIExcDecls [ excdef ] ::
@@ -113,7 +113,7 @@ let inspection_api grammar () =
 
   (* Define the types [terminal] and [nonterminal]. *)
 
-  TokenType.tokengadtdef grammar @
+  TokenType.tokengadtdef Settings.mode grammar @
   NonterminalType.nonterminalgadtdef grammar @
 
   (* Include the signature that lists the inspection functions, with
@@ -199,9 +199,7 @@ let interface grammar = [
 (* Writing the interface to a file. *)
 
 let write grammar () =
-  (* We have a dependency on [TokenType], which takes care of the case
-     where [token_type_mode] is [TokenTypeOnly]. *)
-  assert (Settings.token_type_mode <> Settings.TokenTypeOnly);
+  assert (not Settings.token_type_only);
   let mli = open_out (Settings.base ^ ".mli") in
   let module P = ILPrinter.Make (struct
     let f = mli

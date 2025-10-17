@@ -11,7 +11,6 @@
 open PlainSyntax
 open IL
 open ILConstruction
-open TokenType
 
 (* ------------------------------------------------------------------------- *)
 
@@ -271,7 +270,7 @@ let program grammar =
      it or to its data constructors. *)
 
   [ SIFunctor (grammar.parameters,
-    interface_to_structure (tokentypedef grammar) @
+    interface_to_structure (TokenType.tokentypedef Settings.mode grammar) @
     SIFragment grammar.preludes ::
     SIValDefs (false, [ begindef; def; enddef ]) ::
     SIFragment grammar.postludes ::

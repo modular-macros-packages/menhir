@@ -104,7 +104,7 @@ let grammar : Syntax.grammar =
   let module X = struct
     let ignore_unused_token t =
       Settings.ignore_all_unused_tokens ||
-      Settings.token_type_mode = Settings.TokenTypeOnly ||
+      Settings.token_type_only ||
       StringSet.mem t Settings.ignored_unused_tokens
   end in
   let module C = CheckGrammar.Make(E)(X) in
@@ -171,13 +171,11 @@ let grammar =
    the definition of the [token] type and stop. *)
 
 let () =
-  match Settings.token_type_mode with
-  | Settings.TokenTypeOnly ->
-      TokenType.produce_tokentypes grammar;
-      exit 0
-  | Settings.CodeOnly _
-  | Settings.TokenTypeAndCode ->
-      ()
+  let open Settings in
+  if token_type_only then begin
+    TokenType.write base inspection comment mode grammar;
+    exit 0
+  end
 
 (* ------------------------------------------------------------------------- *)
 

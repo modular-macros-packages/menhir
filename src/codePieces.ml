@@ -165,11 +165,14 @@ let semvtype = function
 
 (* Patterns for tokens. *)
 
+let tokendata t =
+  TokenType.tokendata Settings.mode t
+
 (* [tokpat tok pat] is a pattern that matches the token [tok] and binds
    its semantic value (if it has one) to the pattern [pat]. *)
 
 let tokpat tok pat =
-  let data = TokenType.tokendata (Terminal.print tok) in
+  let data = tokendata (Terminal.print tok) in
   PData (
     data,
     if Terminal.ocamltype tok = None then [] else [ pat ]
@@ -179,7 +182,7 @@ let tokpat tok pat =
    taking its semantic value (if it needs one) from the expression [e]. *)
 
 let tokexpr tok e =
-  let data = TokenType.tokendata (Terminal.print tok) in
+  let data = tokendata (Terminal.print tok) in
   EData (
     data,
     if Terminal.ocamltype tok = None then [] else [ e ]
@@ -283,7 +286,7 @@ let mbasics grammar = [
 
     (* The type [token]. *)
     interface_to_structure (
-      TokenType.tokentypedef grammar
+      TokenType.tokentypedef Settings.mode grammar
     )
 
   ));
