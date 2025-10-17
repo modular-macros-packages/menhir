@@ -39,26 +39,29 @@ and visit_branch visited { producers = symbols } =
 and visit_producer visited producer =
   visit_symbol visited producer.prod_symbol
 
-let grammar =
-  if StringSet.cardinal grammar.start_symbols = 0 then
-    Error.error [] "no start symbol has been declared."
+let reachable =
+  StringSet.fold (fun symbol visited ->
+    visit_symbol visited symbol
+  ) grammar.start_symbols StringSet.empty
+
+let roots =
+  if StringSet.cardinal grammar.start_symbols = 1 then
+    "the start symbol"
   else
-    let reachable =
-      StringSet.fold (fun symbol visited ->
-        visit_symbol visited symbol
-      ) grammar.start_symbols StringSet.empty
-    in
-    StringMap.iter (fun symbol rule ->
-      if not (StringSet.mem symbol reachable) then
-        warning rule.positions
-          "symbol %s is unreachable from any of the start symbol(s)."
-          symbol
-    ) grammar.rules;
-    { grammar with
-      rules = StringMap.restrict reachable grammar.rules;
-      types = StringMap.restrict reachable grammar.types;
-      on_error_reduce = StringMap.restrict reachable grammar.on_error_reduce;
-    }
+    "any of the start symbols"
+
+let () =
+  grammar.rules |> StringMap.iter @@ fun symbol rule ->
+  if not (StringSet.mem symbol reachable) then
+    warning rule.positions
+      "symbol %s is unreachable from %s."
+      symbol roots
+
+let grammar =
+  { grammar with
+    rules = StringMap.restrict reachable grammar.rules;
+    types = StringMap.restrict reachable grammar.types;
+    on_error_reduce = StringMap.restrict reachable grammar.on_error_reduce }
 
 end (* Run *)
 

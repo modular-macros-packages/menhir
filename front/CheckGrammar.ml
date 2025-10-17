@@ -307,6 +307,14 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Check that at least one start symbol has been declared. *)
+
+let () =
+  if StringMap.is_empty grammar.p_start_symbols then
+    signal [] "no start symbol has been declared."
+
+(* -------------------------------------------------------------------------- *)
+
 let finished =
   ()
 
