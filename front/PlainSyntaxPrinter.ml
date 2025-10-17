@@ -20,16 +20,12 @@ open PlainSyntaxAccessors
    declarations) that did not exist originally. We currently do not warn about
    this problem. Nobody has ever complained about it. *)
 
-(* -------------------------------------------------------------------------- *)
+type mode =
+  | PrintNormal
+  | PrintForOCamlyacc
+  | PrintUnitActions of bool
 
-(* The printing mode. *)
-
-type print_mode =
-    | PrintNormal
-    | PrintForOCamlyacc
-    | PrintUnitActions of bool       (** if true, declare unit tokens *)
-
-module Print (X : sig val mode : print_mode end) = struct
+module Print (X : sig val mode : mode end) = struct
 open X
 
 (* -------------------------------------------------------------------------- *)

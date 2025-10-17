@@ -12,7 +12,7 @@
 
 open PlainSyntax
 
-type print_mode =
+type mode =
 
   | PrintNormal
     (**[PrintNormal] is the normal mode: the result is a grammar that obeys
@@ -36,4 +36,4 @@ type print_mode =
 
 (**[print mode f g] prints the grammar [g]. All output is sent to the output
    channel [f]. *)
-val print: print_mode -> out_channel -> grammar -> unit
+val print: mode -> out_channel -> grammar -> unit

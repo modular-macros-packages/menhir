@@ -97,8 +97,8 @@ let noprefix =
   ref false
 
 type preprocess_mode =
-    | PMNormal
-    | PMOnlyPreprocess of print_mode
+  | PMNormal
+  | PMOnlyPreprocess of mode
 
 let preprocess_mode =
   ref PMNormal

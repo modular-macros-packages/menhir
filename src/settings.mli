@@ -61,9 +61,9 @@ val automaton_graph: bool
 val trace: bool
 
 type preprocess_mode =
-    | PMNormal
+  | PMNormal
       (** preprocess and continue *)
-    | PMOnlyPreprocess of PlainSyntaxPrinter.print_mode
+  | PMOnlyPreprocess of PlainSyntaxPrinter.mode
       (** preprocess, print grammar, stop *)
 
 (** Whether one should stop and print the grammar after joining and
