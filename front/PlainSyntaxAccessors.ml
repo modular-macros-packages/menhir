@@ -56,7 +56,7 @@ let nonterminals grammar =
 
 let is_nonterminal grammar symbol =
   let result = StringMap.mem symbol grammar.rules in
-  assert (result || StringMap.mem symbol grammar.tokens);
+  assert (result || StringMap.mem symbol grammar.tokens || symbol = "error");
   result
 
 let alias grammar symbol =
