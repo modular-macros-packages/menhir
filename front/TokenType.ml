@@ -15,13 +15,16 @@ open ILConstruction
 
 type mode =
   | DefineTokenType
-  | UseExternalTokenType of string * string
+  | UseExternalTokenType of string
 
 module Make (M : sig
   val grammar : grammar
   val mode : mode
 end) = struct
 open M
+
+let interpreter =
+  "MenhirInterpreter"
 
 let tctoken =
   "token"
@@ -43,14 +46,14 @@ let ttokengadtdata token =
    abbreviation). However, if the mode is [UseExternalTokenType _], then the
    data constructors must be qualified. *)
 
-(* If the mode is [UseExternalTokenType (M, M')] then the data constructors
-   of the type [token] must be prefixed with [M.] and the data constructors
-   of the type [_ terminal] must be prefixed with [M']. In practice, [M'] is
-   [M.MenhirInterpreter]. This was fixed on 2023/04/28. *)
+(* If the mode is [UseExternalTokenType M] then the data constructors of the
+   type [token] must be prefixed with [M.] and the data constructors of the
+   type [_ terminal] must be prefixed with [M.Interpreter.]. This was fixed
+   on 2023/04/28. *)
 
 let tokenprefix id =
   match mode with
-  | UseExternalTokenType (m, _) ->
+  | UseExternalTokenType m ->
       m ^ "." ^ id
   | DefineTokenType ->
       id
@@ -60,7 +63,8 @@ let tokendata =
 
 let tokengadtprefix id =
   match mode with
-  | UseExternalTokenType (_, m') ->
+  | UseExternalTokenType m ->
+      let m' = m ^ "." ^ interpreter in
       m' ^ "." ^ id
   | DefineTokenType ->
       id
@@ -140,5 +144,30 @@ let tokengadtdef =
       typeconstraint = None
     }]
   ]
+
+(* -------------------------------------------------------------------------- *)
+
+(* Creating both an [.mli] file and an [.ml] file is made necessary by the
+   fact that the two files can differ when there are functor parameters. *)
+
+let write base inspection comment =
+  (* Settings. *)
+  let module F = struct
+    let print_line_directives = None
+    let print_comments = comment
+  end in
+  (* Construct the definitions of the types [token] and [_ terminal]. *)
+  let i : interface =
+    tokentypedef @
+    MList.ifn inspection [ IIModule (interpreter, MTSigEnd tokengadtdef) ]
+  in
+  (* Write an [.mli] file. *)
+  let f = open_out (base ^ ".mli") in
+  let module P = ILPrinter.Make (struct include F let f = f end) in
+  P.interface [ IIFunctor (grammar.parameters, i) ];
+  (* Write an [.ml] file. *)
+  let f = open_out (base ^ ".ml") in
+  let module P = ILPrinter.Make (struct include F let f = f end) in
+  P.program [ SIFunctor (grammar.parameters, interface_to_structure i) ]
 
 end (* Make *)
