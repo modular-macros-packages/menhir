@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 404 distinct tests.
+;; 405 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -22173,6 +22173,73 @@
   (action
     (diff osdp_0_6_0-pa_parser_stripped.ml.log.exp
       osdp_0_6_0-pa_parser_stripped.ml.log)))
+
+(rule (target oxcaml.opp.out) (deps oxcaml.mly)
+  (action
+    (with-outputs-to oxcaml.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:oxcaml.flags} %{deps})))))
+
+(rule (alias quick) (action (diff oxcaml.opp.exp oxcaml.opp.out)))
+
+(rule
+  (targets oxcaml.out oxcaml.automaton oxcaml.automaton.resolved
+    oxcaml.conflicts oxcaml.timings)
+  (deps oxcaml.mly)
+  (action
+    (with-outputs-to oxcaml.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to oxcaml.timings %{read-lines:oxcaml.flags} %{deps})))))
+
+(rule (alias quick) (action (diff oxcaml.exp oxcaml.out)))
+
+(rule (alias quick) (action (diff oxcaml.automaton.exp oxcaml.automaton)))
+
+(rule (alias quick)
+  (action (diff oxcaml.automaton.resolved.exp oxcaml.automaton.resolved)))
+
+(rule (alias quick) (action (diff oxcaml.conflicts.exp oxcaml.conflicts)))
+
+(rule (target oxcaml_stripped.mly) (deps oxcaml.mly)
+  (action
+    (with-stderr-to oxcaml_stripped.ignored
+      (with-stdout-to oxcaml_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu %{read-lines:oxcaml.flags}
+            %{deps}))))))
+
+(rule
+  (targets oxcaml_stripped.log oxcaml_stripped.mli oxcaml_stripped.ml
+    oxcaml_stripped.stacklang oxcaml_stripped.timings oxcaml_stripped.scount
+    oxcaml_stripped.dcount)
+  (deps oxcaml_stripped.mly)
+  (action
+    (with-outputs-to oxcaml_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to oxcaml_stripped.timings %{read-lines:oxcaml.flags}
+          %{deps})))))
+
+(alias (name quick) (deps
+                      oxcaml_stripped.stacklang))
+
+(rule (targets oxcaml_stripped.cmi oxcaml_stripped.mli.log)
+  (deps oxcaml_stripped.mli)
+  (action
+    (with-stdout-to oxcaml_stripped.mli.dtimings
+      (with-stderr-to oxcaml_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -c oxcaml_stripped.mli)))))
+
+(rule (targets oxcaml_stripped.cmo oxcaml_stripped.ml.log)
+  (deps oxcaml_stripped.ml oxcaml_stripped.cmi)
+  (action
+    (with-stdout-to oxcaml_stripped.ml.dtimings
+      (with-stderr-to oxcaml_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -c oxcaml_stripped.ml)))))
+
+(rule (alias test)
+  (action (diff oxcaml_stripped.ml.log.exp oxcaml_stripped.ml.log)))
 
 (rule (target pager.opp.out) (deps pager.mly)
   (action
