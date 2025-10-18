@@ -1,2 +1,2 @@
-File "invalid-token-in-prec.mly", line 4, characters 9-10:
+File "invalid-token-in-prec.mly", line 5, characters 11-12:
 Error: The symbol F is undefined.
