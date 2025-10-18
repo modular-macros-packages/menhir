@@ -212,48 +212,27 @@ open N
    it may be somewhat difficult for the user to ensure that names are
    unique. *)
 
-include struct
-open StringSet
-
 let c = Error.new_category()
 
-let find_name_attribute prod : string option =
+let find_name_attribute prod : string list =
   try
-    Some (find_attribute "name" (Production.attributes prod))
+    [find_attribute "name" (Production.attributes prod)]
   with Not_found ->
     Error.signal c (Production.positions prod)
       "This production has no @name attribute.";
-    None
-
-let duplicates, _ =
-  let names : string option list = Production.mapx find_name_attribute in
-  List.fold_left (fun (duplicates, names) oname ->
-    match oname with
-    | None ->
-        duplicates, names
-    | Some name ->
-        if mem name names then
-          add name duplicates, names
-        else
-          duplicates, add name names
-  ) (empty, empty) names
+    []
 
 let () =
-  if not (is_empty duplicates) then begin
-    (* We provide no source code positions for this error message. We could
-       try, but the [@name] attributes that are synthesized during inlining
-       sometimes carry no meaningful position, because they are constructed
-       by concatenation of several names. *)
-    Error.signal c [] "the following production names are not unique:%s"
-      (elements duplicates
-       |> List.map (fun name -> sprintf "\n  %s" name)
-       |> String.concat "")
-  end
+  let names = List.flatten (Production.mapx find_name_attribute) in
+  MList.foreach_duplicate String.compare names @@ fun name ->
+  (* We provide no source code positions for this error message. We could
+     try, but the [@name] attributes that are synthesized during inlining
+     sometimes carry no meaningful position, because they are constructed
+     by concatenation of several names. *)
+  Error.signal c [] "The production name %s is not unique." name
 
 let () =
   Error.exit_if c
-
-end
 
 (* ------------------------------------------------------------------------ *)
 
