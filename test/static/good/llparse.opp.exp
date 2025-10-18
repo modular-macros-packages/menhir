@@ -4,6 +4,8 @@ File "llparse.mly", line 76, characters 7-16:
 Warning: the token Backslash is unused.
 File "llparse.mly", line 99, characters 7-12:
 Warning: the token Error is unused.
+File "llparse.mly", line 99, characters 7-12:
+Warning: please do not name a terminal symbol Error.
 %{
 
 (* Parser for LLVM IR.  Needs to be kept up to date with the LLVM equivalent, see: *)
