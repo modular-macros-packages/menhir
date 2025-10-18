@@ -131,7 +131,7 @@ Built an LR(0) automaton with 114 states.
 The grammar is SLR(1).
 The construction mode is pager.
 Built an LR(1) automaton with 114 states.
-Warning: one state end-of-stream conflict was arbitrarily resolved.
+Warning: one end-of-stream conflict was arbitrarily resolved.
 File "leap_Z3ModelParser.mly", line 203, characters 3-3:
 Warning: production generic_model -> is never reduced.
 Warning: in total, 1 production is never reduced.
