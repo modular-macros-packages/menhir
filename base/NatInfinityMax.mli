@@ -15,6 +15,7 @@
    this lattice does not necessarily terminate. *)
 
 type property
+type t = property
 
 (**[bottom] is the number zero. *)
 val bottom: property

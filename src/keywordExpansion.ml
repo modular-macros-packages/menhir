@@ -228,7 +228,6 @@ let expand_action analysis producers action =
 let analysis grammar =
   let module G = GrammarFunctor.Make(struct
     let grammar = grammar
-    let verbose = false
   end)() in
   let lookup (nt : Syntax.symbol) : G.Symbol.t =
     try G.Symbol.lookup nt with Not_found -> assert false

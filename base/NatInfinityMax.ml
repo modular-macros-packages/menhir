@@ -8,8 +8,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type property =
-  int
+type property = int
+
+type t = property
 
 let bottom =
   0

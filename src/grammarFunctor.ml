@@ -18,11 +18,6 @@ module Make (G : sig
   (* An abstract syntax tree for the grammar. *)
   val grammar: PlainSyntax.grammar
 
-  (* This flag indicates whether it is OK to produce warnings, verbose
-     information, etc., when this functor is invoked. If it is set to
-     [false], then only serious errors can be signaled. *)
-  val verbose: bool
-
 end) () = struct
 
 open G
@@ -127,14 +122,6 @@ module Nonterminal = struct
   let (n : int), (name : string array), (map : int StringMap.t) =
     index (new_start_nonterminals @ original_nonterminals)
 
-  let () =
-    if verbose then
-      Error.logG 1 (fun f ->
-        Printf.fprintf f
-          "Grammar has %d nonterminal symbols, among which %d start symbols.\n"
-          (n - start) start
-      )
-
   let is_internal_start nt =
     nt < start
 
@@ -173,6 +160,15 @@ module Nonterminal = struct
 
   let[@inline] mapx f =
     MInt.mapij start n f
+
+  let[@inline] iter_internal_start f =
+    MInt.iteri start f
+
+  let iter_user_start f =
+    grammar.start_symbols |> StringSet.iter @@ fun symbol ->
+    let nt = lookup symbol in
+    assert (is_user_start nt);
+    f nt
 
   let ocamltype nt =
     assert (not (is_internal_start nt));
@@ -295,12 +291,6 @@ module Terminal = struct
          assert (tok = sharp || tok = error);
          not_so_dummy_properties
     )
-
-  let () =
-    if verbose then
-      Error.logG 1 (fun f ->
-        Printf.fprintf f "Grammar has %d terminal symbols.\n" (n - 2)
-      )
 
   let precedence_level tok =
     TokPrecedence.levelip (print tok) properties.(tok)
@@ -646,8 +636,6 @@ module Production = struct
     let n = StringMap.fold (fun _ { branches = branches } n ->
       n + List.length branches
     ) grammar.rules 0 in
-    if verbose then
-      Error.logG 1 (fun f -> Printf.fprintf f "Grammar has %d productions.\n" n);
     n + StringSet.cardinal grammar.start_symbols
 
   let p2i prod =
@@ -1375,68 +1363,6 @@ module MAXIMAL =
      end)
 
 (* ------------------------------------------------------------------------ *)
-
-let () =
-  if verbose then begin
-    (* If a start symbol generates the empty language or generates
-       the language {epsilon}, report an error. In principle, this
-       could be just a warning. However, in [Engine], in the function
-       [start], it is convenient to assume that neither of these
-       situations can arise. This means that at least one token must
-       be read. *)
-    StringSet.iter (fun symbol ->
-      let nt = Nonterminal.lookup symbol in
-      if not (NONEMPTY.nonterminal nt) then
-        Error.error
-          (Nonterminal.positions nt)
-          "%s generates the empty language." (Nonterminal.print false nt);
-      if TerminalSet.is_empty (FIRST.nonterminal nt) then
-        Error.error
-          (Nonterminal.positions nt)
-          "%s generates the language {epsilon}." (Nonterminal.print false nt)
-    ) grammar.start_symbols;
-    (* If a nonterminal symbol generates the empty language, issue a warning. *)
-    Nonterminal.iterx (fun nt ->
-      if not (NONEMPTY.nonterminal nt) then
-        Error.warning
-          (Nonterminal.positions nt)
-          "%s generates the empty language." (Nonterminal.print false nt);
-    )
-  end
-
-(* ------------------------------------------------------------------------ *)
-(* Dump the analysis results. *)
-
-let () =
-  if verbose then
-    Error.logG 2 (fun f ->
-      Nonterminal.iterx (fun nt ->
-        Printf.fprintf f "nullable(%s) = %b\n"
-          (Nonterminal.print false nt)
-          (NULLABLE.nonterminal nt)
-      );
-      Nonterminal.iterx (fun nt ->
-        Printf.fprintf f "first(%s) = %s\n"
-          (Nonterminal.print false nt)
-          (TerminalSet.print (FIRST.nonterminal nt))
-      );
-      Nonterminal.iterx (fun nt ->
-        Printf.fprintf f "minimal(%s) = %s\n"
-          (Nonterminal.print false nt)
-          (CompletedNatWitness.print Terminal.print (MINIMAL.nonterminal nt))
-      );
-      Nonterminal.iterx (fun nt ->
-        Printf.fprintf f "maximal(%s) = %s\n"
-          (Nonterminal.print false nt)
-          (NatInfinityMax.print (MAXIMAL.nonterminal nt))
-      );
-  )
-
-let () =
-  if verbose then
-    Time.tick "Analysis of the grammar"
-
-(* ------------------------------------------------------------------------ *)
 (* Compute FOLLOW sets. Unnecessary for us, but requested by a user. Also,
    this is useful for the SLR(1) test. Thus, we perform this analysis only
    on demand. *)
@@ -1517,18 +1443,6 @@ let follow : Nonterminal.t -> TerminalSet.t =
   end) in
   F.follow
 
-(* At log level 2, display the FOLLOW sets. *)
-
-let () =
-  if verbose then
-    Error.logG 2 (fun f ->
-      Nonterminal.iterx (fun nt ->
-        Printf.fprintf f "follow(%s) = %s\n"
-          (Nonterminal.print false nt)
-          (TerminalSet.print (follow nt))
-      )
-    )
-
 (* Compute FOLLOW sets for the terminal symbols as well. Again, unnecessary
    for us, but requested by a user. This is done in a single pass over the
    grammar -- no new fixpoint computation is required. *)
@@ -1569,18 +1483,6 @@ let tfollow : TerminalSet.t array Lazy.t =
 let tfollow t =
   (Lazy.force tfollow).(t)
 
-(* At log level 3, display the FOLLOW sets for terminal symbols. *)
-
-let () =
-  if verbose then
-    Error.logG 3 (fun f ->
-      Terminal.iter (fun t ->
-        Printf.fprintf f "follow(%s) = %s\n"
-          (Terminal.print t)
-          (TerminalSet.print (tfollow t))
-      )
-    )
-
 (* ------------------------------------------------------------------------ *)
 (* Compute symbolic FIRST and FOLLOW sets. *)
 
@@ -1618,18 +1520,6 @@ let sfollow : Nonterminal.t -> SymbolSet.t =
     let first = sfirst
   end) in
   F.follow
-
-(* At log level 3, display the symbolic FOLLOW sets. *)
-
-let () =
-  if verbose then
-    Error.logG 3 (fun f ->
-      Nonterminal.iterx (fun nt ->
-        Printf.fprintf f "sfollow(%s) = %s\n"
-          (Nonterminal.print false nt)
-          (SymbolSet.print (sfollow nt))
-      )
-    )
 
 (* ------------------------------------------------------------------------ *)
 (* Provide explanations about FIRST sets. *)
@@ -1691,6 +1581,8 @@ let rec convert = function
 
 module Analysis = struct
 
+  let nonempty = NONEMPTY.nonterminal
+
   let nullable = NULLABLE.nonterminal
 
   let nullable_symbol = NULLABLE.symbol
@@ -1726,9 +1618,14 @@ module Analysis = struct
     convert (explain tok rhs i)
 
   let follow = follow
+  let tfollow = tfollow
+  let sfollow = sfollow
 
   let attributes =
     grammar.gr_attributes
+
+  let minimal' nt =
+    MINIMAL.nonterminal nt
 
   let minimal nt =
     CompletedNatWitness.to_int (MINIMAL.nonterminal nt)
@@ -1736,6 +1633,9 @@ module Analysis = struct
   let minimal_prod prod i =
     assert (0 <= i && i <= Production.length prod);
     CompletedNatWitness.to_int (MINIMAL.production prod i)
+
+  let maximal' nt =
+    MAXIMAL.nonterminal nt
 
   let maximal nt =
     NatInfinityMax.to_int (MAXIMAL.nonterminal nt)
