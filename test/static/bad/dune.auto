@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 176 distinct tests.
+;; 177 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -83,6 +83,15 @@
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
 (rule (alias test) (action (diff bad_uppercase.exp bad_uppercase.out)))
+
+(rule (target boris-mini-strict.out) (deps boris-mini-strict.mly)
+  (action
+    (with-outputs-to boris-mini-strict.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:boris-mini-strict.flags} %{deps})))))
+
+(rule (alias test)
+  (action (diff boris-mini-strict.exp boris-mini-strict.out)))
 
 (rule (target calc-no-dollars.out) (deps calc-no-dollars.mly)
   (action
