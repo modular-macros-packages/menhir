@@ -292,14 +292,12 @@
 
 ## Code Cleanup
 
+* `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
+   They could move into TokenType.
+
 * `Item.Set` : it would be nice to use bitsets. Could we use a consecutive
   numbering of items internally, and use the old encoding only when saving
   data to the table needed by the inspection API?
-
-* Ideally, `PartialGrammar` should avoid renaming the parameters of
-  a rule, when there is no need to do so. The renamed parameter is
-  visible in sort unification error messages and in messages about
-  duplicate formal parameters (`test/bad/duplicate-formal.mly`).
 
 * Grep for `artificial dependency` and remove these artificial dependencies.
   Ideally, there should be no implicit (global) state ("the" grammar, "the"
