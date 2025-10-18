@@ -34,6 +34,10 @@ end) (X : sig
      about the token [t] should be suppressed. *)
   val ignore_unused_token : terminal -> bool
 
+  (**If [require_aliases] is [true] then a token without an alias causes
+     a warning to be emitted. *)
+  val require_aliases : bool
+
 end) = struct
 open E
 
@@ -273,6 +277,15 @@ let () =
           "please do not name a terminal symbol Error."
   | exception Not_found ->
       ()
+
+(* Check that every token has an alias. (This is optional.) *)
+
+let () =
+  if X.require_aliases then
+    grammar.p_tokens |> StringMap.iter @@ fun t properties ->
+    if properties.tk_is_declared && properties.tk_alias = None then
+      warning [properties.tk_position]
+        "no alias has been defined for the token %s." t
 
 (* -------------------------------------------------------------------------- *)
 

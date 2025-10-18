@@ -106,6 +106,7 @@ let grammar : Syntax.grammar =
       Settings.ignore_all_unused_tokens ||
       Settings.token_type_only ||
       StringSet.mem t Settings.ignored_unused_tokens
+    let require_aliases = Settings.require_aliases
   end in
   let module C = CheckGrammar.Make(E)(X) in
   C.check grammar;

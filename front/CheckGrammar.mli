@@ -32,6 +32,10 @@ end) (X : sig
      about the token [t] should be suppressed. *)
   val ignore_unused_token : terminal -> bool
 
+  (**If [require_aliases] is [true] then a token without an alias causes
+     a warning to be emitted. *)
+  val require_aliases : bool
+
 end) : sig
 
   (**[check g] performs a number of well-formedness checks on the grammar

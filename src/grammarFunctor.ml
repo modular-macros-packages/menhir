@@ -340,26 +340,16 @@ module Terminal = struct
     MInt.mapij 1 sharp f
 
   let tokens_without_an_alias =
-    let accu = ref [] in
+    let accu = ref 0 in
     iter_real begin fun tok ->
       let properties = properties.(tok) in
       if properties.tk_alias = None then
-        accu := tok :: !accu
+        incr accu
     end;
-    List.rev !accu
-
-  let () =
-    if verbose && Settings.require_aliases then
-      tokens_without_an_alias |> List.iter begin fun tok ->
-        let properties = properties.(tok) in
-        let pos = properties.tk_position in
-        Error.warning [pos]
-          "no alias has been defined for the token %s."
-          (print tok)
-      end
+    !accu
 
   let every_token_has_an_alias =
-    tokens_without_an_alias = []
+    tokens_without_an_alias = 0
 
   let alias tok =
     properties.(tok).tk_alias
