@@ -875,6 +875,14 @@ let rec best choice = function
 
 (* Go ahead. *)
 
+let signal_conflicts kind n =
+  if n = 1 then
+    Error.grammar_warning [] "one %s conflict was arbitrarily resolved."
+      kind
+  else if n >= 1 then
+    Error.grammar_warning [] "%d %s conflicts were arbitrarily resolved."
+      n kind
+
 let default_conflict_resolution () =
 
   let shift_reduce =
@@ -967,13 +975,7 @@ let default_conflict_resolution () =
     end
   end;
 
-  if !eos_conflicts = 1 then
-    Error.grammar_warning []
-      "one state end-of-stream conflict was arbitrarily resolved."
-  else if !eos_conflicts > 1 then
-    Error.grammar_warning []
-      "%d end-of-stream conflicts were arbitrarily resolved."
-      !eos_conflicts;
+  signal_conflicts "end-of-stream" !eos_conflicts;
 
   (* We can now compute where productions are reduced. *)
   initialize_production_where();
