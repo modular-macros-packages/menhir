@@ -9,10 +9,9 @@
 (******************************************************************************)
 
 open Attribute
+open Located
 open PlainSyntax
 open PlainSyntaxAccessors
-open Syntax
-open Located
 
 module Make (G : sig
 
