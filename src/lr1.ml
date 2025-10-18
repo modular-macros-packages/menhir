@@ -932,16 +932,8 @@ let default_conflict_resolution () =
     )
   );
 
-  if !shift_reduce = 1 then
-    Error.warning [] "one shift/reduce conflict was arbitrarily resolved."
-  else if !shift_reduce > 1 then
-    Error.warning [] "%d shift/reduce conflicts were arbitrarily resolved."
-      !shift_reduce;
-  if !reduce_reduce = 1 then
-    Error.warning [] "one reduce/reduce conflict was arbitrarily resolved."
-  else if !reduce_reduce > 1 then
-    Error.warning [] "%d reduce/reduce conflicts were arbitrarily resolved."
-      !reduce_reduce;
+  signal_conflicts "shift/reduce" !shift_reduce;
+  signal_conflicts "reduce/reduce" !reduce_reduce;
 
   (* Now, detect and remove end-of-stream conflicts. If a state has both a
      reduce action at [#] and some other (shift or reduce) action, this is
