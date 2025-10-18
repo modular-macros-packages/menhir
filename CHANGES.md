@@ -2,6 +2,15 @@
 
 ## 2025/10/XX
 
+* In `--strict` mode, all warnings are now errors.
+
+* The situation where Menhir does not know how to resolve a reduce/reduce
+  conflict now causes a warning instead of an error. (In `--strict` mode, it
+  still causes an error.) This situation arises when there is no default order
+  between the two productions. This can happen when the productions originate
+  in different source files or when they are derived, via inlining, from the
+  same production.
+
 * Menhir can now report several well-formedness issues (undefined symbols,
   unused tokens, etc.) in one run, instead of stopping at the first issue.
 
