@@ -253,6 +253,15 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* If zero tokens have been declared, reject the grammar. *)
+
+let () =
+  let declared = StringMap.filter (fun _t properties -> properties.tk_is_declared) grammar.p_tokens in
+  if StringMap.is_empty declared then
+    signal [] "no tokens have been declared."
+
+(* -------------------------------------------------------------------------- *)
+
 (* Check that the [@name] attributes carried by productions are valid OCaml
    identifiers. This property is required by the unparsing API. We require
    this property even if [--unparsing] is off. *)

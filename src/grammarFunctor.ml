@@ -267,11 +267,7 @@ module Terminal = struct
 
   let (n : int), (name : string array), (map : int StringMap.t) =
     let tokens = tokens grammar in
-    match tokens with
-    | [] when verbose ->
-        Error.error [] "no tokens have been declared."
-    | _ ->
-        index ("error" :: tokens @ [ "#" ])
+    index ("error" :: tokens @ [ "#" ])
 
   let print tok =
     name.(tok)
