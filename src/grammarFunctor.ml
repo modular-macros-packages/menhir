@@ -90,7 +90,7 @@ module TokPrecedence = struct
         | UndefinedPrecedence ->
             ()
         | PrecedenceLevel mv ->
-            Error.grammar_warning [position mv]
+            Error.warning [position mv]
               "the precedence level assigned to %s is never useful." id
     ) grammar.tokens
 
@@ -247,7 +247,7 @@ module Terminal = struct
       let properties = StringMap.find "Error" grammar.tokens in
       if properties.tk_is_declared then
         let pos = properties.tk_position in
-        Error.grammar_warning [pos]
+        Error.warning [pos]
           "please do not name a terminal symbol Error."
     with Not_found ->
       ()
@@ -371,7 +371,7 @@ module Terminal = struct
       tokens_without_an_alias |> List.iter begin fun tok ->
         let properties = properties.(tok) in
         let pos = properties.tk_position in
-        Error.grammar_warning [pos]
+        Error.warning [pos]
           "no alias has been defined for the token %s."
           (print tok)
       end
@@ -957,7 +957,7 @@ module Production = struct
         (* Check whether this %prec declaration was useless. *)
         let pos = position sym in
         if not (Hashtbl.mem ever_useful pos) then begin
-          Error.grammar_warning [pos] "this %%prec declaration is never useful.";
+          Error.warning [pos] "this %%prec declaration is never useful.";
           Hashtbl.add ever_useful pos () (* hack: avoid two warnings at the same position *)
         end
       ) osym
@@ -1426,7 +1426,7 @@ let () =
     (* If a nonterminal symbol generates the empty language, issue a warning. *)
     Nonterminal.iterx (fun nt ->
       if not (NONEMPTY.nonterminal nt) then
-        Error.grammar_warning
+        Error.warning
           (Nonterminal.positions nt)
           "%s generates the empty language." (Nonterminal.print false nt);
     )

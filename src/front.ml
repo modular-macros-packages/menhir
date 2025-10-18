@@ -182,11 +182,7 @@ let () =
 (* Perform reachability analysis. *)
 
 let grammar =
-  let module E = struct
-    let error = Error.error
-    let warning = Error.grammar_warning
-  end in
-  let module T = Trim.Make(E) in
+  let module T = Trim.Make(Error) in
   T.trim grammar
 
 let () =

@@ -16,7 +16,7 @@ let keep_branch branch : bool =
   branch.producers |> List.iteri begin fun i producer ->
     if i < n - 1 && producer.prod_symbol = "error" && not !warned then begin
       warned := true;
-      Error.grammar_warning [branch.branch_position]
+      Error.warning [branch.branch_position]
         "when --strategy simplified is selected,\n\
          the error token may appear only at the end of a production\n\
          (and the semantic action must abort the parser).\n\

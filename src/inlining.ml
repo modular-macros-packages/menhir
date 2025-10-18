@@ -607,7 +607,7 @@ module Inline (G : sig val grammar: grammar end) = struct
   let keep_or_warn (symbol : string) _rule : bool =
     let keep = keep symbol _rule in
     if not keep then
-      Error.grammar_warning []
+      Error.warning []
         "the declaration %%on_error_reduce %s\n\
          has no effect: this symbol is marked %%inline and is expanded away." symbol;
     keep

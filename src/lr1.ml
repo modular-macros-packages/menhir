@@ -720,14 +720,14 @@ let acceptable_tokens (s : node) =
 
 let () =
   if !shift_reduce = 1 then
-    Error.grammar_warning [] "one state has shift/reduce conflicts."
+    Error.warning [] "one state has shift/reduce conflicts."
   else if !shift_reduce > 1 then
-    Error.grammar_warning [] "%d states have shift/reduce conflicts."
+    Error.warning [] "%d states have shift/reduce conflicts."
       !shift_reduce;
   if !reduce_reduce = 1 then
-    Error.grammar_warning [] "one state has reduce/reduce conflicts."
+    Error.warning [] "one state has reduce/reduce conflicts."
   else if !reduce_reduce > 1 then
-    Error.grammar_warning [] "%d states have reduce/reduce conflicts."
+    Error.warning [] "%d states have reduce/reduce conflicts."
       !reduce_reduce
 
 (* -------------------------------------------------------------------------- *)
@@ -832,18 +832,18 @@ let warn_about_productions_never_reduced () =
       match Production.classify prod with
       | Some nt ->
           incr count;
-          Error.grammar_warning
+          Error.warning
             (Nonterminal.positions nt)
             "symbol %s is never accepted." (Nonterminal.print false nt)
       | None ->
           incr count;
-          Error.grammar_warning
+          Error.warning
             (Production.positions prod)
             "production %s is never reduced." (Production.print prod)
   );
   if !count > 0 then
     let plural_mark, be = if !count > 1 then ("s", "are") else ("", "is") in
-    Error.grammar_warning []
+    Error.warning []
       "in total, %d production%s %s never reduced." !count plural_mark be
 
 (* -------------------------------------------------------------------------- *)
@@ -865,7 +865,7 @@ let rec best choice = function
           (* The cause for not knowing which production is best could be:
              1- the productions originate in different source files;
              2- they are derived, via inlining, from the same production. *)
-          Error.signal Error.grammatical_error
+          Error.warning
             (Production.positions choice @ Production.positions prod)
                "do not know how to resolve a reduce/reduce conflict\n\
                 between the following two productions:\n%s\n%s"
@@ -877,10 +877,10 @@ let rec best choice = function
 
 let signal_conflicts kind n =
   if n = 1 then
-    Error.grammar_warning [] "one %s conflict was arbitrarily resolved."
+    Error.warning [] "one %s conflict was arbitrarily resolved."
       kind
   else if n >= 1 then
-    Error.grammar_warning [] "%d %s conflicts were arbitrarily resolved."
+    Error.warning [] "%d %s conflicts were arbitrarily resolved."
       n kind
 
 let default_conflict_resolution () =
@@ -1074,7 +1074,7 @@ let insert_extra_reductions () =
   (* Warn about useless %on_error_reduce declarations. *)
   OnErrorReduce.iter (fun nt ->
     if not (NonterminalSet.mem nt !extra_nts) then
-      Error.grammar_warning []
+      Error.warning []
         "the declaration %%on_error_reduce %s is never useful."
         (Nonterminal.print false nt)
   )

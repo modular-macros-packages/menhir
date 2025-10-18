@@ -131,10 +131,13 @@ let with_new_category f =
 
 (* ---------------------------------------------------------------------------- *)
 
-(* Certain warnings about the grammar can optionally be treated as errors. *)
+(* Warnings can optionally be treated as errors. *)
 
-let grammatical_error =
+let warnings =
   new_category()
 
-let grammar_warning pos =
-  if Settings.strict then signal grammatical_error pos else warning pos
+let warning pos =
+  if Settings.strict then
+    signal warnings pos
+  else
+    warning pos

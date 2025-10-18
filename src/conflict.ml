@@ -584,4 +584,4 @@ let () =
    into the back-end. *)
 
 let () =
-  Error.exit_if Error.grammatical_error
+  Error.(exit_if warnings)

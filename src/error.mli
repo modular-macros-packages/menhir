@@ -84,13 +84,9 @@ val with_new_category: (category -> 'b) -> 'b
 
 (* ---------------------------------------------------------------------------- *)
 
-(* Certain warnings about the grammar can optionally be treated as errors. *)
+(* In [--strict] mode, warnings about the grammar are treated as errors. Then,
+   when [warning] behaves like [signal warnings], which means that it displays
+   "Error:" instead of "Warning:", and signals the category [warnings].
+   The function call [exit_if warnings] can then be used to stop the program. *)
 
-val grammatical_error: category
-
-(* [grammar_warning] emits a warning or error message, via either [warning] or
-   [signal grammatical_error]. It does not stop the program; the client must
-   at some point use [exit_if grammatical_error] and stop the program if any
-   errors have been reported. *)
-
-val grammar_warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+val warnings: category
