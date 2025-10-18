@@ -310,9 +310,6 @@ let set_echo_errors_concrete filename =
 let cmly =
   ref false
 
-let cmly_on_error =
-  ref false
-
 let coq_lib_path =
   ref (Some "MenhirLib")
 
@@ -383,7 +380,6 @@ let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
-  "--cmly-on-error", Arg.Set cmly_on_error, " Write a .cmly file when a grammar error is found";
   "--code", Arg.Unit (set_backend `CodeBackend), " Use the code back-end (default)";
   unsupported "--code-ancient";
   "--comment", Arg.Set comment, " Include comments in the generated code";
@@ -804,9 +800,6 @@ let echo_errors_concrete =
 
 let cmly =
   !cmly
-
-let cmly_on_error =
-  !cmly_on_error
 
 let coq_lib_path =
   !coq_lib_path

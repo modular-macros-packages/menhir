@@ -232,10 +232,6 @@ val echo_errors_concrete: string option
    binary-format description of the grammar and automaton. *)
 val cmly: bool
 
-(** If [cmly_with_errors] is set, generate a [.cmly] file when fatal grammatical
-    errors were found. *)
-val cmly_on_error : bool
-
 (** This name is used in --coq mode. It appears in the generated Coq file,
    and indicates under what name (or path) the Coq library MenhirLib is
    known. Its default value is [Some "MenhirLib"]. *)
