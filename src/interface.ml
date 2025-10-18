@@ -77,13 +77,6 @@ let entrytypescheme_incremental grammar symbol =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The name of the sub-module that contains the inspection API. *)
-
-let inspection =
-  "Inspection"
-
-(* -------------------------------------------------------------------------- *)
-
 (* The monolithic (traditional) API: the type [token], the exception [Error],
    and the parser's entry points. *)
 
