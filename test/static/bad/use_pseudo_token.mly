@@ -1,7 +1,8 @@
+%token FOO
 %left A
 
 %start<unit> main
 
 %%
 
-main: A+ {}
+main: FOO A+ {}

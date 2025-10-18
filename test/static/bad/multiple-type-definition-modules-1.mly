@@ -1,4 +1,5 @@
+%token A
 %type<int> a
 %%
 
-%public a: {}
+%public a: A {}

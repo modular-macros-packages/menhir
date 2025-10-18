@@ -1,5 +1,6 @@
+%token T
 %start<unit> b
 %%
 a(A): A(a) {}
-b: a(a) {}
+b: T a(a) {}
 %%

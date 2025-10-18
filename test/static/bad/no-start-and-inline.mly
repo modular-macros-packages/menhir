@@ -1,4 +1,5 @@
+%token A
 %start<int> a
 %%
 
-%inline a: {}
+%inline a: A {}

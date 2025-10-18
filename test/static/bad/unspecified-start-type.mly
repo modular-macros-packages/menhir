@@ -1,4 +1,5 @@
+%token A
 %start a
 %%
 
-a: {}
+a: A {}

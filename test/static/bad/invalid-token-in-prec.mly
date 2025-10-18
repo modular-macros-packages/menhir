@@ -1,4 +1,5 @@
+%token A
 %start<int> a
 %%
 
-a: %prec F {}
+a: A %prec F {}

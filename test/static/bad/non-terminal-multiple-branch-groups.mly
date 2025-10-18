@@ -1,5 +1,6 @@
+%token B
 %start<int> a
 %%
 
 b: {}
-b: {}
+b: B {}

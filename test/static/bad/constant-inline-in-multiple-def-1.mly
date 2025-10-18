@@ -1,5 +1,6 @@
+%token A
 %start<int> b
 %%
 
 b: {}
-%public a: {}
+%public a: A {}
