@@ -14,6 +14,9 @@ open PlainSyntaxPrinter
 let error format =
   ksprintf (fun s -> prerr_string s; exit 1) format
 
+let unsupported feature () =
+  error "Error: %s is no longer supported.\n" feature
+
 (* ------------------------------------------------------------------------- *)
 (* Prepare for parsing the command line. *)
 
@@ -22,9 +25,6 @@ let backend =
 
 let set_backend b () =
   backend := b
-
-let use_ancient_code_backend () =
-  error "Error: --code-ancient is no longer supported.\n"
 
 let mode =
   ref TokenType.DefineTokenType
@@ -102,9 +102,6 @@ type preprocess_mode =
 
 let preprocess_mode =
   ref PMNormal
-
-let recovery =
-  ref false
 
 let v () =
   dump := true;
@@ -378,6 +375,9 @@ let pack_classic =
 (* Please note that there is a very short length limit on the explanations
    here, since the output of [menhir -help] must fit in 80 columns. *)
 
+let unsupported switch =
+  switch, Arg.Unit (unsupported switch), " (no longer supported)"
+
 let options = Arg.align [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
@@ -385,7 +385,7 @@ let options = Arg.align [
   "--cmly", Arg.Set cmly, " Write a .cmly file";
   "--cmly-on-error", Arg.Set cmly_on_error, " Write a .cmly file when a grammar error is found";
   "--code", Arg.Unit (set_backend `CodeBackend), " Use the code back-end (default)";
-  "--code-ancient", Arg.Unit use_ancient_code_backend, " (no longer supported)";
+  unsupported "--code-ancient";
   "--comment", Arg.Set comment, " Include comments in the generated code";
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
   "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code";
@@ -401,7 +401,7 @@ let options = Arg.align [
   "--dump-resolved", Arg.Set dump_resolved, " Write an .automaton.resolved file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--echo-errors-concrete", Arg.String set_echo_errors_concrete, "<filename> Echo the sentences in a .messages file";
-  "--error-recovery", Arg.Set recovery, " (no longer supported)";
+  unsupported "--error-recovery";
   "--exn-carries-state", Arg.Set exn_carries_state, " Declares exception Error of int";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
@@ -683,12 +683,6 @@ let automaton_graph =
 
 let trace =
   !trace
-
-let () =
-  if !recovery then begin
-    fprintf stderr "Error: --error-recovery mode is no longer supported.\n";
-    exit 1
-  end
 
 let noprefix =
   !noprefix
