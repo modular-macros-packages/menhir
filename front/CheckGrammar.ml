@@ -260,6 +260,20 @@ let () =
   if StringMap.is_empty declared then
     signal [] "no tokens have been declared."
 
+(* 2021/11/23: If a token is named [Error], warn. This is undesirable,
+   as it creates a collision in the public interface of the generated
+   parser between the token [Error] and the exception [Error]. OCaml
+   itself may warn about this collision. *)
+
+let () =
+  match StringMap.find "Error" grammar.p_tokens with
+  | properties ->
+      if properties.tk_is_declared then
+        warning [properties.tk_position]
+          "please do not name a terminal symbol Error."
+  | exception Not_found ->
+      ()
+
 (* -------------------------------------------------------------------------- *)
 
 (* Check that the [@name] attributes carried by productions are valid OCaml
