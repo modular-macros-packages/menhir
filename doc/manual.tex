@@ -378,7 +378,7 @@ in a format that is suitable for processing by the \emph{graphviz} toolkit.
 \docswitch{\orequirealiases} This switch causes \menhir to check that a token
 alias (\sref{sec:tokens}) has been defined for every token. There is no
 requirement for this alias to be actually used; it must simply exist. A
-missing alias gives rise to a warning (and, in \ostrict mode, to an error).
+missing alias gives rise to a warning.
 
 \docswitch{\ostdlib \nt{directory}} This switch exists only for
 backwards compatibility and is ignored. It may be removed in the future.
@@ -391,12 +391,7 @@ When this switch is omitted, the \legacy strategy is used, if it is available.
 strategy.) The choice of a strategy matters only if the grammar uses the
 \error token. For more details, see \sref{sec:errors}.
 
-\docswitch{\ostrict} This switch causes several warnings about the grammar
-and about the automaton to be considered errors. This includes warnings about
-useless precedence declarations, non-terminal symbols that produce the empty
-language, unreachable non-terminal symbols, productions that are never
-reduced, conflicts that are not resolved by precedence declarations,
-end-of-stream conflicts, and missing token aliases.
+\docswitch{\ostrict} This switch causes all warnings to be considered errors.
 
 \docswitch{\oo{suggest-*}} See \sref{sec:build}.
 
