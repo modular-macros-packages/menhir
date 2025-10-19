@@ -76,18 +76,17 @@ module TokPrecedence = struct
 
   (* This function prints warnings about useless precedence declarations
      for terminal symbols (%left, %right, %nonassoc). It should be invoked
-     after only the automaton has been constructed. *)
+     after the automaton has been constructed. *)
 
   let diagnostics () =
-    StringMap.iter (fun id properties ->
-      if not (StringSet.mem id !ever_useful) then
-        match properties.tk_precedence with
-        | UndefinedPrecedence ->
-            ()
-        | PrecedenceLevel mv ->
-            Error.warning [position mv]
-              "the precedence level assigned to %s is never useful." id
-    ) grammar.tokens
+    grammar.tokens |> StringMap.iter @@ fun id properties ->
+    if not (StringSet.mem id !ever_useful) then
+      match properties.tk_precedence with
+      | UndefinedPrecedence ->
+          ()
+      | PrecedenceLevel mv ->
+          Error.warning [position mv]
+            "the precedence level assigned to %s is never useful." id
 
 end
 
@@ -1659,36 +1658,38 @@ module Precedence = struct
 
   type order = Lt | Gt | Eq | Incomparable
 
-  let precedence_order p1 p2 =
-    match p1, p2 with
-      | UndefinedPrecedence, _
-      | _, UndefinedPrecedence ->
-          Incomparable
-      | PrecedenceLevel ml1, PrecedenceLevel ml2 ->
-          let m1, l1 = value ml1
-          and m2, l2 = value ml2 in
-          if not (InputFile.equal m1 m2) then
-            Incomparable
-          else
-            if l1 > l2 then
-              Gt
-            else if l1 < l2 then
-              Lt
-            else
-              Eq
+  (* [precedence_order] compares two precedence levels. *)
 
-  let production_order p1 p2 =
+  let precedence_order (p1 : precedence_level) (p2 : precedence_level) : order =
     match p1, p2 with
-      | ProductionLevel (m1, l1), ProductionLevel (m2, l2) ->
-          if not (InputFile.equal m1 m2) then
-            Incomparable
-          else
-            if l1 > l2 then
-              Gt
-            else if l1 < l2 then
-              Lt
-            else
-              Eq
+    | UndefinedPrecedence, _
+    | _, UndefinedPrecedence ->
+        Incomparable
+    | PrecedenceLevel fl1, PrecedenceLevel fl2 ->
+        let file1, level1 = value fl1
+        and file2, level2 = value fl2 in
+        if not (InputFile.equal file1 file2) then
+          Incomparable
+        else if level1 > level2 then
+          Gt
+        else if level1 < level2 then
+          Lt
+        else
+          Eq
+
+  (* [production_order] compares two production levels. *)
+
+  let production_order (p1 : production_level) (p2 : production_level) : order =
+    match p1, p2 with
+    | ProductionLevel (file1, level1), ProductionLevel (file2, level2) ->
+        if not (InputFile.equal file1 file2) then
+          Incomparable
+        else if level1 > level2 then
+          Gt
+        else if level1 < level2 then
+          Lt
+        else
+          Eq
 
   let shift_reduce tok prod =
     let fact1, tokp  = Terminal.precedence_level tok
