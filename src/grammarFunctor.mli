@@ -8,8 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Range
 open Attribute
+open PlainSyntax
 
 (* The functor [Make] transforms an abstract syntax tree for the grammar into a
    rich internal representation of the grammar. *)
@@ -21,7 +21,7 @@ open Attribute
 module Make (G : sig
 
   (* An abstract syntax tree for the grammar. *)
-  val grammar: PlainSyntax.grammar
+  val grammar: grammar
 
 end) () : sig
 
@@ -261,6 +261,11 @@ module Terminal : sig
   val alias: t -> string option
   val unquoted_alias: t -> string option
 
+  (* [associativity t] is the associativity of the token [t]. This information
+     plays a role in the resolution of shift/reduce conflicts. *)
+
+  val associativity: t -> associativity
+
 end
 
 (* ------------------------------------------------------------------------ *)
@@ -449,6 +454,17 @@ module Production : sig
      each element in the right-hand side of the production [prod]. *)
 
   val rhs_attributes: index -> attributes array
+
+  (* [prec_decl prod] returns the optional %prec annotation carried by the
+     production [prod]. This information plays a role in the resolution of
+     shift/reduce conflicts. *)
+  val prec_decl : index -> symbol located option
+
+  (* [production_level prod] returns the production level of the production
+     [prod]. This information plays a role in the resolution of reduce/reduce
+     conflicts. *)
+
+  val production_level : index -> production_level
 
   (* [attributes prod] is the list of attributes attached with the
      production [prod]. *)
