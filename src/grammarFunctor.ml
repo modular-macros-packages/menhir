@@ -1657,18 +1657,18 @@ module Precedence = struct
     | ChooseNeither
     | DontKnow
 
-  type order = Lt | Gt | Eq | Ic
+  type order = Lt | Gt | Eq | Incomparable
 
   let precedence_order p1 p2 =
     match p1, p2 with
       | UndefinedPrecedence, _
       | _, UndefinedPrecedence ->
-          Ic
+          Incomparable
       | PrecedenceLevel ml1, PrecedenceLevel ml2 ->
           let m1, l1 = value ml1
           and m2, l2 = value ml2 in
           if not (InputFile.equal m1 m2) then
-            Ic
+            Incomparable
           else
             if l1 > l2 then
               Gt
@@ -1681,7 +1681,7 @@ module Precedence = struct
     match p1, p2 with
       | ProductionLevel (m1, l1), ProductionLevel (m2, l2) ->
           if not (InputFile.equal m1 m2) then
-            Ic
+            Incomparable
           else
             if l1 > l2 then
               Gt
@@ -1698,7 +1698,7 @@ module Precedence = struct
       (* Our information is inconclusive. Drop [fact1] and [fact2],
          that is, do not record that this information was useful. *)
 
-    | Ic ->
+    | Incomparable ->
         DontKnow
 
       (* Our information is useful. Record that fact by evaluating
@@ -1709,7 +1709,7 @@ module Precedence = struct
         Lazy.force fact2;
         match c with
 
-        | Ic ->
+        | Incomparable ->
             assert false (* already dispatched *)
 
         | Eq ->
@@ -1744,7 +1744,7 @@ module Precedence = struct
            precedence level if they originate, via macro-expansion or via
            inlining, from a single production in the source grammar. *)
         None
-    | Ic ->
+    | Incomparable ->
         None
 
 end
@@ -1821,7 +1821,7 @@ module OnErrorReduce = struct
     | Lt ->
         false
     | Eq
-    | Ic ->
+    | Incomparable ->
         (* We could issue a warning or an information message in these cases. *)
         false
 
