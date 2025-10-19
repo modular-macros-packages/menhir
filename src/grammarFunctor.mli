@@ -650,52 +650,6 @@ module Analysis : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Conflict resolution via precedences. *)
-
-module Precedence : sig
-
-  (* Shift/reduce conflicts require making a choice between shifting a
-     token and reducing a production. How these choices are made is of
-     no concern to the back-end, but here is a rough explanation.
-
-     Shifting is preferred when the token has higher precedence than
-     the production, or they have same precedence and the token is
-     right-associative.
-
-     Reducing is preferred when the token has lower precedence than
-     the production, or they have same precedence and the token is
-     left-associative.
-
-     Neither is allowed when the token and the production have same
-     precedence and the token is non-associative.
-
-     No preference is explicitly specified when the token or the
-     production has undefined precedence. In that case, the default
-     choice is to prefer shifting, but a conflict will be reported. *)
-
-  type choice =
-    | ChooseShift
-    | ChooseReduce
-    | ChooseNeither
-    | DontKnow
-
-  val shift_reduce: Terminal.t -> Production.index -> choice
-
-  (* Reduce/reduce conflicts require making a choice between reducing
-     two distinct productions. This is done by exploiting a partial
-     order on productions.
-
-     For compatibility with ocamlyacc, this order should be total and
-     should correspond to textual order when the two productions
-     originate in the same source file. When they originate in
-     different source files, the two productions should be
-     incomparable. *)
-
-  val reduce_reduce: Production.index -> Production.index -> Production.index option
-
-end
-
-(* ------------------------------------------------------------------------ *)
 (* [%on_error_reduce] declarations. *)
 
 module OnErrorReduce : sig
@@ -739,15 +693,6 @@ module Sentence : sig
   val print: [`Abstract | `Concrete] -> sentence -> string
 
 end
-
-(* ------------------------------------------------------------------------ *)
-(* Diagnostics. *)
-
-(* This function prints warnings about useless precedence declarations for
-   terminal symbols (%left, %right, %nonassoc) and productions (%prec). It
-   should be invoked after only the automaton has been constructed. *)
-
-val diagnostics: unit -> unit
 
 (* ------------------------------------------------------------------------ *)
 

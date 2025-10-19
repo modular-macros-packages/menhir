@@ -422,7 +422,8 @@ let () =
     )
 
 let () =
-  Grammar.diagnostics()
+  if not Settings.ignore_all_unused_precedence_levels then
+    Precedence.diagnostics()
 
 (* -------------------------------------------------------------------------- *)
 

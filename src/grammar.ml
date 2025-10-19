@@ -11,7 +11,11 @@
 (* This module runs the grammar functor on the grammar produced by the
    front-end. *)
 
-include GrammarFunctor.Make(Front)()
+module  G = GrammarFunctor.Make(Front)()
+include G
+
+module Precedence =
+  Precedence.Make(Front)(G)
 
 (* -------------------------------------------------------------------------- *)
 

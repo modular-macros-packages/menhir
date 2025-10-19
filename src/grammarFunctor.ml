@@ -9,7 +9,6 @@
 (******************************************************************************)
 
 open Attribute
-open Located
 open PlainSyntax
 open PlainSyntaxAccessors
 
@@ -38,57 +37,6 @@ let index (strings : string list) : int * string array * int StringMap.t =
     n+1, StringMap.add s n map
   ) (0, StringMap.empty) strings in
   n, name, map
-
-(* ------------------------------------------------------------------------ *)
-(* Precedence levels for tokens or pseudo-tokens alike. *)
-
-module TokPrecedence = struct
-
-  (* This set records, on a token by token basis, whether the token's
-     precedence level is ever useful. This allows emitting warnings
-     about useless precedence declarations. *)
-
-  let ever_useful : StringSet.t ref =
-    ref StringSet.empty
-
-  let use id =
-    ever_useful := StringSet.add id !ever_useful
-
-  (* This function is invoked when someone wants to consult a token's
-     precedence level. This does not yet mean that this level is
-     useful, though. Indeed, if it is subsequently compared against
-     [UndefinedPrecedence], it will not allow solving a conflict. So,
-     in addition to the desired precedence level, we return a delayed
-     computation which, when evaluated, records that this precedence
-     level was useful. *)
-
-  let levelip id properties =
-    lazy (use id), properties.tk_precedence
-
-  let leveli id =
-    let properties =
-      try
-        StringMap.find id grammar.tokens
-      with Not_found ->
-        assert false (* well-formedness check has been performed earlier *)
-    in
-    levelip id properties
-
-  (* This function prints warnings about useless precedence declarations
-     for terminal symbols (%left, %right, %nonassoc). It should be invoked
-     after the automaton has been constructed. *)
-
-  let diagnostics () =
-    grammar.tokens |> StringMap.iter @@ fun id properties ->
-    if not (StringSet.mem id !ever_useful) then
-      match properties.tk_precedence with
-      | UndefinedPrecedence ->
-          ()
-      | PrecedenceLevel mv ->
-          Error.warning [position mv]
-            "the precedence level assigned to %s is never useful." id
-
-end
 
 (* ------------------------------------------------------------------------ *)
 (* Nonterminals. *)
@@ -290,9 +238,6 @@ module Terminal = struct
          assert (tok = sharp || tok = error);
          not_so_dummy_properties
     )
-
-  let precedence_level tok =
-    TokPrecedence.levelip (print tok) properties.(tok)
 
   let associativity tok =
     properties.(tok).tk_associativity
@@ -881,93 +826,6 @@ module Production = struct
 
   let[@inline] sum f =
     MInt.sum n f
-
-  (* This array allows recording, for each %prec declaration, whether it is
-     ever useful. This allows us to emit a warning about useless %prec
-     declarations. *)
-
-  (* 2015/10/06: We take into account the fact that a %prec declaration can be
-     duplicated by inlining or by the expansion of parameterized non-terminal
-     symbols. Our table is not indexed by productions, but by positions (of
-     %prec declarations in the source). Thus, if a %prec declaration is
-     duplicated, at least one of its copies should be found useful for the
-     warning to be suppressed. *)
-
-  let ever_useful : (Range.range, unit) Hashtbl.t =
-    (* assuming that generic hashing and equality on positions are OK *)
-    Hashtbl.create 16
-
-  type fact =
-    unit Lazy.t
-
-  let consult_prec_decl prod : fact * symbol located option =
-    let osym = prec_decl prod in
-    lazy (
-      Option.iter (fun sym ->
-        (* Mark this %prec declaration as useful. *)
-        let pos = position sym in
-        Hashtbl.add ever_useful pos ()
-      ) osym
-    ),
-    osym
-
-  (* This function prints warnings about useless precedence declarations for
-     productions (%prec). It should be invoked after only the automaton has
-     been constructed. *)
-
-  let diagnostics () =
-    iterx (fun prod ->
-      let osym = prec_decl prod in
-      Option.iter (fun sym ->
-        (* Check whether this %prec declaration was useless. *)
-        let pos = position sym in
-        if not (Hashtbl.mem ever_useful pos) then begin
-          Error.warning [pos] "this %%prec declaration is never useful.";
-          Hashtbl.add ever_useful pos () (* hack: avoid two warnings at the same position *)
-        end
-      ) osym
-    )
-
-  (* Determining the precedence level of a production. If no %prec
-     declaration was explicitly supplied, it is the precedence level
-     of the rightmost terminal symbol in the production's right-hand
-     side. *)
-
-  type scan =
-    | PNone                        (* no terminal symbol; no %prec annotation *)
-    | PRightmostToken of Terminal.t(* a rightmost terminal symbol exists *)
-    | PPrecDecl of symbol          (* a %prec annotation exists *)
-
-  let scan prod : scan =
-    Array.fold_left (fun accu symbol ->
-      match symbol with
-      | Symbol.T tok ->
-          PRightmostToken tok
-      | Symbol.N _ ->
-          accu
-    ) PNone (rhs prod)
-
-  let combine (fact1 : fact) (fact2 : fact) : fact =
-    lazy (Lazy.force fact1; Lazy.force fact2)
-
-  let precedence prod : fact * precedence_level =
-    let fact1, prec_decl = consult_prec_decl prod in
-    let scan =
-      match prec_decl with
-      | None ->
-          scan prod
-      | Some terminal ->
-          PPrecDecl (value terminal)
-    in
-    match scan with
-    | PNone ->
-        fact1, UndefinedPrecedence
-    | PRightmostToken tok ->
-        let fact2, level = Terminal.precedence_level tok in
-        combine fact1 fact2, level
-    | PPrecDecl id ->
-        let fact2, level = TokPrecedence.leveli id  in
-        combine fact1 fact2, level
 
 end
 
@@ -1652,121 +1510,6 @@ module Analysis = struct
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Conflict resolution via precedences. *)
-
-module Precedence = struct
-
-  type choice =
-    | ChooseShift
-    | ChooseReduce
-    | ChooseNeither
-    | DontKnow
-
-  type order = Lt | Gt | Eq | Incomparable
-
-  (* [precedence_order] compares two precedence levels. *)
-
-  let precedence_order (p1 : precedence_level) (p2 : precedence_level) : order =
-    match p1, p2 with
-    | UndefinedPrecedence, _
-    | _, UndefinedPrecedence ->
-        Incomparable
-    | PrecedenceLevel fl1, PrecedenceLevel fl2 ->
-        let file1, level1 = value fl1
-        and file2, level2 = value fl2 in
-        if not (InputFile.equal file1 file2) then
-          Incomparable
-        else if level1 > level2 then
-          Gt
-        else if level1 < level2 then
-          Lt
-        else
-          Eq
-
-  (* [production_order] compares two production levels. *)
-
-  let production_order (p1 : production_level) (p2 : production_level) : order =
-    match p1, p2 with
-    | ProductionLevel (file1, level1), ProductionLevel (file2, level2) ->
-        if not (InputFile.equal file1 file2) then
-          Incomparable
-        else if level1 > level2 then
-          Gt
-        else if level1 < level2 then
-          Lt
-        else
-          Eq
-
-  let shift_reduce tok prod =
-    let fact1, tokp  = Terminal.precedence_level tok
-    and fact2, prodp = Production.precedence prod in
-    match precedence_order tokp prodp with
-
-      (* Our information is inconclusive. Drop [fact1] and [fact2],
-         that is, do not record that this information was useful. *)
-
-    | Incomparable ->
-        DontKnow
-
-      (* Our information is useful. Record that fact by evaluating
-         [fact1] and [fact2]. *)
-
-    | (Eq | Lt | Gt) as c ->
-        Lazy.force fact1;
-        Lazy.force fact2;
-        match c with
-
-        | Incomparable ->
-            assert false (* already dispatched *)
-
-        | Eq ->
-            begin
-              match Terminal.associativity tok with
-              | LeftAssoc  -> ChooseReduce
-              | RightAssoc -> ChooseShift
-              | NonAssoc   -> ChooseNeither
-              | _          -> assert false
-                              (* If [tok]'s precedence level is defined, then
-                                 its associativity must be defined as well. *)
-            end
-
-        | Lt ->
-            ChooseReduce
-
-        | Gt ->
-            ChooseShift
-
-
-  let reduce_reduce prod1 prod2 =
-    let pl1 = Production.production_level prod1
-    and pl2 = Production.production_level prod2 in
-    match production_order pl1 pl2 with
-    | Lt ->
-        Some prod1
-    | Gt ->
-        Some prod2
-    | Eq ->
-        (* The order is strict except in the presence of parameterized
-           non-terminals and/or inlining. Two productions can have the same
-           precedence level if they originate, via macro-expansion or via
-           inlining, from a single production in the source grammar. *)
-        None
-    | Incomparable ->
-        None
-
-end
-
-(* This function prints warnings about useless precedence declarations for
-   terminal symbols (%left, %right, %nonassoc) and productions (%prec). It
-   should be invoked after only the automaton has been constructed. *)
-
-let diagnostics () =
-  if not Settings.ignore_all_unused_precedence_levels then begin
-    TokPrecedence.diagnostics();
-    Production.diagnostics()
-  end
-
-(* ------------------------------------------------------------------------ *)
 (* %on_error_reduce declarations. *)
 
 module OnErrorReduce = struct
@@ -1797,8 +1540,6 @@ module OnErrorReduce = struct
     StringMap.iter (fun nt _prec ->
       f (lookup nt)
     ) declarations
-
-  open Precedence
 
   let preferable prod1 prod2 =
     (* The two productions that we are comparing must be distinct. *)
