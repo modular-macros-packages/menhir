@@ -742,6 +742,12 @@ module Production = struct
     k'
   ) grammar.rules start
 
+  let prec_decl k =
+    prec_decl.(k)
+
+  let production_level k =
+    production_level.(k)
+
   (* Iteration over the productions associated with a specific nonterminal. *)
 
   let[@inline] iternt nt f =
@@ -895,7 +901,7 @@ module Production = struct
     unit Lazy.t
 
   let consult_prec_decl prod : fact * symbol located option =
-    let osym = prec_decl.(prod) in
+    let osym = prec_decl prod in
     lazy (
       Option.iter (fun sym ->
         (* Mark this %prec declaration as useful. *)
@@ -911,7 +917,7 @@ module Production = struct
 
   let diagnostics () =
     iterx (fun prod ->
-      let osym = prec_decl.(prod) in
+      let osym = prec_decl prod in
       Option.iter (fun sym ->
         (* Check whether this %prec declaration was useless. *)
         let pos = position sym in
@@ -1732,8 +1738,8 @@ module Precedence = struct
 
 
   let reduce_reduce prod1 prod2 =
-    let pl1 = Production.production_level.(prod1)
-    and pl2 = Production.production_level.(prod2) in
+    let pl1 = Production.production_level prod1
+    and pl2 = Production.production_level prod2 in
     match production_order pl1 pl2 with
     | Lt ->
         Some prod1
