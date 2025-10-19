@@ -38,7 +38,9 @@ val ocamltype_of_start_symbol : grammar -> symbol -> ocamltype
 
 (**[tokens grammar] is a list of all (real) tokens in the grammar [grammar].
    The special tokens "#" and "error" are not included. Pseudo-tokens (used
-   in %prec declarations, but never declared using %token) are filtered out. *)
+   in %prec declarations, but never declared using %token) are filtered out.
+   Therefore this is *not* synonymous with [grammar.tokens], which includes
+   the pseudo-tokens. *)
 val tokens : grammar -> terminal list
 
 (**[typed_tokens grammar] is analogous to [tokens grammar], but includes
