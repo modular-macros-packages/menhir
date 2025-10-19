@@ -281,7 +281,7 @@ let discover (raw_node : Raw.node) =
             (* Priorities don't allow concluding. Record the existence of a
                shift/reduce conflict. *)
 
-            _conflict_tokens.(i) <- Grammar.TerminalSet.add tok _conflict_tokens.(i);
+            _conflict_tokens.(i) <- TerminalSet.add tok _conflict_tokens.(i);
             has_shift_reduce := true;
             TerminalMap.add tok prods reductions
 
@@ -321,7 +321,7 @@ let discover (raw_node : Raw.node) =
 
           (* Record a shift/reduce/reduce conflict. Keep all reductions. *)
 
-          _conflict_tokens.(i) <- Grammar.TerminalSet.add tok _conflict_tokens.(i);
+          _conflict_tokens.(i) <- TerminalSet.add tok _conflict_tokens.(i);
           has_shift_reduce := true;
           has_reduce_reduce := true;
           TerminalMap.add tok prods reductions
@@ -338,7 +338,7 @@ let discover (raw_node : Raw.node) =
       if List.length prods >= 2 then begin
         (* If there are multiple reductions, then we have a pure
            reduce/reduce conflict. Do nothing about it at this point. *)
-        _conflict_tokens.(i) <- Grammar.TerminalSet.add tok _conflict_tokens.(i);
+        _conflict_tokens.(i) <- TerminalSet.add tok _conflict_tokens.(i);
         has_reduce_reduce := true
       end;
 
