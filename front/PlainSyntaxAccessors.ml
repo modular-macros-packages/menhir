@@ -78,3 +78,38 @@ and print_production_rhs producers =
   MString.with_buffer 80 @@ fun b ->
   producers |> List.iter @@ fun producer ->
   Printf.bprintf b " %s" producer.prod_symbol
+
+type order =
+  | Lt
+  | Gt
+  | Eq
+  | Incomparable
+
+let precedence_order p1 p2 : order =
+  match p1, p2 with
+  | UndefinedPrecedence, _
+  | _, UndefinedPrecedence ->
+      Incomparable
+  | PrecedenceLevel fl1, PrecedenceLevel fl2 ->
+      let file1, level1 = value fl1
+      and file2, level2 = value fl2 in
+      if not (InputFile.equal file1 file2) then
+        Incomparable
+      else if level1 > level2 then
+        Gt
+      else if level1 < level2 then
+        Lt
+      else
+        Eq
+
+let production_order p1 p2 : order =
+  match p1, p2 with
+  | ProductionLevel (file1, level1), ProductionLevel (file2, level2) ->
+      if not (InputFile.equal file1 file2) then
+        Incomparable
+      else if level1 > level2 then
+        Gt
+      else if level1 < level2 then
+        Lt
+      else
+        Eq

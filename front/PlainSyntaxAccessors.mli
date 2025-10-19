@@ -65,3 +65,17 @@ val unquoted_alias : grammar -> symbol -> alias
    is the nonterminal symbol [nt] and whose right-hand side is [branch].
    An example of the result is [A -> a A B]. *)
 val print_production : nonterminal -> branch -> string
+
+(**This type reflects the outcome of a comparison
+   in a possibly-non-total order. *)
+type order =
+  | Lt
+  | Gt
+  | Eq
+  | Incomparable
+
+(**[precedence_order] compares two precedence levels. *)
+val precedence_order : precedence_level -> precedence_level -> order
+
+(**[production_order] compares two production levels. *)
+val production_order : production_level -> production_level -> order
