@@ -15,7 +15,7 @@ module  G = GrammarFunctor.Make(Front)()
 include G
 
 module Precedence =
-  Precedence.Make(Front)(G)
+  Precedence.Make(Error)(Front)(G)
 
 (* -------------------------------------------------------------------------- *)
 

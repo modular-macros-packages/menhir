@@ -23,6 +23,12 @@
 open PlainSyntax
 
 module Make
+(E : sig
+
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end)
 (F : sig
   val grammar : grammar
 end)

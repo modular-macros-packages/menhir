@@ -13,6 +13,12 @@ open PlainSyntax
 open PlainSyntaxAccessors
 
 module Make
+(E : sig
+
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end)
 (F : sig
   val grammar : grammar
 end)
@@ -38,6 +44,7 @@ end)
     val iterx: (index -> unit) -> unit
   end
 end) = struct
+open E
 open F
 open G
 
@@ -114,7 +121,7 @@ module Tok = struct
       | UndefinedPrecedence ->
           ()
       | PrecedenceLevel fl ->
-          Error.warning [position fl]
+          warning [position fl]
             "the precedence level assigned to %s is never useful." tok
 
 end (* Tok *)
@@ -198,7 +205,7 @@ module Prod = struct
     (* Check whether this %prec annotation was useless. *)
     let pos = position sym in
     if not (Hashtbl.mem ever_useful pos) then begin
-      Error.warning [pos] "this %%prec declaration is never useful.";
+      warning [pos] "this %%prec declaration is never useful.";
       (* Hack: avoid two warnings at the same position. *)
       Hashtbl.add ever_useful pos ()
     end
