@@ -15,7 +15,7 @@ open PlainSyntaxAccessors
 module Make (G : sig
 
   (* An abstract syntax tree for the grammar. *)
-  val grammar: PlainSyntax.grammar
+  val grammar: grammar
 
 end) () = struct
 
