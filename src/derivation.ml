@@ -256,8 +256,8 @@ and common_forest cforest1 forest2 : cforest * cforest * forest =
   | CHole ->
       CHole, cforest1, forest2
   | CCons forest1 ->
-      if Symbol.lequal forest1.prefix forest2.prefix
-      && Symbol.lequal forest1.suffix forest2.suffix
+      if MList.equal Symbol.equal forest1.prefix forest2.prefix
+      && MList.equal Symbol.equal forest1.suffix forest2.suffix
       && forest1.comment = forest2.comment
       then begin
         match common_tree forest1.focus forest2.focus with

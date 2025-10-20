@@ -428,16 +428,6 @@ module Symbol = struct
   let equal sym1 sym2 =
     compare sym1 sym2 = 0
 
-  let rec lequal syms1 syms2 =
-    match syms1, syms2 with
-    | [], [] ->
-        true
-    | sym1 :: syms1, sym2 :: syms2 ->
-        equal sym1 sym2 && lequal syms1 syms2
-    | _ :: _, []
-    | [], _ :: _ ->
-        false
-
   let iter f =
     Terminal.iter (fun t -> f (T t));
     Nonterminal.iter (fun nt -> f (N nt))

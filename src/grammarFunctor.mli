@@ -353,7 +353,6 @@ module Symbol : sig
   (* Comparison. *)
 
   val equal: t -> t -> bool
-  val lequal: t list -> t list -> bool
   val compare: t -> t -> int
 
   (* Iteration. *)
