@@ -28,6 +28,9 @@ type ocamltype = OCamlType.ocamltype =
    integer index to each string and builds mappings both ways between
    strings and indices. *)
 
+(* The order of the list is respected: the [i]-th element of the list
+   [strings] receives the index [i]. *)
+
 let index (strings : string list) : int * string array * int StringMap.t =
   let name = Array.of_list strings
   and n, map = List.fold_left (fun (n, map) s ->
