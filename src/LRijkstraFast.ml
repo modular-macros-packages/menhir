@@ -34,7 +34,7 @@ module Run () = struct
 
   (* ---------------------------------------------------------------------- *)
 
-  (* Produce a warning if the grammar uses the [error] pseudo-token. *)
+  (* Produce a warning if the grammar uses the special token [error]. *)
 
   let () =
     if grammar_uses_error_token then
@@ -194,8 +194,8 @@ module Run () = struct
       Vector.init Lr1C.n begin fun source ->
         SymbolMap.fold begin fun sym target acc ->
           match sym with
-            | Symbol.T t when not (Terminal.real t) ->
-              (* Ignore pseudo-terminals *)
+            | Symbol.T t when Terminal.special t ->
+              (* Ignore special terminals *)
               acc
             | _ ->
               let target = Lr1C.of_g target in
@@ -319,7 +319,7 @@ module Run () = struct
       | None ->
         let raw =
           let add t ps acc =
-            MList.cons_if (Terminal.non_error t) (t, List.hd ps) acc
+            MList.cons_if (t <> Terminal.error) (t, List.hd ps) acc
           in
           TerminalMap.fold add (Lr1.reductions lr1) []
         in

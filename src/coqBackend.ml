@@ -26,7 +26,7 @@ module Run () = struct
     | Some path -> path ^ "."
 
   let print_term t =
-    assert (not (Terminal.pseudo t));
+    assert (Terminal.real t);
     sprintf "%s't" (Terminal.print t)
 
   let print_nterm nt =
@@ -149,7 +149,7 @@ module Run () = struct
 
   let write_terminals f =
     write_inductive_alphabet f "terminal" (
-      Terminal.fold (fun t l -> if Terminal.pseudo t then l else print_term t::l)
+      Terminal.fold (fun t l -> if Terminal.special t then l else print_term t::l)
         []);
     fprintf f "Global Instance TerminalAlph : %sAlphabet.Alphabet terminal := _.\n\n" menhirlib_path
 

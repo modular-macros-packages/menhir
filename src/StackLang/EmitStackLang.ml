@@ -475,7 +475,7 @@ and run_normal_dispatch s =
       match symbol with
       | Symbol.T tok ->
           (* A transition of [s] along [tok] to [s']. *)
-          assert (not (Terminal.pseudo tok));
+          assert (Terminal.real tok);
           (* Use a pattern that recognizes the token [tok] and binds [semv] to
              its semantic value. *)
           branch (TokSingle (tok, semv)) begin fun () ->

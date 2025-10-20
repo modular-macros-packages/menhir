@@ -72,13 +72,10 @@ module Nonterminal : sig
   (**[i2n] converts an integer in the range [\[0, n)] to a nonterminal
      symbol. This function is {b unsafe} and should be used as little as
      possible. *)
-  val i2n: int -> t (* unsafe! *)
+  val i2n: int -> t
 
-  (**[lookup s] maps an identifier [s] to a nonterminal symbol. If there is
-     no nonterminal symbol named [s] then [Not_found] is raised.
-
-     [s] should not be the name of an internal start symbol. If [s] is a
-     valid identifier then it cannot be. *)
+  (**[lookup] maps an identifier [s] to a nonterminal symbol. If there is
+     no nonterminal symbol named [s] then [Not_found] is raised. *)
   val lookup : string -> t
 
   (**[print normalize nt] produces a string representation of the
@@ -166,10 +163,11 @@ module Nonterminal : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Sets of nonterminals. *)
 
+(**Maps whose keys are nonterminal symbols. *)
 module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
 
+(**Sets whose keys are nonterminal symbols. *)
 module NonterminalSet = NonterminalMap.Domain
 
 (* ------------------------------------------------------------------------ *)
@@ -178,115 +176,127 @@ module NonterminalSet = NonterminalMap.Domain
 
 module Terminal : sig
 
-  (* The type of terminals. *)
+  (**The type of terminal symbols includes the terminal symbols that the
+     user is aware of, plus the two special symbols [#] and [error].
 
+     A terminal symbol is internally represented as a small nonnegative
+     integer. Two conversion functions exist. They are exploited in the
+     table-based back-end and in other places. They are considered unsafe
+     and should be used as little as possible. *)
   type t
 
-  (* The number of terminals. This includes the two pseudo-tokens
-     [#] and [error]. *)
-
-  val n: int
-
-  (* Comparison. *)
-
+  (**[equal] determines whether two terminal symbols are equal. *)
   val equal: t -> t -> bool
+
+  (**[compare] compares two terminal symbols according to a fixed but
+     unspecified total order. *)
   val compare: t -> t -> int
 
-  (* [lookup] maps an identifier to a terminal, or raises [Not_found]. *)
+  (**[n] is the total number of terminal symbols, including the special
+     symbols [#] and [error]. *)
+  val n: int
 
+  (**[t2i] converts a terminal symbol to an integer in the range [\[0, n)]. *)
+  val t2i: t -> int
+
+  (**[i2t] converts an integer in the range [\[0, n)] to a terminal symbol.
+     This function is {b unsafe} and should be used as little as possible. *)
+  val i2t: int -> t
+
+  (**[lookup] maps an identifier [s] to a terminal symbol. If there is no
+     terminal symbol named [s] then [Not_found] is raised. *)
   val lookup : string -> t
 
-  (* Terminals can be converted to integers. This feature is exploited in the
-     table-based back-end and in [LRijkstra]. The reverse conversion, [i2t],
-     is unsafe and should not be used. [LRijkstra] uses it :-) *)
-
-  val t2i: t -> int
-  val i2t: int -> t (* unsafe! *)
-
-  (* This produces a string representation of a terminal. *)
-
+  (**[print t] produces a string representation of the terminal symbol [t]. *)
   val print: t -> string
 
-  (**[print_concrete t] prints the terminal symbol [t] under a concrete form,
-     by relying on the token alias that has been declared for this symbol. *)
-  val print_concrete: t -> string
-
-  (* [ocamltype t] returns the OCaml type of the semantic value of the
-     terminal symbol [t]. If this terminal symbol carries no semantic
-     value, then it returns [None]. *)
-
-  val ocamltype: t -> ocamltype option
-
-  (* These are the two pseudo-tokens [#] and [error]. The former is
-     used to denote the end of the token stream. The latter is
-     accessible to the user and is used for handling errors. *)
-
+  (**The special terminal symbol [#] denotes the end of the input stream. *)
   val sharp: t
+
+  (**The special terminal symbol [error] is accessible to the user and is
+     used for handling errors. (We discourage its use, but it is currently
+     still supported.) *)
   val error: t
 
-  (* This is the programmer-defined [EOF] token, if there is one. It
-     is recognized based solely on its name, which is fragile, but
-     this behavior is documented. This token is assumed to represent
-     [ocamllex]'s [eof] pattern. It is used only by the reference
-     interpreter, and in a rather non-essential way. *)
+  (**[special t] determines whether the terminal symbol [t] is special,
+     that is, whether it is one of the special symbols [#] and [error]. *)
+  val special: t -> bool
 
-  val eof: t option
-
-  (* A terminal symbol is pseudo if it is [#] or [error]. It is real
-     otherwise. *)
-
-  val pseudo: t -> bool
+  (**[real t] is equivalent to [not (special t)]. It determines whether
+     the terminal symbol is real, that is, whether it is a symbol in the
+     input alphabet. *)
   val real: t -> bool
 
-  (* [non_error] returns [true] if its argument is not the [error] token. *)
+  (**[eof] is the programmer-defined terminal symbol [EOF], if there is one.
+     It is recognized based solely on its name, which is fragile, but this
+     behavior is documented. This token is assumed to represent [ocamllex]'s
+     [eof] pattern. It is used only by the reference interpreter, and in a
+     rather non-essential way. *)
+  val eof: t option
 
-  val non_error: t -> bool
+  (**[ocamltype t] returns the OCaml type of the semantic value of the
+     terminal symbol [t]. If this terminal symbol carries no semantic value,
+     then it returns [None]. *)
+  val ocamltype: t -> ocamltype option
 
-  (* Creation of a table indexed by terminals. *)
+  (**[associativity t] is the associativity of the terminal symbol [t]. It
+     plays a role in the resolution of shift/reduce conflicts. *)
+  val associativity: t -> associativity
 
-  val init: (t -> 'a) -> 'a array
-
-  (* Iteration over terminals. The order in which elements are
-     examined, and the order of [map]'s output list, correspond to the
-     numeric indices produced by [t2i] above. *)
-
-  val iter: (t -> unit) -> unit
-  val fold: (t -> 'a -> 'a) -> 'a -> 'a
-  val map: (t -> 'a) -> 'a list
-
-  (* Iteration over all terminals except [#]. *)
-
-  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
-  val mapx: (t -> 'a) -> 'a list
-
-  (* Iteration over all real terminals. *)
-
-  val iter_real: (t -> unit) -> unit
-  val fold_real: (t -> 'a -> 'a) -> 'a -> 'a
-  val map_real: (t -> 'a) -> 'a list
-
-  (* [attributes t] is the list of attributes attached with the terminal
+  (**[attributes t] is the list of attributes attached with the terminal
      symbol [t]. *)
-
   val attributes: t -> attributes
 
-  (* [every_token_has_an_alias] is true if a token alias has been defined
-     by the user for every token. *)
-
-  val every_token_has_an_alias: bool
-
-  (* [alias t] is the token alias that has been defined by the user
+  (**[alias t] is the token alias that has been defined by the user
      for the terminal symbol [t], if there is one. It is a quoted
-     escaped string literal. [unquoted_alias t] is the same string,
-     deprived of its opening and closing quotes, and unescaped. *)
-
+     escaped string literal.  *)
   val alias: t -> string option
+
+  (**[unquoted_alias t] is the string [alias t],
+     deprived of its opening and closing quotes, and unescaped.*)
   val unquoted_alias: t -> string option
 
-  (* [associativity t] is the associativity of the token [t]. This information
-     plays a role in the resolution of shift/reduce conflicts. *)
+  (**[every_token_has_an_alias] is [true] if a token alias has been defined
+     by the user for every (real) token. *)
+  val every_token_has_an_alias: bool
 
-  val associativity: t -> associativity
+  (**[init f] initializes a fresh array, which is indexed by the terminal
+     symbols. In other words, [init] tabulates a function [f] whose domain
+     is the terminal symbols, producing a table. *)
+  val init: (t -> 'a) -> 'a array
+
+  (**In every iteration function, the order in which elements are yielded
+     corresponds to the integer indices produced by {!t2i}. *)
+
+  (**[iter] enumerates the terminal symbols. *)
+  val iter: (t -> unit) -> unit
+
+  (**[fold] enumerates the terminal symbols. *)
+  val fold: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map] enumerates the terminal symbols. *)
+  val map: (t -> 'a) -> 'a list
+
+  (**[iterx] enumerates the terminal symbols except [#]. *)
+  val iterx: (t -> unit) -> unit
+
+  (**[foldx] enumerates the terminal symbols except [#]. *)
+  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[mapx] enumerates the terminal symbols except [#]. *)
+  val mapx: (t -> 'a) -> 'a list
+
+  (**[iter_real] enumerates the real terminal symbols, that is,
+     the terminal symbols except [#] and [error]. *)
+  val iter_real: (t -> unit) -> unit
+
+  (**[fold_real] enumerates the real terminal symbols, that is,
+     the terminal symbols except [#] and [error]. *)
+  val fold_real: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map_real] enumerates the real terminal symbols, that is,
+     the terminal symbols except [#] and [error]. *)
+  val map_real: (t -> 'a) -> 'a list
 
 end
 
@@ -316,7 +326,7 @@ module TerminalSet : sig
 
   val identify: t -> string
 
-  (* [universe] is the set of all terminal symbols except the pseudo-tokens
+  (* [universe] is the set of all terminal symbols except the special tokens
      [#] and [error]. *)
 
   val universe: t
@@ -546,7 +556,7 @@ module Production : sig
   val start: int
 
   (* [error_free prod] returns [true] if the right-hand side of the
-     production [prod] does *not* contain the [error] pseudo-token. *)
+     production [prod] does *not* contain the [error] token. *)
 
   val error_free: index -> bool
 
@@ -717,7 +727,8 @@ module Sentence : sig
   (**[print style sentence] prints a sentence as a space-separated list of
      symbolic token names. The [style] parameter indicates whether the
      sentence should be displayed in concrete syntax; if it is [`Concrete],
-     then every token must have a token alias. *)
+     then every token must have a token alias, that is,
+     [Terminal.every_token_has_an_alias] must be [true]. *)
   val print: [`Abstract | `Concrete] -> sentence -> string
 
 end

@@ -23,7 +23,7 @@
    The time complexity is roughly linear with respect to the goal length.
 
    Because we do not wish to generate sentences that contain the [error]
-   pseudo-token, any production that contains this token is ignored. This can
+   token, any production that contains this token is ignored. This can
    cause a problem if the goal can be achieved only via such a production.
    This is hopefully unlikely. *)
 

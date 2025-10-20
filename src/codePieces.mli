@@ -97,7 +97,7 @@ val tok_bind_unit: Terminal.t -> pattern -> expr -> expr
    definition of a function that destructure tokens. [name] is the
    name of the function that is generated. [codomain] is its return
    type. [bindsemv] tells whether the variable [semv] should be
-   bound. [branch] is applied to each (non-pseudo) terminal and must
+   bound. [branch] is applied to each (real) terminal and must
    produce code for each branch. *)
 
 val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef

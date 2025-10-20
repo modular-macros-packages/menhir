@@ -16,7 +16,7 @@ open Grammar
    terminal symbol; a node -- which corresponds to a non-terminal
    symbol, and whose immediate descendants form an expansion of that
    symbol; or an error leaf -- which corresponds to a point where the
-   [error] pseudo-token was shifted. *)
+   [error] token was shifted. *)
 
 type cst =
   | CstTerminal of Terminal.t

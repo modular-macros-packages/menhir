@@ -520,10 +520,10 @@ let action node t =
 
           encode_Fail
 
-(* In the error bitmap and in the action table, the row that corresponds to the
-   [#] pseudo-terminal is never accessed. Thus, we do not create this row. This
-   does not create a gap in the table, because this is the right-most row. For
-   sanity, we check this fact here. *)
+(* In the error bitmap and in the action table, the row that corresponds to
+   the special terminal symbol [#] is never accessed. Thus, we do not create
+   this row. This does not create a gap in the table, because this is the
+   right-most row. For sanity, we check this fact here. *)
 
 let () =
   assert (Terminal.t2i Terminal.sharp = Terminal.n - 1)

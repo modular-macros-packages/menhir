@@ -212,7 +212,7 @@ let tokspat toks =
    definition of a function that destructures tokens. [name] is the
    name of the function that is generated. [codomain] is its return
    type. [bindsemv] tells whether the variable [semv] should be
-   bound. [branch] is applied to each (non-pseudo) terminal and must
+   bound. [branch] is applied to each (real) terminal and must
    produce code for each branch. *)
 
 let destructuretokendef name codomain bindsemv branch = {
@@ -222,7 +222,7 @@ let destructuretokendef name codomain bindsemv branch = {
       EFun ([ PVar token ],
         EMatch (EVar token,
           Terminal.fold (fun tok branches ->
-            if Terminal.pseudo tok then
+            if Terminal.special tok then
               branches
             else
               { branchpat = tokpat tok (if bindsemv then PVar semv else PWildcard);

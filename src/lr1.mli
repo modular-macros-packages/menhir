@@ -237,8 +237,7 @@ val has_eos_conflict: node -> (Production.index list * TerminalSet.t) option
    removing some reduction actions.
 
    Second, it resolves end-of-stream conflicts by ensuring that states
-   that have a reduce action at the pseudo-token "#" have no other
-   action.
+   that have a reduce action at "#" have no other action.
 
    It is called after conflicts have been explained and before code
    generation takes place. The automaton is modified in place. *)

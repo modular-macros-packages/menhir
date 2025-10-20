@@ -352,7 +352,7 @@ let well_formed (k, toksr) =
 
 (* An LR(1) start state is the combination of an LR(0) start state
    (which consists of a single item) with a singleton lookahead set
-   that consists of the end-of-file pseudo-token. *)
+   that consists of the special terminal symbol [#]. *)
 
 let start k =
   let state = (k, [| TerminalSet.singleton Terminal.sharp |]) in

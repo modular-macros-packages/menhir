@@ -62,7 +62,7 @@ let terminal (t : Terminal.t) : terminal_def =
          | None -> false
          | Some eof -> Terminal.equal t eof) then
         `EOF
-      else if Terminal.pseudo t then
+      else if Terminal.special t then
         `PSEUDO
       else
         `REGULAR

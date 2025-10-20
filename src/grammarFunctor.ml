@@ -180,24 +180,22 @@ module NonterminalSet =
   NonterminalMap.Domain
 
 (* ------------------------------------------------------------------------ *)
-(* Terminals. *)
+
+(* Terminal symbols. *)
 
 module Terminal = struct
 
   type t = int
 
-  let t2i i = i
-  let i2t i = i
-
   let compare = (-)
 
-  let equal (tok1 : t) (tok2 : t) =
-    tok1 = tok2
+  let equal (t1 : t) (t2 : t) =
+    t1 = t2
 
   (* Determine how many terminals we have and build mappings
      both ways between names and indices. A new terminal "#"
      is created. A new terminal "error" is created. The fact
-     that the integer code assigned to the "#" pseudo-terminal
+     that the integer code assigned to the terminal "#"
      is the last one is exploited in the table-based back-end.
      (The right-most row of the action table is not created.)
 
@@ -208,14 +206,19 @@ module Terminal = struct
      It is currently 0, but we do not rely on that. *)
 
   let (n : int), (name : string array), (map : int StringMap.t) =
-    let tokens = tokens grammar in
-    index ("error" :: tokens @ [ "#" ])
+    index ("error" :: tokens grammar @ [ "#" ])
 
-  let print tok =
-    name.(tok)
+  let t2i i = i
+
+  let i2t i =
+    assert (0 <= i && i < n);
+    i
 
   let lookup name =
     StringMap.find name map
+
+  let print t =
+    name.(t)
 
   let sharp =
     lookup "#"
@@ -223,40 +226,52 @@ module Terminal = struct
   let error =
     lookup "error"
 
-  let pseudo tok =
-    (tok = sharp) || (tok = error)
+  let special t =
+    t = sharp || t = error
 
   let real t =
-    error <> t && t <> sharp
+    t <> sharp && t <> error
 
-  let non_error tok =
-    tok <> error
+  let eof =
+    try
+      Some (lookup "EOF")
+    with Not_found ->
+      None
+
+  let default = (* applicable to [error] and [#] *)
+    {
+      tk_precedence    = UndefinedPrecedence;
+      tk_associativity = UndefinedAssoc;
+      tk_ocamltype     = None;
+      tk_is_declared   = true;
+      tk_position      = Range.dummy;
+      tk_attributes    = [];
+      tk_alias         = None;
+    }
 
   let properties =
-    let not_so_dummy_properties = (* applicable to [error] and [#] *)
-      {
-        tk_precedence    = UndefinedPrecedence;
-        tk_associativity = UndefinedAssoc;
-        tk_ocamltype     = None;
-        tk_is_declared   = true;
-        tk_position      = Range.dummy;
-        tk_attributes    = [];
-        tk_alias         = None;
-      }
-    in
-    Array.init n (fun tok ->
-      try
-         StringMap.find name.(tok) grammar.tokens
-       with Not_found ->
-         assert (tok = sharp || tok = error);
-         not_so_dummy_properties
-    )
+    Array.init n @@ fun t ->
+    try
+      StringMap.find name.(t) grammar.tokens
+    with Not_found ->
+      assert (special t);
+      default
 
-  let associativity tok =
-    properties.(tok).tk_associativity
+  let ocamltype t =
+    properties.(t).tk_ocamltype
 
-  let ocamltype tok =
-    properties.(tok).tk_ocamltype
+  let associativity t =
+    properties.(t).tk_associativity
+
+  let attributes t =
+    properties.(t).tk_attributes
+
+  let alias t =
+    properties.(t).tk_alias
+
+  let unquoted_alias t =
+    alias t
+    |> Option.map MString.unquote
 
   let init f =
     Array.init n f
@@ -272,59 +287,39 @@ module Terminal = struct
 
   let () =
     assert (sharp = n - 1)
+
+  let[@inline] iterx f =
+    MInt.iteri sharp f
+
   let[@inline] foldx f accu =
     MInt.foldi sharp f accu
+
   let[@inline] mapx f =
     MInt.mapi sharp f
 
   let () =
     assert (error = 0)
+
   let[@inline] iter_real f =
     MInt.iterij 1 sharp f
+
   let[@inline] fold_real f accu =
     MInt.foldij 1 sharp f accu
+
   let[@inline] map_real f =
     MInt.mapij 1 sharp f
 
   let tokens_without_an_alias =
     let accu = ref 0 in
-    iter_real begin fun tok ->
-      let properties = properties.(tok) in
-      if properties.tk_alias = None then
+    let () =
+      iter_real @@ fun t ->
+      if alias t = None then
         incr accu
-    end;
+    in
     !accu
 
   let every_token_has_an_alias =
     tokens_without_an_alias = 0
-
-  let alias tok =
-    properties.(tok).tk_alias
-
-  let unquoted_alias tok =
-    alias tok
-    |> Option.map MString.unquote
-
-  let print_concrete t =
-  match unquoted_alias t with
-  | Some alias ->
-      alias
-  | None ->
-      (* An alias is missing. Use the abstract name of the terminal
-         instead. This is a best effort. *)
-      print t
-
-  (* If a token named [EOF] exists, then it is assumed to represent
-     ocamllex's [eof] pattern. *)
-
-  let eof =
-    try
-      Some (lookup "EOF")
-    with Not_found ->
-      None
-
-  let attributes tok =
-    properties.(tok).tk_attributes
 
 end
 
@@ -457,7 +452,7 @@ module Symbol = struct
   let non_error sym =
     match sym with
     | T tok ->
-        Terminal.non_error tok
+        tok <> Terminal.error
     | N _ ->
         true
 
@@ -1614,7 +1609,7 @@ module Sentence = struct
     MString.with_buffer 128 (fun b ->
       let separator = MString.this_then_that "" " " in
       List.iter (fun t ->
-        bprintf b "%s%s" (separator()) (Terminal.print_concrete t)
+        bprintf b "%s%s" (separator()) (Option.get (Terminal.unquoted_alias t))
       ) terminals
     )
 
