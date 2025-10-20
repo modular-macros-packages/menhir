@@ -351,7 +351,7 @@ module TerminalSet = struct
 
   (* The following definitions aim to define [identify]. *)
 
-  (* [big_max f toks] computes the maximum of the function [f] over the
+  (* [big_max f ts] computes the maximum of the function [f] over the
      set of terminal symbols [ts]. *)
 
   let big_max (f : elt -> int) (ts : t) : int =
@@ -418,8 +418,8 @@ module Symbol = struct
     match sym1, sym2 with
     | N nt1, N nt2 ->
         Nonterminal.compare nt1 nt2
-    | T tok1, T tok2 ->
-        Terminal.compare tok1 tok2
+    | T t1, T t2 ->
+        Terminal.compare t1 t2
     | N _, T _ ->
         1
     | T _, N _ ->
@@ -434,16 +434,16 @@ module Symbol = struct
 
   let non_error sym =
     match sym with
-    | T tok ->
-        tok <> Terminal.error
+    | T t ->
+        t <> Terminal.error
     | N _ ->
         true
 
   let print normalize = function
     | N nt ->
         Nonterminal.print normalize nt
-    | T tok ->
-        Terminal.print tok
+    | T t ->
+        Terminal.print t
 
   let nonterminal = function
     | T _ ->
@@ -888,8 +888,8 @@ end = struct
 
   let symbol sym get : property =
     match sym with
-    | Symbol.T tok ->
-        S.terminal tok
+    | Symbol.T t ->
+        S.terminal t
     | Symbol.N nt ->
         (* Recursive call to the analysis, via [get]. *)
         get nt
@@ -1082,7 +1082,7 @@ module GENERATES_NONEMPTY_WORD =
     (struct
       let shortcut _nt = None
       (* A terminal symbol generates a nonempty word. *)
-      let terminal _tok = true
+      let terminal _t = true
       (* An alternative generates a nonempty word if at least one branch
          generates a nonempty word. *)
       let disjunction p q = p || q()
@@ -1178,7 +1178,7 @@ module MAXIMAL =
       open NatInfinityMax
       let shortcut nt = if unbounded nt then Some infinity else None
       (* A terminal symbol has length 1. *)
-      let terminal _tok = finite 1
+      let terminal _t = finite 1
       (* The length of an alternative is the maximum length of any branch. *)
       let disjunction = max_lazy
       (* The length of a sequence is the sum of the lengths of the members. *)
