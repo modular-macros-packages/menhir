@@ -37,6 +37,12 @@ let ocamltype_of_start_symbol grammar symbol =
   with Not_found ->
     assert false
 
+(* Due to the combined use of [StringMap.fold] and [::], the following three
+   functions produce lists that are sorted in reverse alphabetical order. To
+   avoid surprising the user, it would be nice to correct this; however this
+   would visibly change the output of Menhir (by renumbering states, etc.)
+   so I prefer not to. *)
+
 let tokens grammar =
   StringMap.fold (fun token properties tokens ->
     if properties.tk_is_declared

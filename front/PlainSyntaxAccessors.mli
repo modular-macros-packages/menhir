@@ -40,16 +40,22 @@ val ocamltype_of_start_symbol : grammar -> symbol -> ocamltype
    The special tokens "#" and "error" are not included. Pseudo-tokens (used
    in %prec declarations, but never declared using %token) are filtered out.
    Therefore this is *not* synonymous with [grammar.tokens], which includes
-   the pseudo-tokens. *)
+   the pseudo-tokens.
+
+   Beware: this list is not sorted in alphabetical order. *)
 val tokens : grammar -> terminal list
 
 (**[typed_tokens grammar] is analogous to [tokens grammar], but includes
-   the OCaml type of each token, if it is known. *)
+   the OCaml type of each token, if it is known.
+
+   Beware: this list is not sorted in alphabetical order. *)
 val typed_tokens : grammar -> (terminal * ocamltype option) list
 
 (**[nonterminals grammar] is a list of all nonterminal symbols in the grammar
    [grammar]. It does not include the artificial start symbols [S'] that
-   Menhir creates internally. *)
+   Menhir creates internally.
+
+   Beware: this list is not sorted in alphabetical order. *)
 val nonterminals : grammar -> nonterminal list
 
 (**[is_nonterminal grammar symbol] tests whether the symbol [symbol] is a
