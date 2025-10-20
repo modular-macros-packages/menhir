@@ -359,10 +359,6 @@ module Symbol : sig
 
   val iter: (t -> unit) -> unit
 
-  (* [non_error] returns [true] if its argument is not the [error] token. *)
-
-  val non_error: t -> bool
-
   (* [print] produces a string representation of a symbol.
 
      [printa] prints an array of symbols. The symbols are listed one after

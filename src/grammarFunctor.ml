@@ -451,44 +451,17 @@ module Symbol = struct
     | N _ ->
         true
 
-  (* Printing an array of symbols. [offset] is the start offset -- we
-     print everything to its right. [dot] is the dot offset -- we
-     print a dot at this offset, if we find it. Note that [dot] can be
-     equal to [length]. *)
+  let printaod start dot normalize symbols =
+    MString.subarray (print normalize) " " start dot "." symbols
 
-  let buffer =
-    Buffer.create 1024
-
-  let printaod offset dot normalize symbols =
-    let length = Array.length symbols in
-    let first = ref true in
-    let separate () =
-      if not !first then Printf.bprintf buffer " ";
-      first := false
-    in
-    for i = offset to length do
-      if i = dot then begin
-        separate();
-        Printf.bprintf buffer "."
-      end;
-      if i < length then begin
-        separate();
-        Printf.bprintf buffer "%s" (print normalize symbols.(i))
-      end
-    done;
-    let s = Buffer.contents buffer in
-    Buffer.clear buffer;
-    s
-
-  let printao offset normalize symbols =
-    printaod offset (-1) normalize symbols
+  let printao start normalize symbols =
+    printaod start (-1) normalize symbols
 
   let printa normalize symbols =
     printao 0 normalize symbols
 
   let printl symbols =
-    let normalize = false in
-    printa normalize (Array.of_list symbols)
+    printa false (Array.of_list symbols)
 
   let lookup name =
     try
