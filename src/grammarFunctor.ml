@@ -92,6 +92,9 @@ module Nonterminal = struct
   let[@inline] init f =
     Array.init n f
 
+  let tabulate f =
+    Array.get (init f)
+
   let[@inline] iter f =
     MInt.iteri n f
 
@@ -142,9 +145,6 @@ module Nonterminal = struct
       | None ->
           nt :: accu
     ) []
-
-  let tabulate f =
-    Array.get (Array.init n f)
 
   let attributes : attributes array =
     Array.make n []
