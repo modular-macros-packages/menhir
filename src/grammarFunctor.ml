@@ -13,10 +13,7 @@ open PlainSyntax
 open PlainSyntaxAccessors
 
 module Make (G : sig
-
-  (* An abstract syntax tree for the grammar. *)
   val grammar: grammar
-
 end) () = struct
 
 open G
@@ -36,6 +33,7 @@ let index (strings : string list) : int * string array * int StringMap.t =
   and n, map = List.fold_left (fun (n, map) s ->
     n+1, StringMap.add s n map
   ) (0, StringMap.empty) strings in
+  assert (StringMap.cardinal map = n);
   n, name, map
 
 (* ------------------------------------------------------------------------ *)
@@ -53,9 +51,10 @@ module Nonterminal = struct
 
   let compare = (-)
 
-  (* Determine how many nonterminals we have and build mappings
-     both ways between names and indices. A new nonterminal is
-     created for every start symbol. *)
+  (* Determine how many nonterminals we have, and build mappings both ways
+     between names and indices. For each user start symbol [S], an internal
+     start symbol [S'] is created. No name collision is possible because the
+     quote character ['] cannot occur in the name of a symbol. *)
 
   let new_start_nonterminals =
     StringSet.fold (fun symbol ss -> (symbol ^ "'") :: ss) grammar.start_symbols []
