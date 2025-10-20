@@ -141,7 +141,7 @@ let explain_shift_item
       (* If the item we're looking at is the goal item and if
          we have read all of the input symbols, stop. *)
 
-      if (Item.equal item stop) && (offset = n) then
+      if Item.equal item stop && offset = n then
         raise Done;
 
       (* Otherwise, explore the transitions out of this item. *)
@@ -151,9 +151,9 @@ let explain_shift_item
       (* Shift transition, followed only if the symbol matches
          the symbol found in the input string. *)
 
-      if (pos < length)
-      && (offset < n)
-      && (Symbol.equal rhs.(pos) input.(offset)) then begin
+      if pos < length
+      && offset < n
+      && Symbol.equal rhs.(pos) input.(offset) then begin
         let config' = (Item.import (prod, pos+1), offset+1) in
         enqueue (Some config) config'
       end;
@@ -321,7 +321,7 @@ let explain_reduce_item
       (* If the item we're looking at is the goal item and if
          we have read all of the input symbols, stop. *)
 
-      if (Item.equal item stop) && lookahead && (offset = n) then
+      if Item.equal item stop && lookahead && offset = n then
         raise Done;
 
       (* Otherwise, explore the transitions out of this item. *)
@@ -331,9 +331,9 @@ let explain_reduce_item
       (* Shift transition, followed only if the symbol matches
          the symbol found in the input string. *)
 
-      if (pos < length)
-      && (offset < n)
-      && (Symbol.equal rhs.(pos) input.(offset)) then begin
+      if pos < length
+      && offset < n
+      && Symbol.equal rhs.(pos) input.(offset) then begin
         let config' = (Item.import (prod, pos+1), lookahead, offset+1) in
         enqueue (Some config) config'
       end;
@@ -438,7 +438,7 @@ let () =
       ) closure (0, 0) in
 
       let kind =
-        if (shift > 0) && (reduce > 1) then
+        if shift > 0 && reduce > 1 then
           "shift/reduce/reduce"
         else if (shift > 0) then
           "shift/reduce"
@@ -472,7 +472,7 @@ let () =
           match Item.classify item with
 
           | Item.Shift (Symbol.T tok, _)
-            when still_looking_for_shift_item && (Terminal.equal tok P.token) ->
+            when still_looking_for_shift_item && Terminal.equal tok P.token ->
 
               false,
               let derivation = explain_shift_item P.source P.path item in
