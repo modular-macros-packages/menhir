@@ -8,139 +8,159 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module constructs a view of the grammar that is well-suited to the
+   computations that the middle-end needs to perform. In particular, it
+   offers abstract types of terminal symbols, nonterminal symbols, symbols,
+   and productions, as well as efficient sets and maps. Furthermore, it
+   performs several analyses of the grammar, including NONEMPTY, NULLABLE,
+   FIRST, FOLLOW, MINIMAL, MAXIMAL. *)
+
 open Attribute
 open PlainSyntax
 
-(* The functor [Make] transforms an abstract syntax tree for the grammar into a
-   rich internal representation of the grammar. *)
-
-(* The reason why this is now a functor, and the reason why its verbosity can
-   be controlled, is that we may wish to invoke it several times, e.g. on the
-   grammar before %inlining, and on the grammar after %inlining. 2015/11/10 *)
-
+(**The functor [Make] transforms a grammar in [PlainSyntax] format
+   into a rich internal representation of the grammar. *)
 module Make (G : sig
-
-  (* An abstract syntax tree for the grammar. *)
   val grammar: grammar
-
 end) () : sig
-
-open Located
 
 type ocamltype = OCamlType.ocamltype =
   | Declared of string located
   | Inferred of string
 
 (* ------------------------------------------------------------------------ *)
-(* Nonterminals. *)
+
+(** {2 Nonterminal Symbols} *)
 
 module Nonterminal : sig
 
-  (* The type of nonterminals. *)
+  (**The type of nonterminal symbols includes the nonterminal symbols that
+     the user is aware of, plus, for each user start symbol [S], an internal
+     start symbol [S'].
 
+     A nonterminal symbol is internally represented as a small nonnegative
+     integer. Two conversion functions exist. They are exploited in the
+     table-based back-end. They are considered unsafe and should be used as
+     little as possible. *)
   type t
 
-  (* Comparison. *)
-
+  (**[equal] determines whether two nonterminal symbols are equal. *)
   val equal: t -> t -> bool
+
+  (**[compare] compares two nonterminal symbols according to a fixed but
+     unspecified total order. *)
   val compare: t -> t -> int
 
-  (* The number of nonterminals. This includes the extra nonterminals
-     that are internally generated for the grammar's entry points. *)
-
-  val n: int
-
-  (* [lookup] maps an identifier to a nonterminal, or raises [Not_found]. *)
-
-  val lookup : string -> t
-
-  (* Nonterminals can be converted to integers. This feature is
-     exploited in the table-based back-end. *)
-
-  val n2i: t -> int
-
-  val i2n: int -> t (* unsafe! *)
-
-  (* This produces a string representation of a nonterminal. It should
-     in principle never be applied to one of the internally generated
-     nonterminals, as we do not wish users to become aware of the
-     existence of these extra nonterminals. However, we do sometimes
-     violate this rule when it is difficult to do otherwise.
-
-     The Boolean parameter tells whether the string representation
-     should be normalized, that is, whether parentheses and commas
-     should be eliminated. This is necessary if the string is intended
-     for use as a valid nonterminal name or as a valid OCaml
-     identifier. *)
-
-  val print: bool -> t -> string
-
-  (* This is the OCaml type associated with a nonterminal symbol. It is known
-     only if a %type declaration was provided. (When --infer is used, the
-     result of the type inference process is used to augment the grammar with
-     %type declarations.) This function is not applicable to the internally
-     generated nonterminals. *)
-
-  val ocamltype: t -> ocamltype option
-
-  (* A start symbol always has a type. This allows us to define
-     a simplified version of [ocamltype] for start symbols. *)
-
-  val ocamltype_of_start_symbol: t -> ocamltype
-
-  (* [symbols_without_ocamltype()] returns a list of the nonterminal symbols
-     that do not have a known OCaml type. *)
-
-  val symbols_without_ocamltype: unit -> t list
-
-  (* Creation of a table indexed by nonterminals. *)
-
-  val init: (t -> 'a) -> 'a array
-
-  (* Iteration over nonterminals. The order in which elements are
-     examined, and the order of [map]'s output list, correspond to the
-     numeric indices produced by [n2i] above. *)
-
-  val iter: (t -> unit) -> unit
-  val fold: (t -> 'a -> 'a) -> 'a -> 'a
-  val map: (t -> 'a) -> 'a list
-
-  (* Iteration over all nonterminals, except the start nonterminals. *)
-
-  val iterx: (t -> unit) -> unit
-  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
-  val mapx: (t -> 'a) -> 'a list
-
-  (* Iteration over just the start nonterminals. *)
-
-  val iter_internal_start: (t -> unit) -> unit
-  val iter_user_start: (t -> unit) -> unit
-
-  (* Tabulation of a function over nonterminals. *)
-
-  val tabulate: (t -> 'a) -> (t -> 'a)
-
-  (* [positions nt] is a list of the positions associated with the
-     definition of [nt]. There can be more than one position because
-     definitions can be split over multiple files. *)
-
-  val positions: t -> ranges
-
-  (* [is_user_start nt] tells whether the nonterminal symbol [nt]
-     is one of the start symbols that the user knows about. *)
-
+  (**[is_user_start nt] tells whether the nonterminal symbol [nt] is a
+     user start symbol, that is, one of the start symbols that the user
+     has defined. *)
   val is_user_start: t -> bool
 
-  (* [is_internal_start nt] tells whether the nonterminal symbol [nt]
-     is one of the internal start symbols, that is, one of the new
-     symbols [S'] that are created for each user start symbol [S]. *)
-
+  (**[is_internal_start nt] tells whether the nonterminal symbol [nt] is one
+     of the internal start symbols, that is, one of the new symbols [S']
+     that are created for each user start symbol [S]. *)
   val is_internal_start: t -> bool
 
-  (* [attributes nt] is the list of attributes attached with the nonterminal
-     symbol [nt]. *)
+  (**[n] is the total number of nonterminal symbols, including the internal
+     start symbols. *)
+  val n: int
 
+  (**[lookup s] maps an identifier [s] to a nonterminal symbol. If there is
+     no nonterminal symbol named [s] then [Not_found] is raised.
+
+     [s] should not be the name of an internal start symbol. If [s] is a
+     valid identifier then it cannot be. *)
+  val lookup : string -> t
+
+  (**[n2i] converts a nonterminal symbol to an integer in the range
+     [\[0, n)]. *)
+  val n2i: t -> int
+
+  (**[i2n] converts an integer in the range [\[0, n)] to a nonterminal
+     symbol. This function is {b unsafe} and should be used as little as
+     possible. *)
+  val i2n: int -> t (* unsafe! *)
+
+  (**[print normalize nt] produces a string representation of the
+     nonterminal symbol [nt].
+
+     Ideally, [nt] should not be an internal start symbol, as we do not wish
+     users to be aware of the existence of these extra nonterminal symbols.
+     However, we do sometimes violate this rule when it is difficult to do
+     otherwise.
+
+     The Boolean parameter [normalize] indicates whether the string
+     representation should be normalized, that is, whether parentheses and
+     commas should be replaced with underscores. This is necessary if the
+     string is intended for use as a valid nonterminal name or as a valid
+     OCaml identifier. *)
+  val print: bool -> t -> string
+
+  (**[ocamltype nt] is the OCaml type associated with the nonterminal symbol
+     [nt]. [nt] must not be an internal start symbol.
+
+     The value [None] means that the type of this nonterminal symbol is
+     unknown. The type of a symbol is known only if the grammar contains a
+     %type declaration for it. Type inference augments a grammar with %type
+     declarations; see [Infer]. *)
+  val ocamltype: t -> ocamltype option
+
+  (**[ocamltype_of_start_symbol] is a simplified variant of [ocamltype],
+     which can be applied only to (user) start symbols. Because every start
+     has a known type, this function has result type [ocamltype]. *)
+  val ocamltype_of_start_symbol: t -> ocamltype
+
+  (**[symbols_without_ocamltype()] returns a list of the nonterminal symbols
+     that do not have a known OCaml type. *)
+  val symbols_without_ocamltype: unit -> t list
+
+  (**[positions nt] is a list of the positions associated with the
+     definition of [nt]. There can be more than one position because
+     definitions can be split over multiple files. *)
+  val positions: t -> ranges
+
+  (**[attributes nt] is the list of attributes attached with the nonterminal
+     symbol [nt]. *)
   val attributes: t -> attributes
+
+  (**[init f] initializes a fresh array, which is indexed by the nonterminal
+     symbols. In other words, [init] tabulates a function [f] whose domain
+     is the nonterminal symbols, producing a table. *)
+  val init: (t -> 'a) -> 'a array
+
+  (**[tabulate] tabulates a function [f] whose domain is the nonterminal
+     symbols, producing a new function whose time complexity is O(1). *)
+  val tabulate: (t -> 'a) -> (t -> 'a)
+
+  (**In every iteration function, the order in which elements are yielded
+     corresponds to the integer indices produced by {!n2i}. *)
+
+  (**[iter] enumerates the nonterminal symbols. *)
+  val iter: (t -> unit) -> unit
+
+  (**[fold] enumerates the nonterminal symbols. *)
+  val fold: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map] enumerates the nonterminal symbols. *)
+  val map: (t -> 'a) -> 'a list
+
+  (**[iterx] enumerates the nonterminal symbols
+     except the internal start symbols. *)
+  val iterx: (t -> unit) -> unit
+
+  (**[foldx] enumerates the nonterminal symbols
+     except the internal start symbols. *)
+  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[mapx] enumerates the nonterminal symbols
+     except the internal start symbols. *)
+  val mapx: (t -> 'a) -> 'a list
+
+  (**[iter_internal_start] enumerates just the internal start symbols. *)
+  val iter_internal_start: (t -> unit) -> unit
+
+  (**[iter_user_start] enumerates just the user start symbols. *)
+  val iter_user_start: (t -> unit) -> unit
 
 end
 
@@ -152,7 +172,8 @@ module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
 module NonterminalSet = NonterminalMap.Domain
 
 (* ------------------------------------------------------------------------ *)
-(* Terminals. *)
+
+(** {2 Terminal Symbols} *)
 
 module Terminal : sig
 
@@ -269,7 +290,8 @@ module Terminal : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Sets and maps over terminals. *)
+
+(** {2 Sets and Maps of Terminal Symbols} *)
 
 module TerminalSet : sig
 
@@ -312,7 +334,8 @@ end
 module TerminalMap : API.MAP with type key = Terminal.t
 
 (* ------------------------------------------------------------------------ *)
-(* Symbols. *)
+
+(** {2 Symbols} *)
 
 module Symbol : sig
 
@@ -364,7 +387,8 @@ module Symbol : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Sets and maps over symbols. *)
+
+(** {2 Sets and Maps of Symbols} *)
 
 (* All of the operations documented in [Set] are available. *)
 
@@ -397,7 +421,8 @@ module SymbolMap : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Productions. *)
+
+(** {2 Productions} *)
 
 module Production : sig
 
@@ -547,7 +572,8 @@ module Production : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Maps over productions. *)
+
+(* {2 Maps of Productions} *)
 
 module ProductionMap : sig
 
@@ -566,7 +592,8 @@ end
 val grammar_uses_error_token: bool
 
 (* ------------------------------------------------------------------------ *)
-(* Analysis of the grammar. *)
+
+(* {Analyses of the Grammar} *)
 
 module Analysis : sig
 
