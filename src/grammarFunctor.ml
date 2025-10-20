@@ -323,17 +323,22 @@ module Terminal = struct
 
 end
 
-(* Maps over terminals. *)
+(* ------------------------------------------------------------------------ *)
+
+(* Maps of terminal symbols. *)
 
 module TerminalMap =
   IntMap.Make(Terminal)()
 
-(* Sets of terminals are used intensively in the LR(1) construction,
+(* Sets of terminal symbols are used intensively in the LR(1) construction,
    so it is important that they be as efficient as possible. *)
 
 module TerminalSet = struct
 
   include TerminalMap.Domain
+
+  let universe =
+    Terminal.fold_real add empty
 
   (* The signature [Bitsets.API.SET] does not offer [of_list],
      so we implement this function here in a naive way. *)
@@ -341,28 +346,16 @@ module TerminalSet = struct
   let of_list xs =
     List.fold_right add xs empty
 
-  let print toks =
-    MString.separated_iter Terminal.print " " (fun f -> iter f toks)
-
-  let universe =
-    Terminal.fold_real add empty
-
-  let cardinal_universe =
-    Terminal.n - 2
-
-  let () =
-    assert (cardinal universe = cardinal_universe)
-
-  let is_universe s =
-    cardinal s = cardinal_universe
+  let print ts =
+    MString.separated_iter Terminal.print " " (fun f -> iter f ts)
 
   (* The following definitions aim to define [identify]. *)
 
   (* [big_max f toks] computes the maximum of the function [f] over the
-     set of terminal symbols [toks]. *)
+     set of terminal symbols [ts]. *)
 
-  let big_max (f : elt -> int) (toks : t) : int =
-    fold (fun t accu -> max (f t) accu) toks 0
+  let big_max (f : elt -> int) (ts : t) : int =
+    fold (fun t accu -> max (f t) accu) ts 0
 
   (* [separator] is a run of underscore characters '_' that is long
      enough so as to guarantee that no terminal symbol contains such
@@ -375,17 +368,17 @@ module TerminalSet = struct
       String.make (k+1) '_'
     end
 
-  (* [identify toks] converts the set of terminal symbols [toks] into
+  (* [identify ts] converts the set of terminal symbols [ts] into
      a valid OCaml identifier. The cardinal of the set is mentioned
      (for informative purposes; it is not required for disambiguation)
      and the symbols are separated using [separator]. *)
 
-  let identify toks =
+  let identify ts =
     String.concat (Lazy.force separator) (
       (* The cardinal: *)
-      Printf.sprintf "c%d" (cardinal toks) ::
+      Printf.sprintf "c%d" (cardinal ts) ::
       (* The symbols: *)
-      List.map Terminal.print (elements toks)
+      List.map Terminal.print (elements ts)
     )
 
   (* The following definitions are used in the computation of FIRST sets

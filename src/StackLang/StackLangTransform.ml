@@ -1255,6 +1255,17 @@ let (enum, foreach, singleton, map) = Enum.(enum, foreach, singleton, map)
 module T    = Grammar.Terminal
 module TSet = Grammar.TerminalSet
 
+(* A few extra operations on sets of terminal symbols. *)
+
+let cardinal_universe =
+  T.n - 2
+
+let () =
+  assert (TSet.(cardinal universe) = cardinal_universe)
+
+let is_universe s =
+  TSet.cardinal s = cardinal_universe
+
 (* -------------------------------------------------------------------------- *)
 
 (* We assume that the [token] register is used by the StackLang program
@@ -1885,7 +1896,7 @@ let groups block : TSet.t list =
     ) [] edges
   in
   (* A sanity check. *)
-  assert TSet.(is_universe (big_union groups));
+  assert (is_universe (TSet.big_union groups));
   groups
 
 (* -------------------------------------------------------------------------- *)
@@ -1900,7 +1911,7 @@ let name_vertex' (v' : vertex') : label =
   | None ->
       label
   | Some toks ->
-      if TSet.cardinal toks > TSet.cardinal_universe / 2 then
+      if TSet.cardinal toks > cardinal_universe / 2 then
         (* If [toks] involves more than half of all tokens then we do not
            need to include a list of all of its members in the name. *)
         sprintf "%s_majority" (Label.export label)

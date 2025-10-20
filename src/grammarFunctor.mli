@@ -167,7 +167,7 @@ end
 (**Maps whose keys are nonterminal symbols. *)
 module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
 
-(**Sets whose keys are nonterminal symbols. *)
+(**Sets whose elements are nonterminal symbols. *)
 module NonterminalSet = NonterminalMap.Domain
 
 (* ------------------------------------------------------------------------ *)
@@ -304,44 +304,32 @@ end
 
 (** {2 Sets and Maps of Terminal Symbols} *)
 
+(**Sets whose elements are terminal symbols. *)
 module TerminalSet : sig
 
   include Bitsets.API.SET with type elt = Terminal.t
 
-  (* [of_list] converts a list of terminal symbols into a set of terminal
-     symbols. *)
-
-  val of_list: Terminal.t list -> t
-
-  (* [print] offers a string representation of a set of terminals. The
-     symbols are simply listed one after the other and separated with
-     spaces. *)
-
-  val print: t -> string
-
-  (* [identify] offers a string representation of a set of terminals. This
-     string is guaranteed to be a valid OCaml identifier. Furthermore, this
-     representation is unambiguous: two distinct sets are mapped to two
-     distinct identifiers. *)
-
-  val identify: t -> string
-
-  (* [universe] is the set of all terminal symbols except the special tokens
-     [#] and [error]. *)
-
+  (**[universe] is the set of all real terminal symbols, that is, all terminal
+     symbols except [#] and [error]. *)
   val universe: t
 
-  (* [cardinal_universe] is the cardinal of the set [universe]. *)
+  (**[of_list] converts a list of terminal symbols
+     into a set of terminal symbols. *)
+  val of_list: Terminal.t list -> t
 
-  val cardinal_universe: int
+  (**[print] converts a set of terminal symbols into a string representation.
+     The symbols are listed one after the other and separated with spaces. *)
+  val print: t -> string
 
-  (* [is_universe toks] determines whether the set [toks], which must
-     be a subset of [universe], is in fact equal to the set [universe]. *)
-
-  val is_universe: t -> bool
+  (**[identify] offers a string representation of a set of terminals. This
+     string is a valid OCaml identifier and begins with the character 'c'.
+     Furthermore, this representation is unambiguous: two distinct sets are
+     mapped to two distinct identifiers. *)
+  val identify: t -> string
 
 end
 
+(**Maps whose keys are terminal symbols. *)
 module TerminalMap : API.MAP with type key = Terminal.t
 
 (* ------------------------------------------------------------------------ *)
