@@ -119,11 +119,18 @@ module Nonterminal = struct
   let[@inline] iter_internal_start f =
     MInt.iteri start f
 
+  (* Build a list of the user start symbols and sort it,
+     so that [iter_user_start] produces elements in the
+     correct order. *)
+
+  let user_start_symbols =
+    grammar.start_symbols
+    |> StringSet.elements
+    |> List.map lookup
+    |> List.sort Int.compare
+
   let iter_user_start f =
-    grammar.start_symbols |> StringSet.iter @@ fun symbol ->
-    let nt = lookup symbol in
-    assert (is_user_start nt);
-    f nt
+    List.iter f user_start_symbols
 
   let ocamltype nt =
     assert (not (is_internal_start nt));
