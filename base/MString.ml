@@ -53,6 +53,22 @@ let preceded_list print del xs =
   let iter f = List.iter f xs in
   preceded_iter print del iter
 
+let subarray print separator start dot bullet xs =
+  let separator = this_then_that "" separator in
+  with_buffer 32 @@ fun b ->
+  let emit s = Buffer.add_string b s in
+  let n = Array.length xs in
+  for i = start to n do
+    if i = dot then (
+      separator() |> emit;
+      emit bullet
+    );
+    if i < n then (
+      separator() |> emit;
+      emit (print xs.(i))
+    )
+  done
+
 let count = function
   | 1 -> "one"
   | 2 -> "two"
