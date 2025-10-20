@@ -47,7 +47,6 @@ module Nonterminal = struct
   type t = int
 
   let n2i i = i
-  let i2n i = i
 
   let equal (nt1 : t) (nt2 : t) =
     nt1 = nt2
@@ -70,6 +69,10 @@ module Nonterminal = struct
 
   let (n : int), (name : string array), (map : int StringMap.t) =
     index (new_start_nonterminals @ original_nonterminals)
+
+  let i2n i =
+    assert (0 <= i && i < n);
+    i
 
   let is_internal_start nt =
     nt < start
