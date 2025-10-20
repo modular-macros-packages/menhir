@@ -51,26 +51,19 @@ module Nonterminal : sig
      unspecified total order. *)
   val compare: t -> t -> int
 
-  (**[is_user_start nt] tells whether the nonterminal symbol [nt] is a
-     user start symbol, that is, one of the start symbols that the user
-     has defined. *)
-  val is_user_start: t -> bool
-
   (**[is_internal_start nt] tells whether the nonterminal symbol [nt] is one
      of the internal start symbols, that is, one of the new symbols [S']
      that are created for each user start symbol [S]. *)
   val is_internal_start: t -> bool
 
+  (**[is_user_start nt] tells whether the nonterminal symbol [nt] is a
+     user start symbol, that is, one of the start symbols that the user
+     has defined. *)
+  val is_user_start: t -> bool
+
   (**[n] is the total number of nonterminal symbols, including the internal
      start symbols. *)
   val n: int
-
-  (**[lookup s] maps an identifier [s] to a nonterminal symbol. If there is
-     no nonterminal symbol named [s] then [Not_found] is raised.
-
-     [s] should not be the name of an internal start symbol. If [s] is a
-     valid identifier then it cannot be. *)
-  val lookup : string -> t
 
   (**[n2i] converts a nonterminal symbol to an integer in the range
      [\[0, n)]. *)
@@ -80,6 +73,13 @@ module Nonterminal : sig
      symbol. This function is {b unsafe} and should be used as little as
      possible. *)
   val i2n: int -> t (* unsafe! *)
+
+  (**[lookup s] maps an identifier [s] to a nonterminal symbol. If there is
+     no nonterminal symbol named [s] then [Not_found] is raised.
+
+     [s] should not be the name of an internal start symbol. If [s] is a
+     valid identifier then it cannot be. *)
+  val lookup : string -> t
 
   (**[print normalize nt] produces a string representation of the
      nonterminal symbol [nt].
@@ -114,9 +114,10 @@ module Nonterminal : sig
      that do not have a known OCaml type. *)
   val symbols_without_ocamltype: unit -> t list
 
-  (**[positions nt] is a list of the positions associated with the
-     definition of [nt]. There can be more than one position because
-     definitions can be split over multiple files. *)
+  (**[positions nt] is a list of the positions associated with the definition
+     of the nonterminal symbol [nt]. [nt] should not be an internal start
+     symbol. There can be more than one position because definitions can be
+     split over multiple files. *)
   val positions: t -> ranges
 
   (**[attributes nt] is the list of attributes attached with the nonterminal

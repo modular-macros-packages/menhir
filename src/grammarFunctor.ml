@@ -40,13 +40,12 @@ let index (strings : string list) : int * string array * int StringMap.t =
   n, name, map
 
 (* ------------------------------------------------------------------------ *)
-(* Nonterminals. *)
+
+(* Nonterminal symbols. *)
 
 module Nonterminal = struct
 
   type t = int
-
-  let n2i i = i
 
   let equal (nt1 : t) (nt2 : t) =
     nt1 = nt2
@@ -70,27 +69,26 @@ module Nonterminal = struct
   let (n : int), (name : string array), (map : int StringMap.t) =
     index (new_start_nonterminals @ original_nonterminals)
 
-  let i2n i =
-    assert (0 <= i && i < n);
-    i
-
   let is_internal_start nt =
     nt < start
 
   let is_user_start nt =
     StringSet.mem name.(nt) grammar.start_symbols
 
+  let n2i i = i
+
+  let i2n i =
+    assert (0 <= i && i < n);
+    i
+
+  let lookup symbol =
+    StringMap.find symbol map
+
   let print normalize nt =
     if normalize then
       MString.normalize name.(nt)
     else
       name.(nt)
-
-  let lookup name =
-    StringMap.find name map
-
-  let positions nt =
-    (StringMap.find (print false nt) grammar.rules).positions
 
   let[@inline] init f =
     Array.init n f
@@ -116,6 +114,45 @@ module Nonterminal = struct
   let[@inline] mapx f =
     MInt.mapij start n f
 
+  let ocamltype : t -> ocamltype option =
+    tabulate @@ fun nt ->
+    try
+      Some (StringMap.find name.(nt) grammar.types)
+    with Not_found ->
+      None
+
+  let ocamltype nt =
+    assert (not (is_internal_start nt));
+    ocamltype nt
+
+  let ocamltype_of_start_symbol nt =
+    Option.get (ocamltype nt)
+
+  let symbols_without_ocamltype () =
+    foldx (fun nt accu ->
+      match ocamltype nt with
+      | Some _ ->
+          accu
+      | None ->
+          nt :: accu
+    ) []
+
+  let positions : t -> ranges =
+    tabulate @@ fun nt ->
+    if is_internal_start nt then []
+    else (StringMap.find name.(nt) grammar.rules).positions
+
+  let attributes : attributes array =
+    Array.make n []
+
+  let () =
+    grammar.rules |> StringMap.iter @@ fun symbol rule ->
+    let nt = lookup symbol in
+    attributes.(nt) <- rule.attributes
+
+  let attributes nt =
+    attributes.(nt)
+
   let[@inline] iter_internal_start f =
     MInt.iteri start f
 
@@ -132,45 +169,9 @@ module Nonterminal = struct
   let iter_user_start f =
     List.iter f user_start_symbols
 
-  let ocamltype nt =
-    assert (not (is_internal_start nt));
-    try
-      Some (StringMap.find (print false nt) grammar.types)
-    with Not_found ->
-      None
-
-  let ocamltype_of_start_symbol nt =
-    match ocamltype nt with
-    | Some typ ->
-        typ
-    | None ->
-        (* Every start symbol has a type. *)
-        assert false
-
-  let symbols_without_ocamltype () =
-    foldx (fun nt accu ->
-      match ocamltype nt with
-      | Some _ ->
-          accu
-      | None ->
-          nt :: accu
-    ) []
-
-  let attributes : attributes array =
-    Array.make n []
-
-  let () =
-    StringMap.iter (fun nonterminal { attributes = attrs } ->
-      let nt = lookup nonterminal in
-      attributes.(nt) <- attrs
-    ) grammar.rules
-
-  let attributes nt =
-    attributes.(nt)
-
 end
 
-(* Sets and maps over nonterminals. *)
+(* Sets and maps of nonterminal symbols. *)
 
 module NonterminalMap =
   IntMap.Make(Nonterminal)()
