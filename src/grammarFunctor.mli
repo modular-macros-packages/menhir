@@ -376,13 +376,13 @@ module Symbol : sig
      spaces. *)
   val print_subarray: bool -> int -> t array -> string
 
-  (**[print_subarray_bullet normalize start dot] prints the symbols in the
-     array [syms], starting at offset [start]. The symbols are separated with
-     spaces. Furthermore, if the offset [dot] is part of the closed interval
-     [\[start, n\]], where [n] is the length of the array [symbols], then the
-     character '.' is printed at offset [dot]. Therefore, this character can
-     appear first, appear between two symbols, or appear last. *)
-  val print_subarray_bullet: bool -> int -> int -> t array -> string
+  (**[print_array_bullet normalize dot] prints the symbols in the array
+     [syms]. The symbols are separated with spaces. Furthermore, if the
+     offset [dot] is part of the closed interval [\[start, n\]], where [n]
+     is the length of the array [symbols], then the character '.' is
+     printed at offset [dot]. Therefore, this character can appear first,
+     appear between two symbols, or appear last. *)
+  val print_array_bullet: bool -> int -> t array -> string
 
   (**[iter] enumerates the symbols. *)
   val iter: (t -> unit) -> unit

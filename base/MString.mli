@@ -51,13 +51,14 @@ val preceded_list:  ('a -> string) -> string -> 'a list -> string
    element with the delimiter [del]. *)
 val preceded_iter:  ('a -> string) -> string -> 'a iter -> string
 
-(**[subarray print sep start dot bullet xs] converts a segment of the
-   array [xs], beginning at offset [start], into a string, by applying
-   [print] to each element and by inserting [sep] as a separator
-   between two successive elements. Furthermore, if the offset [dot]
-   is part of the closed interval [\[start, n\]] then, at this offset,
-   the string [bullet] is inserted, as if it were an element. *)
-val subarray:
+(**[subarray_bullet print sep start dot bullet xs] converts a segment
+   of the array [xs], beginning at offset [start], into a string, by
+   applying [print] to each element and by inserting [sep] as a
+   separator between two successive elements. Furthermore, if the
+   offset [dot] is part of the closed interval [\[start, n\]] then, at
+   this offset, the string [bullet] is inserted, as if it were an
+   element. *)
+val subarray_bullet:
   ('a -> string) ->
   string ->
   int ->

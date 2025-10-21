@@ -99,7 +99,7 @@ let print item =
   let _, nt, rhs, pos, _ = def item in
   Printf.sprintf "%s -> %s"
     (Nonterminal.print false nt)
-    (Symbol.print_subarray_bullet false 0 pos rhs)
+    (Symbol.print_array_bullet false pos rhs)
 
 (* Classifying items. *)
 

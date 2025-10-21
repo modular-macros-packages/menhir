@@ -53,7 +53,7 @@ let preceded_list print del xs =
   let iter f = List.iter f xs in
   preceded_iter print del iter
 
-let subarray print separator start dot bullet xs =
+let subarray_bullet print separator start dot bullet xs =
   let separator = this_then_that "" separator in
   with_buffer 32 @@ fun b ->
   let emit s = Buffer.add_string b s in

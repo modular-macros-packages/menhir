@@ -455,11 +455,11 @@ module Symbol = struct
     | N _ ->
         true
 
-  let print_subarray_bullet normalize start dot symbols =
-    MString.subarray (print normalize) " " start dot "." symbols
+  let print_array_bullet normalize dot symbols =
+    MString.subarray_bullet (print normalize) " " 0 dot "." symbols
 
   let print_subarray normalize start symbols =
-    print_subarray_bullet normalize start (-1) symbols
+    MString.subarray_bullet (print normalize) " " start (-1) "." symbols
 
   let print_array normalize symbols =
     print_subarray normalize 0 symbols
