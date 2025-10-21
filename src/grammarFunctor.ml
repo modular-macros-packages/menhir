@@ -399,6 +399,7 @@ module TerminalSet = struct
 end
 
 (* ------------------------------------------------------------------------ *)
+
 (* Symbols. *)
 
 module Symbol = struct
@@ -463,10 +464,12 @@ module Symbol = struct
   let print_array normalize symbols =
     print_subarray normalize 0 symbols
 
-  let print_list symbols =
-    print_array false (Array.of_list symbols)
+  let print_list normalize symbols =
+    print_array normalize (Array.of_list symbols)
 
 end
+
+(* ------------------------------------------------------------------------ *)
 
 (* Sets of symbols. *)
 
@@ -474,8 +477,8 @@ module SymbolSet = struct
 
   include Set.Make(Symbol)
 
-  let print symbols =
-    Symbol.print_list (elements symbols)
+  let print normalize symbols =
+    Symbol.print_list normalize (elements symbols)
 
   (* The following definitions are used in the computation of symbolic FOLLOW
      sets below. They are not exported outside of this file. *)
@@ -494,7 +497,9 @@ module SymbolSet = struct
 
 end
 
-(* Maps over symbols. *)
+(* ------------------------------------------------------------------------ *)
+
+(* Maps of symbols. *)
 
 module SymbolMap = struct
 
@@ -509,11 +514,6 @@ module SymbolMap = struct
     List.fold_left (fun accu x ->
       add x (f x) accu
     ) empty xs
-
-  let purelynonterminal m =
-    fold (fun symbol _ accu ->
-      accu && Symbol.is_nonterminal symbol
-    ) m true
 
 end
 
@@ -1393,7 +1393,7 @@ let rec convert = function
   | ENullable (symbols, e) ->
       let e = convert e in
       Printf.sprintf "%s can vanish%s%s"
-        (Symbol.print_list symbols)
+        (Symbol.print_list false symbols)
         (if e = "" then "" else " and ")
         e
 

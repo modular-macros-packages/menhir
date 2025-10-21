@@ -54,6 +54,9 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
    terminate properly. From 2015/09/25 on, we again always allow default
    reductions, as they seem to be beneficial when explaining syntax errors. *)
 
+let is_purely_nonterminal transitions =
+  SymbolMap.for_all (fun sym _ -> Symbol.is_nonterminal sym) transitions
+
 let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option =
   Lr1.tabulate @@ fun s ->
     if Lr1.forbid_default_reduction s then
@@ -61,7 +64,7 @@ let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) optio
     else
       let reductions = Lr0.invert (Lr1.reductions s) in
       if ProductionMap.is_singleton reductions
-      && SymbolMap.purelynonterminal (Lr1.transitions s) then
+      && is_purely_nonterminal (Lr1.transitions s) then
         let reduction = ProductionMap.choose reductions in
         Some reduction
       else

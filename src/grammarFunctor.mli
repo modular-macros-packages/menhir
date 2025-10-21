@@ -354,6 +354,10 @@ module Symbol : sig
       symbol. *)
   val is_terminal: t -> bool
 
+  (**[is_nonterminal sym] determines whether the symbol [sym] is a
+     nonterminal symbol. *)
+  val is_nonterminal: t -> bool
+
   (**[lookup] maps an identifier [s] to a symbol. There must be exist a
      nonterminal or terminal symbol named [s]. *)
   val lookup : string -> t
@@ -389,33 +393,29 @@ end
 
 (** {2 Sets and Maps of Symbols} *)
 
-(* All of the operations documented in [Set] are available. *)
-
+(**Sets whose elements are symbols. *)
 module SymbolSet : sig
+
   include Set.S with type elt = Symbol.t
-  val print: t -> string
+
+  (**[print normalize syms] prints the symbols in the set [syms].
+     The symbols are separated with spaces. *)
+  val print: bool -> t -> string
+
 end
 
+(**Maps whose keys are symbols. *)
 module SymbolMap : sig
-
-  (* All of the operations documented in [Map] are available. *)
 
   include Map.S with type key = Symbol.t
 
-  (* [domain m] is the domain of the map [m], that is, the list of keys
+  (**[domain m] is the domain of the map [m], that is, the list of keys
      for which an entry exists in the map [m]. *)
-
   val domain: 'a t -> key list
 
-  (* [init f xs] creates a map whose keys are the elements [x] found in the
-     list [xs] and the datum associated with [x] is [f x]. *)
-
+  (**[init f xs] creates a map whose keys are the elements [x] found in
+     the list [xs] and the datum associated with [x] is [f x]. *)
   val init: (key -> 'a) -> key list -> 'a t
-
-  (* This returns [true] if and only if all of the symbols in
-     the domain of the map at hand are nonterminals. *)
-
-  val purelynonterminal: 'a t -> bool
 
 end
 

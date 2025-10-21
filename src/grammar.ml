@@ -132,7 +132,7 @@ let () =
   iterx @@ fun nt ->
   fprintf f "sfollow(%s) = %s\n"
     (Nonterminal.print false nt)
-    (SymbolSet.print (sfollow nt))
+    (SymbolSet.print false (sfollow nt))
 
 (* -------------------------------------------------------------------------- *)
 
