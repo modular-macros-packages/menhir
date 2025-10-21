@@ -542,7 +542,7 @@ let split w k =
 let print w =
   w
   |> Array.map symbol
-  |> Symbol.printa false
+  |> Symbol.print_array false
 
 (* ------------------------------------------------------------------------ *)
 

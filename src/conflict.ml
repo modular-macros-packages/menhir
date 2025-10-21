@@ -261,7 +261,7 @@ let rec follow1 tok derivation offset' = function
 
           let comment =
             "lookahead token is inherited" ^
-            (if pos + 1 < length then Printf.sprintf " because %s can vanish" (Symbol.printao (pos + 1) false rhs) else "")
+            (if pos + 1 < length then Printf.sprintf " because %s can vanish" (Symbol.print_subarray false (pos + 1) rhs) else "")
           in
           let derivation =
             Derivation.build pos rhs derivation (Some comment)
@@ -459,7 +459,7 @@ let () =
         Printf.sprintf "** The following explanations concentrate on token %s.\n" (Terminal.print P.token)
       else "")
       (Nonterminal.print false (Item.startnt P.source))
-      (Symbol.printa false P.path);
+      (Symbol.print_array false P.path);
 
       (* Examine the items in that state, focusing on one particular
          token. Out of the shift items, we explain just one -- this

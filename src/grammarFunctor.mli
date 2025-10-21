@@ -358,25 +358,27 @@ module Symbol : sig
      nonterminal or terminal symbol named [s]. *)
   val lookup : string -> t
 
-  (**[print normalize sym] produces a string representation of the symbol [sym],
-     using either [Nonterminal.print normalize] or [Terminal.print]. *)
+  (**[print normalize sym] prints (produces a string representation of)
+     the symbol [sym], using either [Nonterminal.print normalize] or
+     [Terminal.print]. *)
   val print: bool -> t -> string
 
-  (**[printa] prints an array of symbols. The symbols are listed one after
-     the other and separated with spaces.
+  (**[print_array normalize syms] prints the symbols in the array [syms].
+     The symbols are separated with spaces. *)
+  val print_array: bool -> t array -> string
 
-     [printao o] prints an array of symbols, starting at offset [o].
+  (**[print_subarray normalize start syms] prints the symbols in the array
+     [syms], starting at offset [start]. The symbols are separated with
+     spaces. *)
+  val print_subarray: bool -> int -> t array -> string
 
-     [printaod o d] prints an array of symbols, starting at offset [o],
-     and prints a single dot at offset [d], between two symbols.
-
-     In each of these functions, the Boolean parameter [normalize] has the
-     same effect as in [Nonterminal.print]. If it is [true], parentheses
-     and commas are replaced with underscores. *)
-
-  val printa:                 bool -> t array -> string
-  val printao:         int -> bool -> t array -> string
-  val printaod: int -> int -> bool -> t array -> string
+  (**[print_subarray_bullet normalize start dot] prints the symbols in the
+     array [syms], starting at offset [start]. The symbols are separated with
+     spaces. Furthermore, if the offset [dot] is part of the closed interval
+     [\[start, n\]], where [n] is the length of the array [symbols], then the
+     character '.' is printed at offset [dot]. Therefore, this character can
+     appear first, appear between two symbols, or appear last. *)
+  val print_subarray_bullet: bool -> int -> int -> t array -> string
 
   (**[iter] enumerates the symbols. *)
   val iter: (t -> unit) -> unit

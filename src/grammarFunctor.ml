@@ -454,17 +454,17 @@ module Symbol = struct
     | N _ ->
         true
 
-  let printaod start dot normalize symbols =
+  let print_subarray_bullet normalize start dot symbols =
     MString.subarray (print normalize) " " start dot "." symbols
 
-  let printao start normalize symbols =
-    printaod start (-1) normalize symbols
+  let print_subarray normalize start symbols =
+    print_subarray_bullet normalize start (-1) symbols
 
-  let printa normalize symbols =
-    printao 0 normalize symbols
+  let print_array normalize symbols =
+    print_subarray normalize 0 symbols
 
-  let printl symbols =
-    printa false (Array.of_list symbols)
+  let print_list symbols =
+    print_array false (Array.of_list symbols)
 
 end
 
@@ -475,7 +475,7 @@ module SymbolSet = struct
   include Set.Make(Symbol)
 
   let print symbols =
-    Symbol.printl (elements symbols)
+    Symbol.print_list (elements symbols)
 
   (* The following definitions are used in the computation of symbolic FOLLOW
      sets below. They are not exported outside of this file. *)
@@ -766,7 +766,7 @@ module Production = struct
     else
       Printf.sprintf "%s -> %s"
         (Nonterminal.print false nt)
-        (Symbol.printao 0 false rhs)
+        (Symbol.print_subarray false 0 rhs)
 
   let describe gerund prod =
     match classify prod with
@@ -1393,7 +1393,7 @@ let rec convert = function
   | ENullable (symbols, e) ->
       let e = convert e in
       Printf.sprintf "%s can vanish%s%s"
-        (Symbol.printl symbols)
+        (Symbol.print_list symbols)
         (if e = "" then "" else " and ")
         e
 
