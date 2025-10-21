@@ -407,13 +407,6 @@ module Symbol = struct
     | N of Nonterminal.t
     | T of Terminal.t
 
-  let is_terminal sym =
-    match sym with
-    | N _ ->
-        false
-    | T _ ->
-        true
-
   let compare sym1 sym2 =
     match sym1, sym2 with
     | N nt1, N nt2 ->
@@ -425,29 +418,39 @@ module Symbol = struct
     | T _, N _ ->
         -1
 
-  let equal sym1 sym2 =
+  let[@inline] equal sym1 sym2 =
     compare sym1 sym2 = 0
+
+  let[@inline] is_terminal sym =
+    match sym with N _ -> false | T _ -> true
+
+  let[@inline] is_nonterminal sym =
+    match sym with T _ -> false | N _ -> true
+
+  let lookup name =
+    try
+      T (Terminal.lookup name)
+    with Not_found ->
+      try
+        N (Nonterminal.lookup name)
+      with Not_found ->
+        assert false
 
   let iter f =
     Terminal.iter (fun t -> f (T t));
     Nonterminal.iter (fun nt -> f (N nt))
 
-  let non_error sym =
+  let print normalize sym =
     match sym with
-    | T t ->
-        t <> Terminal.error
-    | N _ ->
-        true
-
-  let print normalize = function
     | N nt ->
         Nonterminal.print normalize nt
     | T t ->
         Terminal.print t
 
-  let nonterminal = function
-    | T _ ->
-        false
+  let non_error sym =
+    match sym with
+    | T t ->
+        t <> Terminal.error
     | N _ ->
         true
 
@@ -462,15 +465,6 @@ module Symbol = struct
 
   let printl symbols =
     printa false (Array.of_list symbols)
-
-  let lookup name =
-    try
-      T (Terminal.lookup name)
-    with Not_found ->
-      try
-        N (Nonterminal.lookup name)
-      with Not_found ->
-        assert false (* well-formedness check has been performed earlier *)
 
 end
 
@@ -518,7 +512,7 @@ module SymbolMap = struct
 
   let purelynonterminal m =
     fold (fun symbol _ accu ->
-      accu && Symbol.nonterminal symbol
+      accu && Symbol.is_nonterminal symbol
     ) m true
 
 end

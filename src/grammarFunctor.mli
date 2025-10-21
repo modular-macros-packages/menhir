@@ -28,7 +28,7 @@ type ocamltype = OCamlType.ocamltype =
   | Declared of string located
   | Inferred of string
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (** {2 Nonterminal Symbols} *)
 
@@ -162,7 +162,7 @@ module Nonterminal : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (**Maps whose keys are nonterminal symbols. *)
 module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
@@ -170,7 +170,7 @@ module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
 (**Sets whose elements are nonterminal symbols. *)
 module NonterminalSet = NonterminalMap.Domain
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (** {2 Terminal Symbols} *)
 
@@ -300,7 +300,7 @@ module Terminal : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (** {2 Sets and Maps of Terminal Symbols} *)
 
@@ -332,36 +332,37 @@ end
 (**Maps whose keys are terminal symbols. *)
 module TerminalMap : API.MAP with type key = Terminal.t
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (** {2 Symbols} *)
 
 module Symbol : sig
 
-  (* A symbol is either a nonterminal or a terminal. *)
-
+  (**A symbol is either a nonterminal symbol or a terminal symbol. *)
   type t =
     | N of Nonterminal.t
     | T of Terminal.t
 
-  val is_terminal: t -> bool
-
-  (* [lookup] maps an identifier to a symbol, or raises [Not_found]. *)
-
-  val lookup : string -> t
-
-  (* Comparison. *)
-
+  (**[equal] determines whether two symbols are equal. *)
   val equal: t -> t -> bool
+
+  (**[compare] compares two symbols according to a fixed but unspecified
+     total order. *)
   val compare: t -> t -> int
 
-  (* Iteration. *)
+  (**[is_terminal sym] determines whether the symbol [sym] is a terminal
+      symbol. *)
+  val is_terminal: t -> bool
 
-  val iter: (t -> unit) -> unit
+  (**[lookup] maps an identifier [s] to a symbol. There must be exist a
+     nonterminal or terminal symbol named [s]. *)
+  val lookup : string -> t
 
-  (* [print] produces a string representation of a symbol.
+  (**[print normalize sym] produces a string representation of the symbol [sym],
+     using either [Nonterminal.print normalize] or [Terminal.print]. *)
+  val print: bool -> t -> string
 
-     [printa] prints an array of symbols. The symbols are listed one after
+  (**[printa] prints an array of symbols. The symbols are listed one after
      the other and separated with spaces.
 
      [printao o] prints an array of symbols, starting at offset [o].
@@ -373,14 +374,16 @@ module Symbol : sig
      same effect as in [Nonterminal.print]. If it is [true], parentheses
      and commas are replaced with underscores. *)
 
-  val print:                  bool -> t       -> string
   val printa:                 bool -> t array -> string
   val printao:         int -> bool -> t array -> string
   val printaod: int -> int -> bool -> t array -> string
 
+  (**[iter] enumerates the symbols. *)
+  val iter: (t -> unit) -> unit
+
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (** {2 Sets and Maps of Symbols} *)
 
@@ -414,7 +417,7 @@ module SymbolMap : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (** {2 Productions} *)
 
@@ -565,7 +568,7 @@ module Production : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* {2 Maps of Productions} *)
 
@@ -579,13 +582,13 @@ module ProductionMap : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* This flag tells whether the [error] token appears in at least one
    production. *)
 
 val grammar_uses_error_token: bool
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* {Analyses of the Grammar} *)
 
@@ -670,7 +673,7 @@ module Analysis : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* [%on_error_reduce] declarations. *)
 
 module OnErrorReduce : sig
@@ -695,7 +698,7 @@ module OnErrorReduce : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Sentences. *)
 
 module Sentence : sig
@@ -716,6 +719,6 @@ module Sentence : sig
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 end (* module Make *)
