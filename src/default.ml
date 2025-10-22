@@ -71,15 +71,12 @@ let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) optio
         None
 
 let () =
-  let count =
-    Lr1.sum (fun s ->
-      if has_default_reduction s = None then 0 else 1
-    )
-  in
-  Error.logC 1 (fun f ->
-    Printf.fprintf f
-       "%d out of %d states have a default reduction.\n"
-       count Lr1.n)
+  Error.logC 1 @@ fun f ->
+  let count = Lr1.sum @@ fun s ->
+    if has_default_reduction s = None then 0 else 1 in
+  Printf.fprintf f
+    "%d out of %d states have a default reduction.\n"
+    count Lr1.n
 
 let () =
   Time.tick "Computing default reductions"
