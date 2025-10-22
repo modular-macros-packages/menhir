@@ -778,7 +778,8 @@ let grammar_uses_error_token =
   !Production.grammar_uses_error_token
 
 (* ------------------------------------------------------------------------ *)
-(* Maps over productions. *)
+
+(* Maps of productions. *)
 
 module ProductionMap = struct
 

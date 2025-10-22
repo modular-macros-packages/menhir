@@ -577,8 +577,8 @@ module ProductionMap : sig
 
   include API.MAP with type key = Production.t
 
-  (* Iteration over the start productions only. *)
-
+  (**[start] constructs a map whose domain consists of just the start
+     productions. *)
   val start: (Production.t -> 'a) -> 'a t
 
 end
