@@ -584,10 +584,10 @@ module ProductionMap : sig
 end
 
 (* -------------------------------------------------------------------------- *)
-(* This flag tells whether the [error] token appears in at least one
-   production. *)
 
-val grammar_uses_error_token: bool
+(**[grammar_uses_error_token()] determines whether the [error] token appears
+   in at least one production. *)
+val grammar_uses_error_token: unit -> bool
 
 (* -------------------------------------------------------------------------- *)
 

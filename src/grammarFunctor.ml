@@ -594,11 +594,6 @@ module Production = struct
   let ntprods : (int * int) array =
     Array.make Nonterminal.n (-1, -1)
 
-  (* This Boolean flag records whether the grammar uses the [error] token. *)
-
-  let grammar_uses_error_token =
-    ref false
-
   (* Create the start productions, populating the above arrays as appropriate.
      [start] is the number of start productions, therefore also the index of
      the first non-start production. [startprods] is a mapping of the start
@@ -644,8 +639,6 @@ module Production = struct
       prec_decl.(k) <- branch.prec_annotation;
       positions.(k) <- [ branch.branch_position ];
       attributes.(k) <- branch.br_attributes;
-      if not (MArray.for_all Symbol.non_error rhs) then
-        grammar_uses_error_token := true;
       k+1
     in
     ntprods.(nt) <- (k, k');
@@ -774,9 +767,6 @@ module Production = struct
 
 end
 
-let grammar_uses_error_token =
-  !Production.grammar_uses_error_token
-
 (* ------------------------------------------------------------------------ *)
 
 (* Maps of productions. *)
@@ -793,6 +783,19 @@ module ProductionMap = struct
     ) empty
 
 end
+
+(* ------------------------------------------------------------------------ *)
+
+(* Not sure where to place this function. *)
+
+let grammar_uses_error_token () =
+  let used = ref false in
+  let () =
+    Production.iterx @@ fun prod ->
+    if not (Production.error_free prod) then
+      used := true
+  in
+  !used
 
 (* ------------------------------------------------------------------------ *)
 (* Support for analyses of the grammar, expressed as fixed point computations.

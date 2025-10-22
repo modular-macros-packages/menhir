@@ -37,7 +37,7 @@ module Run () = struct
   (* Produce a warning if the grammar uses the special token [error]. *)
 
   let () =
-    if grammar_uses_error_token then
+    if grammar_uses_error_token() then
       Error.warning [] "The reachability analysis ignores all productions \
                         that involve the error token."
 
