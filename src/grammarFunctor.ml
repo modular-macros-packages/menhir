@@ -22,7 +22,7 @@ type ocamltype = OCamlType.ocamltype =
   | Declared of string located
   | Inferred of string
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* [index] indexes a list of (distinct) strings, that is, assigns an
    integer index to each string and builds mappings both ways between
@@ -39,7 +39,7 @@ let index (strings : string list) : int * string array * int StringMap.t =
   assert (StringMap.cardinal map = n);
   n, name, map
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Nonterminal symbols. *)
 
@@ -179,7 +179,7 @@ module NonterminalMap =
 module NonterminalSet =
   NonterminalMap.Domain
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Terminal symbols. *)
 
@@ -323,7 +323,7 @@ module Terminal = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Maps of terminal symbols. *)
 
@@ -398,7 +398,7 @@ module TerminalSet = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Symbols. *)
 
@@ -469,7 +469,7 @@ module Symbol = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Sets of symbols. *)
 
@@ -497,7 +497,7 @@ module SymbolSet = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Maps of symbols. *)
 
@@ -517,7 +517,7 @@ module SymbolMap = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Productions. *)
 
@@ -767,7 +767,7 @@ module Production = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Maps of productions. *)
 
@@ -784,7 +784,7 @@ module ProductionMap = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Not sure where to place this function. *)
 
@@ -797,8 +797,9 @@ let grammar_uses_error_token () =
   in
   !used
 
-(* ------------------------------------------------------------------------ *)
-(* Support for analyses of the grammar, expressed as fixed point computations.
+(* -------------------------------------------------------------------------- *)
+
+(* Many analyses of the grammar are expressed as fixed point computations.
    We exploit the generic fixed point algorithm in [Fix]. *)
 
 (* We perform memoization only at nonterminal symbols. We assume that the
@@ -806,57 +807,55 @@ let grammar_uses_error_token () =
    say, a computation that depends on the occurrences of this symbol in
    the grammar). *)
 
-module GenericAnalysis
-  (P : Fix.PROPERTY)
-  (S : sig
-    open P
+module GenericAnalysis (P : Fix.PROPERTY) (S : sig
+  open P
 
-    (* An analysis is specified by the following functions. *)
+  (* An analysis is specified by the following functions. *)
 
-    (* [shortcut] can be used to map a nonterminal symbol to a property.
-       In that case, the definition of this nonterminal symbol is ignored. *)
-    val shortcut: Nonterminal.t -> property option
+  (**If [shortcut nt] is [Some p], then the definition of the nonterminal
+     symbol [nt] is ignored by the analysis, and this symbol is mapped by
+     the analysis to the property [p]. *)
+  val shortcut: Nonterminal.t -> property option
 
-    (* [terminal] maps a terminal symbol to a property. *)
-    val terminal: Terminal.t -> property
+  (**[terminal] maps a terminal symbol to a property. *)
+  val terminal: Terminal.t -> property
 
-    (* [disjunction] abstracts a binary alternative. That is, when we analyze
-       an alternative between several productions, we compute a property for
-       each of them independently, then we combine these properties using
-       [disjunction]. *)
-    val disjunction: property -> (unit -> property) -> property
+  (**[disjunction] abstracts a binary alternative. That is, when we analyze
+     an alternative between several productions, we compute a property for
+     each of them independently, then we combine these properties using
+     [disjunction]. *)
+  val disjunction: property -> (unit -> property) -> property
 
-    (* [P.bottom] should be a neutral element for [disjunction]. We use it in
-       the analysis of an alternative with zero branches. *)
+  (**[conjunction] abstracts a binary sequence. That is, when we analyze a
+     sequence, we compute a property for each member independently, then we
+     combine these properties using [conjunction]. In general, conjunction
+     needs access to the first member of the sequence (a symbol), not just
+     to its analysis (a property).
 
-    (* [conjunction] abstracts a binary sequence. That is, when we analyze a
-       sequence, we compute a property for each member independently, then we
-       combine these properties using [conjunction]. In general, conjunction
-       needs access to the first member of the sequence (a symbol), not just
-       to its analysis (a property). *)
-    val conjunction: Symbol.t -> property -> (unit -> property) -> property
+     The property [P.bottom] must be a neutral element for [disjunction]. We
+     use [P.bottom] in the analysis of an alternative with zero branches. *)
+  val conjunction: Symbol.t -> property -> (unit -> property) -> property
 
-    (* [epsilon] abstracts the empty sequence. It should be a neutral element
-       for [conjunction]. *)
-    val epsilon: property
+  (**[epsilon] abstracts the empty sequence. It must be a neutral element
+     for [conjunction]. *)
+  val epsilon: property
 
-    (* The Boolean flag [ignore_error_productions] indicates whether the
-       productions that mention the [error] token should be ignored. *)
-    val ignore_error_productions: bool
+  (**The Boolean flag [ignore_error_productions] indicates whether the
+     productions that mention the [error] token should be ignored. *)
+  val ignore_error_productions: bool
 
-  end)
-: sig
+end) : sig
   open P
 
   (* The results of the analysis take the following form. *)
 
-  (* To every nonterminal symbol, we associate a property. *)
+  (**To every nonterminal symbol, we associate a property. *)
   val nonterminal: Nonterminal.t -> property
 
-  (* To every symbol, we associate a property. *)
+  (**To every symbol, we associate a property. *)
   val symbol: Symbol.t -> property
 
-  (* To every suffix of every production, we associate a property.
+  (**To every suffix of every production, we associate a property.
      The offset [i], which determines the beginning of the suffix,
      must be contained between [0] and [n], inclusive, where [n]
      is the length of the production. *)
@@ -865,9 +864,9 @@ module GenericAnalysis
 end = struct
   open P
 
-  (* The following analysis functions are parameterized over [get], which allows
-     making a recursive call to the analysis at a nonterminal symbol. [get] maps
-     a nonterminal symbol to a property. *)
+  (* The following analysis functions are parameterized by [get], which
+     allows making a recursive call to the analysis at a nonterminal symbol.
+     [get] maps a nonterminal symbol to a property. *)
 
   (* Analysis of a symbol. *)
 
@@ -887,8 +886,8 @@ end = struct
     let n = Array.length rhs in
     (* Conjunction over all symbols in the right-hand side. This can be viewed
        as a version of [Array.fold_right], which does not necessarily begin at
-       index [0]. Note that, because [conjunction] is lazy, it is possible
-       to stop early. *)
+       index [0]. Note that, because [conjunction] is lazy, it is possible to
+       stop early. *)
     let rec loop i =
       if i = n then
         S.epsilon
@@ -910,17 +909,16 @@ end = struct
         p
     | None ->
         (* Disjunction over all productions for this nonterminal symbol. *)
-        Production.foldnt_lazy nt (fun prod rest ->
-          if S.ignore_error_productions && not (Production.error_free prod) then
-            rest()
-          else
-            S.disjunction
-              (production prod 0 get)
-              rest
-        ) P.bottom
+        P.bottom |> Production.foldnt_lazy nt @@ fun prod rest ->
+        if S.ignore_error_productions && not (Production.error_free prod) then
+          rest()
+        else
+          S.disjunction
+            (production prod 0 get)
+            rest
 
-  (* The least fixed point is taken as follows. Note that it is computed
-     on demand, as [lfp] is called by the user. *)
+  (* The least fixed point is taken as follows. It is computed on demand,
+     when and where [lfp] is called by the user. *)
 
   module F =
     Fix.Make
@@ -940,7 +938,7 @@ end = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Compute which nonterminal symbols are nonempty, that is, which symbols
    generate a nonempty language. Also, compute which nonterminal symbols are
@@ -963,7 +961,7 @@ module NONEMPTY =
          language {epsilon}. *)
       let epsilon = true
       let ignore_error_productions = false
-     end)
+    end)
 
 module NULLABLE =
   GenericAnalysis
@@ -979,9 +977,10 @@ module NULLABLE =
       (* The sequence epsilon is nullable. *)
       let epsilon = true
       let ignore_error_productions = false
-     end)
+    end)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+
 (* Compute FIRST sets. *)
 
 module FIRST =
@@ -994,8 +993,8 @@ module FIRST =
       (* The FIRST set of an alternative is the union of the FIRST sets. *)
       let disjunction p q = TerminalSet.union p (q())
       (* The FIRST set of a sequence is the union of:
-           the FIRST set of the first member, and
-           the FIRST set of the second member, if the first member is nullable. *)
+         the FIRST set of the first member, and
+         the FIRST set of the second member, if the first member is nullable. *)
       let conjunction symbol p q =
         if NULLABLE.symbol symbol then
           TerminalSet.union p (q())
@@ -1004,9 +1003,10 @@ module FIRST =
       (* The FIRST set of the empty sequence is empty. *)
       let epsilon = TerminalSet.empty
       let ignore_error_productions = false
-     end)
+    end)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+
 (* For every nonterminal symbol [nt], compute a word of minimal length
    generated by [nt]. *)
 
@@ -1015,10 +1015,9 @@ module FIRST =
    [nt] is nullable if only if the minimal length is zero. Be careful, though:
    [MINIMAL] analyzes a grammar where error productions are ignored. *)
 
-(* This analysis is in principle more costly than [NONEMPTY] and [NULLABLE],
-   so it is performed only on demand. In practice, it seems to be very cheap:
-   its cost is not measurable for any of the grammars in our benchmark
-   suite. *)
+(* This analysis is in principle more costly than [NONEMPTY] and [NULLABLE].
+   In practice, it seems to be very cheap: its cost is not measurable for any
+   of the grammars in our benchmark suite. *)
 
 (* This analysis could be made cheaper by computing just the length of a
    minimal sequence, as opposed to a minimal sequence. Currently the sequence
@@ -1029,7 +1028,7 @@ module MINIMAL =
     (struct
       include CompletedNatWitness
       type property = Terminal.t t
-     end)
+    end)
     (struct
       let shortcut _nt = None
       open CompletedNatWitness
@@ -1043,23 +1042,17 @@ module MINIMAL =
       let epsilon = epsilon
       (* The productions that contain [error] are ignored. *)
       let ignore_error_productions = true
-     end)
+    end)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* For every nonterminal symbol [nt], we wish to compute the maximum length of
-   a word generated by [nt]. This length can be either finite or [infty]. *)
+(* Determine which symbols generate a nonempty word, that is, a word of length
+   at least 1. We might tempted to deduce this information from the FIRST sets
+   (indeed, a symbol generates a nonempty word if and only if its FIRST set is
+   nonempty), but this does not work because (here) we want to ignore error
+   productions. *)
 
-(* We assume that every symbol generates a nonempty language. This removes the
-   need to watch out for productions whose right hand side is empty (which we
-   would have to ignore). A similar assumption is made in the computation of
-   FIRST sets above. *)
-
-(* We need to determine which symbols generate a nonempty word, that is, a
-   word of length at least 1. We might tempted to deduce this information from
-   the FIRST sets (indeed, a symbol generates a nonempty word if and only if
-   its FIRST set is nonempty), but this does not work because (here) we want
-   to ignore error productions. *)
+(* This information is needed later on by the analysis MAXIMAL. *)
 
 module GENERATES_NONEMPTY_WORD =
   GenericAnalysis
@@ -1078,13 +1071,19 @@ module GENERATES_NONEMPTY_WORD =
       let epsilon = false
       (* The productions that contain [error] are ignored. *)
       let ignore_error_productions = true
-     end)
+    end)
 
 let generates_nonempty_word symbol : bool =
   GENERATES_NONEMPTY_WORD.symbol symbol
 
-(* Then, we construct the reference graph of the grammar. The vertices of
-   this graph are the nonterminal symbols, and, if there is a production
+(* -------------------------------------------------------------------------- *)
+
+(* Compute which symbols can produce words of unbounded length. *)
+
+(* This information is needed later on by the analysis MAXIMAL. *)
+
+(* To do so, we construct the reference graph of the grammar. The vertices
+   of this graph are the nonterminal symbols, and, if there is a production
    [A -> alpha B gamma], then there is an edge from A to B. With each such
    edge, we associate a Boolean label, which is [true] if [alpha . gamma]
    generates a nonempty word. *)
@@ -1095,65 +1094,72 @@ module G = struct
   let index nt = nt
   let iter = Nonterminal.iter
   let labeled_successors yield nt =
-    Production.iternt nt (fun prod ->
-      let rhs = Production.rhs prod in
-      rhs |> Array.iteri (fun i symbol ->
-        match symbol with
-        | Symbol.T _   -> ()
-        | Symbol.N nt' ->
-            (* There is an edge from [nt] to [nt'], whose Boolean label [gnw]
-               is obtained by computing whether the right-hand side, deprived
-               of [nt'], can generate a nonempty word. *)
-            let gnw =
-              MArray.existsi (fun j symbol ->
-                i <> j && generates_nonempty_word symbol
-              ) rhs
-            in
-            yield gnw nt'
-      )
-    )
+    Production.iternt nt @@ fun prod ->
+    let rhs = Production.rhs prod in
+    rhs |> Array.iteri @@ fun i symbol ->
+    match symbol with
+    | Symbol.T _   -> ()
+    | Symbol.N nt' ->
+        (* There is an edge from [nt] to [nt'], whose Boolean label [gnw]
+           is obtained by computing whether the right-hand side, deprived
+           of [nt'], can generate a nonempty word. *)
+        let gnw =
+          rhs |> MArray.existsi @@ fun j symbol ->
+          i <> j && generates_nonempty_word symbol
+        in
+        yield gnw nt'
   let successors yield nt =
     labeled_successors (fun _gnw nt' -> yield nt') nt
 end
 
-(* We now compute the strongly connected components of the reference graph
-   described above. If a component contains an edge labeled [true], then every
+(* Then, we compute the strongly connected components of the reference
+   graph. If a component contains an edge labeled [true], then every
    nonterminal symbol in this component can generate words of unbounded
    length. Mark these symbols in an array [unbounded]. (This computation is
    performed only when needed.) *)
 
 let unbounded : bool array Lazy.t =
-  lazy begin
+  lazy (
     let unbounded = Array.make Nonterminal.n false in
     let module T = Fix.SCC.Run(G) in
-    (* For each edge of [nt] to [nt'] labeled [gnw], *)
-    G.iter begin fun nt ->
-      nt |> G.labeled_successors begin fun gnw nt' ->
-        (* If [gnw] is set and if [nt] and [nt'] lie in the same component, *)
-        if gnw && T.representative nt = T.representative nt' then begin
-          (* Then mark every symbol in this component as unbounded. *)
-          T.scc (T.representative nt) |> List.iter begin fun nt ->
-            unbounded.(nt) <- true
-          end
-        end
-      end
-    end;
+    let () =
+      (* For each edge of [nt] to [nt'] labeled [gnw], *)
+      G.iter @@ fun nt ->
+      nt |> G.labeled_successors @@ fun gnw nt' ->
+      (* If [gnw] is set and if [nt] and [nt'] lie in the same component, *)
+      if gnw && T.representative nt = T.representative nt' then
+        (* Then mark every symbol in this component as unbounded. *)
+        T.scc (T.representative nt) |> List.iter @@ fun nt ->
+        unbounded.(nt) <- true
+    in
     unbounded
-  end
+  )
 
 let unbounded nt : bool =
   (Lazy.force unbounded).(nt)
 
-(* We can finally perform a least fixed point computation, in the lattice
-   [NatMaxInfinity], to find out what is the maximum length of a word
-   generated by each nonterminal symbol. Such a computation normally would not
-   terminate, as the lattice has unbounded height: a cycle of strictly
-   positive weight in the grammar will cause an endless climb. However, we
-   have just identified the symbols that participate in these cycles: they are
-   the symbols [nt] such that [unbounded nt] is [true]. We use the [shortcut]
-   function to set these symbols directly to [infinity]. The cycles that may
-   remain in the grammar must have zero weight and cannot cause divergence.
-   The fixed point computation must therefore terminate and yield the desired
+(* -------------------------------------------------------------------------- *)
+
+(* For every nonterminal symbol [nt], we wish to compute the maximum length of
+   a word generated by [nt]. This length can be either finite or [infty]. *)
+
+(* In this analysis, we assume that every symbol generates a nonempty
+   language. This removes the need to watch out for productions whose right
+   hand side is empty (which we would have to ignore). If this assumption is
+   violated then MAXIMAL can produce an over-estimation.
+
+   A similar assumption is made in the computation of FIRST sets above. *)
+
+(* To find out the maximum length of a word generated by each nonterminal
+   symbol [nt], we perform a least fixed point computation in the lattice
+   [NatMaxInfinity]. Such a computation normally would not terminate, as the
+   lattice has unbounded height: a cycle of strictly positive weight in the
+   grammar will cause an endless climb. However, we have just identified the
+   symbols that participate in these cycles: they are the symbols [nt] such
+   that [unbounded nt] is [true]. We use the [shortcut] function to set
+   these symbols directly to [infinity]. The cycles that may remain in the
+   grammar must have zero weight and cannot cause divergence. The fixed
+   point computation must therefore terminate and yield the desired
    information. *)
 
 module MAXIMAL =
@@ -1172,9 +1178,9 @@ module MAXIMAL =
       let epsilon = bottom
       (* The productions that contain [error] are ignored. *)
       let ignore_error_productions = true
-     end)
+    end)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Compute FOLLOW sets. Unnecessary for us, but requested by a user. Also,
    this is useful for the SLR(1) test. Thus, we perform this analysis only
    on demand. *)
@@ -1295,7 +1301,7 @@ let tfollow : TerminalSet.t array Lazy.t =
 let tfollow t =
   (Lazy.force tfollow).(t)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Compute symbolic FIRST and FOLLOW sets. *)
 
 (* The symbolic FIRST set of the word determined by [prod/i] is defined
@@ -1333,7 +1339,7 @@ let sfollow : Nonterminal.t -> SymbolSet.t =
   end) in
   F.follow
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Provide explanations about FIRST sets. *)
 
 (* The idea is to explain why a certain token appears in the FIRST set
@@ -1388,7 +1394,7 @@ let rec convert = function
         (if e = "" then "" else " and ")
         e
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Package the analysis results. *)
 
 module Analysis = struct
@@ -1458,7 +1464,7 @@ module Analysis = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* %on_error_reduce declarations. *)
 
 module OnErrorReduce = struct
@@ -1524,7 +1530,7 @@ module OnErrorReduce = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Facilities for printing sentences. *)
 
 module Sentence = struct
@@ -1563,6 +1569,6 @@ module Sentence = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 end (* module Make *)
