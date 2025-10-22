@@ -1181,9 +1181,10 @@ module MAXIMAL =
     end)
 
 (* -------------------------------------------------------------------------- *)
-(* Compute FOLLOW sets. Unnecessary for us, but requested by a user. Also,
-   this is useful for the SLR(1) test. Thus, we perform this analysis only
-   on demand. *)
+
+(* Computing FOLLOW or symbolic FOLLOW sets is mostly unnecessary for us,
+   but a user has requested this analysis. Also, FOLLOW sets happen to be
+   useful in the SLR(1) test. *)
 
 (* The computation of the symbolic FOLLOW sets follows exactly the same
    pattern as that of the traditional FOLLOW sets. We share code and
@@ -1201,7 +1202,7 @@ end) = struct
     Fix.Glue.ArraysAsImperativeMaps(Nonterminal)
 
   module S =
-    FixSolver.Make(M)(P)
+    FixSolver.Make(M)(P)()
 
   (* Build a system of constraints. *)
 

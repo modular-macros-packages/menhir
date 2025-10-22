@@ -322,7 +322,7 @@ module TrackPositions () : sig
 end = struct
 
 module F =
-  FixSolver.Make(M)(Fix.Prop.Boolean)
+  FixSolver.Make(M)(Fix.Prop.Boolean)()
 
 let () =
 

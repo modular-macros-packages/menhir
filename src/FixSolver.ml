@@ -8,10 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Make
-(M : Fix.IMPERATIVE_MAPS)
-(P : Fix.MINIMAL_SEMI_LATTICE)
-= struct
+module Make (M : Fix.IMPERATIVE_MAPS) (P : Fix.MINIMAL_SEMI_LATTICE) () = struct
 
   type variable =
     M.key
@@ -39,11 +36,14 @@ module Make
     M.create()
 
   let record_ConVar p y =
-    match M.find y lower with
-    | exception Not_found ->
-        M.add y p lower
-    | q ->
-        M.add y (join p q) lower
+    let p' =
+      match M.find y lower with
+      | exception Not_found ->
+          p
+      | q ->
+          join p q
+    in
+    M.add y p' lower
 
   (* Running the analysis. *)
 

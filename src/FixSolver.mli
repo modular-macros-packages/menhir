@@ -8,12 +8,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module offers a solver of inequalities of the form [p ≤ y] or [x ≤ y]
+   over a lattice of properties. It offers a thin layer of comfort on top of
+   [Fix.DataFlow]. *)
+
 open Fix
 
-module Make
-(M : IMPERATIVE_MAPS)
-(P : MINIMAL_SEMI_LATTICE)
-: sig
+(**When [Make] is applied, a constraint collection phase begins. *)
+module Make (M : IMPERATIVE_MAPS) (P : MINIMAL_SEMI_LATTICE) () : sig
 
   type variable =
     M.key
@@ -21,18 +23,18 @@ module Make
   type property =
     P.property
 
-  (* [record_ConVar x y] records an inequality between a constant and
-     a variable. *)
-
+  (**[record_ConVar p y] records an inequality [p ≤ y] between the
+     constant [p] and the variable [y]. *)
   val record_ConVar: property -> variable -> unit
 
-  (* [record_VarVar x y] records an inequality between two variables. *)
-
+  (**[record_VarVar x y] records an inequality [x ≤ y] between the
+     variable [x] and the variable [y]. *)
   val record_VarVar: variable -> variable -> unit
 
-  (* The functor [Solve] computes the least solution of the
-     constraints. The value [None] represents bottom. *)
-
+  (**When [Solve] is applied, the constraint collection phase ends, and
+     the least solution of the constraints is computed. The function
+     [solution] has type [variable -> property option]. The value [None]
+     represents bottom. *)
   module Solve () :
     SOLUTION
     with type variable = variable
