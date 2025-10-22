@@ -518,17 +518,16 @@ module SymbolMap = struct
 end
 
 (* ------------------------------------------------------------------------ *)
+
 (* Productions. *)
 
 module Production = struct
 
   type index =
       int
+  type t = index
 
-  let compare =
-    (-)
-
-  (* A new production S' -> S is created for every start symbol S.
+  (* For every start symbol [S], a new production S' -> S is created.
      It is known as a start production. *)
 
   (* Count how many productions we have, including the start productions.
@@ -558,9 +557,9 @@ module Production = struct
      of the positions (in the .mly file) of the elements of the right-hand
      side. [rhs_attributes] maps a production to an array of the attributes
      attached to the elements of the right-hand side. [prec_decl] maps a
-     production to an optional [%prec] annotation. [production_level] maps
-     a production to a production level (see [ParserAux]). [attributes]
-     maps a production to the list of its attributes. *)
+     production to an optional [%prec] annotation. [production_level] maps a
+     production to a production level. [attributes] maps a production to the
+     list of its attributes. *)
 
   let table : (Nonterminal.t * Symbol.t array) array =
     Array.make n (-1, [||])
@@ -601,12 +600,11 @@ module Production = struct
     ref false
 
   (* Create the start productions, populating the above arrays as appropriate.
-     [start] is the number of start productions, therefore also the index of the
-     first non-start production. [startprods] is a mapping of the start symbols
-     to the corresponding start productions. *)
+     [start] is the number of start productions, therefore also the index of
+     the first non-start production. [startprods] is a mapping of the start
+     symbols to the corresponding start productions. *)
 
-  let (start : int),
-      (startprods : index NonterminalMap.t) =
+  let (start : int), (startprods : index NonterminalMap.t) =
     StringSet.fold (fun nonterminal (k, startprods) ->
       let nt = Nonterminal.lookup nonterminal
       and nt' = Nonterminal.lookup (nonterminal ^ "'") in
@@ -619,6 +617,15 @@ module Production = struct
       NonterminalMap.add nt k startprods
     ) grammar.start_symbols (0, NonterminalMap.empty)
 
+  let[@inline] is_start prod =
+    prod < start
+
+  let start_production nt =
+    try
+      NonterminalMap.find nt startprods
+    with Not_found ->
+      assert false (* [nt] is not a start symbol *)
+
   (* Create the non-start productions, populating the above arrays. *)
 
   let prod_symbol producer =
@@ -626,7 +633,7 @@ module Production = struct
 
   let (_ : int) = StringMap.fold (fun nonterminal { branches } k ->
     let nt = Nonterminal.lookup nonterminal in
-    let k' = List.fold_left (fun k branch ->
+    let k' = MList.accumulate k branches @@ fun k branch ->
       let producers = Array.of_list branch.producers in
       let rhs = Array.map prod_symbol producers in
       table.(k) <- (nt, rhs);
@@ -640,18 +647,111 @@ module Production = struct
       if not (MArray.for_all Symbol.non_error rhs) then
         grammar_uses_error_token := true;
       k+1
-    ) k branches in
+    in
     ntprods.(nt) <- (k, k');
     k'
   ) grammar.rules start
 
-  let prec_decl k =
+  (* Accessors. *)
+
+  let[@inline] def prod =
+    table.(prod)
+
+  let[@inline] nt prod =
+    let nt, _ = table.(prod) in
+    nt
+
+  let[@inline] rhs prod =
+    let _, rhs = table.(prod) in
+    rhs
+
+  let[@inline] length prod =
+    Array.length (rhs prod)
+
+  let[@inline] identifiers prod =
+    identifiers.(prod)
+
+  let action prod =
+    match actions.(prod) with
+    | Some action ->
+        action
+    | None ->
+        (* Start productions have no action. *)
+        assert (is_start prod);
+        assert false
+
+  let[@inline] positions prod =
+    positions.(prod)
+
+  let[@inline] attributes prod =
+    attributes.(prod)
+
+  let[@inline] rhs_attributes prod =
+    rhs_attributes.(prod)
+
+  let[@inline] prec_decl k =
     prec_decl.(k)
 
-  let production_level k =
+  let[@inline] production_level k =
     production_level.(k)
 
-  (* Iteration over the productions associated with a specific nonterminal. *)
+  let classify prod =
+    if is_start prod then
+      match (rhs prod).(0) with
+      | Symbol.N nt ->
+          Some nt
+      | Symbol.T _ ->
+          assert false
+    else
+      None
+
+  let error_free prod =
+    MArray.for_all Symbol.non_error (rhs prod)
+
+  (* Printing a production. *)
+
+  let print prod =
+    assert (not (is_start prod));
+    let nt, rhs = table.(prod) in
+    let nt = Nonterminal.print false nt in
+    if Array.length rhs = 0 then
+      (* Avoid producing a trailing space. *)
+      Printf.sprintf "%s ->" nt
+    else
+      Printf.sprintf "%s -> %s" nt
+        (Symbol.print_subarray false 0 rhs)
+
+  let describe gerund prod =
+    match classify prod with
+    | Some nt ->
+        let ending = if gerund then "ing" else "" in
+        Printf.sprintf "accept%s %s" ending (Nonterminal.print false nt)
+    | None ->
+        let ending = if gerund then "ing" else "e" in
+        Printf.sprintf "reduc%s production %s" ending (print prod)
+
+  (* Iteration. *)
+
+  let init f =
+    Array.init n f
+
+  let[@inline] iter f =
+    MInt.iteri n f
+
+  let[@inline] fold f accu =
+    MInt.foldi n f accu
+
+  let[@inline] map f =
+    MInt.mapi n f
+
+  let[@inline] iterx f =
+    MInt.iterij start n f
+
+  let[@inline] foldx f accu =
+    MInt.foldij start n f accu
+
+  let[@inline] mapx f =
+    MInt.mapij start n f
 
   let[@inline] iternt nt f =
     let k, k' = ntprods.(nt) in
@@ -669,121 +769,8 @@ module Production = struct
     let k, k' = ntprods.(nt) in
     MInt.foldij_lazy k k' f accu
 
-  (* Accessors. *)
-
-  let def prod =
-    table.(prod)
-
-  let nt prod =
-    let nt, _ = table.(prod) in
-    nt
-
-  let rhs prod =
-    let _, rhs = table.(prod) in
-    rhs
-
-  let length prod =
-    Array.length (rhs prod)
-
-  let identifiers prod =
-    identifiers.(prod)
-
-  let is_start prod =
-    prod < start
-
-  let classify prod =
-    if is_start prod then
-      match (rhs prod).(0) with
-      | Symbol.N nt ->
-          Some nt
-      | Symbol.T _ ->
-          assert false
-    else
-      None
-
-  let action prod =
-    match actions.(prod) with
-    | Some action ->
-        action
-    | None ->
-        (* Start productions have no action. *)
-        assert (is_start prod);
-        assert false
-
-  let positions prod =
-    positions.(prod)
-
-  let attributes prod =
-    attributes.(prod)
-
-  let rhs_attributes prod =
-    rhs_attributes.(prod)
-
-  let startsymbol2startprod nt =
-    try
-      NonterminalMap.find nt startprods
-    with Not_found ->
-      assert false (* [nt] is not a start symbol *)
-
-  let error_free prod =
-    MArray.for_all Symbol.non_error (rhs prod)
-
-  (* Iteration. *)
-
-  let init f =
-    Array.init n f
-
-  let[@inline] iter f =
-    MInt.iteri n f
-
-  let[@inline] fold f accu =
-    MInt.foldi n f accu
-
-  let[@inline] map f =
-    MInt.mapi n f
-
-  let[@inline] amap f =
-    Array.init n f
-
-  let[@inline] iterx f =
-    MInt.iterij start n f
-
-  let[@inline] foldx f accu =
-    MInt.foldij start n f accu
-
-  let[@inline] mapx f =
-    MInt.mapij start n f
-
-  (* Printing a production. *)
-
-  let print prod =
-    assert (not (is_start prod));
-    let nt, rhs = table.(prod) in
-    if Array.length rhs = 0 then
-      (* Avoid producing a trailing space. *)
-      Printf.sprintf "%s ->"
-        (Nonterminal.print false nt)
-    else
-      Printf.sprintf "%s -> %s"
-        (Nonterminal.print false nt)
-        (Symbol.print_subarray false 0 rhs)
-
-  let describe gerund prod =
-    match classify prod with
-    | Some nt ->
-        let ending = if gerund then "ing" else "" in
-        Printf.sprintf "accept%s %s" ending (Nonterminal.print false nt)
-    | None ->
-        let ending = if gerund then "ing" else "e" in
-        Printf.sprintf "reduc%s production %s" ending (print prod)
-
-  (* Tabulation and sum. *)
-
   let[@inline] tabulate f =
     MArray.tabulate n f
-
-  let[@inline] sum f =
-    MInt.sum n f
 
 end
 

@@ -608,7 +608,7 @@ let lhs =
   define_and_measure (
     "lhs",
     marshal1 (
-      Production.amap (fun prod ->
+      Production.init (fun prod ->
         Nonterminal.n2i (Production.nt prod)
       )
     )
@@ -899,7 +899,7 @@ let lr0_incoming () =
 let rhs () =
   assert Settings.inspection;
   let productions : int array array =
-    Production.amap (fun prod ->
+    Production.init (fun prod ->
       Array.map encode_symbol (Production.rhs prod)
     )
   in

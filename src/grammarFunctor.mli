@@ -425,148 +425,147 @@ end
 
 module Production : sig
 
-  (* This is the type of productions. This includes user-defined
-     productions as well as the internally generated productions
-     associated with the start symbols. *)
+  (**The type of productions includes the user-defined productions as
+     well as the internally generated productions associated with the
+     start symbols.
 
+     A production is internally represented as a small nonnegative
+     integer. Two conversion functions exist. They are exploited in
+     the encoding of items. They are considered unsafe and should
+     be used as little as possible. *)
   type index
+  type t = index
 
-  (* Comparison. *)
-
-  val compare: index -> index -> int
-
-  (* Productions can be converted to integers and back. This is unsafe
-     and should be avoided as much as possible. This feature is
-     exploited, for efficiency, in the encoding of items. *)
-
-  val p2i: index -> int
-  val i2p: int -> index
-
-  (* The number of productions. *)
-
+  (**[n] is the total number of productions, including the start
+     productions. *)
   val n: int
 
-  (* These map a production index to the production's definition, that
-     is, a nonterminal (the left-hand side) and an array of symbols
-     (the right-hand side). *)
+  (**[p2i] converts a production to an integer in the range [\[0, n)]. *)
+  val p2i: t -> int
 
-  val def: index -> Nonterminal.t * Symbol.t array
-  val nt: index -> Nonterminal.t
-  val rhs: index -> Symbol.t array
-  val length: index -> int
+  (**[i2p] converts an integer in the range [\[0, n)] to a production. This
+     function is {b unsafe} and should be used as little as possible. *)
+  val i2p: int -> t
 
-  (* This maps a production index to an array of the identifiers that
-     should be used for naming the semantic values of the symbols in
-     the right-hand side. *)
-
-  val identifiers: index -> Syntax.identifier array
-
-  (* This maps a production index to the production's semantic action.
-     This function is not applicable to a start production. *)
-
-  val action: index -> Syntax.action
-
-  (* [positions prod] is a list of the positions associated with
-     production [prod]. This is usually a singleton list, but there
-     can be more than one position for start productions when the
-     definition of the corresponding start symbol is split over
-     multiple files. *)
-
-  val positions: index -> ranges
-
-  (* [rhs_attributes prod] returns an array of the attributes attached with
-     each element in the right-hand side of the production [prod]. *)
-
-  val rhs_attributes: index -> attributes array
-
-  (* [prec_decl prod] returns the optional %prec annotation carried by the
-     production [prod]. This information plays a role in the resolution of
-     shift/reduce conflicts. *)
-  val prec_decl : index -> symbol located option
-
-  (* [production_level prod] returns the production level of the production
-     [prod]. This information plays a role in the resolution of reduce/reduce
-     conflicts. *)
-
-  val production_level : index -> production_level
-
-  (* [attributes prod] is the list of attributes attached with the
-     production [prod]. *)
-
-  val attributes: index -> attributes
-
-  (* Creation of a table indexed by productions. *)
-
-  val init: (index -> 'a) -> 'a array
-
-  (* Iteration over all productions. The order in which elements
-     are examined, and the order of [map]'s output list, correspond
-     to the numeric indices produced by [p2i] above. *)
-
-  val iter: (index -> unit) -> unit
-  val fold: (index -> 'a -> 'a) -> 'a -> 'a
-  val map: (index -> 'a) -> 'a list
-  val amap: (index -> 'a) -> 'a array
-
-  (* Iteration over all productions, except the start productions. *)
-
-  val iterx: (index -> unit) -> unit
-  val foldx: (index -> 'a -> 'a) -> 'a -> 'a
-  val mapx: (index -> 'a) -> 'a list
-
-  (* This maps a (user) non-terminal start symbol to the corresponding
-     start production. *)
-
-  val startsymbol2startprod: Nonterminal.t -> index
-
-  (* Iteration over the productions associated with a specific
-     nonterminal. *)
-
-  val iternt: Nonterminal.t -> (index -> unit) -> unit
-  val foldnt: Nonterminal.t -> (index -> 'a -> 'a) -> 'a -> 'a
-  val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
-
-  (* This allows determining whether a production is a start
-     production. If it is a start production, the start symbol that it
-     is associated with is returned. If it is a regular production,
-     nothing is returned. *)
-
-  val classify: index -> Nonterminal.t option
-
-  (* [is_start] is easier to use than [classify] when the start symbol
-     is not needed. *)
-
-  val is_start: index -> bool
-
-  (* The integer [start] is published so as to allow the table back-end
+  (**The integer index [start] is published so as to allow the table back-end
      to produce code for [is_start]. It should not be used otherwise. *)
-
   val start: int
 
-  (* [error_free prod] returns [true] if the right-hand side of the
-     production [prod] does *not* contain the [error] token. *)
+  (**[start_production nt] is the start production associated with the (user)
+     nonterminal symbol [nt]. *)
+  val start_production: Nonterminal.t -> t
 
-  val error_free: index -> bool
+  (**The definition of a production consists of a nonterminal symbol (the
+     left-hand side) and an array of symbols (the right-hand side). *)
 
-  (* This produces a string representation of a production. It should
-     never be applied to a start production, as we do not wish users
-     to become aware of the existence of these extra productions. *)
+  (**[def prod] returns the definition of the production [prod]. *)
+  val def: t -> Nonterminal.t * Symbol.t array
 
-  val print: index -> string
+  (**[nt prod] returns the left-hand side of the production [prod]. *)
+  val nt: t -> Nonterminal.t
 
-  (* This produces a representation of a production as a string of the form
-     "accepting <nt>" or "reducing <nt> -> <rhs>". The Boolean flag [gerund]
-     allows choosing between gerund and infinitive forms. *)
+  (**[rhs prod] returns the right-hand side of the production [prod]. *)
+  val rhs: t -> Symbol.t array
 
-  val describe: bool -> index -> string
+  (**[length prod] returns the length of the production [prod].
+     It is equivalent to [Array.length (rhs prod)]. *)
+  val length: t -> int
 
-  (* Tabulation of a function over productions. *)
+  (**[identifiers prod] returns an array of the identifiers that should be used
+     to name the semantic values of the symbols in the right-hand side of the
+     production [prod]. The length of this array is [length prod]. *)
+  val identifiers: t -> identifier array
 
-  val tabulate: (index -> 'a) -> (index -> 'a)
+  (**[action prod] returns the semantic action associated with the production
+     [prod]. [prod] must not be a start production. *)
+  val action: t -> action
 
-  (* Sum of an integer function over productions. *)
+  (**[positions prod] is a list of the positions associated with the
+     production [prod]. This is usually a singleton list. A start production
+     can have more than one position if the definition of the corresponding
+     start symbol is split over multiple files. *)
+  val positions: t -> ranges
 
-  val sum: (index -> int) -> int
+  (**[attributes prod] are the attributes attached with the production
+     [prod]. *)
+  val attributes: t -> attributes
+
+  (**[rhs_attributes prod] is an array of the attributes attached with each
+     element in the right-hand side of the production [prod]. *)
+  val rhs_attributes: t -> attributes array
+
+  (**[prec_decl prod] is the optional %prec annotation carried by the
+     production [prod]. This information plays a role in the resolution of
+     shift/reduce conflicts. *)
+  val prec_decl : t -> symbol located option
+
+  (**[production_level prod] is the production level of the production [prod].
+     This information plays a role in the resolution of reduce/reduce
+     conflicts. *)
+  val production_level : t -> production_level
+
+  (**[is_start prod] determines whether the production [prod] is a start
+     production. *)
+  val is_start: t -> bool
+
+  (**[classify prod ] determines whether the production [prod] is a start
+     production. If it is a start production, then the start symbol that this
+     production is associated with is returned. If it is a regular production,
+     nothing is returned. *)
+  val classify: t -> Nonterminal.t option
+
+  (**[error_free prod] returns [true] if the right-hand side of the
+     production [prod] does {i not} contain the [error] token. *)
+  val error_free: t -> bool
+
+  (**[print prod] is a string representation of the production [prod]. It
+     must not be applied to a start production, because we do not wish
+     users to become aware of the existence of these extra productions. *)
+  val print: t -> string
+
+  (**[describe prod] is a representation of the production [prod] as a string
+     of the form "accepting <nt>" or "reducing <nt> -> <rhs>". The Boolean
+     flag [gerund] allows choosing between gerund and infinitive forms. *)
+  val describe: bool -> t -> string
+
+  (**In every iteration function, the order in which elements are yielded
+     corresponds to the integer indices produced by {!p2i}. *)
+
+  (**[init f] initializes a fresh array, which is indexed by the productions.
+     In other words, [init] tabulates a function [f] whose domain is the
+     productions, producing a table. *)
+  val init: (t -> 'a) -> 'a array
+
+  (**[iter] enumerates the productions. *)
+  val iter: (t -> unit) -> unit
+
+  (**[fold] enumerates the productions. *)
+  val fold: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map] enumerates the productions. *)
+  val map: (t -> 'a) -> 'a list
+
+  (**[iterx] enumerates the productions except the start productions. *)
+  val iterx: (t -> unit) -> unit
+
+  (**[foldx] enumerates the productions except the start productions. *)
+  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[mapx] enumerates the productions except the start productions. *)
+  val mapx: (t -> 'a) -> 'a list
+
+  (**[iternt] enumerates the productions of the nonterminal symbol [nt]. *)
+  val iternt: Nonterminal.t -> (t -> unit) -> unit
+
+  (**[foldnt] enumerates the productions of the nonterminal symbol [nt]. *)
+  val foldnt: Nonterminal.t -> (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[mapnt] enumerates the productions of the nonterminal symbol [nt]. *)
+  val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+
+  (**[tabulate] tabulates a function [f] whose domain is the productions,
+     producing a new function whose time complexity is O(1). *)
+  val tabulate: (t -> 'a) -> (t -> 'a)
 
 end
 
@@ -576,11 +575,11 @@ end
 
 module ProductionMap : sig
 
-  include API.MAP with type key = Production.index
+  include API.MAP with type key = Production.t
 
   (* Iteration over the start productions only. *)
 
-  val start: (Production.index -> 'a) -> 'a t
+  val start: (Production.t -> 'a) -> 'a t
 
 end
 
@@ -618,14 +617,14 @@ module Analysis : sig
      as its FIRST set. The offset [i] must be contained between [0] and
      [n], inclusive, where [n] is the length of production [prod]. *)
 
-  val nullable_first_prod: Production.index -> int -> bool * TerminalSet.t
+  val nullable_first_prod: Production.t -> int -> bool * TerminalSet.t
 
   (* [first_prod_lookahead prod i t] computes [FIRST(alpha.t)], where [alpha]
      is the suffix of the production defined by offset [i], and [t] is a
      terminal symbol. The offset [i] must be contained between [0] and [n],
      inclusive, where [n] is the length of production [prod]. *)
 
-  val first_prod_lookahead: Production.index -> int -> Terminal.t -> TerminalSet.t
+  val first_prod_lookahead: Production.t -> int -> Terminal.t -> TerminalSet.t
 
   (* [explain_first_rhs tok rhs i] explains why the token [tok] appears
      in the FIRST set for the string of symbols found at offset [i] in
@@ -656,7 +655,7 @@ module Analysis : sig
      the suffix of the production [prod] defined by the offset [i]. Any
      productions whose right-hand side mentions the [error] token are
      ignored in this computation. *)
-  val minimal_prod: Production.index -> int -> int
+  val minimal_prod: Production.t -> int -> int
 
   (**[maximal nt] is the maximal size of a sentence generated by the
      nonterminal symbol [nt]. An unbounded maximal size is represented by
@@ -671,7 +670,7 @@ module Analysis : sig
      the suffix of the production [prod] defined by the offset [i]. Any
      productions whose right-hand side mentions the [error] token are
      ignored in this computation. *)
-  val maximal_prod: Production.index -> int -> int
+  val maximal_prod: Production.t -> int -> int
 
 end
 
@@ -683,7 +682,7 @@ module OnErrorReduce : sig
   (* [reduce prod] tells whether the left-hand side of [prod] (a nonterminal
      symbol) appears in an [%on_error_reduce] declaration. *)
 
-  val reduce: Production.index -> bool
+  val reduce: Production.t -> bool
 
   (* [iter f] applies the function [f] in turn, in an arbitrary order, to
      every nonterminal symbol that appears in an [%on_error_reduce]
@@ -696,7 +695,7 @@ module OnErrorReduce : sig
      [preferable], to test if one of them takes precedence over the other.
      This is a partial order; two productions may be incomparable. *)
 
-  val preferable: Production.index -> Production.index -> bool
+  val preferable: Production.t -> Production.t -> bool
 
 end
 
