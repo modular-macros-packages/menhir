@@ -20,7 +20,7 @@ module Make (E : sig
 
 end) : sig
 
-  (**[test] accepts a parameterized grammar, where all parameters must have
+  (**[check] accepts a parameterized grammar, where all parameters must have
      sort [*]. (Parameters of higher sort must be eliminated prior to running
      this test: see [SelectiveExpansion].) The test succeeds if and only if
      the expansion of this grammar is safe, that is, expansion terminates. *)
