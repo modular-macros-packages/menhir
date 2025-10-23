@@ -14,8 +14,6 @@ type sw = subject * where
 open Attribute
 open PlainSyntax
 open PlainSyntaxAccessors
-let drop = MList.drop
-let take = MList.take
 
 module Make (E : sig
 
@@ -37,17 +35,18 @@ open E
 
 (* -------------------------------------------------------------------------- *)
 
-(* [names producers] is the set of names of the producers [producers]. The
-   name of a producer is the OCaml variable that is used to name its semantic
-   value. *)
+(* [names producers] is the set of names of the producers [producers].
+   The name of a producer is the OCaml variable that is used to name
+   its semantic value. *)
 
 let names producers =
   producers |> List.map prod_id |> StringSet.of_list
 
 (* -------------------------------------------------------------------------- *)
 
-(* [is_inline_symbol grammar symbol] tells whether [symbol] is a nonterminal
-   symbol (as opposed to a terminal symbol) and is marked %inline. *)
+(* [is_inline_symbol grammar symbol] determines whether [symbol] is a
+   nonterminal symbol (as opposed to a terminal symbol) and is marked
+   %inline. *)
 
 let is_inline_symbol grammar symbol : bool =
   match StringMap.find symbol grammar.rules with
@@ -58,31 +57,25 @@ let is_inline_symbol grammar symbol : bool =
       (* This is a terminal symbol. *)
       false
 
-(* [is_inline_symbol grammar producer] tells whether [producer] represents a
-   nonterminal symbol (as opposed to a terminal) and is marked %inline. *)
+(* [is_inline_symbol grammar producer] tells whether [producer] represents
+   a nonterminal symbol (as opposed to a terminal symbol) and is marked
+   %inline. *)
 
 let is_inline_producer grammar producer =
   is_inline_symbol grammar producer.prod_symbol
 
 (* -------------------------------------------------------------------------- *)
 
-(* [search p i xs] searches the list [xs] for an element [x] that satisfies [p].
-   If successful, then it returns a pair of: - [i] plus the offset of [x] in the
-   list, and - the element [x]. *)
+(* [search p i xs] searches the list [xs] for an element [x] that satisfies
+   the predicate [p]. The search begins at index [i] in the list. If it
+   succeeds then it returns a pair of the index of [x] in the list [xs] and
+   the element [x] itself. *)
 
-let rec search (p : 'a -> bool) (i : int) (xs : 'a list) : (int * 'a) option =
-  match xs with
-  | [] ->
-      None
-  | x :: xs ->
-      if p x then Some (i, x) else search p (i+1) xs
-
-(* [search_at p i xs] searches the list [xs] for an element [x] that satisfies
-   [p]. The search begins at index [i] in the list. If successful, then it
-   returns a pair of: - the offset of [x] in the list, and - the element [x]. *)
-
-let search_at p i xs =
-  search p i (drop i xs)
+let search p i xs : (int * 'a) option =
+  xs
+  |> MList.index
+  |> MList.drop i
+  |> MList.find_opt (fun (_, x) -> p x)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -98,10 +91,9 @@ let find grammar symbol : rule =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [check_no_prod_attributes] checks that a producer, which represents a
-   use site of an %inline symbol, does not carry any attributes. This ensures
-   that we need not worry about propagating producer attributes through
-   inlining. *)
+(* [check_no_prod_attributes] checks that a producer, which represents a use
+   site of an %inline symbol, does not carry any attributes. This ensures that
+   we need not worry about propagating producer attributes through inlining.  *)
 
 let check_no_prod_attributes producer =
   match producer.prod_attributes with
@@ -173,28 +165,26 @@ let inline_attributes (caller : branch) (callee : branch) : attributes =
    host production does not already have a %prec annotation. *)
 
 let check_prec_inline caller producer nsuffix callee =
-  callee.prec_annotation |> Option.iter (fun callee_prec ->
-    (* The callee has a %prec annotation. *)
-    (* Check condition 1. *)
-    if nsuffix > 0 then begin
-      let symbol = producer.prod_symbol in
-      error [ position callee_prec; caller.branch_position ]
-        "this production carries a %%prec annotation,\n\
-         and the nonterminal symbol %s is marked %%inline.\n\
-         For this reason, %s can be used only in tail position."
-        symbol symbol
-    end;
-    (* Check condition 2. *)
-    caller.prec_annotation |> Option.iter (fun caller_prec ->
-      let symbol = producer.prod_symbol in
-      error [ position callee_prec; position caller_prec ]
-        "this production carries a %%prec annotation,\n\
-         and the nonterminal symbol %s is marked %%inline.\n\
-         For this reason, %s cannot be used in a production\n\
-         which itself carries a %%prec annotation."
-        symbol symbol
-    )
-  )
+  callee.prec_annotation |> Option.iter @@ fun callee_prec ->
+  (* The callee has a %prec annotation. *)
+  (* Check condition 1. *)
+  if nsuffix > 0 then begin
+    let symbol = producer.prod_symbol in
+    error [ position callee_prec; caller.branch_position ]
+      "this production carries a %%prec annotation,\n\
+       and the nonterminal symbol %s is marked %%inline.\n\
+       For this reason, %s can be used only in tail position."
+      symbol symbol
+  end;
+  (* Check condition 2. *)
+  caller.prec_annotation |> Option.iter @@ fun caller_prec ->
+  let symbol = producer.prod_symbol in
+  error [ position callee_prec; position caller_prec ]
+    "this production carries a %%prec annotation,\n\
+     and the nonterminal symbol %s is marked %%inline.\n\
+     For this reason, %s cannot be used in a production\n\
+     which itself carries a %%prec annotation."
+    symbol symbol
 
 (* -------------------------------------------------------------------------- *)
 
@@ -406,8 +396,8 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
 
   (* Construct the prefix and suffix. *)
 
-  let prefix = take nprefix caller.producers
-  and suffix = drop (nprefix + 1) caller.producers in
+  let prefix = MList.take nprefix caller.producers
+  and suffix = MList.drop (nprefix + 1) caller.producers in
 
   (* Apply the (undocumented) restrictions that concern the interaction
      between %prec and %inline. Then, (possibly) propagate a %prec
@@ -489,7 +479,7 @@ let inline_branches caller site (callees : branches) : branches =
    work, we memoize [expand_symbol]. Thus, the expansion of each symbol is
    computed at most once. (Expansions are demanded top-down, but are computed
    bottom-up.) Memoization is implemented without pain by using a ready-made
-   fixed point combinator, [Memoize.defensive_fix]. Furthermore, this find
+   fixed point combinator, [Memoize.defensive_fix]. Furthermore, this fixed
    point combinator dynamically detects cycles of %inline nonterminal symbols,
    allowing us to avoid divergence and display a nice error message. *)
 
@@ -519,7 +509,7 @@ module Inline (G : sig val grammar: grammar end) = struct
       (* Search for an inlining site in the branch [caller]. We begin the
          search at position [i], as we know that every inlining site left
          of this position has been dealt with already. *)
-      match search_at is_inline_producer i caller.producers with
+      match search is_inline_producer i caller.producers with
       | None ->
           (* There is none; we are done. *)
           MList.return caller
