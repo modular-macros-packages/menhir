@@ -1,0 +1,28 @@
+;; The library Middle is built here.
+
+;; This library is internal; a user of Menhir should not be aware of
+;; its existence. It collects the modules that form Menhir's middle-end.
+
+(library
+  (name middle)
+  (libraries
+    base
+    front
+    menhirSdk
+  )
+  (flags :standard -open Base -open Front -open MenhirSdk)
+)
+
+;; Explicitly enable warnings during development
+;; and disable assertions in releases.
+
+(env
+  (dev (flags
+    :standard
+    -g
+    -w @1..74-4-44-67-70
+  ))
+  (release (flags
+    :standard -noassert
+  ))
+)

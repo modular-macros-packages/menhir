@@ -11,7 +11,7 @@
 (* This module runs the grammar functor on the grammar produced by the
    front-end. *)
 
-module  G = GrammarFunctor.Make(Front)()
+module  G = GrammarView.Make(Front)()
 include G
 
 module Precedence =

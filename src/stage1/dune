@@ -17,8 +17,9 @@
     unix
     base
     front
+    middle
     menhirLib
     menhirSdk
   )
-  (flags :standard -open Base -open MenhirSdk -open Front)
+  (flags :standard -open Base -open MenhirSdk -open Front -open Middle)
 )

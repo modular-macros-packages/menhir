@@ -53,11 +53,12 @@
   (libraries
     base
     front
+    middle
     unix
     menhirLib
     menhirSdk
   )
-  (flags :standard -open Base -open MenhirSdk -open Front)
+  (flags :standard -open Base -open MenhirSdk -open Front -open Middle)
   (link_deps (alias bootstrap))
 )
 

@@ -226,7 +226,7 @@ let expand_action analysis producers action =
    is used to optimize the expansion of $symbolstartpos. *)
 
 let analysis grammar =
-  let module G = GrammarFunctor.Make(struct
+  let module G = GrammarView.Make(struct
     let grammar = grammar
   end)() in
   let lookup (nt : Syntax.symbol) : G.Symbol.t =

@@ -534,8 +534,8 @@ module Production = struct
      This is [n]. *)
 
   let n : int =
-    let n = StringMap.fold (fun _ { branches = branches } n ->
-      n + List.length branches
+    let n = StringMap.fold (fun _ rule n ->
+      n + List.length rule.branches
     ) grammar.rules 0 in
     n + StringSet.cardinal grammar.start_symbols
 
@@ -626,9 +626,9 @@ module Production = struct
   let prod_symbol producer =
     Symbol.lookup producer.prod_symbol
 
-  let (_ : int) = StringMap.fold (fun nonterminal { branches } k ->
+  let (_ : int) = StringMap.fold (fun nonterminal rule k ->
     let nt = Nonterminal.lookup nonterminal in
-    let k' = MList.accumulate k branches @@ fun k branch ->
+    let k' = MList.accumulate k rule.branches @@ fun k branch ->
       let producers = Array.of_list branch.producers in
       let rhs = Array.map prod_symbol producers in
       table.(k) <- (nt, rhs);
