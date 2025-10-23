@@ -1205,7 +1205,7 @@ end) = struct
     Fix.Glue.ArraysAsImperativeMaps(Nonterminal)
 
   module C =
-    FixSolver.Make(M)(P)()
+    LatticeInequalities.Make(M)(P)()
 
   (* Build a system of constraints. *)
 
