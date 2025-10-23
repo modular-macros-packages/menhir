@@ -17,6 +17,17 @@ open PlainSyntaxAccessors
 let drop = MList.drop
 let take = MList.take
 
+module Make (E : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end) = struct
+open E
+
 (* -------------------------------------------------------------------------- *)
 
 (* Throughout this file, branches (productions) are represented as lists of
@@ -97,7 +108,7 @@ let check_no_prod_attributes producer =
   | [] ->
       ()
   | attr :: _ ->
-      Error.error
+      error
         [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          A use of it cannot carry an attribute."
@@ -167,7 +178,7 @@ let check_prec_inline caller producer nsuffix callee =
     (* Check condition 1. *)
     if nsuffix > 0 then begin
       let symbol = producer.prod_symbol in
-      Error.error [ position callee_prec; caller.branch_position ]
+      error [ position callee_prec; caller.branch_position ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
          For this reason, %s can be used only in tail position."
@@ -176,7 +187,7 @@ let check_prec_inline caller producer nsuffix callee =
     (* Check condition 2. *)
     caller.prec_annotation |> Option.iter (fun caller_prec ->
       let symbol = producer.prod_symbol in
-      Error.error [ position callee_prec; position caller_prec ]
+      error [ position callee_prec; position caller_prec ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
          For this reason, %s cannot be used in a production\n\
@@ -215,7 +226,7 @@ let propagate_prec_annotation caller callee =
    carries such a suffix, then we increment the integer number. *)
 
 let new_candidate x =
-  let x, n = ChopInlined.chop (Lexing.from_string x) in
+  let x, n = Lex.chop (Lexing.from_string x) in
   Printf.sprintf "%s_inlined%d" x (n + 1)
 
 (* [fresh names x] returns a fresh name that is not in the set [names].
@@ -495,24 +506,6 @@ module Inline (G : sig val grammar: grammar end) = struct
   let find =
     find grammar
 
-  (* In [--coq] mode, %inline is forbidden. There are two reasons for this.
-     One technical reason is that inlining requires constructing composite
-     semantic actions (using [Action.compose], etc.) and this construction is
-     currently OCaml-specific. (This could be rather easily changed, though.)
-     A more philosophical reason is that we don't want to have a large gap
-     between the grammar written by the user in the .mly file and the grammar
-     written by Menhir in the .v file. The latter grammar is the reference
-     grammar, the one with respect to which the generated parser is proved
-     correct. *)
-
-  let () =
-    if Settings.backend = `CoqBackend then
-      StringMap.iter (fun _ rule ->
-        if rule.inline_flag then
-          Error.error rule.positions
-            "%%inline is not supported by the Coq back-end."
-      ) grammar.rules
-
   (* This is [expand_branches], parameterized by its companion function,
      [expand_symbol]. The parameter [i], an integer, is used to perform
      a left-to-right sweep: the precondition of [expand_branches] is that
@@ -582,7 +575,7 @@ module Inline (G : sig val grammar: grammar end) = struct
           ) symbols;
           Printf.bprintf b "  which refers back to %s." symbol
       end;
-      Error.error rule.positions "%s" (Buffer.contents b)
+      error rule.positions "%s" (Buffer.contents b)
 
   (* The rules of the transformed grammar are obtained by keeping only
      non-%inline symbols and expanding their rules. *)
@@ -607,7 +600,7 @@ module Inline (G : sig val grammar: grammar end) = struct
   let keep_or_warn (symbol : string) _rule : bool =
     let keep = keep symbol _rule in
     if not keep then
-      Error.warning []
+      warning []
         "the declaration %%on_error_reduce %s\n\
          has no effect: this symbol is marked %%inline and is expanded away." symbol;
     keep
@@ -629,3 +622,5 @@ end
 let inline grammar =
   let module I = Inline(struct let grammar = grammar end) in
   I.grammar
+
+end (* Make *)

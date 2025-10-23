@@ -23,3 +23,16 @@ rule valid_ocaml_identifier = parse
 | _
 | eof
     { false }
+
+(* [chop] never fails. If the input string is of the form [XXX_inlinedNNN]
+   then [chop] returns a pair of the string [XXX] and the number [NNN]. If
+   the input string is not of this form then [chop] returns a pair of the
+   input string and the number 0. *)
+
+and chop = parse
+| (_* as x) "_inlined" (['0'-'9']+ as n) eof
+    { x, int_of_string n }
+| (_* as x) "_inlined" eof
+    { x, 0 }
+| (_* as x) eof
+    { x, 0 }

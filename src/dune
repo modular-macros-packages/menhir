@@ -33,7 +33,6 @@
   lexer
   lexmli
   lexdep
-  chopInlined
   sentenceLexer
   segment
   lexpointfree

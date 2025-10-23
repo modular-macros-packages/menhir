@@ -243,15 +243,34 @@ let grammar =
 
 (* ------------------------------------------------------------------------- *)
 
-(* If [--no-inline] was specified on the command line, skip the
-   inlining of non terminal definitions marked with %inline. *)
-
 let grammar_before_inlining =
   grammar
 
+(* ------------------------------------------------------------------------- *)
+
+(* Expand away the nonterminal symbols marked %inline. *)
+
+(* If [--no-inline] is specified on the command line, then all %inline
+   annotations are ignored; this step is skipped. *)
+
+(* In [--coq] mode, %inline is forbidden. There are two reasons for this.
+   One technical reason is that inlining requires constructing composite
+   semantic actions (using [Action.compose], etc.) and this construction is
+   currently OCaml-specific. (This could be rather easily changed, though.)
+   A more philosophical reason is that we don't want to have a large gap
+   between the grammar written by the user in the .mly file and the grammar
+   written by Menhir in the .v file. The latter grammar is the reference
+   grammar, the one with respect to which the generated parser is proved
+   correct. *)
+
 let grammar =
   if Settings.inline then begin
-    let grammar = Inlining.inline grammar in
+    if Settings.backend = `CoqBackend then begin
+      let module C = CheckInlineUsage.Make(Error) in
+      C.check grammar
+    end;
+    let module I = Inlining.Make(Error) in
+    let grammar = I.inline grammar in
     (* 2018/05/23 Removed the warning that was issued when %inline was used
        but --infer was turned off. Most people should use ocamlbuild or dune
        anyway. *)
