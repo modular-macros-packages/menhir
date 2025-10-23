@@ -272,7 +272,7 @@ MENHIRLIB_FILES   := \
 # Those in coq-menhirlib/ carry the "Coq library" header & license.
 # Every other file carries the "regular" header & license.
 
-SRCDIRS         := base front src
+SRCDIRS         := base front middle src
 LIBDIRS         := lib sdk cst
 HEADACHE        := headache
 SRCHEAD         := $(CURRENT)/headers/regular-header
