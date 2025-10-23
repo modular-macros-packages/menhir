@@ -233,14 +233,14 @@ let rec follow1 tok derivation offset' = function
            a comment that explains why the lookahead symbol is
            produced or inherited. *)
 
-        let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
+        let nullable, first = Analysis.nullable_first prod (pos + 1) in
 
         if TerminalSet.mem tok first then
 
           (* The lookahead symbol is produced (and perhaps also inherited,
              but let's ignore that). *)
 
-          let e = Analysis.explain_first_rhs tok rhs (pos + 1) in
+          let e = Analysis.explain_first tok rhs (pos + 1) in
           let comment =
             "lookahead token appears" ^ (if e = "" then "" else " because " ^ e)
           in
@@ -343,7 +343,7 @@ let explain_reduce_item
       if pos < length then
         match rhs.(pos) with
         | Symbol.N nt ->
-            let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
+            let nullable, first = Analysis.nullable_first prod (pos + 1) in
             let first : bool = TerminalSet.mem tok first in
             let lookahead' =
               if nullable then first || lookahead else first

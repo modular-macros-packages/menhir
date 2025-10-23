@@ -44,7 +44,7 @@ module Run () = struct
    [require_nonempty_prefix] to be [false]. *)
 
 let nullable_suffix prod i =
-  let nullable, _ = Analysis.nullable_first_prod prod i in
+  let nullable, _ = Analysis.nullable_first prod i in
   nullable
 
 let successors

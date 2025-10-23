@@ -342,10 +342,10 @@ let () =
 
       (* If [nt] keeps track of its start position, then the first symbol
          in the right-hand side must do so as well. *)
-      F.record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
+      F.edge (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
       (* If [nt] keeps track of its end position, then the last symbol
          in the right-hand side must do so as well. *)
-      F.record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
+      F.edge (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
 
     end;
 
@@ -361,7 +361,7 @@ let () =
           if length > 0 then
             Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
               Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-                F.record_ConVar true (sym, WhereEnd)
+                F.source true (sym, WhereEnd)
               end
             end
       | Position (Left, _, _) ->
@@ -379,7 +379,7 @@ let () =
              its start position. Similarly for end positions. *)
           Array.iteri (fun i id' ->
             if id = id' then
-              F.record_ConVar true (rhs.(i), where)
+              F.source true (rhs.(i), where)
           ) ids
     end (* end of loop on keywords *)
 

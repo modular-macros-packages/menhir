@@ -27,7 +27,7 @@ module Make (M : Fix.IMPERATIVE_MAPS) (P : Fix.MINIMAL_SEMI_LATTICE) () = struct
   let successors x =
     try M.find x upper with Not_found -> []
 
-  let record_VarVar x y =
+  let edge x y =
     M.add x (y :: successors x) upper
 
   (* A map of each variable to its lower bound (a constant). *)
@@ -35,7 +35,7 @@ module Make (M : Fix.IMPERATIVE_MAPS) (P : Fix.MINIMAL_SEMI_LATTICE) () = struct
   let lower : property M.t =
     M.create()
 
-  let record_ConVar p y =
+  let source p y =
     let p' =
       match M.find y lower with
       | exception Not_found ->

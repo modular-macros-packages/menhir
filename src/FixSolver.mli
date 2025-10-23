@@ -23,13 +23,13 @@ module Make (M : IMPERATIVE_MAPS) (P : MINIMAL_SEMI_LATTICE) () : sig
   type property =
     P.property
 
-  (**[record_ConVar p y] records an inequality [p ≤ y] between the
+  (**[source p y] records an inequality [p ≤ y] between the
      constant [p] and the variable [y]. *)
-  val record_ConVar: property -> variable -> unit
+  val source: property -> variable -> unit
 
-  (**[record_VarVar x y] records an inequality [x ≤ y] between the
+  (**[edge x y] records an inequality [x ≤ y] between the
      variable [x] and the variable [y]. *)
-  val record_VarVar: variable -> variable -> unit
+  val edge: variable -> variable -> unit
 
   (**When [Solve] is applied, the constraint collection phase ends, and
      the least solution of the constraints is computed. The function

@@ -1186,10 +1186,10 @@ module MAXIMAL =
    but a user has requested this analysis. Also, FOLLOW sets happen to be
    useful in the SLR(1) test. *)
 
-(* The computation of the symbolic FOLLOW sets follows exactly the same
-   pattern as that of the traditional FOLLOW sets. We share code and
-   parameterize this computation over a module [P]. The type [P.property]
-   intuitively represents a set of symbols. *)
+(* FOLLOW sets and symbolic FOLLOW sets are computed exactly in the same
+   way. To avoid code duplication, we write this computation just once,
+   parameterized over a module [P]. The type [P.property] intuitively
+   represents a set of symbols. *)
 
 module FOLLOW (P : sig
   include Fix.MINIMAL_SEMI_LATTICE
@@ -1201,7 +1201,7 @@ end) = struct
   module M =
     Fix.Glue.ArraysAsImperativeMaps(Nonterminal)
 
-  module S =
+  module C =
     FixSolver.Make(M)(P)()
 
   (* Build a system of constraints. *)
@@ -1209,101 +1209,102 @@ end) = struct
   (* Iterate over all start symbols. *)
   let () =
     let sharp = P.terminal Terminal.sharp in
-    for nt = 0 to Nonterminal.start - 1 do
-      assert (Nonterminal.is_internal_start nt);
-      (* Add # to FOLLOW(nt). *)
-      S.record_ConVar sharp nt
-    done
+    Nonterminal.iter_internal_start @@ fun nt ->
+    (* Add # to FOLLOW(nt). *)
+    C.source sharp nt
     (* We need to do this explicitly because our start productions are
        of the form S' -> S, not S' -> S #, so # will not automatically
        appear into FOLLOW(S) when the start productions are examined. *)
 
   (* Iterate over all productions. *)
   let () =
-    Array.iteri (fun prod (nt1, rhs) ->
-      (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
-      Array.iteri (fun i symbol ->
-        match symbol with
-        | Symbol.T _ ->
-            ()
-        | Symbol.N nt2 ->
-            let nullable = NULLABLE.production prod (i+1)
-            and first = P.first prod (i+1) in
-            (* The FIRST set of the remainder of the right-hand side
-               contributes to the FOLLOW set of [nt2]. *)
-            S.record_ConVar first nt2;
-            (* If the remainder of the right-hand side is nullable,
-               FOLLOW(nt1) contributes to FOLLOW(nt2). *)
-            if nullable then
-              S.record_VarVar nt1 nt2
-      ) rhs
-    ) Production.table
+    Production.iter @@ fun prod ->
+    let nt1, rhs = Production.def prod in
+    (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
+    rhs |> Array.iteri @@ fun i symbol ->
+    match symbol with
+    | Symbol.T _ ->
+        ()
+    | Symbol.N nt2 ->
+        let nullable = NULLABLE.production prod (i+1)
+        and first = P.first prod (i+1) in
+        (* The FIRST set of the remainder of the right-hand side
+           contributes to the FOLLOW set of [nt2]. *)
+        C.source first nt2;
+        (* If the remainder of the right-hand side is nullable,
+           FOLLOW(nt1) contributes to FOLLOW(nt2). *)
+        if nullable then
+          C.edge nt1 nt2
 
-  (* Second pass. Solve the equations (on demand). *)
+  (* Second pass. Solve the equations. *)
 
-  let follow : (Nonterminal.t -> P.property) Lazy.t =
-    lazy (
-      let module S = S.Solve() in
-      fun nt -> Option.value (S.solution nt) ~default:P.bottom
-    )
+  module S =
+    C.Solve()
 
-  let follow : Nonterminal.t -> P.property =
-    fun nt -> (Lazy.force follow) nt
+  let follow (nt : Nonterminal.t) : P.property =
+    Option.value (S.solution nt) ~default:P.bottom
 
 end
 
-(* Use the above functor to obtain the standard (concrete) FOLLOW sets. *)
+(* -------------------------------------------------------------------------- *)
 
-let follow : Nonterminal.t -> TerminalSet.t =
-  let module F = FOLLOW(struct
-    include TerminalSet
-    let terminal = singleton
-    let first = FIRST.production
-  end) in
-  F.follow
+(* Compute standard (concrete) FOLLOW sets. *)
 
-(* Compute FOLLOW sets for the terminal symbols as well. Again, unnecessary
-   for us, but requested by a user. This is done in a single pass over the
-   grammar -- no new fixpoint computation is required. *)
+let follow : (Nonterminal.t -> TerminalSet.t) Lazy.t =
+  lazy (
+    let module F = FOLLOW(struct
+      include TerminalSet
+      let terminal = singleton
+      let first = FIRST.production
+    end) in
+    F.follow
+  )
+
+let follow (nt : Nonterminal.t) : TerminalSet.t =
+  (Lazy.force follow) nt
+
+(* -------------------------------------------------------------------------- *)
+
+(* Compute FOLLOW sets for the terminal symbols as well. Again, this is
+   unnecessary for us, but has been requested by a user. This is done in
+   a single pass over the grammar -- a new fixed point computation is not
+   required. *)
 
 let tfollow : TerminalSet.t array Lazy.t =
   lazy (
 
-    let tfollow =
-      Array.make Terminal.n TerminalSet.empty
-    in
+    let tfollow = Array.make Terminal.n TerminalSet.empty in
 
     (* Iterate over all productions. *)
-    Array.iteri (fun prod (nt1, rhs) ->
+    let () =
+      Production.iter @@ fun prod ->
+      let nt1, rhs = Production.def prod in
       (* Iterate over all terminal symbols [t2] in the right-hand side. *)
-      Array.iteri (fun i symbol ->
-        match symbol with
-        | Symbol.N _ ->
-            ()
-        | Symbol.T t2 ->
-            let nullable = NULLABLE.production prod (i+1)
-            and first = FIRST.production prod (i+1) in
-            (* The FIRST set of the remainder of the right-hand side
-               contributes to the FOLLOW set of [t2]. *)
-            tfollow.(t2) <- TerminalSet.union first tfollow.(t2);
-            (* If the remainder of the right-hand side is nullable,
-               FOLLOW(nt1) contributes to FOLLOW(t2). *)
-            if nullable then
-              tfollow.(t2) <- TerminalSet.union (follow nt1) tfollow.(t2)
-      ) rhs
-    ) Production.table;
-
+      rhs |> Array.iteri @@ fun i symbol ->
+      match symbol with
+      | Symbol.N _ ->
+          ()
+      | Symbol.T t2 ->
+          let nullable = NULLABLE.production prod (i+1)
+          and first = FIRST.production prod (i+1) in
+          (* The FIRST set of the remainder of the right-hand side
+             contributes to the FOLLOW set of [t2]. *)
+          tfollow.(t2) <- TerminalSet.union first tfollow.(t2);
+          (* If the remainder of the right-hand side is nullable,
+             FOLLOW(nt1) contributes to FOLLOW(t2). *)
+          if nullable then
+            tfollow.(t2) <- TerminalSet.union (follow nt1) tfollow.(t2)
+    in
     tfollow
 
   )
-
-(* Define another accessor. *)
 
 let tfollow t =
   (Lazy.force tfollow).(t)
 
 (* -------------------------------------------------------------------------- *)
-(* Compute symbolic FIRST and FOLLOW sets. *)
+
+(* Compute symbolic FIRST and symbolic FOLLOW sets. *)
 
 (* The symbolic FIRST set of the word determined by [prod/i] is defined
    (and computed) as follows. *)
@@ -1327,49 +1328,57 @@ let sfirst prod i =
   in
   loop i
 
-(* The symbolic FOLLOW sets are computed just like the FOLLOW sets,
-   except we use a symbolic FIRST set instead of a standard FIRST
-   set. *)
+(* The symbolic FOLLOW sets are computed just like the FOLLOW sets, except
+   we use a symbolic FIRST set instead of a standard FIRST set. *)
 
-let sfollow : Nonterminal.t -> SymbolSet.t =
-  let module F = FOLLOW(struct
-    let bottom = SymbolSet.bottom
-    include Fix.Glue.MinimalSemiLattice(SymbolSet)
-    let terminal t = SymbolSet.singleton (Symbol.T t)
-    let first = sfirst
-  end) in
-  F.follow
+let sfollow : (Nonterminal.t -> SymbolSet.t) Lazy.t =
+  lazy (
+    let module F = FOLLOW(struct
+      let bottom = SymbolSet.bottom
+      include Fix.Glue.MinimalSemiLattice(SymbolSet)
+      let terminal t = SymbolSet.singleton (Symbol.T t)
+      let first = sfirst
+    end) in
+    F.follow
+  )
+
+let sfollow (nt : Nonterminal.t) : SymbolSet.t =
+  (Lazy.force sfollow) nt
 
 (* -------------------------------------------------------------------------- *)
+
 (* Provide explanations about FIRST sets. *)
 
-(* The idea is to explain why a certain token appears in the FIRST set
-   for a certain sequence of symbols. Such an explanation involves
-   basic assertions of the form (i) symbol N is nullable and (ii) the
-   token appears in the FIRST set for symbol N. We choose to take
-   these basic facts for granted, instead of recursively explaining
-   them, so as to keep explanations short. *)
+(* We want to explain why a terminal symbol [t] appears in the FIRST set of a
+   sequence of symbols. Such an explanation involves basic assertions of the
+   form: (i) [nt] is nullable and (ii) [t] appears in the FIRST set of [nt].
+   We choose to take these basic facts for granted, instead of recursively
+   explaining them, so as to keep explanations short. *)
 
-(* We first produce an explanation in abstract syntax, then
-   convert it to a human-readable string. *)
+(* We first produce an explanation in abstract syntax, then convert it to a
+   human-readable string. *)
 
 type explanation =
-  | EObvious                                 (* sequence begins with desired token *)
-  | EFirst of Terminal.t * Nonterminal.t     (* sequence begins with a nonterminal that produces desired token *)
-  | ENullable of Symbol.t list * explanation (* sequence begins with a list of nullable symbols and ... *)
+  | EObvious
+    (**The sequence begins with the desired terminal symbol. *)
+  | EFirst of Terminal.t * Nonterminal.t
+    (**The sequence begins with a nonterminal symbol
+       that produces the desired terminal symbol. *)
+  | ENullable of Symbol.t list * explanation
+    (**The sequence begins with a list of nullable symbols and ... *)
 
-let explain (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
-  let length = Array.length rhs in
+let explain (t : Terminal.t) (rhs : Symbol.t array) (i : int) =
+  let n = Array.length rhs in
   let rec loop i =
-    assert (i < length);
+    assert (i < n);
     let symbol = rhs.(i) in
     match symbol with
-    | Symbol.T tok' ->
-        assert (Terminal.equal tok tok');
+    | Symbol.T t' ->
+        assert (Terminal.equal t t');
         EObvious
     | Symbol.N nt ->
-        if TerminalSet.mem tok (FIRST.nonterminal nt) then
-          EFirst (tok, nt)
+        if TerminalSet.mem t (FIRST.nonterminal nt) then
+          EFirst (t, nt)
         else begin
           assert (NULLABLE.nonterminal nt);
           match loop (i + 1) with
@@ -1381,13 +1390,14 @@ let explain (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
   in
   loop i
 
-let rec convert = function
+let rec convert (e : explanation) : string =
+  match e with
   | EObvious ->
       ""
-  | EFirst (tok, nt) ->
+  | EFirst (t, nt) ->
       Printf.sprintf "%s can begin with %s"
         (Nonterminal.print false nt)
-        (Terminal.print tok)
+        (Terminal.print t)
   | ENullable (symbols, e) ->
       let e = convert e in
       Printf.sprintf "%s can vanish%s%s"
@@ -1410,31 +1420,22 @@ module Analysis = struct
 
   let first_symbol = FIRST.symbol
 
-  (* An initial definition of [nullable_first_prod]. *)
+  (* An initial definition of [nullable_first]. *)
 
-  let nullable_first_prod prod i =
+  let nullable_first prod i =
     NULLABLE.production prod i,
     FIRST.production prod i
 
-  (* A memoised version, so as to avoid recomputing along a production's
-     right-hand side. *)
+  (* A memoised version of [nullable_first]. We want to avoid recomputing
+     along a production's right-hand side. *)
 
-  let nullable_first_prod =
-    MArray.tabulate Production.n (fun prod ->
-      MArray.tabulate (Production.length prod + 1) (fun i ->
-        nullable_first_prod prod i
-      )
-    )
+  let nullable_first =
+    Production.tabulate @@ fun prod ->
+    MArray.tabulate (Production.length prod + 1) @@ fun i ->
+    nullable_first prod i
 
-  let first_prod_lookahead prod i z =
-    let nullable, first = nullable_first_prod prod i in
-    if nullable then
-      TerminalSet.add z first
-    else
-      first
-
-  let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
-    convert (explain tok rhs i)
+  let explain_first t rhs i =
+    convert (explain t rhs i)
 
   let follow = follow
   let tfollow = tfollow
