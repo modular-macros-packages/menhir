@@ -465,11 +465,8 @@ let match_tokbranch toks (tokpat, _) : bool =
    [None] if the default branch is definitely taken. The situation where the
    outcome is not definitely known is forbidden. *)
 
-let find_tokbranch branches toks : tokbranch option =
-  match List.find (match_tokbranch toks) branches with
-  | branch -> Some branch
-  | exception Not_found -> None
-  (* [List.find_opt] requires OCaml 4.05, so cannot be used *)
+let[@inline] find_tokbranch branches toks : tokbranch option =
+  MList.find_opt (match_tokbranch toks) branches
 
 (* -------------------------------------------------------------------------- *)
 
