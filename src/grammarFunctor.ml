@@ -1437,8 +1437,8 @@ module Analysis = struct
     MArray.tabulate (Production.length prod + 1) @@ fun i ->
     nullable_first prod i
 
-  let explain_first t rhs i =
-    convert (explain t rhs i)
+  let explain_first t prod i =
+    convert (explain t (Production.rhs prod) i)
 
   let follow = follow
   let tfollow = tfollow
@@ -1453,9 +1453,6 @@ module Analysis = struct
   let minimal_prod prod i =
     assert (0 <= i && i <= Production.length prod);
     CompletedNatWitness.to_int (MINIMAL.production prod i)
-
-  let maximal' nt =
-    MAXIMAL.nonterminal nt
 
   let maximal nt =
     NatInfinityMax.to_int (MAXIMAL.nonterminal nt)

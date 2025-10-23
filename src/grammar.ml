@@ -105,9 +105,10 @@ let () =
       (CompletedNatWitness.print Terminal.print (minimal' nt))
   );
   iterx (fun nt ->
+    let p = maximal nt in
     fprintf f "maximal(%s) = %s\n"
       (print false nt)
-      (NatInfinityMax.print (maximal' nt))
+      (if p = max_int then "infinity" else string_of_int p)
   );
   iterx (fun nt ->
     Printf.fprintf f "follow(%s) = %s\n"

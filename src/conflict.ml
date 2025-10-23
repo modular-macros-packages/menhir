@@ -240,7 +240,7 @@ let rec follow1 tok derivation offset' = function
           (* The lookahead symbol is produced (and perhaps also inherited,
              but let's ignore that). *)
 
-          let e = Analysis.explain_first tok rhs (pos + 1) in
+          let e = Analysis.explain_first tok prod (pos + 1) in
           let comment =
             "lookahead token appears" ^ (if e = "" then "" else " because " ^ e)
           in
