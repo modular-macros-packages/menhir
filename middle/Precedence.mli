@@ -21,6 +21,7 @@
    This information is not accessible elsewhere. *)
 
 open PlainSyntax
+open View
 
 module Make
 (E : sig
@@ -32,28 +33,8 @@ end)
 (F : sig
   val grammar : grammar
 end)
-(G : sig
-  module Terminal : sig
-    type t
-    val print: t -> string
-    val associativity: t -> associativity
-  end
-  module Nonterminal : sig
-    type t
-  end
-  module Symbol : sig
-    type t =
-      | N of Nonterminal.t
-      | T of Terminal.t
-  end
-  module Production : sig
-    type index
-    val rhs: index -> Symbol.t array
-    val prec_decl : index -> symbol located option
-    val production_level : index -> production_level
-    val iterx: (index -> unit) -> unit
-  end
-end) : sig
+(G : VIEW)
+: sig
 open G
 
   (**A choice indicates how a shift/reduce conflict should be resolved. *)
