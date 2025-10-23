@@ -1464,6 +1464,7 @@ module Analysis = struct
 end
 
 (* -------------------------------------------------------------------------- *)
+
 (* %on_error_reduce declarations. *)
 
 module OnErrorReduce = struct
@@ -1472,7 +1473,7 @@ module OnErrorReduce = struct
      the types [Nonterminal.t] and [string] when querying this map. This
      is not very elegant, and could be changed if desired. *)
 
-  let declarations : Syntax.on_error_reduce_level StringMap.t =
+  let declarations : on_error_reduce_level StringMap.t =
     grammar.on_error_reduce
 
   let print (nt : Nonterminal.t) : string =
@@ -1491,9 +1492,8 @@ module OnErrorReduce = struct
     StringMap.mem (print nt) declarations
 
   let iter f =
-    StringMap.iter (fun nt _prec ->
-      f (lookup nt)
-    ) declarations
+    declarations |> StringMap.iter @@ fun nt _prec ->
+    f (lookup nt)
 
   let preferable prod1 prod2 =
     (* The two productions that we are comparing must be distinct. *)
@@ -1540,24 +1540,21 @@ module Sentence = struct
   open Printf
 
   let print_abstract (nto, terminals) : string =
-    MString.with_buffer 128 (fun b ->
-      Option.iter (fun nt ->
-        bprintf b "%s: " (Nonterminal.print false nt)
-      ) nto;
-      let separator = MString.this_then_that "" " " in
-      List.iter (fun t ->
-        bprintf b "%s%s" (separator()) (Terminal.print t)
-      ) terminals;
-      bprintf b "\n";
-    )
+    MString.with_buffer 128 @@ fun b ->
+    Option.iter (fun nt ->
+      bprintf b "%s: " (Nonterminal.print false nt)
+    ) nto;
+    let separator = MString.this_then_that "" " " in
+    List.iter (fun t ->
+      bprintf b "%s%s" (separator()) (Terminal.print t)
+    ) terminals;
+    bprintf b "\n"
 
   let print_concrete (_nto, terminals) : string =
-    MString.with_buffer 128 (fun b ->
-      let separator = MString.this_then_that "" " " in
-      List.iter (fun t ->
-        bprintf b "%s%s" (separator()) (Option.get (Terminal.unquoted_alias t))
-      ) terminals
-    )
+    MString.with_buffer 128 @@ fun b ->
+    let separator = MString.this_then_that "" " " in
+    terminals |> List.iter @@ fun t ->
+    bprintf b "%s%s" (separator()) (Option.get (Terminal.unquoted_alias t))
 
   let print style sentence =
     match style with
@@ -1570,4 +1567,4 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-end (* module Make *)
+end (* Make *)

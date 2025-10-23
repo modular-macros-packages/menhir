@@ -685,46 +685,46 @@ module Analysis : sig
 end
 
 (* -------------------------------------------------------------------------- *)
-(* [%on_error_reduce] declarations. *)
+
+(** {2 [%on_error_reduce] declarations} *)
 
 module OnErrorReduce : sig
 
-  (* [reduce prod] tells whether the left-hand side of [prod] (a nonterminal
-     symbol) appears in an [%on_error_reduce] declaration. *)
-
+  (**[reduce prod] determines whether the left-hand side of the production
+     [prod] (a nonterminal symbol) appears in an [%on_error_reduce]
+     declaration. *)
   val reduce: Production.t -> bool
 
-  (* [iter f] applies the function [f] in turn, in an arbitrary order, to
-     every nonterminal symbol that appears in an [%on_error_reduce]
-     declaration. *)
-
+  (**[iter] enumerates the nonterminal symbols that appear in an
+     [%on_error_reduce] declaration. *)
   val iter: (Nonterminal.t -> unit) -> unit
 
-  (* When two productions could be reduced, in a single state, due to
-     [%on_error_reduce] declarations, these productions can be compared, using
-     [preferable], to test if one of them takes precedence over the other.
-     This is a partial order; two productions may be incomparable. *)
-
+  (**When two productions can be reduced, in a single state, due to
+     [%on_error_reduce] declarations, these productions can be compared,
+     using [preferable], to test if one of them takes precedence over the
+     other. This is a partial order; two productions may be incomparable. *)
   val preferable: Production.t -> Production.t -> bool
 
 end
 
 (* -------------------------------------------------------------------------- *)
-(* Sentences. *)
+
+(** {2 Sentences} *)
 
 module Sentence : sig
 
   (**A sentence is a pair of an optional start symbol and a sequence of
-     terminal symbols. Our convention is the start symbol can be omitted if
-     this is unambiguous, that is, if the grammar has exactly one start
+     terminal symbols. Our convention is that the start symbol can be omitted
+     if this is unambiguous, that is, if the grammar has exactly one start
      symbol. *)
   type sentence =
     Nonterminal.t option * Terminal.t list
 
   (**[print style sentence] prints a sentence as a space-separated list of
-     symbolic token names. The [style] parameter indicates whether the
-     sentence should be displayed in concrete syntax; if it is [`Concrete],
-     then every token must have a token alias, that is,
+     terminal symbols. If [style] is [`Abstract] then each terminal symbol is
+     printed as a symbolic name. If [style] is [`Concrete] then each terminal
+     symbol is printed as its unquoted alias; see [Terminal.unquoted_alias].
+     In the latter case, every token must have a token alias: that is,
      [Terminal.every_token_has_an_alias] must be [true]. *)
   val print: [`Abstract | `Concrete] -> sentence -> string
 
@@ -732,4 +732,4 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-end (* module Make *)
+end (* Make *)
