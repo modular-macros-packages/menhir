@@ -66,6 +66,16 @@ let[@tail_mod_cons] rec take k xs =
   | _, x :: xs ->
       x :: take (k - 1) xs
 
+let[@tail_mod_cons] rec index i xs =
+  match xs with
+  | [] ->
+      []
+  | x :: xs ->
+      (i, x) :: index (i+1) xs
+
+let[@inline] index xs =
+  index 0 xs
+
 let leq_join leq_join xs1 xs2 =
   try
     let xs = List.map2 leq_join xs1 xs2 in
@@ -102,6 +112,11 @@ let foreach_duplicate cmp xs yield =
   | x :: _ :: _ ->
       (* then yield an element. *)
       yield x
+
+(* [find_opt] appears in OCaml 4.05. *)
+let rec find_opt p = function
+  | [] -> None
+  | x :: l -> if p x then Some x else find_opt p l
 
 let rec find_map f = function
   | [] ->

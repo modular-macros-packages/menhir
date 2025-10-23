@@ -53,6 +53,10 @@ val drop : int -> 'a list -> 'a list
 (**[take k xs] is the list of the first [k] elements of the list [xs]. *)
 val take : int -> 'a list -> 'a list
 
+(**[index] transforms a list of elements into a list of pairs of
+   an integer index and an element. *)
+val index : 'a list -> (int * 'a) list
+
 (**Given a [leq_join] function on elements, [leq_join] constructs a [leq_join]
    function on lists. The two lists must have the same length. The
    specification of a [leq_join] is defined by the signature
@@ -68,6 +72,10 @@ val group: ('a -> 'a -> int) -> 'a list -> 'a list list
    duplicate element in the list [xs]. The ordering [cmp] is used internally
    to sort the list [xs]. *)
 val foreach_duplicate: ('a -> 'a -> int) -> 'a list -> ('a -> unit) -> unit
+
+(** [find_opt p xs] returns the first element of the list [xs] that satisfies
+    the predicate [p]. If no element satisfies [p] then [None] is returned. *)
+val find_opt : ('a -> bool) -> 'a list -> 'a option
 
 (**[find_map f xs] applies [f] to the elements of [xs] in order and returns
    the first result of the form [Some y], if there is one. If there is none,
