@@ -786,7 +786,10 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* Not sure where to place this function. *)
+(* Properties of the grammar. *)
+
+let attributes =
+  grammar.gr_attributes
 
 let grammar_uses_error_token () =
   let used = ref false in
@@ -1440,9 +1443,6 @@ module Analysis = struct
   let follow = follow
   let tfollow = tfollow
   let sfollow = sfollow
-
-  let attributes =
-    grammar.gr_attributes
 
   let minimal' nt =
     MINIMAL.nonterminal nt
