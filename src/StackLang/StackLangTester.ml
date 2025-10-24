@@ -170,7 +170,8 @@ let test program nt =
   let total = ref 0 in
   while !size < threshold do
     for _ = 1 to k do
-      let sentence = RandomSentenceGenerator.nonterminal nt !size in
+      let module R = RandomSentenceGenerator.Make(Grammar) in
+      let sentence = R.nonterminal nt !size in
       test m program nt sentence;
       total := !total + List.length sentence;
     done;

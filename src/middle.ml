@@ -22,7 +22,8 @@ let () =
     | exception Not_found ->
         Error.error [] "the nonterminal symbol %s does not exist." nt
     | nt ->
-        let sentence = RandomSentenceGenerator.nonterminal nt goal in
+        let module R = RandomSentenceGenerator.Make(Grammar) in
+        let sentence = R.nonterminal nt goal in
         print_endline (Sentence.print style (Some nt, sentence));
         exit 0
   end

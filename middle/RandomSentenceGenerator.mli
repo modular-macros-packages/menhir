@@ -8,13 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module generates random sentences that are well-formed according to
-   the grammar.
+(**This module generates random sentences that are well-formed according
+   to a grammar.
 
-   If the grammar is not LR(1), these sentences are *not* necessarily accepted
+   If the grammar is not LR(1), these sentences are not necessarily accepted
    by the automaton.
 
-   The distribution of sentences is *not* uniform.
+   The distribution of sentences is not uniform.
 
    The goal length is not necessarily obeyed exactly; the generator normally
    produces a sentence whose length is at most [goal], unless [goal] is so
@@ -27,6 +27,11 @@
    cause a problem if the goal can be achieved only via such a production.
    This is hopefully unlikely. *)
 
-open Grammar
+open View
 
-val nonterminal: Nonterminal.t -> int -> Terminal.t list
+module Make (G : VIEW) : sig
+  open G
+
+  val nonterminal: Nonterminal.t -> int -> Terminal.t list
+
+end

@@ -8,7 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+open View
+
+module Make (G : VIEW) = struct
+open G
 
 (* -------------------------------------------------------------------------- *)
 
@@ -125,7 +128,7 @@ and production prod i goal k : unit =
     assert (goal = 0);
     k()
   end
-  else if i < n then begin
+  else if i < n then
     let rhs = Production.rhs prod in
     match rhs.(i) with
     | Symbol.T tok ->
@@ -167,7 +170,6 @@ and production prod i goal k : unit =
         assert (goal2 <= max2);
         nonterminal nt goal1 (fun () ->
         production prod (i + 1) goal2 k)
-  end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -201,3 +203,7 @@ let nonterminal nt goal =
     end
   in
   nonterminal nt goal
+
+(* -------------------------------------------------------------------------- *)
+
+end (* Make *)
