@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Grammar
+let sharp = Terminal.sharp
 
 (* Make sure that the middle-end runs before the automaton is constructed. *)
 include Middle
@@ -556,7 +557,7 @@ let[@inline] well_formed (k, tsr) =
    that consists of the special terminal symbol [#]. *)
 
 let start k =
-  let state = (k, [| TerminalSet.singleton Terminal.sharp |]) in
+  let state = (k, [| TerminalSet.singleton sharp |]) in
   assert (well_formed state);
   state
 
@@ -675,47 +676,42 @@ let subsume state1 state2 =
      if C is compatible with both A and B. *)
 
 let compatible (k1, tsr1) (k2, tsr2) =
+  let open TerminalSet in
   assert (k1 = k2);
   let n = Array.length tsr1 in
   (* Two states are compatible if and only if they are compatible
      at every pair (i, j), where i and j are distinct. *)
   let rec loopi i =
-    if i = n then
-      true
-    else
-      let tsr1i = tsr1.(i)
-      and tsr2i = tsr2.(i) in
-      let rec loopj j =
-        if j = i then
-          true
-        else
-          let tsr1j = tsr1.(j)
-          and tsr2j = tsr2.(j) in
+    i = n ||
+    let tsr1i = tsr1.(i)
+    and tsr2i = tsr2.(i) in
+    let rec loopj j =
+      j = i ||
+      let tsr1j = tsr1.(j)
+      and tsr2j = tsr2.(j) in
 
-          (* The two states are compatible at (i, j) if every conflict
-             token in the merged state already was a conflict token in
-             one of the two original states. This could be written as
-             follows:
+      (* The two states are compatible at (i, j) if every conflict
+         token in the merged state already was a conflict token in
+         one of the two original states. This could be written as
+         follows:
 
-            TerminalSet.subset
-              (TerminalSet.inter (TerminalSet.union tsr1i tsr2i) (TerminalSet.union tsr1j tsr2j))
-              (TerminalSet.union (TerminalSet.inter tsr1i tsr1j) (TerminalSet.inter tsr2i tsr2j))
+         subset
+           (inter (union tsr1i tsr2i) (union tsr1j tsr2j))
+           (union (inter tsr1i tsr1j) (inter tsr2i tsr2j))
 
-             but is easily seen (on paper) to be equivalent to:
+         but is easily seen (on paper) to be equivalent to: *)
 
-          *)
-
-             TerminalSet.subset
-               (TerminalSet.inter tsr2i tsr1j)
-               (TerminalSet.union tsr1i tsr2j)
-          &&
-             TerminalSet.subset
-               (TerminalSet.inter tsr1i tsr2j)
-               (TerminalSet.union tsr2i tsr1j)
-          &&
-             loopj (j+1)
-      in
-      loopj 0 && loopi (i+1)
+         subset
+           (inter tsr2i tsr1j)
+           (union tsr1i tsr2j)
+      &&
+         subset
+           (inter tsr1i tsr2j)
+           (union tsr2i tsr1j)
+      &&
+         loopj (j+1)
+    in
+    loopj 0 && loopi (i+1)
   in
   loopi 0
 
@@ -742,25 +738,24 @@ let compatible (k1, tsr1) (k2, tsr2) =
    absence of this extra criterion. *)
 
 let eos_compatible  (k1, tsr1) (k2, tsr2) =
+  let open TerminalSet in
   assert (k1 = k2);
   let n = Array.length tsr1 in
   let rec loop i =
-    if i = n then
-      true
-    else
-      let ts1 = tsr1.(i)
-      and ts2 = tsr2.(i) in
-      begin
-        if TerminalSet.mem Terminal.sharp ts1 && TerminalSet.is_singleton ts1 then
-          (* "#" is alone in one set: it must be a member of the other set. *)
-          TerminalSet.mem Terminal.sharp ts2
-        else if TerminalSet.mem Terminal.sharp ts2 && TerminalSet.is_singleton ts2 then
-          (* Symmetric condition. *)
-          TerminalSet.mem Terminal.sharp ts1
-        else
-          true
-      end
-      && loop (i+1)
+    i = n ||
+    let ts1 = tsr1.(i)
+    and ts2 = tsr2.(i) in
+    begin
+      if mem sharp ts1 && is_singleton ts1 then
+        (* "#" is alone in one set: it must be a member of the other set. *)
+        mem sharp ts2
+      else if mem sharp ts2 && is_singleton ts2 then
+        (* Symmetric condition. *)
+        mem sharp ts1
+      else
+        true
+    end
+    && loop (i+1)
   in
   loop 0
 
@@ -793,6 +788,7 @@ let eos_compatible  (k1, tsr1) (k2, tsr2) =
    of this extra criterion. *)
 
 let error_compatible  (k1, tsr1) (k2, tsr2) =
+  let open TerminalSet in
   assert (k1 = k2);
   let n = Array.length tsr1 in
   let rec loop i =
@@ -802,12 +798,12 @@ let error_compatible  (k1, tsr1) (k2, tsr2) =
       let ts1 = tsr1.(i)
       and ts2 = tsr2.(i) in
       begin
-        if TerminalSet.mem Terminal.error ts1 then
+        if mem Terminal.error ts1 then
           (* [error] is a member of one set: it must be a member of the other set. *)
-          TerminalSet.mem Terminal.error ts2
-        else if TerminalSet.mem Terminal.error ts2 then
+          mem Terminal.error ts2
+        else if mem Terminal.error ts2 then
           (* Symmetric condition. *)
-          TerminalSet.mem Terminal.error ts1
+          mem Terminal.error ts1
         else
           true
       end
