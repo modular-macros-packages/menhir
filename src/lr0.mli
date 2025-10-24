@@ -8,19 +8,15 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module builds the LR(0) automaton associated with a grammar
+   and provides access to this automaton. Furthermore, it provides
+   facilities for the efficient construction of LR(1) automata. *)
+
 open Grammar
 
-(* This module builds the LR(0) automaton associated with the grammar,
-   then provides access to it. It also provides facilities for
-   efficiently performing LR(1) constructions. *)
-
-(* ------------------------------------------------------------------------ *)
-(* The LR(0) automaton. *)
-
-(* The nodes of the LR(0) automaton are numbered. *)
-
+(**A state of the LR(0) automaton is known as a node. Nodes are numbered. *)
 type node =
-    int
+  int
 
 (* This is the number of nodes in the LR(0) automaton. *)
 

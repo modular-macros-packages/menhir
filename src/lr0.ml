@@ -267,10 +267,8 @@ module SymbolicLookahead = struct
   let union (ts1, vars1) ((ts2, vars2) as s2) =
     let ts = TerminalSet.union ts1 ts2
     and vars = VarSet.union vars1 vars2 in
-    if ts2 == ts && vars2 == vars then
-      s2
-    else
-      (ts, vars)
+    if ts2 == ts && vars2 == vars then s2 else
+    (ts, vars)
 
   let variable (var : int) : t =
     (TerminalSet.empty, VarSet.singleton var)
@@ -281,34 +279,35 @@ module SymbolicLookahead = struct
 
 end
 
-(* We will perform closure operations over symbolic lookahead sets.
+(* We perform closure computations with symbolic lookahead sets.
    This allows us to later represent LR(1) states as pairs of an
    LR(0) node number and an array of concrete lookahead sets. *)
 
 module SymbolicClosure =
   Closure(SymbolicLookahead)
 
-(* Closure operations over concrete lookahead sets are also used (when
-   explaining conflicts). One could take another instance of the
-   functor. The approach below is somewhat less elegant and makes each
-   call to [closure] somewhat slower, but saves the cost of
-   instantiating the functor again -- which is linear in the size of
-   the grammar. *)
+(* Closure operations over concrete lookahead sets are also needed when
+   explaining conflicts. One could take another instance of the functor
+   [Closure]. The approach below is somewhat less elegant and makes each call
+   to [closure] somewhat slower, but saves the cost of instantiating the
+   functor again. This cost is linear in the size of the grammar. *)
 
 type concretelr1state =
-    TerminalSet.t Item.Map.t
+  TerminalSet.t Item.Map.t
 
 let closure (state : concretelr1state) : concretelr1state =
-   Item.Map.map SymbolicLookahead.project
-     (SymbolicClosure.closure
-       (Item.Map.map SymbolicLookahead.constant state))
+  state
+  |> Item.Map.map SymbolicLookahead.constant
+  |> SymbolicClosure.closure
+  |> Item.Map.map SymbolicLookahead.project
 
 (* -------------------------------------------------------------------------- *)
-(* Finding which non-epsilon transitions leave a set of items. This
-   code is parametric in the nature of lookahead sets. *)
+
+(* [transitions state] computes the non-epsilon transitions that leave the
+   state [state]. Here, a state is a set of items. This code is parametric
+   in the type of the lookahead sets. *)
 
 let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
-
   Item.Map.fold (fun item ts transitions ->
     match Item.classify item with
     | Item.Shift (symbol, item') ->
@@ -324,10 +323,11 @@ let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
   ) state SymbolMap.empty
 
 (* -------------------------------------------------------------------------- *)
-(* Determining the reduction opportunities at a (closed) state. They
-   are represented as a list of pairs of a lookahead set and a
-   production index. This code is again parametric in the nature of
-   lookahead sets. *)
+
+(* [reductions state] computes the reduction opportunities at the (closed)
+   state [state]. These opportunities are represented as a list of pairs of a
+   lookahead set and a production index. This code is again parametric in the
+   type of the lookahead sets. *)
 
 let reductions (state : 'a Item.Map.t) : ('a * Production.t) list =
   Item.Map.fold (fun item ts accu ->
@@ -339,6 +339,7 @@ let reductions (state : 'a Item.Map.t) : ('a * Production.t) list =
   ) state []
 
 (* -------------------------------------------------------------------------- *)
+
 (* Construction of the the LR(0) automaton. *)
 
 (* Nodes are numbered sequentially. *)
@@ -346,19 +347,18 @@ let reductions (state : 'a Item.Map.t) : ('a * Production.t) list =
 type node =
     int
 
-(* A symbolic transition is a pair of the target state number and an
-   array of symbolic lookahead sets. The variables in these sets are
-   numbered in [0,g) where g is the number of items in the source
-   LR(0) state. Items are numbered in the order of presentation by
-   [Item.Set.fold]. *)
+(* A symbolic transition is a pair of the target state number and an array of
+   symbolic lookahead sets. The variables in these sets are numbered in [0,g)
+   where g is the number of items in the source LR(0) state. Items are
+   numbered in the order of presentation by [Item.Set.fold]. *)
 
 type symbolic_transition_target =
     node * SymbolicLookahead.t array
 
-(* The automaton is represented by (growing) arrays of states (sets of
-   items), symbolic transition information, and symbolic reduction
-   information, indexed by node numbers. Conversely, a hash table maps
-   states (sets of items) to node numbers. *)
+(* The automaton is represented by (growing) arrays of states (sets of items),
+   symbolic transition information, and symbolic reduction information,
+   indexed by node numbers. Conversely, a hash table maps states (sets of
+   items) to node numbers. *)
 
 let n =
   ref 0
@@ -416,9 +416,9 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
 
     InfiniteArray.set _reductions k (reductions closure);
 
-    (* Compute symbolic information about the transitions, and, by
-       dropping the symbolic lookahead information, explore the
-       transitions to further LR(0) states. *)
+    (* Compute symbolic information about the transitions, and, by dropping
+       the symbolic lookahead information, explore the transitions to further
+       LR(0) states. *)
 
     InfiniteArray.set _transitions k (SymbolMap.mapi (fun symbol symbolic_state ->
       let (k : node) = explore (Some symbol) (Item.Map.domain symbolic_state) in
@@ -433,14 +433,15 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
 
     k
 
-(* Creating a start state out of a start production. It contains a
-   single item, consisting of the start production, at position 0. *)
+(* [start prod] is the start state that corresponds to the start production
+   [prod]. It contains a single item, consisting of the start production, at
+   position 0. *)
 
 let start prod : Item.Set.t =
    Item.Set.singleton (Item.import (prod, 0))
 
-(* This starts the construction of the automaton and records the
-   entry nodes in an array. *)
+(* The construction of the LR(0) automaton is started here. The entry nodes
+   are recorded in the array [entry]. *)
 
 let entry : node ProductionMap.t =
   ProductionMap.start (fun prod ->
@@ -458,6 +459,7 @@ let () =
   Time.tick "Construction of the LR(0) automaton"
 
 (* -------------------------------------------------------------------------- *)
+
 (* Accessors. *)
 
 let items node : Item.Set.t =
@@ -474,10 +476,8 @@ let outgoing_edges node : node SymbolMap.t =
 let outgoing_symbols node : Symbol.t list =
   SymbolMap.domain (InfiniteArray.get _transitions node)
 
-module ImperativeNodeMap =
-  Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
-
 (* -------------------------------------------------------------------------- *)
+
 (* Help for building the LR(1) automaton. *)
 
 (* An LR(1) state is represented as a pair of an LR(0) state number
