@@ -10,5 +10,3 @@
 
 (* The side effects in this module are executed after the grammar has been read
    and analyzed, but before the automaton is constructed. *)
-
-module Run () : sig end

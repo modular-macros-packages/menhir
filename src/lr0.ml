@@ -10,6 +10,9 @@
 
 open Grammar
 
+(* Make sure that the middle-end runs before the automaton is constructed. *)
+include Middle
+
 (* ------------------------------------------------------------------------ *)
 
 (* [Closure] performs a precomputation which later helps efficiently compute
@@ -234,14 +237,6 @@ end = struct
   (* End of closure computation *)
 
 end
-
-(* ------------------------------------------------------------------------ *)
-
-(* Make sure that the middle-end runs before the automaton is constructed. *)
-
-let () =
-  let module M = Middle.Run() in
-  ()
 
 (* ------------------------------------------------------------------------ *)
 

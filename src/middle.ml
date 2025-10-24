@@ -10,8 +10,6 @@
 
 open Grammar
 
-module Run () = struct
-
 (* -------------------------------------------------------------------------- *)
 
 (* If [--random-sentence] was specified on the command line, obey it. *)
@@ -27,7 +25,3 @@ let () =
         print_endline (Sentence.print style (Some nt, sentence));
         exit 0
   end
-
-(* -------------------------------------------------------------------------- *)
-
-end (* Run *)
