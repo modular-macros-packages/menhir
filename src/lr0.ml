@@ -603,15 +603,15 @@ let reverse_reductions (state : t) : Reductions.reverse =
 let reductions state : Reductions.t =
   Reductions.flip (reverse_reductions state)
 
-(* Equality of states. *)
-
-let equal ((k1, tsr1) as state1) ((k2, tsr2) as state2) =
+let equal state1 state2 =
+  let (k1, tsr1) = state1
+  and (k2, tsr2) = state2 in
   assert (k1 = k2 && well_formed state1 && well_formed state2);
   MArray.equal TerminalSet.equal tsr1 tsr2
 
-(* Subsumption between states. *)
-
-let subsume ((k1, tsr1) as state1) ((k2, tsr2) as state2) =
+let subsume state1 state2 =
+  let (k1, tsr1) = state1
+  and (k2, tsr2) = state2 in
   assert (k1 = k2 && well_formed state1 && well_formed state2);
   MArray.equal TerminalSet.subset tsr1 tsr2
 

@@ -109,22 +109,22 @@ module AbstractLR1State : sig
      transition labeled [symbol]. This transition must exist. *)
   val transition: Symbol.t -> t -> t
 
-  (* Information about the reductions at a state. *)
-  val reverse_reductions: t -> Reductions.reverse
-
-  (* A table of the reductions at a state. *)
+  (**[reductions state] is a reduction table for the state [state]. *)
   val reductions: t -> Reductions.t
 
-  (* Equality of states. The two states must have the same core. Then,
-     they are equal if and only if their lookahead sets are pointwise
-     equal. *)
+  (**[reverse_reductions state] is a reverse reduction table for the state
+     [state]. *)
+  val reverse_reductions: t -> Reductions.reverse
 
+  (**[equal state1 state2] determines whether the states [state1] and [state2]
+     are equal, that is, whether their lookahead sets are pointwise equal. This
+     test is permitted only if [state1] and [state2] have the same core. *)
   val equal: t -> t -> bool
 
-  (* Subsumption between states. The two states must have the same
-     core. Then, one subsumes the other if and only if their lookahead
-     sets are (pointwise) in the subset relation. *)
-
+  (**[subsume state1 state2] determines whether the states [state1] and [state2]
+     are in the subsumption relation, that is, whether their lookahead sets are
+     pointwise in the subset relation. This test is permitted only if [state1]
+     and [state2] have the same core. *)
   val subsume: t -> t -> bool
 
   (* A slightly modified version of Pager's weak compatibility
