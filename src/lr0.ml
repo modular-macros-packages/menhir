@@ -12,169 +12,152 @@ open Grammar
 
 (* ------------------------------------------------------------------------ *)
 
-(* This functor performs precomputation that helps efficiently compute
-   the closure of an LR(0) or LR(1) state. The precomputation requires
-   time linear in the size of the grammar. The nature of the lookahead
-   sets remains abstract. *)
+(* [Closure] performs a precomputation which later helps efficiently compute
+   the closure of an LR(0) or LR(1) state. This precomputation requires linear
+   time in the size of the grammar. In this precomputation, the nature of the
+   lookahead sets is abstract. The parameter [L] represents the lookahead
+   sets. *)
 
 module Closure (L : sig
 
-  (* The type of lookahead sets. *)
+  (**The type of lookahead sets. *)
   type t
 
-  (* The empty lookahead set. Redundant with the following, but
-     convenient. *)
+  (**The empty lookahead set. *)
   val empty: t
 
-  (* A concrete, constant set of terminal symbols. *)
+  (**A concrete, constant set of terminal symbols. *)
   val constant: Grammar.TerminalSet.t -> t
 
-  (* [union s1 s2] returns the union of [s1] and [s2].  *)
+  (**The union of two lookahead sets. *)
   val union: t -> t -> t
 
 end) : sig
 
-  (* A state maps items to lookahead information. *)
-
+  (**A state is a map of items to lookahead information. *)
   type state = L.t Item.Map.t
 
-  (* This takes the closure of a state through all epsilon transitions. *)
-
+  (**[closure] computes the closure of a state through all epsilon
+     transitions. *)
   val closure: state -> state
 
 end = struct
 
-(* The precomputation consists in building the LR(0) nondeterministic
-   automaton. This is a graph whose nodes are items and whose edges
-   are epsilon transitions. (We do not care about shift transitions
-   here.) Lookahead information can be attached to nodes and is
-   propagated through the graph during closure computations. *)
+  (* The precomputation builds the LR(0) nondeterministic automaton. This is
+     a graph whose nodes are items and whose edges are epsilon transitions.
+     (We do not care about shift transitions here.) Lookahead information
+     can be attached to nodes and is propagated through the graph during
+     closure computations. *)
 
-  type state = L.t Item.Map.t
+  (* All of the epsilon transitions that leave a node have the same behavior
+     with respect to lookahead information. *)
+
+  (* The lookahead set that is transmitted along an epsilon transition is
+     either a constant, or the union of a constant and the lookahead set at
+     the source node. The former case corresponds to a source item whose
+     trailer is not nullable; the latter case corresponds to a source item
+     whose trailer is nullable. *)
+
+  type state =
+    L.t Item.Map.t
 
   type node = {
 
-      (* Each node is associated with an item. *)
-
       item: Item.t;
+        (**Each node represents an item. *)
 
-      (* All of the epsilon transitions that leave a node have the
-         same behavior with respect to lookahead information. *)
+      constant: L.t;
+        (**A constant lookahead set that is transmitted along every outgoing
+           epsilon transition. *)
 
-      (* The lookahead set transmitted along an epsilon transition is
-         either a constant, or the union of a constant and the lookahead
-         set at the source node. The former case corresponds to a source
-         item whose trailer is not nullable, the latter to a source item
-         whose trailer is nullable. *)
+      transmits: bool;
+        (**This Boolean flag indicates whether the lookahead set at this
+           node is or is not transmitted along every outgoing transition. *)
 
-      epsilon_constant: L.t;
-      epsilon_transmits: bool;
+      mutable transitions: node list;
+        (**This node's successors through epsilon transitions.
+           This field is never modified once initialization is over. *)
 
-      (* Each node carries pointers to its successors through
-         epsilon transitions. This field is never modified
-         once initialization is over. *)
-
-      mutable epsilon_transitions: node list;
-
-      (* The following fields are transient, that is, only used
-         temporarily during graph traversals. Marks are used to
-         recognize which nodes have been traversed already. Lists
-         of predecessors are used to record which edges have been
-         traversed. Lookahead information is attached with each
-         node. *)
+      (* The following fields are transient: that is, they are used only
+         temporarily, during graph traversals. *)
 
       mutable mark: Mark.t;
+        (**A (transient) mutable mark, used during graph traversal. *)
+
       mutable predecessors: node list;
+         (**A (transient) list of predecessors, used to record which edges
+            have been traversed. *)
+
       mutable lookahead: L.t;
+        (**A (transient) lookahead set at this node. *)
+
     }
 
-  (* Allocate one graph node per item and build a mapping of
-     items to nodes. *)
+  (* Allocate one graph node per item. Build a mapping of items to nodes. *)
 
-  let mapping : node array array =
-    Array.make Production.n [||]
+  let init prod pos : node =
+    let item = Item.import (prod, pos) in
+    (* The lookahead set that is transmitted through an epsilon transition
+       is the FIRST set of the remainder of the source item, plus, if that
+       is nullable, the lookahead set of the source item. *)
+    let constant, transmits =
+      if pos < Production.length prod then
+        let nullable, first = Analysis.nullable_first prod (pos + 1) in
+        L.constant first, nullable
+      else
+        (* No epsilon transitions leave this item. *)
+        L.empty, false
+    and transitions = [] (* temporary placeholder *)
+    and mark = Mark.none
+    and predecessors = []
+    and lookahead = L.empty
+    in
+    { item; constant; transmits; transitions; mark; predecessors; lookahead }
 
-  let item2node item =
+  let mapping : Production.t -> node array =
+    Production.tabulate @@ fun prod ->
+    Array.init (Production.length prod + 1) @@ fun pos ->
+    init prod pos
+
+  let item2node item : node =
     let prod, pos = Item.export item in
-    mapping.(Production.p2i prod).(pos)
+    (mapping prod).(pos)
+
+  (* At each node, compute outgoing transitions. *)
 
   let () =
-    Production.iter (fun prod ->
-      let _nt, rhs = Production.def prod in
-      let length = Array.length rhs in
-      mapping.(Production.p2i prod) <- Array.init (length+1) (fun pos ->
-
-        let item = Item.import (prod, pos) in
-
-        (* The lookahead set transmitted through an epsilon
-           transition is the FIRST set of the remainder of
-           the source item, plus, if that is nullable, the
-           lookahead set of the source item. *)
-
-        let constant, transmits =
-          if pos < length then
-            let nullable, first = Analysis.nullable_first prod (pos + 1) in
-            L.constant first, nullable
-          else
-            (* No epsilon transitions leave this item. *)
-            L.empty, false
-        in
-
-        {
-          item = item;
-          epsilon_constant = constant;
-          epsilon_transmits = transmits;
-          epsilon_transitions = []; (* temporary placeholder *)
-          mark = Mark.none;
-          predecessors = [];
-          lookahead = L.empty;
-        }
-
-      )
-    )
-
-  (* At each node, compute transitions. *)
-
-  let () =
-    Production.iter (fun prod ->
-      let _nt, rhs = Production.def prod in
-      let length = Array.length rhs in
-      Array.iteri (fun pos node ->
-
-        node.epsilon_transitions <-
-          if pos < length then
-            match rhs.(pos) with
-            | Symbol.N nt ->
-                Production.mapnt nt (fun prod ->
-                  item2node (Item.import (prod, 0))
-                )
-            | Symbol.T _ ->
-                []
-          else
+    Production.iter @@ fun prod ->
+    let rhs = Production.rhs prod in
+    mapping prod |> Array.iteri @@ fun pos node ->
+    node.transitions <-
+      if pos < Array.length rhs then
+        match rhs.(pos) with
+        | Symbol.N nt ->
+            Production.mapnt nt @@ fun prod ->
+            item2node (Item.import (prod, 0))
+        | Symbol.T _ ->
             []
+      else
+        []
 
-      ) mapping.(Production.p2i prod)
-    )
-
-  (* We can be certain that there are no cycles of transitions that transmit a
-     lookahead set. This guarantees that we can traverse these transitions in
-     a topological order.
+  (* We can be certain that there are no cycles of transitions that transmit
+     a lookahead set. This guarantees that we can traverse these transitions
+     in a topological order.
 
      Indeed, if there was such a cycle, then every item in this cycle would
-     have to be of the form A -> . B beta, where beta is nullable. DeRemer and
-     Pennello (1982) call this an includes cycle. An includes cycle is a
+     have to be of the form A -> . B beta, where beta is nullable. DeRemer
+     and Pennello (1982) call this an includes cycle. An includes cycle is a
      special case of a cycle, as defined by Aho and Ullman. The module
-     LoopDetection detects and rejects cycles, so we can be assured at this
-     point that no such cycle exists. *)
+     [LoopDetection] detects and rejects cycles, so we can be assured at
+     this point that no such cycle exists. *)
 
   (* Closure computation. *)
 
   let closure (items : state) : state =
 
-    (* Explore the graph forwards, starting from these items. Marks
-       are used to tell which nodes have been visited. Build a list of
-       all visited nodes; this is in fact the list of all items in the
-       closure.
+    (* Explore the graph forwards, starting from these items. Marks are used
+       to tell which nodes have been visited. Build a list of all visited
+       nodes; this is in fact the list of all items in the closure.
 
        At initial nodes and when reaching a node through a transition,
        record a lookahead set.
@@ -204,8 +187,8 @@ end = struct
       node.mark <- this;
       nodes := node :: !nodes;
       List.iter
-        (visit node node.epsilon_transmits node.epsilon_constant)
-        node.epsilon_transitions
+        (visit node node.transmits node.constant)
+        node.transitions
 
     in
 
@@ -218,8 +201,8 @@ end = struct
       !nodes in
 
     (* Explore the graph of transmitting transitions backwards. By
-       hypothesis, it is acyclic, so this is a topological
-       walk. Lookahead sets are inherited through transitions. *)
+       hypothesis, it is acyclic, so this is a topological walk.
+       Lookahead sets are inherited through transitions. *)
 
     let this = Mark.fresh() in
 
@@ -229,10 +212,9 @@ end = struct
         node.mark <- this;
         (* Explore all predecessors and merge their lookahead
            sets into the current node's own lookahead set. *)
-        List.iter (fun predecessor ->
-          walk predecessor;
-          node.lookahead <- L.union predecessor.lookahead node.lookahead
-        ) node.predecessors
+        node.predecessors |> List.iter @@ fun predecessor ->
+        walk predecessor;
+        node.lookahead <- L.union predecessor.lookahead node.lookahead
       end
     in
 
