@@ -57,6 +57,9 @@
   function `stack` have been removed. To inspect the parser's stack, the
   functions `top` and `pop` should be used instead.
 
+* The module `MenhirLib.InfiniteArray`, whose existence was not documented,
+  has been removed.
+
 * The deprecated module `MenhirLib.General` has been removed.
 
 * The deprecated demos in `demos/ocamlbuild` have been removed.
