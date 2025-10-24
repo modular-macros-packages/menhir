@@ -161,7 +161,7 @@ let schedule state =
 (* Since 2011/01/24, both criteria take error compatibility into account. *)
 
 let subsume candidate state =
-  Lr0.AbstractLR1State.subsume candidate state &&
+  Lr0.AbstractLR1State.subset candidate state &&
   Lr0.AbstractLR1State.error_compatible candidate state
 
 let compatible candidate state =

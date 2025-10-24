@@ -10,6 +10,7 @@
 
 open Grammar
 let sharp = Terminal.sharp
+let error = Terminal.error
 
 (* Make sure that the middle-end runs before the automaton is constructed. *)
 include Middle
@@ -527,18 +528,22 @@ type t =
    example, a numbering facility based on this mechanism is able to number
    10000 states in about 0.01s. *)
 
-let compare (k1, tsr1) (k2, tsr2) =
+let compare s1 s2 =
+  let (k1, tsr1) = s1
+  and (k2, tsr2) = s2 in
   let c = k1 - k2 in
   if c <> 0 then c
   else MArray.compare TerminalSet.compare tsr1 tsr2
 
-let export ((k, tsr) : t) : ConcreteLR1State.t =
+let export (s : t) : ConcreteLR1State.t =
+  let (k, tsr) = s in
   let (_ : int), items = Item.Set.fold (fun item (i, items) ->
     i+1, Item.Map.add item tsr.(i) items
   ) (InfiniteArray.get states k) (0, Item.Map.empty) in
   items
 
-let[@inline] core (k, _) =
+let[@inline] core (s : t) =
+  let (k, _) = s in
   k
 
 (* A sanity check. This well-formedness check is quite costly, due to the
@@ -548,7 +553,8 @@ let[@inline] core (k, _) =
 let debug =
   false
 
-let[@inline] well_formed (k, tsr) =
+let[@inline] well_formed (s : t) =
+  let (k, tsr) = s in
   not debug ||
   Array.length tsr = Item.Set.cardinal (InfiniteArray.get states k)
 
@@ -561,15 +567,14 @@ let start k =
   assert (well_formed state);
   state
 
-(* [interpret state sls] interprets the symbolic lookahead set [sls] with
-   respect to the source state [state]. The variables in the symbolic
-   lookahead set (which are integers) are interpreted as indices into the
-   state's array of concrete lookahead sets. The result is a concrete
-   lookahead set. *)
+(* [interpret s sls] interprets the symbolic lookahead set [sls] with respect
+   to the source state [s]. The variables in the symbolic lookahead set (which
+   are integers) are interpreted as indices into the state's array of concrete
+   lookahead sets. The result is a concrete lookahead set. *)
 
-let interpret (state : t) (sls : SymbolicLookahead.t) : TerminalSet.t =
-  assert (well_formed state);
-  let (_, tsr) = state
+let interpret (s : t) (sls : SymbolicLookahead.t) : TerminalSet.t =
+  assert (well_formed s);
+  let (_, tsr) = s
   and (ts, vars) = sls in
   VarSet.fold (fun var ts ->
     assert (0 <= var && var < Array.length tsr);
@@ -580,40 +585,40 @@ let interpret (state : t) (sls : SymbolicLookahead.t) : TerminalSet.t =
    and reductions. This is done in an efficient way by interpreting
    the precomputed symbolic information with respect to that state. *)
 
-let transitions (state : t) : t SymbolMap.t =
-  let (k, _) = state in
+let transitions (s : t) : t SymbolMap.t =
+  let (k, _) = s in
   InfiniteArray.get _transitions k
   |> SymbolMap.map @@ fun ((k, sr) : symbolic_transition_target) ->
-     (k, Array.map (interpret state) sr)
+     (k, Array.map (interpret s) sr)
 
-let transition symbol (state : t) : t =
-  let (k, _) = state in
+let transition symbol (s : t) : t =
+  let (k, _) = s in
   let ((k, sr) : symbolic_transition_target) =
     try
       SymbolMap.find symbol (InfiniteArray.get _transitions k)
     with Not_found ->
       assert false (* no transition along this symbol *)
   in
-  (k, Array.map (interpret state) sr)
+  (k, Array.map (interpret s) sr)
 
-let reverse_reductions (state : t) : Reductions.reverse =
-  let (k, _) = state in
+let reverse_reductions (s : t) : Reductions.reverse =
+  let (k, _) = s in
   InfiniteArray.get _reverse_reductions k
-  |> ProductionMap.map (interpret state)
+  |> ProductionMap.map (interpret s)
 
-let reductions state : Reductions.t =
-  Reductions.flip (reverse_reductions state)
+let reductions s : Reductions.t =
+  Reductions.flip (reverse_reductions s)
 
-let equal state1 state2 =
-  let (k1, tsr1) = state1
-  and (k2, tsr2) = state2 in
-  assert (k1 = k2 && well_formed state1 && well_formed state2);
+let equal s1 s2 =
+  let (k1, tsr1) = s1
+  and (k2, tsr2) = s2 in
+  assert (k1 = k2 && well_formed s1 && well_formed s2);
   MArray.equal TerminalSet.equal tsr1 tsr2
 
-let subsume state1 state2 =
-  let (k1, tsr1) = state1
-  and (k2, tsr2) = state2 in
-  assert (k1 = k2 && well_formed state1 && well_formed state2);
+let subset s1 s2 =
+  let (k1, tsr1) = s1
+  and (k2, tsr2) = s2 in
+  assert (k1 = k2 && well_formed s1 && well_formed s2);
   MArray.equal TerminalSet.subset tsr1 tsr2
 
 (* This function determines whether two (core-equivalent) states are
@@ -787,47 +792,39 @@ let eos_compatible (k1, tsr1) (k2, tsr2) =
    Thanks to Didier Rémy for reporting a bug caused by the absence
    of this extra criterion. *)
 
-let error_compatible  (k1, tsr1) (k2, tsr2) =
+let error_compatible (k1, tsr1) (k2, tsr2) =
   let open TerminalSet in
   assert (k1 = k2);
   let n = Array.length tsr1 in
   let rec loop i =
-    if i = n then
-      true
-    else
-      let ts1 = tsr1.(i)
-      and ts2 = tsr2.(i) in
-      begin
-        if mem Terminal.error ts1 then
-          (* [error] is a member of one set: it must be a member of the other set. *)
-          mem Terminal.error ts2
-        else if mem Terminal.error ts2 then
-          (* Symmetric condition. *)
-          mem Terminal.error ts1
-        else
-          true
-      end
-      && loop (i+1)
+    i = n ||
+    let ts1 = tsr1.(i)
+    and ts2 = tsr2.(i) in
+    begin
+      if mem error ts1 then
+        (* [error] is a member of one set: it must be a member of the other set. *)
+        mem error ts2
+      else if mem error ts2 then
+        (* Symmetric condition. *)
+        mem error ts1
+      else
+        true
+    end
+    && loop (i+1)
   in
   loop 0
 
-(* Union of two states. The two states must have the same core. The
-   new state is obtained by pointwise union of the lookahead sets. *)
-
-let union (k1, tsr1) ((k2, tsr2) as s2) =
+let union s1 s2 =
+  let (k1, tsr1) = s1
+  and (k2, tsr2) = s2 in
   assert (k1 = k2);
   let tsr = MArray.leq_join TerminalSet.union tsr1 tsr2 in
   (* If the fresh array [tsr] has the same content as [tsr2],
      then we must return the state [s2], unchanged. *)
   if tsr2 == tsr then s2 else (k1, tsr)
 
-(* Restriction of a state to a set of tokens of interest. Every
-   lookahead set is intersected with that set. *)
-
 let restrict ts (k, tsr) =
-  k, Array.map (fun tsri ->
-    TerminalSet.inter tsri ts
-  ) tsr
+  k, Array.map (TerminalSet.inter ts) tsr
 
 let print leading state =
   ConcreteLR1State.print leading (export state)

@@ -85,14 +85,14 @@ module AbstractLR1State : sig
      type. It is equipped with a series of efficient operations. *)
   type t
 
-  (**[compare] is a total order on LR(1) states. *)
+  (**[compare] is a total order on states. *)
   val compare: t -> t -> int
 
-  (**[export s] is the concrete LR(1) state that corresponds to the abstract
-     LR(1) state [s]. *)
+  (**[export s] is the concrete LR(1) state that corresponds to the state
+     [s]. *)
   val export: t -> ConcreteLR1State.t
 
-  (**[core s] is the core of the LR(1) state [s], that is, the underlying
+  (**[core s] is the core of the state [s], that is, the underlying
      LR(0) state that is obtained by erasing the lookahead sets. *)
   val core: t -> node
 
@@ -109,58 +109,51 @@ module AbstractLR1State : sig
      transition labeled [symbol]. This transition must exist. *)
   val transition: Symbol.t -> t -> t
 
-  (**[reductions state] is a reduction table for the state [state]. *)
+  (**[reductions s] is a reduction table for the state [s]. *)
   val reductions: t -> Reductions.t
 
-  (**[reverse_reductions state] is a reverse reduction table for the state
-     [state]. *)
+  (**[reverse_reductions s] is a reverse reduction table for the state [s]. *)
   val reverse_reductions: t -> Reductions.reverse
 
-  (**[equal state1 state2] determines whether the states [state1] and [state2]
-     are equal, that is, whether their lookahead sets are pointwise equal. This
-     test is permitted only if [state1] and [state2] have the same core. *)
+  (**[equal s1 s2] determines whether the states [s1] and [s2] are equal, that
+     is, whether their lookahead sets are pointwise equal. This test is
+     permitted only if [s1] and [s2] have the same core. *)
   val equal: t -> t -> bool
 
-  (**[subsume state1 state2] determines whether the states [state1] and [state2]
-     are in the subsumption relation, that is, whether their lookahead sets are
-     pointwise in the subset relation. This test is permitted only if [state1]
-     and [state2] have the same core. *)
-  val subsume: t -> t -> bool
+  (**[subset s1 s2] determines whether the states [s1] and [s2] are in the
+     subset relation, that is, whether their lookahead sets are pointwise in the
+     subset relation. This test is permitted only if [s1] and [s2] have the same
+     core. *)
+  val subset: t -> t -> bool
 
-  (* A slightly modified version of Pager's weak compatibility
-     criterion. The two states must have the same core. *)
-
+  (**[compatible s1 s2] determines whether the states [s1] and [s2] are
+     compatible according to a slightly modified version of Pager's weak
+     compatibility criterion. This test is permitted only if [s1] and [s2] have
+     the same core. *)
   val compatible: t -> t -> bool
 
-  (* This function determines whether two (core-equivalent) states can
-     be merged without creating an end-of-stream conflict. *)
-
+  (**[eos_compatible s1 s2] determines whether the states [s1] and [s2] can be
+     merged without creating an end-of-stream conflict. This test is permitted
+     only if [s1] and [s2] have the same core. *)
   val eos_compatible: t -> t -> bool
 
-  (* This function determines whether two (core-equivalent) states can
-     be merged without creating spurious reductions on the [error]
-     token. *)
-
+  (**[error_compatible s1 s2] determines whether the states [s1] and [s2] can be
+     merged without creating spurious reductions on [error]. This test is
+     permitted only if [s1] and [s2] have the same core. *)
   val error_compatible: t -> t -> bool
 
-  (* Union of two states. The two states must have the same core. The
-     new state is obtained by pointwise union of the lookahead sets. *)
-
-  (* If [s'] is a subset of [s], then [union s' s] is physically equal
-     to [s]. *)
-
+  (**[union s1 s2] computes the union of the states [s1] and [s2]. This is
+     permitted only if [s1] and [s2] have the same core.The new state is
+     obtained by pointwise union of the lookahead sets. If [s1] is a subset of
+     [s2], then [union s1 s2] is physically equal to [s2]. *)
   val union: t -> t -> t
 
-  (* Restriction of a state to a set of tokens of interest. Every
-     lookahead set is intersected with that set. *)
-
+  (**[restrict ts s] restricts the state [s] to the set of terminal symbols
+     [ts]. Every lookahead set in [s] is intersected with the set [ts]. *)
   val restrict: TerminalSet.t -> t -> t
 
-  (* The following functions display: 1- a concrete state; 2- a state
-     (only the kernel, not the closure);
-     The first parameter is a fixed string that is added at the
-     beginning of every line. *)
+  (**[print leading s] is a string representation of the state [s].
+     The string [leading] is inserted at the beginning of every line. *)
+  val print: string -> t -> string
 
-  val print:          string ->         t -> string
-
-end (* Help *)
+end (* AbstractLR1State *)
