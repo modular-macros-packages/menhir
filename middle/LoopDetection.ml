@@ -37,9 +37,9 @@ open G
    grammar is infinitely ambiguous: for some inputs, there is an infinite
    number of parse trees. *)
 
-(* We reject such a grammar, on two grounds: first, it seems pathological, and
-   is likely the result of a mistake; second, the algorithm that we use to
-   speed up closure computations (in the module Item) does not tolerate the
+(* We reject such a grammar, on two grounds: first, it seems pathological,
+   and is likely the result of a mistake; second, the algorithm that we use
+   to speed up closure computations (in [Lr0.Closure]) does not tolerate the
    presence of certain cycles. *)
 
 (* Let us define a relation R as follows: A R B holds if and only if there is
@@ -62,22 +62,21 @@ let successors
   (yield : Production.t -> Nonterminal.t -> unit)
   (nt : Nonterminal.t) : unit
 =
-  Production.iternt nt begin fun prod ->
-    let rhs = Production.rhs prod in
-    let n = Array.length rhs in
-    let nullable_prefix = ref true in
-    let i = ref 0 in
-    while !nullable_prefix && !i < n do
-      match rhs.(MInt.postincrement i) with
-      | Symbol.T _   ->
-          nullable_prefix := false
-      | Symbol.N nt' ->
-          if (not require_nullable_suffix || nullable_suffix prod !i)
-          && (not require_nonempty_prefix || !i > 1) then
-            yield prod nt';
-          nullable_prefix := Analysis.nullable nt'
-    done
-  end
+  Production.iternt nt @@ fun prod ->
+  let rhs = Production.rhs prod in
+  let n = Array.length rhs in
+  let nullable_prefix = ref true in
+  let i = ref 0 in
+  while !nullable_prefix && !i < n do
+    match rhs.(MInt.postincrement i) with
+    | Symbol.T _   ->
+        nullable_prefix := false
+    | Symbol.N nt' ->
+        if (not require_nullable_suffix || nullable_suffix prod !i)
+        && (not require_nonempty_prefix || !i > 1) then
+          yield prod nt';
+        nullable_prefix := Analysis.nullable nt'
+  done
 
 (* This adapter hides [prod] from the user function [yield]. *)
 
@@ -93,14 +92,13 @@ let show_cycle nts nt =
     let i = ref 0 in
     let next () = Nonterminal.print false nts.(MInt.postincrement i)
     and finished () = !i = Array.length nts in
-    MString.with_buffer 1024 begin fun b ->
-      let out format = Printf.bprintf b format in
-      out "%s" (next());
-      while not (finished()) do
-        out " expands to %s" (next());
-        if finished() then out ".\n" else out ",\nwhich"
-      done
-    end
+    MString.with_buffer 1024 @@ fun b ->
+    let out format = Printf.bprintf b format in
+    out "%s" (next());
+    while not (finished()) do
+      out " expands to %s" (next());
+      if finished() then out ".\n" else out ",\nwhich"
+    done
   end
 
 let fail nts nt =
@@ -202,18 +200,13 @@ let () =
   let successors_H =
     successors ~require_nullable_suffix:false ~require_nonempty_prefix:true in
   (* Iterate on every edge in the relation H. *)
-  Nonterminal.iter begin fun nt ->
-    nt |> successors_H begin fun prod nt' ->
-      (* If the source vertex [nt] and the destination vertex [nt'] lie in
-         the same component, then we have detected hidden left recursion. *)
-      if T.representative nt = T.representative nt' then
-        fail prod
-    end
-  end
+  Nonterminal.iter @@ fun nt ->
+  nt |> successors_H @@ fun prod nt' ->
+  (* If the source vertex [nt] and the destination vertex [nt'] lie in
+     the same component, then we have detected hidden left recursion. *)
+  if T.representative nt = T.representative nt' then
+    fail prod
 
 (* -------------------------------------------------------------------------- *)
-
-let () =
-  Time.tick "Running loop detection"
 
 end (* Run *)

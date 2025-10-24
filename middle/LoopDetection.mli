@@ -9,7 +9,8 @@
 (******************************************************************************)
 
 (**This module detects and rejects certain anomalies in the grammar,
-   which cause the grammar to be outside of the class LR(1). *)
+   which cause the grammar to be outside of the class LR(1). These
+   anomalies include cycles and hidden left recursion. *)
 
 open View
 

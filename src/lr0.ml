@@ -251,6 +251,9 @@ let () =
   let module L = LoopDetection.Run(Error)(Grammar) in
   ()
 
+let () =
+  Time.tick "Running loop detection"
+
 (* ------------------------------------------------------------------------ *)
 (* Symbolic lookahead information. *)
 
