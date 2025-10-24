@@ -325,7 +325,7 @@ module Run () = struct
         in
         (* Regroup lookahead tokens by production *)
         let compare (_, p1) (_, p2) =
-          Int.compare (Production.p2i p1) (Production.p2i p2)
+          Production.compare p1 p2
         and group tps =
           match tps with
           | [] -> assert false (* group cannot be empty *)

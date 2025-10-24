@@ -433,6 +433,10 @@ module Production : sig
   type index
   type t = index
 
+  (**[compare] compares two symbols according to a fixed but unspecified
+     total order. *)
+  val compare: t -> t -> int
+
   (**[n] is the total number of productions, including the start
      productions. *)
   val n: int

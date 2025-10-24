@@ -527,6 +527,8 @@ module Production = struct
       int
   type t = index
 
+  let compare = (-)
+
   (* For every start symbol [S], a new production S' -> S is created.
      It is known as a start production. *)
 
