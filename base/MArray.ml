@@ -98,7 +98,14 @@ let count p a =
   done;
   !c
 
-(* [compare] appears in OCaml 5.4. *)
+(* [equal] and [compare] appear in OCaml 5.4. *)
+
+let equal eq a b =
+  if length a <> length b then false else
+  let i = ref 0 in
+  let len = length a in
+  while !i < len && eq (unsafe_get a !i) (unsafe_get b !i) do incr i done;
+  !i = len
 
 let compare cmp a b =
   let len_a = length a and len_b = length b in

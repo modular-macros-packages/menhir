@@ -70,6 +70,10 @@ val existsi : (int -> 'a -> bool) -> 'a array -> bool
    predicate [p]. *)
 val count: ('a -> bool) -> 'a array -> int
 
+(**[equal] is identical to the function by the same name in the OCaml
+   standard library. *)
+val equal : ('a -> 'a -> bool) -> 'a array -> 'a array -> bool
+
 (**[compare] is identical to the function by the same name in the OCaml
    standard library. *)
 val compare : ('a -> 'a -> int) -> 'a array -> 'a array -> int
