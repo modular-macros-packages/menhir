@@ -521,12 +521,6 @@ module AbstractLR1State = struct
 type t =
   node * TerminalSet.t array
 
-let export ((k, tsr) : t) : ConcreteLR1State.t =
-  let (_ : int), items = Item.Set.fold (fun item (i, items) ->
-    i+1, Item.Map.add item tsr.(i) items
-  ) (InfiniteArray.get states k) (0, Item.Map.empty) in
-  items
-
 (* This total order can be used with [Fix.Memoize], [Fix.Numbering], etc. For
    example, a numbering facility based on this mechanism is able to number
    10000 states in about 0.01s. *)
@@ -536,15 +530,13 @@ let compare (k1, tsr1) (k2, tsr2) =
   if c <> 0 then c
   else MArray.compare TerminalSet.compare tsr1 tsr2
 
-(* Displaying a state. By default, only the kernel is displayed, not
-   the closure. *)
+let export ((k, tsr) : t) : ConcreteLR1State.t =
+  let (_ : int), items = Item.Set.fold (fun item (i, items) ->
+    i+1, Item.Map.add item tsr.(i) items
+  ) (InfiniteArray.get states k) (0, Item.Map.empty) in
+  items
 
-let print leading state =
-  ConcreteLR1State.print leading (export state)
-
-(* The core of an LR(1) state is the underlying LR(0) state. *)
-
-let core (k, _) =
+let[@inline] core (k, _) =
   k
 
 (* A sanity check. This well-formedness check is quite costly, due to the
@@ -554,7 +546,7 @@ let core (k, _) =
 let debug =
   false
 
-let well_formed (k, tsr) =
+let[@inline] well_formed (k, tsr) =
   not debug ||
   Array.length tsr = Item.Set.cardinal (InfiniteArray.get states k)
 
@@ -567,47 +559,39 @@ let start k =
   assert (well_formed state);
   state
 
-(* Interpreting a symbolic lookahead set with respect to a source
-   state. The variables in the symbolic lookahead set (which are
-   integers) are interpreted as indices into the state's array of
-   concrete lookahead sets. The result is a concrete lookahead set. *)
+(* [interpret state sls] interprets the symbolic lookahead set [sls] with
+   respect to the source state [state]. The variables in the symbolic
+   lookahead set (which are integers) are interpreted as indices into the
+   state's array of concrete lookahead sets. The result is a concrete
+   lookahead set. *)
 
-let interpret
-    ((_, tsr) as state : t)
-    ((ts, vars) : SymbolicLookahead.t)
-    : TerminalSet.t =
-
+let interpret (state : t) (sls : SymbolicLookahead.t) : TerminalSet.t =
   assert (well_formed state);
+  let (_, tsr) = state
+  and (ts, vars) = sls in
   VarSet.fold (fun var ts ->
-    assert (var >= 0 && var < Array.length tsr);
+    assert (0 <= var && var < Array.length tsr);
     TerminalSet.union tsr.(var) ts
   ) vars ts
 
-(* Out of an LR(1) state, one produces information about reductions
+(* Out of an LR(1) state, one can produce information about reductions
    and transitions. This is done in an efficient way by interpreting
    the precomputed symbolic information with respect to that state. *)
 
-let reductions
-    ((k, _) as state : t)
-    : (TerminalSet.t * Production.t) list =
+let reductions (state : t) : (TerminalSet.t * Production.t) list =
+  let (k, _) = state in
+  InfiniteArray.get _reductions k
+  |> List.map @@ fun (s, prod) ->
+     interpret state s, prod
 
-  List.map (fun (s, prod) ->
-    interpret state s, prod
-  ) (InfiniteArray.get _reductions k)
+let transitions (state : t) : t SymbolMap.t =
+  let (k, _) = state in
+  InfiniteArray.get _transitions k
+  |> SymbolMap.map @@ fun ((k, sr) : symbolic_transition_target) ->
+     (k, Array.map (interpret state) sr)
 
-let transitions
-    ((k, _) as state : t)
-    : t SymbolMap.t =
-
-  SymbolMap.map (fun ((k, sr) : symbolic_transition_target) ->
-    ((k, Array.map (interpret state) sr) : t)
-  ) (InfiniteArray.get _transitions k)
-
-let transition
-    symbol
-    ((k, _) as state : t)
-    : t =
-
+let transition symbol (state : t) : t =
+  let (k, _) = state in
   let ((k, sr) : symbolic_transition_target) =
     try
       SymbolMap.find symbol (InfiniteArray.get _transitions k)
@@ -860,6 +844,9 @@ let reductions_table state =
   List.fold_left (fun reductions (ts, prod) ->
     Reductions.add_reductions prod ts reductions
   ) TerminalMap.empty (reductions state)
+
+let print leading state =
+  ConcreteLR1State.print leading (export state)
 
 (* -------------------------------------------------------------------------- *)
 

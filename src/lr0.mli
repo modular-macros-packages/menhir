@@ -53,10 +53,9 @@ val foreach_outgoing_edge: node -> (Symbol.t -> node -> unit) -> unit
    symbols of the node [node]. *)
 val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(**This module offers facilities that help building LR(1) automata
-   of various kinds. *)
+(**This module offers a concrete representation of LR(1) states. *)
 module ConcreteLR1State : sig
 
   (**An LR(1) state is a mapping of LR(0) items to lookahead sets, that is,
@@ -68,12 +67,16 @@ module ConcreteLR1State : sig
   (**[closure s] is the closure of the LR(1) state [s]. *)
   val closure: t -> t
 
-  (**[print leading s] is a string representation of the state [s].
+  (**[print leading s] is a string representation of the LR(1) state [s].
      The string [leading] is inserted at the beginning of every line. *)
   val print: string -> t -> string
 
 end
 
+(* -------------------------------------------------------------------------- *)
+
+(**This module offers an abstract representation of LR(1) states, which is
+   particularly useful to construct of various kinds of LR(1) automata. *)
 module AbstractLR1State : sig
 
   (**An LR(1) state is internally represented as a pair of an LR(0) state
@@ -82,37 +85,37 @@ module AbstractLR1State : sig
      type. It is equipped with a series of efficient operations. *)
   type t
 
-  (**A total order on LR(1) states. *)
+  (**[compare] is a total order on LR(1) states. *)
   val compare: t -> t -> int
 
-  (**[export s] transforms the abstract LR(1) state [s] into a concrete
-     LR(1) state. *)
+  (**[export s] is the concrete LR(1) state that corresponds to the abstract
+     LR(1) state [s]. *)
   val export: t -> ConcreteLR1State.t
 
-  (* The core of an LR(1) state is the underlying LR(0) state. *)
-
+  (**[core s] is the core of the LR(1) state [s], that is, the underlying
+     LR(0) state that is obtained by erasing the lookahead sets. *)
   val core: t -> node
 
-  (* One can create an LR(1) start state out of an LR(0) start
-     node. *)
-
+  (**If [node] is a start node of the LR(0) automaton then [start node]
+     is the corresponding LR(1) start state. *)
   val start: node -> t
 
-  (* Information about the transitions at a state. *)
-
+  (**[transitions s] returns the outgoing (shift and goto) transitions of the
+     state [s], in the form of a map of symbols (which serve as edge labels)
+     to successor states. *)
   val transitions: t -> t SymbolMap.t
+
   val transition: Symbol.t -> t -> t
 
   (* [transition_tokens transitions] returns the set of tokens (terminal symbols)
      that are labels of outgoing transitions in the table [transitions]. *)
-
   val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
 
   (* Information about the reductions at a state. *)
-
-  (* See also [reductions_table] further on. *)
-
   val reductions: t -> (TerminalSet.t * Production.t) list
+
+  (* A table of the reductions at a state. *)
+  val reductions_table: t -> Reductions.t
 
   (* Equality of states. The two states must have the same core. Then,
      they are equal if and only if their lookahead sets are pointwise
@@ -161,9 +164,5 @@ module AbstractLR1State : sig
      beginning of every line. *)
 
   val print:          string ->         t -> string
-
-  (* A table of the reductions at a state. *)
-
-  val reductions_table: t -> Reductions.t
 
 end (* Help *)
