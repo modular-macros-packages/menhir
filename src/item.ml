@@ -45,32 +45,29 @@ let low_bits =
 let low_limit =
   1 lsl low_bits
 
-let export t =
-  (Production.i2p (t lsr low_bits), t mod low_limit)
+let equal =
+  Int.equal
 
 let import (prod, pos) =
   assert (0 <= pos && pos <= Production.length prod);
   assert (pos < low_limit);
   (Production.p2i prod) lsl low_bits + pos
 
+let export item =
+  Production.i2p (item lsr low_bits),
+  item mod low_limit
+
 let marshal (item : t) : int =
   item
 
-(* Comparison. *)
+let is_start item =
+  let prod, pos = export item in
+  Production.is_start prod && pos = 0
 
-let equal (item1 : t) (item2: t) =
-  item1 = item2
-
-let startnt t =
-  let prod, pos = export t in
-  let rhs = Production.rhs prod in
-  let length = Array.length rhs in
-  assert (pos = 0 && length = 1);
-  match rhs.(0) with
-  | Symbol.N nt ->
-      nt
-  | Symbol.T _ ->
-      assert false
+let startnt item =
+  assert (is_start item);
+  let prod, _pos = export item in
+  Option.get (Production.classify prod)
 
 (* Printing. *)
 
