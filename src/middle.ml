@@ -25,3 +25,14 @@ let () =
         print_endline (Sentence.print style (Some nt, sentence));
         exit 0
   end
+
+(* ------------------------------------------------------------------------ *)
+
+(* Perform loop detection before attempting to build the LR(0) automaton. *)
+
+let () =
+  let module L = LoopDetection.Run(Error)(Grammar) in
+  ()
+
+let () =
+  Time.tick "Running loop detection"

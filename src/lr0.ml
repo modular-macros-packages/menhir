@@ -239,17 +239,6 @@ end = struct
 end
 
 (* ------------------------------------------------------------------------ *)
-
-(* Perform loop detection before attempting to build the LR(0) automaton. *)
-
-let () =
-  let module L = LoopDetection.Run(Error)(Grammar) in
-  ()
-
-let () =
-  Time.tick "Running loop detection"
-
-(* ------------------------------------------------------------------------ *)
 (* Symbolic lookahead information. *)
 
 (* A symbolic lookahead set consists of an actual concrete set of
