@@ -14,18 +14,25 @@ open Grammar
    production and the index of the bullet in the production's right-hand
    side. *)
 type t
+
+(**[equal] determines whether two items are equal. *)
+val equal: t -> t -> bool
+
+(**[import (prod, i)] converts a pair of a production [prod] and an index [i]
+   to an item. The index [i] must lie in the interval [\[0, n\]], where [n]
+   is the length of production [prod]. *)
 val import: Production.t * int -> t
+
+(**[export item] converts the item [item] back to a pair of a production
+   [prod] and an index [i]. The index [i] lies in the interval [\[0, n\]],
+   where [n] is the length of production [prod]. *)
 val export: t -> Production.t * int
 
-(* An item can be encoded as an integer. This is used in the table
-   back-end only. The decoding function (really a copy of [export])
-   is in [TableInterpreter]. *)
-
+(**An item is internally encoded as a single integer value. This feature
+   should be used as little as possible. It is currently exploited in the
+   table back-end only. The decoding function (which is really a copy of
+   [export]) is in [InspectionTableInterpreter]. *)
 val marshal: t -> int
-
-(* Comparison. *)
-
-val equal: t -> t -> bool
 
 (* [def item] looks up the production associated with this item in the
    grammar and returns [prod, nt, rhs, pos, length], where [prod] is
