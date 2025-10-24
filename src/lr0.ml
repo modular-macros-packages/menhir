@@ -13,7 +13,7 @@ open Grammar
 (* Make sure that the middle-end runs before the automaton is constructed. *)
 include Middle
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* [Closure] performs a precomputation which later helps efficiently compute
    the closure of an LR(0) or LR(1) state. This precomputation requires linear
@@ -234,44 +234,50 @@ end = struct
       closure
     ) Item.Map.empty nodes
 
-  (* End of closure computation *)
+end (* Closure *)
 
-end
+(* -------------------------------------------------------------------------- *)
 
-(* ------------------------------------------------------------------------ *)
-(* Symbolic lookahead information. *)
+(* A set variable is represented as an integer value. *)
 
-(* A symbolic lookahead set consists of an actual concrete set of
-   terminal symbols and of a number of set variables. Set variables as
-   encoded as integers. *)
+(* The number of distinct set variables that we need is not easily known
+   ahead of time; it is the maximum number of items in a state. *)
 
-module VarSet = Bitsets.SparseBitSet
+module VarSet =
+  Bitsets.SparseBitSet
+
+(* -------------------------------------------------------------------------- *)
+
+(* Symbolic lookahead sets. *)
 
 module SymbolicLookahead = struct
+
+  (* A symbolic lookahead set consists of a concrete set of terminal symbols
+     and of a number of set variables. *)
 
   type t =
     TerminalSet.t * VarSet.t
 
-  let constant toks =
-    (toks, VarSet.empty)
+  let constant ts =
+    (ts, VarSet.empty)
 
   let empty =
     constant TerminalSet.empty
 
-  let union (toks1, vars1) ((toks2, vars2) as s2) =
-    let toks = TerminalSet.union toks1 toks2
+  let union (ts1, vars1) ((ts2, vars2) as s2) =
+    let ts = TerminalSet.union ts1 ts2
     and vars = VarSet.union vars1 vars2 in
-    if toks2 == toks && vars2 == vars then
+    if ts2 == ts && vars2 == vars then
       s2
     else
-      (toks, vars)
+      (ts, vars)
 
   let variable (var : int) : t =
     (TerminalSet.empty, VarSet.singleton var)
 
-  let project (toks, vars) =
+  let project (ts, vars) =
     assert (VarSet.is_empty vars);
-    toks
+    ts
 
 end
 
@@ -297,13 +303,13 @@ let closure (state : concretelr1state) : concretelr1state =
      (SymbolicClosure.closure
        (Item.Map.map SymbolicLookahead.constant state))
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Finding which non-epsilon transitions leave a set of items. This
    code is parametric in the nature of lookahead sets. *)
 
 let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
 
-  Item.Map.fold (fun item toks transitions ->
+  Item.Map.fold (fun item ts transitions ->
     match Item.classify item with
     | Item.Shift (symbol, item') ->
         let items : 'a Item.Map.t =
@@ -312,27 +318,27 @@ let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
           with Not_found ->
             Item.Map.empty
         in
-        SymbolMap.add symbol (Item.Map.add item' toks items) transitions
+        SymbolMap.add symbol (Item.Map.add item' ts items) transitions
     | Item.Reduce _ ->
         transitions
   ) state SymbolMap.empty
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Determining the reduction opportunities at a (closed) state. They
    are represented as a list of pairs of a lookahead set and a
    production index. This code is again parametric in the nature of
    lookahead sets. *)
 
 let reductions (state : 'a Item.Map.t) : ('a * Production.t) list =
-  Item.Map.fold (fun item toks accu ->
+  Item.Map.fold (fun item ts accu ->
     match Item.classify item with
     | Item.Reduce prod ->
-        (toks, prod) :: accu
+        (ts, prod) :: accu
     | Item.Shift _ ->
         accu
   ) state []
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Construction of the the LR(0) automaton. *)
 
 (* Nodes are numbered sequentially. *)
@@ -451,7 +457,7 @@ let () =
   Error.logA 1 (fun f -> Printf.fprintf f "Built an LR(0) automaton with %d states.\n" n);
   Time.tick "Construction of the LR(0) automaton"
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Accessors. *)
 
 let items node : Item.Set.t =
@@ -471,7 +477,7 @@ let outgoing_symbols node : Symbol.t list =
 module ImperativeNodeMap =
   Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Help for building the LR(1) automaton. *)
 
 (* An LR(1) state is represented as a pair of an LR(0) state number
@@ -488,18 +494,18 @@ type lr1state =
 
 module Lr1StateAsOrderedType = struct
   type t = lr1state
-  let compare (k1, toksr1) (k2, toksr2) =
+  let compare (k1, tsr1) (k2, tsr2) =
     let c = k1 - k2 in
     if c <> 0 then c
-    else MArray.compare TerminalSet.compare toksr1 toksr2
+    else MArray.compare TerminalSet.compare tsr1 tsr2
 end
 
 (* An encoded LR(1) state can be turned into a concrete representation,
    that is, a mapping of items to concrete lookahead sets. *)
 
-let export (k, toksr) =
+let export (k, tsr) =
   let (_ : int), items = Item.Set.fold (fun item (i, items) ->
-    i+1, Item.Map.add item toksr.(i) items
+    i+1, Item.Map.add item tsr.(i) items
   ) (InfiniteArray.get states k) (0, Item.Map.empty) in
   items
 
@@ -507,11 +513,11 @@ let export (k, toksr) =
 
 let print_concrete leading (state : concretelr1state) =
   MString.with_buffer 1024 (fun buffer ->
-    Item.Map.iter (fun item toks ->
+    Item.Map.iter (fun item ts ->
       Printf.bprintf buffer "%s%s [ %s ]\n"
         leading
         (Item.print item)
-        (TerminalSet.print toks)
+        (TerminalSet.print ts)
     ) state
   )
 
@@ -533,9 +539,9 @@ let core (k, _) =
 let debug =
   false
 
-let well_formed (k, toksr) =
+let well_formed (k, tsr) =
   not debug ||
-  Array.length toksr = Item.Set.cardinal (InfiniteArray.get states k)
+  Array.length tsr = Item.Set.cardinal (InfiniteArray.get states k)
 
 (* An LR(1) start state is the combination of an LR(0) start state
    (which consists of a single item) with a singleton lookahead set
@@ -552,15 +558,15 @@ let start k =
    concrete lookahead sets. The result is a concrete lookahead set. *)
 
 let interpret
-    ((_, toksr) as state : lr1state)
-    ((toks, vars) : SymbolicLookahead.t)
+    ((_, tsr) as state : lr1state)
+    ((ts, vars) : SymbolicLookahead.t)
     : TerminalSet.t =
 
   assert (well_formed state);
-  VarSet.fold (fun var toks ->
-    assert (var >= 0 && var < Array.length toksr);
-    TerminalSet.union toksr.(var) toks
-  ) vars toks
+  VarSet.fold (fun var ts ->
+    assert (var >= 0 && var < Array.length tsr);
+    TerminalSet.union tsr.(var) ts
+  ) vars ts
 
 (* Out of an LR(1) state, one produces information about reductions
    and transitions. This is done in an efficient way by interpreting
@@ -599,37 +605,37 @@ let transition
    that are labels of outgoing transitions in the table [transitions]. *)
 
 let transition_tokens transitions =
-  SymbolMap.fold (fun symbol _target toks ->
+  SymbolMap.fold (fun symbol _target ts ->
     match symbol with
-    | Symbol.T tok -> TerminalSet.add tok toks
-    | Symbol.N _   -> toks
+    | Symbol.T tok -> TerminalSet.add tok ts
+    | Symbol.N _   -> ts
   ) transitions TerminalSet.empty
 
 (* Equality of states. *)
 
-let equal ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
+let equal ((k1, tsr1) as state1) ((k2, tsr2) as state2) =
   assert (k1 = k2 && well_formed state1 && well_formed state2);
   let rec loop i =
     if i = 0 then
       true
     else
       let i = i - 1 in
-      (TerminalSet.equal toksr1.(i) toksr2.(i)) && (loop i)
+      (TerminalSet.equal tsr1.(i) tsr2.(i)) && (loop i)
   in
-  loop (Array.length toksr1)
+  loop (Array.length tsr1)
 
 (* Subsumption between states. *)
 
-let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
+let subsume ((k1, tsr1) as state1) ((k2, tsr2) as state2) =
   assert (k1 = k2 && well_formed state1 && well_formed state2);
   let rec loop i =
     if i = 0 then
       true
     else
       let i = i - 1 in
-      (TerminalSet.subset toksr1.(i) toksr2.(i)) && (loop i)
+      (TerminalSet.subset tsr1.(i) tsr2.(i)) && (loop i)
   in
-  loop (Array.length toksr1)
+  loop (Array.length tsr1)
 
 (* This function determines whether two (core-equivalent) states are
    compatible, according to a criterion that is close to Pager's weak
@@ -690,23 +696,23 @@ let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
      A and B are compatible, then C is compatible with (A U B) if and only
      if C is compatible with both A and B. *)
 
-let compatible (k1, toksr1) (k2, toksr2) =
+let compatible (k1, tsr1) (k2, tsr2) =
   assert (k1 = k2);
-  let n = Array.length toksr1 in
+  let n = Array.length tsr1 in
   (* Two states are compatible if and only if they are compatible
      at every pair (i, j), where i and j are distinct. *)
   let rec loopi i =
     if i = n then
       true
     else
-      let toksr1i = toksr1.(i)
-      and toksr2i = toksr2.(i) in
+      let tsr1i = tsr1.(i)
+      and tsr2i = tsr2.(i) in
       let rec loopj j =
         if j = i then
           true
         else
-          let toksr1j = toksr1.(j)
-          and toksr2j = toksr2.(j) in
+          let tsr1j = tsr1.(j)
+          and tsr2j = tsr2.(j) in
 
           (* The two states are compatible at (i, j) if every conflict
              token in the merged state already was a conflict token in
@@ -714,20 +720,20 @@ let compatible (k1, toksr1) (k2, toksr2) =
              follows:
 
             TerminalSet.subset
-              (TerminalSet.inter (TerminalSet.union toksr1i toksr2i) (TerminalSet.union toksr1j toksr2j))
-              (TerminalSet.union (TerminalSet.inter toksr1i toksr1j) (TerminalSet.inter toksr2i toksr2j))
+              (TerminalSet.inter (TerminalSet.union tsr1i tsr2i) (TerminalSet.union tsr1j tsr2j))
+              (TerminalSet.union (TerminalSet.inter tsr1i tsr1j) (TerminalSet.inter tsr2i tsr2j))
 
              but is easily seen (on paper) to be equivalent to:
 
           *)
 
              TerminalSet.subset
-               (TerminalSet.inter toksr2i toksr1j)
-               (TerminalSet.union toksr1i toksr2j)
+               (TerminalSet.inter tsr2i tsr1j)
+               (TerminalSet.union tsr1i tsr2j)
           &&
              TerminalSet.subset
-               (TerminalSet.inter toksr1i toksr2j)
-               (TerminalSet.union toksr2i toksr1j)
+               (TerminalSet.inter tsr1i tsr2j)
+               (TerminalSet.union tsr2i tsr1j)
           &&
              loopj (j+1)
       in
@@ -757,22 +763,22 @@ let compatible (k1, toksr1) (k2, toksr2) =
    Thanks to Sébastien Hinderer for reporting the bug caused by the
    absence of this extra criterion. *)
 
-let eos_compatible  (k1, toksr1) (k2, toksr2) =
+let eos_compatible  (k1, tsr1) (k2, tsr2) =
   assert (k1 = k2);
-  let n = Array.length toksr1 in
+  let n = Array.length tsr1 in
   let rec loop i =
     if i = n then
       true
     else
-      let toks1 = toksr1.(i)
-      and toks2 = toksr2.(i) in
+      let ts1 = tsr1.(i)
+      and ts2 = tsr2.(i) in
       begin
-        if TerminalSet.mem Terminal.sharp toks1 && TerminalSet.is_singleton toks1 then
+        if TerminalSet.mem Terminal.sharp ts1 && TerminalSet.is_singleton ts1 then
           (* "#" is alone in one set: it must be a member of the other set. *)
-          TerminalSet.mem Terminal.sharp toks2
-        else if TerminalSet.mem Terminal.sharp toks2 && TerminalSet.is_singleton toks2 then
+          TerminalSet.mem Terminal.sharp ts2
+        else if TerminalSet.mem Terminal.sharp ts2 && TerminalSet.is_singleton ts2 then
           (* Symmetric condition. *)
-          TerminalSet.mem Terminal.sharp toks1
+          TerminalSet.mem Terminal.sharp ts1
         else
           true
       end
@@ -808,22 +814,22 @@ let eos_compatible  (k1, toksr1) (k2, toksr2) =
    Thanks to Didier Rémy for reporting a bug caused by the absence
    of this extra criterion. *)
 
-let error_compatible  (k1, toksr1) (k2, toksr2) =
+let error_compatible  (k1, tsr1) (k2, tsr2) =
   assert (k1 = k2);
-  let n = Array.length toksr1 in
+  let n = Array.length tsr1 in
   let rec loop i =
     if i = n then
       true
     else
-      let toks1 = toksr1.(i)
-      and toks2 = toksr2.(i) in
+      let ts1 = tsr1.(i)
+      and ts2 = tsr2.(i) in
       begin
-        if TerminalSet.mem Terminal.error toks1 then
+        if TerminalSet.mem Terminal.error ts1 then
           (* [error] is a member of one set: it must be a member of the other set. *)
-          TerminalSet.mem Terminal.error toks2
-        else if TerminalSet.mem Terminal.error toks2 then
+          TerminalSet.mem Terminal.error ts2
+        else if TerminalSet.mem Terminal.error ts2 then
           (* Symmetric condition. *)
-          TerminalSet.mem Terminal.error toks1
+          TerminalSet.mem Terminal.error ts1
         else
           true
       end
@@ -834,22 +840,22 @@ let error_compatible  (k1, toksr1) (k2, toksr2) =
 (* Union of two states. The two states must have the same core. The
    new state is obtained by pointwise union of the lookahead sets. *)
 
-let union (k1, toksr1) ((k2, toksr2) as s2) =
+let union (k1, tsr1) ((k2, tsr2) as s2) =
   assert (k1 = k2);
-  let toksr = MArray.leq_join TerminalSet.union toksr1 toksr2 in
-  (* If the fresh array [toksr] has the same content as [toksr2],
+  let tsr = MArray.leq_join TerminalSet.union tsr1 tsr2 in
+  (* If the fresh array [tsr] has the same content as [tsr2],
      then we must return the state [s2], unchanged. *)
-  if toksr2 == toksr then s2 else (k1, toksr)
+  if tsr2 == tsr then s2 else (k1, tsr)
 
 (* Restriction of a state to a set of tokens of interest. Every
    lookahead set is intersected with that set. *)
 
-let restrict toks (k, toksr) =
-  k, Array.map (fun toksri ->
-    TerminalSet.inter toksri toks
-  ) toksr
+let restrict ts (k, tsr) =
+  k, Array.map (fun tsri ->
+    TerminalSet.inter tsri ts
+  ) tsr
 
 let reductions_table state =
-  List.fold_left (fun reductions (toks, prod) ->
-    Reductions.add_reductions prod toks reductions
+  List.fold_left (fun reductions (ts, prod) ->
+    Reductions.add_reductions prod ts reductions
   ) TerminalMap.empty (reductions state)
