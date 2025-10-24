@@ -40,13 +40,21 @@ val items: node -> Item.Set.t
    [incoming_symbol node] is the incoming symbol of the node [node]. *)
 val incoming_symbol: node -> Symbol.t option
 
+(**[outgoing_edges node] returns the outgoing (shift and goto) edges of the
+   node [node], in the form of a map of symbols (which serve as edge labels)
+   to successor nodes. *)
+val outgoing_edges: node -> node SymbolMap.t
+
+(**[foreach_outgoing_edge node] enumerates the outgoing edges of the node
+   [node]. *)
 val foreach_outgoing_edge: node -> (Symbol.t -> node -> unit) -> unit
 
-(* The outgoing edges of a node. *)
-val outgoing_edges: node -> node SymbolMap.t
+(**[outgoing_symbols node] constructs a map whose domain is the outgoing
+   symbols of the node [node]. *)
 val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 
 (* ------------------------------------------------------------------------ *)
+
 (* Help for building the LR(1) automaton. *)
 
 (* An LR(1) state is internally represented as a pair of an LR(0)

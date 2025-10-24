@@ -462,21 +462,21 @@ let () =
 
 (* Accessors. *)
 
-let items node : Item.Set.t =
+let items node =
   InfiniteArray.get states node
 
-let incoming_symbol node : Symbol.t option =
+let incoming_symbol node =
   InfiniteArray.get incoming node
+
+let outgoing_edges node =
+  InfiniteArray.get _transitions node
+  |> SymbolMap.map @@ fun (target, _) ->
+     target
 
 let foreach_outgoing_edge node yield =
   InfiniteArray.get _transitions node
   |> SymbolMap.iter @@ fun symbol (target, _) ->
      yield symbol target
-
-let outgoing_edges node : node SymbolMap.t =
-  InfiniteArray.get _transitions node
-  |> SymbolMap.map @@ fun (target, _) ->
-     target
 
 let outgoing_symbols node f =
   InfiniteArray.get _transitions node
