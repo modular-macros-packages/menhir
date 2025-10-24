@@ -11,7 +11,8 @@
 type 'a t = {
     default: 'a;
     mutable table: 'a array;
-    mutable extent: int; (* the index of the greatest [set] ever, plus one *)
+    mutable extent: int;
+      (* [extent] is the index of the greatest [set] ever, plus one *)
   }
 
 let default_size =
@@ -29,28 +30,30 @@ let rec new_length length i =
   else
     new_length (2 * length) i
 
-let ensure a i =
-  assert (0 <= i);
-  let table = a.table in
-  let length = Array.length table in
-  if i >= length then begin
-    let table' = Array.make (new_length (2 * length) i) a.default in
-    Array.blit table 0 table' 0 length;
-    a.table <- table'
-  end
+let grow a i =
+  let n = Array.length a.table in
+  let n' = new_length (2 * n) i in
+  let table' = Array.make n' a.default in
+  Array.blit a.table 0 table' 0 n;
+  a.table <- table'
 
-let get a i =
+let[@inline] ensure a i =
+  assert (0 <= i);
+  let n = Array.length a.table in
+  if n <= i then grow a i
+
+let[@inline] get a i =
   ensure a i;
   Array.unsafe_get a.table (i)
 
-let set a i x =
+let[@inline] set a i x =
   ensure a i;
   Array.unsafe_set a.table (i) x;
   if a.extent <= i then
     a.extent <- i + 1
 
-let extent a =
+let[@inline] extent a =
   a.extent
 
-let domain a =
+let[@inline] domain a =
   Array.sub a.table 0 a.extent
