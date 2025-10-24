@@ -166,7 +166,7 @@ end) = struct
                   can_reduce := toks'
 
           ) toks
-        ) (Lr0.AbstractLR1State.reductions state)
+        ) (Lr0.AbstractLR1State.reverse_reductions state)
 
     end
 

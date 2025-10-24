@@ -105,6 +105,8 @@ module AbstractLR1State : sig
      to successor states. *)
   val transitions: t -> t SymbolMap.t
 
+  (**[transition symbol s] return the successor of the state [s] along the
+     transition labeled [symbol]. This transition must exist. *)
   val transition: Symbol.t -> t -> t
 
   (* [transition_tokens transitions] returns the set of tokens (terminal symbols)
@@ -112,10 +114,10 @@ module AbstractLR1State : sig
   val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
 
   (* Information about the reductions at a state. *)
-  val reductions: t -> Reductions.reverse
+  val reverse_reductions: t -> Reductions.reverse
 
   (* A table of the reductions at a state. *)
-  val reductions_table: t -> Reductions.t
+  val reductions: t -> Reductions.t
 
   (* Equality of states. The two states must have the same core. Then,
      they are equal if and only if their lookahead sets are pointwise

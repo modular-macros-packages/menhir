@@ -138,8 +138,7 @@ end
 
 val transitions: node -> node SymbolMap.t
 
-val reductions: node -> Production.t list TerminalMap.t
-  (* or: node -> Lr0.AbstractLR1State.reductions *)
+val reductions: node -> Reductions.t
 
 (* (New as of 2012/01/23.) This tells whether a shift/reduce conflict
    in this node was solved in favor of neither (%nonassoc). This implies

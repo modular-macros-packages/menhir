@@ -355,7 +355,7 @@ let states : Item.Set.t InfiniteArray.t =
 let _transitions : symbolic_transition_target SymbolMap.t InfiniteArray.t =
   InfiniteArray.make SymbolMap.empty
 
-let _reductions : SymbolicLookahead.t ProductionMap.t InfiniteArray.t =
+let _reverse_reductions : SymbolicLookahead.t ProductionMap.t InfiniteArray.t =
   InfiniteArray.make ProductionMap.empty
 
 let map : (Item.Set.t, node) Hashtbl.t =
@@ -400,7 +400,7 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
 
     (* Compute symbolic information about reductions. *)
 
-    InfiniteArray.set _reductions k (reductions closure);
+    InfiniteArray.set _reverse_reductions k (reductions closure);
 
     (* Compute symbolic information about the transitions, and, by dropping
        the symbolic lookahead information, explore the transitions to further
@@ -575,17 +575,9 @@ let interpret (state : t) (sls : SymbolicLookahead.t) : TerminalSet.t =
     TerminalSet.union tsr.(var) ts
   ) vars ts
 
-(* Out of an LR(1) state, one can produce information about reductions
-   and transitions. This is done in an efficient way by interpreting
+(* Out of an LR(1) state, one can produce information about transitions
+   and reductions. This is done in an efficient way by interpreting
    the precomputed symbolic information with respect to that state. *)
-
-let reductions (state : t) : Reductions.reverse =
-  let (k, _) = state in
-  InfiniteArray.get _reductions k
-  |> ProductionMap.map (interpret state)
-
-let reductions_table state : Reductions.t =
-  Reductions.flip (reductions state)
 
 let transitions (state : t) : t SymbolMap.t =
   let (k, _) = state in
@@ -602,6 +594,14 @@ let transition symbol (state : t) : t =
       assert false (* no transition along this symbol *)
   in
   (k, Array.map (interpret state) sr)
+
+let reverse_reductions (state : t) : Reductions.reverse =
+  let (k, _) = state in
+  InfiniteArray.get _reverse_reductions k
+  |> ProductionMap.map (interpret state)
+
+let reductions state : Reductions.t =
+  Reductions.flip (reverse_reductions state)
 
 (* [transition_tokens transitions] returns the set of tokens (terminal symbols)
    that are labels of outgoing transitions in the table [transitions]. *)

@@ -208,7 +208,7 @@ let discover (raw_node : Raw.node) =
   let node : node = MInt.postincrement n in
   _number.(i) <- node;
 
-  (* Detect conflicts. We iterate over the table [Lr0.AbstractLR1State.reductions_table state],
+  (* Detect conflicts. We iterate over the table [Lr0.AbstractLR1State.reductions state],
      which gives us all potential reductions. The code is written in such a
      way that we are aware of multi-way shift/reduce/reduce conflicts. We
      solve conflicts, when unambiguously allowed by priorities, by removing
@@ -218,7 +218,7 @@ let discover (raw_node : Raw.node) =
   and has_reduce_reduce = ref false in
 
   let foreach_reduction f =
-    TerminalMap.fold f (Lr0.AbstractLR1State.reductions_table state) TerminalMap.empty
+    TerminalMap.fold f (Lr0.AbstractLR1State.reductions state) TerminalMap.empty
   in
 
   reductions.(i) <- foreach_reduction begin fun tok prods reductions ->
