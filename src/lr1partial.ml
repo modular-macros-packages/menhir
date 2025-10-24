@@ -134,7 +134,7 @@ end) = struct
           ref TerminalSet.empty in
         let reductions1 : Production.t list TerminalMap.t =
           Lr1.reductions shadow in
-        List.iter (fun (toks, prod) ->
+        ProductionMap.iter (fun prod toks ->
           TerminalSet.iter (fun tok ->
 
             (* We are looking at a [(tok, prod)] pair -- a reduction

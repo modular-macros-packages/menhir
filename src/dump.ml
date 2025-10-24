@@ -71,7 +71,7 @@ let dump_node out stack_symbols node =
       fprintf out "## Reductions:\n";
       (* 2020/11/21: for better readability, we now group the symbols that
          lead to reducing the same production. *)
-      let reductions = Reductions.invert (Lr1.reductions node) in
+      let reductions = Reductions.reverse (Lr1.reductions node) in
       ProductionMap.iter (fun prod toks ->
         fprintf out "-- On %s\n" (TerminalSet.print toks);
         fprintf out "--   %s\n" (Production.describe false prod)

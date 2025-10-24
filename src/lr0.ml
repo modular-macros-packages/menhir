@@ -310,18 +310,19 @@ let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
 (* -------------------------------------------------------------------------- *)
 
 (* [reductions state] computes the reduction opportunities at the (closed)
-   state [state]. These opportunities are represented as a list of pairs of a
-   lookahead set and a production index. This code is again parametric in the
-   type of the lookahead sets. *)
+   state [state]. The result is a reverse reduction table, that is, a map of
+   productions to lookahead sets. This code is again parametric in the type of
+   the lookahead sets. *)
 
-let reductions (state : 'a Item.Map.t) : ('a * Production.t) list =
+let reductions (state : 'a Item.Map.t) : 'a ProductionMap.t =
   Item.Map.fold (fun item ts accu ->
     match Item.classify item with
     | Item.Reduce prod ->
-        (ts, prod) :: accu
+        assert (not (ProductionMap.mem prod accu));
+        ProductionMap.add prod ts accu
     | Item.Shift _ ->
         accu
-  ) state []
+  ) state ProductionMap.empty
 
 (* -------------------------------------------------------------------------- *)
 
@@ -354,8 +355,8 @@ let states : Item.Set.t InfiniteArray.t =
 let _transitions : symbolic_transition_target SymbolMap.t InfiniteArray.t =
   InfiniteArray.make SymbolMap.empty
 
-let _reductions : (SymbolicLookahead.t * Production.t) list InfiniteArray.t =
-  InfiniteArray.make []
+let _reductions : SymbolicLookahead.t ProductionMap.t InfiniteArray.t =
+  InfiniteArray.make ProductionMap.empty
 
 let map : (Item.Set.t, node) Hashtbl.t =
   Hashtbl.create 50021
@@ -578,11 +579,13 @@ let interpret (state : t) (sls : SymbolicLookahead.t) : TerminalSet.t =
    and transitions. This is done in an efficient way by interpreting
    the precomputed symbolic information with respect to that state. *)
 
-let reductions (state : t) : (TerminalSet.t * Production.t) list =
+let reductions (state : t) : Reductions.reverse =
   let (k, _) = state in
   InfiniteArray.get _reductions k
-  |> List.map @@ fun (s, prod) ->
-     interpret state s, prod
+  |> ProductionMap.map (interpret state)
+
+let reductions_table state : Reductions.t =
+  Reductions.flip (reductions state)
 
 let transitions (state : t) : t SymbolMap.t =
   let (k, _) = state in
@@ -839,11 +842,6 @@ let restrict ts (k, tsr) =
   k, Array.map (fun tsri ->
     TerminalSet.inter tsri ts
   ) tsr
-
-let reductions_table state =
-  List.fold_left (fun reductions (ts, prod) ->
-    Reductions.add_reductions prod ts reductions
-  ) TerminalMap.empty (reductions state)
 
 let print leading state =
   ConcreteLR1State.print leading (export state)

@@ -493,7 +493,7 @@ and run_normal_dispatch s =
 
     Lr1.reductions s
     |> TerminalMap.remove Terminal.error
-    |> Reductions.invert
+    |> Reductions.reverse
     |> ProductionMap.iter begin fun prod toks ->
       (* A reduction of [prod] on every token in the set [toks]. *)
       branch (TokMultiple toks) begin fun () ->

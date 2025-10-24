@@ -112,7 +112,7 @@ module AbstractLR1State : sig
   val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
 
   (* Information about the reductions at a state. *)
-  val reductions: t -> (TerminalSet.t * Production.t) list
+  val reductions: t -> Reductions.reverse
 
   (* A table of the reductions at a state. *)
   val reductions_table: t -> Reductions.t

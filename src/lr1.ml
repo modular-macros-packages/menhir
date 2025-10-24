@@ -707,7 +707,7 @@ let acceptable_tokens (s : node) =
   let covered =
     ProductionMap.fold (fun _ toks covered ->
       TerminalSet.union toks covered
-    ) (Reductions.invert reductions) covered
+    ) (Reductions.reverse reductions) covered
   in
 
   (* That's it. *)
@@ -1019,7 +1019,7 @@ let extra_nts =
 
 let extra_reductions_in_node node =
   (* Compute the productions which this node can reduce. *)
-  let productions : _ ProductionMap.t = Reductions.invert (reductions node) in
+  let productions : _ ProductionMap.t = Reductions.reverse (reductions node) in
   let prods : Production.t list =
     ProductionMap.fold (fun prod _ prods -> prod :: prods) productions []
   in

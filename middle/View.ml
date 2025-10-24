@@ -588,14 +588,19 @@ module Reductions : sig
   type t =
     Production.t list TerminalMap.t
 
+  (**A reverse reduction table maps productions to sets of terminal symbols. *)
+  type reverse =
+    TerminalSet.t ProductionMap.t
+
   (**[add_reductions prod ts reductions] extends the table [reductions] with a
      reduction of [prod] on every terminal symbol in the set [ts]. *)
   val add_reductions: Production.t -> TerminalSet.t -> t -> t
 
-  (**[invert] inverts a reduction table (a mapping of terminal symbols to
-     lists of productions), producing a mapping of productions to sets of
-     terminal symbols. *)
-  val invert : t -> TerminalSet.t ProductionMap.t
+  (**[reverse] transforms a reduction table into a reverse reduction table. *)
+  val reverse : t -> reverse
+
+  (**[flip] transforms a reverse reduction table into a reduction table. *)
+  val flip : reverse -> t
 
   (**[has_eos_conflict transitions reductions] tells whether a state has an
      end-of-stream conflict, that is, a reduction action on [#] and at least

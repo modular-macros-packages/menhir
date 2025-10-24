@@ -777,6 +777,22 @@ module Reductions = struct
   type t =
     Production.t list TerminalMap.t
 
+  type reverse =
+    TerminalSet.t ProductionMap.t
+
+  let reverse (reductions : t) : reverse =
+    TerminalMap.fold (fun t prods accu ->
+      List.fold_left (fun accu prod ->
+        let ts =
+          try
+            ProductionMap.find prod accu
+          with Not_found ->
+            TerminalSet.empty
+        in
+        ProductionMap.add prod (TerminalSet.add t ts) accu
+      ) accu prods
+    ) reductions ProductionMap.empty
+
   let add_reduction prod t reductions =
     let prods =
       try
@@ -789,18 +805,8 @@ module Reductions = struct
   let add_reductions prod ts reductions =
     TerminalSet.fold (add_reduction prod) ts reductions
 
-  let invert reductions : TerminalSet.t ProductionMap.t =
-    TerminalMap.fold (fun t prods accu ->
-      List.fold_left (fun accu prod ->
-        let ts =
-          try
-            ProductionMap.find prod accu
-          with Not_found ->
-            TerminalSet.empty
-        in
-        ProductionMap.add prod (TerminalSet.add t ts) accu
-      ) accu prods
-    ) reductions ProductionMap.empty
+  let flip (reductions : reverse) : t =
+    ProductionMap.fold add_reductions reductions TerminalMap.empty
 
   let has_eos_conflict transitions reductions =
     match TerminalMap.find_and_remove Terminal.sharp reductions with
