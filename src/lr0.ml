@@ -603,16 +603,6 @@ let reverse_reductions (state : t) : Reductions.reverse =
 let reductions state : Reductions.t =
   Reductions.flip (reverse_reductions state)
 
-(* [transition_tokens transitions] returns the set of tokens (terminal symbols)
-   that are labels of outgoing transitions in the table [transitions]. *)
-
-let transition_tokens transitions =
-  SymbolMap.fold (fun symbol _target ts ->
-    match symbol with
-    | Symbol.T tok -> TerminalSet.add tok ts
-    | Symbol.N _   -> ts
-  ) transitions TerminalSet.empty
-
 (* Equality of states. *)
 
 let equal ((k1, tsr1) as state1) ((k2, tsr2) as state2) =

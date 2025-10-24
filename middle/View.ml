@@ -405,7 +405,14 @@ module SymbolSet : sig
 end
 
 (**Maps whose keys are symbols. *)
-module SymbolMap : Map.S with type key = Symbol.t
+module SymbolMap : sig
+
+  include Map.S with type key = Symbol.t
+
+  (**[terminals m] returns the terminal symbols in the domain of the map [m]. *)
+  val terminals: 'a t -> TerminalSet.t
+
+end
 
 (* -------------------------------------------------------------------------- *)
 

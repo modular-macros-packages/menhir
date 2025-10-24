@@ -496,8 +496,18 @@ end
 
 (* Maps of symbols. *)
 
-module SymbolMap =
-  Map.Make(Symbol)
+module SymbolMap = struct
+
+  include Map.Make(Symbol)
+
+  let terminals m =
+    fold (fun symbol _ ts ->
+      match symbol with
+      | Symbol.T t -> TerminalSet.add t ts
+      | Symbol.N _ -> ts
+    ) m TerminalSet.empty
+
+end
 
 (* -------------------------------------------------------------------------- *)
 

@@ -109,10 +109,6 @@ module AbstractLR1State : sig
      transition labeled [symbol]. This transition must exist. *)
   val transition: Symbol.t -> t -> t
 
-  (* [transition_tokens transitions] returns the set of tokens (terminal symbols)
-     that are labels of outgoing transitions in the table [transitions]. *)
-  val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
-
   (* Information about the reductions at a state. *)
   val reverse_reductions: t -> Reductions.reverse
 

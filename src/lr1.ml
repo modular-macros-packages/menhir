@@ -363,7 +363,7 @@ let discover (raw_node : Raw.node) =
        reductions. *)
     let toks =
       TerminalSet.union
-        (Lr0.AbstractLR1State.transition_tokens transitions)
+        (SymbolMap.terminals transitions)
         (TerminalMap.domain reductions)
     in
     (* Record this end-of-stream conflict. *)
