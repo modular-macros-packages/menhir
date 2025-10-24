@@ -11,11 +11,12 @@
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
+
 (* Items. *)
 
 (* An LR(0) item encodes a pair of integers, namely the index of the
-   production and the index of the bullet in the production's
-   right-hand side. *)
+   production and the index of the bullet in the production's right-hand
+   side. *)
 
 (* Both integers are packed into a single integer, using 10 bits for
    the bullet position and the rest (21 bits on a 32-bit architecture,
@@ -32,8 +33,9 @@ open Grammar
 (* WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING *)
 
 (* The constants [low_bits], [low_limit] and the function [export] are
-   duplicated in [lib/InspectionTableInterpreter.ml]. Do not modify them,
-   or modify them here and there in a consistent manner. *)
+   duplicated in [lib/InspectionTableInterpreter.ml] and in
+   [front/CheckGrammar.ml]. Do not modify them at all, or modify them
+   everywhere in a consistent manner. *)
 
 type t = int
 
@@ -47,24 +49,12 @@ let export t =
   (Production.i2p (t lsr low_bits), t mod low_limit)
 
 let import (prod, pos) =
+  assert (0 <= pos && pos <= Production.length prod);
   assert (pos < low_limit);
   (Production.p2i prod) lsl low_bits + pos
 
 let marshal (item : t) : int =
   item
-
-(* In order to guarantee that the assertion in [import] cannot fail,
-   we check up front that every production is reasonably short. *)
-
-let () =
-  Production.iter (fun index ->
-    let length = Production.length index in
-    if low_limit <= length then
-      Error.error
-        (Production.positions index)
-        "The length of this production is %d, which exceeds the limit of %d."
-        length (low_limit - 1)
-  )
 
 (* Comparison. *)
 

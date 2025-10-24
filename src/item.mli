@@ -10,10 +10,9 @@
 
 open Grammar
 
-(* An LR(0) item encodes a pair of integers, namely the index of the
-   production and the index of the bullet in the production's
-   right-hand side. *)
-
+(**An LR(0) item encodes a pair of integers, namely the index of the
+   production and the index of the bullet in the production's right-hand
+   side. *)
 type t
 val import: Production.t * int -> t
 val export: t -> Production.t * int

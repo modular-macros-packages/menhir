@@ -343,6 +343,27 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* In order to guarantee that our current encoding of items works (see the
+   module [Item]), we check that every production is reasonably short. *)
+
+let low_bits =
+  10 (* This must match the value in [Item]. *)
+
+let low_limit =
+  1 lsl low_bits
+
+let () =
+  grammar.p_rules |> StringMap.iter @@ fun _ rule ->
+  rule.pr_branches |> List.iter @@ fun branch ->
+  let n = List.length branch.pb_producers in
+  if low_limit <= n then
+    signal
+      [branch.pb_position]
+      "The length of this production is %d, which exceeds the limit of %d."
+      n (low_limit - 1)
+
+(* -------------------------------------------------------------------------- *)
+
 let finished =
   ()
 
