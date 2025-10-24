@@ -55,109 +55,115 @@ val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 
 (* ------------------------------------------------------------------------ *)
 
-(* Help for building the LR(1) automaton. *)
+(**This module offers facilities that help building LR(1) automata
+   of various kinds. *)
+module ConcreteLR1State : sig
 
-module Help : sig
-
-(* An LR(1) state is internally represented as a pair of an LR(0)
-   state number and an array of concrete lookahead sets (whose length
-   depends on the LR(0) state). *)
-
-type lr1state
-
-(* A view of the type [lr1state] as an ordered type. *)
-
-type t = lr1state
-val compare: t -> t -> int
-
-(* An encoded LR(1) state can be turned into a concrete representation,
-   that is, a mapping of items to concrete lookahead sets. *)
-
-type concretelr1state =
+  (**An LR(1) state is a mapping of LR(0) items to lookahead sets, that is,
+     sets of terminal symbols. This is a concrete representation: it is
+     simple but heavyweight. *)
+  type t =
     TerminalSet.t Item.Map.t
 
-val export: lr1state -> concretelr1state
+  (**[closure s] is the closure of the LR(1) state [s]. *)
+  val closure: t -> t
 
-(* One can take the closure of a concrete LR(1) state. *)
+  (**[print leading s] is a string representation of the state [s].
+     The string [leading] is inserted at the beginning of every line. *)
+  val print: string -> t -> string
 
-val closure: concretelr1state -> concretelr1state
+end
 
-(* The core of an LR(1) state is the underlying LR(0) state. *)
+module AbstractLR1State : sig
 
-val core: lr1state -> node
+  (**An LR(1) state is internally represented as a pair of an LR(0) state
+     number and an array of concrete lookahead sets, whose length depends on
+     the LR(0) state. This representation is made available as an abstract
+     type. It is equipped with a series of efficient operations. *)
+  type t
 
-(* One can create an LR(1) start state out of an LR(0) start
-   node. *)
+  (**A total order on LR(1) states. *)
+  val compare: t -> t -> int
 
-val start: node -> lr1state
+  (**[export s] transforms the abstract LR(1) state [s] into a concrete
+     LR(1) state. *)
+  val export: t -> ConcreteLR1State.t
 
-(* Information about the transitions at a state. *)
+  (* The core of an LR(1) state is the underlying LR(0) state. *)
 
-val transitions: lr1state -> lr1state SymbolMap.t
-val transition: Symbol.t -> lr1state -> lr1state
+  val core: t -> node
 
-(* [transition_tokens transitions] returns the set of tokens (terminal symbols)
-   that are labels of outgoing transitions in the table [transitions]. *)
+  (* One can create an LR(1) start state out of an LR(0) start
+     node. *)
 
-val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
+  val start: node -> t
 
-(* Information about the reductions at a state. *)
+  (* Information about the transitions at a state. *)
 
-(* See also [reductions_table] further on. *)
+  val transitions: t -> t SymbolMap.t
+  val transition: Symbol.t -> t -> t
 
-val reductions: lr1state -> (TerminalSet.t * Production.t) list
+  (* [transition_tokens transitions] returns the set of tokens (terminal symbols)
+     that are labels of outgoing transitions in the table [transitions]. *)
 
-(* Equality of states. The two states must have the same core. Then,
-   they are equal if and only if their lookahead sets are pointwise
-   equal. *)
+  val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
 
-val equal: lr1state -> lr1state -> bool
+  (* Information about the reductions at a state. *)
 
-(* Subsumption between states. The two states must have the same
-   core. Then, one subsumes the other if and only if their lookahead
-   sets are (pointwise) in the subset relation. *)
+  (* See also [reductions_table] further on. *)
 
-val subsume: lr1state -> lr1state -> bool
+  val reductions: t -> (TerminalSet.t * Production.t) list
 
-(* A slightly modified version of Pager's weak compatibility
-   criterion. The two states must have the same core. *)
+  (* Equality of states. The two states must have the same core. Then,
+     they are equal if and only if their lookahead sets are pointwise
+     equal. *)
 
-val compatible: lr1state -> lr1state -> bool
+  val equal: t -> t -> bool
 
-(* This function determines whether two (core-equivalent) states can
-   be merged without creating an end-of-stream conflict. *)
+  (* Subsumption between states. The two states must have the same
+     core. Then, one subsumes the other if and only if their lookahead
+     sets are (pointwise) in the subset relation. *)
 
-val eos_compatible: lr1state -> lr1state -> bool
+  val subsume: t -> t -> bool
 
-(* This function determines whether two (core-equivalent) states can
-   be merged without creating spurious reductions on the [error]
-   token. *)
+  (* A slightly modified version of Pager's weak compatibility
+     criterion. The two states must have the same core. *)
 
-val error_compatible: lr1state -> lr1state -> bool
+  val compatible: t -> t -> bool
 
-(* Union of two states. The two states must have the same core. The
-   new state is obtained by pointwise union of the lookahead sets. *)
+  (* This function determines whether two (core-equivalent) states can
+     be merged without creating an end-of-stream conflict. *)
 
-(* If [s'] is a subset of [s], then [union s' s] is physically equal
-   to [s]. *)
+  val eos_compatible: t -> t -> bool
 
-val union: lr1state -> lr1state -> lr1state
+  (* This function determines whether two (core-equivalent) states can
+     be merged without creating spurious reductions on the [error]
+     token. *)
 
-(* Restriction of a state to a set of tokens of interest. Every
-   lookahead set is intersected with that set. *)
+  val error_compatible: t -> t -> bool
 
-val restrict: TerminalSet.t -> lr1state -> lr1state
+  (* Union of two states. The two states must have the same core. The
+     new state is obtained by pointwise union of the lookahead sets. *)
 
-(* The following functions display: 1- a concrete state; 2- a state
-   (only the kernel, not the closure); 3- the closure of a state.
-   The first parameter is a fixed string that is added at the
-   beginning of every line. *)
+  (* If [s'] is a subset of [s], then [union s' s] is physically equal
+     to [s]. *)
 
-val print_concrete: string -> concretelr1state -> string
-val print:          string ->         lr1state -> string
+  val union: t -> t -> t
 
-(* A table of the reductions at a state. *)
+  (* Restriction of a state to a set of tokens of interest. Every
+     lookahead set is intersected with that set. *)
 
-val reductions_table: lr1state -> Reductions.t
+  val restrict: TerminalSet.t -> t -> t
+
+  (* The following functions display: 1- a concrete state; 2- a state
+     (only the kernel, not the closure);
+     The first parameter is a fixed string that is added at the
+     beginning of every line. *)
+
+  val print:          string ->         t -> string
+
+  (* A table of the reductions at a state. *)
+
+  val reductions_table: t -> Reductions.t
 
 end (* Help *)

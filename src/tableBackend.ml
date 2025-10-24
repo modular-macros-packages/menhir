@@ -917,7 +917,7 @@ let lr0_core () =
   define_and_measure (
     "lr0_core",
     marshal1_list (Lr1.map (fun (node : Lr1.node) ->
-      Lr0.Help.core (Lr1.state node)
+      Lr0.AbstractLR1State.core (Lr1.state node)
     ))
   )
 

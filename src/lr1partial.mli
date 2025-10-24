@@ -42,7 +42,7 @@ end) : sig
 
   val path: Symbol.t array
 
-  val goal: Lr0.Help.concretelr1state
+  val goal: Lr0.ConcreteLR1State.t
 
   (* An (arbitrarily chosen) conflict token in the goal state. *)
 

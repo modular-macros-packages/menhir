@@ -472,71 +472,75 @@ let outgoing_symbols node f =
 
 (* Help for building the LR(1) automaton. *)
 
-module Help = struct
+(* -------------------------------------------------------------------------- *)
+
+(* Concrete LR(1) states. *)
+
+module ConcreteLR1State = struct
+
+  type t =
+    TerminalSet.t Item.Map.t
+
+  (* [closure] computes the closure of a concrete LR(1) state. In principle,
+     this requires working with concrete lookahead sets. This could be done by
+     taking a second instance of the functor [Closure]. The approach below is
+     somewhat less elegant and makes each call to [closure] somewhat slower,
+     but saves the cost of applying [Closure] again. This cost is linear in
+     the size of the grammar. *)
+
+  let closure (state : t) : t =
+    state
+    |> Item.Map.map SymbolicLookahead.constant
+    |> SymbolicClosure.closure
+    |> Item.Map.map SymbolicLookahead.project
+
+  let print leading (state : t) =
+    MString.with_buffer 1024 @@ fun buffer ->
+    state |> Item.Map.iter @@ fun item ts ->
+    Printf.bprintf buffer "%s%s [ %s ]\n"
+      leading
+      (Item.print item)
+      (TerminalSet.print ts)
+
+end (* ConcreteLR1State *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* Closure operations over concrete lookahead sets are also needed when
-   explaining conflicts. One could take another instance of the functor
-   [Closure]. The approach below is somewhat less elegant and makes each call
-   to [closure] somewhat slower, but saves the cost of instantiating the
-   functor again. This cost is linear in the size of the grammar. *)
+(* Operations on abstract LR(1) states. *)
 
-type concretelr1state =
-  TerminalSet.t Item.Map.t
+module AbstractLR1State = struct
 
-let closure (state : concretelr1state) : concretelr1state =
-  state
-  |> Item.Map.map SymbolicLookahead.constant
-  |> SymbolicClosure.closure
-  |> Item.Map.map SymbolicLookahead.project
+(* An LR(1) state is internally represented as a pair of an LR(0) state number
+   and an array of concrete lookahead sets, whose length depends on the LR(0)
+   state. This representation is made available as an abstract type. *)
 
-(* -------------------------------------------------------------------------- *)
+(* In the following, by convention, we write [k] for the LR(0) state number
+   and [tsr] for the array of sets of terminal symbols. Thus, an LR(1) state
+   is a pair [(k, tsr)]. *)
 
-(* An LR(1) state is represented as a pair of an LR(0) state number
-   and an array of concrete lookahead sets (whose length depends on
-   the LR(0) state). *)
+type t =
+  node * TerminalSet.t array
 
-type lr1state =
-    node * TerminalSet.t array
-
-(* A view of the type [lr1state] as an ordered type. This can be used in
-   conjuction with [Fix.Memoize], [Fix.Numbering], etc. E.g. a numbering
-   facility based on this mechanism is able to number 10000 states in
-   about 0.01s. *)
-
-type t = lr1state
-let compare (k1, tsr1) (k2, tsr2) =
-  let c = k1 - k2 in
-  if c <> 0 then c
-  else MArray.compare TerminalSet.compare tsr1 tsr2
-
-(* An encoded LR(1) state can be turned into a concrete representation,
-   that is, a mapping of items to concrete lookahead sets. *)
-
-let export (k, tsr) =
+let export ((k, tsr) : t) : ConcreteLR1State.t =
   let (_ : int), items = Item.Set.fold (fun item (i, items) ->
     i+1, Item.Map.add item tsr.(i) items
   ) (InfiniteArray.get states k) (0, Item.Map.empty) in
   items
 
-(* Displaying a concrete state. *)
+(* This total order can be used with [Fix.Memoize], [Fix.Numbering], etc. For
+   example, a numbering facility based on this mechanism is able to number
+   10000 states in about 0.01s. *)
 
-let print_concrete leading (state : concretelr1state) =
-  MString.with_buffer 1024 (fun buffer ->
-    Item.Map.iter (fun item ts ->
-      Printf.bprintf buffer "%s%s [ %s ]\n"
-        leading
-        (Item.print item)
-        (TerminalSet.print ts)
-    ) state
-  )
+let compare (k1, tsr1) (k2, tsr2) =
+  let c = k1 - k2 in
+  if c <> 0 then c
+  else MArray.compare TerminalSet.compare tsr1 tsr2
 
 (* Displaying a state. By default, only the kernel is displayed, not
    the closure. *)
 
 let print leading state =
-  print_concrete leading (export state)
+  ConcreteLR1State.print leading (export state)
 
 (* The core of an LR(1) state is the underlying LR(0) state. *)
 
@@ -569,7 +573,7 @@ let start k =
    concrete lookahead sets. The result is a concrete lookahead set. *)
 
 let interpret
-    ((_, tsr) as state : lr1state)
+    ((_, tsr) as state : t)
     ((ts, vars) : SymbolicLookahead.t)
     : TerminalSet.t =
 
@@ -584,7 +588,7 @@ let interpret
    the precomputed symbolic information with respect to that state. *)
 
 let reductions
-    ((k, _) as state : lr1state)
+    ((k, _) as state : t)
     : (TerminalSet.t * Production.t) list =
 
   List.map (fun (s, prod) ->
@@ -592,17 +596,17 @@ let reductions
   ) (InfiniteArray.get _reductions k)
 
 let transitions
-    ((k, _) as state : lr1state)
-    : lr1state SymbolMap.t =
+    ((k, _) as state : t)
+    : t SymbolMap.t =
 
   SymbolMap.map (fun ((k, sr) : symbolic_transition_target) ->
-    ((k, Array.map (interpret state) sr) : lr1state)
+    ((k, Array.map (interpret state) sr) : t)
   ) (InfiniteArray.get _transitions k)
 
 let transition
     symbol
-    ((k, _) as state : lr1state)
-    : lr1state =
+    ((k, _) as state : t)
+    : t =
 
   let ((k, sr) : symbolic_transition_target) =
     try
@@ -626,27 +630,13 @@ let transition_tokens transitions =
 
 let equal ((k1, tsr1) as state1) ((k2, tsr2) as state2) =
   assert (k1 = k2 && well_formed state1 && well_formed state2);
-  let rec loop i =
-    if i = 0 then
-      true
-    else
-      let i = i - 1 in
-      (TerminalSet.equal tsr1.(i) tsr2.(i)) && (loop i)
-  in
-  loop (Array.length tsr1)
+  MArray.equal TerminalSet.equal tsr1 tsr2
 
 (* Subsumption between states. *)
 
 let subsume ((k1, tsr1) as state1) ((k2, tsr2) as state2) =
   assert (k1 = k2 && well_formed state1 && well_formed state2);
-  let rec loop i =
-    if i = 0 then
-      true
-    else
-      let i = i - 1 in
-      (TerminalSet.subset tsr1.(i) tsr2.(i)) && (loop i)
-  in
-  loop (Array.length tsr1)
+  MArray.equal TerminalSet.subset tsr1 tsr2
 
 (* This function determines whether two (core-equivalent) states are
    compatible, according to a criterion that is close to Pager's weak
@@ -873,4 +863,4 @@ let reductions_table state =
 
 (* -------------------------------------------------------------------------- *)
 
-end (* Help *)
+end (* AbstractLR1State *)

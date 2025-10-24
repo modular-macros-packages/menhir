@@ -26,7 +26,7 @@ let tell_me_everything =
 
 (* The following function turns an LR(0) state into an SLR(1) state. *)
 
-let make_slr_state (s : Lr0.node) : Lr0.Help.concretelr1state =
+let make_slr_state (s : Lr0.node) : Lr0.ConcreteLR1State.t =
 
   (* Obtain the set of LR(0) items associated with the state [s]. *)
 
@@ -47,7 +47,7 @@ let make_slr_state (s : Lr0.node) : Lr0.Help.concretelr1state =
 
   (* Compute the LR(1) closure. *)
 
-  let s = Lr0.Help.closure s in
+  let s = Lr0.ConcreteLR1State.closure s in
 
   (* We now have an LR(1) state that has the correct set of LR(0) items but
      phony lookahead information. We convert it into an SLR(1) state by
@@ -65,7 +65,7 @@ let make_slr_state (s : Lr0.node) : Lr0.Help.concretelr1state =
 (* The following function turns a closed LR(1) state into a map of terminal
    symbols to reduction actions. Copied from a related function in [Lr0]. *)
 
-let reductions (s : Lr0.Help.concretelr1state) : Production.t list TerminalMap.t =
+let reductions (s : Lr0.ConcreteLR1State.t) : Production.t list TerminalMap.t =
   Item.Map.fold (fun item toks reductions ->
     match Item.classify item with
     | Item.Reduce prod ->
@@ -77,7 +77,7 @@ let reductions (s : Lr0.Help.concretelr1state) : Production.t list TerminalMap.t
 (* The following function turns a closed LR(1) state into a set of shift
    actions. *)
 
-let transitions (s : Lr0.Help.concretelr1state) : TerminalSet.t =
+let transitions (s : Lr0.ConcreteLR1State.t) : TerminalSet.t =
   Item.Map.fold (fun item _ transitions ->
     match Item.classify item with
     | Item.Shift (Symbol.T tok, _) ->
@@ -98,7 +98,7 @@ let domain (m : 'a TerminalMap.t) : TerminalSet.t =
 (* The following function checks whether a closed LR(1) state is free of
    conflicts. *)
 
-let state_is_ok (s : Lr0.Help.concretelr1state) : bool =
+let state_is_ok (s : Lr0.ConcreteLR1State.t) : bool =
 
   let reductions = reductions s
   and transitions = transitions s in
@@ -133,7 +133,7 @@ let count_slr_violations () : int =
         Printf.fprintf
           stderr
           "The following SLR(1) state has a conflict:\n%s"
-          (Lr0.Help.print_concrete "" s)
+          (Lr0.ConcreteLR1State.print "" s)
     end
   done;
 

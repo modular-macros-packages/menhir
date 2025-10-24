@@ -39,6 +39,6 @@ module type LR1_AUTOMATON = sig
 
   (* Each node represents an LR(1) state, that is, a set of LR(1) items. *)
 
-  val state: node -> Lr0.Help.lr1state
+  val state: node -> Lr0.AbstractLR1State.t
 
 end

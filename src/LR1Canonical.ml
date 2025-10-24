@@ -15,7 +15,7 @@ type lr0state =
   Lr0.node
 
 type lr1state =
-  Lr0.Help.lr1state
+  Lr0.AbstractLR1State.t
 
 open Grammar
 
@@ -31,12 +31,12 @@ module G = struct
 
   let foreach_root f =
     ProductionMap.iter (fun _prod (c : lr0state) ->
-      f (Lr0.Help.start c)
+      f (Lr0.AbstractLR1State.start c)
     ) Lr0.entry
 
   let foreach_successor (state : lr1state) f =
-    Lr0.foreach_outgoing_edge (Lr0.Help.core state) @@ fun symbol _ ->
-    let successor = Lr0.Help.transition symbol state in
+    Lr0.foreach_outgoing_edge (Lr0.AbstractLR1State.core state) @@ fun symbol _ ->
+    let successor = Lr0.AbstractLR1State.transition symbol state in
     f successor
 
 end
@@ -49,7 +49,7 @@ end
 type node =
   int
 
-include Fix.GraphNumbering.ForOrderedType(Lr0.Help)(G)
+include Fix.GraphNumbering.ForOrderedType(Lr0.AbstractLR1State)(G)
   (* This defines [n : int],
                   [encode : lr1state -> node],
                   [decode : node -> lr1state]. *)
@@ -67,7 +67,7 @@ let state : node -> lr1state =
 
 let entry : node ProductionMap.t =
   ProductionMap.map (fun (c : lr0state) ->
-    encode (Lr0.Help.start c)
+    encode (Lr0.AbstractLR1State.start c)
   ) Lr0.entry
 
 (* -------------------------------------------------------------------------- *)
@@ -75,10 +75,10 @@ let entry : node ProductionMap.t =
 (* Expose the transitions of the LR(1) automaton. *)
 
 let[@inline] transition symbol (i : node) : node =
-  encode (Lr0.Help.transition symbol (state i))
+  encode (Lr0.AbstractLR1State.transition symbol (state i))
 
 let transitions (i : node) : node SymbolMap.t =
-  Lr0.outgoing_symbols (Lr0.Help.core (state i)) @@ fun symbol ->
+  Lr0.outgoing_symbols (Lr0.AbstractLR1State.core (state i)) @@ fun symbol ->
   transition symbol i
 
 (* -------------------------------------------------------------------------- *)

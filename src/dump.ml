@@ -35,7 +35,7 @@ let dump_node out stack_symbols node =
   (* Print the items. *)
 
   fprintf out "## LR(1) items:\n%s"
-    (Lr0.Help.print "" (Lr1.state node));
+    (Lr0.AbstractLR1State.print "" (Lr1.state node));
 
   (* Print the transitions. *)
 
