@@ -468,6 +468,11 @@ let items node : Item.Set.t =
 let incoming_symbol node : Symbol.t option =
   InfiniteArray.get incoming node
 
+let foreach_outgoing_edge node yield =
+  SymbolMap.iter
+    (fun symbol (target, _) -> yield symbol target)
+    (InfiniteArray.get _transitions node)
+
 let outgoing_edges node : node SymbolMap.t =
   SymbolMap.map
     (fun (target, _) -> target)

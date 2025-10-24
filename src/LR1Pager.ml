@@ -87,7 +87,7 @@ module G = struct
     ) Lr0.entry
 
   let foreach_successor (state : lr1state) f =
-    Lr0.outgoing_edges (Lr0.core state) |> SymbolMap.iter @@ fun symbol _ ->
+    Lr0.foreach_outgoing_edge (Lr0.core state) @@ fun symbol _ ->
     let successor = Lr0.transition symbol state in
     f successor
 

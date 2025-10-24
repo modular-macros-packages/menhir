@@ -40,8 +40,9 @@ val items: node -> Item.Set.t
    [incoming_symbol node] is the incoming symbol of the node [node]. *)
 val incoming_symbol: node -> Symbol.t option
 
-(* The outgoing edges of a node. *)
+val foreach_outgoing_edge: node -> (Symbol.t -> node -> unit) -> unit
 
+(* The outgoing edges of a node. *)
 val outgoing_edges: node -> node SymbolMap.t
 
 (* ------------------------------------------------------------------------ *)

@@ -70,10 +70,9 @@ module G = struct
      function [Lr0.transition]. *)
 
   let foreach_successor node state f =
-    SymbolMap.iter (fun symbol (successor_node : node) ->
-      let successor_state : lr1state = Lr0.transition symbol state in
-      f successor_node successor_state
-    ) (Lr0.outgoing_edges node)
+    Lr0.foreach_outgoing_edge node @@ fun symbol (successor_node : node) ->
+    let successor_state : lr1state = Lr0.transition symbol state in
+    f successor_node successor_state
 
 end
 
