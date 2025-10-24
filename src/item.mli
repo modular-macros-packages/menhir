@@ -34,10 +34,15 @@ val export: t -> Production.t * int
    [export]) is in [InspectionTableInterpreter]. *)
 val marshal: t -> int
 
-(* If [item] is a start item, [startnt item] returns the start
-   nonterminal that corresponds to [item]. *)
+(**[is_start item] determines whether the item [item] is a start item.
+   This is the case if the production [prod] is a start production and
+   the index [i] is zero. *)
+val is_start: t -> bool
 
-val startnt: t -> Nonterminal.t
+(**[test_start item] determines whether the item [item] is a start item.
+   If so, the user start symbol that corresponds to this start production
+   is returned. *)
+val test_start: t -> Nonterminal.t option
 
 (* Printing. *)
 

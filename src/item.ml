@@ -48,26 +48,25 @@ let low_limit =
 let equal =
   Int.equal
 
-let import (prod, pos) =
+let[@inline] import (prod, pos) =
   assert (0 <= pos && pos <= Production.length prod);
   assert (pos < low_limit);
   (Production.p2i prod) lsl low_bits + pos
 
-let export item =
+let[@inline] export item =
   Production.i2p (item lsr low_bits),
   item mod low_limit
 
-let marshal (item : t) : int =
+let[@inline] marshal item =
   item
 
 let is_start item =
   let prod, pos = export item in
   Production.is_start prod && pos = 0
 
-let startnt item =
-  assert (is_start item);
+let test_start item =
   let prod, _pos = export item in
-  Option.get (Production.test_start prod)
+  Production.test_start prod
 
 (* Printing. *)
 

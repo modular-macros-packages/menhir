@@ -892,8 +892,8 @@ let code label =
 
 let entry =
   let mode = NormalMode in
-  ProductionMap.fold (fun _prod s accu ->
-      let nt = Item.startnt (Lr1.start2item s) in
+  ProductionMap.fold (fun prod s accu ->
+      let nt = Option.get (Production.test_start prod) in
       let name = Nonterminal.print true nt in
       StringMap.add name (Run (mode, s)) accu
   ) Lr1.entry StringMap.empty

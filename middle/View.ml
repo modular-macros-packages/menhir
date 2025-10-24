@@ -506,9 +506,9 @@ module Production : sig
   val is_start: t -> bool
 
   (**[test_start prod] determines whether the production [prod] is a start
-     production. If it is a start production, then the start symbol that this
-     production is associated with is returned. If it is a regular production,
-     nothing is returned. *)
+     production. If it is a start production, then the user start symbol that
+     this production is associated with is returned. If it is a regular
+     production, nothing is returned. *)
   val test_start: t -> Nonterminal.t option
 
   (**[error_free prod] returns [true] if the right-hand side of the

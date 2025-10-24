@@ -428,6 +428,8 @@ let () =
         let goal = node
       end) in
 
+      assert (Item.is_start P.source);
+
       let closure =
         Lr0.closure P.goal in
 
@@ -466,7 +468,7 @@ let () =
       (if TerminalSet.cardinal toks > 1 then
         Printf.sprintf "** The following explanations concentrate on token %s.\n" (Terminal.print P.token)
       else "")
-      (Nonterminal.print false (Item.startnt P.source))
+      (Nonterminal.print false (Option.get (Item.test_start P.source)))
       (Symbol.print_array false P.path);
 
       (* Examine the items in that state, focusing on one particular
