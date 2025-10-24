@@ -70,20 +70,3 @@ module Map : API.MAP_AND_SET with type key = t
    support the use of OCaml's generic equality and hash functions, so they
    can be used as keys in a hash table. *)
 module Set = Map.Domain
-
-(* This functor performs precomputation that helps efficiently compute
-   the closure of an LR(0) or LR(1) state. The precomputation requires
-   time linear in the size of the grammar. The nature of the lookahead
-   sets remains abstract. *)
-
-module Closure (L : Lookahead.S) : sig
-
-  (* A state maps items to lookahead information. *)
-
-  type state = L.t Map.t
-
-  (* This takes the closure of a state through all epsilon transitions. *)
-
-  val closure: state -> state
-
-end

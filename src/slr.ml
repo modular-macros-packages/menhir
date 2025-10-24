@@ -34,11 +34,11 @@ let make_slr_state (s : Lr0.node) : Lr0.concretelr1state =
 
   (* Unfortunately, this set is not closed. We do not have a function that
      computes the closure of a set of LR(0) items -- we could build one using
-     [Item.Closure], but that would be overkill.  So, we first convert this
-     set to a set of LR(1) items, then compute the closure at this level, and
-     finally we turn this LR(1) state into an SLR(1) state by letting the
-     lookahead sets be the FOLLOW sets. This is somewhat ugly and naïve, but
-     seems to work. *)
+     the functor [Lr0.Closure], but that would be overkill. So, we first
+     convert this set to a set of LR(1) items, then compute the closure at
+     this level, and finally turn this LR(1) state into an SLR(1) state by
+     letting the lookahead sets be the FOLLOW sets. This is somewhat ugly and
+     naïve, but seems to work. *)
 
   (* Convert this set to a set of LR(1) items. Here, we can use any set of
      tokens as the lookahead set. We use the empty set. *)
