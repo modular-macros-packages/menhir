@@ -8,9 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(** This module implements infinite arrays, that is, arrays that grow
-    transparently upon demand. *)
-
 type 'a t = {
     default: 'a;
     mutable table: 'a array;
@@ -57,4 +54,3 @@ let extent a =
 
 let domain a =
   Array.sub a.table 0 a.extent
-

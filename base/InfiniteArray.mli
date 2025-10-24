@@ -8,7 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module implements infinite arrays. **)
+(**This module implements conceptually infinite mutable arrays, where all
+   indices (except a finite number of indices) are mapped to the same value.
+
+   An infinite array is represented internally as a finite array that grows
+   transparently when needed. *)
+
+(**The type of infinite arrays. **)
 type 'a t
 
 (**[make x] creates an infinite array, where every slot contains [x]. **)
