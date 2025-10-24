@@ -31,7 +31,7 @@ open Grammar
 
 (* WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING *)
 
-(* The constant [low_bits], [low_limits] and the function [export] are
+(* The constants [low_bits], [low_limit] and the function [export] are
    duplicated in [lib/InspectionTableInterpreter.ml]. Do not modify them,
    or modify them here and there in a consistent manner. *)
 
