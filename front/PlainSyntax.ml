@@ -15,6 +15,8 @@
    takes place in several steps, implemented in [SelectiveExpansion] and
    [Drop]. *)
 
+include FrontTypes
+
 (* ------------------------------------------------------------------------ *)
 
 (* In a plain grammar, %attribute declarations can be desugared away. This is
@@ -28,78 +30,6 @@
    - with a nonterminal symbol: field [attributes] of [rule]
    - with a producer:           field [prod_attributes] of [producer]
    - with a branch:             field [br_attributes] of [branch]           *)
-
-open Attribute
-
-(* ------------------------------------------------------------------------ *)
-
-(* We repeat all of the following type definitions here, because we
-   want the clients of this module to say just [open PlainSyntax],
-   without having to also say [open Syntax]. *)
-
-type range =
-  Syntax.range
-
-type ranges =
-  Syntax.ranges
-
-type 'a located =
-  'a Syntax.located
-
-type ocamltype = Syntax.ocamltype =
-  | Declared of string located
-  | Inferred of string
-
-type terminal =
-  Syntax.terminal
-
-type nonterminal =
-  Syntax.nonterminal
-
-type symbol =
-  Syntax.symbol
-
-type symbols =
-  Syntax.symbols
-
-type alias =
-  Syntax.alias
-
-type identifier =
-  Syntax.identifier
-
-type action =
-  Syntax.action
-
-type associativity = Syntax.associativity =
-  | LeftAssoc
-  | RightAssoc
-  | NonAssoc
-  | UndefinedAssoc
-
-type precedence_level = Syntax.precedence_level =
-  | UndefinedPrecedence
-  | PrecedenceLevel of (InputFile.file * int) located
-
-type properties = Syntax.properties =
-  {
-    tk_ocamltype     : ocamltype option;
-    tk_position      : range;
-    tk_alias         : alias;
-    tk_attributes    : attributes;
-    tk_associativity : associativity;
-    tk_precedence    : precedence_level;
-    tk_is_declared   : bool;
-  }
-
-type prec_annotation =
-  Syntax.prec_annotation
-
-type production_level = Syntax.production_level =
-  | ProductionLevel of InputFile.file * int
-
-type on_error_reduce_level =
-  Syntax.on_error_reduce_level
 
 (* ------------------------------------------------------------------------ *)
 

@@ -8,7 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Attribute
 open PlainSyntax
 
 (**This module offers a number of accessors that help exploit a grammar. *)

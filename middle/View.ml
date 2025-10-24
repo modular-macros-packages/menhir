@@ -16,14 +16,11 @@
    of the grammar, including NONEMPTY, NULLABLE, FIRST, FOLLOW, MINIMAL,
    MAXIMAL. *)
 
-open Attribute
-open PlainSyntax
+include FrontTypes
+
+(* -------------------------------------------------------------------------- *)
 
 module type VIEW = sig
-
-type ocamltype = OCamlType.ocamltype =
-  | Declared of string located
-  | Inferred of string
 
 (* -------------------------------------------------------------------------- *)
 
@@ -498,7 +495,7 @@ module Production : sig
   (**[prec_decl prod] is the optional %prec annotation carried by the
      production [prod]. This information plays a role in the resolution of
      shift/reduce conflicts. *)
-  val prec_decl : t -> symbol located option
+  val prec_decl : t -> prec_annotation
 
   (**[production_level prod] is the production level of the production [prod].
      This information plays a role in the resolution of reduce/reduce

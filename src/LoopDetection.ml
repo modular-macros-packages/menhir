@@ -8,9 +8,18 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+open View
 
-module Run () = struct
+module Run (E : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+end)
+(G : VIEW)
+= struct
+open E
+open G
 
 (* -------------------------------------------------------------------------- *)
 
@@ -96,7 +105,7 @@ let show_cycle nts nt =
 
 let fail nts nt =
   let positions = List.flatten (List.map Nonterminal.positions nts) in
-  Error.error positions
+  error positions
     "the grammar is cyclic:\n\
      the nonterminal symbol %s expands to itself.\n%s\
      A cyclic grammar is ambiguous."
@@ -160,7 +169,7 @@ let () =
 let fail prod =
   let nt, rhs = Production.def prod in
   let positions = Production.positions prod in
-  Error.error positions
+  error positions
     "the grammar exhibits hidden left recursion: in the production\n\
      %s,\n\
      the nonterminal symbol %s is nullable,\n\

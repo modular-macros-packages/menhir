@@ -8,7 +8,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* [Run] detects and rejects certain anomalies in the grammar, which cause the
-   grammar to be outside of the class LR(1). *)
+(**This module detects and rejects certain anomalies in the grammar,
+   which cause the grammar to be outside of the class LR(1). *)
 
-module Run () : sig end
+open View
+
+module Run (E : sig
+
+  (**[error ranges format ...] reports an error and aborts. *)
+  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+end)
+(G : VIEW)
+: sig end

@@ -9,7 +9,6 @@
 (******************************************************************************)
 
 open Located
-open Attribute
 open Syntax
 
 type early_producer =

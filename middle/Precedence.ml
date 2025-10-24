@@ -132,7 +132,7 @@ module Prod = struct
      with the production [prod]. It also returns a tick which marks this
      annotation as useful. *)
 
-  let prec_decl prod : tick * symbol located option =
+  let prec_decl prod : tick * prec_annotation =
     let osym = Production.prec_decl prod in
     lazy (
       osym |> Option.iter @@ fun sym ->

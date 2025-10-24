@@ -8,7 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Attribute
 open PlainSyntax
 open PlainSyntaxAccessors
 
@@ -17,10 +16,6 @@ module Make (G : sig
 end) () = struct
 
 open G
-
-type ocamltype = OCamlType.ocamltype =
-  | Declared of string located
-  | Inferred of string
 
 (* -------------------------------------------------------------------------- *)
 
@@ -578,7 +573,7 @@ module Production = struct
   let rhs_attributes : attributes array array =
     Array.make n [||]
 
-  let prec_decl : symbol located option array =
+  let prec_decl : prec_annotation array =
     Array.make n None
 
   let production_level : production_level array =

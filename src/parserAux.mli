@@ -11,7 +11,6 @@
 (* This module provides utilities that are shared by the two versions
    of the parser. *)
 
-open Attribute
 open Syntax
 
 (* A few types used in the parser. *)

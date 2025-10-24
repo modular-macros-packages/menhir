@@ -12,12 +12,7 @@
    named IL, which is really just a fragment of OCaml. This fragment is
    tailored for the needs of Menhir and is not very general or pretty. *)
 
-type 'a located =
-  'a Located.located
-
-type ocamltype = OCamlType.ocamltype =
-  | Declared of string located
-  | Inferred of string
+include BaseTypes
 
 (**An interface. *)
 type interface =

@@ -248,7 +248,7 @@ let () =
 (* Perform loop detection before attempting to build the LR(0) automaton. *)
 
 let () =
-  let module L = LoopDetection.Run() in
+  let module L = LoopDetection.Run(Error)(Grammar) in
   ()
 
 (* ------------------------------------------------------------------------ *)

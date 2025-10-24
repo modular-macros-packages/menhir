@@ -11,6 +11,8 @@
 (* This module runs the grammar functor on the grammar produced by the
    front-end. *)
 
+include FrontTypes
+
 module  G = GrammarView.Make(Front)()
 include G
 
