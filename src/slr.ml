@@ -55,7 +55,8 @@ let make_slr_state (s : Lr0.node) : Lr0.concretelr1state =
      symbol that appears on the left-hand side of the item. *)
 
   Item.Map.fold (fun item toks accu ->
-    let _, nt, _, _, _ = Item.def item in
+    let prod, _pos = Item.export item in
+    let nt = Production.nt prod in
     let follow_nt = Analysis.follow nt in
     assert (TerminalSet.subset toks follow_nt); (* sanity check *)
     Item.Map.add item follow_nt accu

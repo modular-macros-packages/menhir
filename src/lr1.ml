@@ -569,7 +569,7 @@ let is_start_or_exit node =
   let items = Lr0.items (Lr0.core (state node)) in
   if Item.Set.cardinal items = 1 then
     let item = Item.Set.choose items in
-    let prod, _, _, _, _ = Item.def item in
+    let prod, _pos = Item.export item in
     Production.classify prod
   else
     None

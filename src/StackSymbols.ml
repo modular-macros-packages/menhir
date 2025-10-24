@@ -86,7 +86,8 @@ module Short () = struct
     in
     MArray.tabulate Lr0.n (fun node ->
       Item.Set.fold (fun item accu ->
-        let _prod, _nt, rhs, pos, _length = Item.def item in
+        let prod, pos = Item.export item in
+        let rhs = Production.rhs prod in
         if pos > Array.length accu then Array.sub rhs 0 pos else accu
       ) (Lr0.items node) dummy
     )

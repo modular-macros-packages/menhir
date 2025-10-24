@@ -34,14 +34,6 @@ val export: t -> Production.t * int
    [export]) is in [InspectionTableInterpreter]. *)
 val marshal: t -> int
 
-(* [def item] looks up the production associated with this item in the
-   grammar and returns [prod, nt, rhs, pos, length], where [prod] is
-   the production's index, [nt] and [rhs] represent the production,
-   [pos] is the position of the bullet in the item, and [length] is
-   the length of the production's right-hand side. *)
-
-val def: t -> Production.t * Nonterminal.t * Symbol.t array * int * int
-
 (* If [item] is a start item, [startnt item] returns the start
    nonterminal that corresponds to [item]. *)
 

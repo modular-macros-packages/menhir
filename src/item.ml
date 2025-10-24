@@ -61,21 +61,10 @@ let marshal (item : t) : int =
 let equal (item1 : t) (item2: t) =
   item1 = item2
 
-(* [def item] looks up the production associated with this item in the
-   grammar and returns [prod, nt, rhs, pos, length], where [prod] is
-   the production's index, [nt] and [rhs] represent the production,
-   [pos] is the position of the bullet in the item, and [length] is
-   the length of the production's right-hand side. *)
-
-let def t =
-  let prod, pos = export t in
-  let nt, rhs = Production.def prod in
-  let length = Array.length rhs in
-  assert ((pos >= 0) && (pos <= length));
-  prod, nt, rhs, pos, length
-
 let startnt t =
-  let _, _, rhs, pos, length = def t in
+  let prod, pos = export t in
+  let rhs = Production.rhs prod in
+  let length = Array.length rhs in
   assert (pos = 0 && length = 1);
   match rhs.(0) with
   | Symbol.N nt ->
@@ -86,7 +75,9 @@ let startnt t =
 (* Printing. *)
 
 let print item =
-  let _, nt, rhs, pos, _ = def item in
+  let prod, pos = export item in
+  let nt = Production.nt prod in
+  let rhs = Production.rhs prod in
   Printf.sprintf "%s -> %s"
     (Nonterminal.print false nt)
     (Symbol.print_array_bullet false pos rhs)
@@ -98,7 +89,9 @@ type kind =
   | Reduce of Production.t
 
 let classify item =
-  let prod, _, rhs, pos, length = def item in
+  let prod, pos = export item in
+  let rhs = Production.rhs prod in
+  let length = Array.length rhs in
   if pos = length then
     Reduce prod
   else

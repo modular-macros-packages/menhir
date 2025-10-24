@@ -81,7 +81,8 @@ let rec follow derivation offset' = function
       assert (offset' = 0);
       derivation
   | (item, offset) :: configs ->
-      let _, _, rhs, pos, _ = Item.def item in
+      let prod, pos = Item.export item in
+      let rhs = Production.rhs prod in
       let derivation =
         if offset = offset' then
           (* This is an epsilon transition. Put a new root node on top of
@@ -146,7 +147,9 @@ let explain_shift_item
 
       (* Otherwise, explore the transitions out of this item. *)
 
-      let prod, _, rhs, pos, length = Item.def item in
+      let prod, pos = Item.export item in
+      let rhs = Production.rhs prod in
+      let length = Array.length rhs in
 
       (* Shift transition, followed only if the symbol matches
          the symbol found in the input string. *)
@@ -178,7 +181,8 @@ let explain_shift_item
        the goal configuration. Turn it into an explicit derivation. *)
 
     let configs = materialize table (stop, n) in
-    let _, _, rhs, pos, _ = Item.def stop in
+    let prod, pos = Item.export stop in
+    let rhs = Production.rhs prod in
     let derivation = Derivation.tail pos rhs in
     let derivation = follow derivation n configs in
     derivation
@@ -226,7 +230,9 @@ let rec follow1 tok derivation offset' = function
          at the moment, so let's skip it. *)
       derivation
   | (item, _, offset) :: configs ->
-      let prod, _, rhs, pos, length = Item.def item in
+      let prod, pos = Item.export item in
+      let rhs = Production.rhs prod in
+      let length = Array.length rhs in
       if offset = offset' then
 
         (* This is an epsilon transition. Attack a new line and add
@@ -326,7 +332,9 @@ let explain_reduce_item
 
       (* Otherwise, explore the transitions out of this item. *)
 
-      let prod, _nt, rhs, pos, length = Item.def item in
+      let prod, pos = Item.export item in
+      let rhs = Production.rhs prod in
+      let length = Array.length rhs in
 
       (* Shift transition, followed only if the symbol matches
          the symbol found in the input string. *)
