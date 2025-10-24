@@ -62,7 +62,7 @@ let has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option =
     if Lr1.forbid_default_reduction s then
       None
     else
-      let reductions = Lr0.invert (Lr1.reductions s) in
+      let reductions = Reductions.invert (Lr1.reductions s) in
       if ProductionMap.is_singleton reductions
       && is_purely_nonterminal (Lr1.transitions s) then
         let reduction = ProductionMap.choose reductions in

@@ -115,7 +115,7 @@ let predecessors : node list array =
 
 (* This array is initialized during the traversal. *)
 
-let reductions : Lr0.reductions array =
+let reductions : Reductions.t array =
   Array.make Raw.n TerminalMap.empty (* dummy *)
 
 (* Record which actions are removed or added to the LR(1) automaton. *)
@@ -355,7 +355,7 @@ let discover (raw_node : Raw.node) =
   let transitions = transitions.(i)
   and reductions = reductions.(i) in
 
-  if Lr0.has_eos_conflict transitions reductions then begin
+  if Reductions.has_eos_conflict transitions reductions then begin
     (* Conceptually suppress the reduce action at [#]. *)
       let prods, reductions =
         TerminalMap.find_and_remove Terminal.sharp reductions in
@@ -364,7 +364,7 @@ let discover (raw_node : Raw.node) =
     let toks =
       TerminalSet.union
         (Lr0.transition_tokens transitions)
-        (Lr0.reduction_tokens reductions)
+        (TerminalMap.domain reductions)
     in
     (* Record this end-of-stream conflict. *)
     _has_eos_conflict.(i) <- Some (prods, toks)
@@ -707,7 +707,7 @@ let acceptable_tokens (s : node) =
   let covered =
     ProductionMap.fold (fun _ toks covered ->
       TerminalSet.union toks covered
-    ) (Lr0.invert reductions) covered
+    ) (Reductions.invert reductions) covered
   in
 
   (* That's it. *)
@@ -950,7 +950,7 @@ let default_conflict_resolution () =
     let transitions = transitions node
     and reductions = reductions node in
 
-    if Lr0.has_eos_conflict transitions reductions then begin
+    if Reductions.has_eos_conflict transitions reductions then begin
 
       (* Suppress the reduce action at [#]. *)
       let prods, reductions =
@@ -1019,7 +1019,7 @@ let extra_nts =
 
 let extra_reductions_in_node node =
   (* Compute the productions which this node can reduce. *)
-  let productions : _ ProductionMap.t = Lr0.invert (reductions node) in
+  let productions : _ ProductionMap.t = Reductions.invert (reductions node) in
   let prods : Production.t list =
     ProductionMap.fold (fun prod _ prods -> prod :: prods) productions []
   in

@@ -781,6 +781,56 @@ module ProductionMap = struct
 
 end
 
+(* -------------------------------------------------------------------------- *)
+
+(* Reduction tables. *)
+
+module Reductions = struct
+
+  type t =
+    Production.t list TerminalMap.t
+
+  let add_reduction prod t reductions =
+    let prods =
+      try
+        TerminalMap.find t reductions
+      with Not_found ->
+        []
+    in
+    TerminalMap.add t (prod :: prods) reductions
+
+  let add_reductions prod ts reductions =
+    TerminalSet.fold (add_reduction prod) ts reductions
+
+  let invert reductions : TerminalSet.t ProductionMap.t =
+    TerminalMap.fold (fun t prods accu ->
+      List.fold_left (fun accu prod ->
+        let ts =
+          try
+            ProductionMap.find prod accu
+          with Not_found ->
+            TerminalSet.empty
+        in
+        ProductionMap.add prod (TerminalSet.add t ts) accu
+      ) accu prods
+    ) reductions ProductionMap.empty
+
+  let has_eos_conflict transitions reductions =
+    match TerminalMap.find_and_remove Terminal.sharp reductions with
+    | exception Not_found ->
+        (* There is no reduction action on [#], thus no conflict. *)
+        false
+    | prods, reductions ->
+        (* There is at least one reduction action on [#]. *)
+        (* If there are two reduction actions on [#], then we have a conflict. *)
+        List.length prods > 1 ||
+        (* If there only one reduction on [#], then we have a conflict if and
+           only if either there exists another shift or reduce action. *)
+        not (TerminalMap.is_empty reductions) ||
+        SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol) transitions
+
+end
+
 (* ------------------------------------------------------------------------ *)
 
 (* Items. *)

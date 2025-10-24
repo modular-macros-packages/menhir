@@ -324,7 +324,13 @@ module TerminalSet : sig
 end
 
 (**Maps whose keys are terminal symbols. *)
-module TerminalMap : API.MAP with type key = Terminal.t
+module TerminalMap : sig
+  include API.MAP with type key = Terminal.t
+  include API.CONVERT
+    with type key := key
+     and type 'a map := 'a t
+     and type set := TerminalSet.t
+end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -569,7 +575,7 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* {2 Maps of Productions} *)
+(** {2 Maps of Productions} *)
 
 module ProductionMap : sig
 
@@ -578,6 +584,37 @@ module ProductionMap : sig
   (**[start] constructs a map whose domain consists of just the start
      productions. *)
   val start: (Production.t -> 'a) -> 'a t
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(** {2 Reduction Tables} *)
+
+module Reductions : sig
+
+  (**A reduction table maps terminal symbols to nonempty lists of productions.
+     A reduction table concerns just one state. It can be nondeterministic:
+     that is, a terminal symbol can be mapped to a list whose length is
+     greater than 1. *)
+  type t =
+    Production.t list TerminalMap.t
+
+  (**[add_reductions prod ts reductions] extends the table [reductions] with a
+     reduction of [prod] on every terminal symbol in the set [ts]. *)
+  val add_reductions: Production.t -> TerminalSet.t -> t -> t
+
+  (**[invert] inverts a reduction table (a mapping of terminal symbols to
+     lists of productions), producing a mapping of productions to sets of
+     terminal symbols. *)
+  val invert : t -> TerminalSet.t ProductionMap.t
+
+  (**[has_eos_conflict transitions reductions] tells whether a state has an
+     end-of-stream conflict, that is, a reduction action on [#] and at least
+     one other (shift or reduce) action. We assume that the state's shift and
+     goto transitions are described by the table [transitions] and that its
+     reductions are described by the reduction table [reductions]. *)
+  val has_eos_conflict: _ SymbolMap.t -> t -> bool
 
 end
 
@@ -652,7 +689,7 @@ end (* Item *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* {2 Properties of the Grammar} *)
+(** {2 Properties of the Grammar} *)
 
 (* [attributes] are the attributes attached with the grammar. *)
 val attributes: attributes
@@ -663,7 +700,7 @@ val grammar_uses_error_token: unit -> bool
 
 (* -------------------------------------------------------------------------- *)
 
-(* {2 Analyses of the Grammar} *)
+(** {2 Analyses of the Grammar} *)
 
 module Analysis : sig
 

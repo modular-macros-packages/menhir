@@ -887,82 +887,12 @@ let restrict toks (k, toksr) =
     TerminalSet.inter toksri toks
   ) toksr
 
-(* A (state-local, possibly nondeterministic) reduction table maps
-   terminal symbols to lists of productions. *)
-
-type reductions =
-  Production.t list TerminalMap.t
-
-(* [add_reduction prod tok reductions] adds a reduction of [prod] on [tok]
-   to the table [reductions]. *)
-
-let add_reduction prod tok reductions =
-  let prods =
-    try
-      TerminalMap.find tok reductions
-    with Not_found ->
-      []
-  in
-  TerminalMap.add tok (prod :: prods) reductions
-
-(* [add_reductions prod toks reductions] adds a reduction of [prod] on every
-   token in the set [toks] to the table [reductions]. *)
-
-let add_reductions prod toks reductions =
-  TerminalSet.fold (add_reduction prod) toks reductions
-
 let reductions_table state =
   List.fold_left (fun reductions (toks, prod) ->
-    add_reductions prod toks reductions
+    Reductions.add_reductions prod toks reductions
   ) TerminalMap.empty (reductions state)
 
-(* [reduction_tokens reductions] returns the domain of the reductions table
-   [table], in the form of a set of tokens. *)
-
-let reduction_tokens reductions =
-  TerminalMap.fold (fun tok _prods toks ->
-      TerminalSet.add tok toks
-  ) reductions TerminalSet.empty
-
-(* This inverts a mapping of tokens to productions into a mapping of
-   productions to sets of tokens. *)
-
-(* This is needed, in the code back-end, to avoid producing two (or more)
-   separate branches that call the same [reduce] function. Instead, we
-   generate just one branch, guarded by a [POr] pattern. *)
-
-let invert reductions : TerminalSet.t ProductionMap.t =
-  TerminalMap.fold (fun tok prods inverse ->
-    List.fold_left (fun inverse prod ->
-      let toks =
-        try
-          ProductionMap.find prod inverse
-        with Not_found ->
-          TerminalSet.empty
-      in
-      ProductionMap.add prod (TerminalSet.add tok toks) inverse
-    ) inverse prods
-  ) reductions ProductionMap.empty
-
-(* [has_eos_conflict transitions reductions] tells whether a state has
-   an end-of-stream conflict, that is, a reduction action on [#] and
-   at least one other (shift or reduce) action. *)
-
-let has_eos_conflict transitions reductions =
-  match TerminalMap.find_and_remove Terminal.sharp reductions with
-  | exception Not_found ->
-      (* There is no reduction action on [#], thus no conflict. *)
-      false
-  | prods, reductions ->
-      (* There is at least one reduction action on [#]. *)
-      (* If there are two reduction actions on [#], then we have a conflict. *)
-      List.length prods > 1 ||
-      (* If there only one reduction on [#], then we have a conflict if and
-         only if either there exists another shift or reduce action. *)
-      not (TerminalMap.is_empty reductions) ||
-      SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol) transitions
-
 let has_eos_conflict_lr1state (state : lr1state) =
-  has_eos_conflict
+  Reductions.has_eos_conflict
     (transitions state)
     (reductions_table state)

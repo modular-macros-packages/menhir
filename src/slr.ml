@@ -69,7 +69,7 @@ let reductions (s : Lr0.concretelr1state) : Production.t list TerminalMap.t =
   Item.Map.fold (fun item toks reductions ->
     match Item.classify item with
     | Item.Reduce prod ->
-        Lr0.add_reductions prod toks reductions
+        Reductions.add_reductions prod toks reductions
     | Item.Shift _ ->
         reductions
   ) s TerminalMap.empty

@@ -155,39 +155,12 @@ val print_concrete: string -> concretelr1state -> string
 val print:          string ->         lr1state -> string
 val print_closure:  string ->         lr1state -> string
 
-(* A (state-local, possibly nondeterministic) reduction table maps
-   terminal symbols to lists of productions. *)
-
-type reductions =
-  Production.t list TerminalMap.t
-
-(* [add_reduction prod tok reductions] adds a reduction of [prod] on [tok]
-   to the table [reductions]. *)
-
-val add_reduction: Production.t -> Terminal.t -> reductions -> reductions
-
-(* [add_reductions prod toks reductions] adds a reduction of [prod] on every
-   token in the set [toks] to the table [reductions]. *)
-
-val add_reductions: Production.t -> TerminalSet.t -> reductions -> reductions
-
 (* A table of the reductions at a state. *)
 
-val reductions_table: lr1state -> reductions
+val reductions_table: lr1state -> Reductions.t
 
-(* [invert] inverts a reduction table (that is, a mapping of tokens to lists of
-   productions), producing a mapping of productions to sets of tokens. *)
-
-val invert : reductions -> TerminalSet.t ProductionMap.t
-
-(* [reduction_tokens reductions] returns the domain of the reductions table
-   [table], in the form of a set of tokens. *)
-
-val reduction_tokens: reductions -> TerminalSet.t
-
-(* [has_eos_conflict transitions reductions] tells whether a state has
+(* [has_eos_conflict_lr1state s] tells whether the state [s] has
    an end-of-stream conflict, that is, a reduction action on [#] and
    at least one other (shift or reduce) action. *)
 
-val has_eos_conflict: 'target SymbolMap.t -> reductions -> bool
 val has_eos_conflict_lr1state: lr1state -> bool
