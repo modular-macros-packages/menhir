@@ -87,11 +87,9 @@ module G = struct
     ) Lr0.entry
 
   let foreach_successor (state : lr1state) f =
-    let symbols = Lr0.outgoing_symbols (Lr0.core state) in
-    List.iter (fun symbol ->
-      let successor = Lr0.transition symbol state in
-      f successor
-    ) symbols
+    Lr0.outgoing_edges (Lr0.core state) |> SymbolMap.iter @@ fun symbol _ ->
+    let successor = Lr0.transition symbol state in
+    f successor
 
 end
 
@@ -393,17 +391,13 @@ let entry : node ProductionMap.t =
 
 (* Expose the transitions of the LR(1) automaton. *)
 
-let transition symbol (i : node) : node =
+let[@inline] transition symbol (i : node) : node =
   encode (redirect (Lr0.transition symbol (state i)))
     (* note the use of [redirect] *)
 
-let outgoing_symbols (i : node) =
-  Lr0.outgoing_symbols (Lr0.core (state i))
-
 let transitions (i : node) : node SymbolMap.t =
-  SymbolMap.init (fun symbol ->
-    transition symbol i
-  ) (outgoing_symbols i)
+  Lr0.outgoing_edges (Lr0.core (state i)) |> SymbolMap.mapi @@ fun symbol _ ->
+  transition symbol i
 
 (* -------------------------------------------------------------------------- *)
 

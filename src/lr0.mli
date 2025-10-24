@@ -43,7 +43,6 @@ val incoming_symbol: node -> Symbol.t option
 (* The outgoing edges of a node. *)
 
 val outgoing_edges: node -> node SymbolMap.t
-val outgoing_symbols: node -> Symbol.t list
 
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)

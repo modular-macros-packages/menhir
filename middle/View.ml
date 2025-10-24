@@ -405,19 +405,7 @@ module SymbolSet : sig
 end
 
 (**Maps whose keys are symbols. *)
-module SymbolMap : sig
-
-  include Map.S with type key = Symbol.t
-
-  (**[domain m] is the domain of the map [m], that is, the list of keys
-     for which an entry exists in the map [m]. *)
-  val domain: 'a t -> key list
-
-  (**[init f xs] creates a map whose keys are the elements [x] found in
-     the list [xs] and the datum associated with [x] is [f x]. *)
-  val init: (key -> 'a) -> key list -> 'a t
-
-end
+module SymbolMap : Map.S with type key = Symbol.t
 
 (* -------------------------------------------------------------------------- *)
 

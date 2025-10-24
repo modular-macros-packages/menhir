@@ -473,9 +473,6 @@ let outgoing_edges node : node SymbolMap.t =
     (fun (target, _) -> target)
     (InfiniteArray.get _transitions node)
 
-let outgoing_symbols node : Symbol.t list =
-  SymbolMap.domain (InfiniteArray.get _transitions node)
-
 (* -------------------------------------------------------------------------- *)
 
 (* Help for building the LR(1) automaton. *)

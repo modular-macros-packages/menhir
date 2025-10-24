@@ -496,21 +496,8 @@ end
 
 (* Maps of symbols. *)
 
-module SymbolMap = struct
-
-  include Map.Make(Symbol)
-
-  let domain m =
-    fold (fun symbol _ accu ->
-      symbol :: accu
-    ) m []
-
-  let init f xs =
-    List.fold_left (fun accu x ->
-      add x (f x) accu
-    ) empty xs
-
-end
+module SymbolMap =
+  Map.Make(Symbol)
 
 (* -------------------------------------------------------------------------- *)
 
