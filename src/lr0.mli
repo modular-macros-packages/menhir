@@ -40,7 +40,6 @@ val items: node -> Item.Set.t
    incoming symbol) if and only if it is a start node. *)
 
 val incoming_symbol: node -> Symbol.t option
-val incoming_edges: node -> node list
 
 (* The outgoing edges of a node. *)
 
