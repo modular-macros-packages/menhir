@@ -46,11 +46,6 @@ val incoming_symbol: node -> Symbol.t option
 val outgoing_edges: node -> node SymbolMap.t
 val outgoing_symbols: node -> Symbol.t list
 
-(* Maps whose keys are nodes. *)
-
-module ImperativeNodeMap :
-  Fix.MINIMAL_IMPERATIVE_MAPS with type key = node
-
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)
 
@@ -152,14 +147,7 @@ val restrict: TerminalSet.t -> lr1state -> lr1state
 
 val print_concrete: string -> concretelr1state -> string
 val print:          string ->         lr1state -> string
-val print_closure:  string ->         lr1state -> string
 
 (* A table of the reductions at a state. *)
 
 val reductions_table: lr1state -> Reductions.t
-
-(* [has_eos_conflict_lr1state s] tells whether the state [s] has
-   an end-of-stream conflict, that is, a reduction action on [#] and
-   at least one other (shift or reduce) action. *)
-
-val has_eos_conflict_lr1state: lr1state -> bool

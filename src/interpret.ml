@@ -232,8 +232,8 @@ let print_messages_auto (nt, sentence, target) : unit =
      ##\n\
      %s##\n"
     (Lr1.number s')
-    (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
-       could sometimes be helpful, but is usually intolerably verbose. *)
+    (* [Lr0.print] prints just the state's kernel, not its closure. Displaying
+       the closure could be helpful, but is usually intolerably verbose. *)
     (Lr0.print "## " (Lr1.state s'))
   ;
 

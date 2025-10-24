@@ -537,9 +537,6 @@ let print_concrete leading (state : concretelr1state) =
 let print leading state =
   print_concrete leading (export state)
 
-let print_closure leading state =
-  print_concrete leading (closure (export state))
-
 (* The core of an LR(1) state is the underlying LR(0) state. *)
 
 let core (k, _) =
@@ -872,8 +869,3 @@ let reductions_table state =
   List.fold_left (fun reductions (toks, prod) ->
     Reductions.add_reductions prod toks reductions
   ) TerminalMap.empty (reductions state)
-
-let has_eos_conflict_lr1state (state : lr1state) =
-  Reductions.has_eos_conflict
-    (transitions state)
-    (reductions_table state)
