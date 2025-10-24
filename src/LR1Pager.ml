@@ -396,7 +396,7 @@ let[@inline] transition symbol (i : node) : node =
     (* note the use of [redirect] *)
 
 let transitions (i : node) : node SymbolMap.t =
-  Lr0.outgoing_edges (Lr0.core (state i)) |> SymbolMap.mapi @@ fun symbol _ ->
+  Lr0.outgoing_symbols (Lr0.core (state i)) @@ fun symbol ->
   transition symbol i
 
 (* -------------------------------------------------------------------------- *)

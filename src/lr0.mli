@@ -44,6 +44,7 @@ val foreach_outgoing_edge: node -> (Symbol.t -> node -> unit) -> unit
 
 (* The outgoing edges of a node. *)
 val outgoing_edges: node -> node SymbolMap.t
+val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)

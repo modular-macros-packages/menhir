@@ -469,14 +469,19 @@ let incoming_symbol node : Symbol.t option =
   InfiniteArray.get incoming node
 
 let foreach_outgoing_edge node yield =
-  SymbolMap.iter
-    (fun symbol (target, _) -> yield symbol target)
-    (InfiniteArray.get _transitions node)
+  InfiniteArray.get _transitions node
+  |> SymbolMap.iter @@ fun symbol (target, _) ->
+     yield symbol target
 
 let outgoing_edges node : node SymbolMap.t =
-  SymbolMap.map
-    (fun (target, _) -> target)
-    (InfiniteArray.get _transitions node)
+  InfiniteArray.get _transitions node
+  |> SymbolMap.map @@ fun (target, _) ->
+     target
+
+let outgoing_symbols node f =
+  InfiniteArray.get _transitions node
+  |> SymbolMap.mapi @@ fun symbol _ ->
+     f symbol
 
 (* -------------------------------------------------------------------------- *)
 
