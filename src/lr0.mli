@@ -14,27 +14,30 @@
 
 open Grammar
 
-(**A state of the LR(0) automaton is known as a node. Nodes are numbered. *)
+(**A state of the LR(0) automaton is known as a node.
+   A node is an integer in the interval [\[0, n)]. *)
 type node =
   int
+  (* We would ideally make [node] an abstract type, but this would make
+     our life unduly hard, as we like to use arrays indexed with nodes,
+     apply [Fix.DataFlow.ForIntSegment] to the type [node], etc. *)
 
-(* This is the number of nodes in the LR(0) automaton. *)
-
+(**[n] is the number of nodes in the LR(0) automaton. *)
 val n: int
 
-(* These are the automaton's entry states, indexed by the start productions. *)
-
+(**[entry] is a map of each start production to the corresponding start node
+   in the LR(0) automaton. *)
 val entry: node ProductionMap.t
 
-(* A node can be converted to the underlying LR(0) set of items. This set is
-   not closed. *)
-
+(**Each node in the LR(0) represents a set of LR(0) items.
+   [items node] returns this set. This set is not closed. *)
 val items: node -> Item.Set.t
 
-(* The incoming symbol of an LR(0) node is the symbol carried by all of the
-   edges that enter this node. A node has zero incoming edges (and, thus, no
-   incoming symbol) if and only if it is a start node. *)
-
+(**All of the edges that enter a node carry the same symbol. If a node has at
+   least one incoming edge, then this common symbol is known as the incoming
+   symbol of this node. A node that has no incoming edges has no incoming
+   symbol. A node has no incoming symbol if and only if it is a start node.
+   [incoming_symbol node] is the incoming symbol of the node [node]. *)
 val incoming_symbol: node -> Symbol.t option
 
 (* The outgoing edges of a node. *)
