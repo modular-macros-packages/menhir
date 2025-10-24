@@ -10,9 +10,6 @@
 
 open Grammar
 
-module InfiniteArray =
-  MenhirLib.InfiniteArray
-
 (* ------------------------------------------------------------------------ *)
 
 (* This functor performs precomputation that helps efficiently compute

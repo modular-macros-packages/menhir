@@ -11,8 +11,6 @@
 (* This module compresses a two-dimensional table, where some values
    are considered insignificant, via row displacement. *)
 
-module InfiniteArray = MenhirLib.InfiniteArray
-
 type displacement =
   int
 

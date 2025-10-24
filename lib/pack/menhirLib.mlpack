@@ -8,7 +8,6 @@ Engine
 ErrorReports
 LexerUtil
 Printers
-InfiniteArray
 PackedIntArray
 RowDisplacementDecode
 LinearizedArray
