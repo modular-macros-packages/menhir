@@ -2613,9 +2613,9 @@ LET JOINDEF def_bindings
             join_pattern EQUAL process 
                                . LET JOINDEF def_bindings IN process 
 
-** Conflict (shift/reduce) in state 314.
+** Conflict (reduce/reduce) in state 314.
 ** Tokens involved: RBRACKET COMMA
-** The following explanations concentrate on token COMMA.
+** The following explanations concentrate on token RBRACKET.
 ** This state is reached from implementation after reading:
 
 LET JOINDEF LIDENT LBRACKET LIDENT
@@ -2631,13 +2631,14 @@ LET JOINDEF def_bindings
             def_binding 
             (?)
 
-** In state 314, looking ahead at COMMA, shifting is permitted
-** because of the following sub-derivation:
+** In state 314, looking ahead at RBRACKET, reducing production
+** lident_comma_list -> LIDENT
+** is permitted because of the following sub-derivation:
 
-LIDENT LBRACKET lident_comma_list RBRACKET LBRACE simple_def_binding loc_init RBRACE 
-                LIDENT . COMMA lident_comma_list 
+LIDENT LBRACKET lident_comma_list RBRACKET LBRACE simple_def_binding loc_init RBRACE // lookahead token appears
+                LIDENT . 
 
-** In state 314, looking ahead at COMMA, reducing production
+** In state 314, looking ahead at RBRACKET, reducing production
 ** val_ident -> LIDENT
 ** is permitted because of the following sub-derivation:
 
@@ -2645,10 +2646,8 @@ simple_def_binding
 def_pattern 
 join_pattern EQUAL process 
 LIDENT simple_pattern 
-       LBRACKET pattern_semi_list opt_semi RBRACKET 
-                pattern 
-                pattern_comma_list 
-                pattern COMMA pattern // lookahead token appears
+       LBRACKET pattern_semi_list opt_semi RBRACKET // lookahead token appears because opt_semi can vanish
+                pattern // lookahead token is inherited
                 simple_pattern // lookahead token is inherited
                 val_ident // lookahead token is inherited
                 LIDENT . 

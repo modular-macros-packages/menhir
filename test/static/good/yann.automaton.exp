@@ -185,7 +185,7 @@ fa4 -> LPAREN exp RPAREN . [ TENSOR RPAREN PLUS # ]
 ** Conflict on RPAREN PLUS #
 ** End-of-stream conflict on TIMES TENSOR RPAREN PLUS
 **   There is a tension between
-**   (1) reducing production fa1 -> LPAREN exp RPAREN
+**   (1) reducing production fa4 -> LPAREN exp RPAREN
 **   without even requesting a lookahead token, and
 **   (2) testing whether the lookahead token is a member of the above set.
 

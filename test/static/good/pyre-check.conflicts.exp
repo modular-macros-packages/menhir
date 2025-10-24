@@ -576,9 +576,9 @@ atom
 MINUS expression 
       expression . LEFTBRACKET parser_generator_separated_nonempty_list(COMMA,subscript_key) RIGHTBRACKET 
 
-** Conflict (reduce/reduce) in state 206.
+** Conflict (shift/reduce) in state 206.
 ** Tokens involved: SLASHSLASHEQUALS SLASHEQUALS SEMICOLON RIGHTPARENS RIGHTCURLY RIGHTBRACKET RIGHTANGLERIGHTANGLEEQUALS RIGHTANGLEEQUALS RIGHTANGLE PLUSEQUALS PERCENTEQUALS OR NEWLINE MINUSEQUALS LEFTBRACKET LEFTANGLELEFTANGLEEQUALS LEFTANGLEEQUALS LEFTANGLE ISNOT IS IN IF HATEQUALS FROM FOR EXCLAMATIONMARK EQUALS ELSE DOUBLEEQUALS COMMA COLON BAREQUALS ATEQUALS ASYNC ASTERIKSEQUALS ASTERIKSASTERIKSEQUALS AS ANNOTATION_COMMENT AND AMPERSANDEQUALS
-** The following explanations concentrate on token SLASHSLASHEQUALS.
+** The following explanations concentrate on token RIGHTANGLEEQUALS.
 ** This state is reached from parse after reading:
 
 NOT expression
@@ -592,30 +592,31 @@ statement statements
 simple_statement 
 parser_generator_separated_nonempty_list_of_lists(SEMICOLON,small_statement) NEWLINE 
 small_statement 
-test_list SLASHSLASHEQUALS value // lookahead token appears
-separated_nonempty_list_indicator(COMMA,test) // lookahead token is inherited
-test separated_nonempty_list_indicator_tail(COMMA,test) // lookahead token is inherited because separated_nonempty_list_indicator_tail(COMMA,test) can vanish
-or_test // lookahead token is inherited
-and_test // lookahead token is inherited
-not_test // lookahead token is inherited
+test_list PLUSEQUALS value 
+separated_nonempty_list_indicator(COMMA,test) 
+test separated_nonempty_list_indicator_tail(COMMA,test) 
+or_test 
+and_test 
+not_test 
 (?)
 
-** In state 206, looking ahead at SLASHSLASHEQUALS, reducing production
+** In state 206, looking ahead at RIGHTANGLEEQUALS, reducing production
 ** atom -> NOT expression
 ** is permitted because of the following sub-derivation:
 
-comparison // lookahead token is inherited
-expression // lookahead token is inherited
+comparison 
+expression nonempty_list(comparison_operator) // lookahead token appears because nonempty_list(comparison_operator) can begin with RIGHTANGLEEQUALS
 atom // lookahead token is inherited
 NOT expression . 
 
-** In state 206, looking ahead at SLASHSLASHEQUALS, reducing production
-** comparison -> expression
-** is permitted because of the following sub-derivation:
+** In state 206, looking ahead at RIGHTANGLEEQUALS, shifting is permitted
+** because of the following sub-derivation:
 
-NOT not_test // lookahead token is inherited
-    comparison // lookahead token is inherited
-    expression . 
+NOT not_test 
+    comparison 
+    expression nonempty_list(comparison_operator) 
+               comparison_operator 
+               . RIGHTANGLEEQUALS expression 
 
 ** Conflict (shift/reduce) in state 192.
 ** Tokens involved: FOR ASYNC

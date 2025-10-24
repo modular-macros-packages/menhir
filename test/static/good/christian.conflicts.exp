@@ -123,9 +123,9 @@ characterStringType
 restrictedCharacterStringType 
 . VisibleString 
 
-** Conflict (reduce/reduce) in state 704.
+** Conflict (shift/reduce/reduce) in state 704.
 ** Tokens involved: LeftBrace Dot Colon
-** The following explanations concentrate on token Colon.
+** The following explanations concentrate on token Dot.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper LeftBrace Upper
@@ -143,35 +143,37 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                           Upper parameterList Assignment type_x 
                                                                                                 LeftBrace separated_nonempty_list(Comma,parameter) RightBrace 
                                                                                                           parameter 
-                                                                                                          paramGovernor Colon dummyReference // lookahead token appears
+                                                                                                          paramGovernor Colon dummyReference 
+                                                                                                          governor 
                                                                                                           (?)
 
-** In state 704, looking ahead at Colon, reducing production
+** In state 704, looking ahead at Dot, reducing production
 ** definedObjectClass -> Upper
 ** is permitted because of the following sub-derivation:
 
-governor // lookahead token is inherited
-definedObjectClass // lookahead token is inherited
+type_x 
+builtinType 
+objectClassFieldType 
+definedObjectClass Dot fieldName // lookahead token appears
 Upper . 
 
-** In state 704, looking ahead at Colon, reducing production
-** definedType -> Upper
+** In state 704, looking ahead at Dot, reducing production
+** definedObjectSet -> Upper
 ** is permitted because of the following sub-derivation:
 
-governor // lookahead token is inherited
-type_x // lookahead token is inherited
-referencedType // lookahead token is inherited
-definedType // lookahead token is inherited
+type_x 
+referencedType 
+typeFromObject 
+referencedObjects Dot fieldName // lookahead token appears
+definedObjectSet // lookahead token is inherited
 Upper . 
 
-** In state 704, looking ahead at Colon, reducing production
-** reference -> Upper
-** is permitted because of the following sub-derivation:
+** In state 704, looking ahead at Dot, shifting is permitted
+** because of the following sub-derivation:
 
-dummyGovernor // lookahead token is inherited
-dummyReference // lookahead token is inherited
-reference // lookahead token is inherited
-Upper . 
+definedObjectClass 
+externalObjectClassReference 
+Upper . Dot Upper 
 
 ** Conflict (shift/reduce/reduce) in state 695.
 ** Tokens involved: Upper RightBrace Number Lower
@@ -295,9 +297,9 @@ constrainedType // lookahead token is inherited
 typeWithConstraint // lookahead token is inherited
 SET sizeConstraint OF type_x . 
 
-** Conflict (reduce/reduce) in state 667.
+** Conflict (shift/reduce) in state 667.
 ** Tokens involved: RightBrace Comma
-** The following explanations concentrate on token RightBrace.
+** The following explanations concentrate on token Comma.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SET LeftBrace extensionAndException
@@ -314,22 +316,21 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                           Upper type_x Assignment valueSet 
                                                                                                 builtinType 
                                                                                                 setType 
-                                                                                                (?)
+                                                                                                SET LeftBrace componentTypeLists RightBrace 
+                                                                                                              (?)
 
-** In state 667, looking ahead at RightBrace, reducing production
+** In state 667, looking ahead at Comma, shifting is permitted
+** because of the following sub-derivation:
+
+extensionAndException extensionAdditions extensionEndMarker Comma rootComponentTypeList 
+                      . Comma extensionAdditionList 
+
+** In state 667, looking ahead at Comma, reducing production
 ** extensionAdditions ->
 ** is permitted because of the following sub-derivation:
 
-SET LeftBrace componentTypeLists RightBrace // lookahead token appears
-              extensionAndException extensionAdditions optionalExtensionMarker // lookahead token is inherited because optionalExtensionMarker can vanish
-                                    . 
-
-** In state 667, looking ahead at RightBrace, reducing production
-** optionalExtensionMarker ->
-** is permitted because of the following sub-derivation:
-
-SET LeftBrace extensionAndException optionalExtensionMarker RightBrace // lookahead token appears
-                                    . 
+extensionAndException extensionAdditions extensionEndMarker Comma rootComponentTypeList // lookahead token appears because extensionEndMarker can begin with Comma
+                      . 
 
 ** Conflict (shift/reduce) in state 663.
 ** Token involved: LeftParen
@@ -520,7 +521,7 @@ restrictedCharacterStringType
 
 ** Conflict (shift/reduce) in state 594.
 ** Tokens involved: VisibleString VideotexString Upper UniversalString UTF8String UTCTime TeletexString TYPE_IDENTIFIER T61String SET SEQUENCE RightBrace RELATIVE_OID REAL PrintableString ObjectDescriptor OCTET OBJECT NumericString NULL Lower LeftBracket ISO646String INTEGER INSTANCE IA5String GraphicString GeneralizedTime GeneralString EXTERNAL ENUMERATED EMBEDDED CHOICE CHARACTER BOOLEAN BMPString BIT ABSTRACT_SYNTAX
-** The following explanations concentrate on token RightBrace.
+** The following explanations concentrate on token VisibleString.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SET LeftParen LeftBrace
@@ -539,36 +540,37 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                 typeWithConstraint 
                                                                                                 SET constraint_x OF type_x 
                                                                                                     LeftParen constraintSpec exceptionSpec RightParen 
-                                                                                                              subtypeConstraint 
-                                                                                                              elementSetSpecs 
-                                                                                                              rootElementSetSpec 
-                                                                                                              elementSetSpec 
-                                                                                                              unions 
-                                                                                                              intersections 
-                                                                                                              intersectionElements 
-                                                                                                              elements 
-                                                                                                              (?)
+                                                                                                              generalConstraint 
+                                                                                                              tableConstraint 
+                                                                                                              simpleTableConstraint 
+                                                                                                              objectSet 
+                                                                                                              LeftBrace objectSetSpec RightBrace 
+                                                                                                                        rootElementSetSpec 
+                                                                                                                        elementSetSpec 
+                                                                                                                        unions 
+                                                                                                                        intersections 
+                                                                                                                        intersectionElements 
+                                                                                                                        elements 
+                                                                                                                        subtypeElements 
+                                                                                                                        (?)
 
-** In state 594, looking ahead at RightBrace, shifting is permitted
-** because of the following sub-derivation:
-
-subtypeElements 
-singleValue 
-value 
-builtinValue 
-bitStringValue 
-LeftBrace . RightBrace 
-
-** In state 594, looking ahead at RightBrace, reducing production
-** loption(separated_nonempty_list(Comma,fieldSetting)) ->
+** In state 594, looking ahead at VisibleString, reducing production
+** includes ->
 ** is permitted because of the following sub-derivation:
 
-objectSetElements 
-object_x 
-objectDefn 
-defaultSyntax 
-LeftBrace loption(separated_nonempty_list(Comma,fieldSetting)) RightBrace // lookahead token appears
-          . 
+containedSubtype 
+includes type_x // lookahead token appears because type_x can begin with VisibleString
+. 
+
+** In state 594, looking ahead at VisibleString, shifting is permitted
+** because of the following sub-derivation:
+
+typeConstraint 
+type_x 
+builtinType 
+characterStringType 
+restrictedCharacterStringType 
+. VisibleString 
 
 ** Conflict (reduce/reduce) in state 589.
 ** Tokens involved: RightBrace LeftParen Comma Colon
@@ -1150,7 +1152,7 @@ restrictedCharacterStringType
 
 ** Conflict (shift/reduce) in state 502.
 ** Tokens involved: VisibleString VideotexString Upper UniversalString UTF8String UTCTime TeletexString TYPE_IDENTIFIER T61String SET SEQUENCE RightBrace RELATIVE_OID REAL PrintableString ObjectDescriptor OCTET OBJECT NumericString NULL Lower LeftBracket ISO646String INTEGER INSTANCE IA5String GraphicString GeneralizedTime GeneralString EXTERNAL ENUMERATED EMBEDDED CHOICE CHARACTER BOOLEAN BMPString BIT ABSTRACT_SYNTAX
-** The following explanations concentrate on token RightBrace.
+** The following explanations concentrate on token VisibleString.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper simpleDefinedType LeftBrace LeftBrace
@@ -1173,23 +1175,38 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                                             actualParameter 
                                                                                                                             (?)
 
-** In state 502, looking ahead at RightBrace, shifting is permitted
+** In state 502, looking ahead at VisibleString, reducing production
+** includes ->
+** is permitted because of the following sub-derivation:
+
+valueSet 
+LeftBrace elementSetSpecs RightBrace 
+          rootElementSetSpec 
+          elementSetSpec 
+          unions 
+          intersections 
+          intersectionElements 
+          elements 
+          subtypeElements 
+          containedSubtype 
+          includes type_x // lookahead token appears because type_x can begin with VisibleString
+          . 
+
+** In state 502, looking ahead at VisibleString, shifting is permitted
 ** because of the following sub-derivation:
 
 value 
 builtinValue 
-bitStringValue 
-LeftBrace . RightBrace 
-
-** In state 502, looking ahead at RightBrace, reducing production
-** loption(separated_nonempty_list(Comma,fieldSetting)) ->
-** is permitted because of the following sub-derivation:
-
-object_x 
-objectDefn 
-defaultSyntax 
-LeftBrace loption(separated_nonempty_list(Comma,fieldSetting)) RightBrace // lookahead token appears
-          . 
+sequenceOfValue 
+LeftBrace valueList RightBrace 
+          value 
+          objectClassFieldValue 
+          openTypeFieldVal 
+          type_x Colon value 
+          builtinType 
+          characterStringType 
+          restrictedCharacterStringType 
+          . VisibleString 
 
 ** Conflict (shift/reduce) in state 499.
 ** Token involved: RightBrace
@@ -1376,9 +1393,9 @@ constrainedType // lookahead token is inherited
 typeWithConstraint // lookahead token is inherited
 SEQUENCE sizeConstraint OF type_x . 
 
-** Conflict (reduce/reduce) in state 476.
+** Conflict (shift/reduce) in state 476.
 ** Tokens involved: RightBrace Comma
-** The following explanations concentrate on token RightBrace.
+** The following explanations concentrate on token Comma.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SEQUENCE LeftBrace extensionAndException
@@ -1395,22 +1412,21 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                           Upper type_x Assignment valueSet 
                                                                                                 builtinType 
                                                                                                 sequenceType 
-                                                                                                (?)
+                                                                                                SEQUENCE LeftBrace componentTypeLists RightBrace 
+                                                                                                                   (?)
 
-** In state 476, looking ahead at RightBrace, reducing production
+** In state 476, looking ahead at Comma, shifting is permitted
+** because of the following sub-derivation:
+
+extensionAndException extensionAdditions extensionEndMarker Comma rootComponentTypeList 
+                      . Comma extensionAdditionList 
+
+** In state 476, looking ahead at Comma, reducing production
 ** extensionAdditions ->
 ** is permitted because of the following sub-derivation:
 
-SEQUENCE LeftBrace componentTypeLists RightBrace // lookahead token appears
-                   extensionAndException extensionAdditions optionalExtensionMarker // lookahead token is inherited because optionalExtensionMarker can vanish
-                                         . 
-
-** In state 476, looking ahead at RightBrace, reducing production
-** optionalExtensionMarker ->
-** is permitted because of the following sub-derivation:
-
-SEQUENCE LeftBrace extensionAndException optionalExtensionMarker RightBrace // lookahead token appears
-                                         . 
+extensionAndException extensionAdditions extensionEndMarker Comma rootComponentTypeList // lookahead token appears because extensionEndMarker can begin with Comma
+                      . 
 
 ** Conflict (shift/reduce) in state 475.
 ** Token involved: Comma
@@ -2819,7 +2835,7 @@ LeftBrace definedValue objIdComponentsList RightBrace
 
 ** Conflict (reduce/reduce) in state 304.
 ** Tokens involved: RightBrace Comma
-** The following explanations concentrate on token Comma.
+** The following explanations concentrate on token RightBrace.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SET LeftParen LeftBrace Number
@@ -2840,8 +2856,8 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                     LeftParen constraintSpec exceptionSpec RightParen 
                                                                                                               (?)
 
-** In state 304, looking ahead at Comma, reducing production
-** group -> Number
+** In state 304, looking ahead at RightBrace, reducing production
+** numberForm -> Number
 ** is permitted because of the following sub-derivation:
 
 subtypeConstraint 
@@ -2856,13 +2872,13 @@ subtypeElements
 singleValue 
 value 
 builtinValue 
-characterStringValue 
-restrictedCharacterStringValue 
-quadruple 
-LeftBrace group Comma plane Comma row Comma cell RightBrace // lookahead token appears
+objectIdentifierValue 
+LeftBrace objIdComponentsList RightBrace // lookahead token appears
+          objIdComponents // lookahead token is inherited
+          numberForm // lookahead token is inherited
           Number . 
 
-** In state 304, looking ahead at Comma, reducing production
+** In state 304, looking ahead at RightBrace, reducing production
 ** signedNumber -> Number
 ** is permitted because of the following sub-derivation:
 
@@ -2870,8 +2886,8 @@ generalConstraint
 tableConstraint 
 simpleTableConstraint 
 objectSet 
-LeftBrace objectSetSpec RightBrace 
-          rootElementSetSpec Comma Ellipsis // lookahead token appears
+LeftBrace objectSetSpec RightBrace // lookahead token appears
+          rootElementSetSpec // lookahead token is inherited
           elementSetSpec // lookahead token is inherited
           unions // lookahead token is inherited
           intersections // lookahead token is inherited
@@ -2883,28 +2899,6 @@ LeftBrace objectSetSpec RightBrace
           builtinValue // lookahead token is inherited
           integerValue // lookahead token is inherited
           signedNumber // lookahead token is inherited
-          Number . 
-
-** In state 304, looking ahead at Comma, reducing production
-** tableColumn -> Number
-** is permitted because of the following sub-derivation:
-
-subtypeConstraint 
-elementSetSpecs 
-rootElementSetSpec 
-elementSetSpec 
-unions 
-intersections 
-intersectionElements 
-elements 
-subtypeElements 
-singleValue 
-value 
-builtinValue 
-characterStringValue 
-restrictedCharacterStringValue 
-tuple 
-LeftBrace tableColumn Comma tableRow RightBrace // lookahead token appears
           Number . 
 
 ** Conflict (reduce/reduce) in state 303.
@@ -2979,9 +2973,9 @@ LeftBrace RightBrace .
 setValue // lookahead token is inherited
 LeftBrace RightBrace . 
 
-** Conflict (shift/reduce/reduce) in state 300.
+** Conflict (reduce/reduce) in state 300.
 ** Tokens involved: Upper UNION RightParen RightDoubleBracket RightBrace Middle Lower LessThan LeftBrace INTERSECTION EXCEPT END DoubleDot Comma Circumflex Bang
-** The following explanations concentrate on token LessThan.
+** The following explanations concentrate on token UNION.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SET LeftParen Lower
@@ -3005,56 +2999,54 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                               rootElementSetSpec 
                                                                                                               elementSetSpec 
                                                                                                               unions 
-                                                                                                              intersections 
-                                                                                                              intersectionElements 
-                                                                                                              elements 
-                                                                                                              subtypeElements 
+                                                                                                              uElems unionMark intersections // lookahead token appears because unionMark can begin with UNION
+                                                                                                              unions // lookahead token is inherited
+                                                                                                              intersections // lookahead token is inherited
+                                                                                                              intersectionElements // lookahead token is inherited
+                                                                                                              elements // lookahead token is inherited
                                                                                                               (?)
 
-** In state 300, looking ahead at LessThan, reducing production
+** In state 300, looking ahead at UNION, reducing production
+** definedObject -> Lower
+** is permitted because of the following sub-derivation:
+
+objectSetElements // lookahead token is inherited
+object_x // lookahead token is inherited
+definedObject // lookahead token is inherited
+Lower . 
+
+** In state 300, looking ahead at UNION, reducing production
 ** definedValue -> Lower
 ** is permitted because of the following sub-derivation:
 
-valueRange 
-lowerEndPoint DoubleDot upperEndPoint 
-lowerEndValue LessThan // lookahead token appears
+subtypeElements // lookahead token is inherited
+singleValue // lookahead token is inherited
 value // lookahead token is inherited
 referencedValue // lookahead token is inherited
 definedValue // lookahead token is inherited
 Lower . 
 
-** In state 300, looking ahead at LessThan, reducing production
+** In state 300, looking ahead at UNION, reducing production
 ** enumeratedValue -> Lower
 ** is permitted because of the following sub-derivation:
 
-valueRange 
-lowerEndPoint DoubleDot upperEndPoint 
-lowerEndValue LessThan // lookahead token appears
+subtypeElements // lookahead token is inherited
+singleValue // lookahead token is inherited
 value // lookahead token is inherited
 builtinValue // lookahead token is inherited
 enumeratedValue // lookahead token is inherited
 Lower . 
 
-** In state 300, looking ahead at LessThan, reducing production
+** In state 300, looking ahead at UNION, reducing production
 ** integerValue -> Lower
 ** is permitted because of the following sub-derivation:
 
-valueRange 
-lowerEndPoint DoubleDot upperEndPoint 
-lowerEndValue LessThan // lookahead token appears
+subtypeElements // lookahead token is inherited
+singleValue // lookahead token is inherited
 value // lookahead token is inherited
 builtinValue // lookahead token is inherited
 integerValue // lookahead token is inherited
 Lower . 
-
-** In state 300, looking ahead at LessThan, shifting is permitted
-** because of the following sub-derivation:
-
-typeConstraint 
-type_x 
-referencedType 
-selectionType 
-Lower . LessThan type_x 
 
 ** Conflict (reduce/reduce) in state 298.
 ** Tokens involved: UNION RightParen RightBrace Middle INTERSECTION EXCEPT Comma Circumflex Bang
@@ -3520,9 +3512,9 @@ parameterizedValue
 simpleDefinedValue actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
 Lower . 
 
-** Conflict (reduce/reduce) in state 113.
+** Conflict (shift/reduce/reduce) in state 113.
 ** Tokens involved: Upper RightBrace OPTIONAL Lower LeftBrace END Dot DEFAULT Comma Colon Assignment
-** The following explanations concentrate on token LeftBrace.
+** The following explanations concentrate on token Dot.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper Upper
@@ -3535,33 +3527,42 @@ moduleDefinition EOF
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN moduleBody END 
                                                                           exports imports assignmentList 
                                                                                           assignment 
-                                                                                          valueSetTypeAssignment 
-                                                                                          Upper type_x Assignment valueSet 
-                                                                                                referencedType 
-                                                                                                (?)
+                                                                                          (?)
 
-** In state 113, looking ahead at LeftBrace, reducing production
+** In state 113, looking ahead at Dot, reducing production
+** definedObjectClass -> Upper
+** is permitted because of the following sub-derivation:
+
+valueSetTypeAssignment 
+Upper type_x Assignment valueSet 
+      builtinType 
+      objectClassFieldType 
+      definedObjectClass Dot fieldName // lookahead token appears
+      Upper . 
+
+** In state 113, looking ahead at Dot, reducing production
 ** definedObjectSet -> Upper
 ** is permitted because of the following sub-derivation:
 
-typeFromObject 
-referencedObjects Dot fieldName 
-parameterizedObjectSet 
-definedObjectSet actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
-Upper . 
+valueSetTypeAssignment 
+Upper type_x Assignment valueSet 
+      referencedType 
+      typeFromObject 
+      referencedObjects Dot fieldName // lookahead token appears
+      definedObjectSet // lookahead token is inherited
+      Upper . 
 
-** In state 113, looking ahead at LeftBrace, reducing production
-** simpleDefinedType -> Upper
-** is permitted because of the following sub-derivation:
+** In state 113, looking ahead at Dot, shifting is permitted
+** because of the following sub-derivation:
 
-definedType 
-parameterizedType 
-simpleDefinedType actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
-Upper . 
+objectSetAssignment 
+Upper definedObjectClass Assignment objectSet 
+      externalObjectClassReference 
+      Upper . Dot Upper 
 
 ** Conflict (reduce/reduce) in state 110.
 ** Tokens involved: UNION RightParen RightBrace Middle LeftBrace INTERSECTION EXCEPT Dot Comma Circumflex Bang Assignment
-** The following explanations concentrate on token UNION.
+** The following explanations concentrate on token Dot.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SET LeftParen Upper Dot Upper
@@ -3585,37 +3586,38 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                               rootElementSetSpec 
                                                                                                               elementSetSpec 
                                                                                                               unions 
-                                                                                                              uElems unionMark intersections // lookahead token appears because unionMark can begin with UNION
-                                                                                                              unions // lookahead token is inherited
-                                                                                                              intersections // lookahead token is inherited
-                                                                                                              intersectionElements // lookahead token is inherited
-                                                                                                              elements // lookahead token is inherited
+                                                                                                              intersections 
+                                                                                                              intersectionElements 
+                                                                                                              elements 
                                                                                                               (?)
 
-** In state 110, looking ahead at UNION, reducing production
+** In state 110, looking ahead at Dot, reducing production
+** externalObjectClassReference -> Upper Dot Upper
+** is permitted because of the following sub-derivation:
+
+subtypeElements 
+typeConstraint 
+type_x 
+builtinType 
+objectClassFieldType 
+definedObjectClass Dot fieldName // lookahead token appears
+externalObjectClassReference // lookahead token is inherited
+Upper Dot Upper . 
+
+** In state 110, looking ahead at Dot, reducing production
 ** externalObjectSetReference -> Upper Dot Upper
 ** is permitted because of the following sub-derivation:
 
-objectSetElements // lookahead token is inherited
+objectSetElements 
+objectSetFromObjects 
+referencedObjects Dot fieldName // lookahead token appears
 definedObjectSet // lookahead token is inherited
 externalObjectSetReference // lookahead token is inherited
 Upper Dot Upper . 
 
-** In state 110, looking ahead at UNION, reducing production
-** externalTypeReference -> Upper Dot Upper
-** is permitted because of the following sub-derivation:
-
-subtypeElements // lookahead token is inherited
-typeConstraint // lookahead token is inherited
-type_x // lookahead token is inherited
-referencedType // lookahead token is inherited
-definedType // lookahead token is inherited
-externalTypeReference // lookahead token is inherited
-Upper Dot Upper . 
-
-** Conflict (reduce/reduce) in state 108.
+** Conflict (shift/reduce/reduce) in state 108.
 ** Tokens involved: UNION RightParen RightBrace Middle LeftBrace INTERSECTION EXCEPT Dot Comma Circumflex Bang
-** The following explanations concentrate on token UNION.
+** The following explanations concentrate on token Dot.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper SET LeftParen Upper
@@ -3639,31 +3641,44 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                               rootElementSetSpec 
                                                                                                               elementSetSpec 
                                                                                                               unions 
-                                                                                                              uElems unionMark intersections // lookahead token appears because unionMark can begin with UNION
-                                                                                                              unions // lookahead token is inherited
-                                                                                                              intersections // lookahead token is inherited
-                                                                                                              intersectionElements // lookahead token is inherited
-                                                                                                              elements // lookahead token is inherited
+                                                                                                              intersections 
+                                                                                                              intersectionElements 
+                                                                                                              elements 
                                                                                                               (?)
 
-** In state 108, looking ahead at UNION, reducing production
+** In state 108, looking ahead at Dot, reducing production
+** definedObjectClass -> Upper
+** is permitted because of the following sub-derivation:
+
+subtypeElements 
+typeConstraint 
+type_x 
+builtinType 
+objectClassFieldType 
+definedObjectClass Dot fieldName // lookahead token appears
+Upper . 
+
+** In state 108, looking ahead at Dot, reducing production
 ** definedObjectSet -> Upper
 ** is permitted because of the following sub-derivation:
 
-objectSetElements // lookahead token is inherited
+objectSetElements 
+objectSetFromObjects 
+referencedObjects Dot fieldName // lookahead token appears
 definedObjectSet // lookahead token is inherited
 Upper . 
 
-** In state 108, looking ahead at UNION, reducing production
-** definedType -> Upper
-** is permitted because of the following sub-derivation:
+** In state 108, looking ahead at Dot, shifting is permitted
+** because of the following sub-derivation:
 
-subtypeElements // lookahead token is inherited
-typeConstraint // lookahead token is inherited
-type_x // lookahead token is inherited
-referencedType // lookahead token is inherited
-definedType // lookahead token is inherited
-Upper . 
+subtypeElements 
+typeConstraint 
+type_x 
+builtinType 
+objectClassFieldType 
+definedObjectClass Dot fieldName 
+externalObjectClassReference 
+Upper . Dot Upper 
 
 ** Conflict (shift/reduce) in state 81.
 ** Tokens involved: VisibleString VideotexString Upper UniversalString UTF8String UTCTime TeletexString TYPE_IDENTIFIER T61String SET SEQUENCE RELATIVE_OID REAL PrintableString ObjectDescriptor OCTET OBJECT NumericString NULL Lower LeftBracket ISO646String INTEGER INSTANCE IA5String GraphicString GeneralizedTime GeneralString EXTERNAL ENUMERATED EMBEDDED CHOICE CHARACTER BOOLEAN BMPString BIT ABSTRACT_SYNTAX
@@ -3772,7 +3787,7 @@ Upper Dot Lower .
 
 ** Conflict (reduce/reduce) in state 70.
 ** Tokens involved: Upper RightBrace OPTIONAL Lower LeftBrace END Dot DEFAULT Comma Colon Assignment
-** The following explanations concentrate on token LeftBrace.
+** The following explanations concentrate on token Dot.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper Upper Dot Upper
@@ -3787,33 +3802,32 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                           assignment 
                                                                                           valueSetTypeAssignment 
                                                                                           Upper type_x Assignment valueSet 
-                                                                                                referencedType 
                                                                                                 (?)
 
-** In state 70, looking ahead at LeftBrace, reducing production
+** In state 70, looking ahead at Dot, reducing production
+** externalObjectClassReference -> Upper Dot Upper
+** is permitted because of the following sub-derivation:
+
+builtinType 
+objectClassFieldType 
+definedObjectClass Dot fieldName // lookahead token appears
+externalObjectClassReference // lookahead token is inherited
+Upper Dot Upper . 
+
+** In state 70, looking ahead at Dot, reducing production
 ** externalObjectSetReference -> Upper Dot Upper
 ** is permitted because of the following sub-derivation:
 
+referencedType 
 typeFromObject 
-referencedObjects Dot fieldName 
-parameterizedObjectSet 
-definedObjectSet actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
+referencedObjects Dot fieldName // lookahead token appears
+definedObjectSet // lookahead token is inherited
 externalObjectSetReference // lookahead token is inherited
 Upper Dot Upper . 
 
-** In state 70, looking ahead at LeftBrace, reducing production
-** externalTypeReference -> Upper Dot Upper
-** is permitted because of the following sub-derivation:
-
-definedType 
-parameterizedType 
-simpleDefinedType actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
-externalTypeReference // lookahead token is inherited
-Upper Dot Upper . 
-
-** Conflict (reduce/reduce) in state 68.
+** Conflict (shift/reduce/reduce) in state 68.
 ** Tokens involved: RightBrace LeftBrace Dot Comma
-** The following explanations concentrate on token LeftBrace.
+** The following explanations concentrate on token Dot.
 ** This state is reached from main after reading:
 
 moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN exports imports Upper simpleDefinedType LeftBrace Upper
@@ -3836,27 +3850,32 @@ moduleIdentifier DEFINITIONS tagDefault extensionDefault Assignment BEGIN module
                                                                                                                             actualParameter 
                                                                                                                             (?)
 
-** In state 68, looking ahead at LeftBrace, reducing production
+** In state 68, looking ahead at Dot, reducing production
+** definedObjectClass -> Upper
+** is permitted because of the following sub-derivation:
+
+type_x 
+builtinType 
+objectClassFieldType 
+definedObjectClass Dot fieldName // lookahead token appears
+Upper . 
+
+** In state 68, looking ahead at Dot, reducing production
 ** definedObjectSet -> Upper
 ** is permitted because of the following sub-derivation:
 
 object_x 
 objectFromObject 
-referencedObjects Dot fieldName 
-parameterizedObjectSet 
-definedObjectSet actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
+referencedObjects Dot fieldName // lookahead token appears
+definedObjectSet // lookahead token is inherited
 Upper . 
 
-** In state 68, looking ahead at LeftBrace, reducing production
-** simpleDefinedType -> Upper
-** is permitted because of the following sub-derivation:
+** In state 68, looking ahead at Dot, shifting is permitted
+** because of the following sub-derivation:
 
-type_x 
-referencedType 
-definedType 
-parameterizedType 
-simpleDefinedType actualParameterList // lookahead token appears because actualParameterList can begin with LeftBrace
-Upper . 
+definedObjectClass 
+externalObjectClassReference 
+Upper . Dot Upper 
 
 ** Conflict (reduce/reduce) in state 62.
 ** Tokens involved: Upper RightBrace Number Lower

@@ -81,9 +81,9 @@ LCURLY constant_expression LCURLY module_path_expression module_path_concatenati
               expr // lookahead token is inherited
               floatnum . 
 
-** Conflict (reduce/reduce) in state 1496.
+** Conflict (shift/reduce) in state 1496.
 ** Tokens involved: VBAR RPAREN RCURLY QUERY P_XNOR P_OROR P_NOTEQUAL P_EQUAL P_ANDAND LBRACK COMMA CARET AMPERSAND
-** The following explanations concentrate on token VBAR.
+** The following explanations concentrate on token LBRACK.
 ** This state is reached from start after reading:
 
 MODULE ID modParE modPortsE SEMICOLON SPECIFY specify_block IF LPAREN LCURLY identifier
@@ -104,27 +104,24 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                                       module_path_primary 
                                                                       (?)
 
-** In state 1496, looking ahead at VBAR, reducing production
+** In state 1496, looking ahead at LBRACK, reducing production
 ** idArrayed -> identifier
 ** is permitted because of the following sub-derivation:
 
 LCURLY constant_expression LCURLY module_path_expression module_path_concatenation_4 RCURLY RCURLY 
        exprNoStr 
-       expr VBAR expr // lookahead token appears
-       exprNoStr // lookahead token is inherited
-       varRefDotBit // lookahead token is inherited
-       idDotted // lookahead token is inherited
-       idArrayed // lookahead token is inherited
+       funcRef 
+       idDotted LPAREN exprList RPAREN 
+       idArrayed 
+       idArrayed LBRACK expr RBRACK // lookahead token appears
        identifier . 
 
-** In state 1496, looking ahead at VBAR, reducing production
-** module_path_primary -> identifier
-** is permitted because of the following sub-derivation:
+** In state 1496, looking ahead at LBRACK, shifting is permitted
+** because of the following sub-derivation:
 
 LCURLY module_path_expression module_path_concatenation_4 RCURLY 
-       module_path_expression binary_module_path_operator module_path_expression // lookahead token appears because binary_module_path_operator can begin with VBAR
-       module_path_primary // lookahead token is inherited
-       identifier . 
+       module_path_primary 
+       identifier . LBRACK constant_range_expression RBRACK 
 
 ** Conflict (shift/reduce) in state 1491.
 ** Tokens involved: VBAR QUERY P_XNOR P_OROR P_NXOR P_NOTEQUAL P_EQUAL P_ANDAND CARET AMPERSAND

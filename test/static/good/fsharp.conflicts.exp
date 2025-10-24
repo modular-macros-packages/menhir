@@ -199,7 +199,7 @@ opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appe
 
 ** Conflict (shift/reduce) in state 2697.
 ** Tokens involved: error OLET ODO OBLOCKEND EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from interaction after reading:
 
 opt_itop_seps opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN error
@@ -212,28 +212,26 @@ opt_itop_seps interactiveExprOrDefinitions
               interactiveDefinitions 
               moduleOrNamespaceDefn interactiveDefinitions 
               opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                                  OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                              error moduleOrNamespaceDefns 
-                                                                                                    moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                                    (?)
+                                                                                  (?)
 
-** In state 2697, looking ahead at OLET, shifting is permitted
+** In state 2697, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            error moduleOrNamespaceDefns 
+                  . error moduleOrNamespaceDefns 
 
-** In state 2697, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2697, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            error moduleOrNamespaceDefns // lookahead token is inherited
+                  . 
 
 ** Conflict (shift/reduce) in state 2696.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from interaction after reading:
 
 opt_itop_seps opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN
@@ -246,23 +244,20 @@ opt_itop_seps interactiveExprOrDefinitions
               interactiveDefinitions 
               moduleOrNamespaceDefn interactiveDefinitions 
               opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                                  OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                              moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                              (?)
+                                                                                  (?)
 
-** In state 2696, looking ahead at OLET, shifting is permitted
+** In state 2696, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            . error moduleOrNamespaceDefns 
 
-** In state 2696, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2696, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            . 
 
 ** Conflict (shift/reduce) in state 2662.
 ** Tokens involved: error END
@@ -368,7 +363,7 @@ opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appe
 
 ** Conflict (shift/reduce) in state 2615.
 ** Tokens involved: OLET ODO LBRACK_LESS EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token LBRACK_LESS.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes namespaceIntro deprecated_opt_equals
@@ -379,27 +374,27 @@ opt_attributes namespaceIntro deprecated_opt_equals
 implementationFile 
 namespaceImpls EOF 
 namespaceImplList 
-namespaceImpl namespaceImplList 
-opt_attributes namespaceIntro deprecated_opt_equals moduleImpl 
-                                                    exprOrDefinitions 
-                                                    (?)
+(?)
 
-** In state 2615, looking ahead at OLET, shifting is permitted
+** In state 2615, looking ahead at LBRACK_LESS, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+namespaceImpl namespaceImplList 
+opt_attributes namespaceIntro deprecated_opt_equals moduleImpl 
+                                                    opt_attributes opt_decl_visibility moduleIntro exprOrDefinitions 
+                                                    attributes 
+                                                    attributeList 
+                                                    . LBRACK_LESS attributeListElements opt_seps GREATER_RBRACK opt_OBLOCKSEP 
 
-** In state 2615, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2615, looking ahead at LBRACK_LESS, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+namespaceImpl namespaceImplList // lookahead token appears because namespaceImplList can begin with LBRACK_LESS
+opt_attributes namespaceIntro deprecated_opt_equals moduleImpl // lookahead token is inherited
+                                                    exprOrDefinitions // lookahead token is inherited
+                                                    moduleOrNamespaceDefns // lookahead token is inherited
+                                                    . 
 
 ** Conflict (shift/reduce) in state 2611.
 ** Tokens involved: OLET ODO LBRACK_LESS EXTERN
@@ -632,7 +627,7 @@ opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appe
 
 ** Conflict (shift/reduce) in state 2574.
 ** Tokens involved: error OLET ODO EXTERN END
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS structOrBegin error
@@ -648,29 +643,28 @@ moduleOrNamespaceDefns
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
                                                                     wrappedNamedModuleDefn 
-                                                                    structOrBegin exprOrDefinitions END 
-                                                                                  moduleOrNamespaceDefns 
-                                                                                  error moduleOrNamespaceDefns 
-                                                                                        moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                        (?)
+                                                                    (?)
 
-** In state 2574, looking ahead at OLET, shifting is permitted
+** In state 2574, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+structOrBegin exprOrDefinitions END 
+              moduleOrNamespaceDefns 
+              error moduleOrNamespaceDefns 
+                    . error moduleOrNamespaceDefns 
 
-** In state 2574, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2574, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+structOrBegin exprOrDefinitions recover // lookahead token appears because recover can begin with error
+              moduleOrNamespaceDefns // lookahead token is inherited
+              error moduleOrNamespaceDefns // lookahead token is inherited
+                    . 
 
 ** Conflict (shift/reduce) in state 2573.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS structOrBegin
@@ -686,29 +680,26 @@ moduleOrNamespaceDefns
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
                                                                     wrappedNamedModuleDefn 
-                                                                    structOrBegin exprOrDefinitions END 
-                                                                                  (?)
+                                                                    (?)
 
-** In state 2573, looking ahead at OLET, shifting is permitted
+** In state 2573, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+structOrBegin exprOrDefinitions END 
+              moduleOrNamespaceDefns 
+              . error moduleOrNamespaceDefns 
 
-** In state 2573, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2573, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+structOrBegin exprOrDefinitions recover // lookahead token appears because recover can begin with error
+              moduleOrNamespaceDefns // lookahead token is inherited
+              . 
 
 ** Conflict (shift/reduce) in state 2564.
 ** Tokens involved: error OLET ODO EXTERN END
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN structOrBegin error
@@ -724,29 +715,28 @@ moduleOrNamespaceDefns
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
                                                                     OBLOCKBEGIN wrappedNamedModuleDefn OBLOCKEND 
-                                                                                structOrBegin exprOrDefinitions END 
-                                                                                              moduleOrNamespaceDefns 
-                                                                                              error moduleOrNamespaceDefns 
-                                                                                                    moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                                    (?)
+                                                                                (?)
 
-** In state 2564, looking ahead at OLET, shifting is permitted
+** In state 2564, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+structOrBegin exprOrDefinitions END 
+              moduleOrNamespaceDefns 
+              error moduleOrNamespaceDefns 
+                    . error moduleOrNamespaceDefns 
 
-** In state 2564, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2564, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+structOrBegin exprOrDefinitions recover // lookahead token appears because recover can begin with error
+              moduleOrNamespaceDefns // lookahead token is inherited
+              error moduleOrNamespaceDefns // lookahead token is inherited
+                    . 
 
 ** Conflict (shift/reduce) in state 2563.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN structOrBegin
@@ -762,29 +752,26 @@ moduleOrNamespaceDefns
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
                                                                     OBLOCKBEGIN wrappedNamedModuleDefn OBLOCKEND 
-                                                                                structOrBegin exprOrDefinitions END 
-                                                                                              (?)
+                                                                                (?)
 
-** In state 2563, looking ahead at OLET, shifting is permitted
+** In state 2563, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+structOrBegin exprOrDefinitions END 
+              moduleOrNamespaceDefns 
+              . error moduleOrNamespaceDefns 
 
-** In state 2563, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2563, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+structOrBegin exprOrDefinitions recover // lookahead token appears because recover can begin with error
+              moduleOrNamespaceDefns // lookahead token is inherited
+              . 
 
 ** Conflict (shift/reduce) in state 2549.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS structOrBegin declExpr top_seps
@@ -800,26 +787,24 @@ moduleOrNamespaceDefns
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
                                                                     wrappedNamedModuleDefn 
-                                                                    structOrBegin exprOrDefinitions END 
-                                                                                  declExpr top_seps exprOrDefinitions 
-                                                                                                    (?)
+                                                                    (?)
 
-** In state 2549, looking ahead at OLET, shifting is permitted
+** In state 2549, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+structOrBegin exprOrDefinitions END 
+              declExpr top_seps exprOrDefinitions 
+                                moduleOrNamespaceDefns 
+                                . error moduleOrNamespaceDefns 
 
-** In state 2549, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2549, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+structOrBegin exprOrDefinitions recover // lookahead token appears because recover can begin with error
+              declExpr top_seps exprOrDefinitions // lookahead token is inherited
+                                moduleOrNamespaceDefns // lookahead token is inherited
+                                . 
 
 ** Conflict (shift/reduce) in state 2547.
 ** Token involved: error
@@ -892,7 +877,7 @@ hardwhiteDefnBindings .
 
 ** Conflict (shift/reduce) in state 2544.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN hashDirective top_seps
@@ -907,30 +892,28 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                hashDirective top_seps exprOrDefinitions 
-                                                                                                       (?)
+                                                                    (?)
 
-** In state 2544, looking ahead at OLET, shifting is permitted
+** In state 2544, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            hashDirective top_seps exprOrDefinitions 
+                                   moduleOrNamespaceDefns 
+                                   . error moduleOrNamespaceDefns 
 
-** In state 2544, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2544, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            hashDirective top_seps exprOrDefinitions // lookahead token is inherited
+                                   moduleOrNamespaceDefns // lookahead token is inherited
+                                   . 
 
 ** Conflict (shift/reduce) in state 2542.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN moduleOrNamespaceDefn top_seps
@@ -945,30 +928,28 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                moduleOrNamespaceDefn top_seps exprOrDefinitions 
-                                                                                                               (?)
+                                                                    (?)
 
-** In state 2542, looking ahead at OLET, shifting is permitted
+** In state 2542, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            moduleOrNamespaceDefn top_seps exprOrDefinitions 
+                                           moduleOrNamespaceDefns 
+                                           . error moduleOrNamespaceDefns 
 
-** In state 2542, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2542, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            moduleOrNamespaceDefn top_seps exprOrDefinitions // lookahead token is inherited
+                                           moduleOrNamespaceDefns // lookahead token is inherited
+                                           . 
 
 ** Conflict (shift/reduce) in state 2541.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN moduleOrNamespaceDefn
@@ -983,28 +964,26 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                                      moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                                      (?)
+                                                                    (?)
 
-** In state 2541, looking ahead at OLET, shifting is permitted
+** In state 2541, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            moduleOrNamespaceDefn moduleOrNamespaceDefns 
+                                  . error moduleOrNamespaceDefns 
 
-** In state 2541, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2541, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            moduleOrNamespaceDefn moduleOrNamespaceDefns // lookahead token is inherited
+                                  . 
 
 ** Conflict (shift/reduce) in state 2538.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN error top_seps
@@ -1019,30 +998,28 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                error top_seps exprOrDefinitions 
-                                                                                               (?)
+                                                                    (?)
 
-** In state 2538, looking ahead at OLET, shifting is permitted
+** In state 2538, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-declExpr top_seps exprOrDefinitions 
-hardwhiteDefnBindings typedSeqExprBlock 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            error top_seps exprOrDefinitions 
+                           moduleOrNamespaceDefns 
+                           . error moduleOrNamespaceDefns 
 
-** In state 2538, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2538, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-moduleOrNamespaceDefns 
-moduleOrNamespaceDefn moduleOrNamespaceDefns 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            error top_seps exprOrDefinitions // lookahead token is inherited
+                           moduleOrNamespaceDefns // lookahead token is inherited
+                           . 
 
 ** Conflict (shift/reduce) in state 2537.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN error error
@@ -1057,29 +1034,28 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                error moduleOrNamespaceDefns 
-                                                                                      error moduleOrNamespaceDefns 
-                                                                                            moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                            (?)
+                                                                    (?)
 
-** In state 2537, looking ahead at OLET, shifting is permitted
+** In state 2537, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            error moduleOrNamespaceDefns 
+                  error moduleOrNamespaceDefns 
+                        . error moduleOrNamespaceDefns 
 
-** In state 2537, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2537, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            error moduleOrNamespaceDefns // lookahead token is inherited
+                  error moduleOrNamespaceDefns // lookahead token is inherited
+                        . 
 
 ** Conflict (shift/reduce) in state 2536.
 ** Tokens involved: error OLET ODO OBLOCKEND EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN error
@@ -1094,28 +1070,26 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                error moduleOrNamespaceDefns 
-                                                                                      moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                      (?)
+                                                                    (?)
 
-** In state 2536, looking ahead at OLET, shifting is permitted
+** In state 2536, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            error moduleOrNamespaceDefns 
+                  . error moduleOrNamespaceDefns 
 
-** In state 2536, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2536, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            error moduleOrNamespaceDefns // lookahead token is inherited
+                  . 
 
 ** Conflict (shift/reduce) in state 2535.
 ** Tokens involved: error OLET ODO EXTERN
-** The following explanations concentrate on token OLET.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS OBLOCKBEGIN
@@ -1130,23 +1104,20 @@ exprOrDefinitions
 moduleOrNamespaceDefns 
 moduleOrNamespaceDefn moduleOrNamespaceDefns 
 opt_attributes opt_decl_visibility moduleIntro opt_signature EQUALS namedModuleDefnBlock 
-                                                                    OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
-                                                                                moduleOrNamespaceDefn moduleOrNamespaceDefns 
-                                                                                (?)
+                                                                    (?)
 
-** In state 2535, looking ahead at OLET, shifting is permitted
+** In state 2535, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
-hardwhiteDefnBindings 
-hardwhiteLetBindings 
-. OLET opt_rec localBindings hardwhiteDefnBindingsTerminator 
+OBLOCKBEGIN moduleOrNamespaceDefns OBLOCKEND 
+            . error moduleOrNamespaceDefns 
 
-** In state 2535, looking ahead at OLET, reducing production
-** opt_attributes ->
+** In state 2535, looking ahead at error, reducing production
+** moduleOrNamespaceDefns ->
 ** is permitted because of the following sub-derivation:
 
-opt_attributes opt_decl_visibility hardwhiteDefnBindings // lookahead token appears because opt_decl_visibility can vanish and hardwhiteDefnBindings can begin with OLET
-. 
+OBLOCKBEGIN moduleOrNamespaceDefns recover // lookahead token appears because recover can begin with error
+            . 
 
 ** Conflict (shift/reduce) in state 2508.
 ** Token involved: LBRACK_LESS
@@ -2684,9 +2655,9 @@ THEN declExpr
                  ifExprThen ifExprElifs 
                             . OELSE OBLOCKBEGIN typedSeqExpr OBLOCKEND 
 
-** Conflict (shift/reduce/reduce) in state 1711.
+** Conflict (shift/reduce) in state 1711.
 ** Tokens involved: error WHILE TRY OLET ODO OBLOCKSEP MATCH LET IF FOR EXTERN
-** The following explanations concentrate on token OBLOCKSEP.
+** The following explanations concentrate on token error.
 ** This state is reached from implementationFile after reading:
 
 LBRACK_BAR TRY hardwhiteDoBinding
@@ -2707,7 +2678,7 @@ arrayExpr
 LBRACK_BAR listExprElements BAR_RBRACK 
            (?)
 
-** In state 1711, looking ahead at OBLOCKSEP, reducing production
+** In state 1711, looking ahead at error, reducing production
 ** hardwhiteDefnBindings -> hardwhiteDoBinding
 ** is permitted because of the following sub-derivation:
 
@@ -2716,24 +2687,10 @@ TRY typedSeqExprBlockR withClausses
     typedSeqExpr ORIGHT_BLOCK_END 
     seqExpr COLON typeWithTypeConstraints 
     declExpr seps seqExpr 
-    hardwhiteDefnBindings OBLOCKSEP typedSeqExprBlock // lookahead token appears
+    hardwhiteDefnBindings error // lookahead token appears
     hardwhiteDoBinding . 
 
-** In state 1711, looking ahead at OBLOCKSEP, reducing production
-** monadicExpr ->
-** is permitted because of the following sub-derivation:
-
-monadicExprInitial 
-monadicExprNonEmptyInitial 
-TRY monadicExprNonEmptyNonInitialBlockR monadicWithClauses 
-    monadicExprNonEmptyNonInitial ORIGHT_BLOCK_END 
-    monadicExprNonEmptyInitial 
-    monadicExprNonEmptyInitial OBLOCKSEP monadicExprNonEmptyInitial // lookahead token appears
-    monadicExprBindings // lookahead token is inherited
-    hardwhiteDoBinding monadicExpr // lookahead token is inherited
-                       . 
-
-** In state 1711, looking ahead at OBLOCKSEP, shifting is permitted
+** In state 1711, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 monadicExprInitial 
@@ -2742,7 +2699,8 @@ TRY monadicExprNonEmptyNonInitialBlockR monadicWithClauses
     monadicExprNonEmptyNonInitial ORIGHT_BLOCK_END 
     monadicExprNonEmptyInitial 
     monadicExprBindings 
-    hardwhiteDoBinding . OBLOCKSEP monadicExpr 
+    hardwhiteDoBinding monadicExpr 
+                       . error 
 
 ** Conflict (shift/reduce) in state 1710.
 ** Tokens involved: WHILE TRY OLET ODO OBLOCKSEP MATCH LET IF FOR EXTERN

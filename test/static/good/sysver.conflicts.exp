@@ -129,9 +129,9 @@ identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5
 identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                        . 
 
-** Conflict (shift/reduce) in state 16525.
+** Conflict (shift/reduce/reduce) in state 16525.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier identifier name_of_instance_3 LPAREN
@@ -144,20 +144,28 @@ source_text_3
 source_text_3 description 
               module_root_item 
               identifier identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON 
+                                                              expression list_of_port_connections_3 
+                                                              primary 
                                                               (?)
 
-** In state 16525, looking ahead at DOT, shifting is permitted
+** In state 16525, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 16525, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 16525, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 16525, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 16523.
@@ -321,9 +329,9 @@ identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_i
 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                                                                         . 
 
-** Conflict (shift/reduce) in state 16512.
+** Conflict (shift/reduce/reduce) in state 16512.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN
@@ -336,20 +344,28 @@ source_text_3
 source_text_3 description 
               module_root_item 
               identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON 
+                                                                                                               expression list_of_port_connections_3 
+                                                                                                               primary 
                                                                                                                (?)
 
-** In state 16512, looking ahead at DOT, shifting is permitted
+** In state 16512, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 16512, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 16512, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 16512, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 16510.
@@ -542,7 +558,7 @@ module_keyword lifetime identifier HASH LPAREN parameter_declaration parameter_p
 
 ** Conflict (reduce/reduce) in state 16343.
 ** Tokens involved: LPAREN LBRACK
-** The following explanations concentrate on token LPAREN.
+** The following explanations concentrate on token LBRACK.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier LPAREN P_DOTSTAR RPAREN SEMICOLON module_declaration_23 identifier identifier
@@ -556,28 +572,42 @@ source_text_3 description
               module_declaration 
               module_keyword identifier LPAREN P_DOTSTAR RPAREN SEMICOLON module_declaration_23 ENDMODULE 
                                                                           module_declaration_23 module_item 
-                                                                                                non_port_module_item 
-                                                                                                module_or_generate_item 
                                                                                                 (?)
 
-** In state 16343, looking ahead at LPAREN, reducing production
+** In state 16343, looking ahead at LBRACK, reducing production
+** list_of_interface_identifiers_3 ->
+** is permitted because of the following sub-derivation:
+
+non_generic_port_declaration SEMICOLON 
+interface_port_declaration 
+identifier identifier list_of_interface_identifiers_3 list_of_interface_identifiers_4 
+                      list_of_interface_identifiers_3 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
+                      . 
+
+** In state 16343, looking ahead at LBRACK, reducing production
 ** name_of_instance_3 ->
 ** is permitted because of the following sub-derivation:
 
-identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
+non_port_module_item 
+module_or_generate_item 
+identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON 
+                      name_of_instance_3 LBRACK constant_expression COLON constant_expression RBRACK // lookahead token appears
                       . 
 
-** In state 16343, looking ahead at LPAREN, reducing production
+** In state 16343, looking ahead at LBRACK, reducing production
 ** program_instance_3 ->
 ** is permitted because of the following sub-derivation:
 
+non_port_module_item 
+module_or_generate_item 
 module_common_item 
-identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 SEMICOLON // lookahead token appears
+identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 SEMICOLON 
+                      program_instance_3 LBRACK constant_expression COLON constant_expression RBRACK // lookahead token appears
                       . 
 
 ** Conflict (shift/reduce) in state 16342.
 ** Tokens involved: SIMPLE_IDENTIFIER LPAREN LBRACK BACKSLASH
-** The following explanations concentrate on token LPAREN.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier LPAREN P_DOTSTAR RPAREN SEMICOLON module_declaration_23 identifier
@@ -591,21 +621,27 @@ source_text_3 description
               module_declaration 
               module_keyword identifier LPAREN P_DOTSTAR RPAREN SEMICOLON module_declaration_23 ENDMODULE 
                                                                           module_declaration_23 module_item 
-                                                                                                non_port_module_item 
-                                                                                                module_or_generate_item 
                                                                                                 (?)
 
-** In state 16342, looking ahead at LPAREN, shifting is permitted
+** In state 16342, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-identifier drive_strength udp_instance_3 LPAREN net_lvalue COMMA expression udp_instance_8 RPAREN udp_instantiation_6 SEMICOLON 
-           . LPAREN strength0 COMMA strength1 RPAREN 
+non_generic_port_declaration SEMICOLON 
+interface_port_declaration 
+identifier identifier list_of_interface_identifiers_3 list_of_interface_identifiers_4 
+           . SIMPLE_IDENTIFIER 
 
-** In state 16342, looking ahead at LPAREN, reducing production
-** udp_instance_3 ->
+** In state 16342, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** type_declaration_identifier_3 ->
 ** is permitted because of the following sub-derivation:
 
-identifier udp_instance_3 LPAREN net_lvalue COMMA expression udp_instance_8 RPAREN udp_instantiation_6 SEMICOLON // lookahead token appears
+non_port_module_item 
+module_or_generate_item 
+module_common_item 
+module_or_generate_item_declaration 
+data_declaration 
+data_type list_of_variable_identifiers_or_assignments SEMICOLON // lookahead token appears because list_of_variable_identifiers_or_assignments can begin with SIMPLE_IDENTIFIER
+identifier type_declaration_identifier_3 data_type_11 // lookahead token is inherited because data_type_11 can vanish
            . 
 
 ** Conflict (shift/reduce) in state 16329.
@@ -638,7 +674,7 @@ module_keyword lifetime identifier LPAREN port list_of_ports_4 RPAREN SEMICOLON 
 
 ** Conflict (shift/reduce) in state 16324.
 ** Tokens involved: SIMPLE_IDENTIFIER LPAREN LBRACK BACKSLASH
-** The following explanations concentrate on token LPAREN.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier SEMICOLON module_declaration_10 identifier
@@ -655,17 +691,21 @@ source_text_3 description
                                                                         module_or_generate_item 
                                                                         (?)
 
-** In state 16324, looking ahead at LPAREN, shifting is permitted
+** In state 16324, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-identifier drive_strength udp_instance_3 LPAREN net_lvalue COMMA expression udp_instance_8 RPAREN udp_instantiation_6 SEMICOLON 
-           . LPAREN strength0 COMMA strength1 RPAREN 
+identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON 
+           . SIMPLE_IDENTIFIER 
 
-** In state 16324, looking ahead at LPAREN, reducing production
-** udp_instance_3 ->
+** In state 16324, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** type_declaration_identifier_3 ->
 ** is permitted because of the following sub-derivation:
 
-identifier udp_instance_3 LPAREN net_lvalue COMMA expression udp_instance_8 RPAREN udp_instantiation_6 SEMICOLON // lookahead token appears
+module_common_item 
+module_or_generate_item_declaration 
+data_declaration 
+data_type list_of_variable_identifiers_or_assignments SEMICOLON // lookahead token appears because list_of_variable_identifiers_or_assignments can begin with SIMPLE_IDENTIFIER
+identifier type_declaration_identifier_3 data_type_11 // lookahead token is inherited because data_type_11 can vanish
            . 
 
 ** Conflict (shift/reduce/reduce) in state 16314.
@@ -1846,9 +1886,9 @@ identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5
 identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                        . 
 
-** Conflict (shift/reduce) in state 16099.
+** Conflict (shift/reduce/reduce) in state 16099.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier SEMICOLON module_declaration_10 identifier identifier name_of_instance_3 LPAREN
@@ -1864,20 +1904,28 @@ source_text_3 description
                                                   module_declaration_10 non_port_module_item 
                                                                         module_or_generate_item 
                                                                         identifier identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON 
+                                                                                                                        expression list_of_port_connections_3 
+                                                                                                                        primary 
                                                                                                                         (?)
 
-** In state 16099, looking ahead at DOT, shifting is permitted
+** In state 16099, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 16099, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 16099, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 16099, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 16097.
@@ -3664,9 +3712,9 @@ identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_i
 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                                                                         . 
 
-** Conflict (shift/reduce) in state 15892.
+** Conflict (shift/reduce/reduce) in state 15892.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier SEMICOLON module_declaration_10 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN
@@ -3682,20 +3730,28 @@ source_text_3 description
                                                   module_declaration_10 non_port_module_item 
                                                                         module_or_generate_item 
                                                                         identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON 
+                                                                                                                                                                         expression list_of_port_connections_3 
+                                                                                                                                                                         primary 
                                                                                                                                                                          (?)
 
-** In state 15892, looking ahead at DOT, shifting is permitted
+** In state 15892, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 15892, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 15892, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 15892, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 15890.
@@ -3944,7 +4000,7 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 
 ** Conflict (shift/reduce) in state 15852.
 ** Tokens involved: SIMPLE_IDENTIFIER LPAREN LBRACK BACKSLASH
-** The following explanations concentrate on token LPAREN.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier SEMICOLON module_declaration_10 GENERATE generated_module_instantiation_3 identifier
@@ -3963,17 +4019,21 @@ source_text_3 description
                                                                                                                   module_or_generate_item 
                                                                                                                   (?)
 
-** In state 15852, looking ahead at LPAREN, shifting is permitted
+** In state 15852, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-identifier drive_strength udp_instance_3 LPAREN net_lvalue COMMA expression udp_instance_8 RPAREN udp_instantiation_6 SEMICOLON 
-           . LPAREN strength0 COMMA strength1 RPAREN 
+identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON 
+           . SIMPLE_IDENTIFIER 
 
-** In state 15852, looking ahead at LPAREN, reducing production
-** udp_instance_3 ->
+** In state 15852, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** type_declaration_identifier_3 ->
 ** is permitted because of the following sub-derivation:
 
-identifier udp_instance_3 LPAREN net_lvalue COMMA expression udp_instance_8 RPAREN udp_instantiation_6 SEMICOLON // lookahead token appears
+module_common_item 
+module_or_generate_item_declaration 
+data_declaration 
+data_type list_of_variable_identifiers_or_assignments SEMICOLON // lookahead token appears because list_of_variable_identifiers_or_assignments can begin with SIMPLE_IDENTIFIER
+identifier type_declaration_identifier_3 data_type_11 // lookahead token is inherited because data_type_11 can vanish
            . 
 
 ** Conflict (shift/reduce/reduce) in state 15845.
@@ -31375,9 +31435,9 @@ LPAREN scalar_timing_check_condition RPAREN
        implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
        . 
 
-** Conflict (shift/reduce) in state 5689.
+** Conflict (shift/reduce/reduce) in state 5689.
 ** Tokens involved: VOID UNSIGNED_NUMBER UNSIGNED TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TIME THIS SYSTEM_FUNCTION_IDENTIFIER SVINT SUPER SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT REG REALTIME REAL OCTAL_BASE NULL LPAREN LONGINT LOGIC LCURLY INTEGER HEX_BASE DECIMAL_BASE BYTE BIT BINARY_BASE BACKSLASH
-** The following explanations concentrate on token VOID.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 module_keyword identifier SEMICOLON module_declaration_10 SPECIFY specify_block_3 NOCHANGE LPAREN specify_terminal_descriptor P_ANDANDAND TILDE
@@ -31398,19 +31458,38 @@ source_text_3 description
                                                                                                                                                         scalar_timing_check_condition 
                                                                                                                                                         (?)
 
-** In state 5689, looking ahead at VOID, shifting is permitted
+** In state 5689, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
 TILDE expression 
       primary 
-      . VOID SQUOTE LPAREN hierarchical_identifier RPAREN 
+      hierarchical_identifier 
+      . SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 5689, looking ahead at VOID, reducing production
+** In state 5689, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+TILDE expression 
+      primary 
+      implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+      . 
+
+** In state 5689, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+TILDE expression 
+      primary 
+      implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+      . 
+
+** In state 5689, looking ahead at SIMPLE_IDENTIFIER, reducing production
 ** unary_operator -> TILDE
 ** is permitted because of the following sub-derivation:
 
 expression 
-unary_operator primary // lookahead token appears because primary can begin with VOID
+unary_operator primary // lookahead token appears because primary can begin with SIMPLE_IDENTIFIER
 TILDE . 
 
 ** Conflict (shift/reduce/reduce) in state 5688.
@@ -33320,7 +33399,7 @@ INTERFACE lifetime identifier HASH LPAREN parameter_declaration parameter_port_l
 
 ** Conflict (reduce/reduce) in state 5171.
 ** Tokens involved: LPAREN LBRACK
-** The following explanations concentrate on token LPAREN.
+** The following explanations concentrate on token LBRACK.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier LPAREN P_DOTSTAR RPAREN SEMICOLON interface_declaration_22 identifier identifier
@@ -33335,23 +33414,38 @@ source_text_3 description
               interface_declaration 
               INTERFACE identifier LPAREN P_DOTSTAR RPAREN SEMICOLON interface_declaration_22 ENDINTERFACE 
                                                                      interface_declaration_22 interface_item 
-                                                                                              non_port_interface_item 
-                                                                                              interface_or_generate_item 
-                                                                                              module_common_item 
                                                                                               (?)
 
-** In state 5171, looking ahead at LPAREN, reducing production
+** In state 5171, looking ahead at LBRACK, reducing production
+** list_of_interface_identifiers_3 ->
+** is permitted because of the following sub-derivation:
+
+non_generic_port_declaration SEMICOLON 
+interface_port_declaration 
+identifier identifier list_of_interface_identifiers_3 list_of_interface_identifiers_4 
+                      list_of_interface_identifiers_3 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
+                      . 
+
+** In state 5171, looking ahead at LBRACK, reducing production
 ** name_of_instance_3 ->
 ** is permitted because of the following sub-derivation:
 
-identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5 SEMICOLON // lookahead token appears
+non_port_interface_item 
+interface_or_generate_item 
+module_common_item 
+identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5 SEMICOLON 
+                      name_of_instance_3 LBRACK constant_expression COLON constant_expression RBRACK // lookahead token appears
                       . 
 
-** In state 5171, looking ahead at LPAREN, reducing production
+** In state 5171, looking ahead at LBRACK, reducing production
 ** program_instance_3 ->
 ** is permitted because of the following sub-derivation:
 
-identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 SEMICOLON // lookahead token appears
+non_port_interface_item 
+interface_or_generate_item 
+module_common_item 
+identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 SEMICOLON 
+                      program_instance_3 LBRACK constant_expression COLON constant_expression RBRACK // lookahead token appears
                       . 
 
 ** Conflict (shift/reduce) in state 5170.
@@ -34573,9 +34667,9 @@ IF LPAREN constant_expression RPAREN generate_interface_item ELSE generate_inter
 IF LPAREN constant_expression RPAREN generate_interface_item 
                                      IF LPAREN constant_expression RPAREN generate_interface_item . ELSE generate_interface_item 
 
-** Conflict (shift/reduce) in state 4896.
+** Conflict (shift/reduce/reduce) in state 4896.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier SEMICOLON interface_declaration_10 identifier identifier name_of_instance_3 LPAREN
@@ -34593,25 +34687,33 @@ source_text_3 description
                                                                       interface_or_generate_item 
                                                                       module_common_item 
                                                                       identifier identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN interface_instantiation_5 SEMICOLON 
+                                                                                                                      expression list_of_port_connections_3 
+                                                                                                                      primary 
                                                                                                                       (?)
 
-** In state 4896, looking ahead at DOT, shifting is permitted
+** In state 4896, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4896, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4896, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 4887.
+** In state 4896, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** Conflict (shift/reduce/reduce) in state 4887.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier identifier program_instance_3 LPAREN
@@ -34625,20 +34727,28 @@ source_text_3 description
               module_root_item 
               module_common_item 
               identifier identifier program_instance_3 LPAREN list_of_port_connections RPAREN program_instantiation_5 SEMICOLON 
+                                                              expression list_of_port_connections_3 
+                                                              primary 
                                                               (?)
 
-** In state 4887, looking ahead at DOT, shifting is permitted
+** In state 4887, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4887, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4887, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 4887, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 4885.
@@ -34676,9 +34786,9 @@ identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5
 identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 SEMICOLON // lookahead token appears
                       . 
 
-** Conflict (shift/reduce) in state 4860.
+** Conflict (shift/reduce/reduce) in state 4860.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier SEMICOLON interface_declaration_10 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN
@@ -34696,25 +34806,33 @@ source_text_3 description
                                                                       interface_or_generate_item 
                                                                       module_common_item 
                                                                       identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN interface_instantiation_5 SEMICOLON 
+                                                                                                                                                                       expression list_of_port_connections_3 
+                                                                                                                                                                       primary 
                                                                                                                                                                        (?)
 
-** In state 4860, looking ahead at DOT, shifting is permitted
+** In state 4860, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4860, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4860, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 4851.
+** In state 4860, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** Conflict (shift/reduce/reduce) in state 4851.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier program_instance_3 LPAREN
@@ -34728,20 +34846,28 @@ source_text_3 description
               module_root_item 
               module_common_item 
               identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier program_instance_3 LPAREN list_of_port_connections RPAREN program_instantiation_5 SEMICOLON 
+                                                                                                               expression list_of_port_connections_3 
+                                                                                                               primary 
                                                                                                                (?)
 
-** In state 4851, looking ahead at DOT, shifting is permitted
+** In state 4851, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4851, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4851, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 4851, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 4849.
@@ -34929,9 +35055,9 @@ identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5
 identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                        . 
 
-** Conflict (shift/reduce) in state 4795.
+** Conflict (shift/reduce/reduce) in state 4795.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 BIND identifier identifier identifier name_of_instance_3 LPAREN
@@ -34947,25 +35073,33 @@ source_text_3 description
               bind_directive 
               BIND identifier bind_instantiation SEMICOLON 
                               identifier identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON 
+                                                                              expression list_of_port_connections_3 
+                                                                              primary 
                                                                               (?)
 
-** In state 4795, looking ahead at DOT, shifting is permitted
+** In state 4795, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4795, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4795, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 4786.
+** In state 4795, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** Conflict (shift/reduce/reduce) in state 4786.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 BIND identifier identifier identifier program_instance_3 LPAREN
@@ -34981,20 +35115,28 @@ source_text_3 description
               bind_directive 
               BIND identifier bind_instantiation SEMICOLON 
                               identifier identifier program_instance_3 LPAREN list_of_port_connections RPAREN program_instantiation_5 SEMICOLON 
+                                                                              expression list_of_port_connections_3 
+                                                                              primary 
                                                                               (?)
 
-** In state 4786, looking ahead at DOT, shifting is permitted
+** In state 4786, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4786, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4786, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 4786, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 4784.
@@ -35063,9 +35205,9 @@ identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_i
 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                                                                                                  . 
 
-** Conflict (shift/reduce) in state 4774.
+** Conflict (shift/reduce/reduce) in state 4774.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5 COMMA identifier name_of_instance_3 LPAREN
@@ -35080,25 +35222,33 @@ source_text_3 description
               module_common_item 
               identifier identifier name_of_instance_3 LPAREN RPAREN interface_instantiation_5 SEMICOLON 
                                                                      interface_instantiation_5 COMMA identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN 
+                                                                                                                                          expression list_of_port_connections_3 
+                                                                                                                                          primary 
                                                                                                                                           (?)
 
-** In state 4774, looking ahead at DOT, shifting is permitted
+** In state 4774, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4774, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4774, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 4765.
+** In state 4774, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** Conflict (shift/reduce/reduce) in state 4765.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 COMMA identifier name_of_instance_3 LPAREN
@@ -35112,20 +35262,28 @@ source_text_3 description
               module_root_item 
               identifier identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON 
                                                                      module_instantiation_5 COMMA identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN 
+                                                                                                                                       expression list_of_port_connections_3 
+                                                                                                                                       primary 
                                                                                                                                        (?)
 
-** In state 4765, looking ahead at DOT, shifting is permitted
+** In state 4765, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4765, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4765, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 4765, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 4759.
@@ -35161,9 +35319,9 @@ identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_i
 identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN RPAREN module_instantiation_5 SEMICOLON // lookahead token appears
                                                                                                         . 
 
-** Conflict (shift/reduce) in state 4758.
+** Conflict (shift/reduce/reduce) in state 4758.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 BIND identifier identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN
@@ -35179,20 +35337,28 @@ source_text_3 description
               bind_directive 
               BIND identifier bind_instantiation SEMICOLON 
                               identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier name_of_instance_3 LPAREN list_of_port_connections RPAREN module_instantiation_5 SEMICOLON 
+                                                                                                                               expression list_of_port_connections_3 
+                                                                                                                               primary 
                                                                                                                                (?)
 
-** In state 4758, looking ahead at DOT, shifting is permitted
+** In state 4758, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4758, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4758, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 4758, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (shift/reduce/reduce) in state 4738.
@@ -35359,9 +35525,9 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 4711.
+** Conflict (shift/reduce/reduce) in state 4711.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 COMMA identifier program_instance_3 LPAREN
@@ -35376,25 +35542,33 @@ source_text_3 description
               module_common_item 
               identifier identifier program_instance_3 LPAREN RPAREN program_instantiation_5 SEMICOLON 
                                                                      program_instantiation_5 COMMA identifier program_instance_3 LPAREN list_of_port_connections RPAREN 
+                                                                                                                                        expression list_of_port_connections_3 
+                                                                                                                                        primary 
                                                                                                                                         (?)
 
-** In state 4711, looking ahead at DOT, shifting is permitted
+** In state 4711, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4711, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4711, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 4704.
+** In state 4711, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** Conflict (shift/reduce/reduce) in state 4704.
 ** Tokens involved: SIMPLE_IDENTIFIER RPAREN DOT BACKSLASH
-** The following explanations concentrate on token DOT.
+** The following explanations concentrate on token SIMPLE_IDENTIFIER.
 ** This state is reached from start after reading:
 
 source_text_3 BIND identifier identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier program_instance_3 LPAREN
@@ -35410,20 +35584,28 @@ source_text_3 description
               bind_directive 
               BIND identifier bind_instantiation SEMICOLON 
                               identifier HASH LPAREN list_of_parameter_assignments RPAREN identifier program_instance_3 LPAREN list_of_port_connections RPAREN program_instantiation_5 SEMICOLON 
+                                                                                                                               expression list_of_port_connections_3 
+                                                                                                                               primary 
                                                                                                                                (?)
 
-** In state 4704, looking ahead at DOT, shifting is permitted
+** In state 4704, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
 ** because of the following sub-derivation:
 
-dot_named_port_connection list_of_port_connections_6 
-. DOT identifier 
+hierarchical_identifier 
+. SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
 
-** In state 4704, looking ahead at DOT, reducing production
-** list_of_port_connections_8 ->
+** In state 4704, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
 ** is permitted because of the following sub-derivation:
 
-list_of_port_connections_8 P_DOTSTAR list_of_port_connections_10 
-list_of_port_connections_8 DOT identifier LPAREN RPAREN COMMA // lookahead token appears
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
+. 
+
+** In state 4704, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** implicit_class_handle ->
+** is permitted because of the following sub-derivation:
+
+implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
 ** Conflict (reduce/reduce) in state 4702.
@@ -42540,9 +42722,9 @@ variable_dimension_2
 variable_dimension_2 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
 . 
 
-** Conflict (reduce/reduce) in state 3063.
+** Conflict (shift/reduce) in state 3063.
 ** Tokens involved: WITHIN SEMICOLON P_POUNDPOUND OR LBRACK_STAR INTERSECT AND
-** The following explanations concentrate on token WITHIN.
+** The following explanations concentrate on token LBRACK_STAR.
 ** This state is reached from start after reading:
 
 source_text_3 SEQUENCE identifier SEMICOLON sequence_declaration_6 identifier
@@ -42559,22 +42741,20 @@ source_text_3 description
               concurrent_assertion_item_declaration 
               SEQUENCE identifier SEMICOLON sequence_declaration_6 sequence_spec SEMICOLON ENDSEQUENCE 
                                                                    sequence_expr 
-                                                                   sequence_expr WITHIN sequence_expr // lookahead token appears
                                                                    (?)
 
-** In state 3063, looking ahead at WITHIN, reducing production
+** In state 3063, looking ahead at LBRACK_STAR, reducing production
 ** primary -> identifier
 ** is permitted because of the following sub-derivation:
 
-expression sequence_expr_12 // lookahead token is inherited because sequence_expr_12 can vanish
+expression sequence_expr_12 boolean_abbrev // lookahead token appears because sequence_expr_12 can vanish and boolean_abbrev can begin with LBRACK_STAR
 primary // lookahead token is inherited
 identifier . 
 
-** In state 3063, looking ahead at WITHIN, reducing production
-** sequence_expr -> identifier
-** is permitted because of the following sub-derivation:
+** In state 3063, looking ahead at LBRACK_STAR, shifting is permitted
+** because of the following sub-derivation:
 
-identifier . 
+identifier . LBRACK_STAR const_or_range_expression RBRACK 
 
 ** Conflict (shift/reduce/reduce) in state 3056.
 ** Tokens involved: SIMPLE_IDENTIFIER BACKSLASH
@@ -47013,9 +47193,9 @@ variable_dimension_2
 variable_dimension_2 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
 . 
 
-** Conflict (shift/reduce) in state 2062.
+** Conflict (reduce/reduce) in state 2062.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT REG REF REALTIME REAL RCMOS P_XNOR P_NXOR P_NAND PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE GENVAR GENERATE FUNCTION FOREVER FOR FINAL EXTERN EXPORT EVENT ENUM ENDMODULE ENDINTERFACE ENDGENERATE ENDFUNCTION ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier SEMICOLON interface_declaration_10 FINAL IF LPAREN expression RPAREN function_statement_or_null
@@ -47029,22 +47209,24 @@ source_text_3 description
               module_root_item 
               interface_declaration 
               INTERFACE identifier SEMICOLON interface_declaration_10 ENDINTERFACE 
-                                             interface_declaration_10 non_port_interface_item 
-                                                                      interface_or_generate_item 
-                                                                      FINAL function_statement_item 
-                                                                            function_conditional_statement 
+                                             interface_declaration_10 non_port_interface_item // lookahead token appears because non_port_interface_item can begin with WOR
+                                             interface_declaration_10 non_port_interface_item // lookahead token is inherited
+                                                                      interface_or_generate_item // lookahead token is inherited
+                                                                      FINAL function_statement_item // lookahead token is inherited
+                                                                            function_conditional_statement // lookahead token is inherited
                                                                             (?)
 
-** In state 2062, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 2062, looking ahead at WOR, reducing production
+** function_conditional_statement -> IF LPAREN expression RPAREN function_statement_or_null
+** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null . ELSE function_statement_or_null 
+IF LPAREN expression RPAREN function_statement_or_null . 
 
-** In state 2062, looking ahead at ELSE, reducing production
+** In state 2062, looking ahead at WOR, reducing production
 ** function_if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 // lookahead token is inherited
                                                        . 
 
 ** Conflict (shift/reduce/reduce) in state 2052.
@@ -47542,9 +47724,9 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce/reduce) in state 2013.
+** Conflict (reduce/reduce) in state 2013.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT REG REF REALTIME REAL RCMOS P_XNOR P_NXOR P_NAND PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE GENVAR GENERATE FUNCTION FOREVER FOR FINAL EXTERN EXPORT EVENT ENUM ENDMODULE ENDINTERFACE ENDGENERATE ENDFUNCTION ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier SEMICOLON interface_declaration_10 FINAL IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE unique_priority IF LPAREN expression RPAREN function_statement_or_null
@@ -47558,35 +47740,37 @@ source_text_3 description
               module_root_item 
               interface_declaration 
               INTERFACE identifier SEMICOLON interface_declaration_10 ENDINTERFACE 
-                                             interface_declaration_10 non_port_interface_item 
-                                                                      interface_or_generate_item 
-                                                                      FINAL function_statement_item 
-                                                                            function_conditional_statement 
+                                             interface_declaration_10 non_port_interface_item // lookahead token appears because non_port_interface_item can begin with WOR
+                                             interface_declaration_10 non_port_interface_item // lookahead token is inherited
+                                                                      interface_or_generate_item // lookahead token is inherited
+                                                                      FINAL function_statement_item // lookahead token is inherited
+                                                                            function_conditional_statement // lookahead token is inherited
                                                                             (?)
 
-** In state 2013, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 2013, looking ahead at WOR, reducing production
+** function_conditional_statement -> unique_priority IF LPAREN expression RPAREN function_statement_or_null
+** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null 
-                                                                                            function_statement_item 
-                                                                                            function_conditional_statement 
-                                                                                            unique_priority IF LPAREN expression RPAREN function_statement_or_null . ELSE function_statement_or_null 
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token is inherited
+                                                                                            function_statement_item // lookahead token is inherited
+                                                                                            function_conditional_statement // lookahead token is inherited
+                                                                                            unique_priority IF LPAREN expression RPAREN function_statement_or_null . 
 
-** In state 2013, looking ahead at ELSE, reducing production
+** In state 2013, looking ahead at WOR, reducing production
 ** function_if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null 
-                                                                                            function_statement_item 
-                                                                                            function_conditional_statement 
-                                                                                            unique_priority IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token is inherited
+                                                                                            function_statement_item // lookahead token is inherited
+                                                                                            function_conditional_statement // lookahead token is inherited
+                                                                                            unique_priority IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 // lookahead token is inherited
                                                                                                                                                                    . 
 
-** In state 2013, looking ahead at ELSE, reducing production
+** In state 2013, looking ahead at WOR, reducing production
 ** function_if_else_if_statement_8 -> function_if_else_if_statement_8 ELSE unique_priority IF LPAREN expression RPAREN function_statement_or_null
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 // lookahead token is inherited
                                                        function_if_else_if_statement_8 ELSE unique_priority IF LPAREN expression RPAREN function_statement_or_null . 
 
 ** Conflict (shift/reduce/reduce) in state 2010.
@@ -47672,9 +47856,9 @@ IF LPAREN expression RPAREN function_statement_or_null
                             function_conditional_statement 
                             IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 . ELSE function_statement_or_null 
 
-** Conflict (shift/reduce/reduce) in state 2003.
+** Conflict (reduce/reduce) in state 2003.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT REG REF REALTIME REAL RCMOS P_XNOR P_NXOR P_NAND PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE GENVAR GENERATE FUNCTION FOREVER FOR FINAL EXTERN EXPORT EVENT ENUM ENDMODULE ENDINTERFACE ENDGENERATE ENDFUNCTION ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier SEMICOLON interface_declaration_10 FINAL IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE IF LPAREN expression RPAREN function_statement_or_null
@@ -47688,35 +47872,37 @@ source_text_3 description
               module_root_item 
               interface_declaration 
               INTERFACE identifier SEMICOLON interface_declaration_10 ENDINTERFACE 
-                                             interface_declaration_10 non_port_interface_item 
-                                                                      interface_or_generate_item 
-                                                                      FINAL function_statement_item 
-                                                                            function_conditional_statement 
+                                             interface_declaration_10 non_port_interface_item // lookahead token appears because non_port_interface_item can begin with WOR
+                                             interface_declaration_10 non_port_interface_item // lookahead token is inherited
+                                                                      interface_or_generate_item // lookahead token is inherited
+                                                                      FINAL function_statement_item // lookahead token is inherited
+                                                                            function_conditional_statement // lookahead token is inherited
                                                                             (?)
 
-** In state 2003, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 2003, looking ahead at WOR, reducing production
+** function_conditional_statement -> IF LPAREN expression RPAREN function_statement_or_null
+** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null 
-                                                                                            function_statement_item 
-                                                                                            function_conditional_statement 
-                                                                                            IF LPAREN expression RPAREN function_statement_or_null . ELSE function_statement_or_null 
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token is inherited
+                                                                                            function_statement_item // lookahead token is inherited
+                                                                                            function_conditional_statement // lookahead token is inherited
+                                                                                            IF LPAREN expression RPAREN function_statement_or_null . 
 
-** In state 2003, looking ahead at ELSE, reducing production
+** In state 2003, looking ahead at WOR, reducing production
 ** function_if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null 
-                                                                                            function_statement_item 
-                                                                                            function_conditional_statement 
-                                                                                            IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token is inherited
+                                                                                            function_statement_item // lookahead token is inherited
+                                                                                            function_conditional_statement // lookahead token is inherited
+                                                                                            IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 // lookahead token is inherited
                                                                                                                                                    . 
 
-** In state 2003, looking ahead at ELSE, reducing production
+** In state 2003, looking ahead at WOR, reducing production
 ** function_if_else_if_statement_8 -> function_if_else_if_statement_8 ELSE IF LPAREN expression RPAREN function_statement_or_null
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 // lookahead token is inherited
                                                        function_if_else_if_statement_8 ELSE IF LPAREN expression RPAREN function_statement_or_null . 
 
 ** Conflict (shift/reduce/reduce) in state 2000.
@@ -47802,9 +47988,9 @@ IF LPAREN expression RPAREN function_statement_or_null
                             function_conditional_statement 
                             unique_priority IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 . ELSE function_statement_or_null 
 
-** Conflict (shift/reduce) in state 1993.
+** Conflict (reduce/reduce) in state 1993.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT REG REF REALTIME REAL RCMOS P_XNOR P_NXOR P_NAND PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE GENVAR GENERATE FUNCTION FOREVER FOR FINAL EXTERN EXPORT EVENT ENUM ENDMODULE ENDINTERFACE ENDGENERATE ENDFUNCTION ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 INTERFACE identifier SEMICOLON interface_declaration_10 FINAL unique_priority IF LPAREN expression RPAREN function_statement_or_null
@@ -47818,22 +48004,24 @@ source_text_3 description
               module_root_item 
               interface_declaration 
               INTERFACE identifier SEMICOLON interface_declaration_10 ENDINTERFACE 
-                                             interface_declaration_10 non_port_interface_item 
-                                                                      interface_or_generate_item 
-                                                                      FINAL function_statement_item 
-                                                                            function_conditional_statement 
+                                             interface_declaration_10 non_port_interface_item // lookahead token appears because non_port_interface_item can begin with WOR
+                                             interface_declaration_10 non_port_interface_item // lookahead token is inherited
+                                                                      interface_or_generate_item // lookahead token is inherited
+                                                                      FINAL function_statement_item // lookahead token is inherited
+                                                                            function_conditional_statement // lookahead token is inherited
                                                                             (?)
 
-** In state 1993, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 1993, looking ahead at WOR, reducing production
+** function_conditional_statement -> unique_priority IF LPAREN expression RPAREN function_statement_or_null
+** is permitted because of the following sub-derivation:
 
-unique_priority IF LPAREN expression RPAREN function_statement_or_null . ELSE function_statement_or_null 
+unique_priority IF LPAREN expression RPAREN function_statement_or_null . 
 
-** In state 1993, looking ahead at ELSE, reducing production
+** In state 1993, looking ahead at WOR, reducing production
 ** function_if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-unique_priority IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 ELSE function_statement_or_null // lookahead token appears
+unique_priority IF LPAREN expression RPAREN function_statement_or_null function_if_else_if_statement_8 // lookahead token is inherited
                                                                        . 
 
 ** Conflict (shift/reduce/reduce) in state 1984.
@@ -51065,9 +51253,9 @@ class_property
 class_property_2 data_declaration // lookahead token appears because data_declaration can begin with STATIC
 . 
 
-** Conflict (shift/reduce) in state 1555.
+** Conflict (reduce/reduce) in state 1555.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND WAIT_ORDER WAIT VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT RELEASE REG REF REALTIME REAL RCMOS P_XNOR P_POUNDPOUND P_NXOR P_NAND P_MINUSGT PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PRIMITIVE PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY JOIN_NONE JOIN_ANY JOIN INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE HASH GENVAR GENERATE FUNCTION FORK FOREVER FORCE FOR FINAL EXTERN EXPORT EVENT ENUM ENDTASK ENDPROGRAM ENDMODULE ENDINTERFACE ENDGENERATE ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE DEASSIGN DASH_GT_GT COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC AT_STAR AT ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS #
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 IF LPAREN expression RPAREN statement_or_null
@@ -51077,22 +51265,24 @@ source_text_3 IF LPAREN expression RPAREN statement_or_null
 
 start 
 source_text_3 
-source_text_3 description 
-              statement_or_null 
-              statement_item 
-              conditional_statement 
+source_text_3 description // lookahead token appears because description can begin with WOR
+source_text_3 description // lookahead token is inherited
+              statement_or_null // lookahead token is inherited
+              statement_item // lookahead token is inherited
+              conditional_statement // lookahead token is inherited
               (?)
 
-** In state 1555, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 1555, looking ahead at WOR, reducing production
+** conditional_statement -> IF LPAREN expression RPAREN statement_or_null
+** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null . ELSE statement_or_null 
+IF LPAREN expression RPAREN statement_or_null . 
 
-** In state 1555, looking ahead at ELSE, reducing production
+** In state 1555, looking ahead at WOR, reducing production
 ** if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 // lookahead token is inherited
                                               . 
 
 ** Conflict (shift/reduce) in state 1550.
@@ -51401,9 +51591,9 @@ lifetime data_type identifier variable_dimension list_of_variable_identifiers_4 
 lifetime data_type variable_decl_assignment list_of_variable_decl_assignments_3 SEMICOLON // lookahead token appears because list_of_variable_decl_assignments_3 can vanish
                    identifier variable_dimension . 
 
-** Conflict (shift/reduce) in state 1487.
+** Conflict (reduce/reduce) in state 1487.
 ** Tokens involved: SEMICOLON LBRACK EQUALS COMMA
-** The following explanations concentrate on token LBRACK.
+** The following explanations concentrate on token SEMICOLON.
 ** This state is reached from start after reading:
 
 source_text_3 FORK par_block_4 lifetime data_type identifier
@@ -51420,22 +51610,22 @@ source_text_3 description
                    par_block_4 block_item_declaration 
                                block_data_declaration 
                                block_variable_declaration 
-                               lifetime data_type identifier variable_dimension list_of_variable_identifiers_4 SEMICOLON 
-                                                             (?)
+                               (?)
 
-** In state 1487, looking ahead at LBRACK, shifting is permitted
-** because of the following sub-derivation:
+** In state 1487, looking ahead at SEMICOLON, reducing production
+** variable_decl_assignment -> identifier
+** is permitted because of the following sub-derivation:
 
-associative_dimension 
-. LBRACK data_type RBRACK 
+lifetime data_type variable_decl_assignment list_of_variable_decl_assignments_3 SEMICOLON // lookahead token appears because list_of_variable_decl_assignments_3 can vanish
+                   identifier . 
 
-** In state 1487, looking ahead at LBRACK, reducing production
+** In state 1487, looking ahead at SEMICOLON, reducing production
 ** variable_dimension_2 ->
 ** is permitted because of the following sub-derivation:
 
-variable_dimension_2 
-variable_dimension_2 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
-. 
+lifetime data_type identifier variable_dimension list_of_variable_identifiers_4 SEMICOLON // lookahead token appears because list_of_variable_identifiers_4 can vanish
+                              variable_dimension_2 // lookahead token is inherited
+                              . 
 
 ** Conflict (shift/reduce/reduce) in state 1476.
 ** Tokens involved: SIMPLE_IDENTIFIER BACKSLASH
@@ -52320,9 +52510,9 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce/reduce) in state 1414.
+** Conflict (reduce/reduce) in state 1414.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND WAIT_ORDER WAIT VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT RELEASE REG REF REALTIME REAL RCMOS P_XNOR P_POUNDPOUND P_NXOR P_NAND P_MINUSGT PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PRIMITIVE PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY JOIN_NONE JOIN_ANY JOIN INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE HASH GENVAR GENERATE FUNCTION FORK FOREVER FORCE FOR FINAL EXTERN EXPORT EVENT ENUM ENDTASK ENDPROGRAM ENDMODULE ENDINTERFACE ENDGENERATE ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE DEASSIGN DASH_GT_GT COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC AT_STAR AT ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS #
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE unique_priority IF LPAREN expression RPAREN statement_or_null
@@ -52332,35 +52522,37 @@ source_text_3 IF LPAREN expression RPAREN statement_or_null if_else_if_statement
 
 start 
 source_text_3 
-source_text_3 description 
-              statement_or_null 
-              statement_item 
-              conditional_statement 
+source_text_3 description // lookahead token appears because description can begin with WOR
+source_text_3 description // lookahead token is inherited
+              statement_or_null // lookahead token is inherited
+              statement_item // lookahead token is inherited
+              conditional_statement // lookahead token is inherited
               (?)
 
-** In state 1414, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 1414, looking ahead at WOR, reducing production
+** conditional_statement -> unique_priority IF LPAREN expression RPAREN statement_or_null
+** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null 
-                                                                          statement_item 
-                                                                          conditional_statement 
-                                                                          unique_priority IF LPAREN expression RPAREN statement_or_null . ELSE statement_or_null 
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token is inherited
+                                                                          statement_item // lookahead token is inherited
+                                                                          conditional_statement // lookahead token is inherited
+                                                                          unique_priority IF LPAREN expression RPAREN statement_or_null . 
 
-** In state 1414, looking ahead at ELSE, reducing production
+** In state 1414, looking ahead at WOR, reducing production
 ** if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null 
-                                                                          statement_item 
-                                                                          conditional_statement 
-                                                                          unique_priority IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token is inherited
+                                                                          statement_item // lookahead token is inherited
+                                                                          conditional_statement // lookahead token is inherited
+                                                                          unique_priority IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 // lookahead token is inherited
                                                                                                                                         . 
 
-** In state 1414, looking ahead at ELSE, reducing production
+** In state 1414, looking ahead at WOR, reducing production
 ** if_else_if_statement_8 -> if_else_if_statement_8 ELSE unique_priority IF LPAREN expression RPAREN statement_or_null
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 // lookahead token is inherited
                                               if_else_if_statement_8 ELSE unique_priority IF LPAREN expression RPAREN statement_or_null . 
 
 ** Conflict (shift/reduce/reduce) in state 1411.
@@ -52437,9 +52629,9 @@ statement_item ELSE statement_or_null
 conditional_statement 
 IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 . ELSE statement_or_null 
 
-** Conflict (shift/reduce/reduce) in state 1404.
+** Conflict (reduce/reduce) in state 1404.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND WAIT_ORDER WAIT VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT RELEASE REG REF REALTIME REAL RCMOS P_XNOR P_POUNDPOUND P_NXOR P_NAND P_MINUSGT PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PRIMITIVE PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY JOIN_NONE JOIN_ANY JOIN INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE HASH GENVAR GENERATE FUNCTION FORK FOREVER FORCE FOR FINAL EXTERN EXPORT EVENT ENUM ENDTASK ENDPROGRAM ENDMODULE ENDINTERFACE ENDGENERATE ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE DEASSIGN DASH_GT_GT COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC AT_STAR AT ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS #
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE IF LPAREN expression RPAREN statement_or_null
@@ -52449,35 +52641,37 @@ source_text_3 IF LPAREN expression RPAREN statement_or_null if_else_if_statement
 
 start 
 source_text_3 
-source_text_3 description 
-              statement_or_null 
-              statement_item 
-              conditional_statement 
+source_text_3 description // lookahead token appears because description can begin with WOR
+source_text_3 description // lookahead token is inherited
+              statement_or_null // lookahead token is inherited
+              statement_item // lookahead token is inherited
+              conditional_statement // lookahead token is inherited
               (?)
 
-** In state 1404, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 1404, looking ahead at WOR, reducing production
+** conditional_statement -> IF LPAREN expression RPAREN statement_or_null
+** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null 
-                                                                          statement_item 
-                                                                          conditional_statement 
-                                                                          IF LPAREN expression RPAREN statement_or_null . ELSE statement_or_null 
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token is inherited
+                                                                          statement_item // lookahead token is inherited
+                                                                          conditional_statement // lookahead token is inherited
+                                                                          IF LPAREN expression RPAREN statement_or_null . 
 
-** In state 1404, looking ahead at ELSE, reducing production
+** In state 1404, looking ahead at WOR, reducing production
 ** if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null 
-                                                                          statement_item 
-                                                                          conditional_statement 
-                                                                          IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token is inherited
+                                                                          statement_item // lookahead token is inherited
+                                                                          conditional_statement // lookahead token is inherited
+                                                                          IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 // lookahead token is inherited
                                                                                                                         . 
 
-** In state 1404, looking ahead at ELSE, reducing production
+** In state 1404, looking ahead at WOR, reducing production
 ** if_else_if_statement_8 -> if_else_if_statement_8 ELSE IF LPAREN expression RPAREN statement_or_null
 ** is permitted because of the following sub-derivation:
 
-IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token appears
+IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 // lookahead token is inherited
                                               if_else_if_statement_8 ELSE IF LPAREN expression RPAREN statement_or_null . 
 
 ** Conflict (shift/reduce/reduce) in state 1401.
@@ -53499,9 +53693,9 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce/reduce) in state 1323.
+** Conflict (shift/reduce) in state 1323.
 ** Tokens involved: VOID VBAR UNSIGNED_NUMBER UNSIGNED TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS SYSTEM_FUNCTION_IDENTIFIER SVINT SUPER SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT REG REALTIME REAL P_XNOR P_NXOR P_NAND PLUS PLING OCTAL_BASE NULL MINUS LPAREN LONGINT LOGIC LCURLY INTEGER HEX_BASE DOUBLE_QUOTES DECIMAL_BASE CARET BYTE BIT BINARY_BASE BACKSLASH AMPERSAND
-** The following explanations concentrate on token SIMPLE_IDENTIFIER.
+** The following explanations concentrate on token VOID.
 ** This state is reached from start after reading:
 
 source_text_3 identifier DOT RANDOMIZE WITH expression P_EQGT LCURLY
@@ -53520,50 +53714,24 @@ source_text_3 description
                                             expression P_EQGT constraint_set 
                                                               (?)
 
-** In state 1323, looking ahead at SIMPLE_IDENTIFIER, reducing production
+** In state 1323, looking ahead at VOID, reducing production
 ** constraint_set_5 ->
 ** is permitted because of the following sub-derivation:
 
 LCURLY constraint_set_5 RCURLY 
-       constraint_set_5 constraint_expression // lookahead token appears because constraint_expression can begin with SIMPLE_IDENTIFIER
+       constraint_set_5 constraint_expression // lookahead token appears because constraint_expression can begin with VOID
        . 
 
-** In state 1323, looking ahead at SIMPLE_IDENTIFIER, shifting is permitted
+** In state 1323, looking ahead at VOID, shifting is permitted
 ** because of the following sub-derivation:
 
 constraint_expression 
 expression SEMICOLON 
-inc_or_dec_expression 
-variable_lvalue inc_or_dec_operator 
-LCURLY variable_lvalue variable_lvalue_8 RCURLY 
-       hierarchical_identifier variable_lvalue_3 
-       . SIMPLE_IDENTIFIER simple_hierarchical_branch_3 
-
-** In state 1323, looking ahead at SIMPLE_IDENTIFIER, reducing production
-** implicit_class_handle ->
-** is permitted because of the following sub-derivation:
-
-constraint_expression 
-expression SEMICOLON 
 primary 
 concatenation 
 LCURLY expression concatenation_4 RCURLY 
        primary 
-       implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
-       . 
-
-** In state 1323, looking ahead at SIMPLE_IDENTIFIER, reducing production
-** implicit_class_handle ->
-** is permitted because of the following sub-derivation:
-
-constraint_expression 
-expression SEMICOLON 
-primary 
-concatenation 
-LCURLY expression concatenation_4 RCURLY 
-       primary 
-       implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
-       . 
+       . VOID SQUOTE LPAREN hierarchical_identifier RPAREN 
 
 ** Conflict (shift/reduce/reduce) in state 1322.
 ** Tokens involved: SIMPLE_IDENTIFIER BACKSLASH
@@ -53819,9 +53987,9 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (shift/reduce) in state 1279.
+** Conflict (reduce/reduce) in state 1279.
 ** Tokens involved: XOR XNOR WOR WIRE WHILE WAND WAIT_ORDER WAIT VOID VIRTUAL VBAR UNSIGNED_NUMBER UNSIGNED UNIQUE UNION TYPEDEF TRIREG TRIOR TRIAND TRI1 TRI0 TRI TRANIF1 TRANIF0 TRAN TOKEN_TWO TOKEN_THREE TOKEN_SIX TOKEN_SEVEN TOKEN_QUOTE_Z2 TOKEN_QUOTE_Z1 TOKEN_QUOTE_X2 TOKEN_QUOTE_X1 TOKEN_QUOTE_TRUE TOKEN_QUOTE_FALSE TOKEN_PLUS_PLUS TOKEN_ONE TOKEN_NINE TOKEN_FOUR TOKEN_FIVE TOKEN_EIGHT TOKEN_DASH_DASH TIME TILDE_VBAR TILDE THIS TASK SYSTEM_TASK_IDENTIFIER SYSTEM_FUNCTION_IDENTIFIER SVINT SUPPLY1 SUPPLY0 SUPER STRUCT STRING STATIC SPECPARAM SPECIFY SIMPLE_IDENTIFIER SIGNED SHORTREAL SHORTINT SEQUENCE SEMICOLON RTRANIF1 RTRANIF0 RTRAN RPMOS RNMOS RETURN REPEAT RELEASE REG REF REALTIME REAL RCMOS P_XNOR P_POUNDPOUND P_NXOR P_NAND P_MINUSGT PULLUP PULLDOWN PROPERTY PROGRAM PRIORITY PRIMITIVE PMOS PLUS PLING PARAMETER OUTPUT OR OCTAL_BASE NULL NOTIF1 NOTIF0 NOT NOR NMOS NAND MODULE MODPORT MINUS MACROMODULE LPAREN LONGINT LOGIC LOCALPARAM LCURLY JOIN_NONE JOIN_ANY JOIN INTERFACE INTEGER INPUT INOUT INITIAL IMPORT IF HEX_BASE HASH GENVAR GENERATE FUNCTION FORK FOREVER FORCE FOR FINAL EXTERN EXPORT EVENT ENUM ENDTASK ENDPROGRAM ENDMODULE ENDINTERFACE ENDGENERATE ENDCASE END ELSE DOUBLE_QUOTES DO DISABLE DEFPARAM DEFAULT DECIMAL_BASE DEASSIGN DASH_GT_GT COVER CONTINUE CONSTRAINT CONST CMOS CLOCKING CLASS CHANDLE CASEZ CASEX CASE CARET BYTE BUFIF1 BUFIF0 BUF BREAK BIT BIND BINARY_BASE BEGIN BACKSLASH AUTOMATIC AT_STAR AT ASSIGN ASSERT AND AMPERSAND ALWAYS_LATCH ALWAYS_FF ALWAYS_COMB ALWAYS ALIAS #
-** The following explanations concentrate on token ELSE.
+** The following explanations concentrate on token WOR.
 ** This state is reached from start after reading:
 
 source_text_3 unique_priority IF LPAREN expression RPAREN statement_or_null
@@ -53831,22 +53999,24 @@ source_text_3 unique_priority IF LPAREN expression RPAREN statement_or_null
 
 start 
 source_text_3 
-source_text_3 description 
-              statement_or_null 
-              statement_item 
-              conditional_statement 
+source_text_3 description // lookahead token appears because description can begin with WOR
+source_text_3 description // lookahead token is inherited
+              statement_or_null // lookahead token is inherited
+              statement_item // lookahead token is inherited
+              conditional_statement // lookahead token is inherited
               (?)
 
-** In state 1279, looking ahead at ELSE, shifting is permitted
-** because of the following sub-derivation:
+** In state 1279, looking ahead at WOR, reducing production
+** conditional_statement -> unique_priority IF LPAREN expression RPAREN statement_or_null
+** is permitted because of the following sub-derivation:
 
-unique_priority IF LPAREN expression RPAREN statement_or_null . ELSE statement_or_null 
+unique_priority IF LPAREN expression RPAREN statement_or_null . 
 
-** In state 1279, looking ahead at ELSE, reducing production
+** In state 1279, looking ahead at WOR, reducing production
 ** if_else_if_statement_8 ->
 ** is permitted because of the following sub-derivation:
 
-unique_priority IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 ELSE statement_or_null // lookahead token appears
+unique_priority IF LPAREN expression RPAREN statement_or_null if_else_if_statement_8 // lookahead token is inherited
                                                               . 
 
 ** Conflict (shift/reduce/reduce) in state 1276.
@@ -55945,9 +56115,9 @@ implicit_class_handle hierarchical_identifier primary_6 // lookahead token appea
 implicit_class_handle hierarchical_identifier primary_6 // lookahead token appears because hierarchical_identifier can begin with SIMPLE_IDENTIFIER
 . 
 
-** Conflict (reduce/reduce) in state 1103.
+** Conflict (shift/reduce) in state 1103.
 ** Tokens involved: WITHIN VBAR_DASH_GT TOKEN_PLING_EQUALS_GT SEMICOLON RPAREN P_POUNDPOUND OR LBRACK_STAR INTERSECT AND
-** The following explanations concentrate on token WITHIN.
+** The following explanations concentrate on token LBRACK_STAR.
 ** This state is reached from start after reading:
 
 source_text_3 COVER PROPERTY LPAREN clocking_event identifier
@@ -55965,22 +56135,20 @@ source_text_3 description
               COVER PROPERTY LPAREN property_spec RPAREN statement_or_null 
                                     multi_clock_property_expr 
                                     clocking_event sequence_expr multi_clock_sequence_3 
-                                                   sequence_expr WITHIN sequence_expr // lookahead token appears
                                                    (?)
 
-** In state 1103, looking ahead at WITHIN, reducing production
+** In state 1103, looking ahead at LBRACK_STAR, reducing production
 ** primary -> identifier
 ** is permitted because of the following sub-derivation:
 
-expression sequence_expr_12 // lookahead token is inherited because sequence_expr_12 can vanish
+expression sequence_expr_12 boolean_abbrev // lookahead token appears because sequence_expr_12 can vanish and boolean_abbrev can begin with LBRACK_STAR
 primary // lookahead token is inherited
 identifier . 
 
-** In state 1103, looking ahead at WITHIN, reducing production
-** sequence_expr -> identifier
-** is permitted because of the following sub-derivation:
+** In state 1103, looking ahead at LBRACK_STAR, shifting is permitted
+** because of the following sub-derivation:
 
-identifier . 
+identifier . LBRACK_STAR const_or_range_expression RBRACK 
 
 ** Conflict (shift/reduce) in state 1102.
 ** Tokens involved: WITHIN P_POUNDPOUND OR INTERSECT AND
@@ -57903,9 +58071,9 @@ identifier variable_dimension list_of_variable_identifiers_4 // lookahead token 
 variable_decl_assignment list_of_variable_decl_assignments_3 // lookahead token is inherited because list_of_variable_decl_assignments_3 can vanish
 identifier variable_dimension . 
 
-** Conflict (shift/reduce) in state 824.
+** Conflict (reduce/reduce) in state 824.
 ** Tokens involved: SEMICOLON LBRACK EQUALS COMMA
-** The following explanations concentrate on token LBRACK.
+** The following explanations concentrate on token SEMICOLON.
 ** This state is reached from start after reading:
 
 source_text_3 data_type identifier
@@ -57920,23 +58088,23 @@ source_text_3 description
               module_common_item 
               module_or_generate_item_declaration 
               data_declaration 
-              data_type list_of_variable_identifiers_or_assignments SEMICOLON 
-                        identifier variable_dimension list_of_variable_identifiers_4 
-                                   (?)
+              data_type list_of_variable_identifiers_or_assignments SEMICOLON // lookahead token appears
+                        (?)
 
-** In state 824, looking ahead at LBRACK, shifting is permitted
-** because of the following sub-derivation:
+** In state 824, looking ahead at SEMICOLON, reducing production
+** variable_decl_assignment -> identifier
+** is permitted because of the following sub-derivation:
 
-associative_dimension 
-. LBRACK data_type RBRACK 
+variable_decl_assignment list_of_variable_decl_assignments_3 // lookahead token is inherited because list_of_variable_decl_assignments_3 can vanish
+identifier . 
 
-** In state 824, looking ahead at LBRACK, reducing production
+** In state 824, looking ahead at SEMICOLON, reducing production
 ** variable_dimension_2 ->
 ** is permitted because of the following sub-derivation:
 
-variable_dimension_2 
-variable_dimension_2 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
-. 
+identifier variable_dimension list_of_variable_identifiers_4 // lookahead token is inherited because list_of_variable_identifiers_4 can vanish
+           variable_dimension_2 // lookahead token is inherited
+           . 
 
 ** Conflict (shift/reduce/reduce) in state 812.
 ** Tokens involved: SIMPLE_IDENTIFIER BACKSLASH
@@ -58263,9 +58431,9 @@ identifier LBRACK RBRACK . EQUALS NEW LBRACK constant_expression RBRACK
 identifier variable_dimension EQUALS constant_expression // lookahead token appears
            LBRACK RBRACK . 
 
-** Conflict (shift/reduce) in state 762.
+** Conflict (reduce/reduce) in state 762.
 ** Tokens involved: SEMICOLON LBRACK EQUALS COMMA
-** The following explanations concentrate on token LBRACK.
+** The following explanations concentrate on token SEMICOLON.
 ** This state is reached from start after reading:
 
 source_text_3 data_type variable_decl_assignment list_of_variable_decl_assignments_3 COMMA identifier
@@ -58280,25 +58448,24 @@ source_text_3 description
               module_common_item 
               module_or_generate_item_declaration 
               data_declaration 
-              data_type list_of_variable_identifiers_or_assignments SEMICOLON 
-                        variable_decl_assignment list_of_variable_decl_assignments_3 
-                                                 list_of_variable_decl_assignments_3 COMMA variable_decl_assignment 
-                                                                                           identifier variable_dimension 
-                                                                                                      (?)
+              data_type list_of_variable_identifiers_or_assignments SEMICOLON // lookahead token appears
+                        variable_decl_assignment list_of_variable_decl_assignments_3 // lookahead token is inherited
+                                                 list_of_variable_decl_assignments_3 COMMA variable_decl_assignment // lookahead token is inherited
+                                                                                           (?)
 
-** In state 762, looking ahead at LBRACK, shifting is permitted
-** because of the following sub-derivation:
+** In state 762, looking ahead at SEMICOLON, reducing production
+** variable_decl_assignment -> identifier
+** is permitted because of the following sub-derivation:
 
-associative_dimension 
-. LBRACK data_type RBRACK 
+identifier . 
 
-** In state 762, looking ahead at LBRACK, reducing production
+** In state 762, looking ahead at SEMICOLON, reducing production
 ** variable_dimension_2 ->
 ** is permitted because of the following sub-derivation:
 
-variable_dimension_2 
-variable_dimension_2 unpacked_dimension // lookahead token appears because unpacked_dimension can begin with LBRACK
-. 
+identifier variable_dimension // lookahead token is inherited
+           variable_dimension_2 // lookahead token is inherited
+           . 
 
 ** Conflict (shift/reduce) in state 759.
 ** Token involved: COMMA
@@ -60854,7 +61021,7 @@ LCURLY variable_lvalue variable_lvalue_8 RCURLY // lookahead token appears becau
 
 ** Conflict (reduce/reduce) in state 383.
 ** Tokens involved: VBAR TOKEN_VBAR_VBAR TOKEN_PLING_QUERY_EQUALS TIMES QUERY P_XNOR P_SSRIGHT3 P_SRIGHT P_SLEFT3 P_SLEFT P_POW P_NXOR P_NOTEQUAL P_LTE P_GTE P_EQUAL P_CASENOTEQUAL P_CASEEQUAL P_ANDAND PLUS MODULO MINUS LESS GREATER EQUALS_QUERY_EQUALS DIVIDE COLON CARET AMPERSAND
-** The following explanations concentrate on token VBAR.
+** The following explanations concentrate on token COLON.
 ** This state is reached from start after reading:
 
 source_text_3 RETURN LCURLY array_member_label COLON expression concatenation_18 COMMA identifier
@@ -60872,34 +61039,45 @@ source_text_3 description
                      primary 
                      concatenation 
                      LCURLY array_member_label COLON expression concatenation_18 RCURLY 
-                                                                concatenation_18 COMMA array_member_label COLON expression 
-                                                                                       constant_expression 
-                                                                                       constant_expression binary_operator constant_expression // lookahead token appears because binary_operator can begin with VBAR
-                                                                                       constant_primary // lookahead token is inherited
+                                                                concatenation_18 COMMA array_member_label COLON expression // lookahead token appears
                                                                                        (?)
 
-** In state 383, looking ahead at VBAR, reducing production
-** constant_primary -> identifier
+** In state 383, looking ahead at COLON, reducing production
+** array_member_label -> identifier
 ** is permitted because of the following sub-derivation:
 
 identifier . 
 
-** In state 383, looking ahead at VBAR, reducing production
+** In state 383, looking ahead at COLON, reducing production
 ** constant_primary -> identifier
 ** is permitted because of the following sub-derivation:
 
+constant_expression // lookahead token is inherited
+constant_primary // lookahead token is inherited
 identifier . 
 
-** In state 383, looking ahead at VBAR, reducing production
+** In state 383, looking ahead at COLON, reducing production
 ** constant_primary -> identifier
 ** is permitted because of the following sub-derivation:
 
+constant_expression // lookahead token is inherited
+constant_primary // lookahead token is inherited
 identifier . 
 
-** In state 383, looking ahead at VBAR, reducing production
+** In state 383, looking ahead at COLON, reducing production
 ** constant_primary -> identifier
 ** is permitted because of the following sub-derivation:
 
+constant_expression // lookahead token is inherited
+constant_primary // lookahead token is inherited
+identifier . 
+
+** In state 383, looking ahead at COLON, reducing production
+** constant_primary -> identifier
+** is permitted because of the following sub-derivation:
+
+constant_expression // lookahead token is inherited
+constant_primary // lookahead token is inherited
 identifier . 
 
 ** Conflict (reduce/reduce) in state 368.
