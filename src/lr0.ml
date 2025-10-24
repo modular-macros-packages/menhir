@@ -737,7 +737,7 @@ let compatible (k1, tsr1) (k2, tsr2) =
    Thanks to Sébastien Hinderer for reporting the bug caused by the
    absence of this extra criterion. *)
 
-let eos_compatible  (k1, tsr1) (k2, tsr2) =
+let eos_compatible (k1, tsr1) (k2, tsr2) =
   let open TerminalSet in
   assert (k1 = k2);
   let n = Array.length tsr1 in
@@ -746,10 +746,10 @@ let eos_compatible  (k1, tsr1) (k2, tsr2) =
     let ts1 = tsr1.(i)
     and ts2 = tsr2.(i) in
     begin
-      if mem sharp ts1 && is_singleton ts1 then
+      if is_singleton ts1 && mem sharp ts1 then
         (* "#" is alone in one set: it must be a member of the other set. *)
         mem sharp ts2
-      else if mem sharp ts2 && is_singleton ts2 then
+      else if is_singleton ts2 && mem sharp ts2 then
         (* Symmetric condition. *)
         mem sharp ts1
       else
