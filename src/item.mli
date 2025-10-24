@@ -44,25 +44,31 @@ val is_start: t -> bool
    is returned. *)
 val test_start: t -> Nonterminal.t option
 
-(* Printing. *)
-
+(**[print item] produces a string representation of the item [item]. *)
 val print: t -> string
 
-(* Classifying items as shift or reduce items. A shift item is one
-   where the bullet can still advance. A reduce item is one where the
-   bullet has reached the end of the right-hand side. *)
-
+(**A shift item is an item where the bullet can still advance. A reduce item
+   is an item where the bullet has reached the end of the right-hand side of
+   the production. *)
 type kind =
   | Shift of Symbol.t * t
+      (**[Shift] carries the (terminal or nonterminal) symbol that is expected
+         next and the item that is obtained by advancing the bullet. *)
   | Reduce of Production.t
+      (**[Reduce] carries the production that this item is associated with. *)
 
+(**[classify item] classifies the item [item] as either a shift item or a
+   reduce item. *)
 val classify: t -> kind
 
-(* Sets of items and maps over items. Hashing these data structures is
-   specifically allowed. *)
-
+(**Maps whose keys are items. These maps are canonical: that is, they
+   support the use of OCaml's generic equality and hash functions, so
+   they can be used as keys in a hash table. *)
 module Map : API.MAP_AND_SET with type key = t
 
+(**Sets whose elements are items. These sets are canonical: that is, they
+   support the use of OCaml's generic equality and hash functions, so they
+   can be used as keys in a hash table. *)
 module Set = Map.Domain
 
 (* This functor performs precomputation that helps efficiently compute

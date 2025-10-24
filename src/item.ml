@@ -68,8 +68,6 @@ let test_start item =
   let prod, _pos = export item in
   Production.test_start prod
 
-(* Printing. *)
-
 let print item =
   let prod, pos = export item in
   let nt = Production.nt prod in
@@ -78,8 +76,6 @@ let print item =
     (Nonterminal.print false nt)
     (Symbol.print_array_bullet false pos rhs)
 
-(* Classifying items. *)
-
 type kind =
   | Shift of Symbol.t * t
   | Reduce of Production.t
@@ -87,8 +83,8 @@ type kind =
 let classify item =
   let prod, pos = export item in
   let rhs = Production.rhs prod in
-  let length = Array.length rhs in
-  if pos = length then
+  let n = Array.length rhs in
+  if pos = n then
     Reduce prod
   else
     Shift (rhs.(pos), import (prod, pos + 1))
