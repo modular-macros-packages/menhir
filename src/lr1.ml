@@ -570,7 +570,7 @@ let is_start_or_exit node =
   if Item.Set.cardinal items = 1 then
     let item = Item.Set.choose items in
     let prod, _pos = Item.export item in
-    Production.classify prod
+    Production.test_start prod
   else
     None
 
@@ -830,7 +830,7 @@ let warn_about_productions_never_reduced () =
   let count = ref 0 in
   Production.iter (fun prod ->
     if NodeSet.is_empty (production_where prod) then
-      match Production.classify prod with
+      match Production.test_start prod with
       | Some nt ->
           incr count;
           Error.warning
@@ -1086,7 +1086,7 @@ let insert_extra_reductions () =
 let fold_entry f accu =
   ProductionMap.fold (fun prod state accu ->
     let nt : Nonterminal.t =
-      match Production.classify prod with
+      match Production.test_start prod with
       | Some nt ->
           nt
       | None ->
@@ -1113,7 +1113,7 @@ let nt_of_entry s =
   try
     ProductionMap.iter (fun prod entry ->
       if Node.compare s entry = 0 then
-        match Production.classify prod with
+        match Production.test_start prod with
         | None ->
             assert false
         | Some nt ->

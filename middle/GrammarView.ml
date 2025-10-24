@@ -688,7 +688,7 @@ module Production = struct
   let[@inline] production_level k =
     production_level.(k)
 
-  let classify prod =
+  let test_start prod =
     if is_start prod then
       match (rhs prod).(0) with
       | Symbol.N nt ->
@@ -715,7 +715,7 @@ module Production = struct
         (Symbol.print_subarray false 0 rhs)
 
   let describe gerund prod =
-    match classify prod with
+    match test_start prod with
     | Some nt ->
         let ending = if gerund then "ing" else "" in
         Printf.sprintf "accept%s %s" ending (Nonterminal.print false nt)

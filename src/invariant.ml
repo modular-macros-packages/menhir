@@ -754,7 +754,7 @@ module G = struct
     (* The entry points are the [run] functions associated with each of
        the entry states. *)
     Lr1.entry |> ProductionMap.iter (fun prod node ->
-      let nt = Option.get (Production.classify prod) in
+      let nt = Option.get (Production.test_start prod) in
       yield (Run node) (SingleOrigin nt)
     )
 

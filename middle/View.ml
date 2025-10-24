@@ -505,11 +505,11 @@ module Production : sig
      production. *)
   val is_start: t -> bool
 
-  (**[classify prod ] determines whether the production [prod] is a start
+  (**[test_start prod] determines whether the production [prod] is a start
      production. If it is a start production, then the start symbol that this
      production is associated with is returned. If it is a regular production,
      nothing is returned. *)
-  val classify: t -> Nonterminal.t option
+  val test_start: t -> Nonterminal.t option
 
   (**[error_free prod] returns [true] if the right-hand side of the
      production [prod] does {i not} contain the [error] token. *)

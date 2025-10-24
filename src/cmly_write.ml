@@ -97,7 +97,7 @@ let action (a : Action.t) : action =
   }
 
 let rhs (prod : Production.t) : symbol producer_def array =
-  match Production.classify prod with
+  match Production.test_start prod with
   | Some n ->
       [| (N (n2i n), "", []) |]
   | None ->

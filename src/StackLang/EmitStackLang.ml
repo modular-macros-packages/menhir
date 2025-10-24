@@ -670,7 +670,7 @@ let reduce mode prod =
   if Production.is_start prod then begin
     assert (n = 1);
     log "Accepting";
-    let nt = Option.get (Production.classify prod) in
+    let nt = Option.get (Production.test_start prod) in
     return nt (VReg (id 0))
   end
   else

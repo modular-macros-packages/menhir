@@ -123,7 +123,7 @@ let start poss ((nto, _) : sentence) : Nonterminal.t =
            form: <start symbol>: <token>*"
       else
         let prod, _ = ProductionMap.choose Lr1.entry in
-        match Production.classify prod with
+        match Production.test_start prod with
         | Some nt ->
             nt
         | None ->

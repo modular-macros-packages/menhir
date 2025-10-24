@@ -67,7 +67,7 @@ let is_start item =
 let startnt item =
   assert (is_start item);
   let prod, _pos = export item in
-  Option.get (Production.classify prod)
+  Option.get (Production.test_start prod)
 
 (* Printing. *)
 

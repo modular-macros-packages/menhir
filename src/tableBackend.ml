@@ -630,7 +630,7 @@ let stringwrap f x =
   EStringConst (f x)
 
 let reduce_or_accept prod =
-  match Production.classify prod with
+  match Production.test_start prod with
   | Some _ ->
       "Accepting"
   | None ->
