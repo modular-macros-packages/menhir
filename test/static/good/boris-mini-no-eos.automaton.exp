@@ -158,11 +158,11 @@ State 12:
 ## Known stack suffix:
 ## expr DOT
 ## LR(1) items:
-expr -> expr DOT . [ DOT ]
+expr -> expr DOT . [ EOF DOT ]
 inst -> expr DOT . [ SEP LIDENT DOT ]
 ## Transitions:
 ## Reductions:
--- On DOT
+-- On EOF DOT
 --   reduce production expr -> expr DOT
 -- On SEP LIDENT DOT
 --   reduce production inst -> expr DOT
@@ -177,7 +177,7 @@ expr -> expr . DOT [ EOF DOT ]
 inst -> expr . DOT [ DOT ]
 ## Transitions:
 -- On EOF shift to state 14
--- On DOT shift to state 7
+-- On DOT shift to state 12
 ## Reductions:
 
 State 14:

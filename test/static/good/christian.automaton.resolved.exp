@@ -1522,14 +1522,14 @@ State 110:
 ## Known stack suffix:
 ## Upper Dot Upper
 ## LR(1) items:
-externalObjectClassReference -> Upper Dot Upper . [ Dot ]
+externalObjectClassReference -> Upper Dot Upper . [ Dot Assignment ]
 externalObjectSetReference -> Upper Dot Upper . [ UNION RightParen RightBrace Middle LeftBrace INTERSECTION EXCEPT Dot Comma Circumflex Bang ]
-externalTypeReference -> Upper Dot Upper . [ UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle LeftParen LeftBrace INTERSECTION EXCEPT ENCODED DEFAULT Comma Colon Circumflex Bang ]
+externalTypeReference -> Upper Dot Upper . [ UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle LeftParen LeftBrace INTERSECTION EXCEPT ENCODED DEFAULT Comma Colon Circumflex Bang Assignment ]
 ## Transitions:
 ## Reductions:
 -- On Dot
 --   reduce production externalObjectClassReference -> Upper Dot Upper
--- On UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle LeftParen LeftBrace INTERSECTION EXCEPT ENCODED DEFAULT Comma Colon Circumflex Bang
+-- On UNION RightParen RightDoubleBracket RightBrace OPTIONAL Middle LeftParen LeftBrace INTERSECTION EXCEPT ENCODED DEFAULT Comma Colon Circumflex Bang Assignment
 --   reduce production externalTypeReference -> Upper Dot Upper
 
 State 111:

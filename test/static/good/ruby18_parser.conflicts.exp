@@ -33,7 +33,7 @@ LCURLY brace_block_e1 opt_block_var compstmt RCURLY_error
                                     stmts opt_terms 
                                     . error stmt 
 
-** Conflict (shift/reduce) in state 1094.
+** Conflict (shift/reduce) in state 1102.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -59,7 +59,7 @@ program_e1 compstmt
                                                          command do_block 
                                                                  (?)
 
-** In state 1094, looking ahead at error, reducing production
+** In state 1102, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -68,14 +68,14 @@ K_DO_BLOCK do_block_e1 opt_block_var compstmt K_END_error // lookahead token app
                                      none // lookahead token is inherited
                                      . 
 
-** In state 1094, looking ahead at error, shifting is permitted
+** In state 1102, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 K_DO_BLOCK do_block_e1 opt_block_var compstmt K_END_error 
                                      stmts opt_terms 
                                      . error stmt 
 
-** Conflict (shift/reduce) in state 1042.
+** Conflict (shift/reduce) in state 1050.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -100,7 +100,7 @@ program_e1 compstmt
                                                          operation command_args cmd_brace_block 
                                                                                 (?)
 
-** In state 1042, looking ahead at error, reducing production
+** In state 1050, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -109,14 +109,14 @@ LBRACE_ARG cmd_brace_block_e1 opt_block_var compstmt RCURLY_error // lookahead t
                                             none // lookahead token is inherited
                                             . 
 
-** In state 1042, looking ahead at error, shifting is permitted
+** In state 1050, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 LBRACE_ARG cmd_brace_block_e1 opt_block_var compstmt RCURLY_error 
                                             stmts opt_terms 
                                             . error stmt 
 
-** Conflict (shift/reduce) in state 961.
+** Conflict (shift/reduce) in state 969.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -140,7 +140,7 @@ program_e1 compstmt
                                                          operation brace_block 
                                                                    (?)
 
-** In state 961, looking ahead at error, reducing production
+** In state 969, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -149,14 +149,14 @@ K_DO brace_block_e1 opt_block_var compstmt K_END_error // lookahead token appear
                                   none // lookahead token is inherited
                                   . 
 
-** In state 961, looking ahead at error, shifting is permitted
+** In state 969, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 K_DO brace_block_e1 opt_block_var compstmt K_END_error 
                                   stmts opt_terms 
                                   . error stmt 
 
-** Conflict (shift/reduce) in state 943.
+** Conflict (shift/reduce) in state 951.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -180,7 +180,7 @@ program_e1 compstmt
                                                          operation brace_block 
                                                                    (?)
 
-** In state 943, looking ahead at error, reducing production
+** In state 951, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -189,14 +189,14 @@ LCURLY brace_block_e1 opt_block_var compstmt RCURLY_error // lookahead token app
                                     none // lookahead token is inherited
                                     . 
 
-** In state 943, looking ahead at error, shifting is permitted
+** In state 951, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 LCURLY brace_block_e1 opt_block_var compstmt RCURLY_error 
                                     stmts opt_terms 
                                     . error stmt 
 
-** Conflict (shift/reduce) in state 521.
+** Conflict (shift/reduce) in state 514.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -215,7 +215,7 @@ program_e1 compstmt
            operation command_args cmd_brace_block 
                                   (?)
 
-** In state 521, looking ahead at error, reducing production
+** In state 514, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -224,14 +224,14 @@ LBRACE_ARG cmd_brace_block_e1 opt_block_var compstmt RCURLY_error // lookahead t
                                             none // lookahead token is inherited
                                             . 
 
-** In state 521, looking ahead at error, shifting is permitted
+** In state 514, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 LBRACE_ARG cmd_brace_block_e1 opt_block_var compstmt RCURLY_error 
                                             stmts opt_terms 
                                             . error stmt 
 
-** Conflict (shift/reduce) in state 436.
+** Conflict (shift/reduce) in state 432.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -251,7 +251,7 @@ program_e1 compstmt
            command do_block 
                    (?)
 
-** In state 436, looking ahead at error, reducing production
+** In state 432, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -260,14 +260,14 @@ K_DO_BLOCK do_block_e1 opt_block_var compstmt K_END_error // lookahead token app
                                      none // lookahead token is inherited
                                      . 
 
-** In state 436, looking ahead at error, shifting is permitted
+** In state 432, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 K_DO_BLOCK do_block_e1 opt_block_var compstmt K_END_error 
                                      stmts opt_terms 
                                      . error stmt 
 
-** Conflict (shift/reduce) in state 258.
+** Conflict (shift/reduce) in state 252.
 ** Token involved: error
 ** This state is reached from program after reading:
 
@@ -285,7 +285,7 @@ program_e1 compstmt
            operation brace_block 
                      (?)
 
-** In state 258, looking ahead at error, reducing production
+** In state 252, looking ahead at error, reducing production
 ** none ->
 ** is permitted because of the following sub-derivation:
 
@@ -294,7 +294,7 @@ K_DO brace_block_e1 opt_block_var compstmt K_END_error // lookahead token appear
                                   none // lookahead token is inherited
                                   . 
 
-** In state 258, looking ahead at error, shifting is permitted
+** In state 252, looking ahead at error, shifting is permitted
 ** because of the following sub-derivation:
 
 K_DO brace_block_e1 opt_block_var compstmt K_END_error 

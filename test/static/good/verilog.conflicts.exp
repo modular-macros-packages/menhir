@@ -736,7 +736,7 @@ LPAREN identifier LBRACK constant_range_expression RBRACK list_of_path_inputs_3 
 LPAREN identifier LBRACK constant_range_expression RBRACK polarity_operator P_EQGT specify_output_terminal_descriptor RPAREN EQUALS path_delay_value 
                                                           . PLUS 
 
-** Conflict (shift/reduce) in state 1297.
+** Conflict (shift/reduce) in state 1299.
 ** Tokens involved: PLUS MINUS
 ** The following explanations concentrate on token PLUS.
 ** This state is reached from start after reading:
@@ -757,20 +757,20 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                             simple_path_declaration SEMICOLON 
                                                             (?)
 
-** In state 1297, looking ahead at PLUS, reducing production
+** In state 1299, looking ahead at PLUS, reducing production
 ** list_of_path_inputs_3 ->
 ** is permitted because of the following sub-derivation:
 
 LPAREN identifier list_of_path_inputs_3 polarity_operator P_ASTGT specify_output_terminal_descriptor list_of_path_outputs_3 RPAREN EQUALS path_delay_value // lookahead token appears because polarity_operator can begin with PLUS
                   . 
 
-** In state 1297, looking ahead at PLUS, shifting is permitted
+** In state 1299, looking ahead at PLUS, shifting is permitted
 ** because of the following sub-derivation:
 
 LPAREN identifier polarity_operator P_EQGT specify_output_terminal_descriptor RPAREN EQUALS path_delay_value 
                   . PLUS 
 
-** Conflict (reduce/reduce) in state 1095.
+** Conflict (reduce/reduce) in state 1097.
 ** Tokens involved: P_ANDANDAND COMMA
 ** The following explanations concentrate on token P_ANDANDAND.
 ** This state is reached from start after reading:
@@ -791,7 +791,7 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                             NOCHANGE LPAREN specify_terminal_descriptor P_ANDANDAND timing_check_condition COMMA specify_terminal_descriptor COMMA mintypmax_expression COMMA mintypmax_expression RPAREN SEMICOLON // lookahead token appears
                                                                             (?)
 
-** In state 1095, looking ahead at P_ANDANDAND, reducing production
+** In state 1097, looking ahead at P_ANDANDAND, reducing production
 ** specify_output_terminal_descriptor_3 -> LBRACK constant_range_expression RBRACK
 ** is permitted because of the following sub-derivation:
 
@@ -799,13 +799,13 @@ specify_output_terminal_descriptor // lookahead token is inherited
 identifier specify_output_terminal_descriptor_3 // lookahead token is inherited
            LBRACK constant_range_expression RBRACK . 
 
-** In state 1095, looking ahead at P_ANDANDAND, reducing production
+** In state 1097, looking ahead at P_ANDANDAND, reducing production
 ** specify_terminal_descriptor -> identifier LBRACK constant_range_expression RBRACK
 ** is permitted because of the following sub-derivation:
 
 identifier LBRACK constant_range_expression RBRACK . 
 
-** Conflict (reduce/reduce) in state 1092.
+** Conflict (reduce/reduce) in state 1094.
 ** Tokens involved: P_ANDANDAND COMMA
 ** The following explanations concentrate on token P_ANDANDAND.
 ** This state is reached from start after reading:
@@ -826,7 +826,7 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                             NOCHANGE LPAREN specify_terminal_descriptor P_ANDANDAND timing_check_condition COMMA specify_terminal_descriptor COMMA mintypmax_expression COMMA mintypmax_expression RPAREN SEMICOLON // lookahead token appears
                                                                             (?)
 
-** In state 1092, looking ahead at P_ANDANDAND, reducing production
+** In state 1094, looking ahead at P_ANDANDAND, reducing production
 ** specify_output_terminal_descriptor_3 ->
 ** is permitted because of the following sub-derivation:
 
@@ -834,13 +834,13 @@ specify_output_terminal_descriptor // lookahead token is inherited
 identifier specify_output_terminal_descriptor_3 // lookahead token is inherited
            . 
 
-** In state 1092, looking ahead at P_ANDANDAND, reducing production
+** In state 1094, looking ahead at P_ANDANDAND, reducing production
 ** specify_terminal_descriptor -> identifier
 ** is permitted because of the following sub-derivation:
 
 identifier . 
 
-** Conflict (shift/reduce) in state 1077.
+** Conflict (shift/reduce) in state 1079.
 ** Tokens involved: P_NOTEQUAL P_EQUAL P_CASENOTEQUAL P_CASEEQUAL
 ** The following explanations concentrate on token P_NOTEQUAL.
 ** This state is reached from start after reading:
@@ -862,7 +862,7 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                                                                                     scalar_timing_check_condition 
                                                                                                                     (?)
 
-** In state 1077, looking ahead at P_NOTEQUAL, shifting is permitted
+** In state 1079, looking ahead at P_NOTEQUAL, shifting is permitted
 ** because of the following sub-derivation:
 
 expression 
@@ -870,14 +870,14 @@ expr
 exprNoStr 
 expr . P_NOTEQUAL expr 
 
-** In state 1077, looking ahead at P_NOTEQUAL, reducing production
+** In state 1079, looking ahead at P_NOTEQUAL, reducing production
 ** expression -> expr
 ** is permitted because of the following sub-derivation:
 
 expression P_NOTEQUAL scalar_constant // lookahead token appears
 expr . 
 
-** Conflict (shift/reduce) in state 1053.
+** Conflict (shift/reduce) in state 1055.
 ** Tokens involved: RPAREN P_NOTEQUAL P_EQUAL P_CASENOTEQUAL P_CASEEQUAL
 ** The following explanations concentrate on token RPAREN.
 ** This state is reached from start after reading:
@@ -898,7 +898,7 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                             NOCHANGE LPAREN specify_terminal_descriptor P_ANDANDAND timing_check_condition COMMA specify_terminal_descriptor COMMA mintypmax_expression COMMA mintypmax_expression RPAREN SEMICOLON 
                                                                                                                     (?)
 
-** In state 1053, looking ahead at RPAREN, shifting is permitted
+** In state 1055, looking ahead at RPAREN, shifting is permitted
 ** because of the following sub-derivation:
 
 scalar_timing_check_condition 
@@ -907,7 +907,7 @@ expr
 exprNoStr 
 LPAREN expr . RPAREN 
 
-** In state 1053, looking ahead at RPAREN, reducing production
+** In state 1055, looking ahead at RPAREN, reducing production
 ** expression -> expr
 ** is permitted because of the following sub-derivation:
 
@@ -915,7 +915,7 @@ LPAREN scalar_timing_check_condition RPAREN // lookahead token appears
        expression // lookahead token is inherited
        expr . 
 
-** Conflict (reduce/reduce) in state 1034.
+** Conflict (reduce/reduce) in state 1036.
 ** Tokens involved: RPAREN COMMA
 ** The following explanations concentrate on token COMMA.
 ** This state is reached from start after reading:
@@ -937,7 +937,7 @@ MODULE ID modParE modPortsE SEMICOLON modItemListE ENDMODULE
                                                                                                                     scalar_timing_check_condition // lookahead token is inherited
                                                                                                                     (?)
 
-** In state 1034, looking ahead at COMMA, reducing production
+** In state 1036, looking ahead at COMMA, reducing production
 ** exprNoStr -> TILDE expr
 ** is permitted because of the following sub-derivation:
 
@@ -946,7 +946,7 @@ expr // lookahead token is inherited
 exprNoStr // lookahead token is inherited
 TILDE expr . 
 
-** In state 1034, looking ahead at COMMA, reducing production
+** In state 1036, looking ahead at COMMA, reducing production
 ** expression -> expr
 ** is permitted because of the following sub-derivation:
 

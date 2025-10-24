@@ -19,20 +19,21 @@ follow(expr) = PLUS MINUS INT #
 Built an LR(0) automaton with 14 states.
 The grammar is not SLR(1) -- 3 states have a conflict.
 The construction mode is pager.
-Built an LR(1) automaton with 15 states.
+Built an LR(1) automaton with 16 states.
 Warning: 2 states have shift/reduce conflicts.
-Warning: 2 states have reduce/reduce conflicts.
+Warning: 3 states have reduce/reduce conflicts.
+1 conflict could not be explained.
 Warning: 2 shift/reduce conflicts were arbitrarily resolved.
-Warning: 2 reduce/reduce conflicts were arbitrarily resolved.
-Warning: 7 end-of-stream conflicts were arbitrarily resolved.
+Warning: 3 reduce/reduce conflicts were arbitrarily resolved.
+Warning: 8 end-of-stream conflicts were arbitrarily resolved.
 File "ketti.mly", line 5, characters 0-4:
 Warning: symbol expr is never accepted.
 Warning: in total, 1 production is never reduced.
-3 out of 15 states have a default reduction.
-The action table is 60 entries; 23 non-zero; 29 compressed.
-The action table occupies roughly 120 bytes.
-The goto table is 60 entries; 12 non-zero; 27 compressed.
-The goto table occupies roughly 112 bytes.
+3 out of 16 states have a default reduction.
+The action table is 64 entries; 26 non-zero; 33 compressed.
+The action table occupies roughly 128 bytes.
+The goto table is 64 entries; 12 non-zero; 28 compressed.
+The goto table occupies roughly 120 bytes.
 The error table occupies roughly 40 bytes.
 The default_reduction table occupies roughly 40 bytes.
 The lhs table occupies roughly 40 bytes.

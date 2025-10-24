@@ -37,77 +37,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                   includes list(includes) // lookahead token is inherited because list(includes) can vanish
                   defineop ctype . 
 
-** Conflict (reduce/reduce) in state 1132.
-** Token involved: TOPar
-** This state is reached from minus_main after reading:
-
-loption(filespec) defineop generic_ctype list(TMul)
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-minus_main 
-minus_body EOF 
-(?)
-
-** In state 1132, looking ahead at TOPar, reducing production
-** ctype -> generic_ctype list(TMul)
-** is permitted because of the following sub-derivation:
-
-loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) // lookahead token appears because loption(minus_function_decl_statement_or_expression) can begin with TOPar
-                  includes list(includes) // lookahead token is inherited because list(includes) can vanish
-                  defineop ctype // lookahead token is inherited
-                           generic_ctype list(TMul) . 
-
-** In state 1132, looking ahead at TOPar, reducing production
-** fn_ctype -> generic_ctype list(TMul)
-** is permitted because of the following sub-derivation:
-
-loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
-                  includes list(includes) 
-                  defineop statement_dots(TEllipsis) 
-                           no_dot_start_end(exp_decl_statement_list,dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement)) 
-                           exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) 
-                           pure_decl_statement_list 
-                           nonempty_list(decl_statement) 
-                           decl_statement 
-                           decl_var 
-                           fn_ctype TOPar TMul d_ident TCPar TOPar decl_list(name_opt_decl) TCPar TPtVirg // lookahead token appears
-                           generic_ctype list(TMul) . 
-
-** Conflict (shift/reduce) in state 1131.
-** Token involved: TMul
-** This state is reached from minus_main after reading:
-
-loption(filespec) defineop generic_ctype
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-minus_main 
-minus_body EOF 
-(?)
-
-** In state 1131, looking ahead at TMul, reducing production
-** list(TMul) ->
-** is permitted because of the following sub-derivation:
-
-loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) // lookahead token appears because loption(minus_function_decl_statement_or_expression) can begin with TMul
-                  includes list(includes) // lookahead token is inherited because list(includes) can vanish
-                  defineop ctype // lookahead token is inherited
-                           generic_ctype list(TMul) // lookahead token is inherited
-                                         . 
-
-** In state 1131, looking ahead at TMul, shifting is permitted
-** because of the following sub-derivation:
-
-loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
-                  includes list(includes) 
-                  defineop ctype 
-                           generic_ctype list(TMul) 
-                                         . TMul list(TMul) 
-
-** Conflict (shift/reduce) in state 823.
+** Conflict (shift/reduce) in state 825.
 ** Token involved: TEllipsis
 ** This state is reached from minus_main after reading:
 
@@ -120,7 +50,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 823, looking ahead at TEllipsis, shifting is permitted
+** In state 825, looking ahead at TEllipsis, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -132,7 +62,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                                                                                                                                                           dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement) exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) 
                                                                                                                                                           . TEllipsis list(whens(pre_post_decl_statement_or_expression,rule_elem_statement)) 
 
-** In state 823, looking ahead at TEllipsis, reducing production
+** In state 825, looking ahead at TEllipsis, reducing production
 ** list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) ->
 ** is permitted because of the following sub-derivation:
 
@@ -144,7 +74,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                                                    dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement) exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) // lookahead token is inherited
                                                                                                                                                           . 
 
-** Conflict (shift/reduce) in state 820.
+** Conflict (shift/reduce) in state 822.
 ** Token involved: TEllipsis
 ** This state is reached from minus_main after reading:
 
@@ -157,7 +87,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 820, looking ahead at TEllipsis, shifting is permitted
+** In state 822, looking ahead at TEllipsis, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -168,7 +98,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                                                    dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement) exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) 
                                                    . TEllipsis list(whens(pre_post_decl_statement_or_expression,rule_elem_statement)) 
 
-** In state 820, looking ahead at TEllipsis, reducing production
+** In state 822, looking ahead at TEllipsis, reducing production
 ** list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) ->
 ** is permitted because of the following sub-derivation:
 
@@ -179,7 +109,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) // lookahead token is inherited
                                                    . 
 
-** Conflict (shift/reduce) in state 796.
+** Conflict (shift/reduce) in state 798.
 ** Tokens involved: Tvolatile Tvoid Tunsigned Tunion Tstruct Tstatic Tsigned Tshort Tregister Tlong Tint Tfloat Textern Tdouble Tconst Tchar Tauto TWhile TTypeId TTilde TSwitch TString TSizeof TRuleName TReturn TPlus TOPar0 TOPar TOEllipsis TOBrace TMul TMinus TMetaType TMetaStmList TMetaStm TMetaLocalFunc TMetaId TMetaFunc TMetaExp TMetaErr TMetaConst TInvalid TInt TInc TIf TIdent TFor TFloat TDo TDeclarerId TDec TContinue TChar TBreak TBang TAnd
 ** The following explanations concentrate on token Tvolatile.
 ** This state is reached from minus_main after reading:
@@ -193,7 +123,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 796, looking ahead at Tvolatile, shifting is permitted
+** In state 798, looking ahead at Tvolatile, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -209,7 +139,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                                           const_vol pure_ident comma_list(d_ident) TPtVirg 
                                           . Tvolatile 
 
-** In state 796, looking ahead at Tvolatile, reducing production
+** In state 798, looking ahead at Tvolatile, reducing production
 ** nonempty_list(decl_statement) -> decl_statement
 ** is permitted because of the following sub-derivation:
 
@@ -222,7 +152,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            nonempty_list(decl_statement) // lookahead token is inherited
                            decl_statement . 
 
-** Conflict (shift/reduce) in state 793.
+** Conflict (shift/reduce) in state 795.
 ** Tokens involved: Tvolatile Tvoid Tunsigned Tunion Tstruct Tstatic Tsigned Tshort Tregister Tlong Tint Tfloat Textern Tdouble Tconst Tchar Tauto TWhile TTypeId TTilde TSwitch TString TSizeof TRuleName TReturn TPlus TOPar0 TOPar TOEllipsis TOBrace TNothing TMul TMinus TMetaType TMetaStmList TMetaStm TMetaLocalFunc TMetaId TMetaFunc TMetaExp TMetaErr TMetaConst TInvalid TInt TInc TIf TIdent TFor TFloat TDo TDeclarerId TDec TContinue TChar TBreak TBang TAnd
 ** The following explanations concentrate on token Tvolatile.
 ** This state is reached from minus_main after reading:
@@ -236,7 +166,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 793, looking ahead at Tvolatile, shifting is permitted
+** In state 795, looking ahead at Tvolatile, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -252,7 +182,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                                                                                 const_vol pure_ident comma_list(d_ident) TPtVirg 
                                                                                 . Tvolatile 
 
-** In state 793, looking ahead at Tvolatile, reducing production
+** In state 795, looking ahead at Tvolatile, reducing production
 ** exp_decl_statement_list -> expr TOEllipsis statement_dots(TEllipsis) TCEllipsis
 ** is permitted because of the following sub-derivation:
 
@@ -263,7 +193,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) // lookahead token is inherited because list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) can vanish
                            expr TOEllipsis statement_dots(TEllipsis) TCEllipsis . 
 
-** Conflict (shift/reduce) in state 790.
+** Conflict (shift/reduce) in state 792.
 ** Token involved: TOEllipsis
 ** This state is reached from minus_main after reading:
 
@@ -276,7 +206,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 790, looking ahead at TOEllipsis, reducing production
+** In state 792, looking ahead at TOEllipsis, reducing production
 ** exp_decl_statement_list -> expr
 ** is permitted because of the following sub-derivation:
 
@@ -287,7 +217,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) // lookahead token is inherited because list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) can vanish
                            expr . 
 
-** In state 790, looking ahead at TOEllipsis, shifting is permitted
+** In state 792, looking ahead at TOEllipsis, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -297,7 +227,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) 
                            expr . TOEllipsis statement_dots(TEllipsis) TCEllipsis exp_decl_statement_list 
 
-** Conflict (shift/reduce) in state 755.
+** Conflict (shift/reduce) in state 757.
 ** Tokens involved: TMetaId TIdent
 ** The following explanations concentrate on token TMetaId.
 ** This state is reached from minus_main after reading:
@@ -311,7 +241,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 755, looking ahead at TMetaId, reducing production
+** In state 757, looking ahead at TMetaId, reducing production
 ** func_ident -> pure_ident
 ** is permitted because of the following sub-derivation:
 
@@ -332,7 +262,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            func_ident // lookahead token is inherited
                            pure_ident . 
 
-** In state 755, looking ahead at TMetaId, shifting is permitted
+** In state 757, looking ahead at TMetaId, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -348,7 +278,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                                       ident list(array_dec) 
                                       . TMetaId 
 
-** Conflict (shift/reduce) in state 459.
+** Conflict (shift/reduce) in state 461.
 ** Tokens involved: TPlus TMul TMinus TAnd
 ** The following explanations concentrate on token TPlus.
 ** This state is reached from minus_main after reading:
@@ -362,7 +292,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 459, looking ahead at TPlus, shifting is permitted
+** In state 461, looking ahead at TPlus, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -377,7 +307,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            arith_expr(expr,invalid) 
                            arith_expr(expr,invalid) . TPlus arith_expr(expr,invalid) 
 
-** In state 459, looking ahead at TPlus, reducing production
+** In state 461, looking ahead at TPlus, reducing production
 ** cond_expr(expr,invalid) -> arith_expr(expr,invalid)
 ** is permitted because of the following sub-derivation:
 
@@ -392,7 +322,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            cond_expr(expr,invalid) // lookahead token is inherited
                            arith_expr(expr,invalid) . 
 
-** Conflict (shift/reduce) in state 435.
+** Conflict (shift/reduce) in state 437.
 ** Tokens involved: TOPar TInc TDec
 ** The following explanations concentrate on token TOPar.
 ** This state is reached from minus_main after reading:
@@ -406,7 +336,7 @@ minus_main
 minus_body EOF 
 (?)
 
-** In state 435, looking ahead at TOPar, shifting is permitted
+** In state 437, looking ahead at TOPar, shifting is permitted
 ** because of the following sub-derivation:
 
 loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
@@ -421,7 +351,7 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            postfix_expr(expr,invalid) 
                            postfix_expr(expr,invalid) . TOPar eexpr_list_option TCPar 
 
-** In state 435, looking ahead at TOPar, reducing production
+** In state 437, looking ahead at TOPar, reducing production
 ** unary_expr(expr,invalid) -> postfix_expr(expr,invalid)
 ** is permitted because of the following sub-derivation:
 
@@ -438,6 +368,76 @@ loption(filespec) list(includes) loption(minus_function_decl_statement_or_expres
                            cast_expr(expr,invalid) // lookahead token is inherited
                            unary_expr(expr,invalid) // lookahead token is inherited
                            postfix_expr(expr,invalid) . 
+
+** Conflict (reduce/reduce) in state 326.
+** Token involved: TOPar
+** This state is reached from minus_main after reading:
+
+loption(filespec) defineop generic_ctype list(TMul)
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+minus_main 
+minus_body EOF 
+(?)
+
+** In state 326, looking ahead at TOPar, reducing production
+** ctype -> generic_ctype list(TMul)
+** is permitted because of the following sub-derivation:
+
+loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) // lookahead token appears because loption(minus_function_decl_statement_or_expression) can begin with TOPar
+                  includes list(includes) // lookahead token is inherited because list(includes) can vanish
+                  defineop ctype // lookahead token is inherited
+                           generic_ctype list(TMul) . 
+
+** In state 326, looking ahead at TOPar, reducing production
+** fn_ctype -> generic_ctype list(TMul)
+** is permitted because of the following sub-derivation:
+
+loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
+                  includes list(includes) 
+                  defineop statement_dots(TEllipsis) 
+                           no_dot_start_end(exp_decl_statement_list,dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement)) 
+                           exp_decl_statement_list list(pair(dots_when(TEllipsis,pre_post_decl_statement_or_expression,rule_elem_statement),exp_decl_statement_list)) 
+                           pure_decl_statement_list 
+                           nonempty_list(decl_statement) 
+                           decl_statement 
+                           decl_var 
+                           fn_ctype TOPar TMul d_ident TCPar TOPar decl_list(name_opt_decl) TCPar TPtVirg // lookahead token appears
+                           generic_ctype list(TMul) . 
+
+** Conflict (shift/reduce) in state 325.
+** Token involved: TMul
+** This state is reached from minus_main after reading:
+
+loption(filespec) defineop generic_ctype
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+minus_main 
+minus_body EOF 
+(?)
+
+** In state 325, looking ahead at TMul, reducing production
+** list(TMul) ->
+** is permitted because of the following sub-derivation:
+
+loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) // lookahead token appears because loption(minus_function_decl_statement_or_expression) can begin with TMul
+                  includes list(includes) // lookahead token is inherited because list(includes) can vanish
+                  defineop ctype // lookahead token is inherited
+                           generic_ctype list(TMul) // lookahead token is inherited
+                                         . 
+
+** In state 325, looking ahead at TMul, shifting is permitted
+** because of the following sub-derivation:
+
+loption(filespec) list(includes) loption(minus_function_decl_statement_or_expression) loption(error_words) 
+                  includes list(includes) 
+                  defineop ctype 
+                           generic_ctype list(TMul) 
+                                         . TMul list(TMul) 
 
 ** Conflict (shift/reduce) in state 161.
 ** Token involved: TMul

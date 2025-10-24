@@ -118,12 +118,12 @@ interactive_command -> annot . EOF [ # ]
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On EOF shift to state 343
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On effetto shift to state 386
+-- On FLUX shift to state 336
+-- On EOF shift to state 345
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On effetto shift to state 388
 ## Reductions:
 
 State 10:
@@ -2299,7 +2299,7 @@ State 180:
 ## Known stack suffix:
 ## OP_PAR
 ## LR(1) items:
-small_alg_expr -> OP_PAR . annot alg_expr CL_PAR [ TOKEN THEN SPACE SMALLER SIGNATURE SEMICOLON RAR POW PLUS PLOT PIPE PERT OR OP_PAR OP_CUR OBS NEWLINE MULT MOD MINUS LRAR LET LABEL INIT ID GREATER EQUAL EOF ELSE DOT DO DIV DIFF CONFIG COMMENT COMMA CL_PAR AND ]
+small_alg_expr -> OP_PAR . annot alg_expr CL_PAR [ TOKEN THEN SPACE SMALLER SIGNATURE SEMICOLON RAR POW PLUS PLOT PIPE PERT OR OP_CUR OBS NEWLINE MULT MOD MINUS LRAR LET LABEL INIT ID GREATER EQUAL EOF ELSE DOT DO DIV DIFF CONFIG COMMENT COMMA CL_PAR AND ]
 small_bool_expr -> OP_PAR . annot bool_expr CL_PAR [ THEN SPACE OR NEWLINE COMMENT CL_PAR AND ]
 ## Transitions:
 -- On SPACE shift to state 2
@@ -2314,7 +2314,7 @@ State 181:
 ## Known stack suffix:
 ## OP_PAR annot
 ## LR(1) items:
-small_alg_expr -> OP_PAR annot . alg_expr CL_PAR [ TOKEN THEN SPACE SMALLER SIGNATURE SEMICOLON RAR POW PLUS PLOT PIPE PERT OR OP_PAR OP_CUR OBS NEWLINE MULT MOD MINUS LRAR LET LABEL INIT ID GREATER EQUAL EOF ELSE DOT DO DIV DIFF CONFIG COMMENT COMMA CL_PAR AND ]
+small_alg_expr -> OP_PAR annot . alg_expr CL_PAR [ TOKEN THEN SPACE SMALLER SIGNATURE SEMICOLON RAR POW PLUS PLOT PIPE PERT OR OP_CUR OBS NEWLINE MULT MOD MINUS LRAR LET LABEL INIT ID GREATER EQUAL EOF ELSE DOT DO DIV DIFF CONFIG COMMENT COMMA CL_PAR AND ]
 small_bool_expr -> OP_PAR annot . bool_expr CL_PAR [ THEN SPACE OR NEWLINE COMMENT CL_PAR AND ]
 ## Transitions:
 -- On TRUE shift to state 179
@@ -2458,7 +2458,7 @@ State 187:
 ## Known stack suffix:
 ## OP_PAR
 ## LR(1) items:
-small_alg_expr -> OP_PAR . annot alg_expr CL_PAR [ SPACE SMALLER POW PLUS NEWLINE MULT MOD MINUS GREATER EQUAL DIV DIFF COMMENT COLON CL_CUR ]
+small_alg_expr -> OP_PAR . annot alg_expr CL_PAR [ SPACE SMALLER POW PLUS NEWLINE MULT MOD MINUS GREATER EQUAL DIV DIFF COMMENT ]
 small_bool_expr -> OP_PAR . annot bool_expr CL_PAR [ TOKEN THEN SPACE SIGNATURE SEMICOLON RAR PLOT PIPE PERT OR OBS NEWLINE LRAR LET LABEL INIT ID EOF DOT DO CONFIG COMMENT CL_PAR AND ]
 ## Transitions:
 -- On SPACE shift to state 2
@@ -2473,7 +2473,7 @@ State 188:
 ## Known stack suffix:
 ## OP_PAR annot
 ## LR(1) items:
-small_alg_expr -> OP_PAR annot . alg_expr CL_PAR [ SPACE SMALLER POW PLUS NEWLINE MULT MOD MINUS GREATER EQUAL DIV DIFF COMMENT COLON CL_CUR ]
+small_alg_expr -> OP_PAR annot . alg_expr CL_PAR [ SPACE SMALLER POW PLUS NEWLINE MULT MOD MINUS GREATER EQUAL DIV DIFF COMMENT ]
 small_bool_expr -> OP_PAR annot . bool_expr CL_PAR [ TOKEN THEN SPACE SIGNATURE SEMICOLON RAR PLOT PIPE PERT OR OBS NEWLINE LRAR LET LABEL INIT ID EOF DOT DO CONFIG COMMENT CL_PAR AND ]
 ## Transitions:
 -- On TRUE shift to state 179
@@ -4944,7 +4944,7 @@ effetto -> INTRO annot . error [ SEMICOLON EOF CL_PAR ]
 -- On SQRT shift to state 166
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
--- On OP_PAR shift to state 180
+-- On OP_PAR shift to state 332
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -4975,7 +4975,7 @@ effetto -> INTRO annot . error [ SEMICOLON EOF CL_PAR ]
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 332
+-- On alg_expr shift to state 334
 ## Reductions:
 
 State 331:
@@ -4989,199 +4989,26 @@ effetto -> INTRO annot error . [ SEMICOLON EOF CL_PAR ]
 
 State 332:
 ## Known stack suffix:
-## INTRO annot alg_expr
+## OP_PAR
 ## LR(1) items:
-effetto -> INTRO annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
+small_alg_expr -> OP_PAR . annot alg_expr CL_PAR [ SPACE SMALLER POW PLUS OP_PAR NEWLINE MULT MOD MINUS ID GREATER EQUAL DOT DIV DIFF COMMENT COLON CL_CUR ]
+small_bool_expr -> OP_PAR . annot bool_expr CL_PAR [ THEN SPACE OR NEWLINE EOF DO COMMENT CL_PAR AND ]
 ## Transitions:
--- On ID shift to state 18
--- On DOT shift to state 150
--- On pattern shift to state 333
--- On agent shift to state 155
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 333
 ## Reductions:
+-- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
+--   reduce production annot ->
 
 State 333:
 ## Known stack suffix:
-## INTRO annot alg_expr pattern
+## OP_PAR annot
 ## LR(1) items:
-effetto -> INTRO annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
+small_alg_expr -> OP_PAR annot . alg_expr CL_PAR [ SPACE SMALLER POW PLUS OP_PAR NEWLINE MULT MOD MINUS ID GREATER EQUAL DOT DIV DIFF COMMENT COLON CL_CUR ]
+small_bool_expr -> OP_PAR annot . bool_expr CL_PAR [ THEN SPACE OR NEWLINE EOF DO COMMENT CL_PAR AND ]
 ## Transitions:
-## Default reduction:
--- After reading the next token, reduce production effetto -> INTRO annot alg_expr pattern
-
-State 334:
-## Known stack suffix:
-## FLUX
-## LR(1) items:
-effetto -> FLUX . annot nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
-effetto -> FLUX . annot nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On SPACE shift to state 2
--- On NEWLINE shift to state 3
--- On COMMENT shift to state 4
--- On annot shift to state 335
-## Reductions:
--- On TMAX TIME TAN STRING SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
---   reduce production annot ->
-
-State 335:
-## Known stack suffix:
-## FLUX annot
-## LR(1) items:
-effetto -> FLUX annot . nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
-effetto -> FLUX annot . nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On TMAX shift to state 162
--- On TIME shift to state 163
--- On TAN shift to state 164
--- On STRING shift to state 290
--- On SQRT shift to state 166
--- On SINUS shift to state 168
--- On PIPE shift to state 170
--- On OP_PAR shift to state 294
--- On NULL_EVENT shift to state 182
--- On MINUS shift to state 189
--- On MIN shift to state 191
--- On MAX shift to state 193
--- On LOG shift to state 195
--- On LABEL shift to state 197
--- On INT shift to state 198
--- On INFINITY shift to state 199
--- On ID shift to state 200
--- On FLOAT shift to state 201
--- On EXPONENT shift to state 202
--- On EVENT shift to state 204
--- On EMAX shift to state 205
--- On CPUTIME shift to state 206
--- On COSINUS shift to state 207
--- On ABS shift to state 209
--- On variable shift to state 211
--- On small_alg_expr shift to state 228
--- On print_expr_list shift to state 304
--- On nonempty_print_expr shift to state 336
--- On nbr shift to state 213
--- On constant shift to state 214
--- On alg_expr_up_to_sum shift to state 240
--- On alg_expr_up_to_prod shift to state 251
--- On alg_expr_up_to_mod shift to state 247
--- On alg_expr_up_to_if shift to state 306
-## Reductions:
-
-State 336:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr . boolean annot [ SEMICOLON EOF CL_PAR ]
-effetto -> FLUX annot nonempty_print_expr . STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On TRUE shift to state 14
--- On STRING shift to state 337
--- On FALSE shift to state 15
--- On boolean shift to state 341
-## Reductions:
-
-State 337:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr STRING
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr STRING . annot boolean annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On SPACE shift to state 2
--- On NEWLINE shift to state 3
--- On COMMENT shift to state 4
--- On annot shift to state 338
-## Reductions:
--- On TRUE FALSE
---   reduce production annot ->
-
-State 338:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr STRING annot
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr STRING annot . boolean annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On TRUE shift to state 14
--- On FALSE shift to state 15
--- On boolean shift to state 339
-## Reductions:
-
-State 339:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr STRING annot boolean
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr STRING annot boolean . annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On SPACE shift to state 2
--- On NEWLINE shift to state 3
--- On COMMENT shift to state 4
--- On annot shift to state 340
-## Reductions:
--- On SEMICOLON EOF CL_PAR
---   reduce production annot ->
-
-State 340:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr STRING annot boolean annot
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr STRING annot boolean annot . [ SEMICOLON EOF CL_PAR ]
-## Transitions:
-## Default reduction:
--- After reading the next token, reduce production effetto -> FLUX annot nonempty_print_expr STRING annot boolean annot
-
-State 341:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr boolean
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr boolean . annot [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On SPACE shift to state 2
--- On NEWLINE shift to state 3
--- On COMMENT shift to state 4
--- On annot shift to state 342
-## Reductions:
--- On SEMICOLON EOF CL_PAR
---   reduce production annot ->
-
-State 342:
-## Known stack suffix:
-## FLUX annot nonempty_print_expr boolean annot
-## LR(1) items:
-effetto -> FLUX annot nonempty_print_expr boolean annot . [ SEMICOLON EOF CL_PAR ]
-## Transitions:
-## Default reduction:
--- After reading the next token, reduce production effetto -> FLUX annot nonempty_print_expr boolean annot
-
-State 343:
-## Known stack suffix:
-## annot EOF
-## LR(1) items:
-interactive_command -> annot EOF . [ # ]
-## Transitions:
-## Default reduction:
--- Without reading the next token, reduce production interactive_command -> annot EOF
-
-State 344:
-## Known stack suffix:
-## DELETE
-## LR(1) items:
-effetto -> DELETE . annot alg_expr pattern [ SEMICOLON EOF CL_PAR ]
-effetto -> DELETE . annot error [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On SPACE shift to state 19
--- On NEWLINE shift to state 20
--- On COMMENT shift to state 21
--- On annot shift to state 345
-## Reductions:
--- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
---   reduce production annot ->
-
-State 345:
-## Known stack suffix:
-## DELETE annot
-## LR(1) items:
-effetto -> DELETE annot . alg_expr pattern [ SEMICOLON EOF CL_PAR ]
-effetto -> DELETE annot . error [ SEMICOLON EOF CL_PAR ]
-## Transitions:
--- On error shift to state 346
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -5215,15 +5042,251 @@ effetto -> DELETE annot . error [ SEMICOLON EOF CL_PAR ]
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
+-- On bool_expr shift to state 281
+-- On alg_expr_up_to_sum shift to state 240
+-- On alg_expr_up_to_prod shift to state 251
+-- On alg_expr_up_to_mod shift to state 247
+-- On alg_expr_up_to_if shift to state 258
+-- On alg_expr shift to state 283
+## Reductions:
+
+State 334:
+## Known stack suffix:
+## INTRO annot alg_expr
+## LR(1) items:
+effetto -> INTRO annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On ID shift to state 18
+-- On DOT shift to state 150
+-- On pattern shift to state 335
+-- On agent shift to state 155
+## Reductions:
+
+State 335:
+## Known stack suffix:
+## INTRO annot alg_expr pattern
+## LR(1) items:
+effetto -> INTRO annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production effetto -> INTRO annot alg_expr pattern
+
+State 336:
+## Known stack suffix:
+## FLUX
+## LR(1) items:
+effetto -> FLUX . annot nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX . annot nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 337
+## Reductions:
+-- On TMAX TIME TAN STRING SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
+--   reduce production annot ->
+
+State 337:
+## Known stack suffix:
+## FLUX annot
+## LR(1) items:
+effetto -> FLUX annot . nonempty_print_expr boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot . nonempty_print_expr STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On TMAX shift to state 162
+-- On TIME shift to state 163
+-- On TAN shift to state 164
+-- On STRING shift to state 290
+-- On SQRT shift to state 166
+-- On SINUS shift to state 168
+-- On PIPE shift to state 170
+-- On OP_PAR shift to state 294
+-- On NULL_EVENT shift to state 182
+-- On MINUS shift to state 189
+-- On MIN shift to state 191
+-- On MAX shift to state 193
+-- On LOG shift to state 195
+-- On LABEL shift to state 197
+-- On INT shift to state 198
+-- On INFINITY shift to state 199
+-- On ID shift to state 200
+-- On FLOAT shift to state 201
+-- On EXPONENT shift to state 202
+-- On EVENT shift to state 204
+-- On EMAX shift to state 205
+-- On CPUTIME shift to state 206
+-- On COSINUS shift to state 207
+-- On ABS shift to state 209
+-- On variable shift to state 211
+-- On small_alg_expr shift to state 228
+-- On print_expr_list shift to state 304
+-- On nonempty_print_expr shift to state 338
+-- On nbr shift to state 213
+-- On constant shift to state 214
+-- On alg_expr_up_to_sum shift to state 240
+-- On alg_expr_up_to_prod shift to state 251
+-- On alg_expr_up_to_mod shift to state 247
+-- On alg_expr_up_to_if shift to state 306
+## Reductions:
+
+State 338:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr . boolean annot [ SEMICOLON EOF CL_PAR ]
+effetto -> FLUX annot nonempty_print_expr . STRING annot boolean annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On TRUE shift to state 14
+-- On STRING shift to state 339
+-- On FALSE shift to state 15
+-- On boolean shift to state 343
+## Reductions:
+
+State 339:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr STRING
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr STRING . annot boolean annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 340
+## Reductions:
+-- On TRUE FALSE
+--   reduce production annot ->
+
+State 340:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr STRING annot
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr STRING annot . boolean annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On TRUE shift to state 14
+-- On FALSE shift to state 15
+-- On boolean shift to state 341
+## Reductions:
+
+State 341:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr STRING annot boolean
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr STRING annot boolean . annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 342
+## Reductions:
+-- On SEMICOLON EOF CL_PAR
+--   reduce production annot ->
+
+State 342:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr STRING annot boolean annot
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr STRING annot boolean annot . [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production effetto -> FLUX annot nonempty_print_expr STRING annot boolean annot
+
+State 343:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr boolean
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr boolean . annot [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 344
+## Reductions:
+-- On SEMICOLON EOF CL_PAR
+--   reduce production annot ->
+
+State 344:
+## Known stack suffix:
+## FLUX annot nonempty_print_expr boolean annot
+## LR(1) items:
+effetto -> FLUX annot nonempty_print_expr boolean annot . [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production effetto -> FLUX annot nonempty_print_expr boolean annot
+
+State 345:
+## Known stack suffix:
+## annot EOF
+## LR(1) items:
+interactive_command -> annot EOF . [ # ]
+## Transitions:
+## Default reduction:
+-- Without reading the next token, reduce production interactive_command -> annot EOF
+
+State 346:
+## Known stack suffix:
+## DELETE
+## LR(1) items:
+effetto -> DELETE . annot alg_expr pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE . annot error [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On SPACE shift to state 19
+-- On NEWLINE shift to state 20
+-- On COMMENT shift to state 21
+-- On annot shift to state 347
+## Reductions:
+-- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
+--   reduce production annot ->
+
+State 347:
+## Known stack suffix:
+## DELETE annot
+## LR(1) items:
+effetto -> DELETE annot . alg_expr pattern [ SEMICOLON EOF CL_PAR ]
+effetto -> DELETE annot . error [ SEMICOLON EOF CL_PAR ]
+## Transitions:
+-- On error shift to state 348
+-- On TRUE shift to state 179
+-- On TMAX shift to state 162
+-- On TIME shift to state 163
+-- On TAN shift to state 164
+-- On SQRT shift to state 166
+-- On SINUS shift to state 168
+-- On PIPE shift to state 170
+-- On OP_PAR shift to state 332
+-- On NULL_EVENT shift to state 182
+-- On NOT shift to state 183
+-- On MINUS shift to state 189
+-- On MIN shift to state 191
+-- On MAX shift to state 193
+-- On LOG shift to state 195
+-- On LABEL shift to state 197
+-- On INT shift to state 198
+-- On INFINITY shift to state 199
+-- On ID shift to state 200
+-- On FLOAT shift to state 201
+-- On FALSE shift to state 225
+-- On EXPONENT shift to state 202
+-- On EVENT shift to state 204
+-- On EMAX shift to state 205
+-- On CPUTIME shift to state 206
+-- On COSINUS shift to state 207
+-- On ABS shift to state 209
+-- On variable shift to state 211
+-- On small_bool_expr shift to state 226
+-- On small_alg_expr shift to state 228
+-- On nbr shift to state 213
+-- On constant shift to state 214
+-- On bool_expr_no_or shift to state 233
+-- On bool_expr_comp shift to state 236
 -- On bool_expr shift to state 255
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 347
+-- On alg_expr shift to state 349
 ## Reductions:
 
-State 346:
+State 348:
 ## Known stack suffix:
 ## DELETE annot error
 ## LR(1) items:
@@ -5232,7 +5295,7 @@ effetto -> DELETE annot error . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production effetto -> DELETE annot error
 
-State 347:
+State 349:
 ## Known stack suffix:
 ## DELETE annot alg_expr
 ## LR(1) items:
@@ -5240,11 +5303,11 @@ effetto -> DELETE annot alg_expr . pattern [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
 -- On ID shift to state 18
 -- On DOT shift to state 150
--- On pattern shift to state 348
+-- On pattern shift to state 350
 -- On agent shift to state 155
 ## Reductions:
 
-State 348:
+State 350:
 ## Known stack suffix:
 ## DELETE annot alg_expr pattern
 ## LR(1) items:
@@ -5253,7 +5316,7 @@ effetto -> DELETE annot alg_expr pattern . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production effetto -> DELETE annot alg_expr pattern
 
-State 349:
+State 351:
 ## Known stack suffix:
 ## ASSIGN
 ## LR(1) items:
@@ -5263,23 +5326,23 @@ effetto -> ASSIGN . annot LABEL annot alg_expr [ SEMICOLON EOF CL_PAR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 350
+-- On annot shift to state 352
 ## Reductions:
 -- On LABEL ID
 --   reduce production annot ->
 
-State 350:
+State 352:
 ## Known stack suffix:
 ## ASSIGN annot
 ## LR(1) items:
 effetto -> ASSIGN annot . ID annot alg_expr [ SEMICOLON EOF CL_PAR ]
 effetto -> ASSIGN annot . LABEL annot alg_expr [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
--- On LABEL shift to state 351
--- On ID shift to state 354
+-- On LABEL shift to state 353
+-- On ID shift to state 356
 ## Reductions:
 
-State 351:
+State 353:
 ## Known stack suffix:
 ## ASSIGN annot LABEL
 ## LR(1) items:
@@ -5288,12 +5351,12 @@ effetto -> ASSIGN annot LABEL . annot alg_expr [ SEMICOLON EOF CL_PAR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 352
+-- On annot shift to state 354
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 352:
+State 354:
 ## Known stack suffix:
 ## ASSIGN annot LABEL annot
 ## LR(1) items:
@@ -5337,10 +5400,10 @@ effetto -> ASSIGN annot LABEL annot . alg_expr [ SEMICOLON EOF CL_PAR ]
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 353
+-- On alg_expr shift to state 355
 ## Reductions:
 
-State 353:
+State 355:
 ## Known stack suffix:
 ## ASSIGN annot LABEL annot alg_expr
 ## LR(1) items:
@@ -5349,7 +5412,7 @@ effetto -> ASSIGN annot LABEL annot alg_expr . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production effetto -> ASSIGN annot LABEL annot alg_expr
 
-State 354:
+State 356:
 ## Known stack suffix:
 ## ASSIGN annot ID
 ## LR(1) items:
@@ -5358,12 +5421,12 @@ effetto -> ASSIGN annot ID . annot alg_expr [ SEMICOLON EOF CL_PAR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 355
+-- On annot shift to state 357
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 355:
+State 357:
 ## Known stack suffix:
 ## ASSIGN annot ID annot
 ## LR(1) items:
@@ -5407,10 +5470,10 @@ effetto -> ASSIGN annot ID annot . alg_expr [ SEMICOLON EOF CL_PAR ]
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 356
+-- On alg_expr shift to state 358
 ## Reductions:
 
-State 356:
+State 358:
 ## Known stack suffix:
 ## ASSIGN annot ID annot alg_expr
 ## LR(1) items:
@@ -5419,7 +5482,7 @@ effetto -> ASSIGN annot ID annot alg_expr . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production effetto -> ASSIGN annot ID annot alg_expr
 
-State 357:
+State 359:
 ## Known stack suffix:
 ## APPLY
 ## LR(1) items:
@@ -5428,12 +5491,12 @@ effetto -> APPLY . annot alg_expr rule_content [ SEMICOLON EOF CL_PAR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 358
+-- On annot shift to state 360
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 358:
+State 360:
 ## Known stack suffix:
 ## APPLY annot
 ## LR(1) items:
@@ -5477,28 +5540,28 @@ effetto -> APPLY annot . alg_expr rule_content [ SEMICOLON EOF CL_PAR ]
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 359
+-- On alg_expr shift to state 361
 ## Reductions:
 
-State 359:
+State 361:
 ## Known stack suffix:
 ## APPLY annot alg_expr
 ## LR(1) items:
 effetto -> APPLY annot alg_expr . rule_content [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
--- On RAR shift to state 360
--- On PIPE shift to state 361
--- On LRAR shift to state 372
+-- On RAR shift to state 362
+-- On PIPE shift to state 363
+-- On LRAR shift to state 374
 -- On ID shift to state 18
 -- On DOT shift to state 150
--- On rule_side shift to state 373
--- On rule_content shift to state 382
--- On pattern shift to state 377
--- On arrow shift to state 383
+-- On rule_side shift to state 375
+-- On rule_content shift to state 384
+-- On pattern shift to state 379
+-- On arrow shift to state 385
 -- On agent shift to state 155
 ## Reductions:
 
-State 360:
+State 362:
 ## Known stack suffix:
 ## RAR
 ## LR(1) items:
@@ -5507,7 +5570,7 @@ arrow -> RAR . [ SPACE SEMICOLON PIPE NEWLINE ID EOF DOT COMMENT CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production arrow -> RAR
 
-State 361:
+State 363:
 ## Known stack suffix:
 ## PIPE
 ## LR(1) items:
@@ -5517,19 +5580,19 @@ rule_side -> PIPE . annot error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 362
+-- On annot shift to state 364
 ## Reductions:
 -- On error TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 362:
+State 364:
 ## Known stack suffix:
 ## PIPE annot
 ## LR(1) items:
 rule_side -> PIPE annot . sum_token [ SEMICOLON RAR LRAR EOF CL_PAR ]
 rule_side -> PIPE annot . error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Transitions:
--- On error shift to state 363
+-- On error shift to state 365
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
 -- On TAN shift to state 164
@@ -5554,13 +5617,13 @@ rule_side -> PIPE annot . error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
 -- On variable shift to state 211
--- On sum_token shift to state 364
--- On small_alg_expr shift to state 365
+-- On sum_token shift to state 366
+-- On small_alg_expr shift to state 367
 -- On nbr shift to state 213
 -- On constant shift to state 214
 ## Reductions:
 
-State 363:
+State 365:
 ## Known stack suffix:
 ## PIPE annot error
 ## LR(1) items:
@@ -5569,7 +5632,7 @@ rule_side -> PIPE annot error . [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> PIPE annot error
 
-State 364:
+State 366:
 ## Known stack suffix:
 ## PIPE annot sum_token
 ## LR(1) items:
@@ -5578,7 +5641,7 @@ rule_side -> PIPE annot sum_token . [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> PIPE annot sum_token
 
-State 365:
+State 367:
 ## Known stack suffix:
 ## small_alg_expr
 ## LR(1) items:
@@ -5588,22 +5651,22 @@ sum_token -> small_alg_expr . annot ID annot COMMA annot sum_token [ SEMICOLON R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 366
+-- On annot shift to state 368
 ## Reductions:
 -- On ID
 --   reduce production annot ->
 
-State 366:
+State 368:
 ## Known stack suffix:
 ## small_alg_expr annot
 ## LR(1) items:
 sum_token -> small_alg_expr annot . ID annot [ SEMICOLON RAR LRAR EOF CL_PAR ]
 sum_token -> small_alg_expr annot . ID annot COMMA annot sum_token [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Transitions:
--- On ID shift to state 367
+-- On ID shift to state 369
 ## Reductions:
 
-State 367:
+State 369:
 ## Known stack suffix:
 ## small_alg_expr annot ID
 ## LR(1) items:
@@ -5613,24 +5676,24 @@ sum_token -> small_alg_expr annot ID . annot COMMA annot sum_token [ SEMICOLON R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 368
+-- On annot shift to state 370
 ## Reductions:
 -- On SEMICOLON RAR LRAR EOF COMMA CL_PAR
 --   reduce production annot ->
 
-State 368:
+State 370:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot
 ## LR(1) items:
 sum_token -> small_alg_expr annot ID annot . [ SEMICOLON RAR LRAR EOF CL_PAR ]
 sum_token -> small_alg_expr annot ID annot . COMMA annot sum_token [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Transitions:
--- On COMMA shift to state 369
+-- On COMMA shift to state 371
 ## Reductions:
 -- On SEMICOLON RAR LRAR EOF CL_PAR
 --   reduce production sum_token -> small_alg_expr annot ID annot
 
-State 369:
+State 371:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot COMMA
 ## LR(1) items:
@@ -5639,12 +5702,12 @@ sum_token -> small_alg_expr annot ID annot COMMA . annot sum_token [ SEMICOLON R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 370
+-- On annot shift to state 372
 ## Reductions:
 -- On TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 370:
+State 372:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot COMMA annot
 ## LR(1) items:
@@ -5674,13 +5737,13 @@ sum_token -> small_alg_expr annot ID annot COMMA annot . sum_token [ SEMICOLON R
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
 -- On variable shift to state 211
--- On sum_token shift to state 371
--- On small_alg_expr shift to state 365
+-- On sum_token shift to state 373
+-- On small_alg_expr shift to state 367
 -- On nbr shift to state 213
 -- On constant shift to state 214
 ## Reductions:
 
-State 371:
+State 373:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot COMMA annot sum_token
 ## LR(1) items:
@@ -5689,7 +5752,7 @@ sum_token -> small_alg_expr annot ID annot COMMA annot sum_token . [ SEMICOLON R
 ## Default reduction:
 -- After reading the next token, reduce production sum_token -> small_alg_expr annot ID annot COMMA annot sum_token
 
-State 372:
+State 374:
 ## Known stack suffix:
 ## LRAR
 ## LR(1) items:
@@ -5698,7 +5761,7 @@ arrow -> LRAR . [ SPACE SEMICOLON PIPE NEWLINE ID EOF DOT COMMENT CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production arrow -> LRAR
 
-State 373:
+State 375:
 ## Known stack suffix:
 ## rule_side
 ## LR(1) items:
@@ -5706,14 +5769,14 @@ rule_content -> rule_side . arrow annot rule_side [ SEMICOLON EOF CL_PAR ]
 rule_content -> rule_side . arrow annot [ SEMICOLON EOF CL_PAR ]
 rule_content -> rule_side . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
--- On RAR shift to state 360
--- On LRAR shift to state 372
--- On arrow shift to state 374
+-- On RAR shift to state 362
+-- On LRAR shift to state 374
+-- On arrow shift to state 376
 ## Reductions:
 -- On SEMICOLON EOF CL_PAR
 --   reduce production rule_content -> rule_side
 
-State 374:
+State 376:
 ## Known stack suffix:
 ## rule_side arrow
 ## LR(1) items:
@@ -5723,29 +5786,29 @@ rule_content -> rule_side arrow . annot [ SEMICOLON EOF CL_PAR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 375
+-- On annot shift to state 377
 ## Reductions:
 -- On SEMICOLON PIPE ID EOF DOT CL_PAR
 --   reduce production annot ->
 
-State 375:
+State 377:
 ## Known stack suffix:
 ## rule_side arrow annot
 ## LR(1) items:
 rule_content -> rule_side arrow annot . rule_side [ SEMICOLON EOF CL_PAR ]
 rule_content -> rule_side arrow annot . [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
--- On PIPE shift to state 361
+-- On PIPE shift to state 363
 -- On ID shift to state 18
 -- On DOT shift to state 150
--- On rule_side shift to state 376
--- On pattern shift to state 377
+-- On rule_side shift to state 378
+-- On pattern shift to state 379
 -- On agent shift to state 155
 ## Reductions:
 -- On SEMICOLON EOF CL_PAR
 --   reduce production rule_content -> rule_side arrow annot
 
-State 376:
+State 378:
 ## Known stack suffix:
 ## rule_side arrow annot rule_side
 ## LR(1) items:
@@ -5754,7 +5817,7 @@ rule_content -> rule_side arrow annot rule_side . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_content -> rule_side arrow annot rule_side
 
-State 377:
+State 379:
 ## Known stack suffix:
 ## pattern
 ## LR(1) items:
@@ -5762,12 +5825,12 @@ rule_side -> pattern . [ SEMICOLON RAR LRAR EOF CL_PAR ]
 rule_side -> pattern . PIPE annot sum_token [ SEMICOLON RAR LRAR EOF CL_PAR ]
 rule_side -> pattern . PIPE annot error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Transitions:
--- On PIPE shift to state 378
+-- On PIPE shift to state 380
 ## Reductions:
 -- On SEMICOLON RAR LRAR EOF CL_PAR
 --   reduce production rule_side -> pattern
 
-State 378:
+State 380:
 ## Known stack suffix:
 ## pattern PIPE
 ## LR(1) items:
@@ -5777,19 +5840,19 @@ rule_side -> pattern PIPE . annot error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 379
+-- On annot shift to state 381
 ## Reductions:
 -- On error TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 379:
+State 381:
 ## Known stack suffix:
 ## pattern PIPE annot
 ## LR(1) items:
 rule_side -> pattern PIPE annot . sum_token [ SEMICOLON RAR LRAR EOF CL_PAR ]
 rule_side -> pattern PIPE annot . error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Transitions:
--- On error shift to state 380
+-- On error shift to state 382
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
 -- On TAN shift to state 164
@@ -5814,13 +5877,13 @@ rule_side -> pattern PIPE annot . error [ SEMICOLON RAR LRAR EOF CL_PAR ]
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
 -- On variable shift to state 211
--- On sum_token shift to state 381
--- On small_alg_expr shift to state 365
+-- On sum_token shift to state 383
+-- On small_alg_expr shift to state 367
 -- On nbr shift to state 213
 -- On constant shift to state 214
 ## Reductions:
 
-State 380:
+State 382:
 ## Known stack suffix:
 ## pattern PIPE annot error
 ## LR(1) items:
@@ -5829,7 +5892,7 @@ rule_side -> pattern PIPE annot error . [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> pattern PIPE annot error
 
-State 381:
+State 383:
 ## Known stack suffix:
 ## pattern PIPE annot sum_token
 ## LR(1) items:
@@ -5838,7 +5901,7 @@ rule_side -> pattern PIPE annot sum_token . [ SEMICOLON RAR LRAR EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> pattern PIPE annot sum_token
 
-State 382:
+State 384:
 ## Known stack suffix:
 ## APPLY annot alg_expr rule_content
 ## LR(1) items:
@@ -5847,7 +5910,7 @@ effetto -> APPLY annot alg_expr rule_content . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production effetto -> APPLY annot alg_expr rule_content
 
-State 383:
+State 385:
 ## Known stack suffix:
 ## arrow
 ## LR(1) items:
@@ -5856,26 +5919,26 @@ rule_content -> arrow . annot rule_side [ SEMICOLON EOF CL_PAR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 384
+-- On annot shift to state 386
 ## Reductions:
 -- On PIPE ID DOT
 --   reduce production annot ->
 
-State 384:
+State 386:
 ## Known stack suffix:
 ## arrow annot
 ## LR(1) items:
 rule_content -> arrow annot . rule_side [ SEMICOLON EOF CL_PAR ]
 ## Transitions:
--- On PIPE shift to state 361
+-- On PIPE shift to state 363
 -- On ID shift to state 18
 -- On DOT shift to state 150
--- On rule_side shift to state 385
--- On pattern shift to state 377
+-- On rule_side shift to state 387
+-- On pattern shift to state 379
 -- On agent shift to state 155
 ## Reductions:
 
-State 385:
+State 387:
 ## Known stack suffix:
 ## arrow annot rule_side
 ## LR(1) items:
@@ -5884,16 +5947,16 @@ rule_content -> arrow annot rule_side . [ SEMICOLON EOF CL_PAR ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_content -> arrow annot rule_side
 
-State 386:
+State 388:
 ## Known stack suffix:
 ## annot effetto
 ## LR(1) items:
 interactive_command -> annot effetto . SEMICOLON [ # ]
 ## Transitions:
--- On SEMICOLON shift to state 387
+-- On SEMICOLON shift to state 389
 ## Reductions:
 
-State 387:
+State 389:
 ## Known stack suffix:
 ## annot effetto SEMICOLON
 ## LR(1) items:
@@ -5902,23 +5965,23 @@ interactive_command -> annot effetto SEMICOLON . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production interactive_command -> annot effetto SEMICOLON
 
-State 388:
+State 390:
 ## Known stack suffix:
 ##
 ## LR(1) items:
 model' -> . model [ # ]
 ## Transitions:
--- On error shift to state 389
+-- On error shift to state 391
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On model shift to state 390
--- On annot shift to state 391
+-- On model shift to state 392
+-- On annot shift to state 393
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production annot ->
 
-State 389:
+State 391:
 ## Known stack suffix:
 ## error
 ## LR(1) items:
@@ -5927,7 +5990,7 @@ model -> error . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production model -> error
 
-State 390:
+State 392:
 ## Known stack suffix:
 ## model
 ## LR(1) items:
@@ -5936,38 +5999,38 @@ model' -> model . [ # ]
 ## Default reduction:
 -- Without reading the next token, accept model
 
-State 391:
+State 393:
 ## Known stack suffix:
 ## annot
 ## LR(1) items:
 model -> annot . model_body [ # ]
 ## Transitions:
--- On TOKEN shift to state 392
--- On SIGNATURE shift to state 396
--- On RAR shift to state 360
--- On PLOT shift to state 400
--- On PIPE shift to state 404
--- On PERT shift to state 415
--- On OBS shift to state 448
--- On LRAR shift to state 372
--- On LET shift to state 460
--- On LABEL shift to state 463
--- On INIT shift to state 536
--- On ID shift to state 465
--- On EOF shift to state 555
--- On DOT shift to state 490
--- On CONFIG shift to state 556
--- On sentence shift to state 564
--- On rule_side shift to state 492
--- On rule_content shift to state 507
--- On rule shift to state 565
--- On pattern shift to state 498
--- On model_body shift to state 567
--- On arrow shift to state 533
--- On agent shift to state 503
+-- On TOKEN shift to state 394
+-- On SIGNATURE shift to state 398
+-- On RAR shift to state 362
+-- On PLOT shift to state 402
+-- On PIPE shift to state 406
+-- On PERT shift to state 417
+-- On OBS shift to state 450
+-- On LRAR shift to state 374
+-- On LET shift to state 462
+-- On LABEL shift to state 465
+-- On INIT shift to state 538
+-- On ID shift to state 467
+-- On EOF shift to state 557
+-- On DOT shift to state 492
+-- On CONFIG shift to state 558
+-- On sentence shift to state 566
+-- On rule_side shift to state 494
+-- On rule_content shift to state 509
+-- On rule shift to state 567
+-- On pattern shift to state 500
+-- On model_body shift to state 569
+-- On arrow shift to state 535
+-- On agent shift to state 505
 ## Reductions:
 
-State 392:
+State 394:
 ## Known stack suffix:
 ## TOKEN
 ## LR(1) items:
@@ -5976,21 +6039,21 @@ sentence -> TOKEN . annot ID annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 393
+-- On annot shift to state 395
 ## Reductions:
 -- On ID
 --   reduce production annot ->
 
-State 393:
+State 395:
 ## Known stack suffix:
 ## TOKEN annot
 ## LR(1) items:
 sentence -> TOKEN annot . ID annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On ID shift to state 394
+-- On ID shift to state 396
 ## Reductions:
 
-State 394:
+State 396:
 ## Known stack suffix:
 ## TOKEN annot ID
 ## LR(1) items:
@@ -5999,12 +6062,12 @@ sentence -> TOKEN annot ID . annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 395
+-- On annot shift to state 397
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production annot ->
 
-State 395:
+State 397:
 ## Known stack suffix:
 ## TOKEN annot ID annot
 ## LR(1) items:
@@ -6013,7 +6076,7 @@ sentence -> TOKEN annot ID annot . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> TOKEN annot ID annot
 
-State 396:
+State 398:
 ## Known stack suffix:
 ## SIGNATURE
 ## LR(1) items:
@@ -6023,25 +6086,25 @@ sentence -> SIGNATURE . annot error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRA
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 397
+-- On annot shift to state 399
 ## Reductions:
 -- On error ID DOT
 --   reduce production annot ->
 
-State 397:
+State 399:
 ## Known stack suffix:
 ## SIGNATURE annot
 ## LR(1) items:
 sentence -> SIGNATURE annot . agent [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 sentence -> SIGNATURE annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 398
+-- On error shift to state 400
 -- On ID shift to state 18
 -- On DOT shift to state 150
--- On agent shift to state 399
+-- On agent shift to state 401
 ## Reductions:
 
-State 398:
+State 400:
 ## Known stack suffix:
 ## SIGNATURE annot error
 ## LR(1) items:
@@ -6050,7 +6113,7 @@ sentence -> SIGNATURE annot error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRA
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> SIGNATURE annot error
 
-State 399:
+State 401:
 ## Known stack suffix:
 ## SIGNATURE annot agent
 ## LR(1) items:
@@ -6059,7 +6122,7 @@ sentence -> SIGNATURE annot agent . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRA
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> SIGNATURE annot agent
 
-State 400:
+State 402:
 ## Known stack suffix:
 ## PLOT
 ## LR(1) items:
@@ -6069,19 +6132,19 @@ sentence -> PLOT . annot error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 401
+-- On annot shift to state 403
 ## Reductions:
 -- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 401:
+State 403:
 ## Known stack suffix:
 ## PLOT annot
 ## LR(1) items:
 sentence -> PLOT annot . alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 sentence -> PLOT annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 402
+-- On error shift to state 404
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -6120,10 +6183,10 @@ sentence -> PLOT annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 403
+-- On alg_expr shift to state 405
 ## Reductions:
 
-State 402:
+State 404:
 ## Known stack suffix:
 ## PLOT annot error
 ## LR(1) items:
@@ -6132,7 +6195,7 @@ sentence -> PLOT annot error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> PLOT annot error
 
-State 403:
+State 405:
 ## Known stack suffix:
 ## PLOT annot alg_expr
 ## LR(1) items:
@@ -6141,7 +6204,7 @@ sentence -> PLOT annot alg_expr . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR 
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> PLOT annot alg_expr
 
-State 404:
+State 406:
 ## Known stack suffix:
 ## PIPE
 ## LR(1) items:
@@ -6151,19 +6214,19 @@ rule_side -> PIPE . annot error [ error RAR LRAR AT ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 405
+-- On annot shift to state 407
 ## Reductions:
 -- On error TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 405:
+State 407:
 ## Known stack suffix:
 ## PIPE annot
 ## LR(1) items:
 rule_side -> PIPE annot . sum_token [ error RAR LRAR AT ]
 rule_side -> PIPE annot . error [ error RAR LRAR AT ]
 ## Transitions:
--- On error shift to state 406
+-- On error shift to state 408
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
 -- On TAN shift to state 164
@@ -6188,13 +6251,13 @@ rule_side -> PIPE annot . error [ error RAR LRAR AT ]
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
 -- On variable shift to state 211
--- On sum_token shift to state 407
--- On small_alg_expr shift to state 408
+-- On sum_token shift to state 409
+-- On small_alg_expr shift to state 410
 -- On nbr shift to state 213
 -- On constant shift to state 214
 ## Reductions:
 
-State 406:
+State 408:
 ## Known stack suffix:
 ## PIPE annot error
 ## LR(1) items:
@@ -6203,7 +6266,7 @@ rule_side -> PIPE annot error . [ error RAR LRAR AT ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> PIPE annot error
 
-State 407:
+State 409:
 ## Known stack suffix:
 ## PIPE annot sum_token
 ## LR(1) items:
@@ -6212,7 +6275,7 @@ rule_side -> PIPE annot sum_token . [ error RAR LRAR AT ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> PIPE annot sum_token
 
-State 408:
+State 410:
 ## Known stack suffix:
 ## small_alg_expr
 ## LR(1) items:
@@ -6222,22 +6285,22 @@ sum_token -> small_alg_expr . annot ID annot COMMA annot sum_token [ error RAR L
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 409
+-- On annot shift to state 411
 ## Reductions:
 -- On ID
 --   reduce production annot ->
 
-State 409:
+State 411:
 ## Known stack suffix:
 ## small_alg_expr annot
 ## LR(1) items:
 sum_token -> small_alg_expr annot . ID annot [ error RAR LRAR AT ]
 sum_token -> small_alg_expr annot . ID annot COMMA annot sum_token [ error RAR LRAR AT ]
 ## Transitions:
--- On ID shift to state 410
+-- On ID shift to state 412
 ## Reductions:
 
-State 410:
+State 412:
 ## Known stack suffix:
 ## small_alg_expr annot ID
 ## LR(1) items:
@@ -6247,24 +6310,24 @@ sum_token -> small_alg_expr annot ID . annot COMMA annot sum_token [ error RAR L
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 411
+-- On annot shift to state 413
 ## Reductions:
 -- On error RAR LRAR COMMA AT
 --   reduce production annot ->
 
-State 411:
+State 413:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot
 ## LR(1) items:
 sum_token -> small_alg_expr annot ID annot . [ error RAR LRAR AT ]
 sum_token -> small_alg_expr annot ID annot . COMMA annot sum_token [ error RAR LRAR AT ]
 ## Transitions:
--- On COMMA shift to state 412
+-- On COMMA shift to state 414
 ## Reductions:
 -- On error RAR LRAR AT
 --   reduce production sum_token -> small_alg_expr annot ID annot
 
-State 412:
+State 414:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot COMMA
 ## LR(1) items:
@@ -6273,12 +6336,12 @@ sum_token -> small_alg_expr annot ID annot COMMA . annot sum_token [ error RAR L
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 413
+-- On annot shift to state 415
 ## Reductions:
 -- On TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 413:
+State 415:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot COMMA annot
 ## LR(1) items:
@@ -6308,13 +6371,13 @@ sum_token -> small_alg_expr annot ID annot COMMA annot . sum_token [ error RAR L
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
 -- On variable shift to state 211
--- On sum_token shift to state 414
--- On small_alg_expr shift to state 408
+-- On sum_token shift to state 416
+-- On small_alg_expr shift to state 410
 -- On nbr shift to state 213
 -- On constant shift to state 214
 ## Reductions:
 
-State 414:
+State 416:
 ## Known stack suffix:
 ## small_alg_expr annot ID annot COMMA annot sum_token
 ## LR(1) items:
@@ -6323,7 +6386,7 @@ sum_token -> small_alg_expr annot ID annot COMMA annot sum_token . [ error RAR L
 ## Default reduction:
 -- After reading the next token, reduce production sum_token -> small_alg_expr annot ID annot COMMA annot sum_token
 
-State 415:
+State 417:
 ## Known stack suffix:
 ## PERT
 ## LR(1) items:
@@ -6332,14 +6395,14 @@ sentence -> PERT . perturbation_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On perturbation_declaration shift to state 416
--- On perturbation_alarm shift to state 417
--- On annot shift to state 443
+-- On perturbation_declaration shift to state 418
+-- On perturbation_alarm shift to state 419
+-- On annot shift to state 445
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX DO CPUTIME COSINUS ALARM ABS
 --   reduce production annot ->
 
-State 416:
+State 418:
 ## Known stack suffix:
 ## PERT perturbation_declaration
 ## LR(1) items:
@@ -6348,7 +6411,7 @@ sentence -> PERT perturbation_declaration . [ TOKEN SIGNATURE RAR PLOT PIPE PERT
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> PERT perturbation_declaration
 
-State 417:
+State 419:
 ## Known stack suffix:
 ## perturbation_alarm
 ## LR(1) items:
@@ -6378,7 +6441,7 @@ perturbation_declaration -> perturbation_alarm . DO annot effect_list perturbati
 -- On EXPONENT shift to state 202
 -- On EVENT shift to state 204
 -- On EMAX shift to state 205
--- On DO shift to state 418
+-- On DO shift to state 420
 -- On CPUTIME shift to state 206
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
@@ -6389,14 +6452,14 @@ perturbation_declaration -> perturbation_alarm . DO annot effect_list perturbati
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
--- On bool_expr shift to state 438
+-- On bool_expr shift to state 440
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 252
 ## Reductions:
 
-State 418:
+State 420:
 ## Known stack suffix:
 ## perturbation_alarm DO
 ## LR(1) items:
@@ -6405,12 +6468,12 @@ perturbation_declaration -> perturbation_alarm DO . annot effect_list perturbati
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 419
+-- On annot shift to state 421
 ## Reductions:
 -- On TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY OP_PAR INTRO FLUX DELETE ASSIGN APPLY
 --   reduce production annot ->
 
-State 419:
+State 421:
 ## Known stack suffix:
 ## perturbation_alarm DO annot
 ## LR(1) items:
@@ -6422,17 +6485,17 @@ perturbation_declaration -> perturbation_alarm DO annot . effect_list perturbati
 -- On SNAPSHOT shift to state 316
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
--- On OP_PAR shift to state 420
+-- On OP_PAR shift to state 422
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On effetto shift to state 429
--- On effect_list shift to state 433
+-- On FLUX shift to state 336
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On effetto shift to state 431
+-- On effect_list shift to state 435
 ## Reductions:
 
-State 420:
+State 422:
 ## Known stack suffix:
 ## OP_PAR
 ## LR(1) items:
@@ -6441,12 +6504,12 @@ effect_list -> OP_PAR . annot partial_effect_list CL_PAR annot [ TOKEN SIGNATURE
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 421
+-- On annot shift to state 423
 ## Reductions:
 -- On TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO FLUX DELETE ASSIGN APPLY
 --   reduce production annot ->
 
-State 421:
+State 423:
 ## Known stack suffix:
 ## OP_PAR annot
 ## LR(1) items:
@@ -6459,24 +6522,24 @@ effect_list -> OP_PAR annot . partial_effect_list CL_PAR annot [ TOKEN SIGNATURE
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On partial_effect_list shift to state 422
--- On effetto shift to state 425
+-- On FLUX shift to state 336
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On partial_effect_list shift to state 424
+-- On effetto shift to state 427
 ## Reductions:
 
-State 422:
+State 424:
 ## Known stack suffix:
 ## OP_PAR annot partial_effect_list
 ## LR(1) items:
 effect_list -> OP_PAR annot partial_effect_list . CL_PAR annot [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On CL_PAR shift to state 423
+-- On CL_PAR shift to state 425
 ## Reductions:
 
-State 423:
+State 425:
 ## Known stack suffix:
 ## OP_PAR annot partial_effect_list CL_PAR
 ## LR(1) items:
@@ -6485,12 +6548,12 @@ effect_list -> OP_PAR annot partial_effect_list CL_PAR . annot [ TOKEN SIGNATURE
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 424
+-- On annot shift to state 426
 ## Reductions:
 -- On TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production annot ->
 
-State 424:
+State 426:
 ## Known stack suffix:
 ## OP_PAR annot partial_effect_list CL_PAR annot
 ## LR(1) items:
@@ -6499,7 +6562,7 @@ effect_list -> OP_PAR annot partial_effect_list CL_PAR annot . [ TOKEN SIGNATURE
 ## Default reduction:
 -- After reading the next token, reduce production effect_list -> OP_PAR annot partial_effect_list CL_PAR annot
 
-State 425:
+State 427:
 ## Known stack suffix:
 ## effetto
 ## LR(1) items:
@@ -6507,12 +6570,12 @@ partial_effect_list -> effetto . SEMICOLON annot [ EOF CL_PAR ]
 partial_effect_list -> effetto . [ EOF CL_PAR ]
 partial_effect_list -> effetto . SEMICOLON annot partial_effect_list [ EOF CL_PAR ]
 ## Transitions:
--- On SEMICOLON shift to state 426
+-- On SEMICOLON shift to state 428
 ## Reductions:
 -- On EOF CL_PAR
 --   reduce production partial_effect_list -> effetto
 
-State 426:
+State 428:
 ## Known stack suffix:
 ## effetto SEMICOLON
 ## LR(1) items:
@@ -6522,12 +6585,12 @@ partial_effect_list -> effetto SEMICOLON . annot partial_effect_list [ EOF CL_PA
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 427
+-- On annot shift to state 429
 ## Reductions:
 -- On TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO FLUX EOF DELETE CL_PAR ASSIGN APPLY
 --   reduce production annot ->
 
-State 427:
+State 429:
 ## Known stack suffix:
 ## effetto SEMICOLON annot
 ## LR(1) items:
@@ -6541,17 +6604,17 @@ partial_effect_list -> effetto SEMICOLON annot . partial_effect_list [ EOF CL_PA
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On partial_effect_list shift to state 428
--- On effetto shift to state 425
+-- On FLUX shift to state 336
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On partial_effect_list shift to state 430
+-- On effetto shift to state 427
 ## Reductions:
 -- On EOF CL_PAR
 --   reduce production partial_effect_list -> effetto SEMICOLON annot
 
-State 428:
+State 430:
 ## Known stack suffix:
 ## effetto SEMICOLON annot partial_effect_list
 ## LR(1) items:
@@ -6560,17 +6623,17 @@ partial_effect_list -> effetto SEMICOLON annot partial_effect_list . [ EOF CL_PA
 ## Default reduction:
 -- After reading the next token, reduce production partial_effect_list -> effetto SEMICOLON annot partial_effect_list
 
-State 429:
+State 431:
 ## Known stack suffix:
 ## effetto
 ## LR(1) items:
 effect_list -> effetto . SEMICOLON annot [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 effect_list -> effetto . SEMICOLON annot effect_list [ TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On SEMICOLON shift to state 430
+-- On SEMICOLON shift to state 432
 ## Reductions:
 
-State 430:
+State 432:
 ## Known stack suffix:
 ## effetto SEMICOLON
 ## LR(1) items:
@@ -6580,12 +6643,12 @@ effect_list -> effetto SEMICOLON . annot effect_list [ TOKEN SIGNATURE REPEAT RA
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 431
+-- On annot shift to state 433
 ## Reductions:
 -- On TRACK TOKEN STOP SPECIES_OF SNAPSHOT SIGNATURE REPEAT RAR PRINTF PLOTENTRY PLOT PIPE PERT OP_PAR OBS LRAR LET LABEL INTRO INIT ID FLUX EOF DOT DELETE CONFIG ASSIGN APPLY
 --   reduce production annot ->
 
-State 431:
+State 433:
 ## Known stack suffix:
 ## effetto SEMICOLON annot
 ## LR(1) items:
@@ -6598,19 +6661,19 @@ effect_list -> effetto SEMICOLON annot . effect_list [ TOKEN SIGNATURE REPEAT RA
 -- On SNAPSHOT shift to state 316
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
--- On OP_PAR shift to state 420
+-- On OP_PAR shift to state 422
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On effetto shift to state 429
--- On effect_list shift to state 432
+-- On FLUX shift to state 336
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On effetto shift to state 431
+-- On effect_list shift to state 434
 ## Reductions:
 -- On TOKEN SIGNATURE REPEAT RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production effect_list -> effetto SEMICOLON annot
 
-State 432:
+State 434:
 ## Known stack suffix:
 ## effetto SEMICOLON annot effect_list
 ## LR(1) items:
@@ -6619,19 +6682,19 @@ effect_list -> effetto SEMICOLON annot effect_list . [ TOKEN SIGNATURE REPEAT RA
 ## Default reduction:
 -- After reading the next token, reduce production effect_list -> effetto SEMICOLON annot effect_list
 
-State 433:
+State 435:
 ## Known stack suffix:
 ## perturbation_alarm DO annot effect_list
 ## LR(1) items:
 perturbation_declaration -> perturbation_alarm DO annot effect_list . perturbation_post [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On REPEAT shift to state 434
--- On perturbation_post shift to state 437
+-- On REPEAT shift to state 436
+-- On perturbation_post shift to state 439
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production perturbation_post ->
 
-State 434:
+State 436:
 ## Known stack suffix:
 ## REPEAT
 ## LR(1) items:
@@ -6640,12 +6703,12 @@ perturbation_post -> REPEAT . annot bool_expr [ TOKEN SIGNATURE RAR PLOT PIPE PE
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 435
+-- On annot shift to state 437
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 435:
+State 437:
 ## Known stack suffix:
 ## REPEAT annot
 ## LR(1) items:
@@ -6684,14 +6747,14 @@ perturbation_post -> REPEAT annot . bool_expr [ TOKEN SIGNATURE RAR PLOT PIPE PE
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
--- On bool_expr shift to state 436
+-- On bool_expr shift to state 438
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 252
 ## Reductions:
 
-State 436:
+State 438:
 ## Known stack suffix:
 ## REPEAT annot bool_expr
 ## LR(1) items:
@@ -6700,7 +6763,7 @@ perturbation_post -> REPEAT annot bool_expr . [ TOKEN SIGNATURE RAR PLOT PIPE PE
 ## Default reduction:
 -- After reading the next token, reduce production perturbation_post -> REPEAT annot bool_expr
 
-State 437:
+State 439:
 ## Known stack suffix:
 ## perturbation_alarm DO annot effect_list perturbation_post
 ## LR(1) items:
@@ -6709,16 +6772,16 @@ perturbation_declaration -> perturbation_alarm DO annot effect_list perturbation
 ## Default reduction:
 -- After reading the next token, reduce production perturbation_declaration -> perturbation_alarm DO annot effect_list perturbation_post
 
-State 438:
+State 440:
 ## Known stack suffix:
 ## perturbation_alarm bool_expr
 ## LR(1) items:
 perturbation_declaration -> perturbation_alarm bool_expr . DO annot effect_list perturbation_post [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On DO shift to state 439
+-- On DO shift to state 441
 ## Reductions:
 
-State 439:
+State 441:
 ## Known stack suffix:
 ## perturbation_alarm bool_expr DO
 ## LR(1) items:
@@ -6727,12 +6790,12 @@ perturbation_declaration -> perturbation_alarm bool_expr DO . annot effect_list 
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 440
+-- On annot shift to state 442
 ## Reductions:
 -- On TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY OP_PAR INTRO FLUX DELETE ASSIGN APPLY
 --   reduce production annot ->
 
-State 440:
+State 442:
 ## Known stack suffix:
 ## perturbation_alarm bool_expr DO annot
 ## LR(1) items:
@@ -6744,29 +6807,29 @@ perturbation_declaration -> perturbation_alarm bool_expr DO annot . effect_list 
 -- On SNAPSHOT shift to state 316
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
--- On OP_PAR shift to state 420
+-- On OP_PAR shift to state 422
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On effetto shift to state 429
--- On effect_list shift to state 441
+-- On FLUX shift to state 336
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On effetto shift to state 431
+-- On effect_list shift to state 443
 ## Reductions:
 
-State 441:
+State 443:
 ## Known stack suffix:
 ## perturbation_alarm bool_expr DO annot effect_list
 ## LR(1) items:
 perturbation_declaration -> perturbation_alarm bool_expr DO annot effect_list . perturbation_post [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On REPEAT shift to state 434
--- On perturbation_post shift to state 442
+-- On REPEAT shift to state 436
+-- On perturbation_post shift to state 444
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production perturbation_post ->
 
-State 442:
+State 444:
 ## Known stack suffix:
 ## perturbation_alarm bool_expr DO annot effect_list perturbation_post
 ## LR(1) items:
@@ -6775,19 +6838,19 @@ perturbation_declaration -> perturbation_alarm bool_expr DO annot effect_list pe
 ## Default reduction:
 -- After reading the next token, reduce production perturbation_declaration -> perturbation_alarm bool_expr DO annot effect_list perturbation_post
 
-State 443:
+State 445:
 ## Known stack suffix:
 ## annot
 ## LR(1) items:
 perturbation_alarm -> annot . [ TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX DO CPUTIME COSINUS ABS ]
 perturbation_alarm -> annot . ALARM annot nbr annot [ TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX DO CPUTIME COSINUS ABS ]
 ## Transitions:
--- On ALARM shift to state 444
+-- On ALARM shift to state 446
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX DO CPUTIME COSINUS ABS
 --   reduce production perturbation_alarm -> annot
 
-State 444:
+State 446:
 ## Known stack suffix:
 ## annot ALARM
 ## LR(1) items:
@@ -6796,12 +6859,12 @@ perturbation_alarm -> annot ALARM . annot nbr annot [ TRUE TMAX TIME TAN SQRT SI
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 445
+-- On annot shift to state 447
 ## Reductions:
 -- On INT INFINITY FLOAT
 --   reduce production annot ->
 
-State 445:
+State 447:
 ## Known stack suffix:
 ## annot ALARM annot
 ## LR(1) items:
@@ -6810,10 +6873,10 @@ perturbation_alarm -> annot ALARM annot . nbr annot [ TRUE TMAX TIME TAN SQRT SI
 -- On INT shift to state 198
 -- On INFINITY shift to state 199
 -- On FLOAT shift to state 201
--- On nbr shift to state 446
+-- On nbr shift to state 448
 ## Reductions:
 
-State 446:
+State 448:
 ## Known stack suffix:
 ## annot ALARM annot nbr
 ## LR(1) items:
@@ -6822,12 +6885,12 @@ perturbation_alarm -> annot ALARM annot nbr . annot [ TRUE TMAX TIME TAN SQRT SI
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 447
+-- On annot shift to state 449
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX DO CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 447:
+State 449:
 ## Known stack suffix:
 ## annot ALARM annot nbr annot
 ## LR(1) items:
@@ -6836,7 +6899,7 @@ perturbation_alarm -> annot ALARM annot nbr annot . [ TRUE TMAX TIME TAN SQRT SI
 ## Default reduction:
 -- After reading the next token, reduce production perturbation_alarm -> annot ALARM annot nbr annot
 
-State 448:
+State 450:
 ## Known stack suffix:
 ## OBS
 ## LR(1) items:
@@ -6845,24 +6908,24 @@ sentence -> OBS . annot variable_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PER
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 449
+-- On annot shift to state 451
 ## Reductions:
 -- On error LABEL ID
 --   reduce production annot ->
 
-State 449:
+State 451:
 ## Known stack suffix:
 ## OBS annot
 ## LR(1) items:
 sentence -> OBS annot . variable_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 450
--- On LABEL shift to state 451
--- On ID shift to state 455
--- On variable_declaration shift to state 459
+-- On error shift to state 452
+-- On LABEL shift to state 453
+-- On ID shift to state 457
+-- On variable_declaration shift to state 461
 ## Reductions:
 
-State 450:
+State 452:
 ## Known stack suffix:
 ## error
 ## LR(1) items:
@@ -6871,7 +6934,7 @@ variable_declaration -> error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LE
 ## Default reduction:
 -- After reading the next token, reduce production variable_declaration -> error
 
-State 451:
+State 453:
 ## Known stack suffix:
 ## LABEL
 ## LR(1) items:
@@ -6881,19 +6944,19 @@ variable_declaration -> LABEL . annot error [ TOKEN SIGNATURE RAR PLOT PIPE PERT
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 452
+-- On annot shift to state 454
 ## Reductions:
 -- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 452:
+State 454:
 ## Known stack suffix:
 ## LABEL annot
 ## LR(1) items:
 variable_declaration -> LABEL annot . alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 variable_declaration -> LABEL annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 453
+-- On error shift to state 455
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -6932,10 +6995,10 @@ variable_declaration -> LABEL annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 454
+-- On alg_expr shift to state 456
 ## Reductions:
 
-State 453:
+State 455:
 ## Known stack suffix:
 ## LABEL annot error
 ## LR(1) items:
@@ -6944,7 +7007,7 @@ variable_declaration -> LABEL annot error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT
 ## Default reduction:
 -- After reading the next token, reduce production variable_declaration -> LABEL annot error
 
-State 454:
+State 456:
 ## Known stack suffix:
 ## LABEL annot alg_expr
 ## LR(1) items:
@@ -6953,7 +7016,7 @@ variable_declaration -> LABEL annot alg_expr . [ TOKEN SIGNATURE RAR PLOT PIPE P
 ## Default reduction:
 -- After reading the next token, reduce production variable_declaration -> LABEL annot alg_expr
 
-State 455:
+State 457:
 ## Known stack suffix:
 ## ID
 ## LR(1) items:
@@ -6963,19 +7026,19 @@ variable_declaration -> ID . annot error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OB
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 456
+-- On annot shift to state 458
 ## Reductions:
 -- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 456:
+State 458:
 ## Known stack suffix:
 ## ID annot
 ## LR(1) items:
 variable_declaration -> ID annot . alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 variable_declaration -> ID annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 457
+-- On error shift to state 459
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -7014,10 +7077,10 @@ variable_declaration -> ID annot . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OB
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 458
+-- On alg_expr shift to state 460
 ## Reductions:
 
-State 457:
+State 459:
 ## Known stack suffix:
 ## ID annot error
 ## LR(1) items:
@@ -7026,7 +7089,7 @@ variable_declaration -> ID annot error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OB
 ## Default reduction:
 -- After reading the next token, reduce production variable_declaration -> ID annot error
 
-State 458:
+State 460:
 ## Known stack suffix:
 ## ID annot alg_expr
 ## LR(1) items:
@@ -7035,7 +7098,7 @@ variable_declaration -> ID annot alg_expr . [ TOKEN SIGNATURE RAR PLOT PIPE PERT
 ## Default reduction:
 -- After reading the next token, reduce production variable_declaration -> ID annot alg_expr
 
-State 459:
+State 461:
 ## Known stack suffix:
 ## OBS annot variable_declaration
 ## LR(1) items:
@@ -7044,7 +7107,7 @@ sentence -> OBS annot variable_declaration . [ TOKEN SIGNATURE RAR PLOT PIPE PER
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> OBS annot variable_declaration
 
-State 460:
+State 462:
 ## Known stack suffix:
 ## LET
 ## LR(1) items:
@@ -7053,24 +7116,24 @@ sentence -> LET . annot variable_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PER
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 461
+-- On annot shift to state 463
 ## Reductions:
 -- On error LABEL ID
 --   reduce production annot ->
 
-State 461:
+State 463:
 ## Known stack suffix:
 ## LET annot
 ## LR(1) items:
 sentence -> LET annot . variable_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 450
--- On LABEL shift to state 451
--- On ID shift to state 455
--- On variable_declaration shift to state 462
+-- On error shift to state 452
+-- On LABEL shift to state 453
+-- On ID shift to state 457
+-- On variable_declaration shift to state 464
 ## Reductions:
 
-State 462:
+State 464:
 ## Known stack suffix:
 ## LET annot variable_declaration
 ## LR(1) items:
@@ -7079,7 +7142,7 @@ sentence -> LET annot variable_declaration . [ TOKEN SIGNATURE RAR PLOT PIPE PER
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> LET annot variable_declaration
 
-State 463:
+State 465:
 ## Known stack suffix:
 ## LABEL
 ## LR(1) items:
@@ -7089,33 +7152,33 @@ sentence -> LABEL . annot EQUAL annot alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE P
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 464
+-- On annot shift to state 466
 ## Reductions:
 -- On RAR PIPE LRAR ID EQUAL DOT
 --   reduce production annot ->
 
-State 464:
+State 466:
 ## Known stack suffix:
 ## LABEL annot
 ## LR(1) items:
 sentence -> LABEL annot . rule [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 sentence -> LABEL annot . EQUAL annot alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On RAR shift to state 360
--- On PIPE shift to state 404
--- On LRAR shift to state 372
--- On ID shift to state 465
--- On EQUAL shift to state 487
--- On DOT shift to state 490
--- On rule_side shift to state 492
--- On rule_content shift to state 507
--- On rule shift to state 532
--- On pattern shift to state 498
--- On arrow shift to state 533
--- On agent shift to state 503
+-- On RAR shift to state 362
+-- On PIPE shift to state 406
+-- On LRAR shift to state 374
+-- On ID shift to state 467
+-- On EQUAL shift to state 489
+-- On DOT shift to state 492
+-- On rule_side shift to state 494
+-- On rule_content shift to state 509
+-- On rule shift to state 534
+-- On pattern shift to state 500
+-- On arrow shift to state 535
+-- On agent shift to state 505
 ## Reductions:
 
-State 465:
+State 467:
 ## Known stack suffix:
 ## ID
 ## LR(1) items:
@@ -7126,12 +7189,12 @@ agent -> ID . annot error [ error RAR PIPE LRAR COMMA AT ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 466
+-- On annot shift to state 468
 ## Reductions:
 -- On error OP_PAR COLON
 --   reduce production annot ->
 
-State 466:
+State 468:
 ## Known stack suffix:
 ## ID annot
 ## LR(1) items:
@@ -7139,12 +7202,12 @@ agent -> ID annot . OP_PAR annot interface CL_PAR agent_modif [ error RAR PIPE L
 agent -> ID annot . COLON annot ID annot OP_PAR annot interface CL_PAR agent_modif [ error RAR PIPE LRAR COMMA AT ]
 agent -> ID annot . error [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
--- On error shift to state 467
--- On OP_PAR shift to state 468
--- On COLON shift to state 478
+-- On error shift to state 469
+-- On OP_PAR shift to state 470
+-- On COLON shift to state 480
 ## Reductions:
 
-State 467:
+State 469:
 ## Known stack suffix:
 ## ID annot error
 ## LR(1) items:
@@ -7153,7 +7216,7 @@ agent -> ID annot error . [ error RAR PIPE LRAR COMMA AT ]
 ## Default reduction:
 -- After reading the next token, reduce production agent -> ID annot error
 
-State 468:
+State 470:
 ## Known stack suffix:
 ## ID annot OP_PAR
 ## LR(1) items:
@@ -7162,12 +7225,12 @@ agent -> ID annot OP_PAR . annot interface CL_PAR agent_modif [ error RAR PIPE L
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 469
+-- On annot shift to state 471
 ## Reductions:
 -- On error ID CL_PAR
 --   reduce production annot ->
 
-State 469:
+State 471:
 ## Known stack suffix:
 ## ID annot OP_PAR annot
 ## LR(1) items:
@@ -7176,21 +7239,21 @@ agent -> ID annot OP_PAR annot . interface CL_PAR agent_modif [ error RAR PIPE L
 -- On error shift to state 29
 -- On ID shift to state 30
 -- On site shift to state 128
--- On interface shift to state 470
+-- On interface shift to state 472
 ## Reductions:
 -- On CL_PAR
 --   reduce production interface ->
 
-State 470:
+State 472:
 ## Known stack suffix:
 ## ID annot OP_PAR annot interface
 ## LR(1) items:
 agent -> ID annot OP_PAR annot interface . CL_PAR agent_modif [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
--- On CL_PAR shift to state 471
+-- On CL_PAR shift to state 473
 ## Reductions:
 
-State 471:
+State 473:
 ## Known stack suffix:
 ## ID annot OP_PAR annot interface CL_PAR
 ## LR(1) items:
@@ -7199,13 +7262,13 @@ agent -> ID annot OP_PAR annot interface CL_PAR . agent_modif [ error RAR PIPE L
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 472
--- On agent_modif shift to state 477
+-- On annot shift to state 474
+-- On agent_modif shift to state 479
 ## Reductions:
 -- On error RAR PLUS PIPE MINUS LRAR COMMA AT
 --   reduce production annot ->
 
-State 472:
+State 474:
 ## Known stack suffix:
 ## annot
 ## LR(1) items:
@@ -7213,40 +7276,17 @@ agent_modif -> annot . [ error RAR PIPE LRAR COMMA AT ]
 agent_modif -> annot . PLUS annot [ error RAR PIPE LRAR COMMA AT ]
 agent_modif -> annot . MINUS annot [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
--- On PLUS shift to state 473
--- On MINUS shift to state 475
+-- On PLUS shift to state 475
+-- On MINUS shift to state 477
 ## Reductions:
 -- On error RAR PIPE LRAR COMMA AT
 --   reduce production agent_modif -> annot
 
-State 473:
+State 475:
 ## Known stack suffix:
 ## annot PLUS
 ## LR(1) items:
 agent_modif -> annot PLUS . annot [ error RAR PIPE LRAR COMMA AT ]
-## Transitions:
--- On SPACE shift to state 19
--- On NEWLINE shift to state 20
--- On COMMENT shift to state 21
--- On annot shift to state 474
-## Reductions:
--- On error RAR PIPE LRAR COMMA AT
---   reduce production annot ->
-
-State 474:
-## Known stack suffix:
-## annot PLUS annot
-## LR(1) items:
-agent_modif -> annot PLUS annot . [ error RAR PIPE LRAR COMMA AT ]
-## Transitions:
-## Default reduction:
--- After reading the next token, reduce production agent_modif -> annot PLUS annot
-
-State 475:
-## Known stack suffix:
-## annot MINUS
-## LR(1) items:
-agent_modif -> annot MINUS . annot [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
@@ -7258,6 +7298,29 @@ agent_modif -> annot MINUS . annot [ error RAR PIPE LRAR COMMA AT ]
 
 State 476:
 ## Known stack suffix:
+## annot PLUS annot
+## LR(1) items:
+agent_modif -> annot PLUS annot . [ error RAR PIPE LRAR COMMA AT ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production agent_modif -> annot PLUS annot
+
+State 477:
+## Known stack suffix:
+## annot MINUS
+## LR(1) items:
+agent_modif -> annot MINUS . annot [ error RAR PIPE LRAR COMMA AT ]
+## Transitions:
+-- On SPACE shift to state 19
+-- On NEWLINE shift to state 20
+-- On COMMENT shift to state 21
+-- On annot shift to state 478
+## Reductions:
+-- On error RAR PIPE LRAR COMMA AT
+--   reduce production annot ->
+
+State 478:
+## Known stack suffix:
 ## annot MINUS annot
 ## LR(1) items:
 agent_modif -> annot MINUS annot . [ error RAR PIPE LRAR COMMA AT ]
@@ -7265,7 +7328,7 @@ agent_modif -> annot MINUS annot . [ error RAR PIPE LRAR COMMA AT ]
 ## Default reduction:
 -- After reading the next token, reduce production agent_modif -> annot MINUS annot
 
-State 477:
+State 479:
 ## Known stack suffix:
 ## ID annot OP_PAR annot interface CL_PAR agent_modif
 ## LR(1) items:
@@ -7274,7 +7337,7 @@ agent -> ID annot OP_PAR annot interface CL_PAR agent_modif . [ error RAR PIPE L
 ## Default reduction:
 -- After reading the next token, reduce production agent -> ID annot OP_PAR annot interface CL_PAR agent_modif
 
-State 478:
+State 480:
 ## Known stack suffix:
 ## ID annot COLON
 ## LR(1) items:
@@ -7283,21 +7346,21 @@ agent -> ID annot COLON . annot ID annot OP_PAR annot interface CL_PAR agent_mod
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 479
+-- On annot shift to state 481
 ## Reductions:
 -- On ID
 --   reduce production annot ->
 
-State 479:
+State 481:
 ## Known stack suffix:
 ## ID annot COLON annot
 ## LR(1) items:
 agent -> ID annot COLON annot . ID annot OP_PAR annot interface CL_PAR agent_modif [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
--- On ID shift to state 480
+-- On ID shift to state 482
 ## Reductions:
 
-State 480:
+State 482:
 ## Known stack suffix:
 ## ID annot COLON annot ID
 ## LR(1) items:
@@ -7306,21 +7369,21 @@ agent -> ID annot COLON annot ID . annot OP_PAR annot interface CL_PAR agent_mod
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 481
+-- On annot shift to state 483
 ## Reductions:
 -- On OP_PAR
 --   reduce production annot ->
 
-State 481:
+State 483:
 ## Known stack suffix:
 ## ID annot COLON annot ID annot
 ## LR(1) items:
 agent -> ID annot COLON annot ID annot . OP_PAR annot interface CL_PAR agent_modif [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
--- On OP_PAR shift to state 482
+-- On OP_PAR shift to state 484
 ## Reductions:
 
-State 482:
+State 484:
 ## Known stack suffix:
 ## ID annot COLON annot ID annot OP_PAR
 ## LR(1) items:
@@ -7329,12 +7392,12 @@ agent -> ID annot COLON annot ID annot OP_PAR . annot interface CL_PAR agent_mod
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 483
+-- On annot shift to state 485
 ## Reductions:
 -- On error ID CL_PAR
 --   reduce production annot ->
 
-State 483:
+State 485:
 ## Known stack suffix:
 ## ID annot COLON annot ID annot OP_PAR annot
 ## LR(1) items:
@@ -7343,21 +7406,21 @@ agent -> ID annot COLON annot ID annot OP_PAR annot . interface CL_PAR agent_mod
 -- On error shift to state 29
 -- On ID shift to state 30
 -- On site shift to state 128
--- On interface shift to state 484
+-- On interface shift to state 486
 ## Reductions:
 -- On CL_PAR
 --   reduce production interface ->
 
-State 484:
+State 486:
 ## Known stack suffix:
 ## ID annot COLON annot ID annot OP_PAR annot interface
 ## LR(1) items:
 agent -> ID annot COLON annot ID annot OP_PAR annot interface . CL_PAR agent_modif [ error RAR PIPE LRAR COMMA AT ]
 ## Transitions:
--- On CL_PAR shift to state 485
+-- On CL_PAR shift to state 487
 ## Reductions:
 
-State 485:
+State 487:
 ## Known stack suffix:
 ## ID annot COLON annot ID annot OP_PAR annot interface CL_PAR
 ## LR(1) items:
@@ -7366,13 +7429,13 @@ agent -> ID annot COLON annot ID annot OP_PAR annot interface CL_PAR . agent_mod
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 472
--- On agent_modif shift to state 486
+-- On annot shift to state 474
+-- On agent_modif shift to state 488
 ## Reductions:
 -- On error RAR PLUS PIPE MINUS LRAR COMMA AT
 --   reduce production annot ->
 
-State 486:
+State 488:
 ## Known stack suffix:
 ## ID annot COLON annot ID annot OP_PAR annot interface CL_PAR agent_modif
 ## LR(1) items:
@@ -7381,7 +7444,7 @@ agent -> ID annot COLON annot ID annot OP_PAR annot interface CL_PAR agent_modif
 ## Default reduction:
 -- After reading the next token, reduce production agent -> ID annot COLON annot ID annot OP_PAR annot interface CL_PAR agent_modif
 
-State 487:
+State 489:
 ## Known stack suffix:
 ## LABEL annot EQUAL
 ## LR(1) items:
@@ -7390,12 +7453,12 @@ sentence -> LABEL annot EQUAL . annot alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE P
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 488
+-- On annot shift to state 490
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 488:
+State 490:
 ## Known stack suffix:
 ## LABEL annot EQUAL annot
 ## LR(1) items:
@@ -7439,10 +7502,10 @@ sentence -> LABEL annot EQUAL annot . alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE P
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 489
+-- On alg_expr shift to state 491
 ## Reductions:
 
-State 489:
+State 491:
 ## Known stack suffix:
 ## LABEL annot EQUAL annot alg_expr
 ## LR(1) items:
@@ -7451,7 +7514,7 @@ sentence -> LABEL annot EQUAL annot alg_expr . [ TOKEN SIGNATURE RAR PLOT PIPE P
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> LABEL annot EQUAL annot alg_expr
 
-State 490:
+State 492:
 ## Known stack suffix:
 ## DOT
 ## LR(1) items:
@@ -7460,12 +7523,12 @@ agent -> DOT . annot [ error RAR PIPE LRAR COMMA AT ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 491
+-- On annot shift to state 493
 ## Reductions:
 -- On error RAR PIPE LRAR COMMA AT
 --   reduce production annot ->
 
-State 491:
+State 493:
 ## Known stack suffix:
 ## DOT annot
 ## LR(1) items:
@@ -7474,7 +7537,7 @@ agent -> DOT annot . [ error RAR PIPE LRAR COMMA AT ]
 ## Default reduction:
 -- After reading the next token, reduce production agent -> DOT annot
 
-State 492:
+State 494:
 ## Known stack suffix:
 ## rule_side
 ## LR(1) items:
@@ -7482,14 +7545,14 @@ rule_content -> rule_side . arrow annot rule_side [ error AT ]
 rule_content -> rule_side . arrow annot [ error AT ]
 rule_content -> rule_side . [ error AT ]
 ## Transitions:
--- On RAR shift to state 493
--- On LRAR shift to state 494
--- On arrow shift to state 495
+-- On RAR shift to state 495
+-- On LRAR shift to state 496
+-- On arrow shift to state 497
 ## Reductions:
 -- On error AT
 --   reduce production rule_content -> rule_side
 
-State 493:
+State 495:
 ## Known stack suffix:
 ## RAR
 ## LR(1) items:
@@ -7498,7 +7561,7 @@ arrow -> RAR . [ error SPACE PIPE NEWLINE ID DOT COMMENT AT ]
 ## Default reduction:
 -- After reading the next token, reduce production arrow -> RAR
 
-State 494:
+State 496:
 ## Known stack suffix:
 ## LRAR
 ## LR(1) items:
@@ -7507,7 +7570,7 @@ arrow -> LRAR . [ error SPACE PIPE NEWLINE ID DOT COMMENT AT ]
 ## Default reduction:
 -- After reading the next token, reduce production arrow -> LRAR
 
-State 495:
+State 497:
 ## Known stack suffix:
 ## rule_side arrow
 ## LR(1) items:
@@ -7517,29 +7580,29 @@ rule_content -> rule_side arrow . annot [ error AT ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 496
+-- On annot shift to state 498
 ## Reductions:
 -- On error PIPE ID DOT AT
 --   reduce production annot ->
 
-State 496:
+State 498:
 ## Known stack suffix:
 ## rule_side arrow annot
 ## LR(1) items:
 rule_content -> rule_side arrow annot . rule_side [ error AT ]
 rule_content -> rule_side arrow annot . [ error AT ]
 ## Transitions:
--- On PIPE shift to state 404
--- On ID shift to state 465
--- On DOT shift to state 490
--- On rule_side shift to state 497
--- On pattern shift to state 498
--- On agent shift to state 503
+-- On PIPE shift to state 406
+-- On ID shift to state 467
+-- On DOT shift to state 492
+-- On rule_side shift to state 499
+-- On pattern shift to state 500
+-- On agent shift to state 505
 ## Reductions:
 -- On error AT
 --   reduce production rule_content -> rule_side arrow annot
 
-State 497:
+State 499:
 ## Known stack suffix:
 ## rule_side arrow annot rule_side
 ## LR(1) items:
@@ -7548,7 +7611,7 @@ rule_content -> rule_side arrow annot rule_side . [ error AT ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_content -> rule_side arrow annot rule_side
 
-State 498:
+State 500:
 ## Known stack suffix:
 ## pattern
 ## LR(1) items:
@@ -7556,12 +7619,12 @@ rule_side -> pattern . [ error RAR LRAR AT ]
 rule_side -> pattern . PIPE annot sum_token [ error RAR LRAR AT ]
 rule_side -> pattern . PIPE annot error [ error RAR LRAR AT ]
 ## Transitions:
--- On PIPE shift to state 499
+-- On PIPE shift to state 501
 ## Reductions:
 -- On error RAR LRAR AT
 --   reduce production rule_side -> pattern
 
-State 499:
+State 501:
 ## Known stack suffix:
 ## pattern PIPE
 ## LR(1) items:
@@ -7571,19 +7634,19 @@ rule_side -> pattern PIPE . annot error [ error RAR LRAR AT ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 500
+-- On annot shift to state 502
 ## Reductions:
 -- On error TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 500:
+State 502:
 ## Known stack suffix:
 ## pattern PIPE annot
 ## LR(1) items:
 rule_side -> pattern PIPE annot . sum_token [ error RAR LRAR AT ]
 rule_side -> pattern PIPE annot . error [ error RAR LRAR AT ]
 ## Transitions:
--- On error shift to state 501
+-- On error shift to state 503
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
 -- On TAN shift to state 164
@@ -7608,13 +7671,13 @@ rule_side -> pattern PIPE annot . error [ error RAR LRAR AT ]
 -- On COSINUS shift to state 207
 -- On ABS shift to state 209
 -- On variable shift to state 211
--- On sum_token shift to state 502
--- On small_alg_expr shift to state 408
+-- On sum_token shift to state 504
+-- On small_alg_expr shift to state 410
 -- On nbr shift to state 213
 -- On constant shift to state 214
 ## Reductions:
 
-State 501:
+State 503:
 ## Known stack suffix:
 ## pattern PIPE annot error
 ## LR(1) items:
@@ -7623,7 +7686,7 @@ rule_side -> pattern PIPE annot error . [ error RAR LRAR AT ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> pattern PIPE annot error
 
-State 502:
+State 504:
 ## Known stack suffix:
 ## pattern PIPE annot sum_token
 ## LR(1) items:
@@ -7632,19 +7695,19 @@ rule_side -> pattern PIPE annot sum_token . [ error RAR LRAR AT ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_side -> pattern PIPE annot sum_token
 
-State 503:
+State 505:
 ## Known stack suffix:
 ## agent
 ## LR(1) items:
 pattern -> agent . COMMA annot pattern [ error RAR PIPE LRAR AT ]
 pattern -> agent . [ error RAR PIPE LRAR AT ]
 ## Transitions:
--- On COMMA shift to state 504
+-- On COMMA shift to state 506
 ## Reductions:
 -- On error RAR PIPE LRAR AT
 --   reduce production pattern -> agent
 
-State 504:
+State 506:
 ## Known stack suffix:
 ## agent COMMA
 ## LR(1) items:
@@ -7653,24 +7716,24 @@ pattern -> agent COMMA . annot pattern [ error RAR PIPE LRAR AT ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 505
+-- On annot shift to state 507
 ## Reductions:
 -- On ID DOT
 --   reduce production annot ->
 
-State 505:
+State 507:
 ## Known stack suffix:
 ## agent COMMA annot
 ## LR(1) items:
 pattern -> agent COMMA annot . pattern [ error RAR PIPE LRAR AT ]
 ## Transitions:
--- On ID shift to state 465
--- On DOT shift to state 490
--- On pattern shift to state 506
--- On agent shift to state 503
+-- On ID shift to state 467
+-- On DOT shift to state 492
+-- On pattern shift to state 508
+-- On agent shift to state 505
 ## Reductions:
 
-State 506:
+State 508:
 ## Known stack suffix:
 ## agent COMMA annot pattern
 ## LR(1) items:
@@ -7679,19 +7742,19 @@ pattern -> agent COMMA annot pattern . [ error RAR PIPE LRAR AT ]
 ## Default reduction:
 -- After reading the next token, reduce production pattern -> agent COMMA annot pattern
 
-State 507:
+State 509:
 ## Known stack suffix:
 ## rule_content
 ## LR(1) items:
 rule -> rule_content . birate [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 rule -> rule_content . error [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 508
--- On AT shift to state 509
--- On birate shift to state 531
+-- On error shift to state 510
+-- On AT shift to state 511
+-- On birate shift to state 533
 ## Reductions:
 
-State 508:
+State 510:
 ## Known stack suffix:
 ## rule_content error
 ## LR(1) items:
@@ -7700,7 +7763,7 @@ rule -> rule_content error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET L
 ## Default reduction:
 -- After reading the next token, reduce production rule -> rule_content error
 
-State 509:
+State 511:
 ## Known stack suffix:
 ## AT
 ## LR(1) items:
@@ -7710,12 +7773,12 @@ birate -> AT . annot rate COMMA annot rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 510
+-- On annot shift to state 512
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR OP_CUR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 510:
+State 512:
 ## Known stack suffix:
 ## AT annot
 ## LR(1) items:
@@ -7730,7 +7793,7 @@ birate -> AT annot . rate COMMA annot rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
 -- On OP_PAR shift to state 180
--- On OP_CUR shift to state 511
+-- On OP_CUR shift to state 513
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -7752,7 +7815,7 @@ birate -> AT annot . rate COMMA annot rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On variable shift to state 211
 -- On small_bool_expr shift to state 226
 -- On small_alg_expr shift to state 228
--- On rate shift to state 521
+-- On rate shift to state 523
 -- On nbr shift to state 213
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
@@ -7762,10 +7825,10 @@ birate -> AT annot . rate COMMA annot rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 525
+-- On alg_expr shift to state 527
 ## Reductions:
 
-State 511:
+State 513:
 ## Known stack suffix:
 ## OP_CUR
 ## LR(1) items:
@@ -7774,12 +7837,12 @@ rate -> OP_CUR . annot alg_with_radius CL_CUR annot alg_expr [ TOKEN SIGNATURE R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 512
+-- On annot shift to state 514
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 512:
+State 514:
 ## Known stack suffix:
 ## OP_CUR annot
 ## LR(1) items:
@@ -7792,7 +7855,7 @@ rate -> OP_CUR annot . alg_with_radius CL_CUR annot alg_expr [ TOKEN SIGNATURE R
 -- On SQRT shift to state 166
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
--- On OP_PAR shift to state 187
+-- On OP_PAR shift to state 332
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -7819,24 +7882,24 @@ rate -> OP_CUR annot . alg_with_radius CL_CUR annot alg_expr [ TOKEN SIGNATURE R
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
 -- On bool_expr shift to state 255
--- On alg_with_radius shift to state 513
+-- On alg_with_radius shift to state 515
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 517
+-- On alg_expr shift to state 519
 ## Reductions:
 
-State 513:
+State 515:
 ## Known stack suffix:
 ## OP_CUR annot alg_with_radius
 ## LR(1) items:
 rate -> OP_CUR annot alg_with_radius . CL_CUR annot alg_expr [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA ]
 ## Transitions:
--- On CL_CUR shift to state 514
+-- On CL_CUR shift to state 516
 ## Reductions:
 
-State 514:
+State 516:
 ## Known stack suffix:
 ## OP_CUR annot alg_with_radius CL_CUR
 ## LR(1) items:
@@ -7845,12 +7908,12 @@ rate -> OP_CUR annot alg_with_radius CL_CUR . annot alg_expr [ TOKEN SIGNATURE R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 515
+-- On annot shift to state 517
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 515:
+State 517:
 ## Known stack suffix:
 ## OP_CUR annot alg_with_radius CL_CUR annot
 ## LR(1) items:
@@ -7894,10 +7957,10 @@ rate -> OP_CUR annot alg_with_radius CL_CUR annot . alg_expr [ TOKEN SIGNATURE R
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 516
+-- On alg_expr shift to state 518
 ## Reductions:
 
-State 516:
+State 518:
 ## Known stack suffix:
 ## OP_CUR annot alg_with_radius CL_CUR annot alg_expr
 ## LR(1) items:
@@ -7906,19 +7969,19 @@ rate -> OP_CUR annot alg_with_radius CL_CUR annot alg_expr . [ TOKEN SIGNATURE R
 ## Default reduction:
 -- After reading the next token, reduce production rate -> OP_CUR annot alg_with_radius CL_CUR annot alg_expr
 
-State 517:
+State 519:
 ## Known stack suffix:
 ## alg_expr
 ## LR(1) items:
 alg_with_radius -> alg_expr . [ CL_CUR ]
 alg_with_radius -> alg_expr . COLON annot alg_expr [ CL_CUR ]
 ## Transitions:
--- On COLON shift to state 518
+-- On COLON shift to state 520
 ## Reductions:
 -- On CL_CUR
 --   reduce production alg_with_radius -> alg_expr
 
-State 518:
+State 520:
 ## Known stack suffix:
 ## alg_expr COLON
 ## LR(1) items:
@@ -7927,12 +7990,12 @@ alg_with_radius -> alg_expr COLON . annot alg_expr [ CL_CUR ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 519
+-- On annot shift to state 521
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 519:
+State 521:
 ## Known stack suffix:
 ## alg_expr COLON annot
 ## LR(1) items:
@@ -7945,7 +8008,7 @@ alg_with_radius -> alg_expr COLON annot . alg_expr [ CL_CUR ]
 -- On SQRT shift to state 166
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
--- On OP_PAR shift to state 187
+-- On OP_PAR shift to state 332
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -7976,10 +8039,10 @@ alg_with_radius -> alg_expr COLON annot . alg_expr [ CL_CUR ]
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 520
+-- On alg_expr shift to state 522
 ## Reductions:
 
-State 520:
+State 522:
 ## Known stack suffix:
 ## alg_expr COLON annot alg_expr
 ## LR(1) items:
@@ -7988,19 +8051,19 @@ alg_with_radius -> alg_expr COLON annot alg_expr . [ CL_CUR ]
 ## Default reduction:
 -- After reading the next token, reduce production alg_with_radius -> alg_expr COLON annot alg_expr
 
-State 521:
+State 523:
 ## Known stack suffix:
 ## AT annot rate
 ## LR(1) items:
 birate -> AT annot rate . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 birate -> AT annot rate . COMMA annot rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On COMMA shift to state 522
+-- On COMMA shift to state 524
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production birate -> AT annot rate
 
-State 522:
+State 524:
 ## Known stack suffix:
 ## AT annot rate COMMA
 ## LR(1) items:
@@ -8009,12 +8072,12 @@ birate -> AT annot rate COMMA . annot rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 523
+-- On annot shift to state 525
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR OP_CUR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 523:
+State 525:
 ## Known stack suffix:
 ## AT annot rate COMMA annot
 ## LR(1) items:
@@ -8028,7 +8091,7 @@ birate -> AT annot rate COMMA annot . rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
 -- On OP_PAR shift to state 180
--- On OP_CUR shift to state 511
+-- On OP_CUR shift to state 513
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -8050,7 +8113,7 @@ birate -> AT annot rate COMMA annot . rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On variable shift to state 211
 -- On small_bool_expr shift to state 226
 -- On small_alg_expr shift to state 228
--- On rate shift to state 524
+-- On rate shift to state 526
 -- On nbr shift to state 213
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
@@ -8060,10 +8123,10 @@ birate -> AT annot rate COMMA annot . rate [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 525
+-- On alg_expr shift to state 527
 ## Reductions:
 
-State 524:
+State 526:
 ## Known stack suffix:
 ## AT annot rate COMMA annot rate
 ## LR(1) items:
@@ -8072,19 +8135,19 @@ birate -> AT annot rate COMMA annot rate . [ TOKEN SIGNATURE RAR PLOT PIPE PERT 
 ## Default reduction:
 -- After reading the next token, reduce production birate -> AT annot rate COMMA annot rate
 
-State 525:
+State 527:
 ## Known stack suffix:
 ## alg_expr
 ## LR(1) items:
 rate -> alg_expr . OP_CUR annot alg_with_radius CL_CUR annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA ]
 rate -> alg_expr . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA ]
 ## Transitions:
--- On OP_CUR shift to state 526
+-- On OP_CUR shift to state 528
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA
 --   reduce production rate -> alg_expr
 
-State 526:
+State 528:
 ## Known stack suffix:
 ## alg_expr OP_CUR
 ## LR(1) items:
@@ -8093,12 +8156,12 @@ rate -> alg_expr OP_CUR . annot alg_with_radius CL_CUR annot [ TOKEN SIGNATURE R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 527
+-- On annot shift to state 529
 ## Reductions:
 -- On TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 527:
+State 529:
 ## Known stack suffix:
 ## alg_expr OP_CUR annot
 ## LR(1) items:
@@ -8111,7 +8174,7 @@ rate -> alg_expr OP_CUR annot . alg_with_radius CL_CUR annot [ TOKEN SIGNATURE R
 -- On SQRT shift to state 166
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
--- On OP_PAR shift to state 187
+-- On OP_PAR shift to state 332
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -8138,24 +8201,24 @@ rate -> alg_expr OP_CUR annot . alg_with_radius CL_CUR annot [ TOKEN SIGNATURE R
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
 -- On bool_expr shift to state 255
--- On alg_with_radius shift to state 528
+-- On alg_with_radius shift to state 530
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 517
+-- On alg_expr shift to state 519
 ## Reductions:
 
-State 528:
+State 530:
 ## Known stack suffix:
 ## alg_expr OP_CUR annot alg_with_radius
 ## LR(1) items:
 rate -> alg_expr OP_CUR annot alg_with_radius . CL_CUR annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA ]
 ## Transitions:
--- On CL_CUR shift to state 529
+-- On CL_CUR shift to state 531
 ## Reductions:
 
-State 529:
+State 531:
 ## Known stack suffix:
 ## alg_expr OP_CUR annot alg_with_radius CL_CUR
 ## LR(1) items:
@@ -8164,12 +8227,12 @@ rate -> alg_expr OP_CUR annot alg_with_radius CL_CUR . annot [ TOKEN SIGNATURE R
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 530
+-- On annot shift to state 532
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA
 --   reduce production annot ->
 
-State 530:
+State 532:
 ## Known stack suffix:
 ## alg_expr OP_CUR annot alg_with_radius CL_CUR annot
 ## LR(1) items:
@@ -8178,7 +8241,7 @@ rate -> alg_expr OP_CUR annot alg_with_radius CL_CUR annot . [ TOKEN SIGNATURE R
 ## Default reduction:
 -- After reading the next token, reduce production rate -> alg_expr OP_CUR annot alg_with_radius CL_CUR annot
 
-State 531:
+State 533:
 ## Known stack suffix:
 ## rule_content birate
 ## LR(1) items:
@@ -8187,7 +8250,7 @@ rule -> rule_content birate . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET 
 ## Default reduction:
 -- After reading the next token, reduce production rule -> rule_content birate
 
-State 532:
+State 534:
 ## Known stack suffix:
 ## LABEL annot rule
 ## LR(1) items:
@@ -8196,7 +8259,7 @@ sentence -> LABEL annot rule . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> LABEL annot rule
 
-State 533:
+State 535:
 ## Known stack suffix:
 ## arrow
 ## LR(1) items:
@@ -8205,26 +8268,26 @@ rule_content -> arrow . annot rule_side [ error AT ]
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 534
+-- On annot shift to state 536
 ## Reductions:
 -- On PIPE ID DOT
 --   reduce production annot ->
 
-State 534:
+State 536:
 ## Known stack suffix:
 ## arrow annot
 ## LR(1) items:
 rule_content -> arrow annot . rule_side [ error AT ]
 ## Transitions:
--- On PIPE shift to state 404
--- On ID shift to state 465
--- On DOT shift to state 490
--- On rule_side shift to state 535
--- On pattern shift to state 498
--- On agent shift to state 503
+-- On PIPE shift to state 406
+-- On ID shift to state 467
+-- On DOT shift to state 492
+-- On rule_side shift to state 537
+-- On pattern shift to state 500
+-- On agent shift to state 505
 ## Reductions:
 
-State 535:
+State 537:
 ## Known stack suffix:
 ## arrow annot rule_side
 ## LR(1) items:
@@ -8233,7 +8296,7 @@ rule_content -> arrow annot rule_side . [ error AT ]
 ## Default reduction:
 -- After reading the next token, reduce production rule_content -> arrow annot rule_side
 
-State 536:
+State 538:
 ## Known stack suffix:
 ## INIT
 ## LR(1) items:
@@ -8242,18 +8305,18 @@ sentence -> INIT . annot init_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 537
+-- On annot shift to state 539
 ## Reductions:
 -- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 537:
+State 539:
 ## Known stack suffix:
 ## INIT annot
 ## LR(1) items:
 sentence -> INIT annot . init_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On error shift to state 538
+-- On error shift to state 540
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -8261,7 +8324,7 @@ sentence -> INIT annot . init_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On SQRT shift to state 166
 -- On SINUS shift to state 168
 -- On PIPE shift to state 170
--- On OP_PAR shift to state 180
+-- On OP_PAR shift to state 332
 -- On NULL_EVENT shift to state 182
 -- On NOT shift to state 183
 -- On MINUS shift to state 189
@@ -8284,7 +8347,7 @@ sentence -> INIT annot . init_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On small_bool_expr shift to state 226
 -- On small_alg_expr shift to state 228
 -- On nbr shift to state 213
--- On init_declaration shift to state 539
+-- On init_declaration shift to state 541
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
@@ -8293,10 +8356,10 @@ sentence -> INIT annot . init_declaration [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 258
--- On alg_expr shift to state 540
+-- On alg_expr shift to state 542
 ## Reductions:
 
-State 538:
+State 540:
 ## Known stack suffix:
 ## error
 ## LR(1) items:
@@ -8305,7 +8368,7 @@ init_declaration -> error . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LA
 ## Default reduction:
 -- After reading the next token, reduce production init_declaration -> error
 
-State 539:
+State 541:
 ## Known stack suffix:
 ## INIT annot init_declaration
 ## LR(1) items:
@@ -8314,7 +8377,7 @@ sentence -> INIT annot init_declaration . [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> INIT annot init_declaration
 
-State 540:
+State 542:
 ## Known stack suffix:
 ## alg_expr
 ## LR(1) items:
@@ -8322,15 +8385,15 @@ init_declaration -> alg_expr . pattern [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS 
 init_declaration -> alg_expr . OP_PAR annot pattern CL_PAR annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 init_declaration -> alg_expr . id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On OP_PAR shift to state 541
--- On ID shift to state 546
+-- On OP_PAR shift to state 543
+-- On ID shift to state 548
 -- On DOT shift to state 150
--- On pattern shift to state 553
--- On id_list shift to state 554
+-- On pattern shift to state 555
+-- On id_list shift to state 556
 -- On agent shift to state 155
 ## Reductions:
 
-State 541:
+State 543:
 ## Known stack suffix:
 ## alg_expr OP_PAR
 ## LR(1) items:
@@ -8339,12 +8402,12 @@ init_declaration -> alg_expr OP_PAR . annot pattern CL_PAR annot [ TOKEN SIGNATU
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 542
+-- On annot shift to state 544
 ## Reductions:
 -- On ID DOT
 --   reduce production annot ->
 
-State 542:
+State 544:
 ## Known stack suffix:
 ## alg_expr OP_PAR annot
 ## LR(1) items:
@@ -8352,20 +8415,20 @@ init_declaration -> alg_expr OP_PAR annot . pattern CL_PAR annot [ TOKEN SIGNATU
 ## Transitions:
 -- On ID shift to state 18
 -- On DOT shift to state 150
--- On pattern shift to state 543
+-- On pattern shift to state 545
 -- On agent shift to state 155
 ## Reductions:
 
-State 543:
+State 545:
 ## Known stack suffix:
 ## alg_expr OP_PAR annot pattern
 ## LR(1) items:
 init_declaration -> alg_expr OP_PAR annot pattern . CL_PAR annot [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On CL_PAR shift to state 544
+-- On CL_PAR shift to state 546
 ## Reductions:
 
-State 544:
+State 546:
 ## Known stack suffix:
 ## alg_expr OP_PAR annot pattern CL_PAR
 ## LR(1) items:
@@ -8374,12 +8437,12 @@ init_declaration -> alg_expr OP_PAR annot pattern CL_PAR . annot [ TOKEN SIGNATU
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 545
+-- On annot shift to state 547
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production annot ->
 
-State 545:
+State 547:
 ## Known stack suffix:
 ## alg_expr OP_PAR annot pattern CL_PAR annot
 ## LR(1) items:
@@ -8388,7 +8451,7 @@ init_declaration -> alg_expr OP_PAR annot pattern CL_PAR annot . [ TOKEN SIGNATU
 ## Default reduction:
 -- After reading the next token, reduce production init_declaration -> alg_expr OP_PAR annot pattern CL_PAR annot
 
-State 546:
+State 548:
 ## Known stack suffix:
 ## ID
 ## LR(1) items:
@@ -8401,12 +8464,12 @@ id_list -> ID . annot COMMA annot id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On annot shift to state 547
+-- On annot shift to state 549
 ## Reductions:
 -- On error TOKEN SIGNATURE RAR PLOT PIPE PERT OP_PAR OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA COLON
 --   reduce production annot ->
 
-State 547:
+State 549:
 ## Known stack suffix:
 ## ID annot
 ## LR(1) items:
@@ -8418,13 +8481,13 @@ id_list -> ID annot . COMMA annot id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 ## Transitions:
 -- On error shift to state 26
 -- On OP_PAR shift to state 27
--- On COMMA shift to state 548
+-- On COMMA shift to state 550
 -- On COLON shift to state 141
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production id_list -> ID annot
 
-State 548:
+State 550:
 ## Known stack suffix:
 ## ID annot COMMA
 ## LR(1) items:
@@ -8433,22 +8496,22 @@ id_list -> ID annot COMMA . annot id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 549
+-- On annot shift to state 551
 ## Reductions:
 -- On ID
 --   reduce production annot ->
 
-State 549:
+State 551:
 ## Known stack suffix:
 ## ID annot COMMA annot
 ## LR(1) items:
 id_list -> ID annot COMMA annot . id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On ID shift to state 550
--- On id_list shift to state 552
+-- On ID shift to state 552
+-- On id_list shift to state 554
 ## Reductions:
 
-State 550:
+State 552:
 ## Known stack suffix:
 ## ID
 ## LR(1) items:
@@ -8458,24 +8521,24 @@ id_list -> ID . annot COMMA annot id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 551
+-- On annot shift to state 553
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG COMMA
 --   reduce production annot ->
 
-State 551:
+State 553:
 ## Known stack suffix:
 ## ID annot
 ## LR(1) items:
 id_list -> ID annot . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 id_list -> ID annot . COMMA annot id_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On COMMA shift to state 548
+-- On COMMA shift to state 550
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production id_list -> ID annot
 
-State 552:
+State 554:
 ## Known stack suffix:
 ## ID annot COMMA annot id_list
 ## LR(1) items:
@@ -8484,7 +8547,7 @@ id_list -> ID annot COMMA annot id_list . [ TOKEN SIGNATURE RAR PLOT PIPE PERT O
 ## Default reduction:
 -- After reading the next token, reduce production id_list -> ID annot COMMA annot id_list
 
-State 553:
+State 555:
 ## Known stack suffix:
 ## alg_expr pattern
 ## LR(1) items:
@@ -8493,7 +8556,7 @@ init_declaration -> alg_expr pattern . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS 
 ## Default reduction:
 -- After reading the next token, reduce production init_declaration -> alg_expr pattern
 
-State 554:
+State 556:
 ## Known stack suffix:
 ## alg_expr id_list
 ## LR(1) items:
@@ -8502,7 +8565,7 @@ init_declaration -> alg_expr id_list . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS 
 ## Default reduction:
 -- After reading the next token, reduce production init_declaration -> alg_expr id_list
 
-State 555:
+State 557:
 ## Known stack suffix:
 ## EOF
 ## LR(1) items:
@@ -8511,34 +8574,11 @@ model_body -> EOF . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production model_body -> EOF
 
-State 556:
+State 558:
 ## Known stack suffix:
 ## CONFIG
 ## LR(1) items:
 sentence -> CONFIG . annot STRING annot value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-## Transitions:
--- On SPACE shift to state 2
--- On NEWLINE shift to state 3
--- On COMMENT shift to state 4
--- On annot shift to state 557
-## Reductions:
--- On STRING
---   reduce production annot ->
-
-State 557:
-## Known stack suffix:
-## CONFIG annot
-## LR(1) items:
-sentence -> CONFIG annot . STRING annot value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
-## Transitions:
--- On STRING shift to state 558
-## Reductions:
-
-State 558:
-## Known stack suffix:
-## CONFIG annot STRING
-## LR(1) items:
-sentence -> CONFIG annot STRING . annot value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
@@ -8550,15 +8590,38 @@ sentence -> CONFIG annot STRING . annot value_list [ TOKEN SIGNATURE RAR PLOT PI
 
 State 559:
 ## Known stack suffix:
+## CONFIG annot
+## LR(1) items:
+sentence -> CONFIG annot . STRING annot value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+## Transitions:
+-- On STRING shift to state 560
+## Reductions:
+
+State 560:
+## Known stack suffix:
+## CONFIG annot STRING
+## LR(1) items:
+sentence -> CONFIG annot STRING . annot value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
+## Transitions:
+-- On SPACE shift to state 2
+-- On NEWLINE shift to state 3
+-- On COMMENT shift to state 4
+-- On annot shift to state 561
+## Reductions:
+-- On STRING
+--   reduce production annot ->
+
+State 561:
+## Known stack suffix:
 ## CONFIG annot STRING annot
 ## LR(1) items:
 sentence -> CONFIG annot STRING annot . value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On STRING shift to state 560
--- On value_list shift to state 563
+-- On STRING shift to state 562
+-- On value_list shift to state 565
 ## Reductions:
 
-State 560:
+State 562:
 ## Known stack suffix:
 ## STRING
 ## LR(1) items:
@@ -8568,25 +8631,25 @@ value_list -> STRING . annot value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On annot shift to state 561
+-- On annot shift to state 563
 ## Reductions:
 -- On TOKEN STRING SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production annot ->
 
-State 561:
+State 563:
 ## Known stack suffix:
 ## STRING annot
 ## LR(1) items:
 value_list -> STRING annot . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 value_list -> STRING annot . value_list [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG ]
 ## Transitions:
--- On STRING shift to state 560
--- On value_list shift to state 562
+-- On STRING shift to state 562
+-- On value_list shift to state 564
 ## Reductions:
 -- On TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT ID EOF DOT CONFIG
 --   reduce production value_list -> STRING annot
 
-State 562:
+State 564:
 ## Known stack suffix:
 ## STRING annot value_list
 ## LR(1) items:
@@ -8595,7 +8658,7 @@ value_list -> STRING annot value_list . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS
 ## Default reduction:
 -- After reading the next token, reduce production value_list -> STRING annot value_list
 
-State 563:
+State 565:
 ## Known stack suffix:
 ## CONFIG annot STRING annot value_list
 ## LR(1) items:
@@ -8604,38 +8667,38 @@ sentence -> CONFIG annot STRING annot value_list . [ TOKEN SIGNATURE RAR PLOT PI
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> CONFIG annot STRING annot value_list
 
-State 564:
+State 566:
 ## Known stack suffix:
 ## sentence
 ## LR(1) items:
 model_body -> sentence . model_body [ # ]
 ## Transitions:
--- On TOKEN shift to state 392
--- On SIGNATURE shift to state 396
--- On RAR shift to state 360
--- On PLOT shift to state 400
--- On PIPE shift to state 404
--- On PERT shift to state 415
--- On OBS shift to state 448
--- On LRAR shift to state 372
--- On LET shift to state 460
--- On LABEL shift to state 463
--- On INIT shift to state 536
--- On ID shift to state 465
--- On EOF shift to state 555
--- On DOT shift to state 490
--- On CONFIG shift to state 556
--- On sentence shift to state 564
--- On rule_side shift to state 492
--- On rule_content shift to state 507
--- On rule shift to state 565
--- On pattern shift to state 498
--- On model_body shift to state 566
--- On arrow shift to state 533
--- On agent shift to state 503
+-- On TOKEN shift to state 394
+-- On SIGNATURE shift to state 398
+-- On RAR shift to state 362
+-- On PLOT shift to state 402
+-- On PIPE shift to state 406
+-- On PERT shift to state 417
+-- On OBS shift to state 450
+-- On LRAR shift to state 374
+-- On LET shift to state 462
+-- On LABEL shift to state 465
+-- On INIT shift to state 538
+-- On ID shift to state 467
+-- On EOF shift to state 557
+-- On DOT shift to state 492
+-- On CONFIG shift to state 558
+-- On sentence shift to state 566
+-- On rule_side shift to state 494
+-- On rule_content shift to state 509
+-- On rule shift to state 567
+-- On pattern shift to state 500
+-- On model_body shift to state 568
+-- On arrow shift to state 535
+-- On agent shift to state 505
 ## Reductions:
 
-State 565:
+State 567:
 ## Known stack suffix:
 ## rule
 ## LR(1) items:
@@ -8644,7 +8707,7 @@ sentence -> rule . [ TOKEN SIGNATURE RAR PLOT PIPE PERT OBS LRAR LET LABEL INIT 
 ## Default reduction:
 -- After reading the next token, reduce production sentence -> rule
 
-State 566:
+State 568:
 ## Known stack suffix:
 ## sentence model_body
 ## LR(1) items:
@@ -8653,7 +8716,7 @@ model_body -> sentence model_body . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production model_body -> sentence model_body
 
-State 567:
+State 569:
 ## Known stack suffix:
 ## annot model_body
 ## LR(1) items:
@@ -8662,7 +8725,7 @@ model -> annot model_body . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production model -> annot model_body
 
-State 568:
+State 570:
 ## Known stack suffix:
 ##
 ## LR(1) items:
@@ -8671,13 +8734,13 @@ standalone_bool_expr' -> . standalone_bool_expr [ # ]
 -- On SPACE shift to state 19
 -- On NEWLINE shift to state 20
 -- On COMMENT shift to state 21
--- On standalone_bool_expr shift to state 569
--- On annot shift to state 570
+-- On standalone_bool_expr shift to state 571
+-- On annot shift to state 572
 ## Reductions:
 -- On error TRUE TMAX TIME TAN SQRT SINUS PIPE OP_PAR NULL_EVENT NOT MINUS MIN MAX LOG LABEL INT INFINITY ID FLOAT FALSE EXPONENT EVENT EMAX CPUTIME COSINUS ABS
 --   reduce production annot ->
 
-State 569:
+State 571:
 ## Known stack suffix:
 ## standalone_bool_expr
 ## LR(1) items:
@@ -8686,14 +8749,14 @@ standalone_bool_expr' -> standalone_bool_expr . [ # ]
 ## Default reduction:
 -- Without reading the next token, accept standalone_bool_expr
 
-State 570:
+State 572:
 ## Known stack suffix:
 ## annot
 ## LR(1) items:
 standalone_bool_expr -> annot . bool_expr EOF [ # ]
 standalone_bool_expr -> annot . error [ # ]
 ## Transitions:
--- On error shift to state 571
+-- On error shift to state 573
 -- On TRUE shift to state 179
 -- On TMAX shift to state 162
 -- On TIME shift to state 163
@@ -8727,14 +8790,14 @@ standalone_bool_expr -> annot . error [ # ]
 -- On constant shift to state 214
 -- On bool_expr_no_or shift to state 233
 -- On bool_expr_comp shift to state 236
--- On bool_expr shift to state 572
+-- On bool_expr shift to state 574
 -- On alg_expr_up_to_sum shift to state 240
 -- On alg_expr_up_to_prod shift to state 251
 -- On alg_expr_up_to_mod shift to state 247
 -- On alg_expr_up_to_if shift to state 252
 ## Reductions:
 
-State 571:
+State 573:
 ## Known stack suffix:
 ## annot error
 ## LR(1) items:
@@ -8743,16 +8806,16 @@ standalone_bool_expr -> annot error . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production standalone_bool_expr -> annot error
 
-State 572:
+State 574:
 ## Known stack suffix:
 ## annot bool_expr
 ## LR(1) items:
 standalone_bool_expr -> annot bool_expr . EOF [ # ]
 ## Transitions:
--- On EOF shift to state 573
+-- On EOF shift to state 575
 ## Reductions:
 
-State 573:
+State 575:
 ## Known stack suffix:
 ## annot bool_expr EOF
 ## LR(1) items:
@@ -8761,23 +8824,23 @@ standalone_bool_expr -> annot bool_expr EOF . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production standalone_bool_expr -> annot bool_expr EOF
 
-State 574:
+State 576:
 ## Known stack suffix:
 ##
 ## LR(1) items:
 standalone_effect_list' -> . standalone_effect_list [ # ]
 ## Transitions:
--- On error shift to state 575
+-- On error shift to state 577
 -- On SPACE shift to state 2
 -- On NEWLINE shift to state 3
 -- On COMMENT shift to state 4
--- On standalone_effect_list shift to state 576
--- On annot shift to state 577
+-- On standalone_effect_list shift to state 578
+-- On annot shift to state 579
 ## Reductions:
 -- On TRACK STOP SPECIES_OF SNAPSHOT PRINTF PLOTENTRY INTRO FLUX DELETE ASSIGN APPLY
 --   reduce production annot ->
 
-State 575:
+State 577:
 ## Known stack suffix:
 ## error
 ## LR(1) items:
@@ -8786,7 +8849,7 @@ standalone_effect_list -> error . [ # ]
 ## Default reduction:
 -- Without reading the next token, reduce production standalone_effect_list -> error
 
-State 576:
+State 578:
 ## Known stack suffix:
 ## standalone_effect_list
 ## LR(1) items:
@@ -8795,7 +8858,7 @@ standalone_effect_list' -> standalone_effect_list . [ # ]
 ## Default reduction:
 -- Without reading the next token, accept standalone_effect_list
 
-State 577:
+State 579:
 ## Known stack suffix:
 ## annot
 ## LR(1) items:
@@ -8808,24 +8871,24 @@ standalone_effect_list -> annot . partial_effect_list EOF [ # ]
 -- On PRINTF shift to state 323
 -- On PLOTENTRY shift to state 327
 -- On INTRO shift to state 329
--- On FLUX shift to state 334
--- On DELETE shift to state 344
--- On ASSIGN shift to state 349
--- On APPLY shift to state 357
--- On partial_effect_list shift to state 578
--- On effetto shift to state 425
+-- On FLUX shift to state 336
+-- On DELETE shift to state 346
+-- On ASSIGN shift to state 351
+-- On APPLY shift to state 359
+-- On partial_effect_list shift to state 580
+-- On effetto shift to state 427
 ## Reductions:
 
-State 578:
+State 580:
 ## Known stack suffix:
 ## annot partial_effect_list
 ## LR(1) items:
 standalone_effect_list -> annot partial_effect_list . EOF [ # ]
 ## Transitions:
--- On EOF shift to state 579
+-- On EOF shift to state 581
 ## Reductions:
 
-State 579:
+State 581:
 ## Known stack suffix:
 ## annot partial_effect_list EOF
 ## LR(1) items:

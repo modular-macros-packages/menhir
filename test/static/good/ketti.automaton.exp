@@ -6,9 +6,9 @@ expr' -> . expr [ # ]
 ## Transitions:
 -- On PLUS shift to state 1
 -- On INT shift to state 3
--- On plus shift to state 4
+-- On plus shift to state 11
 -- On indir shift to state 5
--- On expr shift to state 14
+-- On expr shift to state 15
 ## Reductions:
 
 State 1:
@@ -30,7 +30,7 @@ expr -> PLUS PLUS . expr INT [ PLUS MINUS INT # ]
 -- On INT shift to state 3
 -- On plus shift to state 4
 -- On indir shift to state 5
--- On expr shift to state 12
+-- On expr shift to state 13
 ## Reductions:
 
 State 3:
@@ -52,18 +52,18 @@ State 4:
 ## Known stack suffix:
 ## plus
 ## LR(1) items:
-expr -> plus . [ PLUS MINUS INT # ]
-indir -> plus . [ MINUS ]
+expr -> plus . [ PLUS INT ]
+indir -> plus . [ PLUS MINUS # ]
 ## Transitions:
 ## Reductions:
--- On PLUS MINUS INT #
+-- On PLUS INT
 --   reduce production expr -> plus
--- On MINUS
+-- On PLUS MINUS #
 --   reduce production indir -> plus
-** Conflict on MINUS
+** Conflict on PLUS
 ** End-of-stream conflict on PLUS MINUS INT
 **   There is a tension between
-**   (1) reducing production expr -> plus
+**   (1) reducing production indir -> plus
 **   without even requesting a lookahead token, and
 **   (2) testing whether the lookahead token is a member of the above set.
 
@@ -143,12 +143,31 @@ plus -> expr PLUS . expr [ PLUS MINUS INT # ]
 ## Transitions:
 -- On PLUS shift to state 1
 -- On INT shift to state 3
--- On plus shift to state 4
+-- On plus shift to state 11
 -- On indir shift to state 5
--- On expr shift to state 11
+-- On expr shift to state 12
 ## Reductions:
 
 State 11:
+## Known stack suffix:
+## plus
+## LR(1) items:
+expr -> plus . [ PLUS MINUS INT # ]
+indir -> plus . [ MINUS ]
+## Transitions:
+## Reductions:
+-- On PLUS MINUS INT #
+--   reduce production expr -> plus
+-- On MINUS
+--   reduce production indir -> plus
+** Conflict on MINUS
+** End-of-stream conflict on PLUS MINUS INT
+**   There is a tension between
+**   (1) reducing production expr -> plus
+**   without even requesting a lookahead token, and
+**   (2) testing whether the lookahead token is a member of the above set.
+
+State 12:
 ## Known stack suffix:
 ## expr PLUS expr
 ## LR(1) items:
@@ -166,7 +185,7 @@ plus -> expr PLUS expr . [ PLUS MINUS INT # ]
 **   without even requesting a lookahead token, and
 **   (2) testing whether the lookahead token is a member of the above set.
 
-State 12:
+State 13:
 ## Known stack suffix:
 ## PLUS PLUS expr
 ## LR(1) items:
@@ -174,10 +193,10 @@ expr -> PLUS PLUS expr . INT [ PLUS MINUS INT # ]
 plus -> expr . PLUS expr [ PLUS MINUS INT ]
 ## Transitions:
 -- On PLUS shift to state 10
--- On INT shift to state 13
+-- On INT shift to state 14
 ## Reductions:
 
-State 13:
+State 14:
 ## Known stack suffix:
 ## PLUS PLUS expr INT
 ## LR(1) items:
@@ -192,7 +211,7 @@ expr -> PLUS PLUS expr INT . [ PLUS MINUS INT # ]
 **   without even requesting a lookahead token, and
 **   (2) testing whether the lookahead token is a member of the above set.
 
-State 14:
+State 15:
 ## Known stack suffix:
 ## expr
 ## LR(1) items:

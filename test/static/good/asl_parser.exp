@@ -665,13 +665,13 @@ follow(aexpr) = TO THEN STAR SLASH SEMICOLON RPAREN REM RBRACK RBRACE QUOT PLUS_
 Built an LR(0) automaton with 735 states.
 The grammar is not SLR(1) -- 1 states have a conflict.
 The construction mode is pager.
-Built an LR(1) automaton with 737 states.
-278 out of 737 states have a default reduction.
-The action table is 89177 entries; 2864 non-zero; 2283 compressed.
-The action table occupies roughly 4664 bytes.
-The goto table is 98021 entries; 1366 non-zero; 2827 compressed.
-The goto table occupies roughly 5752 bytes.
-The error table occupies roughly 11184 bytes.
+Built an LR(1) automaton with 739 states.
+278 out of 739 states have a default reduction.
+The action table is 89419 entries; 2867 non-zero; 2471 compressed.
+The action table occupies roughly 5032 bytes.
+The goto table is 98287 entries; 1368 non-zero; 2814 compressed.
+The goto table occupies roughly 5720 bytes.
+The error table occupies roughly 11216 bytes.
 The default_reduction table occupies roughly 1512 bytes.
 The lhs table occupies roughly 376 bytes.
 The trace table occupies roughly 8 bytes.

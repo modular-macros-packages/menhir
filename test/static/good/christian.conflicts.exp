@@ -3560,7 +3560,7 @@ simpleDefinedType actualParameterList // lookahead token appears because actualP
 Upper . 
 
 ** Conflict (reduce/reduce) in state 110.
-** Tokens involved: UNION RightParen RightBrace Middle LeftBrace INTERSECTION EXCEPT Dot Comma Circumflex Bang
+** Tokens involved: UNION RightParen RightBrace Middle LeftBrace INTERSECTION EXCEPT Dot Comma Circumflex Bang Assignment
 ** The following explanations concentrate on token UNION.
 ** This state is reached from main after reading:
 

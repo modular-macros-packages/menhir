@@ -224,14 +224,14 @@ follow(a_link_state) = KAPPA_WLD KAPPA_LNK DIV COMMA CL_PAR
 Built an LR(0) automaton with 357 states.
 The grammar is not SLR(1) -- 20 states have a conflict.
 The construction mode is pager.
-Built an LR(1) automaton with 400 states.
+Built an LR(1) automaton with 401 states.
 90 shift/reduce conflicts were silently solved.
-156 out of 400 states have a default reduction.
-The action table is 33200 entries; 3111 non-zero; 2231 compressed.
-The action table occupies roughly 4552 bytes.
-The goto table is 19200 entries; 672 non-zero; 1280 compressed.
-The goto table occupies roughly 2648 bytes.
-The error table occupies roughly 4184 bytes.
-The default_reduction table occupies roughly 432 bytes.
+156 out of 401 states have a default reduction.
+The action table is 33283 entries; 3137 non-zero; 2304 compressed.
+The action table occupies roughly 4704 bytes.
+The goto table is 19248 entries; 680 non-zero; 1210 compressed.
+The goto table occupies roughly 2520 bytes.
+The error table occupies roughly 4200 bytes.
+The default_reduction table occupies roughly 440 bytes.
 The lhs table occupies roughly 224 bytes.
 The trace table occupies roughly 8 bytes.

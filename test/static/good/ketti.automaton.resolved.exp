@@ -6,9 +6,9 @@ expr' -> . expr [ # ]
 ## Transitions:
 -- On PLUS shift to state 1
 -- On INT shift to state 3
--- On plus shift to state 4
+-- On plus shift to state 11
 -- On indir shift to state 5
--- On expr shift to state 14
+-- On expr shift to state 15
 ## Reductions:
 
 State 1:
@@ -30,7 +30,7 @@ expr -> PLUS PLUS . expr INT [ PLUS MINUS INT # ]
 -- On INT shift to state 3
 -- On plus shift to state 4
 -- On indir shift to state 5
--- On expr shift to state 12
+-- On expr shift to state 13
 ## Reductions:
 
 State 3:
@@ -46,11 +46,14 @@ State 4:
 ## Known stack suffix:
 ## plus
 ## LR(1) items:
-expr -> plus . [ PLUS MINUS INT # ]
-indir -> plus . [ MINUS ]
+expr -> plus . [ PLUS INT ]
+indir -> plus . [ PLUS MINUS # ]
 ## Transitions:
-## Default reduction:
--- After reading the next token, reduce production expr -> plus
+## Reductions:
+-- On PLUS INT
+--   reduce production expr -> plus
+-- On MINUS
+--   reduce production indir -> plus
 
 State 5:
 ## Known stack suffix:
@@ -116,12 +119,22 @@ plus -> expr PLUS . expr [ PLUS MINUS INT # ]
 ## Transitions:
 -- On PLUS shift to state 1
 -- On INT shift to state 3
--- On plus shift to state 4
+-- On plus shift to state 11
 -- On indir shift to state 5
--- On expr shift to state 11
+-- On expr shift to state 12
 ## Reductions:
 
 State 11:
+## Known stack suffix:
+## plus
+## LR(1) items:
+expr -> plus . [ PLUS MINUS INT # ]
+indir -> plus . [ MINUS ]
+## Transitions:
+## Default reduction:
+-- After reading the next token, reduce production expr -> plus
+
+State 12:
 ## Known stack suffix:
 ## expr PLUS expr
 ## LR(1) items:
@@ -133,7 +146,7 @@ plus -> expr PLUS expr . [ PLUS MINUS INT # ]
 -- On MINUS INT
 --   reduce production plus -> expr PLUS expr
 
-State 12:
+State 13:
 ## Known stack suffix:
 ## PLUS PLUS expr
 ## LR(1) items:
@@ -141,10 +154,10 @@ expr -> PLUS PLUS expr . INT [ PLUS MINUS INT # ]
 plus -> expr . PLUS expr [ PLUS MINUS INT ]
 ## Transitions:
 -- On PLUS shift to state 10
--- On INT shift to state 13
+-- On INT shift to state 14
 ## Reductions:
 
-State 13:
+State 14:
 ## Known stack suffix:
 ## PLUS PLUS expr INT
 ## LR(1) items:
@@ -153,7 +166,7 @@ expr -> PLUS PLUS expr INT . [ PLUS MINUS INT # ]
 ## Default reduction:
 -- After reading the next token, reduce production expr -> PLUS PLUS expr INT
 
-State 14:
+State 15:
 ## Known stack suffix:
 ## expr
 ## LR(1) items:
