@@ -152,7 +152,7 @@ module type STACK = sig
      this suffix is [Production.length prod]. In the long invariant, its
      length can be greater. If there are no states where [prod] can be
      reduced, then every cell contains an empty set of states. *)
-  val prodstack: Production.index -> word
+  val prodstack: Production.t -> word
 
   (**[gotostack nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. In the short invariant, the
@@ -214,7 +214,7 @@ module Origin : sig
 
   (**[reduce prod] determines via which start symbols the [reduce] function
      for production [prod] is reachable. *)
-  val reduce: Production.index -> origin
+  val reduce: Production.t -> origin
 
   (**[goto nt] determines via which start symbols the [goto] function for the
      nonterminal symbol [nt] is reachable. *)

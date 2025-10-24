@@ -558,7 +558,7 @@ module type STACK = sig
      this suffix is [Production.length prod]. In the long invariant, its
      length can be greater. If there are no states where [prod] can be
      reduced, then every cell contains an empty set of states. *)
-  val prodstack: Production.index -> word
+  val prodstack: Production.t -> word
 
   (**[gotostack nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. In the short invariant, the
@@ -601,7 +601,7 @@ module Short = struct
       StackSymbolsShort.stack_symbols
       StackStatesShort.stack_states
 
-  let prodstack : Production.index -> word =
+  let prodstack : Production.t -> word =
     publish long Production.tabulate
       StackSymbolsShort.production_symbols
       StackStatesShort.production_states
@@ -686,7 +686,7 @@ module Long () = struct
       StackSymbolsLong.stack_symbols
       stack_states
 
-  let prodstack : Production.index -> word =
+  let prodstack : Production.t -> word =
     publish long Production.tabulate
       StackSymbolsLong.production_symbols
       production_states
@@ -745,7 +745,7 @@ module G = struct
 
   type variable =
     | Run of Lr1.node
-    | Reduce of Production.index
+    | Reduce of Production.t
     | Goto of Nonterminal.t
 
   type t = variable

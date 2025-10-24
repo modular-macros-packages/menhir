@@ -132,7 +132,7 @@ end) = struct
       if shadow == X.goal then
         let can_reduce =
           ref TerminalSet.empty in
-        let reductions1 : Production.index list TerminalMap.t =
+        let reductions1 : Production.t list TerminalMap.t =
           Lr1.reductions shadow in
         List.iter (fun (toks, prod) ->
           TerminalSet.iter (fun tok ->
@@ -177,7 +177,7 @@ end) = struct
   let goal, token =
     try
 
-      ProductionMap.iter (fun (prod : Production.index) (k : Lr0.node) ->
+      ProductionMap.iter (fun (prod : Production.t) (k : Lr0.node) ->
         let shadow = try
             ProductionMap.find prod Lr1.entry
           with Not_found ->

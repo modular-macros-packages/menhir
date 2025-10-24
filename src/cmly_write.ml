@@ -96,7 +96,7 @@ let action (a : Action.t) : action =
     a_keywords = Keyword.KeywordSet.elements (Action.keywords a);
   }
 
-let rhs (prod : Production.index) : symbol producer_def array =
+let rhs (prod : Production.t) : symbol producer_def array =
   match Production.classify prod with
   | Some n ->
       [| (N (n2i n), "", []) |]
@@ -107,7 +107,7 @@ let rhs (prod : Production.index) : symbol producer_def array =
         symbol sym, id, attrs
       ) (Production.rhs prod)
 
-let production (prod : Production.index) : production_def =
+let production (prod : Production.t) : production_def =
   {
     p_kind = if Production.is_start prod then `START else `REGULAR;
     p_lhs = n2i (Production.nt prod);

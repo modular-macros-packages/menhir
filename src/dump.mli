@@ -19,7 +19,7 @@ open Grammar
 module Make (Default : sig
 
   val has_default_reduction:
-    Lr1.node -> (Production.index * TerminalSet.t) option
+    Lr1.node -> (Production.t * TerminalSet.t) option
 
 end) : sig
 

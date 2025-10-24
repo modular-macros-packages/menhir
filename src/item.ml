@@ -105,7 +105,7 @@ let print item =
 
 type kind =
   | Shift of Symbol.t * t
-  | Reduce of Production.index
+  | Reduce of Production.t
 
 let classify item =
   let prod, _, rhs, pos, length = def item in

@@ -18,7 +18,7 @@ module type LOG =
   MenhirLib.EngineTypes.LOG
     with type state := Lr1.node
      and type terminal := Terminal.t
-     and type production := Production.index
+     and type production := Production.t
 
 (* The type of a first-class module whose signature is LOG. *)
 

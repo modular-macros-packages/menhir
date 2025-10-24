@@ -34,7 +34,7 @@ val interpret:
    options [--interpret-error], [--compile-errors], etc. *)
 
 type spurious_reduction =
-  Lr1.node * Production.index
+  Lr1.node * Production.t
 
 type target =
   Lr1.node * spurious_reduction list

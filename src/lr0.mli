@@ -103,7 +103,7 @@ val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
 
 (* See also [reductions_table] further on. *)
 
-val reductions: lr1state -> (TerminalSet.t * Production.index) list
+val reductions: lr1state -> (TerminalSet.t * Production.t) list
 
 (* Equality of states. The two states must have the same core. Then,
    they are equal if and only if their lookahead sets are pointwise
@@ -159,17 +159,17 @@ val print_closure:  string ->         lr1state -> string
    terminal symbols to lists of productions. *)
 
 type reductions =
-  Production.index list TerminalMap.t
+  Production.t list TerminalMap.t
 
 (* [add_reduction prod tok reductions] adds a reduction of [prod] on [tok]
    to the table [reductions]. *)
 
-val add_reduction: Production.index -> Terminal.t -> reductions -> reductions
+val add_reduction: Production.t -> Terminal.t -> reductions -> reductions
 
 (* [add_reductions prod toks reductions] adds a reduction of [prod] on every
    token in the set [toks] to the table [reductions]. *)
 
-val add_reductions: Production.index -> TerminalSet.t -> reductions -> reductions
+val add_reductions: Production.t -> TerminalSet.t -> reductions -> reductions
 
 (* A table of the reductions at a state. *)
 

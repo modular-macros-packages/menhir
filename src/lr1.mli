@@ -67,7 +67,7 @@ val entry: node ProductionMap.t
    symbol and to the OCaml type associated with this production. *)
 
 val fold_entry:
-  (Production.index -> node -> Nonterminal.t -> ocamltype -> 'a -> 'a) ->
+  (Production.t -> node -> Nonterminal.t -> ocamltype -> 'a -> 'a) ->
   'a -> 'a
 
 (* [entry_of_nt] maps a (user) non-terminal start symbol to the corresponding
@@ -138,7 +138,7 @@ end
 
 val transitions: node -> node SymbolMap.t
 
-val reductions: node -> Production.index list TerminalMap.t
+val reductions: node -> Production.t list TerminalMap.t
   (* or: node -> Lr0.reductions *)
 
 (* (New as of 2012/01/23.) This tells whether a shift/reduce conflict
@@ -225,7 +225,7 @@ val conflict_tokens: node -> TerminalSet.t
    If this function is invoked after conflicts have been resolved, then
    no end-of-stream conflicts are reported. *)
 
-val has_eos_conflict: node -> (Production.index list * TerminalSet.t) option
+val has_eos_conflict: node -> (Production.t list * TerminalSet.t) option
 
 (* ------------------------------------------------------------------------- *)
 (* Modifications of the automaton. *)
@@ -265,7 +265,7 @@ val insert_extra_reductions: unit -> unit
    [prod] might be reduced. It is an error to call this function before
    default conflict resolution has taken place. *)
 
-val production_where: Production.index -> NodeSet.t
+val production_where: Production.t -> NodeSet.t
 
 (* ------------------------------------------------------------------------- *)
 
@@ -289,10 +289,10 @@ val get_conflicting_transitions: node -> (Terminal.t * node * bool) list
    true if the conflict was silently resolved by obeying precedence
    declarations; it is false if the conflict was accidental and gave rise to a
    warning. *)
-val get_conflicting_reductions: node -> (Terminal.t * Production.index list * bool) list
+val get_conflicting_reductions: node -> (Terminal.t * Production.t list * bool) list
 
 (**[get_extra_reductions s] returns the reduction actions, at state [s], that
    have been inserted as a result of [%on_error_reduce] declarations. A group
    of such actions is represented as a pair [t, prods] where [t] is a terminal
    symbol and [prods] is a list of distinct productions. *)
-val get_extra_reductions: node -> (Terminal.t * Production.index) list
+val get_extra_reductions: node -> (Terminal.t * Production.t) list

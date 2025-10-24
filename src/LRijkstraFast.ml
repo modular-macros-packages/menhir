@@ -256,7 +256,7 @@ module Run () = struct
 
     type t = {
       (* The production that is being reduced *)
-      production: Production.index;
+      production: Production.t;
 
       (* The set of lookahead terminals that allow this reduction to happen *)
       lookahead: TerminalSet.t;
@@ -277,7 +277,7 @@ module Run () = struct
   end = struct
 
     type t = {
-      production: Production.index;
+      production: Production.t;
       lookahead: TerminalSet.t;
       steps: Transition.any index list;
       state: Lr1C.n index;

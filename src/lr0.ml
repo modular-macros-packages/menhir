@@ -114,7 +114,7 @@ let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
    production index. This code is again parametric in the nature of
    lookahead sets. *)
 
-let reductions (state : 'a Item.Map.t) : ('a * Production.index) list =
+let reductions (state : 'a Item.Map.t) : ('a * Production.t) list =
   Item.Map.fold (fun item toks accu ->
     match Item.classify item with
     | Item.Reduce prod ->
@@ -154,7 +154,7 @@ let states : Item.Set.t InfiniteArray.t =
 let _transitions : symbolic_transition_target SymbolMap.t InfiniteArray.t =
   InfiniteArray.make SymbolMap.empty
 
-let _reductions : (SymbolicLookahead.t * Production.index) list InfiniteArray.t =
+let _reductions : (SymbolicLookahead.t * Production.t) list InfiniteArray.t =
   InfiniteArray.make []
 
 let map : (Item.Set.t, node) Hashtbl.t =
@@ -381,7 +381,7 @@ let interpret
 
 let reductions
     ((k, _) as state : lr1state)
-    : (TerminalSet.t * Production.index) list =
+    : (TerminalSet.t * Production.t) list =
 
   List.map (fun (s, prod) ->
     interpret state s, prod
@@ -666,7 +666,7 @@ let restrict toks (k, toksr) =
    terminal symbols to lists of productions. *)
 
 type reductions =
-  Production.index list TerminalMap.t
+  Production.t list TerminalMap.t
 
 (* [add_reduction prod tok reductions] adds a reduction of [prod] on [tok]
    to the table [reductions]. *)

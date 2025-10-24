@@ -283,9 +283,9 @@ module A () = struct
 
 type address =
   | Run of mode * Lr1.node
-  | Reduce of mode * Production.index
+  | Reduce of mode * Production.t
   | Goto of mode * Nonterminal.t
-  | ActGoto of mode * Production.index
+  | ActGoto of mode * Production.t
   | Stop of Lr1.node
 
 let mode_prefix mode name =

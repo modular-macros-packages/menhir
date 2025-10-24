@@ -30,10 +30,10 @@ module type STACK_SYMBOLS = sig
      where production [prod] can be reduced. In the short invariant, the
      length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
-  val production_symbols: Production.index -> property
+  val production_symbols: Production.t -> property
 
   (**[production_height prod] is [Array.length (production_symbols prod)]. *)
-  val production_height: Production.index -> int
+  val production_height: Production.t -> int
 
   (**[goto_symbols nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. In the short invariant, the

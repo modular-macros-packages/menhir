@@ -20,7 +20,7 @@ open Grammar
 
 type cst =
   | CstTerminal of Terminal.t
-  | CstNonTerminal of Production.index * cst array
+  | CstNonTerminal of Production.t * cst array
   | CstError
 
 (* The fringe of a concrete syntax tree. *)

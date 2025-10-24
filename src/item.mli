@@ -15,8 +15,8 @@ open Grammar
    right-hand side. *)
 
 type t
-val import: Production.index * int -> t
-val export: t -> Production.index * int
+val import: Production.t * int -> t
+val export: t -> Production.t * int
 
 (* An item can be encoded as an integer. This is used in the table
    back-end only. The decoding function (really a copy of [export])
@@ -34,7 +34,7 @@ val equal: t -> t -> bool
    [pos] is the position of the bullet in the item, and [length] is
    the length of the production's right-hand side. *)
 
-val def: t -> Production.index * Nonterminal.t * Symbol.t array * int * int
+val def: t -> Production.t * Nonterminal.t * Symbol.t array * int * int
 
 (* If [item] is a start item, [startnt item] returns the start
    nonterminal that corresponds to [item]. *)
@@ -51,7 +51,7 @@ val print: t -> string
 
 type kind =
   | Shift of Symbol.t * t
-  | Reduce of Production.index
+  | Reduce of Production.t
 
 val classify: t -> kind
 

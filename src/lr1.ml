@@ -125,11 +125,11 @@ let conflicting_transitions : (Terminal.t * Raw.node * bool) list array =
   Array.make Raw.n []
 
 (* Reduction actions removed during conflict resolution. *)
-let conflicting_reductions : (Terminal.t * Production.index list * bool) list array =
+let conflicting_reductions : (Terminal.t * Production.t list * bool) list array =
   Array.make Raw.n []
 
 (* Reduction actions added because of [%on_error_reduce] directives. *)
-let extra_reductions : (Terminal.t * Production.index) list array =
+let extra_reductions : (Terminal.t * Production.t) list array =
   Array.make Raw.n []
 
 (* Tokens for which there are several possible actions in the raw LR(1)
@@ -141,7 +141,7 @@ let _conflict_tokens : TerminalSet.t array =
 
 (* Information about end-of-stream conflicts in each state. *)
 
-let _has_eos_conflict : (Production.index list * TerminalSet.t) option array =
+let _has_eos_conflict : (Production.t list * TerminalSet.t) option array =
   Array.make Raw.n None
 
 (* (New as of 2012/01/23.) This flag records whether a shift/reduce conflict
@@ -801,7 +801,7 @@ let initialize_production_where () =
     ) ProductionMap.empty
   )
 
-let production_where (prod : Production.index) : NodeSet.t =
+let production_where (prod : Production.t) : NodeSet.t =
   match !production_where with
   | None ->
       (* It is an error to call this function before conflict resolution. *)
@@ -1020,7 +1020,7 @@ let extra_nts =
 let extra_reductions_in_node node =
   (* Compute the productions which this node can reduce. *)
   let productions : _ ProductionMap.t = Lr0.invert (reductions node) in
-  let prods : Production.index list =
+  let prods : Production.t list =
     ProductionMap.fold (fun prod _ prods -> prod :: prods) productions []
   in
   (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)

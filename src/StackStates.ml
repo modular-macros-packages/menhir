@@ -22,7 +22,7 @@ module type STACK_HEIGHTS = sig
 
   (**[production_height prod] is the height of the known suffix of the stack
      at a state where production [prod] can be reduced. *)
-  val production_height: Production.index -> int
+  val production_height: Production.t -> int
 
   (**[goto_height nt] is the height of the known suffix of the stack at a
      state where an edge labeled [nt] has just been followed. *)
@@ -51,7 +51,7 @@ module type STACK_STATES = sig
      where production [prod] can be reduced. In the short invariant, the
      length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
-  val production_states: Production.index -> property
+  val production_states: Production.t -> property
 
   (**[goto_states nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. If [long] is false, then the
@@ -72,7 +72,7 @@ module Run (S : sig
 
   (**[production_height prod] is the height of the known suffix of the stack
      at a state where production [prod] can be reduced. *)
-  val production_height: Production.index -> int
+  val production_height: Production.t -> int
 
   (**[goto_height nt] is the height of the known suffix of the stack at a
      state where an edge labeled [nt] has just been followed. *)
@@ -218,7 +218,7 @@ let truncate_join height (f : Lr1.node -> property) nodes =
 (* We produce a vector of states whose length is [production_height prod].
    It is up to the user to provide an appropriate height oracle. *)
 
-let production_states : Production.index -> property =
+let production_states : Production.t -> property =
   Production.tabulate (fun prod ->
     let sites = Lr1.production_where prod in
     let height = production_height prod in

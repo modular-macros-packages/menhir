@@ -26,7 +26,7 @@ module type STACK_HEIGHTS = sig
 
   (**[production_height prod] is the height of the known suffix of the stack
      at a state where production [prod] can be reduced. *)
-  val production_height: Production.index -> int
+  val production_height: Production.t -> int
 
   (**[goto_height nt] is the height of the known suffix of the stack at a
      state where an edge labeled [nt] has just been followed. *)
@@ -55,7 +55,7 @@ module type STACK_STATES = sig
      where production [prod] can be reduced. In the short invariant, the
      length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
-  val production_states: Production.index -> property
+  val production_states: Production.t -> property
 
   (**[goto_states nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. If [long] is false, then the

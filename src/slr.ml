@@ -64,7 +64,7 @@ let make_slr_state (s : Lr0.node) : Lr0.concretelr1state =
 (* The following function turns a closed LR(1) state into a map of terminal
    symbols to reduction actions. Copied from a related function in [Lr0]. *)
 
-let reductions (s : Lr0.concretelr1state) : Production.index list TerminalMap.t =
+let reductions (s : Lr0.concretelr1state) : Production.t list TerminalMap.t =
   Item.Map.fold (fun item toks reductions ->
     match Item.classify item with
     | Item.Reduce prod ->

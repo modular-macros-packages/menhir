@@ -53,7 +53,7 @@ module T = struct
     Terminal.foldx
 
   type production =
-      Production.index
+      Production.t
 
   let production_index = Production.p2i
   let find_production  = Production.i2p
@@ -269,7 +269,7 @@ let interpret nt log lexer lexbuf =
    state. *)
 
 type spurious_reduction =
-  Lr1.node * Production.index
+  Lr1.node * Production.t
 
 type target =
   Lr1.node * spurious_reduction list

@@ -50,7 +50,7 @@ let nullable_suffix prod i =
 let successors
   ~require_nullable_suffix
   ~require_nonempty_prefix
-  (yield : Production.index -> Nonterminal.t -> unit)
+  (yield : Production.t -> Nonterminal.t -> unit)
   (nt : Nonterminal.t) : unit
 =
   Production.iternt nt begin fun prod ->

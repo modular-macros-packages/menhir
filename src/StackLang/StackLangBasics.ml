@@ -99,7 +99,7 @@ type start_nonterminal =
 
 (**A production index. *)
 type production =
-  Grammar.Production.index
+  Grammar.Production.t
 
 (* -------------------------------------------------------------------------- *)
 

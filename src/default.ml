@@ -57,7 +57,7 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
 let is_purely_nonterminal transitions =
   SymbolMap.for_all (fun sym _ -> Symbol.is_nonterminal sym) transitions
 
-let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option =
+let has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option =
   Lr1.tabulate @@ fun s ->
     if Lr1.forbid_default_reduction s then
       None
@@ -90,7 +90,7 @@ let () =
    the lookahead symbol is [z]. This is a list of zero or one elements. This
    does not take default reductions into account. [z] must be real. *)
 
-let reductions_on s z : Production.index list =
+let reductions_on s z : Production.t list =
   assert (Terminal.real z);
   try
     TerminalMap.find z (Lr1.reductions s)
@@ -101,7 +101,7 @@ let reductions_on s z : Production.index list =
    production (and if so, which one) when the lookahead symbol is [z]. It
    takes a possible default reduction into account. [z] must be real. *)
 
-let has_reduction s z : Production.index option =
+let has_reduction s z : Production.t option =
   assert (Terminal.real z);
   match has_default_reduction s with
   | Some (prod, _) ->
