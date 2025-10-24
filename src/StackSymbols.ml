@@ -95,7 +95,7 @@ module Short () = struct
   (* Extend it to the LR(1) automaton. *)
 
   let stack_symbols (node : Lr1.node) : property =
-    stack_symbols (Lr0.core (Lr1.state node))
+    stack_symbols (Lr0.Help.core (Lr1.state node))
 
   let stack_height (node : Lr1.node) : int =
     Array.length (stack_symbols node)

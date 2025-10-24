@@ -286,21 +286,6 @@ end
 module SymbolicClosure =
   Closure(SymbolicLookahead)
 
-(* Closure operations over concrete lookahead sets are also needed when
-   explaining conflicts. One could take another instance of the functor
-   [Closure]. The approach below is somewhat less elegant and makes each call
-   to [closure] somewhat slower, but saves the cost of instantiating the
-   functor again. This cost is linear in the size of the grammar. *)
-
-type concretelr1state =
-  TerminalSet.t Item.Map.t
-
-let closure (state : concretelr1state) : concretelr1state =
-  state
-  |> Item.Map.map SymbolicLookahead.constant
-  |> SymbolicClosure.closure
-  |> Item.Map.map SymbolicLookahead.project
-
 (* -------------------------------------------------------------------------- *)
 
 (* [transitions state] computes the non-epsilon transitions that leave the
@@ -487,6 +472,27 @@ let outgoing_symbols node f =
 
 (* Help for building the LR(1) automaton. *)
 
+module Help = struct
+
+(* -------------------------------------------------------------------------- *)
+
+(* Closure operations over concrete lookahead sets are also needed when
+   explaining conflicts. One could take another instance of the functor
+   [Closure]. The approach below is somewhat less elegant and makes each call
+   to [closure] somewhat slower, but saves the cost of instantiating the
+   functor again. This cost is linear in the size of the grammar. *)
+
+type concretelr1state =
+  TerminalSet.t Item.Map.t
+
+let closure (state : concretelr1state) : concretelr1state =
+  state
+  |> Item.Map.map SymbolicLookahead.constant
+  |> SymbolicClosure.closure
+  |> Item.Map.map SymbolicLookahead.project
+
+(* -------------------------------------------------------------------------- *)
+
 (* An LR(1) state is represented as a pair of an LR(0) state number
    and an array of concrete lookahead sets (whose length depends on
    the LR(0) state). *)
@@ -499,13 +505,11 @@ type lr1state =
    facility based on this mechanism is able to number 10000 states in
    about 0.01s. *)
 
-module Lr1StateAsOrderedType = struct
-  type t = lr1state
-  let compare (k1, tsr1) (k2, tsr2) =
-    let c = k1 - k2 in
-    if c <> 0 then c
-    else MArray.compare TerminalSet.compare tsr1 tsr2
-end
+type t = lr1state
+let compare (k1, tsr1) (k2, tsr2) =
+  let c = k1 - k2 in
+  if c <> 0 then c
+  else MArray.compare TerminalSet.compare tsr1 tsr2
 
 (* An encoded LR(1) state can be turned into a concrete representation,
    that is, a mapping of items to concrete lookahead sets. *)
@@ -866,3 +870,7 @@ let reductions_table state =
   List.fold_left (fun reductions (ts, prod) ->
     Reductions.add_reductions prod ts reductions
   ) TerminalMap.empty (reductions state)
+
+(* -------------------------------------------------------------------------- *)
+
+end (* Help *)

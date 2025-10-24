@@ -57,6 +57,8 @@ val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 
 (* Help for building the LR(1) automaton. *)
 
+module Help : sig
+
 (* An LR(1) state is internally represented as a pair of an LR(0)
    state number and an array of concrete lookahead sets (whose length
    depends on the LR(0) state). *)
@@ -65,10 +67,8 @@ type lr1state
 
 (* A view of the type [lr1state] as an ordered type. *)
 
-module Lr1StateAsOrderedType : sig
-  type t = lr1state
-  val compare: t -> t -> int
-end
+type t = lr1state
+val compare: t -> t -> int
 
 (* An encoded LR(1) state can be turned into a concrete representation,
    that is, a mapping of items to concrete lookahead sets. *)
@@ -159,3 +159,5 @@ val print:          string ->         lr1state -> string
 (* A table of the reductions at a state. *)
 
 val reductions_table: lr1state -> Reductions.t
+
+end (* Help *)

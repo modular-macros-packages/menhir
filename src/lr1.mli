@@ -88,7 +88,7 @@ val print: node -> string
 
 (* This provides access to the LR(1) state that a node stands for. *)
 
-val state: node -> Lr0.lr1state
+val state: node -> Lr0.Help.lr1state
 
 (* This converts a start node into the single item that it contains. *)
 
@@ -139,7 +139,7 @@ end
 val transitions: node -> node SymbolMap.t
 
 val reductions: node -> Production.t list TerminalMap.t
-  (* or: node -> Lr0.reductions *)
+  (* or: node -> Lr0.Help.reductions *)
 
 (* (New as of 2012/01/23.) This tells whether a shift/reduce conflict
    in this node was solved in favor of neither (%nonassoc). This implies

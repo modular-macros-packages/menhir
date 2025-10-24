@@ -433,7 +433,7 @@ module Run () = struct
                 bprintf b "{| prod_item := %s; dot_pos_item := %d; lookaheads_item := %s |}"
                         (print_prod prod) pos (get_lookaheadset_id lookaheads);
             end
-          )  (Lr0.closure (Lr0.export (Lr1.state node)));
+          )  (Lr0.Help.closure (Lr0.Help.export (Lr1.state node)));
           bprintf b " ]%%list.\n";
           bprintf b "Extract Inlined Constant items_of_state_%d => \"assert false\".\n\n" (Lr1.number node)
         );

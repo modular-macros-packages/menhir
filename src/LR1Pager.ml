@@ -65,7 +65,7 @@ type lr0state =
   Lr0.node
 
 type lr1state =
-  Lr0.lr1state
+  Lr0.Help.lr1state
 
 open Grammar
 
@@ -83,12 +83,12 @@ module G = struct
 
   let foreach_root f =
     ProductionMap.iter (fun _prod (c : lr0state) ->
-      f (Lr0.start c)
+      f (Lr0.Help.start c)
     ) Lr0.entry
 
   let foreach_successor (state : lr1state) f =
-    Lr0.foreach_outgoing_edge (Lr0.core state) @@ fun symbol _ ->
-    let successor = Lr0.transition symbol state in
+    Lr0.foreach_outgoing_edge (Lr0.Help.core state) @@ fun symbol _ ->
+    let successor = Lr0.Help.transition symbol state in
     f successor
 
 end
@@ -104,7 +104,7 @@ end
 
 module S = struct
 
-  include Set.Make(Lr0.Lr1StateAsOrderedType)
+  include Set.Make(Lr0.Help)
 
   (* [select p s] returns an element of the set [s] that satisfies the
      predicate [p], if such an element exists. It is deterministic: the
@@ -161,13 +161,13 @@ let schedule state =
 (* Since 2011/01/24, both criteria take error compatibility into account. *)
 
 let subsume candidate state =
-  Lr0.subsume candidate state &&
-  Lr0.error_compatible candidate state
+  Lr0.Help.subsume candidate state &&
+  Lr0.Help.error_compatible candidate state
 
 let compatible candidate state =
-  Lr0.compatible candidate state &&
-  Lr0.eos_compatible candidate state &&
-  Lr0.error_compatible candidate state
+  Lr0.Help.compatible candidate state &&
+  Lr0.Help.eos_compatible candidate state &&
+  Lr0.Help.error_compatible candidate state
 
 (* In the construction mode [ModeInclusionOnly], the compatibility test is
    much weakened. In this mode, compatibility is defined as the symmetric
@@ -227,7 +227,7 @@ let rec examine (candidate : lr1state) =
   (* Find out which already-discovered states are core-compatible with the
      candidate state. *)
 
-  let c : lr0state = Lr0.core candidate in
+  let c : lr0state = Lr0.Help.core candidate in
   let family : S.t = families.(c) in
   if debug then assert (well_formed family);
 
@@ -270,7 +270,7 @@ and fuse (c : lr0state) (family : S.t) (candidate : lr1state) =
          union of the candidate state and the pre-existing state, and we
          regard it as a new candidate state. *)
 
-      let candidate : lr1state = Lr0.union candidate state in
+      let candidate : lr1state = Lr0.Help.union candidate state in
 
       (* The existing state [state] is subsumed by the new candidate, so it
          must be removed from the family, so as to maintain the invariant
@@ -308,7 +308,7 @@ and fuse (c : lr0state) (family : S.t) (candidate : lr1state) =
 
 let () =
   G.foreach_root (fun state ->
-    let c = Lr0.core state in
+    let c = Lr0.Help.core state in
     if debug then assert (S.is_empty families.(c));
     families.(c) <- S.singleton state;
     schedule state
@@ -332,7 +332,7 @@ let () =
    that the candidate state must be subsumed by some member of the family. *)
 
 let redirect candidate =
-    let c = Lr0.core candidate in
+    let c = Lr0.Help.core candidate in
     let family = families.(c) in
     match S.select (subsume candidate) family with
     | Some successor ->
@@ -366,7 +366,7 @@ end
 type node =
   int
 
-include Fix.GraphNumbering.ForOrderedType(Lr0.Lr1StateAsOrderedType)(G')
+include Fix.GraphNumbering.ForOrderedType(Lr0.Help)(G')
   (* This defines [n : int],
                   [encode : lr1state -> node],
                   [decode : node -> lr1state]. *)
@@ -384,7 +384,7 @@ let state : node -> lr1state =
 
 let entry : node ProductionMap.t =
   ProductionMap.map (fun (c : lr0state) ->
-    encode (Lr0.start c)
+    encode (Lr0.Help.start c)
   ) Lr0.entry
 
 (* -------------------------------------------------------------------------- *)
@@ -392,11 +392,11 @@ let entry : node ProductionMap.t =
 (* Expose the transitions of the LR(1) automaton. *)
 
 let[@inline] transition symbol (i : node) : node =
-  encode (redirect (Lr0.transition symbol (state i)))
+  encode (redirect (Lr0.Help.transition symbol (state i)))
     (* note the use of [redirect] *)
 
 let transitions (i : node) : node SymbolMap.t =
-  Lr0.outgoing_symbols (Lr0.core (state i)) @@ fun symbol ->
+  Lr0.outgoing_symbols (Lr0.Help.core (state i)) @@ fun symbol ->
   transition symbol i
 
 (* -------------------------------------------------------------------------- *)

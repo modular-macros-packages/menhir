@@ -232,9 +232,9 @@ let print_messages_auto (nt, sentence, target) : unit =
      ##\n\
      %s##\n"
     (Lr1.number s')
-    (* [Lr0.print] prints just the state's kernel, not its closure. Displaying
+    (* [Lr0.Help.print] prints just the state's kernel, not its closure. Displaying
        the closure could be helpful, but is usually intolerably verbose. *)
-    (Lr0.print "## " (Lr1.state s'))
+    (Lr0.Help.print "## " (Lr1.state s'))
   ;
 
   (* Show the known suffix of the stack in this state. *)

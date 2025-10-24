@@ -50,7 +50,7 @@ end) = struct
      faster. *)
 
   let restrict =
-    Lr0.restrict X.tokens
+    Lr0.Help.restrict X.tokens
 
   (* Constructing the automaton. The automaton is represented as a
      graph. States are never merged -- this is a canonical LR(1)
@@ -70,7 +70,7 @@ end) = struct
      every node to one of the start nodes are recorded. *)
 
   type node = {
-      state: Lr0.lr1state;
+      state: Lr0.Help.lr1state;
       ancestor: (Symbol.t * node) option;
       shadow: Lr1.node;
     }
@@ -90,11 +90,11 @@ end) = struct
 
   exception Goal of node * Terminal.t
 
-  let explore ancestor shadow (state : Lr0.lr1state) : unit =
+  let explore ancestor shadow (state : Lr0.Help.lr1state) : unit =
 
     (* Find all existing nodes that share the same LR(0) core. *)
 
-    let k = Lr0.core state in
+    let k = Lr0.Help.core state in
     assert (k < Lr0.n);
     let similar = map.(k) in
 
@@ -108,7 +108,7 @@ end) = struct
        ensure that we eventually find a goal node. *)
 
     if not (List.exists (fun node ->
-      Lr0.equal state node.state && shadow == node.shadow
+      Lr0.Help.equal state node.state && shadow == node.shadow
     ) similar) then begin
 
       (* Otherwise, create a new node. *)
@@ -166,7 +166,7 @@ end) = struct
                   can_reduce := toks'
 
           ) toks
-        ) (Lr0.reductions state)
+        ) (Lr0.Help.reductions state)
 
     end
 
@@ -184,7 +184,7 @@ end) = struct
             assert false
         in
         if relevant shadow then
-          explore None shadow (restrict (Lr0.start k))
+          explore None shadow (restrict (Lr0.Help.start k))
       ) Lr0.entry;
 
       MQueue.repeat queue (fun node ->
@@ -198,7 +198,7 @@ end) = struct
             (* No shadow. This can happen if a shift/reduce conflict
                was resolved in favor in reduce. Ignore that transition. *)
             ()
-        ) (Lr0.transitions node.state)
+        ) (Lr0.Help.transitions node.state)
       );
 
       (* We didn't find a goal node. This shouldn't happen! If the
@@ -227,6 +227,6 @@ end) = struct
     follow [] goal
 
   let goal =
-    Lr0.export goal.state
+    Lr0.Help.export goal.state
 
 end

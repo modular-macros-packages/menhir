@@ -208,7 +208,7 @@ let discover (raw_node : Raw.node) =
   let node : node = MInt.postincrement n in
   _number.(i) <- node;
 
-  (* Detect conflicts. We iterate over the table [Lr0.reductions_table state],
+  (* Detect conflicts. We iterate over the table [Lr0.Help.reductions_table state],
      which gives us all potential reductions. The code is written in such a
      way that we are aware of multi-way shift/reduce/reduce conflicts. We
      solve conflicts, when unambiguously allowed by priorities, by removing
@@ -218,7 +218,7 @@ let discover (raw_node : Raw.node) =
   and has_reduce_reduce = ref false in
 
   let foreach_reduction f =
-    TerminalMap.fold f (Lr0.reductions_table state) TerminalMap.empty
+    TerminalMap.fold f (Lr0.Help.reductions_table state) TerminalMap.empty
   in
 
   reductions.(i) <- foreach_reduction begin fun tok prods reductions ->
@@ -363,7 +363,7 @@ let discover (raw_node : Raw.node) =
        reductions. *)
     let toks =
       TerminalSet.union
-        (Lr0.transition_tokens transitions)
+        (Lr0.Help.transition_tokens transitions)
         (TerminalMap.domain reductions)
     in
     (* Record this end-of-stream conflict. *)
@@ -529,7 +529,7 @@ let has_eos_conflict node =
    core. For this reason, we do not need to explicitly record it here. *)
 
 let incoming_symbol node =
-  Lr0.incoming_symbol (Lr0.core (state node))
+  Lr0.incoming_symbol (Lr0.Help.core (state node))
 
 let is_start node =
   match incoming_symbol node with
@@ -566,7 +566,7 @@ end
    corresponding start symbol [S]. *)
 
 let is_start_or_exit node =
-  let items = Lr0.items (Lr0.core (state node)) in
+  let items = Lr0.items (Lr0.Help.core (state node)) in
   if Item.Set.cardinal items = 1 then
     let item = Item.Set.choose items in
     let prod, _pos = Item.export item in
@@ -661,8 +661,8 @@ let single_target symbol =
 (* Converting a start node into the single item that it contains. *)
 
 let start2item node =
-  let state : Lr0.lr1state = state node in
-  let core : Lr0.node = Lr0.core state in
+  let state : Lr0.Help.lr1state = state node in
+  let core : Lr0.node = Lr0.Help.core state in
   let items : Item.Set.t = Lr0.items core in
   assert (Item.Set.cardinal items = 1);
   Item.Set.choose items

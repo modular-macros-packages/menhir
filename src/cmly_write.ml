@@ -136,7 +136,7 @@ let transition (sym, node) : symbol * lr1 =
 
 let lr1_state (node : Lr1.node) : lr1_state_def =
   {
-    lr1_lr0 = Lr0.core (Lr1.state node);
+    lr1_lr0 = Lr0.Help.core (Lr1.state node);
     lr1_transitions =
       List.map transition (SymbolMap.bindings (Lr1.transitions node));
     lr1_reductions = (
