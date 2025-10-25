@@ -176,6 +176,10 @@ module type MAP = sig
      [m]. *)
   val map: ('a -> 'b) -> 'a t -> 'b t
 
+  (**[filter f m] produces a map containing just the bindings of the map [m]
+     that satisfy the predicate [f]. *)
+  val filter: (key -> 'a -> bool) -> 'a t -> 'a t
+
 end (* MAP *)
 
 module type CONVERT = sig
