@@ -10,6 +10,8 @@
 
 (**This module constructs a canonical LR(1) automaton. *)
 
+(**At this stage, the precedence declarations play no role. *)
+
 open MiddleAPI
 
 module Make (Lr0 : LR0) : LR1_ALGORITHM with module Lr0 = Lr0

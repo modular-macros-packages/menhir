@@ -32,10 +32,12 @@ let algo, mode =
       (module LR1Canonical.Make(Lr0) : ALGORITHM),
       "canonical"
   | ModeInclusionOnly ->
-      (module LR1Pager.Make(Lr0) : ALGORITHM),
+      let module X = struct let mode = `InclusionOnly end in
+      (module LR1Pager.Make(Lr0)(X) : ALGORITHM),
       "no-pager"
   | ModePager ->
-      (module LR1Pager.Make(Lr0) : ALGORITHM),
+      let module X = struct let mode = `Pager end in
+      (module LR1Pager.Make(Lr0)(X) : ALGORITHM),
       "pager"
   | ModeLALR ->
       (module LALR.Make(Lr0) : ALGORITHM),

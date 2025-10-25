@@ -63,7 +63,9 @@
 
 open MiddleAPI
 
-module Make (Lr0 : LR0) = struct
+module Make (Lr0 : LR0)
+(X : sig val mode : [`Pager | `InclusionOnly] end)
+= struct
 module Lr0 = Lr0
 open Lr0.G
 
@@ -86,9 +88,8 @@ module G = struct
   type t = lr1state
 
   let foreach_root f =
-    ProductionMap.iter (fun _prod (c : lr0state) ->
-      f (Lr0.ALR1.start c)
-    ) Lr0.entry
+    Lr0.entry |> ProductionMap.iter @@ fun _prod (c : lr0state) ->
+    f (Lr0.ALR1.start c)
 
   let foreach_successor (state : lr1state) f =
     Lr0.foreach_outgoing_edge (Lr0.ALR1.core state) @@ fun symbol _ ->
@@ -101,10 +102,9 @@ end
 
 (* Sets of LR(1) states. *)
 
-(* We expect these sets to have few elements, most of the time, as of the
+(* We expect these sets to have few elements, most of the time, as the
    automaton produced by Pager's algorithm will have only marginally more
-   states than the LALR automaton. So, one could perhaps use lists instead
-   of sets. But it's easy to do the right thing here, so let's do it. *)
+   states than the LALR automaton. *)
 
 module S = struct
 
@@ -118,10 +118,9 @@ module S = struct
   exception Found of elt
 
   let select (p : elt -> bool) (s : t) : elt option =
+    (* OCaml 4.05: choose_opt (filter p s) *)
     try
-      iter (fun x ->
-        if p x then raise (Found x)
-      ) s;
+      iter (fun x -> if p x then raise (Found x)) s;
       None
     with Found x ->
       Some x
@@ -150,7 +149,7 @@ let families : S.t array =
 let frontier : lr1state Stack.t =
   Stack.create()
 
-let schedule state =
+let[@inline] schedule state =
   Stack.push state frontier
 
 (* -------------------------------------------------------------------------- *)
@@ -173,25 +172,19 @@ let compatible candidate state =
   Lr0.ALR1.eos_compatible candidate state &&
   Lr0.ALR1.error_compatible candidate state
 
-(* In the construction mode [ModeInclusionOnly], the compatibility test is
-   much weakened. In this mode, compatibility is defined as the symmetric
-   closure of subsumption. This means that two states can be merged only if
-   one subsumes the other. Thus, we get an LR(1) automaton where every state
-   is a state that also exists in the canonical automaton. Thus, it is clear
+(* In the construction mode [`InclusionOnly], the compatibility test is much
+   weakened. In this mode, compatibility is defined as the symmetric closure
+   of subsumption. This means that two states can be merged only if one
+   subsumes the other. Thus, we get an LR(1) automaton where every state is
+   a state that also exists in the canonical automaton. Thus, it is clear
    that no artificial conflicts can be created by this construction. *)
 
 let compatible candidate state =
-  Settings.(
-    match construction_mode with
-    | ModePager ->
-        compatible candidate state
-    | ModeInclusionOnly ->
-        subsume candidate state || subsume state candidate
-    | ModeCanonical
-    | ModeLALR ->
-        (* We cannot be here. *)
-        assert false
-  )
+  match X.mode with
+  | `Pager ->
+      compatible candidate state
+  | `InclusionOnly ->
+      subsume candidate state || subsume state candidate
 
 (* -------------------------------------------------------------------------- *)
 
@@ -311,12 +304,11 @@ and fuse (c : lr0state) (family : S.t) (candidate : lr1state) =
    extract a node of out the frontier and examine its candidate successors. *)
 
 let () =
-  G.foreach_root (fun state ->
-    let c = Lr0.ALR1.core state in
-    if debug then assert (S.is_empty families.(c));
-    families.(c) <- S.singleton state;
-    schedule state
-  )
+  G.foreach_root @@ fun state ->
+  let c = Lr0.ALR1.core state in
+  if debug then assert (S.is_empty families.(c));
+  families.(c) <- S.singleton state;
+  schedule state
 
 let () =
   while not (Stack.is_empty frontier) do
@@ -336,14 +328,14 @@ let () =
    that the candidate state must be subsumed by some member of the family. *)
 
 let redirect candidate =
-    let c = Lr0.ALR1.core candidate in
-    let family = families.(c) in
-    match S.select (subsume candidate) family with
-    | Some successor ->
-        successor
-    | None ->
-        (* This cannot happen. Trust me, I have often been wrong before. *)
-        assert false
+  let c = Lr0.ALR1.core candidate in
+  let family = families.(c) in
+  match S.select (subsume candidate) family with
+  | Some successor ->
+      successor
+  | None ->
+      (* This cannot happen. Trust me, I have often been wrong before. *)
+      assert false
 
 (* The composition of [G.foreach_successor] and [redirect] defines the edges
    of a new graph [G'], whose vertices form a subset of the vertices that we
@@ -354,10 +346,9 @@ module G' = struct
   include G
 
   let foreach_successor (state : lr1state) f =
-    G.foreach_successor state (fun candidate ->
-      let successor = redirect candidate in
-      f successor
-    )
+    G.foreach_successor state @@ fun candidate ->
+    let successor = redirect candidate in
+    f successor
 
 end
 
@@ -387,9 +378,8 @@ let state : node -> lr1state =
 (* Expose the entry nodes of the LR(1) automaton. *)
 
 let entry : node ProductionMap.t =
-  ProductionMap.map (fun (c : lr0state) ->
-    encode (Lr0.ALR1.start c)
-  ) Lr0.entry
+  Lr0.entry |> ProductionMap.map @@ fun (c : lr0state) ->
+  encode (Lr0.ALR1.start c)
 
 (* -------------------------------------------------------------------------- *)
 
