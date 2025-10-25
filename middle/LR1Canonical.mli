@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module constructs a canonical LR(1) automaton. *)
+(**This module constructs a canonical LR(1) automaton. *)
 
 open MiddleAPI
 

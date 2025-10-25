@@ -8,13 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module constructs an LALR automaton for the grammar described by the
-   module [Grammar]. *)
-
-(* In this construction, precedence declarations are not taken into account.
-   Thus, conflicts are not resolved; no transitions or reductions are removed
-   in order to resolve conflicts. As a result, every node is reachable from
-   some entry node. *)
+(**This module constructs an LALR automaton. *)
 
 open MiddleAPI
 

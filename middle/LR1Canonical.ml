@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module formulates the construction of the canonical LR(1) automaton as
+(* The construction of the canonical LR(1) automaton is formulated as
    a forward graph traversal. *)
 
 open MiddleAPI
@@ -34,9 +34,8 @@ module G = struct
   type t = lr1state
 
   let foreach_root f =
-    ProductionMap.iter (fun _prod (c : lr0state) ->
-      f (Lr0.ALR1.start c)
-    ) Lr0.entry
+    Lr0.entry |> ProductionMap.iter @@ fun _prod (c : lr0state) ->
+    f (Lr0.ALR1.start c)
 
   let foreach_successor (state : lr1state) f =
     Lr0.foreach_outgoing_edge (Lr0.ALR1.core state) @@ fun symbol _ ->
@@ -70,9 +69,8 @@ let state : node -> lr1state =
 (* Expose the entry nodes of the LR(1) automaton. *)
 
 let entry : node ProductionMap.t =
-  ProductionMap.map (fun (c : lr0state) ->
-    encode (Lr0.ALR1.start c)
-  ) Lr0.entry
+  Lr0.entry |> ProductionMap.map @@ fun (c : lr0state) ->
+  encode (Lr0.ALR1.start c)
 
 (* -------------------------------------------------------------------------- *)
 
