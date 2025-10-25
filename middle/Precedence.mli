@@ -62,8 +62,8 @@ open G
      precedence. In that case, the default choice is to prefer shifting,
      but a conflict is reported.
 
-     [shift_reduce tok prod] determines how a shift/reduce conflict between
-     the token [tok] and the production [prod] should be resolved. *)
+     [shift_reduce t prod] determines how a shift/reduce conflict between the
+     terminal symbol [t] and the production [prod] should be resolved. *)
   val shift_reduce: Terminal.t -> Production.index -> choice
 
   (**A reduce/reduce conflict requires making a choice between reducing two
