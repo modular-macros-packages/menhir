@@ -62,53 +62,16 @@ let make_slr_state (s : Lr0.node) : Lr0.ConcreteLR1State.t =
     Item.Map.add item follow_nt accu
   ) s Item.Map.empty
 
-(* The following function turns a closed LR(1) state into a map of terminal
-   symbols to reduction actions. Copied from a related function in [Lr0]. *)
-
-let reductions (s : Lr0.ConcreteLR1State.t) : Production.t list TerminalMap.t =
-  Item.Map.fold (fun item toks reductions ->
-    match Item.classify item with
-    | Item.Reduce prod ->
-        Reductions.add_reductions prod toks reductions
-    | Item.Shift _ ->
-        reductions
-  ) s TerminalMap.empty
-
-(* The following function turns a closed LR(1) state into a set of shift
-   actions. *)
-
-let transitions (s : Lr0.ConcreteLR1State.t) : TerminalSet.t =
-  Item.Map.fold (fun item _ transitions ->
-    match Item.classify item with
-    | Item.Shift (Symbol.T tok, _) ->
-        TerminalSet.add tok transitions
-    | Item.Shift (Symbol.N _, _)
-    | Item.Reduce _ ->
-        transitions
-  ) s TerminalSet.empty
-
 (* The following function checks whether a closed LR(1) state is free of
    conflicts. *)
 
 let state_is_ok (s : Lr0.ConcreteLR1State.t) : bool =
-
-  let reductions = reductions s
-  and transitions = transitions s in
-
+  let reductions = Lr0.ConcreteLR1State.reductions s
+  and transitions = SymbolMap.terminals (Lr0.ConcreteLR1State.transitions s) in
   (* Check for shift/reduce conflicts. *)
-
   TerminalSet.disjoint transitions (TerminalMap.domain reductions) &&
-
   (* Check for reduce/reduce conflicts. *)
-
-  TerminalMap.fold (fun _ prods ok ->
-    ok && match prods with
-    | []
-    | [ _ ] ->
-        true
-    | _ :: _ :: _ ->
-        false
-  ) reductions true
+  not (Reductions.has_reduce_reduce_conflict reductions)
 
 (* The following function counts the number of states in the SLR(1) automaton
    that have a conflict. *)
