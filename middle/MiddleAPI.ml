@@ -1047,14 +1047,12 @@ end (* LR0 *)
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(**[LR1_ALGORITHM] is the signature of several LR(1) automaton construction
-   algorithms. *)
-module type LR1_ALGORITHM = sig
+(**[LR1_AUTOMATON] is the result signature of several LR(1) automaton
+   construction algorithms. *)
+module type LR1_AUTOMATON = sig
 
-module Lr0 : LR0
-  open Lr0.G
-
-module Run () : sig
+  module Lr0 : LR0
+    open Lr0.G
 
   (**A state of the LR(1) automaton is known as a node. *)
   type node
@@ -1081,6 +1079,14 @@ module Run () : sig
      [node]. *)
   val state: node -> Lr0.ALR1.t
 
-end (* Run *)
+end (* LR1_AUTOMATON *)
+
+(**[LR1_ALGORITHM] is the signature of several LR(1) automaton construction
+   algorithms. *)
+module type LR1_ALGORITHM = sig
+
+  module Lr0 : LR0
+
+  module Run () : LR1_AUTOMATON with module Lr0 = Lr0
 
 end (* LR1_ALGORITHM *)
