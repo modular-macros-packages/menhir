@@ -570,24 +570,6 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* With each start production [S' -> S], exactly two states are
-   associated: a start state, which contains the item [S' -> . S [#]],
-   and an exit state, which contains the item [S' -> S . [#]]. *)
-
-(* The following function recognizes these two states and returns the
-   corresponding start symbol [S]. *)
-
-let is_start_or_exit node =
-  let items = Lr0.items (Lr0.ALR1.core (state node)) in
-  if Item.Set.cardinal items = 1 then
-    let item = Item.Set.choose items in
-    let prod, _pos = Item.export item in
-    Production.test_start prod
-  else
-    None
-
-(* -------------------------------------------------------------------------- *)
-
 (* Iteration over all nodes. *)
 
 let fold f accu =
@@ -658,15 +640,6 @@ let targets f accu symbol =
 
 let ntargets symbol =
   targets (fun count _ _ -> count + 1) 0 symbol
-
-exception FoundSingleTarget of node
-
-let single_target symbol =
-  try
-    targets (fun () _ target -> raise (FoundSingleTarget target)) () symbol;
-    assert false
-  with FoundSingleTarget target ->
-    target
 
 (* -------------------------------------------------------------------------- *)
 

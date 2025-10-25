@@ -106,15 +106,6 @@ val incoming_symbol: node -> Symbol.t option
 
 val is_start: node -> bool
 
-(* With each start production [S' -> S], exactly two states are
-   associated: a start state, which contains the item [S' -> . S [#]],
-   and an exit state, which contains the item [S' -> S . [#]]. *)
-
-(* [is_start_or_exit node] determines whether [node] is one of these
-   two states and, if so, returns the corresponding start symbol [S]. *)
-
-val is_start_or_exit: node -> Nonterminal.t option
-
 (* This maps a node to its predecessors. *)
 
 val predecessors: node -> node list
@@ -146,13 +137,6 @@ val reductions: node -> Reductions.t
    that one must forbid a default reduction at this node. *)
 
 val forbid_default_reduction: node -> bool
-
-(* Computing which terminal symbols a state is willing to act upon.
-
-   This function is currently unused, but could be used as part of an error
-   reporting system. *)
-
-val acceptable_tokens: node -> TerminalSet.t
 
 (* Iteration over all nodes. The order in which elements are examined,
    and the order of [map]'s output list, correspond to the numeric
@@ -195,11 +179,6 @@ val all_targets: Symbol.t -> NodeSet.t
    associated with [nt]. *)
 
 val ntargets: Symbol.t -> int
-
-(* [single_target symbol] requires [ntargets symbol = 1], and returns
-   the single target of all edges labeled with [symbol]. *)
-
-val single_target: Symbol.t -> node
 
 (* Iteration over all nodes with conflicts. [conflicts f] invokes [f toks
    node] once for every node [node] with a conflict, where [toks] are the
