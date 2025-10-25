@@ -15,7 +15,7 @@
    both integer sets and integer maps. There is no restriction on the integer
    values that are used as elements or keys. *)
 module Unbounded
-: API.MAP_AND_SET with type key = int
+: BaseAPI.MAP_AND_SET with type key = int
 
 (**The second implementation, [Make], expects an integer parameter [n] and
    provides integer sets and integer maps where every element or key must lie
@@ -24,4 +24,4 @@ module Unbounded
 module Make (N : sig
   val n: int
 end) ()
-: API.MAP_AND_BITSET with type key = int
+: BaseAPI.MAP_AND_BITSET with type key = int

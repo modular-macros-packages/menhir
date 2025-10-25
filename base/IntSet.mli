@@ -12,12 +12,12 @@
    It is not super-efficient: sets are implemented in terms of maps, so
    one word memory per node is wasted. *)
 
-(**The set API is described by the signature [API.SET]. *)
-include API.SET with type elt = int
+(**The set API is described by the signature [BaseAPI.SET]. *)
+include BaseAPI.SET with type elt = int
 
 (**The conversions between sets and maps are described by
-   the signature [API.CONVERT]. *)
-include API.CONVERT
+   the signature [BaseAPI.CONVERT]. *)
+include BaseAPI.CONVERT
   with type key := int
    and type 'a map := 'a Patricia.t
    and type set := t

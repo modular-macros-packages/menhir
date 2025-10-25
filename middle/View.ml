@@ -160,7 +160,7 @@ end
 (* -------------------------------------------------------------------------- *)
 
 (**Maps whose keys are nonterminal symbols. *)
-module NonterminalMap : API.MAP_AND_BITSET with type key = Nonterminal.t
+module NonterminalMap : BaseAPI.MAP_AND_BITSET with type key = Nonterminal.t
 
 (**Sets whose elements are nonterminal symbols. *)
 module NonterminalSet = NonterminalMap.Domain
@@ -326,8 +326,8 @@ end
 
 (**Maps whose keys are terminal symbols. *)
 module TerminalMap : sig
-  include API.MAP with type key = Terminal.t
-  include API.CONVERT
+  include BaseAPI.MAP with type key = Terminal.t
+  include BaseAPI.CONVERT
     with type key := key
      and type 'a map := 'a t
      and type set := TerminalSet.t
@@ -575,7 +575,7 @@ end
 
 module ProductionMap : sig
 
-  include API.MAP with type key = Production.t
+  include BaseAPI.MAP with type key = Production.t
 
   (**[start] constructs a map whose domain consists of just the start
      productions. *)
@@ -681,7 +681,7 @@ module Item : sig
   (**Maps whose keys are items. These maps are canonical: that is, they
      support the use of OCaml's generic equality and hash functions, so
      they can be used as keys in a hash table. *)
-  module Map : API.MAP_AND_SET with type key = t
+  module Map : BaseAPI.MAP_AND_SET with type key = t
 
   (**Sets whose elements are items. These sets are canonical: that is, they
      support the use of OCaml's generic equality and hash functions, so they
