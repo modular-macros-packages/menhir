@@ -13,7 +13,7 @@
 
 include FrontTypes
 
-module  G = GrammarView.Make(Front)()
+module  G = GrammarConstruction.Make(Front)()
 include G
 
 module Precedence =
