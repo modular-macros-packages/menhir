@@ -60,19 +60,18 @@ module G = struct
   (* The root nodes are the entry nodes of the LR(0) automaton. The properties
      associated with these nodes are given by the function [Lr0.ALR1.start]. *)
 
-  let foreach_root f =
-    ProductionMap.iter (fun _prod node ->
-      f node (Lr0.ALR1.start node)
-    ) Lr0.entry
+  let foreach_root yield =
+    Lr0.entry |> ProductionMap.iter @@ fun _prod node ->
+    yield node (Lr0.ALR1.start node)
 
   (* The edges are the edges of the LR(0) automaton, and the manner in which
      each edge contributes to the computation of a property is given by the
      function [Lr0.ALR1.transition]. *)
 
-  let foreach_successor node state f =
+  let foreach_successor node state yield =
     Lr0.foreach_outgoing_edge node @@ fun symbol (successor_node : node) ->
     let successor_state : lr1state = Lr0.ALR1.transition symbol state in
-    f successor_node successor_state
+    yield successor_node successor_state
 
 end
 
