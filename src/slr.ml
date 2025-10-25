@@ -87,14 +87,6 @@ let transitions (s : Lr0.ConcreteLR1State.t) : TerminalSet.t =
         transitions
   ) s TerminalSet.empty
 
-(* This function computes the domain of a terminal map, producing a terminal
-   set. *)
-
-let domain (m : 'a TerminalMap.t) : TerminalSet.t =
-  TerminalMap.fold (fun tok _ accu ->
-    TerminalSet.add tok accu
-  ) m TerminalSet.empty
-
 (* The following function checks whether a closed LR(1) state is free of
    conflicts. *)
 
@@ -105,7 +97,7 @@ let state_is_ok (s : Lr0.ConcreteLR1State.t) : bool =
 
   (* Check for shift/reduce conflicts. *)
 
-  TerminalSet.disjoint transitions (domain reductions) &&
+  TerminalSet.disjoint transitions (TerminalMap.domain reductions) &&
 
   (* Check for reduce/reduce conflicts. *)
 
