@@ -609,6 +609,12 @@ module Reductions : sig
   (**[flip] transforms a reverse reduction table into a reduction table. *)
   val flip : reverse -> t
 
+  (**[has_reduce_reduce_conflict reductions] determines whether the reduction
+     table [reductions] has a reduce/reduce conflict, that is, whether there
+     exists a terminal symbol [t] for which several reductions are
+     permitted. *)
+  val has_reduce_reduce_conflict: t -> bool
+
   (**[has_eos_conflict transitions reductions] tells whether a state has an
      end-of-stream conflict, that is, a reduction action on [#] and at least
      one other (shift or reduce) action. We assume that the state's shift and
