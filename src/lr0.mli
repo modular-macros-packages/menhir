@@ -76,6 +76,10 @@ module ConcreteLR1State : sig
      [s]. The state [s] must be closed. *)
   val reverse_reductions: t -> Reductions.reverse
 
+  (**[reductions s] computes a reverse reduction table for the state [s].
+     The state [s] must be closed. *)
+  val reductions: t -> Reductions.t
+
   (**[print leading s] is a string representation of the LR(1) state [s].
      The string [leading] is inserted at the beginning of every line. *)
   val print: string -> t -> string

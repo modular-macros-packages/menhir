@@ -466,6 +466,9 @@ module ConcreteLR1State = struct
   let reverse_reductions =
     AbstractState.reverse_reductions
 
+  let reductions state =
+    Reductions.flip (reverse_reductions state)
+
   let print leading (state : t) =
     MString.with_buffer 1024 @@ fun buffer ->
     state |> Item.Map.iter @@ fun item ts ->
