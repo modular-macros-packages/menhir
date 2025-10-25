@@ -8,8 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open MiddleAPI
+
 (**This module builds the LR(0) automaton associated with a grammar
    and provides access to this automaton. Furthermore, it provides
    facilities for the efficient construction of LR(1) automata. *)
 
-include MiddleAPI.LR0 with module G := Grammar
+include LR0 with module G := Grammar

@@ -160,11 +160,11 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(**Maps whose keys are nonterminal symbols. *)
-module NonterminalMap : BaseAPI.MAP_AND_BITSET with type key = Nonterminal.t
-
 (**Sets whose elements are nonterminal symbols. *)
-module NonterminalSet = NonterminalMap.Domain
+module NonterminalSet : Vendored_bitsets.API.SET with type elt = Nonterminal.t
+
+(**Maps whose keys are nonterminal symbols. *)
+module NonterminalMap : BaseAPI.MAP with type key = Nonterminal.t
 
 (* -------------------------------------------------------------------------- *)
 
@@ -679,15 +679,21 @@ module Item : sig
      reduce item. *)
   val classify: t -> kind
 
-  (**Maps whose keys are items. These maps are canonical: that is, they
-     support the use of OCaml's generic equality and hash functions, so
-     they can be used as keys in a hash table. *)
-  module Map : BaseAPI.MAP_AND_SET with type key = t
-
   (**Sets whose elements are items. These sets are canonical: that is, they
      support the use of OCaml's generic equality and hash functions, so they
      can be used as keys in a hash table. *)
-  module Set = Map.Domain
+  module Set : BaseAPI.SET with type elt = t
+
+  (**Maps whose keys are items. These maps are canonical: that is, they
+     support the use of OCaml's generic equality and hash functions, so
+     they can be used as keys in a hash table. *)
+  module Map : sig
+    include BaseAPI.MAP with type key = t
+    include BaseAPI.CONVERT
+        with type key := key
+        and type 'a map := 'a t
+        and type set := Set.t
+  end
 
 end (* Item *)
 
