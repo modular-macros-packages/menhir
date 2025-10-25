@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+include Grammar
 let sharp = Terminal.sharp
 let error = Terminal.error
 

@@ -872,8 +872,11 @@ end (* GRAMMAR *)
 module type LR0 = sig
 
 (* Because the signature LR0 depends on many of the types defined
-   in the signature GRAMMAR, we include GRAMMAR. *)
-include GRAMMAR
+   in the signature GRAMMAR, we include a component [G : GRAMMAR].
+   It can be understood as a parameter, which can be instantiated
+   by writing [LR0 with module G := ...]. *)
+module G : GRAMMAR
+  open G
 
 (**A state of the LR(0) automaton is known as a node.
    A node is an integer in the interval [\[0, n)]. *)
