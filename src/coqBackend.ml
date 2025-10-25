@@ -10,6 +10,7 @@
 
 open Printf
 let value = Located.value
+open FrontTypes
 open Grammar
 
 module Run () = struct

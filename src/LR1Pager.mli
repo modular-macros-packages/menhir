@@ -11,6 +11,6 @@
 (* This module implements the construction of an LR(1) automaton following a
    version of Pager's algorithm. *)
 
-open LR1Sigs
+open MiddleAPI
 
-module Run () : LR1_AUTOMATON
+module Make (Lr0 : LR0) : LR1_ALGORITHM with module Lr0 = Lr0

@@ -14,4 +14,4 @@ open MiddleAPI
    and provides access to this automaton. Furthermore, it provides
    facilities for the efficient construction of LR(1) automata. *)
 
-include LR0 with module G := Grammar
+include LR0 with module G = Grammar

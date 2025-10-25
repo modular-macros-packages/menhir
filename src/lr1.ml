@@ -8,8 +8,9 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open MiddleAPI
+
 open Grammar
-open LR1Sigs
 
 (* -------------------------------------------------------------------------- *)
 
@@ -22,23 +23,22 @@ let () =
 
 (* Select a construction algorithm based on the command-line settings. *)
 
-module type ALGORITHM = sig
-  module Run () : LR1_AUTOMATON
-end
+module type ALGORITHM =
+  LR1_ALGORITHM with module Lr0 = Lr0
 
 let algo, mode =
   Settings.(match construction_mode with
   | ModeCanonical ->
-      (module LR1Canonical : ALGORITHM),
+      (module LR1Canonical.Make(Lr0) : ALGORITHM),
       "canonical"
   | ModeInclusionOnly ->
-      (module LR1Pager : ALGORITHM),
+      (module LR1Pager.Make(Lr0) : ALGORITHM),
       "no-pager"
   | ModePager ->
-      (module LR1Pager : ALGORITHM),
+      (module LR1Pager.Make(Lr0) : ALGORITHM),
       "pager"
   | ModeLALR ->
-      (module LALR : ALGORITHM),
+      (module LALR.Make(Lr0) : ALGORITHM),
       "lalr"
   )
 
@@ -196,6 +196,9 @@ end
 (* -------------------------------------------------------------------------- *)
 
 (* This function is invoked during the traversal when a node is discovered. *)
+
+module Precedence =
+  Precedence.Make(Error)(Front)(Grammar)
 
 (* It is in charge of detecting and resolving conflicts at this node. *)
 

@@ -16,6 +16,6 @@
    in order to resolve conflicts. As a result, every node is reachable from
    some entry node. *)
 
-open LR1Sigs
+open MiddleAPI
 
-module Run () : LR1_AUTOMATON
+module Make (Lr0 : LR0) : LR1_ALGORITHM with module Lr0 = Lr0

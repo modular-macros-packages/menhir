@@ -8,18 +8,22 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open MiddleAPI
+
 (* This module constructs an LALR automaton for the grammar described by the
    module [Grammar]. *)
 
 (* In LALR mode, two LR(1) states are merged as soon as they have the same
    LR(0) core. *)
 
-open Grammar
+module Make (Lr0 : LR0) = struct
+module Lr0 = Lr0
+open Lr0.G
+
+module Run () = struct
 
 type lr1state =
   Lr0.ALR1.t
-
-module Run () = struct
 
 (* -------------------------------------------------------------------------- *)
 
@@ -120,3 +124,5 @@ let node (i : int) : node =
 (* -------------------------------------------------------------------------- *)
 
 end (* Run *)
+
+end (* Make *)

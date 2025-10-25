@@ -61,13 +61,17 @@
    the new algorithm does not commit early to which states or edges will exist
    once the dust settles down. *)
 
+open MiddleAPI
+
+module Make (Lr0 : LR0) = struct
+module Lr0 = Lr0
+open Lr0.G
+
 type lr0state =
   Lr0.node
 
 type lr1state =
   Lr0.ALR1.t
-
-open Grammar
 
 module Run () = struct
 
@@ -409,4 +413,6 @@ let number (i : node) : int =
 let node (i : int) : node =
   i
 
-end
+end (* Run *)
+
+end (* Make *)

@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open FrontTypes
 open Grammar
 
 (* This module first constructs an LR(1) automaton by using an appropriate
