@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module defines the signature [VIEW], which offers a rich view of a
+(**This module defines the signature [GRAMMAR], which offers a rich view of a
    grammar. This view is well-suited to the computations that the middle-end
    performs. In particular, it offers abstract types of terminal symbols,
    nonterminal symbols, symbols, and productions, as well as efficient sets
@@ -20,7 +20,7 @@ include FrontTypes
 
 (* -------------------------------------------------------------------------- *)
 
-module type VIEW = sig
+module type GRAMMAR = sig
 
 (* -------------------------------------------------------------------------- *)
 

@@ -20,5 +20,5 @@ module Run (E : sig
   val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 end)
-(G : VIEW)
+(G : GRAMMAR)
 : sig end

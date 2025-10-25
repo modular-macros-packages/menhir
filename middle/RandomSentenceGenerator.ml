@@ -10,7 +10,7 @@
 
 open View
 
-module Make (G : VIEW) = struct
+module Make (G : GRAMMAR) = struct
 open G
 
 (* -------------------------------------------------------------------------- *)

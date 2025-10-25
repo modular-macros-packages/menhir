@@ -23,7 +23,7 @@ end)
 (F : sig
   val grammar : grammar
 end)
-(G : VIEW)
+(G : GRAMMAR)
 = struct
 open E
 open F

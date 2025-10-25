@@ -33,7 +33,7 @@ end)
 (F : sig
   val grammar : grammar
 end)
-(G : VIEW)
+(G : GRAMMAR)
 : sig
 open G
 

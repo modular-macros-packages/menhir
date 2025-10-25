@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 (**This module constructs a rich view of the grammar,
-   which obeys the signature [VIEW]. *)
+   which obeys the signature [GRAMMAR]. *)
 
 open PlainSyntax
 open View
@@ -18,4 +18,4 @@ open View
    into a rich internal view. *)
 module Make (G : sig
   val grammar: grammar
-end) () : VIEW
+end) () : GRAMMAR

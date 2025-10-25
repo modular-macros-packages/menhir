@@ -29,7 +29,7 @@
 
 open View
 
-module Make (G : VIEW) : sig
+module Make (G : GRAMMAR) : sig
   open G
 
   val nonterminal: Nonterminal.t -> int -> Terminal.t list
