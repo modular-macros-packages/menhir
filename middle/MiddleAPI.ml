@@ -1073,10 +1073,8 @@ module Run () : sig
      in the LR(1) automaton. *)
   val entry : node ProductionMap.t
 
-    (**[transitions node] returns the outgoing (shift and goto) transitions of
-       the node [node], in the form a map of symbols to successor nodes.
-       (Note to implementors of the signature [LR1_AUTOMATON]: there is no
-       need to memoize this function; this is done a posteriori, in [Lr1].) *)
+  (**[transitions node] returns the outgoing (shift and goto) transitions of
+     the node [node], in the form a map of symbols to successor nodes. *)
   val transitions: node -> node SymbolMap.t
 
   (**[state node] is the abstract LR(1) state that corresponds to the node
