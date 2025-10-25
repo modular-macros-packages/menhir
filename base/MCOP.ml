@@ -8,41 +8,54 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type problem = int array
+type problem =
+  int array
 
 type 'a solution =
   | Matrix of 'a
   | Product of 'a solution * 'a solution
 
-let rec map_solution f = function
-  | Matrix x -> Matrix (f x)
+let rec map f = function
+  | Matrix x ->
+      Matrix (f x)
   | Product (t, u) ->
-    let t' = map_solution f t in
-    let u' = map_solution f u in
-    Product (t', u')
+      let t' = map f t in
+      let u' = map f u in
+      Product (t', u')
+
+(* -------------------------------------------------------------------------- *)
+
+(* Handle trivial cases before falling back to a smarter algorithm. *)
 
 exception Empty
 
-(** Try to handle trivial cases before falling back to smart algorithms. *)
-let trivial_cases = function
-  | [||] | [|_|] -> raise Empty
-  (* One or two matrices, one solution *)
-  | [|_; _|] -> Some (Matrix 0)
-  | [|_; _; _|] -> Some (Product (Matrix 0, Matrix 1))
+let trivial f dims =
+  match dims with
+  | [||] | [|_|] ->
+      raise Empty
+  | [|_; _|] ->
+      (* One matrix: there is just one solution. *)
+      Matrix 0
+  | [|_; _; _|] ->
+      (* Two matrices: there is just one solution. *)
+      Product (Matrix 0, Matrix 1)
   | [|a; b; c; d|] ->
-    (* Three matrices, two possible solutions.
-       One test is sufficient. *)
-    let cost_AB_C = a * b * c + a * c * d in
-    let cost_A_BC = a * b * d + b * c * d in
-    if cost_AB_C < cost_A_BC
-    then Some (Product (Product (Matrix 0, Matrix 1), Matrix 2))
-    else Some (Product (Matrix 0, Product (Matrix 1, Matrix 2)))
-  | _ -> None
+      (* Three matrices: there are two solutions. One test suffices. *)
+      let cost_AB_C = a * b * c + a * c * d in
+      let cost_A_BC = a * b * d + b * c * d in
+      if cost_AB_C < cost_A_BC
+      then Product (Product (Matrix 0, Matrix 1), Matrix 2)
+      else Product (Matrix 0, Product (Matrix 1, Matrix 2))
+  | _ ->
+      (* Not a trivial case. *)
+      f dims
 
-(* Left-leaning tree *)
+(* -------------------------------------------------------------------------- *)
 
-let left_solution arr =
-  let len = Array.length arr in
+(* Trivial solutions. *)
+
+let left dims =
+  let len = Array.length dims in
   if len <= 1 then raise Empty;
   let solution = ref (Matrix 0) in
   for i = 1 to len - 1 do
@@ -50,10 +63,8 @@ let left_solution arr =
   done;
   !solution
 
-(* Right-leaning tree *)
-
-let right_solution arr =
-  let len = Array.length arr in
+let right dims =
+  let len = Array.length dims in
   if len <= 1 then raise Empty;
   let solution = ref (Matrix (len - 1)) in
   for i = len - 2 downto 0 do
@@ -61,9 +72,12 @@ let right_solution arr =
   done;
   !solution
 
-(* Francis Chin O(n) approximation *)
+(* -------------------------------------------------------------------------- *)
 
-(** Returns the index of the biggest float in the array *)
+(* Francis Chin's algorithm. *)
+
+(* [argmax] returns the index of the largest element of the array. *)
+
 let argmax (a : float array) : int =
   let i = ref 0 in
   let m = ref a.(0) in
@@ -76,8 +90,9 @@ let argmax (a : float array) : int =
   done;
   !i
 
-(** Returns the permutation vector corresponding to problem [k] *)
-let approx_vector (k : problem) =
+(* [vector] returns a permutation vector corresponding to the problem [k]. *)
+
+let vector (k : problem) =
   (* k.(0..n) *)
   let n = Array.length k - 1 in
   (* v.(0..n-2) *)
@@ -90,12 +105,10 @@ let approx_vector (k : problem) =
   let c = ref 1 in
   let j = ref 0 in
   let s = Array.make (n + 1) 0 in
-  (*Printf.printf "n=%d\n" n;*)
   for i = 1 to n - 1 do
     incr j;
     s.(!j) <- i;
     while !j > 0 && r.(s.(!j)) +. r_m < r.(s.(!j-1)) +. r.(i+1) do
-      (*Printf.printf "j=%d s(j)=%d\n" !j s.(!j);*)
       v.(s.(!j)-1) <- !c;
       incr c;
       decr j;
@@ -103,8 +116,6 @@ let approx_vector (k : problem) =
   done;
   let b = ref (n - 1) in
   incr j;
-  (*Printf.printf "j=%d " !j;*)
-  (*Printf.printf "s(j)=%d\n" s.(!j);*)
   s.(!j) <- n;
   let k = ref 0 in
   let stop = ref false in
@@ -115,9 +126,6 @@ let approx_vector (k : problem) =
           begin decr j; v.(s.(!j) - 1) <- !b; decr b; end
         else if r.(s.(!k)) +. r_m < r.(s.(!k+1)) +. r.(s.(!j)) then
           begin incr k;
-            (*Printf.printf "k=%d " !k;*)
-            (*Printf.printf "s(k)=%d " s.(!k);*)
-            (*Printf.printf "b=%d\n" !b;*)
             if s.(!k) < n then v.(s.(!k)-1) <- !b;
             decr b;
           end
@@ -132,28 +140,36 @@ let approx_vector (k : problem) =
   if m > 0 && m < n && v.(m-1) = 0 then v.(m-1) <- !c;
   v
 
-(* Parse the permutation vector produced by the approximation using
-   a variant of shunting-yard algorithm *)
+(* [parse] parses the permutation vector produced by [vector]
+   using a variant of the shunting-yard algorithm. *)
 
-let approx_parse_vector order =
-  let rec pop (n : int) x = function
-    | (n', x') :: xs when n' <= n -> pop n (Product (x', x)) xs
-    | other -> (n, x) :: other
-  in
-  let push (i, stack) v = (i + 1, pop v (Matrix i) stack) in
-  let close (i, stack) = snd (List.hd (pop max_int (Matrix i) stack)) in
-  let final_stack = Array.fold_left push (0, []) order in
-  close final_stack
+let rec pop (n : int) x stack =
+  match stack with
+  | (n', x') :: xs when n' <= n ->
+      pop n (Product (x', x)) xs
+  | _ ->
+      (n, x) :: stack
 
-let approx_solution dims =
-  match trivial_cases dims with
-  | Some solution -> solution
-  | None -> approx_parse_vector (approx_vector dims)
+let push (i, stack) v =
+  (i + 1, pop v (Matrix i) stack)
 
-(* Optimal solution, O(n^3) using dynamic programming *)
+let close (i, stack) =
+  snd (List.hd (pop max_int (Matrix i) stack))
 
-(** Returns the solution matrix for problem [dims] *)
-let dynamic_matrix (dims : problem) =
+let parse v =
+  let stack = [] in
+  let stack = Array.fold_left push (0, stack) v in
+  close stack
+
+let approx =
+  trivial @@ fun dims ->
+  parse (vector dims)
+
+(* -------------------------------------------------------------------------- *)
+
+(* The optimal solution. *)
+
+let build_matrix (dims : problem) =
   let n = Array.length dims - 1 in
   let m = Array.make_matrix n n 0 in
   let s = Array.make_matrix n n 0 in
@@ -172,18 +188,17 @@ let dynamic_matrix (dims : problem) =
   done;
   s
 
-let dynamic_parse_matrix s =
+let parse_matrix s =
   let rec loop i j =
-    if i <> j then (
+    if i <> j then
       let i_s = loop i s.(i).(j) in
       let s_j = loop (s.(i).(j) + 1) j in
       Product (i_s, s_j)
-    ) else
+    else
       Matrix i
   in
   loop 0 (Array.length s - 1)
 
-let dynamic_solution dims =
-  match trivial_cases dims with
-  | Some solution -> solution
-  | None -> dynamic_parse_matrix (dynamic_matrix dims)
+let optimal =
+  trivial @@ fun dims ->
+  parse_matrix (build_matrix dims)

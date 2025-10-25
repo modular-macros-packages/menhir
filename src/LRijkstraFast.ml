@@ -628,18 +628,18 @@ module Run () = struct
       in
       (* Import the solution to a matrix-chain ordering problem as a sub-tree *)
       let rec import_mcop = function
-        | Mcop.Matrix l -> leaf l
-        | Mcop.Product (l, r) -> node (import_mcop l) (import_mcop r)
+        | MCOP.Matrix l -> leaf l
+        | MCOP.Product (l, r) -> node (import_mcop l) (import_mcop r)
       in
       (* Compute the nullable terminal set and non_nullable list for a single
          reduction, optimizing the matrix-product chain.  *)
       let solve_ccost_path {Unreduce. steps; lookahead; _} =
         let dimensions = first_dim :: List.map transition_size steps in
-        match Mcop.dynamic_solution (Array.of_list dimensions) with
-        | exception Mcop.Empty -> `L lookahead
+        match MCOP.optimal (Array.of_list dimensions) with
+        | exception MCOP.Empty -> `L lookahead
         | solution ->
           let steps = Array.of_list steps in
-          let solution = Mcop.map_solution (fun i -> steps.(i)) solution in
+          let solution = MCOP.map (fun i -> steps.(i)) solution in
           `R (import_mcop solution, lookahead)
       in
       let nullable, non_nullable =
