@@ -599,10 +599,6 @@ module Reductions : sig
   type reverse =
     TerminalSet.t ProductionMap.t
 
-  (**[add_reductions prod ts reductions] extends the table [reductions] with a
-     reduction of [prod] on every terminal symbol in the set [ts]. *)
-  val add_reductions: Production.t -> TerminalSet.t -> t -> t
-
   (**[reverse] transforms a reduction table into a reverse reduction table. *)
   val reverse : t -> reverse
 
