@@ -933,6 +933,55 @@ end (* Item *)
 
 (* -------------------------------------------------------------------------- *)
 
+(* Operations on states. *)
+
+(* These functions are parametric in the type of the lookahead sets,
+   so they can be applied to a symbolic state or to a concrete state,
+   for example *)
+
+module AbstractState = struct
+
+  type 'lookahead t =
+    'lookahead Item.Map.t
+
+  (* [transitions state] computes the non-epsilon transitions that leave the
+     state [state]. Here, a state is a set of items. *)
+
+  let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
+    Item.Map.fold (fun item ts transitions ->
+      match Item.classify item with
+      | Item.Shift (symbol, item') ->
+          let items : 'a Item.Map.t =
+            try
+              SymbolMap.find symbol transitions
+            with Not_found ->
+              Item.Map.empty
+          in
+          SymbolMap.add symbol (Item.Map.add item' ts items) transitions
+      | Item.Reduce _ ->
+          transitions
+    ) state SymbolMap.empty
+
+  (* -------------------------------------------------------------------------- *)
+
+  (* [reverse_reductions state] computes the reduction opportunities at the
+     (closed) state [state]. The result is a reverse reduction table, that is,
+     a map of productions to lookahead sets. *)
+
+  let reverse_reductions (state : 'a Item.Map.t) : 'a ProductionMap.t =
+    Item.Map.fold (fun item ts accu ->
+      match Item.classify item with
+      | Item.Reduce prod ->
+          assert (not (ProductionMap.mem prod accu));
+          ProductionMap.add prod ts accu
+      | Item.Shift _ ->
+          accu
+    ) state ProductionMap.empty
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (* Properties of the grammar. *)
 
 let attributes =

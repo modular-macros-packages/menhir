@@ -290,44 +290,6 @@ module SymbolicClosure =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [transitions state] computes the non-epsilon transitions that leave the
-   state [state]. Here, a state is a set of items. This code is parametric
-   in the type of the lookahead sets. *)
-
-let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
-  Item.Map.fold (fun item ts transitions ->
-    match Item.classify item with
-    | Item.Shift (symbol, item') ->
-        let items : 'a Item.Map.t =
-          try
-            SymbolMap.find symbol transitions
-          with Not_found ->
-            Item.Map.empty
-        in
-        SymbolMap.add symbol (Item.Map.add item' ts items) transitions
-    | Item.Reduce _ ->
-        transitions
-  ) state SymbolMap.empty
-
-(* -------------------------------------------------------------------------- *)
-
-(* [reductions state] computes the reduction opportunities at the (closed)
-   state [state]. The result is a reverse reduction table, that is, a map of
-   productions to lookahead sets. This code is again parametric in the type of
-   the lookahead sets. *)
-
-let reductions (state : 'a Item.Map.t) : 'a ProductionMap.t =
-  Item.Map.fold (fun item ts accu ->
-    match Item.classify item with
-    | Item.Reduce prod ->
-        assert (not (ProductionMap.mem prod accu));
-        ProductionMap.add prod ts accu
-    | Item.Shift _ ->
-        accu
-  ) state ProductionMap.empty
-
-(* -------------------------------------------------------------------------- *)
-
 (* Construction of the the LR(0) automaton. *)
 
 (* Nodes are numbered sequentially. *)
@@ -402,7 +364,8 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
 
     (* Compute symbolic information about reductions. *)
 
-    InfiniteArray.set _reverse_reductions k (reductions closure);
+    InfiniteArray.set _reverse_reductions k
+      (AbstractState.reverse_reductions closure);
 
     (* Compute symbolic information about the transitions, and, by dropping
        the symbolic lookahead information, explore the transitions to further
@@ -417,7 +380,7 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
         i+1
       ) symbolic_state 0 in
       ((k, lookahead) : symbolic_transition_target)
-    ) (transitions closure));
+    ) (AbstractState.transitions closure));
 
     k
 
@@ -496,6 +459,12 @@ module ConcreteLR1State = struct
     |> Item.Map.map SymbolicLookahead.constant
     |> SymbolicClosure.closure
     |> Item.Map.map SymbolicLookahead.project
+
+  let transitions =
+    AbstractState.transitions
+
+  let reverse_reductions =
+    AbstractState.reverse_reductions
 
   let print leading (state : t) =
     MString.with_buffer 1024 @@ fun buffer ->

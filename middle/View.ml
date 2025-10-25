@@ -689,6 +689,28 @@ end (* Item *)
 
 (* -------------------------------------------------------------------------- *)
 
+(* Abstract LR states. *)
+
+module AbstractState : sig
+
+  (**An abstract LR state is a map of items to lookahead sets.
+     Here, the type of the lookahead sets is undetermined. *)
+  type 'lookahead t =
+    'lookahead Item.Map.t
+
+  (**[transitions s] computes the outgoing (shift and goto) transitions of the
+     state [s], in the form a map of symbols to successor states. The state
+     [s] must be closed. The successor states are not necessarily closed. *)
+  val transitions: 'lookahead t -> 'lookahead t SymbolMap.t
+
+  (**[reverse_reductions s] computes a reverse reduction table for the state
+     [s]. The state [s] must be closed. *)
+  val reverse_reductions:  'lookahead t -> 'lookahead ProductionMap.t
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (** {2 Properties of the Grammar} *)
 
 (* [attributes] are the attributes attached with the grammar. *)
