@@ -12,7 +12,7 @@
    which obeys the signature [GRAMMAR]. *)
 
 open PlainSyntax
-open View
+open MiddleAPI
 
 (**The functor [Make] transforms a grammar in [PlainSyntax] format
    into a rich internal view. *)

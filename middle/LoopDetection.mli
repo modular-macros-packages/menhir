@@ -12,7 +12,7 @@
    which cause the grammar to be outside of the class LR(1). These
    anomalies include cycles and hidden left recursion. *)
 
-open View
+open MiddleAPI
 
 module Run (E : sig
 

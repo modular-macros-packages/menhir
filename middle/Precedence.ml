@@ -11,7 +11,7 @@
 open Located
 open PlainSyntax
 open PlainSyntaxAccessors
-open View
+open MiddleAPI
 
 module Make
 (E : sig

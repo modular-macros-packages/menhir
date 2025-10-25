@@ -27,7 +27,7 @@
    cause a problem if the goal can be achieved only via such a production.
    This is hopefully unlikely. *)
 
-open View
+open MiddleAPI
 
 module Make (G : GRAMMAR) : sig
   open G

@@ -21,7 +21,7 @@
    This information is not accessible elsewhere. *)
 
 open PlainSyntax
-open View
+open MiddleAPI
 
 module Make
 (E : sig

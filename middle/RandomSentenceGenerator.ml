@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open View
+open MiddleAPI
 
 module Make (G : GRAMMAR) = struct
 open G
