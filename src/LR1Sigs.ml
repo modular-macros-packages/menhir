@@ -41,6 +41,6 @@ module type LR1_AUTOMATON = sig
 
   (**[state node] is the abstract LR(1) state that corresponds to the node
      [node]. *)
-  val state: node -> Lr0.AbstractLR1State.t
+  val state: node -> Lr0.ALR1.t
 
 end

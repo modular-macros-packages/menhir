@@ -441,7 +441,7 @@ let outgoing_symbols node f =
 
 (* Concrete LR(1) states. *)
 
-module ConcreteLR1State = struct
+module CLR1 = struct
 
   type t =
     TerminalSet.t Item.Map.t
@@ -476,13 +476,13 @@ module ConcreteLR1State = struct
       (Item.print item)
       (TerminalSet.print ts)
 
-end (* ConcreteLR1State *)
+end (* CLR1 *)
 
 (* -------------------------------------------------------------------------- *)
 
 (* Operations on abstract LR(1) states. *)
 
-module AbstractLR1State = struct
+module ALR1 = struct
 
 (* An LR(1) state is internally represented as a pair of an LR(0) state number
    and an array of concrete lookahead sets, whose length depends on the LR(0)
@@ -506,7 +506,7 @@ let compare s1 s2 =
   if c <> 0 then c
   else MArray.compare TerminalSet.compare tsr1 tsr2
 
-let export (s : t) : ConcreteLR1State.t =
+let export (s : t) : CLR1.t =
   let (k, tsr) = s in
   let (_ : int), items = Item.Set.fold (fun item (i, items) ->
     i+1, Item.Map.add item tsr.(i) items
@@ -798,10 +798,10 @@ let restrict ts (k, tsr) =
   k, Array.map (TerminalSet.inter ts) tsr
 
 let print leading state =
-  ConcreteLR1State.print leading (export state)
+  CLR1.print leading (export state)
 
 (* -------------------------------------------------------------------------- *)
 
-end (* AbstractLR1State *)
+end (* ALR1 *)
 
 end (* Make *)

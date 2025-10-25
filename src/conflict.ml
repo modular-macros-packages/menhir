@@ -431,7 +431,7 @@ let () =
       assert (Item.is_start P.source);
 
       let closure =
-        Lr0.ConcreteLR1State.closure P.goal in
+        Lr0.CLR1.closure P.goal in
 
       (* Determine what kind of conflict was found. *)
 

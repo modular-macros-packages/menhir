@@ -926,7 +926,7 @@ val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 (* -------------------------------------------------------------------------- *)
 
 (**This module offers a concrete representation of LR(1) states. *)
-module ConcreteLR1State : sig
+module CLR1 : sig
 
   (**An LR(1) state is a mapping of LR(0) items to lookahead sets, that is,
      sets of terminal symbols. This is a concrete representation: it is
@@ -960,7 +960,7 @@ end
 
 (**This module offers an abstract representation of LR(1) states, which is
    particularly useful to construct of various kinds of LR(1) automata. *)
-module AbstractLR1State : sig
+module ALR1 : sig
 
   (**An LR(1) state is internally represented as a pair of an LR(0) state
      number and an array of concrete lookahead sets, whose length depends on
@@ -973,7 +973,7 @@ module AbstractLR1State : sig
 
   (**[export s] is the concrete LR(1) state that corresponds to the state
      [s]. *)
-  val export: t -> ConcreteLR1State.t
+  val export: t -> CLR1.t
 
   (**[core s] is the core of the state [s], that is, the underlying
      LR(0) state that is obtained by erasing the lookahead sets. *)
@@ -1039,6 +1039,6 @@ module AbstractLR1State : sig
      The string [leading] is inserted at the beginning of every line. *)
   val print: string -> t -> string
 
-end (* AbstractLR1State *)
+end (* ALR1 *)
 
 end (* LR0 *)

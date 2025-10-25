@@ -17,10 +17,9 @@
 open Grammar
 
 type lr1state =
-  Lr0.AbstractLR1State.t
+  Lr0.ALR1.t
 
 module Run () = struct
-let () = ()
 
 (* -------------------------------------------------------------------------- *)
 
@@ -42,12 +41,13 @@ type node =
 
 (* A property is an LR(1) state. The function [leq_join] is used to detect
    stabilization and to merge the contribution of a predecessor state into a
-   successor state. We exploit the fact that [Lr0.AbstractLR1State.union s' s] is physically
-   equal to [s] if [s'] is a subet of [s]. (Yes, we live on the edge.) *)
+   successor state. We exploit the fact that [Lr0.ALR1.union s1 s2] is
+   physically equal to [s2] if [s1] is a subet of [s2]. (Yes, we live on the
+   edge.) *)
 
 module P = struct
   type property = lr1state
-  let leq_join = Lr0.AbstractLR1State.union
+  let leq_join = Lr0.ALR1.union
 end
 
 (* The graph. *)
@@ -58,20 +58,20 @@ module G = struct
   type property = P.property
 
   (* The root nodes are the entry nodes of the LR(0) automaton. The properties
-     associated with these nodes are given by the function [Lr0.AbstractLR1State.start]. *)
+     associated with these nodes are given by the function [Lr0.ALR1.start]. *)
 
   let foreach_root f =
     ProductionMap.iter (fun _prod node ->
-      f node (Lr0.AbstractLR1State.start node)
+      f node (Lr0.ALR1.start node)
     ) Lr0.entry
 
   (* The edges are the edges of the LR(0) automaton, and the manner in which
      each edge contributes to the computation of a property is given by the
-     function [Lr0.AbstractLR1State.transition]. *)
+     function [Lr0.ALR1.transition]. *)
 
   let foreach_successor node state f =
     Lr0.foreach_outgoing_edge node @@ fun symbol (successor_node : node) ->
-    let successor_state : lr1state = Lr0.AbstractLR1State.transition symbol state in
+    let successor_state : lr1state = Lr0.ALR1.transition symbol state in
     f successor_node successor_state
 
 end

@@ -88,7 +88,7 @@ val print: node -> string
 
 (* This provides access to the LR(1) state that a node stands for. *)
 
-val state: node -> Lr0.AbstractLR1State.t
+val state: node -> Lr0.ALR1.t
 
 (* This converts a start node into the single item that it contains. *)
 

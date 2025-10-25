@@ -26,7 +26,7 @@ let tell_me_everything =
 
 (* The following function turns an LR(0) state into an SLR(1) state. *)
 
-let make_slr_state (s : Lr0.node) : Lr0.ConcreteLR1State.t =
+let make_slr_state (s : Lr0.node) : Lr0.CLR1.t =
 
   (* Obtain the set of LR(0) items associated with the state [s]. *)
 
@@ -47,7 +47,7 @@ let make_slr_state (s : Lr0.node) : Lr0.ConcreteLR1State.t =
 
   (* Compute the LR(1) closure. *)
 
-  let s = Lr0.ConcreteLR1State.closure s in
+  let s = Lr0.CLR1.closure s in
 
   (* We now have an LR(1) state that has the correct set of LR(0) items but
      phony lookahead information. We convert it into an SLR(1) state by
@@ -65,9 +65,9 @@ let make_slr_state (s : Lr0.node) : Lr0.ConcreteLR1State.t =
 (* The following function checks whether a closed LR(1) state is free of
    conflicts. *)
 
-let state_is_ok (s : Lr0.ConcreteLR1State.t) : bool =
-  let reductions = Lr0.ConcreteLR1State.reductions s
-  and transitions = SymbolMap.terminals (Lr0.ConcreteLR1State.transitions s) in
+let state_is_ok (s : Lr0.CLR1.t) : bool =
+  let reductions = Lr0.CLR1.reductions s
+  and transitions = SymbolMap.terminals (Lr0.CLR1.transitions s) in
   (* Check for shift/reduce conflicts. *)
   TerminalSet.disjoint transitions (TerminalMap.domain reductions) &&
   (* Check for reduce/reduce conflicts. *)
@@ -88,7 +88,7 @@ let count_slr_violations () : int =
         Printf.fprintf
           stderr
           "The following SLR(1) state has a conflict:\n%s"
-          (Lr0.ConcreteLR1State.print "" s)
+          (Lr0.CLR1.print "" s)
     end
   done;
 
