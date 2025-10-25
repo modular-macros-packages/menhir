@@ -133,7 +133,7 @@ let lr0_state (node : Lr0.node) : C.lr0_state_def =
   }
 
 let transition (sym, node) : C.symbol * C.lr1 =
-  (symbol sym, Lr1.number node)
+  (symbol sym, Lr1.encode node)
 
 let lr1_state (node : Lr1.node) : C.lr1_state_def =
   {
@@ -147,7 +147,7 @@ let lr1_state (node : Lr1.node) : C.lr1_state_def =
     C.lr1_default_reduction =
       Option.map (fun (p, _ts) -> p2i p) (Default.has_default_reduction node);
     C.lr1_conflicting_transitions = (
-      let prepare (t, node, silent) = (t2i t, Lr1.number node, silent) in
+      let prepare (t, node, silent) = (t2i t, Lr1.encode node, silent) in
       List.map prepare (Lr1.get_conflicting_transitions node);
     );
     C.lr1_conflicting_reductions = (
@@ -161,7 +161,7 @@ let lr1_state (node : Lr1.node) : C.lr1_state_def =
   }
 
 let entry_point prod node nt _typ accu : (C.nonterminal * C.production * C.lr1) list =
-  (n2i nt, p2i prod, Lr1.number node) :: accu
+  (n2i nt, p2i prod, Lr1.encode node) :: accu
 
 let priority_level input level = {
   C.pl_input_file = InputFile.name input;

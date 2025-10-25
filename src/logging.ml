@@ -47,11 +47,11 @@ end) = struct
     emit "\n"
 
   let state s =
-    emit "State %d:" (Lr1.number s);
+    emit "State %d:" (Lr1.encode s);
     newline()
 
   let shift tok s' =
-    emit "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.number s');
+    emit "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.encode s');
     newline()
 
   let reduce_or_accept prod =
@@ -79,7 +79,7 @@ end) = struct
     newline()
 
   let handling_error s =
-    emit "Handling error in state %d" (Lr1.number s);
+    emit "Handling error in state %d" (Lr1.encode s);
     newline()
 
 end

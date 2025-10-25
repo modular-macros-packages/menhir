@@ -1060,12 +1060,12 @@ module type LR1_AUTOMATON = sig
   (**[n] is the number of nodes in the LR(1) automaton. *)
   val n: int
 
-  (**[number] converts a node to an integer in the range [\[0, n)]. *)
-  val number: node -> int
+  (**[encode] converts a node to an integer in the range [\[0, n)]. *)
+  val encode: node -> int
 
-  (**[node] converts an integer in the range [\[0, n)] to a node. This
+  (**[decode] converts an integer in the range [\[0, n)] to a node. This
      function is {b unsafe} and should be used as little as possible. *)
-  val node: int -> node
+  val decode: int -> node
 
   (**[entry] is a map of each start production to the corresponding start node
      in the LR(1) automaton. *)

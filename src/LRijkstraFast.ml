@@ -46,8 +46,8 @@ module Run () = struct
   (* [Lr1C] represents Lr1 states as elements of a [Numbering.Typed] set *)
   module Lr1C = struct
     include (val const Lr1.n)
-    let of_g lr1 = Index.of_int n (Lr1.number lr1)
-    let to_g lr1 = Lr1.of_number (Index.to_int lr1)
+    let of_g lr1 = Index.of_int n (Lr1.encode lr1)
+    let to_g lr1 = Lr1.decode (Index.to_int lr1)
   end
 
   (* ---------------------------------------------------------------------- *)

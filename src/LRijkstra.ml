@@ -102,8 +102,8 @@ let validate nt s' elements : ReferenceInterpreter.target =
   | OK ((state, _) as target) ->
       if Lr1.Node.compare state s' <> 0 then
         fail "error occurred in state %d instead of %d"
-          (Lr1.number state)
-          (Lr1.number s')
+          (Lr1.encode state)
+          (Lr1.encode s')
       else
         target
 
@@ -203,7 +203,7 @@ let () =
 let () =
   !data
   |> List.fast_sort (fun (nt1, w1, (s1, _)) (nt2, w2, (s2, _)) ->
-      let c = Int.compare (Lr1.number s1) (Lr1.number s2) in
+      let c = Int.compare (Lr1.encode s1) (Lr1.encode s2) in
       if c <> 0 then c else
         let c = Nonterminal.compare nt1 nt2 in
         if c <> 0 then c else Word.compare w2 w1

@@ -88,11 +88,8 @@ let transitions (i : node) : node SymbolMap.t =
 
 (* Expose the bijection between nodes and numbers. *)
 
-let number (i : node) : int =
-  i
-
-let node (i : int) : node =
-  i
+let encode (i : node) : int = i
+let decode (i : int) : node = i
 
 end (* Run *)
 

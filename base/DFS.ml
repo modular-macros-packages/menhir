@@ -57,14 +57,14 @@ end
 module MarkArray (G : sig
   type node
   val n: int
-  val number: node -> int
+  val encode: node -> int
 end) = struct
   let marked =
     Array.make G.n false
   let is_marked x =
-    marked.(G.number x)
+    marked.(G.encode x)
   let mark x =
-    marked.(G.number x) <- true
+    marked.(G.encode x) <- true
   let marked () =
     marked
 end

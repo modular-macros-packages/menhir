@@ -105,7 +105,7 @@ let _number : node array =
   Array.make Raw.n unreachable
 
 let transport (raw_node : Raw.node) : node =
-  _number.(Raw.number raw_node)
+  _number.(Raw.encode raw_node)
 
 (* This array of transitions is initialized here with the data supplied by
    [Raw.transitions]. Then, some transitions are *removed* (because of
@@ -113,7 +113,7 @@ let transport (raw_node : Raw.node) : node =
 
 let transitions : Raw.node SymbolMap.t array =
   Array.init Raw.n (fun i ->
-    Raw.transitions (Raw.node i)
+    Raw.transitions (Raw.decode i)
   )
 
 (* Transitions are also stored in reverse, so as to allow reverse traversals
@@ -196,7 +196,7 @@ module RawForwardEdges = struct
   type node = Raw.node
   type label = Symbol.t
   let foreach_outgoing_edge node f =
-    let i = Raw.number node in
+    let i = Raw.encode node in
     SymbolMap.iter f transitions.(i)
   let foreach_root f =
     ProductionMap.iter (fun _prod node -> f node) Raw.entry
@@ -212,7 +212,7 @@ module Precedence =
 (* It is in charge of detecting and resolving conflicts at this node. *)
 
 let discover (raw_node : Raw.node) =
-  let i = Raw.number raw_node
+  let i = Raw.encode raw_node
   and state = Raw.state raw_node in
 
   (* Number this node. *)
@@ -401,7 +401,7 @@ let discover (raw_node : Raw.node) =
 let traverse (source : Raw.node) _symbol (target : Raw.node) =
   (* The source node has been discovered and numbered already, so it can be
      transported. (This is not necessarily true of the target node.) *)
-  let j = Raw.number target in
+  let j = Raw.encode target in
   predecessors.(j) <- transport source :: predecessors.(j)
 
 (* -------------------------------------------------------------------------- *)
@@ -492,21 +492,21 @@ let () =
 
 (* Accessors. *)
 
-let number node =
+let encode node =
   node
 
-let of_number node =
-  assert (node < n);
+let decode node =
+  assert (0 <= node && node < n);
   node
 
 let print node =
-  Printf.sprintf "%d" (number node)
+  Printf.sprintf "%d" (encode node)
 
 let entry =
   ProductionMap.map transport Raw.entry
 
 let state node =
-  Raw.state (Raw.node (raw node))
+  Raw.state (Raw.decode (raw node))
 
 let transitions node =
   assert (0 <= node && node < n);

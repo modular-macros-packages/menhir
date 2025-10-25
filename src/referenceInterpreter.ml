@@ -23,7 +23,7 @@ module T = struct
       Lr1.node
 
   let number =
-    Lr1.number
+    Lr1.encode
 
   type token =
       Terminal.t

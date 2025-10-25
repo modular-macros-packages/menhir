@@ -299,7 +299,7 @@ let print addr =
   Label.import (prefix (
     match addr with
     | Run (mode, s) ->
-        let s = MString.padded_index Lr1.n (Lr1.number s) in
+        let s = MString.padded_index Lr1.n (Lr1.encode s) in
         sprintf "run_%s" s
         |> mode_prefix mode
     | Reduce (mode, prod) ->
@@ -315,7 +315,7 @@ let print addr =
         sprintf "act_goto_%s" prod
         |> mode_prefix mode
     | Stop s ->
-        let s = MString.padded_index Lr1.n (Lr1.number s) in
+        let s = MString.padded_index Lr1.n (Lr1.encode s) in
         sprintf "stop_%s" s
   ))
 
@@ -380,7 +380,7 @@ let rec run mode s =
 
   (* Log that we are entering state [s]. *)
 
-  log "State %d:" (Lr1.number s);
+  log "State %d:" (Lr1.encode s);
 
   (* If necessary, read the positions of the current token from [lexbuf]. *)
 
@@ -481,7 +481,7 @@ and run_normal_dispatch s =
           branch (TokSingle (tok, semv)) begin fun () ->
             (* Log that we are shifting. *)
             log "Shifting (%s) to state %d"
-              (Terminal.print tok) (Lr1.number s');
+              (Terminal.print tok) (Lr1.encode s');
             (* Invoke [run s']. *)
             jump (Run (mode, s'))
           end
@@ -534,8 +534,8 @@ and run_error_dispatch s =
          because the [error] token has type unit. Invoke [run s'], still in
           error-handling mode. *)
 
-      log "Handling error in state %d" (Lr1.number s);
-      log "Shifting (error) to state %d" (Lr1.number s');
+      log "Handling error in state %d" (Lr1.encode s);
+      log "Shifting (error) to state %d" (Lr1.encode s');
       def [PReg semv] [VUnit];
       jump (Run (mode, s'))
 
@@ -549,7 +549,7 @@ and run_error_dispatch s =
          error-handling mode. Note that [reduce] can invoke [goto] which can
          invoke another [run] function, still in error-handling mode. *)
 
-      log "Handling error in state %d" (Lr1.number s);
+      log "Handling error in state %d" (Lr1.encode s);
       jump (Reduce (mode, prod))
 
   | exception Not_found ->
@@ -884,7 +884,7 @@ let code label =
          that is consistent with the [run] function for state [s]. *)
       set_block_type stack (Origin.run s);
       (* The code for this block consists of just a [STOP] instruction. *)
-      stop (Lr1.number s)
+      stop (Lr1.encode s)
 
 (* -------------------------------------------------------------------------- *)
 

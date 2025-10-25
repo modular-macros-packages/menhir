@@ -325,10 +325,10 @@ let encode_Reduce prod =            (* prod | 01 *)
   (Production.p2i prod lsl 2) lor 1
 
 let encode_ShiftDiscard s =         (*    s | 10 *)
-  ((Lr1.number s) lsl 2) lor 0b10
+  ((Lr1.encode s) lsl 2) lor 0b10
 
 let encode_ShiftNoDiscard s =       (*    s | 11 *)
-  ((Lr1.number s) lsl 2) lor 0b11
+  ((Lr1.encode s) lsl 2) lor 0b11
 
 let encode_Fail =                   (*        00 *)
   0
@@ -336,7 +336,7 @@ let encode_Fail =                   (*        00 *)
 (* Encodings of entries in the goto table. *)
 
 let encode_Goto node =              (* 1 + node *)
-  1 + Lr1.number node
+  1 + Lr1.encode node
 
 let encode_NoGoto =                 (* 0 *)
   0
@@ -717,7 +717,7 @@ let monolithic_entry_point state nt t =
           EApp (
             EVar entry, [
               strategy;
-              EIntConst (Lr1.number state);
+              EIntConst (Lr1.encode state);
               EVar lexer;
               EVar lexbuf
             ]
@@ -752,7 +752,7 @@ let incremental_entry_point state nt t =
         EMagic (
           EApp (
             EVar start, [
-              EIntConst (Lr1.number state);
+              EIntConst (Lr1.encode state);
               EVar initial;
             ]
           )
@@ -1053,7 +1053,7 @@ let unparsing_API () : structure =
     (* A list of the start symbols and start states. *)
     let entry =
       Lr1.fold_entry (fun _prod state nt _ty accu ->
-        (nt, Lr1.number state) :: accu
+        (nt, Lr1.encode state) :: accu
       ) []
   end in
   let module N = struct

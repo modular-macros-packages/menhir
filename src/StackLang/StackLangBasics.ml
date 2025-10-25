@@ -57,7 +57,7 @@ end = struct
   type t = tag
 
   let make s =
-    let tag = Lr1.number s in
+    let tag = Lr1.encode s in
     if not (Invariant.represented s) then begin
       Printf.eprintf "Attempt to use an unrepresented state: %d\n" tag;
       assert false

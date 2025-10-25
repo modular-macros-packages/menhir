@@ -69,10 +69,10 @@ module Run () = struct
     Lr1.foldx (fun accu node -> if not (is_final_state node) then f accu node else accu)
 
   let print_nis nis =
-    sprintf "Nis'%d" (Lr1.number nis)
+    sprintf "Nis'%d" (Lr1.encode nis)
 
   let print_init init =
-    sprintf "Init'%d" (Lr1.number init)
+    sprintf "Init'%d" (Lr1.encode init)
 
   let print_st st =
     match Lr1.incoming_symbol st with
@@ -423,7 +423,7 @@ module Run () = struct
         in
         let b = Buffer.create 256 in
         lr1_iter_nonfinal (fun node ->
-          bprintf b "Definition items_of_state_%d : list item :=\n" (Lr1.number node);
+          bprintf b "Definition items_of_state_%d : list item :=\n" (Lr1.encode node);
           bprintf b "  [ ";
           let first = ref true in
           Item.Map.iter (fun item lookaheads ->
@@ -436,14 +436,14 @@ module Run () = struct
             end
           )  (Lr0.CLR1.closure (Lr0.ALR1.export (Lr1.state node)));
           bprintf b " ]%%list.\n";
-          bprintf b "Extract Inlined Constant items_of_state_%d => \"assert false\".\n\n" (Lr1.number node)
+          bprintf b "Extract Inlined Constant items_of_state_%d => \"assert false\".\n\n" (Lr1.encode node)
         );
         Buffer.output_buffer f b;
 
         fprintf f "Definition items_of_state (s:state) : list item :=\n";
         fprintf f "  match s with\n";
         lr1_iter_nonfinal (fun node ->
-          fprintf f "  | %s => items_of_state_%d\n" (print_st node) (Lr1.number node));
+          fprintf f "  | %s => items_of_state_%d\n" (print_st node) (Lr1.encode node));
         fprintf f "  end.\n";
       end
     else
@@ -454,7 +454,7 @@ module Run () = struct
     fprintf f "Definition N_of_state (s:state) : N :=\n";
     fprintf f "  match s with\n";
     lr1_iter_nonfinal (fun node ->
-        fprintf f "  | %s => %d%%N\n" (print_st node) (Lr1.number node)
+        fprintf f "  | %s => %d%%N\n" (print_st node) (Lr1.encode node)
       );
     fprintf f "  end.\n"
 

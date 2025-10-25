@@ -462,7 +462,7 @@ let () =
         ** Conflict (%s) in state %d.\n\
         ** Token%s involved: %s\n%s\
         ** This state is reached from %s after reading:\n\n%s\n"
-      kind (Lr1.number node)
+      kind (Lr1.encode node)
       (if TerminalSet.cardinal toks > 1 then "s" else "")
       (TerminalSet.print toks)
       (if TerminalSet.cardinal toks > 1 then
@@ -525,7 +525,7 @@ let () =
 
         Printf.fprintf out
           "\n** In state %d, looking ahead at %s, "
-          (Lr1.number node)
+          (Lr1.encode node)
           (Terminal.print P.token);
 
         begin match Item.classify item with
@@ -555,7 +555,7 @@ let () =
         ** Conflict (unexplainable) in state %d.\n\
         ** Token%s involved: %s\n\
         ** %s.\n%!"
-      (Lr1.number node)
+      (Lr1.encode node)
       (if TerminalSet.cardinal toks > 1 then "s" else "")
       (TerminalSet.print toks)
       (match Settings.construction_mode with

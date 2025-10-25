@@ -115,7 +115,7 @@ let rep : bool UnionFind.point array =
 (* Getter. *)
 
 let represented state =
-  rep.(Lr1.number state)
+  rep.(Lr1.encode state)
 
 (* Setters. *)
 

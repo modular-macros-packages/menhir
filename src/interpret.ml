@@ -231,7 +231,7 @@ let print_messages_auto (nt, sentence, target) : unit =
      ## Ends in an error in state: %d.\n\
      ##\n\
      %s##\n"
-    (Lr1.number s')
+    (Lr1.encode s')
     (* [Lr0.ALR1.print] prints just the state's kernel, not its closure. Displaying
        the closure could be helpful, but is usually intolerably verbose. *)
     (Lr0.ALR1.print "## " (Lr1.state s'))
@@ -258,7 +258,7 @@ let print_messages_auto (nt, sentence, target) : unit =
     List.iter (fun (s, prod) ->
       printf
         "## In state %d, spurious reduction of production %s\n"
-        (Lr1.number s)
+        (Lr1.encode s)
         (Production.print prod)
     ) spurious;
     printf "##\n"
@@ -554,7 +554,7 @@ let message_table
           if detect_redundancy then
             Error.signal c (fst sentence1 @ fst sentence2)
                  "these sentences both cause an error in state %d."
-                 (Lr1.number s);
+                 (Lr1.encode s);
           table
       | exception Not_found ->
           Lr1.NodeMap.add s (sentence2, message) table
@@ -586,7 +586,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
       (* Create an or-pattern for these states. *)
       let states = MList.filter_map (or_comment_filter_map (fun (_, target) ->
         let s = target2state target in
-        pint (Lr1.number s)
+        pint (Lr1.encode s)
       )) run.elements in
       (* Map all these states to this message. *)
       { branchpat = POr states;
@@ -732,7 +732,7 @@ let compare_errors filename1 filename2 =
           Error.signal c poss1
             "this sentence leads to an error in state %d.\n\
              No sentence that leads to this state exists in \"%s\"."
-            (Lr1.number s) filename2
+            (Lr1.encode s) filename2
 
       (* 2. Check that [s] is mapped by [table1] and [table2] to the same
          error message. As an exception, if the message found in [table1] is
@@ -748,7 +748,7 @@ let compare_errors filename1 filename2 =
             Error.warning (poss1 @ poss2)
               "these sentences lead to an error in state %d.\n\
                The corresponding messages in \"%s\" and \"%s\" differ."
-              (Lr1.number s) filename1 filename2
+              (Lr1.encode s) filename1 filename2
           end
 
     ) () runs1

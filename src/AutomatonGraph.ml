@@ -16,7 +16,7 @@ module P = Dot.Print (struct
   type vertex = Lr1.node
 
   let name node =
-    sprintf "s%d" (Lr1.number node)
+    sprintf "s%d" (Lr1.encode node)
 
   let successors (f : ?style:Dot.style -> label:string -> vertex -> unit) source =
     SymbolMap.iter (fun symbol target ->
@@ -35,13 +35,13 @@ module P = Dot.Print (struct
       let label =
         match Lr1.incoming_symbol node with
         | None ->
-            sprintf "%d" (Lr1.number node)
+            sprintf "%d" (Lr1.encode node)
         | Some nt ->
             (* The incoming symbol and the node number,
                stacked vertically. *)
             sprintf "{%s|%d}"
               (Symbol.print false nt)
-              (Lr1.number node)
+              (Lr1.encode node)
       in
       f ~shape:Dot.Record ~label node
     )

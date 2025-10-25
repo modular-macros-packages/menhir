@@ -60,7 +60,7 @@ end
 module MarkArray (G : sig
   type node
   val n: int
-  val number: node -> int
+  val encode: node -> int
 end) : sig
   val mark: G.node -> unit
   val is_marked: G.node -> bool

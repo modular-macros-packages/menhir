@@ -23,7 +23,7 @@ let dump_node out stack_symbols node =
   (* Print the state number. *)
 
   fprintf out "State %d:\n"
-    (Lr1.number node);
+    (Lr1.encode node);
 
   (* Print the known suffix of the stack. *)
 
@@ -42,7 +42,7 @@ let dump_node out stack_symbols node =
   fprintf out "## Transitions:\n";
   SymbolMap.iter (fun symbol node ->
     fprintf out "-- On %s shift to state %d\n"
-      (Symbol.print false symbol) (Lr1.number node)
+      (Symbol.print false symbol) (Lr1.encode node)
   ) (Lr1.transitions node);
 
   (* Print the reductions. *)

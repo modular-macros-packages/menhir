@@ -80,8 +80,8 @@ val nt_of_entry: node -> Nonterminal.t
 (* Nodes are numbered sequentially from [0] to [n-1]. *)
 
 val n: int
-val number: node -> int
-val of_number : int -> node
+val encode: node -> int
+val decode : int -> node
 
 (* A state is printed simply as its number. *)
 
