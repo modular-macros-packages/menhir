@@ -8,18 +8,19 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module defines the signature [GRAMMAR], which offers a rich view of a
-   grammar. This view is well-suited to the computations that the middle-end
-   performs. In particular, it offers abstract types of terminal symbols,
-   nonterminal symbols, symbols, and productions, as well as efficient sets
-   and maps. Furthermore, it offers access to the results of several analyses
-   of the grammar, including NONEMPTY, NULLABLE, FIRST, FOLLOW, MINIMAL,
-   MAXIMAL. *)
+(**This module defines several signatures that play an important role
+   in the middle-end and back-end. *)
 
 include FrontTypes
 
 (* -------------------------------------------------------------------------- *)
 
+(**The signature [GRAMMAR] offers a rich view of a grammar. This view is
+   well-suited to the computations that the middle-end performs. It offers
+   abstract types of terminal symbols, nonterminal symbols, symbols, and
+   productions, as well as efficient sets and maps. Furthermore, it offers
+   access to the results of several analyses of the grammar, including
+   NONEMPTY, NULLABLE, FIRST, FOLLOW, MINIMAL, MAXIMAL.*)
 module type GRAMMAR = sig
 
 (* -------------------------------------------------------------------------- *)
