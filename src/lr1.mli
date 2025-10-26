@@ -190,7 +190,8 @@ val ntargets: Symbol.t -> int
 val conflicts: (TerminalSet.t -> node -> unit) -> unit
 
 (* [conflict_tokens node] returns the set of tokens where [node] has a
-   conflict.
+   severe conflict (one that has not been resolved by the silent
+   conflict resolution process).
 
    If this function is invoked after conflicts have been resolved, then
    no conflict tokens are reported. *)
