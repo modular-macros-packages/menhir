@@ -1,3 +1,13 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                    Menhir                                  *)
+(*                                                                            *)
+(*   Copyright Inria. All rights reserved. This file is distributed under     *)
+(*   the terms of the GNU General Public License version 2, as described in   *)
+(*   the file LICENSE.                                                        *)
+(*                                                                            *)
+(******************************************************************************)
+
 open MiddleAPI
 
 module Run
@@ -27,7 +37,7 @@ end)
 
 end)
 = struct
-module Lr0 = A.Lr0
+include A
 open Lr0.G
 open E
 
@@ -43,9 +53,6 @@ open E
 
 (* We do not re-number nodes so as to exclude unreachable nodes. This can be
    done in a separate pass. *)
-
-type node =
-  A.node
 
 let tabulate (f : node -> 'a) : 'a array =
   Array.init A.n @@ fun i ->
@@ -100,6 +107,8 @@ let silently_solved =
 (* -------------------------------------------------------------------------- *)
 
 (* Read accessors. *)
+
+(* These accessors are public: they are part of the signature [LR1_AUTOMATON].*)
 
 let[@inline] transitions node =
   _transitions.(A.encode node)
@@ -269,8 +278,8 @@ let () =
 
 (* Diagnostics. *)
 
-let diagnostics () =
-  begin match !silently_solved with
+let log_silently_solved () =
+  match !silently_solved with
   | 0 ->
       ()
   | 1 ->
@@ -278,7 +287,8 @@ let diagnostics () =
   | _ ->
       log "%d shift/reduce conflicts were silently solved.\n"
         !silently_solved
-  end;
+
+let warnings () =
   if !severe_shift_reduce = 1 then
     warning [] "one state has shift/reduce conflicts."
   else if !severe_shift_reduce > 1 then
@@ -289,5 +299,9 @@ let diagnostics () =
   else if !severe_reduce_reduce > 1 then
     warning [] "%d states have reduce/reduce conflicts."
       !severe_reduce_reduce
+
+let diagnostics () =
+  log_silently_solved();
+  warnings()
 
 end (* Run *)
