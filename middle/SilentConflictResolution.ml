@@ -17,9 +17,19 @@ module Run
   val shift_reduce: Terminal.t -> Production.index -> choice
 
 end)
+(E : sig
+
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+  (**[log format ...] emits an information message. *)
+  val log: ('a, out_channel, unit, unit) format4 -> 'a
+
+end)
 = struct
 module Lr0 = A.Lr0
 open Lr0.G
+open E
 
 (* -------------------------------------------------------------------------- *)
 
@@ -243,9 +253,41 @@ let discover node =
 
 (* -------------------------------------------------------------------------- *)
 
-module M =
-  DFS.MarkArray(A)
+(* Perform a depth-first traversal of the automaton. *)
+
+
+let () =
+  let module M = DFS.MarkArray(A) in
+  let module D = struct
+    let traverse _source _symbol _target = ()
+    let discover = discover
+  end in
+  let module _ = DFS.Run(RawForwardEdges)(M)(D) in
+  ()
 
 (* -------------------------------------------------------------------------- *)
+
+(* Diagnostics. *)
+
+let diagnostics () =
+  begin match !silently_solved with
+  | 0 ->
+      ()
+  | 1 ->
+      log "One shift/reduce conflict was silently solved.\n"
+  | _ ->
+      log "%d shift/reduce conflicts were silently solved.\n"
+        !silently_solved
+  end;
+  if !severe_shift_reduce = 1 then
+    warning [] "one state has shift/reduce conflicts."
+  else if !severe_shift_reduce > 1 then
+    warning [] "%d states have shift/reduce conflicts."
+      !severe_shift_reduce;
+  if !severe_reduce_reduce = 1 then
+    warning [] "one state has reduce/reduce conflicts."
+  else if !severe_reduce_reduce > 1 then
+    warning [] "%d states have reduce/reduce conflicts."
+      !severe_reduce_reduce
 
 end (* Run *)
