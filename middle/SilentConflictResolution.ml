@@ -79,18 +79,6 @@ let predecessors : node list array =
 let reductions : Reductions.t array =
   Array.make A.n TerminalMap.empty
 
-(* The array [conflicting_transitions] stores the transitions that are removed
-   due to silent conflict resolution. *)
-
-let conflicting_transitions : (Terminal.t * A.node) list array =
-  Array.make A.n []
-
-(* The array [conflicting_reductions] stores the reductions that are removed
-   due to silent conflict resolution. *)
-
-let conflicting_reductions : (Terminal.t * Production.t list) list array =
-  Array.make A.n []
-
 (* The array [severe_conflict_symbols] records the terminal symbols for which
    a conflict still exists after silent conflict resolution has been
    performed. *)
@@ -214,9 +202,8 @@ and resolve2 hasSR hasRR i t prods =
 
 (* Auxiliary functions. *)
 
-and prefer_shift i t prods : bool =
+and prefer_shift _i _t prods : bool =
   silently_solved := !silently_solved + List.length prods;
-  conflicting_reductions.(i) <- (t, prods) :: conflicting_reductions.(i);
   false (* remove these reductions *)
 
 and prefer_reduce i t : bool =
@@ -224,21 +211,12 @@ and prefer_reduce i t : bool =
      modified in place. This can have the subtle effect of making some
      nodes unreachable. Any conflicts in these nodes are then ignored. *)
   incr silently_solved;
-  let key = Symbol.T t in
-  let target = SymbolMap.find key transitions.(i) in
-  transitions.(i) <- SymbolMap.remove key transitions.(i);
-  conflicting_transitions.(i) <- (t, target) :: conflicting_transitions.(i);
+  transitions.(i) <- SymbolMap.remove (Symbol.T t) transitions.(i);
   true (* keep these reductions *)
 
 and prefer_neither i t prods : bool =
   silently_solved := !silently_solved + List.length prods;
-  let key = Symbol.T t in
-  let target = SymbolMap.find key transitions.(i) in
-  conflicting_transitions.(i) <-
-    (t, target) :: conflicting_transitions.(i);
-  conflicting_reductions.(i) <-
-    (t, prods) :: conflicting_reductions.(i);
-  transitions.(i) <- SymbolMap.remove key transitions.(i);
+  transitions.(i) <- SymbolMap.remove (Symbol.T t) transitions.(i);
   forbid_default_reduction.(i) <- true;
   false (* remove these reductions *)
 
