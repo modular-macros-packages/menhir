@@ -68,6 +68,11 @@
 
 * Some documentation comments have been added in `MenhirSdk`.
 
+* Fix an obscure bug (which was never reported or observed). When a multi-way
+  shift/reduce/reduce conflict is resolved in favor of neither action,
+  a default reduction in this state should be forbidden (see 2012/01/23).
+  This was not the case; it should now be fixed.
+
 ## 2025/09/12
 
 * In the new code back-end, fix a problem that could lead to an internal error
