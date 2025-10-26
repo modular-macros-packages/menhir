@@ -292,6 +292,10 @@
 
 ## Code Cleanup
 
+* I believe that `Lr1.get_conflicting_transitions` produces an invalid node
+  (`unreachable` viewed as a node) when a transition that leads to an
+  unreachable node appears in the list.
+
 * `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
    They could move into TokenType.
 
