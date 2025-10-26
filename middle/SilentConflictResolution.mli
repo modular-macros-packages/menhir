@@ -44,7 +44,7 @@ end)
 end)
 : sig
 
-  include LR1_AUTOMATON
+  include LR1_AUTOMATON with module Lr0 = A.Lr0
 
   (**[diagnostics()] emits an information message about the conflicts that
      have been silently solved and warnings about the severe conflicts that
