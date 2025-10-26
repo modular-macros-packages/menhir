@@ -69,11 +69,6 @@ let transitions : A.node SymbolMap.t array =
   Array.init A.n @@ fun i ->
   A.transitions (A.decode i)
 
-(* The array [predecessors] stores transitions in the reverse direction. *)
-
-let predecessors : node list array =
-  Array.make A.n []
-
 (* The array [reductions] stores the reductions at a node. *)
 
 let reductions : Reductions.t array =
