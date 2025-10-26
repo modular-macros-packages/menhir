@@ -9,7 +9,13 @@
 (******************************************************************************)
 
 (**This module discovers the reachable states of an LR(1) automaton and
-   renumbers them in a consecutive manner. The unreachable states disappear. *)
+   renumbers them in a consecutive manner. Thus, the unreachable states
+   disappear.
+
+   This analysis is conservative: a state is deemed reachable if it can be
+   reached from an entry state by following shift and goto edges. It may be
+   the case that in reality some productions can never be reduced and as a
+   consequence some goto edges can never be taken. This is not detected. *)
 
 open MiddleAPI
 
