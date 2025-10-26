@@ -9,9 +9,10 @@
 (******************************************************************************)
 
 (**This module implements silent conflict resolution. The LR(1) automaton is
-   transformed by obyeing user-provided precedence declarations. Some shift
-   transitions and some reductions can be removed. Some default reductions can
-   become forbidden. *)
+   transformed by obeying user-provided precedence declarations. Some
+   transitions can be removed. This can make some states unreachable, but the
+   states are not renumbered; all states are retained. Some reductions can be
+   removed. Some default reductions can become forbidden. *)
 
 open MiddleAPI
 
