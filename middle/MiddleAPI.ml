@@ -1047,10 +1047,12 @@ end (* LR0 *)
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(**[LR1_AUTOMATON] is the result signature of several LR(1) automaton
-   construction algorithms. It is a minimal description of an LR(1)
-   automaton. *)
-module type LR1_AUTOMATON = sig
+(**[MINIMAL_LR1_AUTOMATON] is the result signature of several LR(1) automaton
+   construction algorithms. It is a minimal description of an LR(1) automaton.
+   In this format, there is no description of the reductions: the reduction
+   table at each node is implicit. It can be obtained by applying the function
+   [Lr0.ALR1.reductions] to the state [state node]. *)
+module type MINIMAL_LR1_AUTOMATON = sig
 
   module Lr0 : LR0
     open Lr0.G
@@ -1080,13 +1082,33 @@ module type LR1_AUTOMATON = sig
      It is not necessarily closed. *)
   val state: node -> Lr0.ALR1.t
 
-  (**[reductions node] is the reduction table at the node [node]. In the
-     absence of conflict resolution, this reduction table can be obtained
-     by applying [Lr0.ALR1.reductions] to the state [state node]. If some
-     reductions have been removed by a conflict resolution process, or if
-     some reductions have added because of [%on_error_reduce] declarations,
-     then this reduction table can differ from the ideal table. *)
+end (* MINIMAL_LR1_AUTOMATON *)
+
+(**[LR1_AUTOMATON] is a richer description of an LR(1) automaton. In this
+   format, there is an explicit description of the reductions. This format is
+   sufficiently general to serve as the input and output format of several
+   transformations, including silent conflict resolution, default conflict
+   resolution, insertion of extra reductions on error, and introduction of
+   default reductions. *)
+module type LR1_AUTOMATON = sig
+
+  include MINIMAL_LR1_AUTOMATON
+  open Lr0.G
+
+  (**[reductions node] is the reduction table at the node [node]. In an ideal
+     automaton (that is, in the absence of conflict resolution), this table is
+     obtained by applying [Lr0.ALR1.reductions] to the state [state node]. If
+     some reductions have been removed by a conflict resolution process, or if
+     some reductions have added to obey [%on_error_reduce] declarations, then
+     this reduction table can differ from the ideal table. *)
   val reductions: node -> Reductions.t
+
+  (**When set, the flag [forbid_default_reduction node] forbids adding a
+     default reduction at the node [node]. In an ideal automaton, this flag
+     is [false]. It can be set to [true] during silent conflict resolution:
+     when a shift/reduce conflict is solved in favor of neither action, we
+     set it to [true]. *)
+  val forbid_default_reduction: node -> bool
 
 end (* LR1_AUTOMATON *)
 
@@ -1096,6 +1118,6 @@ module type LR1_ALGORITHM = sig
 
   module Lr0 : LR0
 
-  module Run () : LR1_AUTOMATON with module Lr0 = Lr0
+  module Run () : MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0
 
 end (* LR1_ALGORITHM *)

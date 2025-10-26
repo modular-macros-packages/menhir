@@ -396,17 +396,6 @@ let transitions (i : node) : node SymbolMap.t =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Expose the reduction table at each node. *)
-
-(* The table that we construct here is the ideal reduction table; it is
-   obtained just by inspection of the LR(1) state [state i] and does not
-   depend at all on the construction method. *)
-
-let reductions (i : node) : Reductions.t =
-  Lr0.ALR1.reductions (state i)
-
-(* -------------------------------------------------------------------------- *)
-
 (* Expose the bijection between nodes and numbers. *)
 
 let encode (i : node) : int = i
