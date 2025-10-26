@@ -1048,7 +1048,8 @@ end (* LR0 *)
 (* -------------------------------------------------------------------------- *)
 
 (**[LR1_AUTOMATON] is the result signature of several LR(1) automaton
-   construction algorithms. *)
+   construction algorithms. It is a minimal description of an LR(1)
+   automaton. *)
 module type LR1_AUTOMATON = sig
 
   module Lr0 : LR0
@@ -1075,9 +1076,17 @@ module type LR1_AUTOMATON = sig
      the node [node], in the form a map of symbols to successor nodes. *)
   val transitions: node -> node SymbolMap.t
 
-  (**[state node] is the abstract LR(1) state that corresponds to the node
-     [node]. *)
+  (**[state node] is the LR(1) state that corresponds to the node [node].
+     It is not necessarily closed. *)
   val state: node -> Lr0.ALR1.t
+
+  (**[reductions node] is the reduction table at the node [node]. In the
+     absence of conflict resolution, this reduction table can be obtained
+     by applying [Lr0.ALR1.reductions] to the state [state node]. If some
+     reductions have been removed by a conflict resolution process, or if
+     some reductions have added because of [%on_error_reduce] declarations,
+     then this reduction table can differ from the ideal table. *)
+  val reductions: node -> Reductions.t
 
 end (* LR1_AUTOMATON *)
 
