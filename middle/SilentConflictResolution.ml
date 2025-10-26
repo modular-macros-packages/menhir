@@ -264,7 +264,6 @@ let discover node =
 
 (* Perform a depth-first traversal of the automaton. *)
 
-
 let () =
   let module M = DFS.MarkArray(A) in
   let module D = struct
