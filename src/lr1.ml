@@ -308,25 +308,23 @@ and record_severe_conflict i t : bool =
 (* It is in charge of detecting and resolving conflicts at this node. *)
 
 let discover (raw_node : Raw.node) =
-  let i = Raw.encode raw_node
-  and state = Raw.state raw_node in
+  let i = Raw.encode raw_node in
 
   (* Number this node. *)
 
   let node : node = MInt.postincrement n in
   _number.(i) <- node;
 
-  (* Detect conflicts. We iterate over the table [Lr0.ALR1.reductions state],
-     which gives us all potential reductions. The code is written in such a
-     way that we are aware of multi-way shift/reduce/reduce conflicts. We
-     solve conflicts, when unambiguously allowed by priorities, by removing
-     certain transitions and reductions. *)
+  (* Detect conflicts. We iterate over the reduction table. The code is
+     written in such a way that we are aware of multi-way shift/reduce/reduce
+     conflicts. We solve conflicts, when unambiguously allowed by priorities,
+     by removing certain transitions and reductions. *)
 
   let hasSR = ref false
   and hasRR = ref false in
 
   let retained =
-    (Lr0.ALR1.reductions state) |> TerminalMap.filter @@ fun t prods ->
+    Raw.reductions raw_node |> TerminalMap.filter @@ fun t prods ->
     if SymbolMap.mem (Symbol.T t) transitions.(i) then
       (* There is a transition and at least one reduction. *)
       resolve hasSR hasRR i t prods

@@ -232,8 +232,7 @@ and record_severe_conflict i t : bool =
 (* It is in charge of detecting and resolving conflicts at this node. *)
 
 let discover (raw_node : A.node) =
-  let i = A.encode raw_node
-  and state = A.state raw_node in
+  let i = A.encode raw_node in
 
   (* Number this node. *)
 
@@ -250,7 +249,7 @@ let discover (raw_node : A.node) =
   and hasRR = ref false in
 
   let retained =
-    (Lr0.ALR1.reductions state) |> TerminalMap.filter @@ fun t prods ->
+    A.reductions raw_node |> TerminalMap.filter @@ fun t prods ->
     if SymbolMap.mem (Symbol.T t) transitions.(i) then
       (* There is a transition and at least one reduction. *)
       resolve hasSR hasRR i t prods
