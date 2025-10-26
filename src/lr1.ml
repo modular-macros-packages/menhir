@@ -204,10 +204,106 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* This function is invoked during the traversal when a node is discovered. *)
-
 module Precedence =
   Precedence.Make(Error)(Front)(Grammar)
+
+(* -------------------------------------------------------------------------- *)
+
+(* [resolve] is invoked at the raw node [i] when there are reduction actions
+   described by [t] and [prods] and there is an outgoing transition along [t].
+   Therefore, there is at least a shift/reduce conflict. *)
+
+(* [resolve] sets the flags [hasSR] and [hasRR] to record severe shift/reduce
+   and reduce/reduce conflicts. Furthermore, it returns a Boolean flag, which
+   indicates whether the reduction actions should be kept ([true]) or silently
+   removed ([false]). *)
+
+let rec resolve hasSR hasRR i t prods : bool =
+  assert (not (Terminal.equal t Terminal.sharp));
+  assert (prods <> []);
+  if List.length prods = 1 then
+    let prod = List.hd prods in
+    resolve1 hasSR hasRR i t prod
+  else
+    resolve2 hasSR hasRR i t prods
+
+(* [resolve1] deals with the case where only one reduction action exists.
+   Therefore, this is a single shift/reduce conflict. If the user-provided
+   precedence declarations tell us how to solve it, follow them and modify
+   the automaton by removing a transition, a reduction, or both. *)
+
+and resolve1 hasSR _hasRR i t prod : bool =
+  let open Precedence in
+  match shift_reduce t prod with
+  | ChooseShift ->
+      prefer_shift i t [prod]
+  | ChooseReduce ->
+      prefer_reduce i t
+  | ChooseNeither ->
+      prefer_neither i t [prod]
+  | DontKnow ->
+      hasSR := true;
+      record_severe_conflict i t
+
+(* [resolve2] deals with the case where two or more reduction actions exist.
+   This is a shift/reduce/reduce conflict. If the priorities are such that
+   each individual shift/reduce conflict is solved in favor of shifting or in
+   favor of neither, then solve the entire composite conflict in the same way.
+   Otherwise, report the conflict. *)
+
+and resolve2 hasSR hasRR i t prods =
+  let open Precedence in
+  let choices = List.map (shift_reduce t) prods in
+  if List.for_all ((=) ChooseShift) choices then
+    prefer_shift i t prods
+  else if List.for_all ((=) ChooseNeither) choices then
+    prefer_neither i t prods
+  else begin
+    hasSR := true;
+    hasRR := true;
+    record_severe_conflict i t
+  end
+
+(* Auxiliary functions. *)
+
+and prefer_shift i t prods : bool =
+  silently_solved := !silently_solved + List.length prods;
+  conflicting_reductions.(i) <-
+    (t, prods, true) :: conflicting_reductions.(i);
+  false (* remove these reductions *)
+
+and prefer_reduce i t : bool =
+  (* Keep the reduce action and remove the transition. The automaton is
+     modified in place. This can have the subtle effect of making some
+     nodes unreachable. Any conflicts in these nodes are then ignored. *)
+  incr silently_solved;
+  let key = Symbol.T t in
+  let target = SymbolMap.find key transitions.(i) in
+  transitions.(i) <- SymbolMap.remove key transitions.(i);
+  conflicting_transitions.(i) <-
+    (t, target, true) :: conflicting_transitions.(i);
+  true (* keep these reductions *)
+
+and prefer_neither i t prods : bool =
+  silently_solved := !silently_solved + List.length prods;
+  let key = Symbol.T t in
+  let target = SymbolMap.find key transitions.(i) in
+  conflicting_transitions.(i) <-
+    (t, target, true) :: conflicting_transitions.(i);
+  conflicting_reductions.(i) <-
+    (t, prods, true) :: conflicting_reductions.(i);
+  transitions.(i) <- SymbolMap.remove key transitions.(i);
+  forbid_default_reduction.(i) <- true;
+  false (* remove these reductions *)
+
+and record_severe_conflict i t : bool =
+  (* Record the existence of a severe shift/reduce conflict. *)
+  _conflict_tokens.(i) <- TerminalSet.add t _conflict_tokens.(i);
+  true (* keep these reductions *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* This function is invoked during the traversal when a node is discovered. *)
 
 (* It is in charge of detecting and resolving conflicts at this node. *)
 
@@ -226,139 +322,25 @@ let discover (raw_node : Raw.node) =
      solve conflicts, when unambiguously allowed by priorities, by removing
      certain transitions and reductions. *)
 
-  let has_shift_reduce = ref false
-  and has_reduce_reduce = ref false in
+  let hasSR = ref false
+  and hasRR = ref false in
 
-  let foreach_reduction f =
-    TerminalMap.fold f (Lr0.ALR1.reductions state) TerminalMap.empty
+  let retained =
+    (Lr0.ALR1.reductions state) |> TerminalMap.filter @@ fun t prods ->
+    if SymbolMap.mem (Symbol.T t) transitions.(i) then
+      (* There is a transition and at least one reduction. *)
+      resolve hasSR hasRR i t prods
+    else if List.length prods >= 2 then begin
+      (* There is no transition and there are multiple reductions. This is a pure
+         reduce/reduce conflict. *)
+      hasRR := true;
+      record_severe_conflict i t
+    end
+    else
+      (* There is no transition and there is one reduction. No conflict. *)
+      true (* keep this reduction *)
   in
-
-  reductions.(i) <- foreach_reduction begin fun tok prods reductions ->
-    assert (prods <> []);
-    if SymbolMap.mem (Symbol.T tok) transitions.(i) then begin
-
-      (* There is a transition in addition to the reduction(s). We have (at
-         least) a shift/reduce conflict. *)
-
-      assert (not (Terminal.equal tok Terminal.sharp));
-      if List.length prods = 1 then begin
-        let prod = List.hd prods in
-
-        (* This is a single shift/reduce conflict. If priorities tell
-           us how to solve it, we follow that and modify the automaton. *)
-
-        match Precedence.shift_reduce tok prod with
-
-        | Precedence.ChooseShift ->
-
-            (* Suppress the reduce action. *)
-
-            incr silently_solved;
-            conflicting_reductions.(i) <-
-              (tok, prods, true) :: conflicting_reductions.(i);
-            reductions
-
-        | Precedence.ChooseReduce ->
-
-            (* Record the reduce action and suppress the shift transition.
-               The automaton is modified in place. This can have the subtle
-               effect of making some nodes unreachable. Any conflicts in these
-               nodes are then ignored (as they should be). *)
-
-            incr silently_solved;
-            let key = Symbol.T tok in
-            let target = SymbolMap.find key transitions.(i) in
-            transitions.(i) <- SymbolMap.remove key transitions.(i);
-            conflicting_transitions.(i) <-
-              (tok, target, true) :: conflicting_transitions.(i);
-            TerminalMap.add tok prods reductions
-
-        | Precedence.ChooseNeither ->
-
-            (* Suppress both the reduce action and the shift transition. *)
-
-            incr silently_solved;
-            let key = Symbol.T tok in
-            let target = SymbolMap.find key transitions.(i) in
-            conflicting_transitions.(i) <-
-              (tok, target, true) :: conflicting_transitions.(i);
-            conflicting_reductions.(i) <-
-              (tok, prods, true) :: conflicting_reductions.(i);
-            transitions.(i) <- SymbolMap.remove key transitions.(i);
-            forbid_default_reduction.(i) <- true;
-            reductions
-
-        | Precedence.DontKnow ->
-
-            (* Priorities don't allow concluding. Record the existence of a
-               shift/reduce conflict. *)
-
-            _conflict_tokens.(i) <- TerminalSet.add tok _conflict_tokens.(i);
-            has_shift_reduce := true;
-            TerminalMap.add tok prods reductions
-
-      end
-      else begin
-
-        (* At least two reductions are enabled, so this is a
-           shift/reduce/reduce conflict. If the priorities are such that
-           each individual shift/reduce conflict is solved in favor of
-           shifting or in favor of neither, then solve the entire composite
-           conflict in the same way. Otherwise, report the conflict. *)
-
-        let choices = List.map (Precedence.shift_reduce tok) prods in
-
-        if List.for_all (fun choice ->
-          match choice with
-          | Precedence.ChooseShift -> true
-          | _ -> false
-        ) choices then begin
-
-          (* Suppress the reduce action. *)
-
-          silently_solved := !silently_solved + List.length prods;
-          reductions
-
-        end
-        else if List.for_all ((=) Precedence.ChooseNeither) choices then begin
-
-          (* Suppress the reduce action and the shift transition. *)
-
-          silently_solved := !silently_solved + List.length prods;
-          transitions.(i) <- SymbolMap.remove (Symbol.T tok) transitions.(i);
-          reductions
-
-        end
-        else begin
-
-          (* Record a shift/reduce/reduce conflict. Keep all reductions. *)
-
-          _conflict_tokens.(i) <- TerminalSet.add tok _conflict_tokens.(i);
-          has_shift_reduce := true;
-          has_reduce_reduce := true;
-          TerminalMap.add tok prods reductions
-
-        end
-
-      end
-
-    end
-    else begin
-
-      (* There is no transition in addition to the reduction(s). *)
-
-      if List.length prods >= 2 then begin
-        (* If there are multiple reductions, then we have a pure
-           reduce/reduce conflict. Do nothing about it at this point. *)
-        _conflict_tokens.(i) <- TerminalSet.add tok _conflict_tokens.(i);
-        has_reduce_reduce := true
-      end;
-
-      TerminalMap.add tok prods reductions
-
-    end
-
-  end;
+  reductions.(i) <- retained;
 
   (* Detect end-of-stream conflicts at this node. If it has both a reduce
      action at [#] and some other (shift or reduce) action, this is an
@@ -386,9 +368,9 @@ let discover (raw_node : Raw.node) =
 
   if not (TerminalSet.is_empty _conflict_tokens.(i)) then begin
     conflict_nodes := node :: !conflict_nodes;
-    if !has_shift_reduce then
+    if !hasSR then
       incr shift_reduce;
-    if !has_reduce_reduce then
+    if !hasRR then
       incr reduce_reduce
   end
 
