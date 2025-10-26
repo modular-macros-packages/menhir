@@ -1095,6 +1095,8 @@ module type LR1_AUTOMATON = sig
   include MINIMAL_LR1_AUTOMATON
   open Lr0.G
 
+  type t = node
+
   (**[reductions node] is the reduction table at the node [node]. In an ideal
      automaton (that is, in the absence of conflict resolution), this table is
      obtained by applying [Lr0.ALR1.reductions] to the state [state node]. If

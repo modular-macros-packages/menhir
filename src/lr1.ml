@@ -69,9 +69,11 @@ module Raw : (LR1_AUTOMATON with module Lr0 = Lr0) = struct
 
   include Algorithm.Run()
 
-(* Expose an ideal reduction table at each node. This table is obtained just
-   by inspection of the LR(1) state [state i]. It does not depend on the
-   construction method. *)
+  type t = node
+
+  (* Expose an ideal reduction table at each node. This table is obtained just
+     by inspection of the LR(1) state [state i]. It does not depend on the
+     construction method. *)
 
   let reductions (i : node) : Reductions.t =
     Lr0.ALR1.reductions (state i)
