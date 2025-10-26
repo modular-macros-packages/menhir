@@ -138,6 +138,45 @@ module ArraysAsImperativeMaps (K : sig val n: int end) = struct
 
 end
 
+(* The following code could be obtained by composing [ArraysAsImperativeMaps]
+   and [InjectImperativeMaps], but a direct definition is perhaps simpler. *)
+module ArraysAsImperativeMapsWithNumbering (K : NUMBERING) = struct
+
+  open K
+
+  type key =
+    K.t
+
+  type 'data t =
+    'data option array
+
+  let create () =
+    Array.make n None
+
+  let clear m =
+    Array.fill m 0 n None
+
+  let add key data m =
+    m.(encode key) <- Some data
+
+  let find key m =
+    match m.(encode key) with
+    | None ->
+	raise Not_found
+    | Some data ->
+	data
+
+  let iter f m =
+    Array.iteri (fun key data ->
+      match data with
+      | None ->
+	  ()
+      | Some data ->
+	  f (decode key) data
+    ) m
+
+end
+
 module HashTablesAsImperativeMaps (H : HashedType) = struct
 
   include Hashtbl.Make(H)

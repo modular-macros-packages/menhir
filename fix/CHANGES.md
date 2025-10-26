@@ -1,5 +1,11 @@
 # CHANGES
 
+## 2025/MM/DD
+
+* New functor `Fix.Glue.ArraysAsImperativeMapsWithNumbering`.
+
+* New functor `Fix.GraphNumbering.ForNumberedType`.
+
 ## 2025/09/19
 
 * The new submodule `Fix.SCC` provides an implementation of Tarjan's

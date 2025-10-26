@@ -24,6 +24,13 @@ module Make
   (G : GRAPH with type t = M.key)
      : NUMBERING with type t = G.t
 
+(**{!ForNumberedType} is a special case of {!Make} where it suffices for
+   the vertices of [G] to be numbered from [0] to [n-1]. *)
+module ForNumberedType
+  (T : NUMBERING)
+  (G : GRAPH with type t = T.t)
+     : NUMBERING with type t = G.t
+
 (**{!ForOrderedType} is a special case of {!Make} where it suffices for
    the vertices of [G] to be ordered. *)
 module ForOrderedType
