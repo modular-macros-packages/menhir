@@ -13,13 +13,20 @@
 
 open MiddleAPI
 
-module Run (A : LR1_AUTOMATON) : sig
+module Run
+(A : LR1_AUTOMATON)
+(E : sig
+
+  (**[log format ...] emits an information message. *)
+  val log: ('a, out_channel, unit, unit) format4 -> 'a
+
+end)
+: sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
 
-  (**[diagnostics()] emits an information message about the conflicts that
-     have been silently solved and warnings about the severe conflicts that
-     remain. *)
-  (* val diagnostics: unit -> unit *)
+  (**[diagnostics()] emits an information message about the unreachable nodes
+     that have disappeared. *)
+  val diagnostics: unit -> unit
 
 end

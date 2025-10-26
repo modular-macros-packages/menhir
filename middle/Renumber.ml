@@ -10,8 +10,17 @@
 
 open MiddleAPI
 
-module Run (A : LR1_AUTOMATON) = struct
+module Run
+(A : LR1_AUTOMATON)
+(E : sig
+
+  (**[log format ...] emits an information message. *)
+  val log: ('a, out_channel, unit, unit) format4 -> 'a
+
+end)
+= struct
 open A.Lr0.G
+open E
 
 (* -------------------------------------------------------------------------- *)
 
@@ -39,9 +48,17 @@ module G = struct
 end
 
 include Fix.GraphNumbering.ForNumberedType(A)(G)
-    (* type t = A.node *)
-    (* n : int *)
-    (* encode : A.node -> int *)
-    (* decode : int -> A.node *)
+  (* type t = A.node        *)
+  (* n : int                *)
+  (* encode : A.node -> int *)
+  (* decode : int -> A.node *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Diagnostics. *)
+
+let diagnostics () =
+  if n < A.n then
+    log "Only %d states remain after resolving shift/reduce conflicts.\n" n
 
 end (* Run *)
