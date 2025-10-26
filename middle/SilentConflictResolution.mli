@@ -8,6 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module implements silent conflict resolution. The LR(1) automaton is
+   transformed by obyeing user-provided precedence declarations. Some shift
+   transitions and some reductions can be removed. Some default reductions can
+   become forbidden. *)
+
 open MiddleAPI
 
 module Run
