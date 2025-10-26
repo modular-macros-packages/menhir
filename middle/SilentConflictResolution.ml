@@ -61,9 +61,9 @@ let number : node array =
 let transport (raw_node : A.node) : node =
   number.(A.encode raw_node)
 
-(* The array [transitions] is initialized here with the data supplied by the
-   function [A.transitions]. During the traversal, some transitions are
-   removed, because of conflict resolution. *)
+(* The array [transitions] is initialized here with the data supplied by
+   the function [A.transitions]. During the traversal, some transitions
+   are removed, because of conflict resolution. *)
 
 let transitions : A.node SymbolMap.t array =
   Array.init A.n @@ fun i ->
@@ -74,20 +74,11 @@ let transitions : A.node SymbolMap.t array =
 let reductions : Reductions.t array =
   Array.make A.n TerminalMap.empty
 
-(* The array [severe_conflict_symbols] records the terminal symbols for which
-   a conflict still exists after silent conflict resolution has been
-   performed. *)
+(* The array [severe_conflict] records the nodes where a conflict still
+   exists after silent conflict resolution has been performed. *)
 
-let severe_conflict_symbols : TerminalSet.t array =
-  Array.make A.n TerminalSet.empty
-
-(* The array [eos_conflict] records an optional end-of-stream conflicts in
-   each state. When present, [prods] are the productions that can be reduced
-   on [#], and [ts] is the set of terminal symbols on which other actions
-   are permitted. *)
-
-let eos_conflict : (Production.t list * TerminalSet.t) option array =
-  Array.make A.n None
+let severe_conflict : bool array =
+  Array.make A.n false
 
 (* (New as of 2012/01/23.) The array [forbid_default_reduction] records
    whether a shift/reduce conflict was solved in favor of neither action
@@ -100,11 +91,6 @@ let forbid_default_reduction : bool array =
 
 let n =
   ref 0
-
-(* A list of all nodes with severe conflicts. *)
-
-let severe_conflict_nodes : node list ref =
-  ref []
 
 (* Counts of nodes with severe shift/reduce and severe reduce/reduce
    conflicts. *)
@@ -215,9 +201,9 @@ and prefer_neither i t prods : bool =
   forbid_default_reduction.(i) <- true;
   false (* remove these reductions *)
 
-and record_severe_conflict i t : bool =
-  (* Record the existence of a severe shift/reduce conflict. *)
-  severe_conflict_symbols.(i) <- TerminalSet.add t severe_conflict_symbols.(i);
+and record_severe_conflict i _t : bool =
+  (* Record the existence of a severe conflict. *)
+  severe_conflict.(i) <- true;
   true (* keep these reductions *)
 
 (* -------------------------------------------------------------------------- *)
@@ -260,32 +246,9 @@ let discover (raw_node : A.node) =
   in
   reductions.(i) <- retained;
 
-  (* Detect end-of-stream conflicts at this node. If it has both a reduce
-     action at [#] and some other (shift or reduce) action, this is an
-     end-of-stream conflict. *)
-
-  let transitions = transitions.(i)
-  and reductions = reductions.(i) in
-
-  if Reductions.has_eos_conflict transitions reductions then begin
-    (* Conceptually suppress the reduce action at [#]. *)
-      let prods, reductions =
-        TerminalMap.find_and_remove Terminal.sharp reductions in
-    (* Compute the tokens involved in the transitions and remaining
-       reductions. *)
-    let toks =
-      TerminalSet.union
-        (SymbolMap.terminals transitions)
-        (TerminalMap.domain reductions)
-    in
-    (* Record this end-of-stream conflict. *)
-    eos_conflict.(i) <- Some (prods, toks)
-  end;
-
   (* Record statistics about conflicts. *)
 
-  if not (TerminalSet.is_empty severe_conflict_symbols.(i)) then begin
-    severe_conflict_nodes := node :: !severe_conflict_nodes;
+  if severe_conflict.(i) then begin
     if !hasSR then
       incr shift_reduce;
     if !hasRR then
