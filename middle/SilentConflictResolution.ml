@@ -140,7 +140,7 @@ let[@inline] kill_default_reduction node =
    [A.transitions]. This means that, once an edge has been removed, it can
    no longer be followed. *)
 
-module RawForwardEdges = struct
+module ForwardEdges = struct
   type node = A.node
   type label = Symbol.t
   let foreach_outgoing_edge node yield =
@@ -271,7 +271,7 @@ let () =
     let traverse _source _symbol _target = ()
     let discover = discover
   end in
-  let module _ = DFS.Run(RawForwardEdges)(M)(D) in
+  let module _ = DFS.Run(ForwardEdges)(M)(D) in
   ()
 
 (* -------------------------------------------------------------------------- *)
