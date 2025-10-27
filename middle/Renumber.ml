@@ -59,6 +59,6 @@ include Fix.GraphNumbering.ForNumberedType(A)(G)
 
 let diagnostics () =
   if n < A.n then
-    log "Only %d states remain after resolving shift/reduce conflicts.\n" n
+    log "Only %d states remain after resolving shift/reduce conflicts." n
 
 end (* Run *)

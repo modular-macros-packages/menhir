@@ -282,9 +282,9 @@ let log_silently_solved () =
   | 0 ->
       ()
   | 1 ->
-      log "One shift/reduce conflict was silently solved.\n"
+      log "One shift/reduce conflict was silently solved."
   | _ ->
-      log "%d shift/reduce conflicts were silently solved.\n"
+      log "%d shift/reduce conflicts were silently solved."
         !silently_solved
 
 let warnings () =
