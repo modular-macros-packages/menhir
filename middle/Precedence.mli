@@ -64,7 +64,7 @@ open G
 
      [shift_reduce t prod] determines how a shift/reduce conflict between the
      terminal symbol [t] and the production [prod] should be resolved. *)
-  val shift_reduce: Terminal.t -> Production.index -> choice
+  val shift_reduce: Terminal.t -> Production.t -> choice
 
   (**A reduce/reduce conflict requires making a choice between reducing two
      distinct productions.
@@ -72,13 +72,19 @@ open G
      This choice is made by exploiting a partial order on productions. For
      compatibility with ocamlyacc, this order should be total and should
      correspond to textual order when the two productions originate in the
-     same source file. When they originate in different source files, the two
-     productions are considered incomparable.
+     same source file.
+
+     Two productions that originate in different source files productions are
+     considered incomparable.
+
+     Two productions can have the same precedence level if they originate, via
+     macro-expansion or via inlining, from a single production in the source
+     grammar.
 
      [reduce_reduce prod1 prod2] determines how a reduce/reduce conflict
      between the productions [prod1] and [prod2] should be resolved. *)
   val reduce_reduce:
-    Production.index -> Production.index -> Production.index option
+    Production.t -> Production.t -> Production.t option
 
   (**[diagnostics()] should be called after the automaton has been constructed,
      that is, after all calls to {!shift_reduce} have taken place. This function

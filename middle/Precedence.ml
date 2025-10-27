@@ -237,7 +237,7 @@ let shift_reduce tok prod : choice =
 
 (* Resolving reduce/reduce conflicts. *)
 
-let reduce_reduce prod1 prod2 : Production.index option =
+let reduce_reduce prod1 prod2 : Production.t option =
   let p1 = Production.production_level prod1
   and p2 = Production.production_level prod2 in
   match production_order p1 p2 with
@@ -246,10 +246,6 @@ let reduce_reduce prod1 prod2 : Production.index option =
   | Gt ->
       Some prod2
   | Eq ->
-      (* The order is strict except in the presence of parameterized
-         non-terminals and/or inlining. Two productions can have the same
-         precedence level if they originate, via macro-expansion or via
-         inlining, from a single production in the source grammar. *)
       None
   | Incomparable ->
       None

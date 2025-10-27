@@ -24,7 +24,7 @@ module Run
 
   (**[shift_reduce t prod] determines how a shift/reduce conflict between the
      terminal symbol [t] and the production [prod] should be resolved. *)
-  val shift_reduce: Terminal.t -> Production.index -> choice
+  val shift_reduce: Terminal.t -> Production.t -> choice
 
 end)
 (E : sig

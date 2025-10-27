@@ -1063,7 +1063,7 @@ end) : sig
      The offset [i], which determines the beginning of the suffix,
      must be contained between [0] and [n], inclusive, where [n]
      is the length of the production. *)
-  val production: Production.index -> int -> property
+  val production: Production.t -> int -> property
 
 end = struct
   open P
@@ -1399,7 +1399,7 @@ module FOLLOW (P : sig
   include Fix.MINIMAL_SEMI_LATTICE
   val bottom: property
   val terminal: Terminal.t -> property
-  val first: Production.index -> int -> property
+  val first: Production.t -> int -> property
 end) = struct
 
   module M =
