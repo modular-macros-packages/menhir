@@ -833,9 +833,9 @@ let warn_about_productions_never_reduced () =
 (* When requested by the code generator, apply default conflict
    resolution to ensure that the automaton is deterministic. *)
 
-(* [best prod prods] chooses which production should be reduced
-   among the list [prod :: prods]. It fails if no best choice
-   exists. *)
+(* [best prod prods] chooses which production, out of the nonempty
+   list [prod :: prods], should be reduced. If no best choice exists,
+   one or more warnings are emitted and an arbitrary choice is made. *)
 
 let rec best choice = function
   | [] ->
