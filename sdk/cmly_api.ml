@@ -238,18 +238,6 @@ module type GRAMMAR = sig
        resolved by obeying precedence declarations. When false, it indicates
        that this conflict was accidental and gave rise to a warning. *)
     type silent = bool
-
-    (**The outgoing transitions that have been removed by conflict resolution. *)
-    val conflicting_transitions : t -> (terminal * t * silent) list
-
-    (**The reduction actions that have been removed by conflict resolution. *)
-    val conflicting_reductions : t -> (terminal * Production.t list * silent) list
-
-    (**The reduction actions that have been added to obey [%on_error_reduce]
-       directives. These reduction actions already appear in the list returned
-       by {!get_reductions}. *)
-    val extra_reductions : t -> (terminal * Production.t) list
-
   end
 
   module Print : sig

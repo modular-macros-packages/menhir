@@ -118,22 +118,6 @@ type lr1_state_def = {
      Therefore, for each terminal symbol [t], there is at most one
      transition or reduction action. *)
 
-  lr1_conflicting_transitions: (terminal * lr1 * bool) list;
-  (**The outgoing transitions that have been removed by conflict resolution.
-     The Boolean component is true if the conflict was silently resolved by
-     obeying the precedence declarations; it is false if the conflict was
-     accidental and gave rise to a warning. *)
-
-  lr1_conflicting_reductions: (terminal * production list * bool) list;
-  (**The reduction actions that have been removed by conflict resolution.
-     The Boolean component is true if the conflict was silently resolved by
-     obeying the precedence declarations; it is false if the conflict was
-     accidental and gave rise to a warning. *)
-
-  lr1_extra_reductions: (terminal * production) list;
-  (**The reduction actions that have been added to obey [%on_error_reduce]
-     directives. These reduction actions already appear in [lr1_reductions]. *)
-
   lr1_default_reduction: production option;
   (**This field is set to [Some prod] if this state reduces production [prod]
      as a default reduction. Regardless of the value of this field, the above

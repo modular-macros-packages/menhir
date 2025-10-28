@@ -146,18 +146,6 @@ let lr1_state (node : Lr1.node) : C.lr1_state_def =
     );
     C.lr1_default_reduction =
       Option.map (fun (p, _ts) -> p2i p) (Default.has_default_reduction node);
-    C.lr1_conflicting_transitions = (
-      let prepare (t, node, silent) = (t2i t, Lr1.encode node, silent) in
-      List.map prepare (Lr1.get_conflicting_transitions node);
-    );
-    C.lr1_conflicting_reductions = (
-      let prepare (t, prods, silent) = (t2i t, List.map p2i prods, silent) in
-      List.map prepare (Lr1.get_conflicting_reductions node);
-    );
-    C.lr1_extra_reductions = (
-      let prepare (t, prod) = (t2i t, p2i prod) in
-      List.map prepare (Lr1.get_extra_reductions node);
-    );
   }
 
 let entry_point prod node nt _typ accu : (C.nonterminal * C.production * C.lr1) list =
