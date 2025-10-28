@@ -104,7 +104,6 @@ following order:
 | Grammar               | performs a number of analyses of the grammar |
 | Middle                | deals with `--random-sentence` and exits |
 | Lr0                   | constructs the LR(0) automaton |
-| Slr                   | determines whether the grammar is SLR |
 | Lr1                   | constructs the LR(1) automaton |
 | Conflict              | performs default conflict resolution and explains conflicts |
 | Interpret             | deals with `--interpret` and exits |
