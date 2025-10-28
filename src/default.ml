@@ -85,26 +85,18 @@ let () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Here are a number of auxiliary functions that provide information about the
-   LR(1) automaton. *)
-
 (* [find_erroneous s zs] finds whether there is a terminal [z] in [zs] such
    that state [s] will initiate an error on the lookahead symbol [z].
    All terminals in [zs] must be real. *)
-
-exception Found_error of Terminal.t
 
 let find_erroneous s zs : Terminal.t option =
   match has_default_reduction s with
   | Some _ ->
       None
   | None ->
-      match
-        TerminalSet.iter (fun z ->
-            if not (TerminalMap.mem z (Lr1.reductions s)) &&
-               not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
-            then raise (Found_error z)
-          ) zs
-      with
-      | () -> None
-      | exception (Found_error z) -> Some z
+      let transitions = Lr1.transitions s
+      and reductions = Lr1.reductions s in
+      zs |> TerminalSet.pick @@ fun z ->
+      assert (Terminal.real z);
+      not (TerminalMap.mem z reductions) &&
+      not (SymbolMap.mem (Symbol.T z) transitions)
