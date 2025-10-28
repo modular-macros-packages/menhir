@@ -207,7 +207,7 @@ module Long () = struct
   (* Compute the least fixed point. *)
 
   let stack_symbols : Lr1.node -> property option =
-    let module F = Fix.DataFlow.Run(Lr1.ImperativeNodeMap)(SymbolVector)(G) in
+    let module F = Fix.DataFlow.ForNumberedType(Lr1)(SymbolVector)(G) in
     F.solution
 
   (* If every state is reachable, then the least fixed point must be non-[None]

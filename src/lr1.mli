@@ -45,6 +45,7 @@ open Grammar
 (* This is the type of the automaton's nodes. *)
 
 type node
+type t = node
 
 module Node : Set.OrderedType with type t = node
 
@@ -55,9 +56,6 @@ module NodeSet : sig
 end
 
 module NodeMap : Map.S with type key = node
-
-module ImperativeNodeMap :
-  Fix.MINIMAL_IMPERATIVE_MAPS with type key = node
 
 (* These are the automaton's entry states, indexed by the start productions. *)
 

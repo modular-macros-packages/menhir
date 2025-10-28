@@ -101,6 +101,8 @@ let () =
 
 type node =
   int
+type t =
+  node
 
 (* -------------------------------------------------------------------------- *)
 
@@ -744,9 +746,6 @@ end
 
 module NodeMap =
   Map.Make(Node)
-
-module ImperativeNodeMap =
-  Fix.Glue.ArraysAsImperativeMaps(struct let n = n end)
 
 let all_sources symbol =
   targets (fun accu sources _target ->
