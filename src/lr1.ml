@@ -17,14 +17,13 @@ open Grammar
 (* At log level 1, run the SLR(1) test. *)
 
 let () =
-  Error.logG 1 (fun f ->
-    let module SLR = SLR.Make(Lr0) in
-    let count = SLR.count_violations() in
-    if count = 0 then
-      Printf.fprintf f "The grammar is SLR(1).\n"
-    else
-      Printf.fprintf f "The grammar is not SLR(1) -- %d states have a conflict.\n" count
-  )
+  Error.logG 1 @@ fun f ->
+  let module SLR = SLR.Make(Lr0) in
+  let count = SLR.count_violations() in
+  if count = 0 then
+    Printf.fprintf f "The grammar is SLR(1).\n"
+  else
+    Printf.fprintf f "The grammar is not SLR(1) -- %d states have a conflict.\n" count
 
 (* -------------------------------------------------------------------------- *)
 
