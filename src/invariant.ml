@@ -748,10 +748,9 @@ module G = struct
   let foreach_root yield =
     (* The entry points are the [run] functions associated with each of
        the entry states. *)
-    Lr1.entry |> ProductionMap.iter (fun prod node ->
-      let nt = Option.get (Production.test_start prod) in
-      yield (Run node) (SingleOrigin nt)
-    )
+    Lr1.entry |> ProductionMap.iter @@ fun prod node ->
+    let nt = Production.get_start prod in
+    yield (Run node) (SingleOrigin nt)
 
   let foreach_successor v origin yield =
     match v with

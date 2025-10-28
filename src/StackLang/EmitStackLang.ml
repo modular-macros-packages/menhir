@@ -669,7 +669,7 @@ let reduce mode prod =
   if Production.is_start prod then begin
     assert (n = 1);
     log "Accepting";
-    let nt = Option.get (Production.test_start prod) in
+    let nt = Production.get_start prod in
     return nt (VReg (id 0))
   end
   else
@@ -886,9 +886,9 @@ let code label =
 let entry =
   let mode = NormalMode in
   ProductionMap.fold (fun prod s accu ->
-      let nt = Option.get (Production.test_start prod) in
-      let name = Nonterminal.print true nt in
-      StringMap.add name (Run (mode, s)) accu
+    let nt = Production.get_start prod in
+    let name = Nonterminal.print true nt in
+    StringMap.add name (Run (mode, s)) accu
   ) Lr1.entry StringMap.empty
 
 (* -------------------------------------------------------------------------- *)

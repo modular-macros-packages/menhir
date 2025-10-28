@@ -682,15 +682,16 @@ module Production = struct
   let[@inline] production_level k =
     production_level.(k)
 
+  let get_start prod =
+    assert (is_start prod);
+    match (rhs prod).(0) with
+    | Symbol.N nt ->
+        nt
+    | Symbol.T _ ->
+        assert false
+
   let test_start prod =
-    if is_start prod then
-      match (rhs prod).(0) with
-      | Symbol.N nt ->
-          Some nt
-      | Symbol.T _ ->
-          assert false
-    else
-      None
+    if is_start prod then Some (get_start prod) else None
 
   let error_free prod =
     MArray.for_all Symbol.non_error (rhs prod)

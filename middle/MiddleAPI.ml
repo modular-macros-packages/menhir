@@ -515,6 +515,10 @@ module Production : sig
      production, nothing is returned. *)
   val test_start: t -> Nonterminal.t option
 
+  (**[get_start] maps a start production to a user start symbol.
+     It is equivalent to [Option.get (test_start prod)]. *)
+  val get_start: t -> Nonterminal.t
+
   (**[error_free prod] returns [true] if the right-hand side of the
      production [prod] does {i not} contain the [error] token. *)
   val error_free: t -> bool
