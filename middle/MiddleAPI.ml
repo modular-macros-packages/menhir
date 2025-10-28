@@ -1122,6 +1122,127 @@ module type LR1_AUTOMATON = sig
 
 end (* LR1_AUTOMATON *)
 
+(**Compared with [LR1_AUTOMATON], [LR1] is a more convenient description of
+   an LR(1) automaton. It does not offer more information, but offers more
+   facilities for accessing this information. *)
+module type LR1 = sig
+
+  include LR1_AUTOMATON
+  open Lr0.G
+
+  (**Sets whose elements are nodes. *)
+  module NodeSet : sig
+
+    include Set.S with type elt = node
+
+    (**[leq_join p q] computes the union of the sets [p] and [q]. If the
+       result is logically equal to [q], then [q] itself is returned. Thus,
+       we have [leq_join p q == q] if and only if [subset p q] holds. *)
+    val leq_join: t -> t -> t
+
+    (**[print s] produces a string representation of the set [s]. The set
+       is printed as a comma-separated list of elements and is surrounded
+       with curly braces. This function should be used for debugging only. *)
+    val print: t -> string
+
+  end
+
+  (**Maps whose keys are nodes. *)
+  module NodeMap : Map.S with type key = node
+
+  (**[print] produces a string representation of a node. The node is displayed
+     as a number. This function should be used for debugging only. *)
+  val print: node -> string
+
+  (**[is_start node] determines whether the node [node] is a start node. *)
+  val is_start: node -> bool
+
+  (**[test_start node] determines whether the node [node] is a start node. If
+     it is a start node, then the user start symbol that this node is
+     associated with is returned. If it is a regular node, nothing is
+     returned. *)
+  val test_start: node -> Nonterminal.t option
+
+  (**[get_start] maps a start node to a user start symbol.
+     [get_start node] is equivalent to [Option.get (test_start node)]. *)
+  val get_start: t -> Nonterminal.t
+
+  (**[entry_of_nt] maps a user nonterminal start symbol to the corresponding
+     start node. *)
+  val entry_of_nt: Nonterminal.t -> node
+
+  (**[start2item] converts a start node into the single item that it
+     contains. *)
+  val start2item: node -> Item.t
+
+  (**[fold_entry] folds over [entry]. For convenience, it gives access not
+     only to the start production and start state, but also to the nonterminal
+     symbol and to the OCaml type associated with this production. *)
+  val fold_entry:
+    (Production.t -> node -> Nonterminal.t -> ocamltype -> 'a -> 'a) ->
+    'a -> 'a
+
+  (**All of the edges that enter a node carry the same symbol. If a node has at
+     least one incoming edge, then this common symbol is known as the incoming
+     symbol of this node. A node that has no incoming edges has no incoming
+     symbol. A node has no incoming symbol if and only if it is a start node.
+     [incoming_symbol node] is the incoming symbol of the node [node]. *)
+  val incoming_symbol: node -> Symbol.t option
+
+  (**[targets symbol] enumerates the families of (shift or goto) edges that
+     carry the symbol [symbol]. A family is a group of edges that have the
+     same target node. A family is represented as a pair [(sources, target)],
+     where [sources] is the set of the sources of the edges in the family and
+     [target] is their common target. *)
+  val targets: Symbol.t -> (node list -> node -> unit) -> unit
+
+  (**[ntargets symbol] counts the number of distinct targets of edges labeled
+     with [symbol]. In other words, it counts the number of families that are
+     enumerated by [targets symbol]. If [symbol] is a nonterminal symbol [nt]
+     then this is the number of branches in the [goto] function associated
+     with [nt]. *)
+  val ntargets: Symbol.t -> int
+
+  (**[foreach_predecessor node] enumerates the predecessors of the node
+     [node]. *)
+  val foreach_predecessor: node -> (node -> unit) -> unit
+
+  (**[all_sources symbol] is the set of all sources of all edges labeled
+     with [symbol]. *)
+  val all_sources: Symbol.t -> NodeSet.t
+
+  (**[all_targets symbol] is the set of all targets of edges labeled
+     with [symbol]. *)
+  val all_targets: Symbol.t -> NodeSet.t
+
+  (**[reduction_sites prod] is the set of all nodes where production [prod]
+     might be reduced. *)
+  val reduction_sites: Production.t -> NodeSet.t
+
+  (**[iter] enumerates the nodes. *)
+  val iter: (t -> unit) -> unit
+
+  (**[fold] enumerates the nodes. *)
+  val fold: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map] enumerates the nodes. *)
+  val map: (t -> 'a) -> 'a list
+
+  (**[tabulate] tabulates a function [f] whose domain is the nodes,
+     producing a new function whose time complexity is O(1). *)
+  val tabulate: (node -> 'a) -> (node -> 'a)
+
+  (**[sum f] computes the sum of the function [f] over all nodes. *)
+  val sum: (node -> int) -> int
+
+  (**[iterx] enumerates the nodes except the start nodes. *)
+  val iterx: (t -> unit) -> unit
+
+  (**[foldx] enumerates the nodes except the start nodes. *)
+  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
+
+end
+
 (**[LR1_ALGORITHM] is the signature of several LR(1) automaton construction
    algorithms. *)
 module type LR1_ALGORITHM = sig
