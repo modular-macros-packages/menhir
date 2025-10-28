@@ -714,6 +714,11 @@ let () =
 
 (* Instantiate [Set] and [Map] on the type [node]. *)
 
+(* Because nodes are numbered between 0 and [n], instead of implementing
+   [NodeSet] by using balanced binary trees, one could perhaps use some form
+   of bit sets. However, the sparse bit sets in [Bitsets.SparseBitSet] can be
+   slow when [n] becomes large, so I prefer to be cautious. *)
+
 module Node = struct
   type t = node
   let compare = (-)
@@ -722,7 +727,6 @@ end
 module NodeSet = struct
 
   include Set.Make(Node)
-
 
   (* [union] does not guarantee physical equality between its second
      argument and its result when a logical equality holds. We wrap it
