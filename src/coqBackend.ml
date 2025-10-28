@@ -63,10 +63,16 @@ module Run () = struct
     Lr1.iter (fun node -> if not (is_final_state node) then f node)
 
   let lr1_iterx_nonfinal f =
-    Lr1.iterx (fun node -> if not (is_final_state node) then f node)
+    Lr1.iter @@ fun node ->
+    if not (Lr1.is_start node) && not (is_final_state node) then
+      f node
 
   let lr1_foldx_nonfinal f =
-    Lr1.foldx (fun accu node -> if not (is_final_state node) then f accu node else accu)
+    Lr1.fold @@ fun accu node ->
+    if not (Lr1.is_start node) && not (is_final_state node) then
+      f accu node
+    else
+      accu
 
   let print_nis nis =
     sprintf "Nis'%d" (Lr1.encode nis)

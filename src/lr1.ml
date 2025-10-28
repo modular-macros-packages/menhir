@@ -587,20 +587,6 @@ let map f =
     ) []
   )
 
-let foldx f =
-  fold (fun accu node ->
-    match incoming_symbol node with
-    | None -> accu
-    | Some _ -> f accu node
-  )
-
-let iterx f =
-  iter (fun node ->
-    match incoming_symbol node with
-    | None -> ()
-    | Some _ -> f node
-  )
-
 let tabulate (f : node -> 'a) =
   MArray.tabulate n f
 
@@ -624,11 +610,7 @@ let index : node list SymbolMap.t =
         SymbolMap.add symbol (node :: lookup symbol index) index
   ) SymbolMap.empty
 
-(* This allows iterating over all nodes that are targets of edges carrying a
-   certain symbol. The sources of the corresponding edges are also provided. *)
-
 let targets symbol yield =
-  (* There are no incoming transitions on the start symbols. *)
   let targets = lookup symbol index in
   targets |> List.iter @@ fun target ->
   yield (predecessors target) target
