@@ -900,6 +900,10 @@ module Item = struct
     let prod, _pos = export item in
     Production.test_start prod
 
+  let get_start item =
+    let prod, _pos = export item in
+    Production.get_start prod
+
   let print item =
     let prod, pos = export item in
     let nt = Production.nt prod in

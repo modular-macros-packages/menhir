@@ -666,6 +666,10 @@ module Item : sig
      is returned. *)
   val test_start: t -> Nonterminal.t option
 
+  (**[get_start] maps a start item to a user start symbol.
+     [test_start item] is equivalent to [Option.get (test_start item)]. *)
+  val get_start: t -> Nonterminal.t
+
   (**[print item] produces a string representation of the item [item]. *)
   val print: t -> string
 
