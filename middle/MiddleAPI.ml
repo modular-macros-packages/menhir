@@ -72,7 +72,7 @@ module Nonterminal : sig
 
   (**[lookup] maps an identifier [s] to a nonterminal symbol. If there is
      no nonterminal symbol named [s] then [Not_found] is raised. *)
-  val lookup : string -> t
+  val lookup: string -> t
 
   (**[print normalize nt] produces a string representation of the
      nonterminal symbol [nt].
@@ -201,7 +201,7 @@ module Terminal : sig
 
   (**[lookup] maps an identifier [s] to a terminal symbol. If there is no
      terminal symbol named [s] then [Not_found] is raised. *)
-  val lookup : string -> t
+  val lookup: string -> t
 
   (**[print t] produces a string representation of the terminal symbol [t]. *)
   val print: t -> string
@@ -362,7 +362,7 @@ module Symbol : sig
 
   (**[lookup] maps an identifier [s] to a symbol. There must be exist a
      nonterminal or terminal symbol named [s]. *)
-  val lookup : string -> t
+  val lookup: string -> t
 
   (**[print normalize sym] prints (produces a string representation of)
      the symbol [sym], using either [Nonterminal.print normalize] or
@@ -498,12 +498,12 @@ module Production : sig
   (**[prec_decl prod] is the optional %prec annotation carried by the
      production [prod]. This information plays a role in the resolution of
      shift/reduce conflicts. *)
-  val prec_decl : t -> prec_annotation
+  val prec_decl: t -> prec_annotation
 
   (**[production_level prod] is the production level of the production [prod].
      This information plays a role in the resolution of reduce/reduce
      conflicts. *)
-  val production_level : t -> production_level
+  val production_level: t -> production_level
 
   (**[is_start prod] determines whether the production [prod] is a start
      production. *)
@@ -516,7 +516,7 @@ module Production : sig
   val test_start: t -> Nonterminal.t option
 
   (**[get_start] maps a start production to a user start symbol.
-     It is equivalent to [Option.get (test_start prod)]. *)
+     [get_start prod] is equivalent to [Option.get (test_start prod)]. *)
   val get_start: t -> Nonterminal.t
 
   (**[error_free prod] returns [true] if the right-hand side of the
@@ -606,10 +606,10 @@ module Reductions : sig
     TerminalSet.t ProductionMap.t
 
   (**[reverse] transforms a reduction table into a reverse reduction table. *)
-  val reverse : t -> reverse
+  val reverse: t -> reverse
 
   (**[flip] transforms a reverse reduction table into a reduction table. *)
-  val flip : reverse -> t
+  val flip: reverse -> t
 
   (**[has_reduce_reduce_conflict reductions] determines whether the reduction
      table [reductions] has a reduce/reduce conflict, that is, whether there
@@ -1076,7 +1076,7 @@ module type MINIMAL_LR1_AUTOMATON = sig
 
   (**[entry] is a map of each start production to the corresponding start node
      in the LR(1) automaton. *)
-  val entry : node ProductionMap.t
+  val entry: node ProductionMap.t
 
   (**[transitions node] returns the outgoing (shift and goto) transitions of
      the node [node], in the form a map of symbols to successor nodes. *)
