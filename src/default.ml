@@ -99,23 +99,6 @@ let reductions_on s z : Production.t list =
   with Not_found ->
     []
 
-(* [has_reduction s z] tells whether state [s] is willing to reduce some
-   production (and if so, which one) when the lookahead symbol is [z]. It
-   takes a possible default reduction into account. [z] must be real. *)
-
-let has_reduction s z : Production.t option =
-  assert (Terminal.real z);
-  match has_default_reduction s with
-  | Some (prod, _) ->
-      Some prod
-  | None ->
-      match reductions_on s z with
-      | prod :: prods ->
-          assert (prods = []);
-          Some prod
-      | [] ->
-          None
-
 (* [causes_an_error s z] tells whether state [s] will initiate an error on the
    lookahead symbol [z]. [z] must be real. *)
 
