@@ -26,9 +26,6 @@ end)
   (**[warning ranges format ...] reports a warning. It does not abort. *)
   val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
 end)
 = struct
 include A
@@ -40,6 +37,9 @@ open E
 let tabulate (f : node -> 'a) : 'a array =
   Array.init A.n @@ fun i ->
   f (A.decode i)
+
+let iter yield =
+  for i = 0 to A.n - 1 do yield (A.decode i) done
 
 (* -------------------------------------------------------------------------- *)
 
@@ -67,7 +67,7 @@ let[@inline] reductions node =
 
 let[@inline] filter_reductions node f =
   let i = A.encode node in
-  _reductions.(i) <- TerminalMap.filter f _reductions.(i)
+  _reductions.(i) <- TerminalMap.fold f _reductions.(i) TerminalMap.empty
 
 (* -------------------------------------------------------------------------- *)
 
@@ -99,9 +99,51 @@ let rec best candidate = function
 
 (* -------------------------------------------------------------------------- *)
 
+(* Resolve conflicts. *)
+
+(* We implicitly assume that all conflicts are severe; we resolve all of them.
+   We implicitly assume that all states are reachable; we resolve conflicts
+   at every state. *)
+
+let shift_reduce, reduce_reduce =
+  ref 0, ref 0
+
+let () =
+  iter @@ fun node ->
+  filter_reductions node @@ fun t prods reductions ->
+  assert (prods <> []);
+  if SymbolMap.mem (Symbol.T t) (transitions node) then (
+    (* There is a transition along [t], so this is a (possibly multi-way)
+       shift/reduce conflict. Resolve it in favor of shifting by suppressing
+       all reductions. *)
+    shift_reduce := List.length prods + !shift_reduce;
+    reductions
+  )
+  else
+    (* There is no transition along [t].
+       Test whether multiple reductions are enabled. *)
+    match prods with
+    | [] | [_] ->
+        (* There is just one reduction. No conflict. *)
+        TerminalMap.add t prods reductions
+    | prod :: ((_ :: _) as prods) ->
+        (* We have a reduce/reduce conflict. Resolve in favor of a single
+           reduction, which is chosen by the function [best]. *)
+        reduce_reduce := List.length prods + !reduce_reduce;
+        TerminalMap.add t [ best prod prods ] reductions
+
+(* -------------------------------------------------------------------------- *)
+
 (* Diagnostics. *)
 
+let signal_conflicts kind n =
+  if n = 1 then
+    warning []  "one %s conflict was arbitrarily resolved."   kind
+  else if n >= 1 then
+    warning [] "%d %s conflicts were arbitrarily resolved." n kind
+
 let diagnostics () =
-  ()
+  signal_conflicts "shift/reduce" !shift_reduce;
+  signal_conflicts "reduce/reduce" !reduce_reduce
 
 end (* Run *)
