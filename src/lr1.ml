@@ -1068,11 +1068,8 @@ let nt_of_entry s =
   try
     ProductionMap.iter (fun prod entry ->
       if Node.compare s entry = 0 then
-        match Production.test_start prod with
-        | None ->
-            assert false
-        | Some nt ->
-            raise (Found nt)
+        let nt = Production.get_start prod in
+        raise (Found nt)
     ) entry;
     (* This should not happen if [s] is indeed an initial state. *)
     assert false
