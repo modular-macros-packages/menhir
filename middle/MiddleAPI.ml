@@ -311,7 +311,11 @@ module TerminalSet : sig
 
   (**[of_list] converts a list of terminal symbols
      into a set of terminal symbols. *)
-  val of_list: Terminal.t list -> t
+  val of_list: elt list -> t
+
+  (**[pick f ts] returns an element of the set [ts] which satisfies [f],
+     provided such an element exists. *)
+  val pick: (elt -> bool) -> t -> elt option
 
   (**[print] converts a set of terminal symbols into a string representation.
      The symbols are listed one after the other and separated with spaces. *)

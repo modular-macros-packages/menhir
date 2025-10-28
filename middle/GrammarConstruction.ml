@@ -338,8 +338,16 @@ module TerminalSet = struct
   (* The signature [Bitsets.API.SET] does not offer [of_list],
      so we implement this function here in a naive way. *)
 
-  let of_list xs =
-    List.fold_right add xs empty
+  let of_list ts =
+    List.fold_right add ts empty
+
+  let pick f ts =
+    let exception Found of Terminal.t in
+    match
+      iter (fun x -> if f x then raise (Found x)) ts
+    with
+    | exception Found x -> Some x
+    | ()                -> None
 
   let print ts =
     MString.separated_iter Terminal.print " " (fun f -> iter f ts)
