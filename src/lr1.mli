@@ -104,10 +104,6 @@ val incoming_symbol: node -> Symbol.t option
 
 val is_start: node -> bool
 
-(* This maps a node to its predecessors. *)
-
-val predecessors: node -> node list
-
 (* A view of the forward edges as a graph. *)
 
 module ForwardEdges : sig
@@ -155,11 +151,12 @@ val iterx: (node -> unit) -> unit
 
 (* Iteration over all edges that carry a certain symbol. Edges are
    grouped in families, where all edges in a single family have the
-   same target node. [targets f accu symbol] invokes [f accu sources
-   target] once for every family, where [sources] are the sources of
-   the edges in the family and [target] is their common target. *)
+   same target node. [targets symbol] enumerates the families. Each
+   family is represented as a pair [(sources, target)], where
+   [sources] is the set of the sources of the edges in the family and
+   [target] is their common target. *)
 
-val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
+val targets: Symbol.t -> (node list -> node -> unit) -> unit
 
 (* [all_sources symbol] is the set of all sources of edges labeled
    with [symbol]. *)

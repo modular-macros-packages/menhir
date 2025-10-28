@@ -496,9 +496,8 @@ and run_normal_dispatch s =
     |> Reductions.reverse
     |> ProductionMap.iter begin fun prod toks ->
       (* A reduction of [prod] on every token in the set [toks]. *)
-      branch (TokMultiple toks) begin fun () ->
-        jump (Reduce (mode, prod))
-      end
+      branch (TokMultiple toks) @@ fun () ->
+      jump (Reduce (mode, prod))
     end;
 
     (* A default branch, where we switch to error-handling mode. *)
@@ -734,14 +733,12 @@ let reduce mode prod =
 let goto mode nt =
 
   let has_case_tag =
-    case_tag state begin fun branch ->
-      Lr1.targets begin fun () sources target ->
-        (* If the current state is a member of [sources], jump to [target]. *)
-        branch
-          (List.map Tag.lazy_make sources)
-          (fun () -> jump (Run (mode, target)))
-      end () (Symbol.N nt)
-    end
+    case_tag state @@ fun branch ->
+    Lr1.targets (Symbol.N nt) @@ fun sources target ->
+    (* If the current state is a member of [sources], jump to [target]. *)
+    branch
+      (List.map Tag.lazy_make sources)
+      (fun () -> jump (Run (mode, target)))
   in
 
   (* If we have generated a [casetag] instruction, then this function must
@@ -779,20 +776,16 @@ let rec act_goto mode prod =
      so this case analysis is possible. *)
 
   let has_case_tag =
-    case_tag state begin fun branch ->
-      Lr1.targets begin fun () sources target ->
-        sources |> List.iter begin fun source ->
-          (* Generate one branch per edge of [source] to [target]. *)
-          branch [Tag.lazy_make source] begin fun () ->
-            (* Assign [beforeendp]; execute the semantic action; jump to
-               the [run] routine for the state [target]. *)
-            assign_beforeendp source;
-            act prod;
-            jump (Run (mode, target))
-          end
-        end
-      end () symbol
-    end
+    case_tag state @@ fun branch ->
+    Lr1.targets symbol @@ fun sources target ->
+    sources |> List.iter @@ fun source ->
+    (* Generate one branch per edge of [source] to [target]. *)
+    branch [Tag.lazy_make source] @@ fun () ->
+    (* Assign [beforeendp]; execute the semantic action; jump to
+       the [run] routine for the state [target]. *)
+    assign_beforeendp source;
+    act prod;
+    jump (Run (mode, target))
   in
   set_hint (if has_case_tag then OnlyIfKnownState else Always)
 

@@ -143,28 +143,23 @@ let () =
 (* Enforce condition (2a) above. *)
 
 let () =
-  Nonterminal.iter (fun nt ->
-    let symbol = Symbol.N nt in
-    if Lr1.ntargets symbol > 1 then
-      Lr1.targets (fun () sources _ ->
-        List.iter represent sources
-      ) () symbol
-  )
+  Nonterminal.iter @@ fun nt ->
+  let symbol = Symbol.N nt in
+  if Lr1.ntargets symbol > 1 then
+    Lr1.targets symbol @@ fun sources _ ->
+    List.iter represent sources
 
 (* Enforce condition (2b) above. *)
 
 let () =
-  Production.iterx (fun prod ->
-    let n = Production.length prod in
-    if n > 0 && Action.has_beforeend (Production.action prod) then
-      let nt = Production.nt prod in
-      let symbol = Symbol.N nt in
-      Lr1.targets (fun () sources _ ->
-        sources |> List.iter (fun source ->
-          represent source
-        )
-      ) () symbol
-  )
+  Production.iterx @@ fun prod ->
+  let n = Production.length prod in
+  if n > 0 && Action.has_beforeend (Production.action prod) then
+    let nt = Production.nt prod in
+    let symbol = Symbol.N nt in
+    Lr1.targets symbol @@ fun sources _ ->
+    sources |> List.iter @@ fun source ->
+    represent source
 
 (* Define an accessor. *)
 

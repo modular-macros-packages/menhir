@@ -627,15 +627,15 @@ let index : node list SymbolMap.t =
 (* This allows iterating over all nodes that are targets of edges carrying a
    certain symbol. The sources of the corresponding edges are also provided. *)
 
-let targets f accu symbol =
+let targets symbol yield =
   (* There are no incoming transitions on the start symbols. *)
   let targets = lookup symbol index in
-  List.fold_left (fun accu target ->
-    f accu (predecessors target) target
-  ) accu targets
+  targets |> List.iter @@ fun target ->
+  yield (predecessors target) target
 
 let ntargets symbol =
-  targets (fun count _ _ -> count + 1) 0 symbol
+  let targets = lookup symbol index in
+  List.length targets
 
 (* -------------------------------------------------------------------------- *)
 
@@ -748,14 +748,21 @@ module NodeMap =
   Map.Make(Node)
 
 let all_sources symbol =
-  targets (fun accu sources _target ->
-    List.fold_left (fun accu source -> NodeSet.add source accu) accu sources
-  ) NodeSet.empty symbol
+  let accu = ref NodeSet.empty in
+  let () =
+    targets symbol @@ fun sources _target ->
+    sources |> List.iter @@ fun source ->
+    accu := NodeSet.add source !accu
+  in
+  !accu
 
 let all_targets symbol =
-  targets (fun accu _sources target ->
-    NodeSet.add target accu
-  ) NodeSet.empty symbol
+  let accu = ref NodeSet.empty in
+  let () =
+    targets symbol @@ fun _sources target ->
+    accu := NodeSet.add target !accu
+  in
+  !accu
 
 (* -------------------------------------------------------------------------- *)
 
