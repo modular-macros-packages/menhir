@@ -292,16 +292,10 @@
 
 ## Code Cleanup
 
-* I believe that `Lr1.get_conflicting_transitions` produces an invalid node
-  (`unreachable` viewed as a node) when a transition that leads to an
-  unreachable node appears in the list.
+* Clean up the new signature `LR1`.
 
 * `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
    They could move into TokenType.
-
-* `Item.Set` : it would be nice to use bitsets. Could we use a consecutive
-  numbering of items internally, and use the old encoding only when saving
-  data to the table needed by the inspection API?
 
 * Grep for `artificial dependency` and remove these artificial dependencies.
   Ideally, there should be no implicit (global) state ("the" grammar, "the"

@@ -143,7 +143,6 @@ val map: (node -> 'a) -> 'a list
 (* Tabulation and sum of a function over nodes. *)
 
 val tabulate: (node -> 'a) -> (node -> 'a)
-val sum: (node -> int) -> int
 
 (* Iteration over all edges that carry a certain symbol. Edges are
    grouped in families, where all edges in a single family have the

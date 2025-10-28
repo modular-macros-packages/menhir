@@ -590,9 +590,6 @@ let map f =
 let tabulate (f : node -> 'a) =
   MArray.tabulate n f
 
-let sum (f : node -> int) =
-  MInt.sum n f
-
 (* -------------------------------------------------------------------------- *)
 
 (* We build a map of each symbol to the (reachable) nodes that have this

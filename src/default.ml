@@ -57,6 +57,9 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
 let is_purely_nonterminal transitions =
   SymbolMap.for_all (fun sym _ -> Symbol.is_nonterminal sym) transitions
 
+let count =
+  ref 0
+
 let has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option =
   Lr1.tabulate @@ fun s ->
     if Lr1.forbid_default_reduction s then
@@ -66,17 +69,16 @@ let has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option =
       if ProductionMap.is_singleton reductions
       && is_purely_nonterminal (Lr1.transitions s) then
         let reduction = ProductionMap.choose reductions in
+        incr count;
         Some reduction
       else
         None
 
 let () =
   Error.logC 1 @@ fun f ->
-  let count = Lr1.sum @@ fun s ->
-    if has_default_reduction s = None then 0 else 1 in
   Printf.fprintf f
     "%d out of %d states have a default reduction.\n"
-    count Lr1.n
+    !count Lr1.n
 
 let () =
   Time.tick "Computing default reductions"

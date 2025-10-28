@@ -1232,9 +1232,6 @@ module type LR1 = sig
      producing a new function whose time complexity is O(1). *)
   val tabulate: (node -> 'a) -> (node -> 'a)
 
-  (**[sum f] computes the sum of the function [f] over all nodes. *)
-  val sum: (node -> int) -> int
-
   (**[iterx] enumerates the nodes except the start nodes. *)
   val iterx: (t -> unit) -> unit
 
