@@ -1057,17 +1057,9 @@ let insert_extra_reductions () =
 
 let fold_entry f accu =
   ProductionMap.fold (fun prod state accu ->
-    let nt : Nonterminal.t =
-      match Production.test_start prod with
-      | Some nt ->
-          nt
-      | None ->
-          assert false (* this is a start production *)
-    in
-    let t : ocamltype =
-      Nonterminal.ocamltype_of_start_symbol nt
-    in
-    f prod state nt t accu
+    let nt = Option.get (Production.test_start prod) in
+    let ty = Nonterminal.ocamltype_of_start_symbol nt in
+    f prod state nt ty accu
   ) entry accu
 
 let entry_of_nt nt =
