@@ -1242,7 +1242,16 @@ module type LR1 = sig
   (**[foldx] enumerates the nodes except the start nodes. *)
   val foldx: (t -> 'a -> 'a) -> 'a -> 'a
 
-end
+  (**[has_default_reduction node] tells whether the node [node] has a default
+     reduction, and, if so, upon which set of terminal symbols. *)
+  val has_default_reduction : node -> (Production.t * TerminalSet.t) option
+
+  (**[find_unacceptable_terminal node zs] tests whether the set [zs] contains a
+     terminal symbol [z] such that node [node] has no action on [z].
+     All members of the set [zs] must be real terminal symbols. *)
+  val find_unacceptable: node -> TerminalSet.t -> Terminal.t option
+
+end (* LR1 *)
 
 (**[LR1_ALGORITHM] is the signature of several LR(1) automaton construction
    algorithms. *)
