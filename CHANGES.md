@@ -43,6 +43,11 @@
   + In the signature `GRAMMAR`, the function
     `Token.filename` has been removed.
 
+  + In the signature `GRAMMAR`, the functions
+    `Lr1.conflicting_transitions`,
+    `Lr1.conflicting_reductions`, and
+    `Lr1.extra_reductions` have been removed.
+
 * The words `effect` and `nonrec` are now reserved.
   The word `parser` is no longer reserved.
 
