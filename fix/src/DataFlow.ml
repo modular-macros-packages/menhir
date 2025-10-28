@@ -142,6 +142,9 @@ module Run
 
 end
 
+module ForNumberedType (T : NUMBERING) =
+  Run(Glue.ArraysAsImperativeMapsWithNumbering(T))
+
 module ForOrderedType (T : OrderedType) =
   Run(Glue.PersistentMapsToImperativeMaps(Map.Make(T)))
 

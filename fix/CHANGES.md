@@ -6,6 +6,8 @@
 
 * New functor `Fix.GraphNumbering.ForNumberedType`.
 
+* New functor `Fix.DataFlow.ForNumberedType`.
+
 ## 2025/09/19
 
 * The new submodule `Fix.SCC` provides an implementation of Tarjan's

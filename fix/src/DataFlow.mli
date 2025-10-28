@@ -36,6 +36,17 @@ module Run
        with type variable = G.variable
         and type property = P.property option
 
+(**{!ForNumberedType} is a special case of {!Run} where it
+   suffices to pass a numbered type [T] as an argument.
+   An array is used to hold the memoization table. *)
+module ForNumberedType
+  (T : NUMBERING)
+  (P : MINIMAL_SEMI_LATTICE)
+  (G : DATA_FLOW_GRAPH with type variable = T.t and type property = P.property)
+     : SOLUTION
+       with type variable = G.variable
+        and type property = P.property option
+
 (**{!ForOrderedType} is a special case of {!Run} where it
    suffices to pass an ordered type [T] as an argument.
    A reference to a persistent map is used to hold the
