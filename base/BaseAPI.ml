@@ -223,7 +223,7 @@ module type MAP_AND_BITSET = sig
   include MAP
 
   (**Sets. *)
-  module Domain : Vendored_bitsets.API.SET with type elt = key
+  module Domain : Bitsets.API.SET with type elt = key
 
   (**Conversions. *)
   include CONVERT

@@ -40,7 +40,7 @@ end) ()
      whereas a Patricia tree would occupy 4 words per node.  *)
 
   module Domain =
-    Vendored_bitsets.BoundedBitSet.Make(N)()
+    Bitsets.BoundedBitSet.Make(N)()
 
   (* Conversions. *)
 
