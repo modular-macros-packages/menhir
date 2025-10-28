@@ -99,18 +99,6 @@ let reductions_on s z : Production.t list =
   with Not_found ->
     []
 
-(* [causes_an_error s z] tells whether state [s] will initiate an error on the
-   lookahead symbol [z]. [z] must be real. *)
-
-let causes_an_error s z : bool =
-  assert (Terminal.real z);
-  match has_default_reduction s with
-  | Some _ ->
-      false
-  | None ->
-      reductions_on s z = [] &&
-      not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
-
 (* [find_erroneous s zs] finds whether there is a terminal [z] in [zs] such
    that state [s] will initiate an error on the lookahead symbol [z].
    All terminals in [zs] must be real.

@@ -15,11 +15,6 @@ open Grammar
 
 val has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option
 
-(* [causes_an_error s z] tells whether state [s] will initiate an error on the
-   lookahead symbol [z]. [z] must be real. *)
-
-val causes_an_error: Lr1.node -> Terminal.t -> bool
-
 (* [find_erroneous s zs] finds whether there is a terminal [z] in [zs] such
    that state [s] will initiate an error on the lookahead symbol [z].
    All terminals in [zs] must be real.
