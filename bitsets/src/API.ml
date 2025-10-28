@@ -148,6 +148,9 @@ module type SET = sig
      in an unspecified order. *)
   val elements: t -> elt list
 
+  (**[of_list xs] is the set of all elements in the list [xs]. *)
+  val of_list: elt list -> t
+
   (** [find_first_opt p s] returns the least element [x] of [s] such that
       [p x] is true. It returns [None] if no such element exists. *)
   val find_first_opt: (elt -> bool) -> t -> elt option

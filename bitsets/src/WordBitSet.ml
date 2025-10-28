@@ -276,9 +276,12 @@ let rec fold yield s accu =
     let accu = yield (tib x) accu in
     fold yield s accu
 
-let elements s =
+let[@inline] elements s =
   (* Note: the list is produced in decreasing order. *)
   fold (fun tl hd -> tl :: hd) s []
+
+let[@inline] of_list xs =
+  List.fold_left (fun s x -> add x s) empty xs
 
 exception Found of elt
 

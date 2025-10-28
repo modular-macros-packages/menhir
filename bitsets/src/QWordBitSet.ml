@@ -307,6 +307,9 @@ let fold yield s accu =
 let[@inline] elements s =
   fold (fun tl hd -> tl :: hd) s []
 
+let[@inline] of_list xs =
+  List.fold_left (fun s x -> add x s) empty xs
+
 exception Found of elt
 
 let find_first_opt p s =
