@@ -88,35 +88,23 @@ let () =
 (* Here are a number of auxiliary functions that provide information about the
    LR(1) automaton. *)
 
-(* [reductions_on s z] is the list of reductions permitted in state [s] when
-   the lookahead symbol is [z]. This is a list of zero or one elements. This
-   does not take default reductions into account. [z] must be real. *)
-
-let reductions_on s z : Production.t list =
-  assert (Terminal.real z);
-  try
-    TerminalMap.find z (Lr1.reductions s)
-  with Not_found ->
-    []
-
 (* [find_erroneous s zs] finds whether there is a terminal [z] in [zs] such
    that state [s] will initiate an error on the lookahead symbol [z].
-   All terminals in [zs] must be real.
-   (It is effectively [causes_an_error] lifted to operate on [TerminalSet].) *)
+   All terminals in [zs] must be real. *)
 
 exception Found_error of Terminal.t
 
 let find_erroneous s zs : Terminal.t option =
   match has_default_reduction s with
-  | Some _ -> None
+  | Some _ ->
+      None
   | None ->
-    begin match
+      match
         TerminalSet.iter (fun z ->
-            if reductions_on s z = [] &&
+            if not (TerminalMap.mem z (Lr1.reductions s)) &&
                not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
             then raise (Found_error z)
           ) zs
       with
       | () -> None
       | exception (Found_error z) -> Some z
-    end
