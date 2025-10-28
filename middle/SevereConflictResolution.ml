@@ -69,6 +69,11 @@ let[@inline] filter_reductions node f =
   let i = A.encode node in
   _reductions.(i) <- TerminalMap.fold f _reductions.(i) TerminalMap.empty
 
+let[@inline] kill_reduction node t =
+  let i = A.encode node in
+  let _prods, reductions = TerminalMap.find_and_remove t _reductions.(i) in
+  _reductions.(i) <- reductions
+
 (* -------------------------------------------------------------------------- *)
 
 (* [best prod prods] chooses which production, out of the nonempty list
@@ -99,20 +104,23 @@ let rec best candidate = function
 
 (* -------------------------------------------------------------------------- *)
 
-(* Resolve conflicts. *)
+(* Resolve shift/reduce and reduce/reduce conflicts. *)
 
 (* We implicitly assume that all conflicts are severe; we resolve all of them.
    We implicitly assume that all states are reachable; we resolve conflicts
    at every state. *)
+
+(* We resolve conflicts by removing reductions. *)
 
 let shift_reduce, reduce_reduce =
   ref 0, ref 0
 
 let () =
   iter @@ fun node ->
+  let transitions = transitions node in
   filter_reductions node @@ fun t prods reductions ->
   assert (prods <> []);
-  if SymbolMap.mem (Symbol.T t) (transitions node) then (
+  if SymbolMap.mem (Symbol.T t) transitions then (
     (* There is a transition along [t], so this is a (possibly multi-way)
        shift/reduce conflict. Resolve it in favor of shifting by suppressing
        all reductions. *)
@@ -134,6 +142,29 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Resolve end-of-stream conflicts. *)
+
+(* If a state has both a reduce action at [#] and some other (shift or reduce)
+   action, this is an end-of-stream conflict. This conflict is resolved by
+   suppressing the reduce action at [#]. *)
+
+(* Because we have already removed some reductions above, we may find fewer
+   end-of-stream conflicts than we would if we detected them first. *)
+
+let eos_conflicts =
+  ref 0
+
+let () =
+  iter @@ fun node ->
+  let transitions = transitions node
+  and reductions = reductions node in
+  if Reductions.has_eos_conflict transitions reductions then (
+    eos_conflicts := !eos_conflicts + 1;
+    kill_reduction node Terminal.sharp
+  )
+
+(* -------------------------------------------------------------------------- *)
+
 (* Diagnostics. *)
 
 let signal_conflicts kind n =
@@ -144,6 +175,7 @@ let signal_conflicts kind n =
 
 let diagnostics () =
   signal_conflicts "shift/reduce" !shift_reduce;
-  signal_conflicts "reduce/reduce" !reduce_reduce
+  signal_conflicts "reduce/reduce" !reduce_reduce;
+  signal_conflicts "end-of-stream" !eos_conflicts
 
 end (* Run *)

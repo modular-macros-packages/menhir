@@ -9,9 +9,13 @@
 (******************************************************************************)
 
 (**This module implements severe conflict resolution. That is, all of the
-   shift/reduce and reduce/reduce conflicts that exist in the automaton (which
-   could not be silently solved) are resolved in a default, possibly arbitrary
-   manner. No transitions are removed. Some reductions are removed. *)
+   shift/reduce, reduce/reduce, and end-of-stream conflicts that exist in the
+   automaton are resolved. Shift/reduce conflicts are resolved by removing a
+   reduction, thereby favoring shifting. Reduce/reduce conflicts are solved by
+   obeying [Precedence.reduce_reduce] and possibly making an arbitrary choice.
+   End-of-stream conflicts are solved by removing a reduction, thereby
+   favoring inspecting the next input symbol. In summary, no transitions are
+   removed; some reductions are removed. *)
 
 open MiddleAPI
 
