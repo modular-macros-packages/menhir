@@ -55,6 +55,11 @@ val rev_of_list : 'a list -> 'a array
    [rev_to_list [|1; 2; 3; 4; 5|] = [5; 4; 3; 2; 1]] *)
 val rev_to_list : 'a array -> 'a list
 
+(**[segment_to_list a i j] converts the array segment defined
+   by the array [a] and the offsets [i] and [j] into a list.
+   [segment_to_list [|1; 2; 3; 4|] 1 3 = [2; 3]] *)
+val segment_to_list : 'a array -> int -> int -> 'a list
+
 (**[iter_rev f a] is equivalent to [iter f (rev a)]. *)
 val iter_rev : ('a -> unit) -> 'a array -> unit
 

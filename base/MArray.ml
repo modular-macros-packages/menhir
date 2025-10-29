@@ -74,6 +74,12 @@ let rev_of_list xs =
 let[@inline] rev_to_list a =
   fold_left (fun xs x -> x :: xs) [] a
 
+let[@tail_mod_cons] rec segment_to_list a i j =
+  if i = j then
+    []
+  else
+    a.(i) :: segment_to_list a (i + 1) j
+
 let[@inline] iter_rev f a =
   for i = length a - 1 downto 0 do
     f a.(i)
@@ -190,4 +196,5 @@ let test () =
   assert (suffix [|1; 2; 3; 4; 5|] 0 = [||]) ;
   assert (suffix [|1; 2; 3; 4; 5|] 3 = [|3; 4; 5|]) ;
   assert (suffix [|1; 2; 3; 4; 5|] 5 = [|1; 2; 3; 4; 5|]) ;
+  assert (segment_to_list [|1; 2; 3; 4|] 1 3 = [2; 3]) ;
   ()
