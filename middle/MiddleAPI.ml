@@ -1252,13 +1252,3 @@ module type LR1 = sig
   val find_unacceptable: node -> TerminalSet.t -> Terminal.t option
 
 end (* LR1 *)
-
-(**[LR1_ALGORITHM] is the signature of several LR(1) automaton construction
-   algorithms. *)
-module type LR1_ALGORITHM = sig
-
-  module Lr0 : LR0
-
-  module Run () : MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0
-
-end (* LR1_ALGORITHM *)

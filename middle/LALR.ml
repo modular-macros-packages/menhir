@@ -20,9 +20,6 @@ open Lr0.G
 type lr1state =
   Lr0.ALR1.t
 
-module Run () = struct
-module Lr0 = Lr0
-
 (* -------------------------------------------------------------------------- *)
 
 (* The LALR automaton has exactly the same states as the LR(0) automaton, up
@@ -117,7 +114,5 @@ let encode (i : node) : int = i
 let decode (i : int) : node = i
 
 (* -------------------------------------------------------------------------- *)
-
-end (* Run *)
 
 end (* Make *)

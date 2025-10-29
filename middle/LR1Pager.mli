@@ -25,4 +25,4 @@ open MiddleAPI
 
 module Make (Lr0 : LR0)
 (X : sig val mode : [`Pager | `InclusionOnly] end)
- : LR1_ALGORITHM with module Lr0 = Lr0
+ : MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0

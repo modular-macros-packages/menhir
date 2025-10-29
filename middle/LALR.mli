@@ -14,4 +14,4 @@
 
 open MiddleAPI
 
-module Make (Lr0 : LR0) : LR1_ALGORITHM with module Lr0 = Lr0
+module Make (Lr0 : LR0) : MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0

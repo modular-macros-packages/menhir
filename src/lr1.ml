@@ -29,29 +29,29 @@ let () =
 
 (* Select a construction algorithm based on the command-line settings. *)
 
-module type ALGORITHM =
-  LR1_ALGORITHM with module Lr0 = Lr0
+module type AUTOMATON =
+  MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0
 
 let algo, mode =
   Settings.(match construction_mode with
   | ModeCanonical ->
-      (module LR1Canonical.Make(Lr0) : ALGORITHM),
+      (module LR1Canonical.Make(Lr0) : AUTOMATON),
       "canonical"
   | ModeInclusionOnly ->
       let module X = struct let mode = `InclusionOnly end in
-      (module LR1Pager.Make(Lr0)(X) : ALGORITHM),
+      (module LR1Pager.Make(Lr0)(X) : AUTOMATON),
       "no-pager"
   | ModePager ->
       let module X = struct let mode = `Pager end in
-      (module LR1Pager.Make(Lr0)(X) : ALGORITHM),
+      (module LR1Pager.Make(Lr0)(X) : AUTOMATON),
       "pager"
   | ModeLALR ->
-      (module LALR.Make(Lr0) : ALGORITHM),
+      (module LALR.Make(Lr0) : AUTOMATON),
       "lalr"
   )
 
-module Algorithm =
-  (val algo : ALGORITHM)
+module A =
+  (val algo : AUTOMATON)
 
 let () =
   Error.logA 1 (fun f ->
@@ -66,7 +66,7 @@ let () =
 
 module Raw : (LR1_AUTOMATON with module Lr0 = Lr0) = struct
 
-  include Algorithm.Run()
+  include A
 
   type t = node
 

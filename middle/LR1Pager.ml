@@ -75,9 +75,6 @@ type lr0state =
 type lr1state =
   Lr0.ALR1.t
 
-module Run () = struct
-module Lr0 = Lr0
-
 (* -------------------------------------------------------------------------- *)
 
 (* Give an implicit definition of the graph that we wish to traverse. *)
@@ -402,7 +399,5 @@ let encode (i : node) : int = i
 let decode (i : int) : node = i
 
 (* -------------------------------------------------------------------------- *)
-
-end (* Run *)
 
 end (* Make *)
