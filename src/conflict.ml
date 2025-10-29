@@ -559,11 +559,11 @@ let () =
       (if TerminalSet.cardinal toks > 1 then "s" else "")
       (TerminalSet.print toks)
       (match Settings.construction_mode with
-      | Settings.ModeLALR ->
+      | `LALR ->
           "This may be an artificial conflict caused by your use of --lalr"
-      | Settings.ModeCanonical
-      | Settings.ModeInclusionOnly
-      | Settings.ModePager ->
+      | `Canonical
+      | `InclusionOnly
+      | `Pager ->
           "Please send your grammar to Menhir's developers"
       )
 

@@ -31,17 +31,16 @@ val mode: TokenType.mode
    definition of the type [token]. This corresponds to [--only-tokens]. *)
 val token_type_only: bool
 
-type construction_mode =
-  | ModeCanonical     (** --canonical: canonical Knuth LR(1) automaton *)
-  | ModeInclusionOnly (** --no-pager : states are merged when there is an inclusion
-                                      relationship, default reductions are used *)
-  | ModePager         (** normal mode: states are merged as per Pager's criterion,
-                                      default reductions are used *)
-  | ModeLALR          (** --lalr     : states are merged as in an LALR generator,
-                                      i.e. as soon as they have the same LR(0) core *)
-
 (** How to construct the automaton. *)
-val construction_mode: construction_mode
+val construction_mode: [
+  | `Canonical     (** --canonical: canonical Knuth LR(1) automaton *)
+  | `InclusionOnly (** --no-pager : states are merged when there is an inclusion
+                                      relationship, default reductions are used *)
+  | `Pager         (** normal mode: states are merged as per Pager's criterion,
+                                      default reductions are used *)
+  | `LALR          (** --lalr     : states are merged as in an LALR generator,
+                                      i.e. as soon as they have the same LR(0) core *)
+]
 
 (** Whether conflicts should be explained. *)
 val explain: bool

@@ -33,22 +33,21 @@ module type AUTOMATON =
   MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0
 
 let algo, mode =
-  Settings.(match construction_mode with
-  | ModeCanonical ->
+  match Settings.construction_mode with
+  | `Canonical ->
       (module LR1Canonical.Make(Lr0) : AUTOMATON),
       "canonical"
-  | ModeInclusionOnly ->
+  | `InclusionOnly ->
       let module X = struct let mode = `InclusionOnly end in
       (module LR1Pager.Make(Lr0)(X) : AUTOMATON),
       "no-pager"
-  | ModePager ->
+  | `Pager ->
       let module X = struct let mode = `Pager end in
       (module LR1Pager.Make(Lr0)(X) : AUTOMATON),
       "pager"
-  | ModeLALR ->
+  | `LALR ->
       (module LALR.Make(Lr0) : AUTOMATON),
       "lalr"
-  )
 
 module A =
   (val algo : AUTOMATON)

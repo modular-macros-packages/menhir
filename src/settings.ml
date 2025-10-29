@@ -55,19 +55,11 @@ let codeonly m =
 let version =
   ref false
 
-type construction_mode =
-  | ModeCanonical     (* --canonical: canonical Knuth LR(1) automaton *)
-  | ModeInclusionOnly (* --no-pager : states are merged when there is an inclusion
-                                      relationship *)
-  | ModePager         (* normal mode: states are merged as per Pager's criterion *)
-  | ModeLALR          (* --lalr     : states are merged as in an LALR generator,
-                                      i.e. as soon as they have the same LR(0) core *)
-
 (* Note that --canonical overrides --no-pager. If both are specified, the result
    is a canonical automaton. *)
 
 let construction_mode =
-  ref ModePager
+  ref `Pager
 
 let explain =
   ref false
@@ -378,7 +370,7 @@ let unsupported switch =
 let options = Arg.align [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
-  "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
+  "--canonical", Arg.Unit (fun () -> construction_mode := `Canonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
   "--code", Arg.Unit (set_backend `CodeBackend), " Use the code back-end (default)";
   unsupported "--code-ancient";
@@ -410,7 +402,7 @@ let options = Arg.align [
   "--interpret", Arg.Unit (fun () -> interpret := `Normal `DoNotShowCST), " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Unit (fun () -> interpret := `Normal `ShowCST), " Show a concrete syntax tree upon acceptance";
   "--interpret-error", Arg.Unit (fun () -> interpret := `Error), " Interpret an error sentence";
-  "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
+  "--lalr", Arg.Unit (fun () -> construction_mode := `LALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
@@ -420,7 +412,7 @@ let options = Arg.align [
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
   "--no-dollars", Arg.Unit (fun () -> dollars := `DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
-  "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
+  "--no-pager", Arg.Unit (fun () -> if !construction_mode = `Pager then construction_mode := `InclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
