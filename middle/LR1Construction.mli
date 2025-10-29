@@ -17,7 +17,7 @@ open MiddleAPI
 module Make (Lr0 : LR0)
 (X : sig
 
-  (**The parameter [mode] determines which construction method is used.
+  (**[construction_mode] determines which construction method is used.
      In short,
      - Knuth's canonical LR(1) construction performs no fusion.
        This is the minimal amount of fusion.
@@ -27,7 +27,7 @@ module Make (Lr0 : LR0)
        according to a variant of Pager's weak compatibility criterion.
      - In LALR mode, all states with the same LR(0) core must be fused.
        This is the maximal amount of fusion. *)
-  val mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
+  val construction_mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
 
 end) ()
 : LR1_AUTOMATON with module Lr0 = Lr0

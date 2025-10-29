@@ -8,8 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open MiddleAPI
-
 open Grammar
 
 (* -------------------------------------------------------------------------- *)
@@ -27,66 +25,30 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Select a construction algorithm based on the command-line settings. *)
-
-module type AUTOMATON =
-  MINIMAL_LR1_AUTOMATON with module Lr0 = Lr0
-
-let algo, mode =
-  match Settings.construction_mode with
-  | `Canonical ->
-      (module LR1Canonical.Make(Lr0) : AUTOMATON),
-      "canonical"
-  | `InclusionOnly ->
-      let module X = struct let mode = `InclusionOnly end in
-      (module LR1Pager.Make(Lr0)(X) : AUTOMATON),
-      "no-pager"
-  | `Pager ->
-      let module X = struct let mode = `Pager end in
-      (module LR1Pager.Make(Lr0)(X) : AUTOMATON),
-      "pager"
-  | `LALR ->
-      (module LALR.Make(Lr0) : AUTOMATON),
-      "lalr"
-
-module A =
-  (val algo : AUTOMATON)
-
-let () =
-  Error.logA 1 (fun f ->
-    Printf.fprintf f
-      "The construction mode is %s.\n"
-      mode
-  )
-
-(* -------------------------------------------------------------------------- *)
-
 (* Run the construction algorithm. *)
 
-module Raw : (LR1_AUTOMATON with module Lr0 = Lr0) = struct
-
-  include A
-
-  type t = node
-
-  (* Expose an ideal reduction table at each node. This table is obtained just
-     by inspection of the LR(1) state [state i]. It does not depend on the
-     construction method. *)
-
-  let reductions (i : node) : Reductions.t =
-    Lr0.ALR1.reductions (state i)
-
-  (* Allow default reductions everywhere. *)
-
-  let forbid_default_reduction (_i : node) : bool =
-    false
-
-end
+let print_mode mode =
+  match mode with
+  | `Canonical ->
+      "canonical"
+  | `InclusionOnly ->
+      "no-pager"
+  | `Pager ->
+      "pager"
+  | `LALR ->
+      "lalr"
 
 let () =
-  Error.logA 1 (fun f ->
-    Printf.fprintf f "Built an LR(1) automaton with %d states.\n" Raw.n
-  )
+  Error.logA 1 @@ fun f ->
+  Printf.fprintf f "The construction mode is %s.\n"
+    (print_mode Settings.construction_mode)
+
+module Raw =
+  LR1Construction.Make(Lr0)(Settings)()
+
+let () =
+  Error.logA 1 @@ fun f ->
+  Printf.fprintf f "Built an LR(1) automaton with %d states.\n" Raw.n
 
 (* -------------------------------------------------------------------------- *)
 
