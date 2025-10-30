@@ -33,6 +33,11 @@ let with_file filename creation action =
   try_finally action @@ fun () ->
   Sys.remove filename
 
+let write filename action =
+  let out = open_out filename in
+  action out;
+  close_out out
+
 (* [exhaust channel] reads all of the data that is available on [channel].
    It does not assume that the length of the data is known ahead of time.
    It does not close the channel. *)

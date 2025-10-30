@@ -20,6 +20,11 @@ val moving_away: string -> (unit -> 'a) -> 'a
    is removed in the end. *)
 val with_file: string -> (unit -> unit) -> (unit -> 'a) -> 'a
 
+(**[write filename action] opens the file [filename] for writing, runs
+   [action] (which can write to the file via the channel that it receives
+   as an argument), and closes the file. *)
+val write: string -> (out_channel -> unit) -> unit
+
 (**[invoke command] invokes an external command (which expects no input).
    If the command succeeds, its output is returned. Otherwise, [None] is
    returned. *)
