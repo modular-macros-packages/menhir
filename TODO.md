@@ -292,6 +292,13 @@
 
 ## Code Cleanup
 
+* `ConflictExplanation` must probably be applied to the LR(1) automaton after
+  silent conflict resolution and before severe conflict resolutions, so the
+  severe conflicts are still there to be seen (and the transitions removed by
+  silent conflict reduction cannot be used to explain a conflict). *)
+
+* Re-implement `lr1` entirely in terms of the new modules.
+
 * Clean up the new signature `LR1`.
 
 * `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
