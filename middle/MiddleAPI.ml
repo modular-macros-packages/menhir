@@ -618,16 +618,30 @@ module Reductions : sig
   (**[flip] transforms a reverse reduction table into a reduction table. *)
   val flip: reverse -> t
 
-  (**[has_reduce_reduce_conflict reductions] determines whether the reduction
-     table [reductions] has a reduce/reduce conflict, that is, whether there
-     exists a terminal symbol [t] for which several reductions are
-     permitted. *)
+  (**[has_shift_reduce_conflict transitions reductions] determines whether
+     a state has a shift/reduce conflict, that is, whether there exists a
+     terminal symbol [t] for which a transition exists and a reduction is
+     permitted. We assume that the state's transitions are described by
+     the table [transitions] and that its reductions are described by the
+     reduction table [reductions]. *)
+  val has_shift_reduce_conflict: _ SymbolMap.t -> t -> bool
+
+  (**[has_reduce_reduce_conflict reductions] determines whether a state has a
+     reduce/reduce conflict, that is, whether there exists a terminal symbol
+     [t] for which several reductions are permitted. We assume that the
+     state's reductions are described by the reduction table [reductions]. *)
   val has_reduce_reduce_conflict: t -> bool
+
+  (**[has_conflict transitions reductions] determines whether a state has a
+     shift/reduce or reduce/reduce conflict. We assume that the state's
+     transitions are described by the table [transitions] and that its
+     reductions are described by the reduction table [reductions]. *)
+  val has_conflict: _ SymbolMap.t -> t -> bool
 
   (**[has_eos_conflict transitions reductions] tells whether a state has an
      end-of-stream conflict, that is, a reduction action on [#] and at least
-     one other (shift or reduce) action. We assume that the state's shift and
-     goto transitions are described by the table [transitions] and that its
+     one other (shift or reduce) action. We assume that the state's
+     transitions are described by the table [transitions] and that its
      reductions are described by the reduction table [reductions]. *)
   val has_eos_conflict: _ SymbolMap.t -> t -> bool
 
@@ -972,6 +986,10 @@ module CLR1 : sig
   (**[reductions s] computes a reverse reduction table for the state [s].
      The state [s] must be closed. *)
   val reductions: t -> Reductions.t
+
+  (**[has_conflict s] determines whether the state [s] has a shift/reduce or
+     reduce/reduce conflict. The state [s] must be closed. *)
+  val has_conflict: t -> bool
 
   (**[print leading s] is a string representation of the LR(1) state [s].
      The string [leading] is inserted at the beginning of every line. *)

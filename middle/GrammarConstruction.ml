@@ -835,10 +835,22 @@ module Reductions = struct
   let flip (reductions : reverse) : t =
     ProductionMap.fold add_reductions reductions TerminalMap.empty
 
+  let has_shift_reduce_conflict transitions reductions =
+    let disjoint =
+      TerminalSet.disjoint
+        (SymbolMap.terminals transitions)
+        (TerminalMap.domain reductions)
+    in
+    not disjoint
+
   let has_reduce_reduce_conflict reductions =
     reductions |> TerminalMap.exists @@ fun _t prods ->
     match prods with
     | [] | [_] -> false | _ :: _ :: _ -> true
+
+  let has_conflict transitions reductions =
+    has_shift_reduce_conflict transitions reductions ||
+    has_reduce_reduce_conflict reductions
 
   let has_eos_conflict transitions reductions =
     match TerminalMap.find_and_remove Terminal.sharp reductions with

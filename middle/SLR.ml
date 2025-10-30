@@ -19,7 +19,7 @@ open Lr0.G
 let tell_me_everything =
   false
 
-(* [make_slr_state] turns an LR(0) state into an SLR(1) state. *)
+(* [make_slr_state] turns an LR(0) state into a closed SLR(1) state. *)
 
 let make_slr_state (s : Lr0.node) : Lr0.CLR1.t =
 
@@ -57,21 +57,11 @@ let make_slr_state (s : Lr0.node) : Lr0.CLR1.t =
     Item.Map.add item follow_nt accu
   ) s Item.Map.empty
 
-(* [conflicted] checks whether a closed LR(1) state has a conflict. *)
-
-let conflicted (s : Lr0.CLR1.t) : bool =
-  let reductions = Lr0.CLR1.reductions s
-  and transitions = SymbolMap.terminals (Lr0.CLR1.transitions s) in
-  (* Check for shift/reduce conflicts. *)
-  not (TerminalSet.disjoint transitions (TerminalMap.domain reductions)) ||
-  (* Check for reduce/reduce conflicts. *)
-  Reductions.has_reduce_reduce_conflict reductions
-
 let count_violations () : int =
   let count = ref 0 in
   for s = 0 to Lr0.n - 1 do
     let s = make_slr_state s in
-    if conflicted s then
+    if Lr0.CLR1.has_conflict s then
       let () = incr count in
       if tell_me_everything then
         Printf.fprintf

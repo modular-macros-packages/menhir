@@ -471,8 +471,11 @@ module CLR1 = struct
   let reverse_reductions =
     AbstractState.reverse_reductions
 
-  let reductions state =
-    Reductions.flip (reverse_reductions state)
+  let reductions s =
+    Reductions.flip (reverse_reductions s)
+
+  let has_conflict s =
+    Reductions.has_conflict (transitions s) (reductions s)
 
   let print leading (state : t) =
     MString.with_buffer 1024 @@ fun buffer ->
