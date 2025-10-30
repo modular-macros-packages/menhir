@@ -41,6 +41,8 @@ include A
 open Lr0.G
 open E
 
+include Fix.Numbering.Operations(A)
+
 (* -------------------------------------------------------------------------- *)
 
 (* In the following, we perform a depth-first traversal of the automaton [A].
@@ -53,10 +55,6 @@ open E
 
 (* We do not re-number nodes so as to exclude unreachable nodes. This can be
    done in a separate pass. *)
-
-let init (f : node -> 'a) : 'a array =
-  Array.init A.n @@ fun i ->
-  f (A.decode i)
 
 (* -------------------------------------------------------------------------- *)
 

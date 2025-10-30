@@ -23,10 +23,7 @@ include A
 open Lr0.G
 open E
 
-(* -------------------------------------------------------------------------- *)
-
-let iter yield =
-  for i = 0 to A.n - 1 do yield (A.decode i) done
+include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
 

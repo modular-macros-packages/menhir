@@ -32,14 +32,7 @@ include A
 open Lr0.G
 open E
 
-(* -------------------------------------------------------------------------- *)
-
-let init (f : node -> 'a) : 'a array =
-  Array.init A.n @@ fun i ->
-  f (A.decode i)
-
-let iter yield =
-  for i = 0 to A.n - 1 do yield (A.decode i) done
+include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
 
