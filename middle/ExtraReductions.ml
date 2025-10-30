@@ -50,7 +50,7 @@ open E
 
 (* -------------------------------------------------------------------------- *)
 
-let tabulate (f : node -> 'a) : 'a array =
+let init (f : node -> 'a) : 'a array =
   Array.init A.n @@ fun i ->
   f (A.decode i)
 
@@ -67,7 +67,7 @@ let iter yield =
    function [A.reductions]. Later on, some reductions are added. *)
 
 let _reductions : Reductions.t array =
-  tabulate A.reductions
+  init A.reductions
 
 (* A count of the states that receive extra reductions. *)
 

@@ -34,7 +34,7 @@ open E
 
 (* -------------------------------------------------------------------------- *)
 
-let tabulate (f : node -> 'a) : 'a array =
+let init (f : node -> 'a) : 'a array =
   Array.init A.n @@ fun i ->
   f (A.decode i)
 
@@ -52,7 +52,7 @@ let iter yield =
    are removed, because of conflict resolution. *)
 
 let _reductions : Reductions.t array =
-  tabulate A.reductions
+  init A.reductions
 
 (* -------------------------------------------------------------------------- *)
 

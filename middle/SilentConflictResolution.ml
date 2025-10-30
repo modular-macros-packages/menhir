@@ -54,7 +54,7 @@ open E
 (* We do not re-number nodes so as to exclude unreachable nodes. This can be
    done in a separate pass. *)
 
-let tabulate (f : node -> 'a) : 'a array =
+let init (f : node -> 'a) : 'a array =
   Array.init A.n @@ fun i ->
   f (A.decode i)
 
@@ -69,14 +69,14 @@ let tabulate (f : node -> 'a) : 'a array =
    are removed, because of conflict resolution. *)
 
 let _transitions : A.node SymbolMap.t array =
-  tabulate A.transitions
+  init A.transitions
 
 (* The array [_reductions] is initialized here with the data supplied by
    the function [A.reductions]. During the traversal, some reductions
    are removed, because of conflict resolution. *)
 
 let _reductions : Reductions.t array =
-  tabulate A.reductions
+  init A.reductions
 
 (* (New as of 2012/01/23.) The array [forbid_default_reduction] records
    whether a shift/reduce conflict was solved in favor of neither action
@@ -87,7 +87,7 @@ let _reductions : Reductions.t array =
    can become forbidden. *)
 
 let _forbid_default_reduction : bool array =
-  tabulate A.forbid_default_reduction
+  init A.forbid_default_reduction
 
 (* [severe_shift_reduce] and [severe_reduce_reduce] count the nodes that have
    severe shift/reduce and severe reduce/reduce conflicts. *)
