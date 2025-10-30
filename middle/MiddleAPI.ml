@@ -1299,3 +1299,51 @@ module type LR1 = sig
   val find_unacceptable: node -> TerminalSet.t -> Terminal.t option
 
 end (* LR1 *)
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+(**[STACK_SYMBOLS] is the result of an analysis of the shape of the stack
+   in an LR(1) automaton. *)
+module type STACK_SYMBOLS = sig
+
+  module Lr1 : LR1_AUTOMATON
+  open Lr1.Lr0.G
+
+  (**A property is a description of the known suffix of the stack at state
+     [s]. It is represented as an array of symbols. By convention, the top
+     of the stack is the end of the array. *)
+  type property =
+    Symbol.t array
+
+  (**[stack_symbols s] is the known suffix of the stack at state [s]. It
+     is represented as an array of symbols. By convention, the top of
+     the stack is the end of the array. *)
+  val stack_symbols: Lr1.node -> property
+
+  (**[stack_height s] is [Array.length (stack_symbols s)]. *)
+  val stack_height: Lr1.node -> int
+
+  (**[production_symbols prod] is the known suffix of the stack at a state
+     where production [prod] can be reduced. In the short invariant, the
+     length of this suffix is [Production.length prod]. In the long
+     invariant, its length can be greater. *)
+  val production_symbols: Production.t -> property
+
+  (**[production_height prod] is [Array.length (production_symbols prod)]. *)
+  val production_height: Production.t -> int
+
+  (**[goto_symbols nt] is the known suffix of the stack at a state where an
+     edge labeled [nt] has just been followed. In the short invariant, the
+     length of this suffix is [1]. In the long invariant, its length can be
+     greater. *)
+  val goto_symbols: Nonterminal.t -> property
+
+  (**[goto_height nt] is [Array.length (goto_symbols nt)]. *)
+  val goto_height: Nonterminal.t -> int
+
+  (**The string [variant] is "short" or "long" and is printed when
+     --timings is enabled. *)
+  val variant: string
+
+end
