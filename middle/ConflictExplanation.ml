@@ -8,11 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* TODO this algorithm must probably be applied to the LR(1) automaton after
-   silent conflict resolution and before severe conflict resolutions, so the
-   severe conflicts are still there to be seen (and the transitions removed
-   by silent conflict reduction cannot be used to explain a conflict). *)
-
 open Printf
 open MiddleAPI
 
@@ -456,31 +451,30 @@ let count z (state : Lr0.CLR1.t) : int * int =
         shift, reduce
   ) state (0, 0)
 
+(* [derivations z start input state] builds a map of items to derivations.
+   [z] is the terminal symbol of interest. [start], [input], and [state] are
+   the start item, sequence of input symbols, and closed goal state. *)
+
+(* We build a map that contains at most one shift item and as many reduce
+   items as possible. Including multiple shift items would not help produce
+   a better explanation. *)
+
 let derivations z start input (state : Lr0.CLR1.t) : Derivation.t Item.Map.t =
-  Item.Map.fold (fun item ts (still_looking_for_shift_item, derivations) ->
+  let still_looking_for_shift_item = ref true in
+  Item.Map.fold (fun item ts derivations ->
     match Item.classify item with
-
     | Item.Shift (Symbol.T t, _)
-      when still_looking_for_shift_item && Terminal.equal t z ->
-
-        false,
+      when !still_looking_for_shift_item && Terminal.equal t z ->
+        still_looking_for_shift_item := false;
         let derivation = explain_shift_item start input item in
         Item.Map.add item derivation derivations
-
     | Item.Reduce _
       when TerminalSet.mem z ts ->
-
-        still_looking_for_shift_item,
         let derivation = explain_reduce_item z start input item in
         Item.Map.add item derivation derivations
-
     | _ ->
-
-        still_looking_for_shift_item,
         derivations
-
-  ) state (true, Item.Map.empty)
-  |> snd
+  ) state Item.Map.empty
 
 (* -------------------------------------------------------------------------- *)
 
@@ -551,33 +545,27 @@ let try_explain out node ts =
     (Symbol.print_array false P.path)
   ;
 
-  (* Examine the items in that state, focusing on one particular
-     symbol. Out of the shift items, we explain just one -- this
-     seems enough. We explain each of the reduce items. *)
+  (* Examine the items in that state, focusing on one particular symbol.
+     Out of the shift items, we explain just one -- this seems enough.
+     We explain each of the reduce items. *)
 
-  (* First, build a mapping of items to derivations. *)
-
+  (* Build a mapping of items to derivations. *)
   let derivations = derivations P.t P.source P.path closure in
 
   (* Factor out the common context among all derivations, so as to avoid
      repeating it. This helps prevent derivation trees from drifting too
      far away towards the right. It also helps produce sub-derivations
      that are quite compact. *)
-
-  let context, derivations =
-    Derivation.factor derivations
-  in
+  let context, derivations = Derivation.factor derivations in
 
   (* Display the common context. *)
-
   fprintf out
     "\n** The derivations that appear below have the following common factor:\
      \n** (The question mark symbol (?) represents the spot where the derivations begin to differ.)\n\n";
   Derivation.printc out context;
 
   (* Then, display the sub-derivations. *)
-
-  Item.Map.iter (fun item derivation ->
+  derivations |> Item.Map.iter @@ fun item derivation ->
 
     fprintf out
       "\n** In state %d, looking ahead at %s, "
@@ -586,7 +574,8 @@ let try_explain out node ts =
 
     begin match Item.classify item with
     | Item.Shift _ ->
-        fprintf out "shifting is permitted\n** because of the following sub-derivation:\n\n"
+        fprintf out
+          "shifting is permitted\n** because of the following sub-derivation:\n\n"
     | Item.Reduce prod ->
         fprintf out
           "reducing production\n** %s\n** is permitted because of the following sub-derivation:\n\n"
@@ -595,14 +584,7 @@ let try_explain out node ts =
 
     Derivation.print out derivation
 
-  ) derivations
-
-(* [cannot_explain out node ts] is invoked when we are unable to explain a
-   conflict at [node] on the symbols [ts]. This can happen either because the
-   automaton has been butchered by conflict resolution directives or because
-   [--lalr] is enabled, giving rise to so-called mysterious (unexplainable)
-   LALR conflicts. We write an error message to the .conflicts file and
-   continue. *)
+(* This comment is emitted when we are unable to explain a conflict. *)
 
 let construction_mode_comment () =
   match X.construction_mode with
@@ -612,6 +594,13 @@ let construction_mode_comment () =
   | `InclusionOnly
   | `Pager ->
       "Please send your grammar to Menhir's developers"
+
+(* [cannot_explain out node ts] is invoked when we are unable to explain a
+   conflict at [node] on the symbols [ts]. This can happen either because the
+   automaton has been butchered by conflict resolution directives or because
+   [--lalr] is enabled, giving rise to so-called mysterious (unexplainable)
+   LALR conflicts. We write an error message to the .conflicts file and
+   continue. *)
 
 let cannot_explain out node ts =
   incr unexplainable;
