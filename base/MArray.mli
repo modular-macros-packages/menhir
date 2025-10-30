@@ -40,6 +40,13 @@ val is_suffix : ('a -> 'a -> bool) -> 'a array -> 'a array -> bool
    whose elements satisfy the predicate [p]. *)
 val greatest_suffix_forall : ('a -> bool) -> 'a array -> 'a array
 
+(**[leq_join_lcs] is a [leq_join] function on arrays, whose result is
+   the largest common suffix of the two arrays. The elements of the
+   two arrays are compared using OCaml's polymorphic equality. The
+   specification of a [leq_join] function is given in the signature
+   [Fix.MINIMAL_SEMI_LATTICE]. *)
+val leq_join_lcs : 'a array -> 'a array -> 'a array
+
 (**[rev a] is a new array whose elements are the elements of the array [a],
    in reverse order.
    [rev [|1; 2; 3; 4|] = [|4; 3; 2; 1|]]*)
@@ -91,9 +98,9 @@ val for_all2 : ('a -> 'b -> bool) -> 'a array -> 'b array -> bool
    must have the same length, while carrying an accumulator. *)
 val fold_left2 : ('a -> 'b1 -> 'b2 -> 'a) -> 'a -> 'b1 array -> 'b2 array -> 'a
 
-(**Given a [leq_join] function on elements, [leq_join] constructs a [leq_join]
-   function on arrays. The two arrays must have the same length. The
-   specification of a [leq_join] is defined by the signature
+(**Given a [leq_join] function on elements, [leq_join] constructs a
+   [leq_join] function on arrays. The two arrays must have the same
+   length. The specification of a [leq_join] function is given in
    [Fix.MINIMAL_SEMI_LATTICE]. *)
 val leq_join : ('a -> 'b -> 'b) -> 'a array -> 'b array -> 'b array
 

@@ -50,6 +50,20 @@ let greatest_suffix_forall p a =
   let k = greatest_suffix_forall p a (length a) 0 in
   suffix a k
 
+let rec lcs v1 v2 n1 n2 n k =
+  assert (n = min n1 n2);
+  if k = n || v1.(n1 - 1 - k) <> v2.(n2 - 1 - k) then k
+  else lcs v1 v2 n1 n2 n (k + 1)
+
+let leq_join_lcs v1 v2 =
+  let n1 = Array.length v1
+  and n2 = Array.length v2 in
+  let n = min n1 n2 in
+  let k = lcs v1 v2 n1 n2 n 0 in
+  if k = n2 then v2
+  else if k = n1 then v1
+  else suffix v1 k
+
 let rev a =
   let n = length a in
   if n = 0 then
