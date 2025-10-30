@@ -458,6 +458,11 @@ module Symbol = struct
     | N _ ->
         true
 
+  let print_array' normalize symbols =
+    MString.with_buffer 64 @@ fun b ->
+    symbols |> Array.iter @@ fun symbol ->
+    Printf.bprintf b " %s" (print normalize symbol)
+
   let print_array_bullet normalize dot symbols =
     MString.subarray_bullet (print normalize) " " 0 dot "." symbols
 

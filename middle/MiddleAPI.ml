@@ -373,6 +373,10 @@ module Symbol : sig
      [Terminal.print]. *)
   val print: bool -> t -> string
 
+  (**[print_array' normalize syms] prints the symbols in the array [syms].
+     Every symbol is preceded with a space. *)
+  val print_array': bool -> t array -> string
+
   (**[print_array normalize syms] prints the symbols in the array [syms].
      The symbols are separated with spaces. *)
   val print_array: bool -> t array -> string
