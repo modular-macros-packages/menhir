@@ -849,7 +849,7 @@ module Reductions = struct
         (* There is at least one reduction action on [#]. *)
         (* If there are two reduction actions on [#], then we have a conflict. *)
         List.length prods > 1 ||
-        (* If there only one reduction on [#], then we have a conflict if and
+        (* If there is only one reduction on [#], then we have a conflict if and
            only if either there exists another shift or reduce action. *)
         not (TerminalMap.is_empty reductions) ||
         SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol) transitions
