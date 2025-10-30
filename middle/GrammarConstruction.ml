@@ -271,6 +271,9 @@ module Terminal = struct
   let init f =
     Array.init n f
 
+  let tabulate f =
+    Array.get (init f)
+
   let[@inline] iter f =
     MInt.iteri n f
 
@@ -736,6 +739,9 @@ module Production = struct
   let init f =
     Array.init n f
 
+  let tabulate f =
+    Array.get (init f)
+
   let[@inline] iter f =
     MInt.iteri n f
 
@@ -769,9 +775,6 @@ module Production = struct
   let foldnt_lazy nt f accu =
     let k, k' = ntprods.(nt) in
     MInt.foldij_lazy k k' f accu
-
-  let[@inline] tabulate f =
-    MArray.tabulate n f
 
 end
 

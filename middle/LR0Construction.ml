@@ -412,6 +412,12 @@ let n =
 
 (* Accessors. *)
 
+let init f =
+  Array.init n f
+
+let tabulate f =
+  Array.get (init f)
+
 let items node =
   InfiniteArray.get states node
 

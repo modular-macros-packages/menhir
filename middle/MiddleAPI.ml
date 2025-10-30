@@ -117,9 +117,8 @@ module Nonterminal : sig
      symbol [nt]. *)
   val attributes: t -> attributes
 
-  (**[init f] initializes a fresh array, which is indexed by the nonterminal
-     symbols. In other words, [init] tabulates a function [f] whose domain
-     is the nonterminal symbols, producing a table. *)
+  (**[init f] initializes a fresh array, indexed by the nonterminal
+     symbols. *)
   val init: (t -> 'a) -> 'a array
 
   (**[tabulate] tabulates a function [f] whose domain is the nonterminal
@@ -256,10 +255,12 @@ module Terminal : sig
      by the user for every (real) token. *)
   val every_token_has_an_alias: bool
 
-  (**[init f] initializes a fresh array, which is indexed by the terminal
-     symbols. In other words, [init] tabulates a function [f] whose domain
-     is the terminal symbols, producing a table. *)
+  (**[init f] initializes a fresh array, by the terminal symbols. *)
   val init: (t -> 'a) -> 'a array
+
+  (**[tabulate] tabulates a function [f] whose domain is the terminal
+     symbols, producing a new function whose time complexity is O(1). *)
+  val tabulate: (t -> 'a) -> (t -> 'a)
 
   (**In every iteration function, the order in which elements are yielded
      corresponds to the integer indices produced by {!t2i}. *)
@@ -544,10 +545,12 @@ module Production : sig
   (**In every iteration function, the order in which elements are yielded
      corresponds to the integer indices produced by {!p2i}. *)
 
-  (**[init f] initializes a fresh array, which is indexed by the productions.
-     In other words, [init] tabulates a function [f] whose domain is the
-     productions, producing a table. *)
+  (**[init f] initializes a fresh array, indexed by the productions. *)
   val init: (t -> 'a) -> 'a array
+
+  (**[tabulate] tabulates a function [f] whose domain is the productions,
+     producing a new function whose time complexity is O(1). *)
+  val tabulate: (t -> 'a) -> (t -> 'a)
 
   (**[iter] enumerates the productions. *)
   val iter: (t -> unit) -> unit
@@ -575,10 +578,6 @@ module Production : sig
 
   (**[mapnt] enumerates the productions of the nonterminal symbol [nt]. *)
   val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
-
-  (**[tabulate] tabulates a function [f] whose domain is the productions,
-     producing a new function whose time complexity is O(1). *)
-  val tabulate: (t -> 'a) -> (t -> 'a)
 
 end
 
@@ -911,6 +910,13 @@ type node =
 
 (**[n] is the number of nodes in the LR(0) automaton. *)
 val n: int
+
+(**[init f] initializes a fresh array, indexed by the nodes. *)
+val init: (node -> 'a) -> 'a array
+
+(**[tabulate] tabulates a function [f] whose domain is the nodes,
+  producing a new function whose time complexity is O(1). *)
+val tabulate: (node -> 'a) -> (node -> 'a)
 
 (**[entry] is a map of each start production to the corresponding start node
    in the LR(0) automaton. *)
