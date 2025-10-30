@@ -42,3 +42,12 @@ module ForHashedType
 module ForType
   (T : TYPE)
      : TWO_PHASE_NUMBERING with type t = T.t
+
+module type OPERATIONS =
+  NUMBERING_OPERATIONS
+
+(**{!Operations} extends a numbered type
+   with a number of common operations,
+   including [tabulate], [iter], [fold], [map]. *)
+module Operations (T : NUMBERING)
+     : OPERATIONS with type t := T.t

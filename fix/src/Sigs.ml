@@ -419,6 +419,33 @@ module type NUMBERING = sig
 
 end
 
+(**A number of operations that are easily supported by numbered types. *)
+module type NUMBERING_OPERATIONS = sig
+
+  (**A (numbered) type of elements. *)
+  type t
+
+  (**[init f] initializes a fresh array, indexed by elements. *)
+  val init: (t -> 'a) -> 'a array
+
+  (**[tabulate] tabulates a function [f] on elements,
+     producing a new function whose time complexity is O(1). *)
+  val tabulate: (t -> 'a) -> (t -> 'a)
+
+  (**In every iteration function, the order in which elements are yielded
+     corresponds to the integer indices produced by [encode]. *)
+
+  (**[iter] enumerates all elements. *)
+  val iter: (t -> unit) -> unit
+
+  (**[fold] enumerates all elements. *)
+  val fold: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map] enumerates all elements. *)
+  val map: (t -> 'a) -> 'a list
+
+end
+
 (**The signature {!TWO_PHASE_NUMBERING} combines the signatures
    {!ONGOING_NUMBERING} and {!NUMBERING}. It describes a numbering process
    that is organized in two phases. During the first phase, the numbering is

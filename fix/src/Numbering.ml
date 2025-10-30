@@ -101,3 +101,29 @@ module ForHashedType (T : HashedType) =
 
 module ForType (T : TYPE) =
   ForHashedType(Glue.TrivialHashedType(T))
+
+module type OPERATIONS =
+  NUMBERING_OPERATIONS
+
+module Operations (T : NUMBERING) = struct
+
+  let init (f : T.t -> 'a) : 'a array =
+    Array.init T.n @@ fun i ->
+    f (T.decode i)
+
+  let tabulate (f : T.t -> 'a) : T.t -> 'a =
+    let table = init f in
+    fun x -> table.(T.encode x)
+
+  let iter yield =
+    for i = 0 to T.n - 1 do yield (T.decode i) done
+
+  let fold yield accu =
+    let accu = ref accu in
+    for i = 0 to T.n - 1 do accu := yield (T.decode i) !accu done;
+    !accu
+
+  let map f =
+    List.rev (fold (fun x accu -> f x :: accu) [])
+
+end

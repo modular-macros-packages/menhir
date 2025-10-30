@@ -8,6 +8,8 @@
 
 * New functor `Fix.DataFlow.ForNumberedType`.
 
+* New functor `Fix.Numbering.Operations`.
+
 ## 2025/09/19
 
 * The new submodule `Fix.SCC` provides an implementation of Tarjan's
