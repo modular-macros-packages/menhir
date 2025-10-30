@@ -119,9 +119,6 @@ module Short () = struct
   let variant =
     "short"
 
-  let () =
-    Time.tick "Computing stack symbols (short)"
-
 end
 
 (* ------------------------------------------------------------------------ *)
@@ -280,9 +277,6 @@ module Long () = struct
 
   let variant =
     "long"
-
-  let () =
-    Time.tick "Computing stack symbols (long)"
 
 end
 
