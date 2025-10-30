@@ -1164,12 +1164,11 @@ module type LR1_AUTOMATON = sig
      inspecting the next input symbol and sometimes even without requesting
      the next input symbol.
 
-     If end-of-stream conflicts have been resolved then the set [ts] is either
-     a singleton set containing just the terminal symbol [#] or a set of
-     non-[#] terminal symbols. In the former case, reduction is performed
-     without even requesting the next input token. In the latter case, first
-     the next input token is requested, then reduction is performed, without
-     inspecting this input token.
+     The set [ts] should be either a singleton set containing just the
+     terminal symbol [#] or a set of non-[#] terminal symbols. In the former
+     case, reduction is performed without even requesting the next input
+     token. In the latter case, first the next input token is requested, then
+     reduction is performed, without inspecting this input token.
 
      If [node] has a default reduction then [forbid_default_reduction node]
      must be false. It is up to the automaton construction procedure to
