@@ -13,7 +13,7 @@ open Grammar
 
 module Make (Default : sig
 
-  val has_default_reduction:
+  val test_default_reduction:
     Lr1.node -> (Production.t * TerminalSet.t) option
 
 end) = struct
@@ -47,7 +47,7 @@ let dump_node out stack_symbols node =
 
   (* Print the reductions. *)
 
-  begin match Default.has_default_reduction node with
+  begin match Default.test_default_reduction node with
   | Some (prod, toks) ->
       (* There is a default reduction. *)
       (* Because end-of-stream conflicts have been resolved, either [toks]

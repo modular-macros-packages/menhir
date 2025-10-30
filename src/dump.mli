@@ -18,7 +18,7 @@ open Grammar
 
 module Make (Default : sig
 
-  val has_default_reduction:
+  val test_default_reduction:
     Lr1.node -> (Production.t * TerminalSet.t) option
 
 end) : sig

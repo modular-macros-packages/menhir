@@ -24,7 +24,7 @@ let is_unit prod =
   Production.length prod = 1
 
 let _may_perform_unit_reduction s =
-  match Default.has_default_reduction s with
+  match Default.test_default_reduction s with
   | Some (prod, _) ->
       is_unit prod
   | None ->
@@ -33,7 +33,7 @@ let _may_perform_unit_reduction s =
       ) (Lr1.reductions s) false
 
 let has_default_unit_reduction s =
-  match Default.has_default_reduction s with
+  match Default.test_default_reduction s with
   | Some (prod, _) ->
       is_unit prod
   | None ->
@@ -163,7 +163,7 @@ let must_query_lexer_upon_entering mode s =
   | Some (Symbol.T _) ->
       (* The state [s] either is an initial state or is entered via a shift
          transition. *)
-      match Default.has_default_reduction s with
+      match Default.test_default_reduction s with
       | Some (_, toks)
         when TerminalSet.mem Terminal.sharp toks ->
           assert (TerminalSet.cardinal toks = 1);
@@ -446,7 +446,7 @@ let rec run mode s =
      perform a similar case analysis, while pretending that the current token
      is the [error] token. *)
 
-  match Default.has_default_reduction s, mode with
+  match Default.test_default_reduction s, mode with
   | Some (prod, _), _ ->
       jump (Reduce (mode, prod))
   | None, NormalMode ->

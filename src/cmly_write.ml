@@ -145,7 +145,7 @@ let lr1_state (node : Lr1.node) : C.lr1_state_def =
       TerminalMap.fold_rev add (Lr1.reductions node) []
     );
     C.lr1_default_reduction =
-      Option.map (fun (p, _ts) -> p2i p) (Default.has_default_reduction node);
+      Option.map (fun (p, _ts) -> p2i p) (Default.test_default_reduction node);
   }
 
 let entry_point prod node nt _typ accu : (C.nonterminal * C.production * C.lr1) list =

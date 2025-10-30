@@ -59,7 +59,7 @@ module T = struct
   let find_production  = Production.i2p
 
   let default_reduction (s : state) defred nodefred env =
-    match Default.has_default_reduction s with
+    match Default.test_default_reduction s with
     | Some (prod, _) ->
         defred env prod
     | None ->
@@ -77,7 +77,7 @@ module T = struct
          [ShiftNoDiscard], depending on the existence of a default
          reduction on [#] at [s']. *)
 
-      match Default.has_default_reduction s' with
+      match Default.test_default_reduction s' with
       | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
           shift env false tok value s'
       | _ ->
@@ -104,7 +104,7 @@ module T = struct
       None
 
   let may_reduce_prod (s : state) (tok : terminal) (prod : production) =
-    match Default.has_default_reduction s with
+    match Default.test_default_reduction s with
     | Some (prod', _) ->
         prod = prod'
     | None ->

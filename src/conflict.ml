@@ -24,7 +24,7 @@ let () =
   if Settings.dump then
     (* The default reductions have not been decided yet at this point. *)
     let module Default = struct
-      let has_default_reduction _node = None
+      let test_default_reduction _node = None
     end in
     let module D = Dump.Make(Default) in
     D.dump (Settings.base ^ ".automaton")

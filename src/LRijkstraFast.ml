@@ -312,7 +312,7 @@ module Run () = struct
        sets that allow reducing them from state [lr1] *)
     let get_reductions lr1 =
       let lr1 = Lr1C.to_g lr1 in
-      match Default.has_default_reduction lr1 with
+      match Default.test_default_reduction lr1 with
       | Some (prod, _) ->
         (* State has a default reduction, the lookahead can be any terminal *)
         [prod, all_terminals]

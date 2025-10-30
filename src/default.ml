@@ -60,7 +60,7 @@ let is_purely_nonterminal transitions =
 let count =
   ref 0
 
-let has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option =
+let test_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option =
   Lr1.tabulate @@ fun s ->
     if Lr1.forbid_default_reduction s then
       None
@@ -90,7 +90,7 @@ let () =
    All terminals in [zs] must be real. *)
 
 let find_erroneous s zs : Terminal.t option =
-  match has_default_reduction s with
+  match test_default_reduction s with
   | Some _ ->
       None
   | None ->
