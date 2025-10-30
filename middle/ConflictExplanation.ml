@@ -622,23 +622,14 @@ let explain out node ts =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Writing a fresh file. *)
+(* The main loop. *)
 
 (* 2018/09/05: when [--explain] is enabled, always create a fresh .conflicts
    file (wiping out any pre-existing file), even if there are in fact no
    conflicts. This should avoid confusion with outdated .conflicts files. *)
 
-let write filename action =
-  let out = open_out filename in
-  action out;
-  close_out out
-
-(* -------------------------------------------------------------------------- *)
-
-(* The main loop. *)
-
 let () =
-  write (X.base ^ ".conflicts") @@ fun out ->
+  IO.write (X.base ^ ".conflicts") @@ fun out ->
   foreach_conflict_node @@ fun node ts ->
   explain out node ts
 
