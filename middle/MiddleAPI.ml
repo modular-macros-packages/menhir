@@ -1128,6 +1128,30 @@ module type LR1_AUTOMATON = sig
      set it to [true]. *)
   val forbid_default_reduction: node -> bool
 
+  (**[test_default_reduction node] returns [Some (prod, ts)] if the node
+     [node] has a default reduction of the production [prod] on the set set of
+     terminal symbols [ts]. It returns [None] if this node has no default
+     reduction.
+
+     When the result is [Some (prod, ts)], this implies that the node [node]
+     has a reduction of [prod] on every symbol in the set [ts], and does not
+     have any other shift or reduce actions. The reduction of [prod] is then
+     considered a default reduction: this reduction is performed without
+     inspecting the next input symbol and sometimes even without requesting
+     the next input symbol.
+
+     If end-of-stream conflicts have been resolved then the set [ts] is either
+     a singleton set containing just the terminal symbol [#] or a set of
+     non-[#] terminal symbols. In the former case, reduction is performed
+     without even requesting the next input token. In the latter case, first
+     the next input token is requested, then reduction is performed, without
+     inspecting this input token.
+
+     If [node] has a default reduction then [forbid_default_reduction node]
+     must be false. It is up to the automaton construction procedure to
+     respect this rule. *)
+  val test_default_reduction : node -> (Production.t * TerminalSet.t) option
+
 end (* LR1_AUTOMATON *)
 
 (**Compared with [LR1_AUTOMATON], [LR1] is a more convenient description of
@@ -1245,10 +1269,6 @@ module type LR1 = sig
 
   (**[foldx] enumerates the nodes except the start nodes. *)
   val foldx: (t -> 'a -> 'a) -> 'a -> 'a
-
-  (**[has_default_reduction node] tells whether the node [node] has a default
-     reduction, and, if so, upon which set of terminal symbols. *)
-  val has_default_reduction : node -> (Production.t * TerminalSet.t) option
 
   (**[find_unacceptable_terminal node zs] tests whether the set [zs] contains a
      terminal symbol [z] such that node [node] has no action on [z].

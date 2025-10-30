@@ -69,8 +69,13 @@ let reductions (i : node) : Reductions.t =
 
 (* Allow default reductions everywhere. *)
 
-let forbid_default_reduction (_i : node) : bool =
+let forbid_default_reduction (_i : node) =
   false
+
+(* At this point, no default reductions exist yet. *)
+
+let test_default_reduction (_i : node) =
+  None
 
 (* -------------------------------------------------------------------------- *)
 
