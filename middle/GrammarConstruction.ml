@@ -835,22 +835,37 @@ module Reductions = struct
   let flip (reductions : reverse) : t =
     ProductionMap.fold add_reductions reductions TerminalMap.empty
 
-  let has_shift_reduce_conflict transitions reductions =
-    let disjoint =
-      TerminalSet.disjoint
-        (SymbolMap.terminals transitions)
-        (TerminalMap.domain reductions)
-    in
-    not disjoint
+  let nonempty ts =
+    not (TerminalSet.is_empty ts)
+      (* It is a bit expensive to build a set [ts] just to find out
+         whether this set is empty, but this will do. *)
 
-  let has_reduce_reduce_conflict reductions =
-    reductions |> TerminalMap.exists @@ fun _t prods ->
+  let shift_reduce_conflict_symbols transitions reductions =
+    TerminalSet.inter
+      (SymbolMap.terminals transitions)
+      (TerminalMap.domain reductions)
+
+  let more_than_one _t prods =
     match prods with
     | [] | [_] -> false | _ :: _ :: _ -> true
 
+  let reduce_reduce_conflict_symbols reductions =
+    TerminalMap.filter more_than_one reductions
+    |> TerminalMap.domain
+
+  let conflict_symbols transitions reductions =
+    TerminalSet.union
+      (shift_reduce_conflict_symbols transitions reductions)
+      (reduce_reduce_conflict_symbols reductions)
+
+  let has_shift_reduce_conflict transitions reductions =
+    nonempty (shift_reduce_conflict_symbols transitions reductions)
+
+  let has_reduce_reduce_conflict reductions =
+    nonempty (reduce_reduce_conflict_symbols reductions)
+
   let has_conflict transitions reductions =
-    has_shift_reduce_conflict transitions reductions ||
-    has_reduce_reduce_conflict reductions
+    nonempty (conflict_symbols transitions reductions)
 
   let has_eos_conflict transitions reductions =
     match TerminalMap.find_and_remove Terminal.sharp reductions with
@@ -859,16 +874,17 @@ module Reductions = struct
         false
     | prods, reductions ->
         (* There is at least one reduction action on [#]. *)
-        (* If there are two reduction actions on [#], then we have a conflict. *)
-        List.length prods > 1 ||
-        (* If there is only one reduction on [#], then we have a conflict if and
-           only if either there exists another shift or reduce action. *)
+        (* If there are two reduction actions on [#], there is a conflict. *)
+        more_than_one Terminal.sharp prods ||
+        (* If there is only one reduction on [#], then there is a conflict if
+           and only if either there exists another shift or reduce action. *)
         not (TerminalMap.is_empty reductions) ||
-        SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol) transitions
+        SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol)
+          transitions
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Items. *)
 
