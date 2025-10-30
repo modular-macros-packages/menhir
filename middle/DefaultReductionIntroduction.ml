@@ -71,6 +71,15 @@ open E
 let no_shift transitions =
   SymbolMap.for_all (fun sym _ -> Symbol.is_nonterminal sym) transitions
 
+(* Because end-of-stream conflicts have been resolved, when we introduce
+   a default reduction on [ts], it must be the case that either [ts] is
+   the singleton set that contains just the token [#] or [ts] is a set
+   of non-[#] terminal symbols. *)
+
+let no_eos_conflict ts =
+  TerminalSet.equal ts (TerminalSet.singleton Terminal.sharp) ||
+  not (TerminalSet.mem Terminal.sharp ts)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Compute which nodes should have a default reduction,
@@ -86,9 +95,10 @@ let test_default_reduction node =
     let reductions = Reductions.reverse (A.reductions node) in
     if ProductionMap.is_singleton reductions
     && no_shift (A.transitions node) then
-      let reduction = ProductionMap.choose reductions in
+      let prod, ts = ProductionMap.choose reductions in
       incr count;
-      Some reduction
+      assert (no_eos_conflict ts);
+      Some (prod, ts)
     else
       None
 

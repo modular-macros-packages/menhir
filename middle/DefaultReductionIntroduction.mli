@@ -9,7 +9,8 @@
 (******************************************************************************)
 
 (**This module transforms an LR(1) automaton by introducing default
-   reductions. *)
+   reductions. End-of-stream conflicts must have already been resolved
+   by running [SevereConflictResolution]. *)
 
 open MiddleAPI
 
