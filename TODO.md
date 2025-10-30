@@ -292,6 +292,11 @@
 
 ## Code Cleanup
 
+* Rename `n2i` and `i2n` (and friends) to `encode` and `decode`.
+
+* The type `node` in LR0 can be made abstract
+  provided the signature NUMBERING is satisfied.
+
 * `ConflictExplanation` must probably be applied to the LR(1) automaton after
   silent conflict resolution and before severe conflict resolutions, so the
   severe conflicts are still there to be seen (and the transitions removed by
