@@ -30,7 +30,7 @@ let dump_node out stack_symbols node =
   fprintf out
     "## Known stack suffix:\n\
      ##%s\n"
-    (StackSymbols.print_symbols (stack_symbols node));
+    (Symbol.print_array' false (stack_symbols node));
 
   (* Print the items. *)
 
