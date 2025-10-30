@@ -403,32 +403,11 @@ let log_unexplainable () =
 
 (* Detecting and enumerating the nodes that have a conflict. *)
 
-(* 2025/10/30: this information used to be recorded during silent conflict
-   resolution and later looked up (here) during conflict explanation. It
-   seems preferable to avoid this implicit transmission of information. *)
-
-let[@inline] has_shift_reduce_conflict node t =
-  SymbolMap.mem (Symbol.T t) (Lr1.transitions node) &&
-  TerminalMap.mem t (Lr1.reductions node)
-
-let[@inline] has_reduce_reduce_conflict node t =
-  match TerminalMap.find t (Lr1.reductions node) with
-  | prods ->
-      List.length prods > 1
-  | exception Not_found ->
-      false
-
-let conflict_symbols node =
-  Terminal.fold (fun t ts ->
-    if has_shift_reduce_conflict node t
-    || has_reduce_reduce_conflict node t
-    then TerminalSet.add t ts
-    else ts
-  ) TerminalSet.empty
-
 let foreach_conflict_node yield =
   Lr1.iter @@ fun node ->
-  let ts = conflict_symbols node in
+  let transitions = Lr1.transitions node
+  and reductions = Lr1.reductions node in
+  let ts = Reductions.conflict_symbols transitions reductions in
   if not (TerminalSet.is_empty ts) then
     yield node ts
 
