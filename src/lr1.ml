@@ -191,8 +191,10 @@ let () = A3.diagnostics()
 module Sites = ReductionSites.Run(A3)(Error)
 module A4 = ExtraReductions.Run(A3)(Error)
 let () = A4.diagnostics()
+module A5 = DefaultReductionIntroduction.Run(A4)(Error)
+let () = A5.diagnostics()
 
-*)
+ *)
 
 (* -------------------------------------------------------------------------- *)
 
