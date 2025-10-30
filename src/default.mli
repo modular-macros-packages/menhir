@@ -10,9 +10,24 @@
 
 open Grammar
 
-(* [has_default_reduction s] tells whether state [s] has a default reduction,
-   and, if so, upon which set of tokens. *)
+(**[has_default_reduction node] returns [Some (prod, ts)] if the node [node]
+   has a default reduction of the production [prod] on the set set of
+   terminal symbols [ts]. It returns [None] if this node has no default
+   reduction.
 
+   When the result is [Some (prod, ts)], this implies that the node [node]
+   has a reduction of [prod] on every symbol in the set [ts], and does not
+   have any other shift or reduce actions. The reduction of [prod] is then
+   considered a default reduction: this reduction is performed without
+   inspecting the next input symbol and sometimes even without requesting
+   the next input symbol.
+
+   If end-of-stream conflicts have been resolved then the set [ts] is either
+   a singleton set containing just the terminal symbol [#] or a set of
+   non-[#] terminal symbols. In the former case, reduction is performed
+   without even requesting the next input token. In the latter case, first
+   the next input token is requested, then reduction is performed, without
+   inspecting this input token. *)
 val has_default_reduction : Lr1.node -> (Production.t * TerminalSet.t) option
 
 (* [find_erroneous s zs] finds whether there is a terminal [z] in [zs] such
