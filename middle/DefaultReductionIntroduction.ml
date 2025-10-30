@@ -23,6 +23,8 @@ include A
 open Lr0.G
 open E
 
+include Fix.Numbering.Operations(A)
+
 (* A node [node] can have a default reduction if it has no outgoing shift
    transitions and can reduce only one production.
 
@@ -103,8 +105,7 @@ let test_default_reduction node =
       None
 
 let test_default_reduction =
-  let module T = Fix.Tabulate.ForNumberedType(A) in
-  T.tabulate test_default_reduction
+  tabulate test_default_reduction
 
 let diagnostics () =
   log "%d out of %d states have a default reduction."
