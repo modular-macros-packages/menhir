@@ -12,23 +12,37 @@ open MiddleAPI
 
 exception Oops
 
-module Run (Lr1 : LR1)
+module Run (A : LR1_AUTOMATON)
 (X : sig
-open Lr1.Lr0.G
+open A.Lr0.G
 
   (**A goal node in the LR(1) automaton. *)
-  val goal: Lr1.node
+  val goal: A.node
 
   (**A nonempty set of terminal symbols such that in the node [goal]
      there is a conflict on every terminal symbol in this set. *)
   val conflicts: TerminalSet.t
 
 end) = struct
-open Lr1.Lr0.G
-module Lr0 = Lr1.Lr0
+open A.Lr0.G
+module Lr0 = A.Lr0
 
 let () =
   assert (not (TerminalSet.is_empty X.conflicts))
+
+(* -------------------------------------------------------------------------- *)
+
+(* [start2item] converts a start node into the single item that it contains.  *)
+
+(* Perhaps this function could be placed elsewhere. For now, it is used here
+   and nowhere else. *)
+
+let start2item (node : A.node) : Item.t =
+  let state : Lr0.ALR1.t = A.state node in
+  let core : Lr0.node = Lr0.ALR1.core state in
+  let items : Item.Set.t = Lr0.items core in
+  assert (Item.Set.cardinal items = 1);
+  Item.Set.choose items
 
 (* -------------------------------------------------------------------------- *)
 
@@ -40,16 +54,19 @@ let () =
 (* A backward traversal of the LR(1) automaton, starting at the goal node,
    is used. *)
 
-let relevant : Lr1.node -> bool =
+module P =
+  Predecessors.Make(A)
+
+let relevant : A.node -> bool =
   let module G = struct
-    type node = Lr1.node
+    type node = A.node
     type label = unit
     let foreach_root yield =
       yield X.goal
     let foreach_outgoing_edge node yield =
-      Lr1.foreach_predecessor node (yield ())
+      P.predecessors node |> List.iter (yield ())
   end in
-  let module M = DFS.MarkArray(Lr1) in
+  let module M = DFS.MarkArray(A) in
   let module D = struct
     let discover _node = ()
     let traverse _source _label _target = ()
@@ -77,11 +94,11 @@ let restrict : state -> state =
 
    As we go, we record the correspondence between the nodes of the new
    automaton, whose type is [node], defined below, and the nodes of the
-   automaton that we have been given, whose type is [Lr1.node]. This allows us
+   automaton that we have been given, whose type is [A.node]. This allows us
    to tell when we have reached the desired place.
 
    This also allows us not to follow transitions that do not exist in the
-   automaton [Lr1] because they have been eliminated during silent conflict
+   automaton [A] because they have been eliminated during silent conflict
    resolution. Whenever we follow a transition in the new automaton, we check
    that the corresponding transition is legal in the existing automaton.
 
@@ -98,7 +115,7 @@ type node = {
   ancestor: (Symbol.t * node) option;
     (**A reverse edge on a shortest path to one of the start nodes. *)
 
-  shadow: Lr1.node;
+  shadow: A.node;
     (**The node in the existing automaton that corresponds
        to this node in the new automaton. *)
 
@@ -174,8 +191,8 @@ and create ancestor shadow state =
 
 and test_goal_node node =
   let { shadow; state; _ } = node in
-  let transitions = Lr1.transitions shadow
-  and reductions = Lr1.reductions shadow in
+  let transitions = A.transitions shadow
+  and reductions = A.reductions shadow in
   (* We accumulate the terminal symbols for which a reduction exists
      in the new automaton and in the existing automaton. We use this
      information to detect a reduce/reduce conflict. *)
@@ -190,7 +207,7 @@ and test_goal_node node =
     (* It does exist. *)
     (* Test whether there is a shift/reduce conflict. *)
     match SymbolMap.find (Symbol.T t) transitions with
-    | (_ : Lr1.node) ->
+    | (_ : A.node) ->
         (* Yes, there is a shift/reduce conflict at [node] on [t]. *)
         raise (Goal (node, t))
     | exception Not_found ->
@@ -213,7 +230,7 @@ and test_goal_node node =
 
 let init () =
   Lr0.entry |> ProductionMap.iter @@ fun prod (k : Lr0.node) ->
-  let shadow = ProductionMap.find prod Lr1.entry in (* cannot fail *)
+  let shadow = ProductionMap.find prod A.entry in (* cannot fail *)
   if relevant shadow then
     let ancestor = None
     and state = restrict (Lr0.ALR1.start k) in
@@ -226,7 +243,7 @@ let init () =
 let loop () =
   MQueue.repeat queue @@ fun node ->
   Lr0.ALR1.transitions node.state |> SymbolMap.iter @@ fun symbol state ->
-  match SymbolMap.find symbol (Lr1.transitions node.shadow) with
+  match SymbolMap.find symbol (A.transitions node.shadow) with
   | shadow  ->
       if relevant shadow then
         explore (Some (symbol, node)) shadow (restrict state)
@@ -262,7 +279,7 @@ let (goal : node), (t : Terminal.t) =
 let rec follow path node =
   match node.ancestor with
   | None ->
-      Lr1.start2item node.shadow,
+      start2item node.shadow,
       Array.of_list path
   | Some (symbol, node) ->
       follow (symbol :: path) node

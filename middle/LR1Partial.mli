@@ -24,24 +24,24 @@ exception Oops
    explains a conflict in the node [X.goal] on a lookahead symbol that is a
    member of the set [X.conflicts]. If such a path is not found, the exception
    [Oops] is raised. *)
-module Run (Lr1 : LR1)
+module Run (A : LR1_AUTOMATON)
 (X : sig
-open Lr1.Lr0.G
+open A.Lr0.G
 
   (**A goal node in the LR(1) automaton. *)
-  val goal: Lr1.node
+  val goal: A.node
 
   (**A nonempty set of terminal symbols such that in the node [goal]
      there is a conflict on every terminal symbol in this set. *)
   val conflicts: TerminalSet.t
 
 end) : sig
-open Lr1.Lr0.G
+open A.Lr0.G
 
   (**A node in the canonical LR(1) automaton is a goal node if (i) [node] has
      a conflict involving one of the terminal symbols in the set [X.conflicts]
      and (ii) the path that leads to [node] in the canonical automaton leads
-     to the node [goal] in the existing automaton [Lr1]. *)
+     to the node [goal] in the existing automaton [A]. *)
 
   (**If a path is found, then three pieces of information are returned: the
      source node of this path; the path itself; the final node of this path. *)
@@ -52,14 +52,14 @@ open Lr1.Lr0.G
   val source: Item.t
 
   (**[path] is a sequence of edge labels (symbols). It determines a path
-     out of the source node in the existing LR(1) automaton [Lr1] and in
+     out of the source node in the existing LR(1) automaton [A] and in
      the canonical automaton. In the existing automaton, the final node
      of this path is [X.goal]. *)
   val path: Symbol.t array
 
   (**[goal] is the state to which this path leads in the canonical automaton.
      The lookahead sets of this state are restricted to [X.conflicts]. *)
-  val goal: Lr1.Lr0.CLR1.t
+  val goal: A.Lr0.CLR1.t
 
   (**[t] is an arbitrary terminal symbol such that the state [goal] in the
      canonical automaton has a conflict on [t]. *)
