@@ -12,16 +12,12 @@ open Printf
 open MiddleAPI
 
 module Run
-(Lr1 : LR1)
+(A : LR1_AUTOMATON)
 (X : sig
 
   (**[construction_mode] determines which construction method was used.
      See [LR1Construction]. *)
   val construction_mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
-
-  (**[base] is the name of the [.conflicts] file that should be created,
-     without the [.conflicts] extension. *)
-  val base: string
 
 end)
 (E : sig
@@ -31,11 +27,12 @@ end)
 
 end)
 = struct
-module Lr0 = Lr1.Lr0
+module Lr0 = A.Lr0
 module G = Lr0.G
 open G
 open E
 module Derivation = Derivation.Make(G)
+include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -404,9 +401,9 @@ let log_unexplainable () =
 (* Detecting and enumerating the nodes that have a conflict. *)
 
 let foreach_conflict_node yield =
-  Lr1.iter @@ fun node ->
-  let transitions = Lr1.transitions node
-  and reductions = Lr1.reductions node in
+  iter @@ fun node ->
+  let transitions = A.transitions node
+  and reductions = A.reductions node in
   let ts = Reductions.conflict_symbols transitions reductions in
   if not (TerminalSet.is_empty ts) then
     yield node ts
@@ -497,7 +494,7 @@ let if_plural ts text =
 let try_explain out node ts =
 
   (* Construct a partial canonical automaton. *)
-  let module P = LR1Partial.Run(Lr1)(struct
+  let module P = LR1Partial.Run(A)(struct
     let goal = node
     let conflicts = ts
   end) in
@@ -513,7 +510,7 @@ let try_explain out node ts =
     ** Conflict (%s) in state %d.\n\
     ** Token%s involved: %s\n%s\
     ** This state is reached from %s after reading:\n\n%s\n"
-    kind (Lr1.encode node)
+    kind (A.encode node)
     (if_plural ts "s")
     (TerminalSet.print ts)
     (if_plural ts @@
@@ -548,7 +545,7 @@ let try_explain out node ts =
 
     fprintf out
       "\n** In state %d, looking ahead at %s, "
-      (Lr1.encode node)
+      (A.encode node)
       (Terminal.print P.t);
 
     begin match Item.classify item with
@@ -587,7 +584,7 @@ let cannot_explain out node ts =
     ** Conflict (unexplainable) in state %d.\n\
     ** Token%s involved: %s\n\
     ** %s.\n%!"
-    (Lr1.encode node)
+    (A.encode node)
     (if_plural ts "s")
     (TerminalSet.print ts)
     (construction_mode_comment())
@@ -607,12 +604,14 @@ let explain out node ts =
    file (wiping out any pre-existing file), even if there are in fact no
    conflicts. This should avoid confusion with outdated .conflicts files. *)
 
-let () =
-  IO.write (X.base ^ ".conflicts") @@ fun out ->
+let write filename =
+  IO.write filename @@ fun out ->
   foreach_conflict_node @@ fun node ts ->
   explain out node ts
 
-let () =
+let write filename =
+  unexplainable := 0;
+  write filename;
   log_unexplainable()
 
 end (* Run *)

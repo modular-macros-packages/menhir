@@ -18,7 +18,7 @@
 open MiddleAPI
 
 module Run
-(Lr1 : LR1)
+(A : LR1_AUTOMATON)
 (X : sig
 
   (**[construction_mode] determines which construction method was used.
@@ -36,4 +36,10 @@ end)
   val log: ('a, out_channel, unit, unit) format4 -> 'a
 
 end)
-: sig end
+: sig
+
+  (**[write filename] writes conflict explanations to the file named
+     [filename]. *)
+  val write: string -> unit
+
+end
