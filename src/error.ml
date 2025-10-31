@@ -60,6 +60,21 @@ let logA =
 let logC =
   selective_log Settings.logC
 
+let slog kind level format =
+  if kind >= level && !enabled then
+    Printf.eprintf format
+  else
+    Printf.ifprintf stderr format
+
+let slogG level format =
+  slog Settings.logG level format
+
+let slogC level format =
+  slog Settings.logC level format
+
+let slogA level format =
+  slog Settings.logA level format
+
 (* ---------------------------------------------------------------------------- *)
 
 (* Errors and warnings. *)

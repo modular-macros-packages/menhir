@@ -27,6 +27,10 @@ val logG: int -> (out_channel -> unit) -> unit
 val logA: int -> (out_channel -> unit) -> unit
 val logC: int -> (out_channel -> unit) -> unit
 
+val slogG: int -> ('a, out_channel, unit) format -> 'a
+val slogA: int -> ('a, out_channel, unit) format -> 'a
+val slogC: int -> ('a, out_channel, unit) format -> 'a
+
 (* ---------------------------------------------------------------------------- *)
 
 (* Errors and warnings. *)
