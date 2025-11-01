@@ -41,7 +41,7 @@ let _sites : A.node list array =
 
 (* Read and write accessors. *)
 
-let[@inline] sites prod =
+let[@inline] reduction_sites prod =
   _sites.(Production.p2i prod)
 
 let[@inline] record prod node =
@@ -76,7 +76,7 @@ let diagnostics () =
   let count = ref 0 in
   let () =
     Production.iter @@ fun prod ->
-    if sites prod = [] then
+    if reduction_sites prod = [] then
       let () = incr count in
       match Production.test_start prod with
       | Some nt ->

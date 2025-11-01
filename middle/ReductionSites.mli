@@ -27,7 +27,7 @@ end)
 
   (**[sites prod] is a list of the nodes that are able to reduce
      the production [prod]. *)
-  val sites: Production.t -> node list
+  val reduction_sites: Production.t -> node list
 
   (**[diagnostics()] emits warnings about productions
      that can never be reduced. *)
