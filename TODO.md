@@ -62,6 +62,10 @@
 
 ## Enhancements
 
+* It might be interesting to sort the conflict explanations by order of
+  increasing complexity, so that the conflicts that are simpler in some
+  sense are shown first.
+
 * Suggestion by Léo Andrès: in the point-free syntax <A>, if a constructor
   is applied to an empty tuple, then omit this tuple entirely; that is,
   generate `A` instead of `A ()`.
@@ -118,9 +122,6 @@
   Or should we just expose the start symbol, not the start state?
 
 ## Minor suggestions for enhancements
-
-* For Frédéric, add option `--lax` to tolerate reduce/reduce conflicts,
-  solving them in an arbitrary way.
 
 * Place a comment at the beginning of the generated code, indicating by which
   version of Menhir it was introduced, and with which command line. (All
@@ -296,15 +297,6 @@
 
 * The type `node` in LR0 can be made abstract
   provided the signature NUMBERING is satisfied.
-
-* `ConflictExplanation` must probably be applied to the LR(1) automaton after
-  silent conflict resolution and before severe conflict resolutions, so the
-  severe conflicts are still there to be seen (and the transitions removed by
-  silent conflict reduction cannot be used to explain a conflict). *)
-
-* Re-implement `lr1` entirely in terms of the new modules.
-
-* Clean up the new signature `LR1`.
 
 * `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
    They could move into TokenType.
