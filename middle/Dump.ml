@@ -98,6 +98,8 @@ let print_eos_conflict out node =
         (SymbolMap.terminals transitions)
         (TerminalMap.domain reductions)
     in
+    (* This set cannot be empty; otherwise there would be no conflict. *)
+    assert (not (TerminalSet.is_empty ts));
     (* The list [prods] can have several elements. Pick one. *)
     assert (prods <> []);
     let prod = List.hd prods in
