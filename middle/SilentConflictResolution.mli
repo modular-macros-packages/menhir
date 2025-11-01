@@ -45,10 +45,13 @@ end)
 : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
+                         and type node = A.node
 
-  (**[diagnostics()] emits an information message about the conflicts that
-     have been silently solved and warnings about the severe conflicts that
-     remain. *)
-  val diagnostics: unit -> unit
+  (**[log()] emits an information message about the conflicts that have been
+     silently solved. *)
+  val log: unit -> unit
+
+  (**[warnings()] emits warnings about the severe conflicts that remain. *)
+  val warnings: unit -> unit
 
 end

@@ -275,7 +275,7 @@ let () =
 
 (* Diagnostics. *)
 
-let log_silently_solved () =
+let log () =
   match !silently_solved with
   | 0 ->
       ()
@@ -296,9 +296,5 @@ let warnings () =
   else if !severe_reduce_reduce > 1 then
     warning [] "%d states have reduce/reduce conflicts."
       !severe_reduce_reduce
-
-let diagnostics () =
-  log_silently_solved();
-  warnings()
 
 end (* Run *)
