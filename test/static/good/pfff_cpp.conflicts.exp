@@ -1,44 +1,4 @@
 
-** Conflict (shift/reduce) in state 442.
-** Token involved: TIdent
-** This state is reached from toplevel after reading:
-
-Ttemplate TInf_Template decl_spec_seq TOPar
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-toplevel 
-toplevel_aux 
-declaration 
-template_declaration 
-Ttemplate TInf_Template listc(template_parameter) TSup_Template declaration 
-                        template_parameter 
-                        parameter_decl 
-                        (?)
-
-** In state 442, looking ahead at TIdent, reducing production
-** option(TColCol) ->
-** is permitted because of the following sub-derivation:
-
-decl_spec_seq declarator 
-              direct_d 
-              TOPar declarator TCPar 
-                    direct_d 
-                    declarator_id 
-                    option(TColCol) id_expression // lookahead token appears because id_expression can begin with TIdent
-                    . 
-
-** In state 442, looking ahead at TIdent, shifting is permitted
-** because of the following sub-derivation:
-
-decl_spec_seq abstract_declarator 
-              direct_abstract_declarator 
-              TOPar parameter_type_list TCPar 
-                    parameter_list 
-                    parameter_decl2 
-                    . TIdent 
-
 ** Conflict (shift/reduce) in state 299.
 ** Token involved: TCol
 ** This state is reached from main after reading:
@@ -84,3 +44,43 @@ decl_spec // lookahead token is inherited
 type_spec // lookahead token is inherited
 elaborated_type_specifier // lookahead token is inherited
 class_key ident . 
+
+** Conflict (shift/reduce) in state 442.
+** Token involved: TIdent
+** This state is reached from toplevel after reading:
+
+Ttemplate TInf_Template decl_spec_seq TOPar
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+toplevel 
+toplevel_aux 
+declaration 
+template_declaration 
+Ttemplate TInf_Template listc(template_parameter) TSup_Template declaration 
+                        template_parameter 
+                        parameter_decl 
+                        (?)
+
+** In state 442, looking ahead at TIdent, reducing production
+** option(TColCol) ->
+** is permitted because of the following sub-derivation:
+
+decl_spec_seq declarator 
+              direct_d 
+              TOPar declarator TCPar 
+                    direct_d 
+                    declarator_id 
+                    option(TColCol) id_expression // lookahead token appears because id_expression can begin with TIdent
+                    . 
+
+** In state 442, looking ahead at TIdent, shifting is permitted
+** because of the following sub-derivation:
+
+decl_spec_seq abstract_declarator 
+              direct_abstract_declarator 
+              TOPar parameter_type_list TCPar 
+                    parameter_list 
+                    parameter_decl2 
+                    . TIdent 

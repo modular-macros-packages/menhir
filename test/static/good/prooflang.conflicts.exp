@@ -1,31 +1,4 @@
 
-** Conflict (shift/reduce) in state 119.
-** Token involved: KOMMA
-** This state is reached from main after reading:
-
-CASES formulalist DOPPELPUNKT caseends KOMMA caseends
-
-** The derivations that appear below have the following common factor:
-** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
-
-main 
-step EOF 
-CASES formulalist DOPPELPUNKT caseends TOOBTAIN nafo SEMIKOLON step 
-                              (?)
-
-** In state 119, looking ahead at KOMMA, shifting is permitted
-** because of the following sub-derivation:
-
-caseends KOMMA caseends 
-               caseends . KOMMA caseends 
-
-** In state 119, looking ahead at KOMMA, reducing production
-** caseends -> caseends KOMMA caseends
-** is permitted because of the following sub-derivation:
-
-caseends KOMMA caseends // lookahead token appears
-caseends KOMMA caseends . 
-
 ** Conflict (shift/reduce/reduce) in state 70.
 ** Token involved: DOPPELPUNKT
 ** This state is reached from main after reading:
@@ -60,3 +33,30 @@ name . DOPPELPUNKT formula
 
 var DOPPELPUNKT hyptyp // lookahead token appears
 name . 
+
+** Conflict (shift/reduce) in state 119.
+** Token involved: KOMMA
+** This state is reached from main after reading:
+
+CASES formulalist DOPPELPUNKT caseends KOMMA caseends
+
+** The derivations that appear below have the following common factor:
+** (The question mark symbol (?) represents the spot where the derivations begin to differ.)
+
+main 
+step EOF 
+CASES formulalist DOPPELPUNKT caseends TOOBTAIN nafo SEMIKOLON step 
+                              (?)
+
+** In state 119, looking ahead at KOMMA, shifting is permitted
+** because of the following sub-derivation:
+
+caseends KOMMA caseends 
+               caseends . KOMMA caseends 
+
+** In state 119, looking ahead at KOMMA, reducing production
+** caseends -> caseends KOMMA caseends
+** is permitted because of the following sub-derivation:
+
+caseends KOMMA caseends // lookahead token appears
+caseends KOMMA caseends . 
