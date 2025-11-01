@@ -1272,8 +1272,10 @@ end (* LR1 *)
    in an LR(1) automaton. *)
 module type STACK_SYMBOLS = sig
 
-  module Lr1 : LR1_AUTOMATON
-  open Lr1.Lr0.G
+  module G : GRAMMAR
+    open G
+
+  type node
 
   (**A property is a description of the known suffix of the stack at state
      [s]. It is represented as an array of symbols. By convention, the top
@@ -1284,10 +1286,10 @@ module type STACK_SYMBOLS = sig
   (**[stack_symbols s] is the known suffix of the stack at state [s]. It
      is represented as an array of symbols. By convention, the top of
      the stack is the end of the array. *)
-  val stack_symbols: Lr1.node -> property
+  val stack_symbols: node -> property
 
   (**[stack_height s] is [Array.length (stack_symbols s)]. *)
-  val stack_height: Lr1.node -> int
+  val stack_height: node -> int
 
   (**[production_symbols prod] is the known suffix of the stack at a state
      where production [prod] can be reduced. In the short invariant, the

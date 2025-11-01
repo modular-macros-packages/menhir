@@ -33,9 +33,11 @@ open MiddleAPI
    it takes under 0.01 second. *)
 
 module Short (Lr1 : LR1_AUTOMATON) () = struct
-  module Lr1 = Lr1
+
   module Lr0 = Lr1.Lr0
-  open Lr0.G
+  module G = Lr0.G
+    open G
+  type node = Lr1.node
 
   type property =
     Symbol.t array
@@ -89,9 +91,11 @@ end
    length can be predicted based on the LR(0) items in each state. *)
 
 module Long (Lr1 : LR1) () = struct
-  module Lr1 = Lr1
+
   module Lr0 = Lr1.Lr0
-  open Lr0.G
+  module G = Lr0.G
+    open G
+  type node = Lr1.node
 
   (* Vectors of symbols. *)
 
@@ -121,7 +125,7 @@ module Long (Lr1 : LR1) () = struct
      invariant that is not self-consistent; that would later lead to a failure
      in StackLangCheck. (See wiktor.mly.) *)
 
-  module G = struct
+  module Graph = struct
 
     type variable =
       Lr1.node
@@ -148,7 +152,7 @@ module Long (Lr1 : LR1) () = struct
   (* Compute the least fixed point. *)
 
   let stack_symbols : Lr1.node -> property option =
-    let module F = Fix.DataFlow.ForNumberedType(Lr1)(SymbolVector)(G) in
+    let module F = Fix.DataFlow.ForNumberedType(Lr1)(SymbolVector)(Graph) in
     F.solution
 
   (* Assuming that every state is reachable, the least fixed point
@@ -202,7 +206,7 @@ module Long (Lr1 : LR1) () = struct
     let symbol = Symbol.N nt in
     (* Compute the join of the stack shapes at every target of an edge
        labeled with [nt]. *)
-    let targets = Lr1.all_targets symbol in
+    let targets = Lr1.targets symbol in
     if Lr1.NodeSet.is_empty targets then
       (* No edge is labeled [nt]. *)
       [| symbol |]
