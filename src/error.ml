@@ -61,6 +61,7 @@ let logC =
   selective_log Settings.logC
 
 let slog kind level format =
+  let format = format ^^ "\n%!" in
   if kind >= level && !enabled then
     Printf.eprintf format
   else
