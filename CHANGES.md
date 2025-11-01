@@ -25,13 +25,6 @@
 
 * Some additions have been made in `MenhirSdk`:
 
-  + In the signature `GRAMMAR`, the functions
-    `Lr1.conflicting_transitions`,
-    `Lr1.conflicting_reductions`, and
-    `Lr1.extra_reductions`
-    document the changes made to the LR(1) automaton by resolving conflicts
-    and by obeying `%on_error_reduce` declarations.
-
   + In the signature `GRAMMAR`,
     the module `Surface` is new.
     This module provides access to two versions of the grammar,
@@ -46,11 +39,6 @@
 
   + In the signature `GRAMMAR`, the function
     `Token.filename` has been removed.
-
-  + In the signature `GRAMMAR`, the functions
-    `Lr1.conflicting_transitions`,
-    `Lr1.conflicting_reductions`, and
-    `Lr1.extra_reductions` have been removed.
 
 * The words `effect` and `nonrec` are now reserved.
   The word `parser` is no longer reserved.
@@ -81,6 +69,9 @@
   shift/reduce/reduce conflict is resolved in favor of neither action,
   a default reduction in this state should be forbidden (see 2012/01/23).
   This was not the case; it should now be fixed.
+
+* Fix an obscure bug where Menhir could report an end-of-stream conflict on an
+  empty set of terminal symbols.
 
 ## 2025/09/12
 
