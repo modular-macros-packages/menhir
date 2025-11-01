@@ -392,7 +392,7 @@ let unexplainable =
 let log_unexplainable () =
   if !unexplainable > 0 then
     log
-      "%d conflict%s could not be explained.\n"
+      "%d conflict%s could not be explained."
       !unexplainable
       (if !unexplainable > 1 then "s" else "")
 
