@@ -19,6 +19,10 @@
   analyses in Menhir's front-end are still performed. If requested via the
   command line switch `--cmly`, a `.cmly` file is written.
 
+* In the `.conflicts` file, the conflicts are now listed in increasing
+  order of state numbers, whereas (for an unknown reason) they used to
+  be listed in decreasing order.
+
 * Some additions have been made in `MenhirSdk`:
 
   + In the signature `GRAMMAR`, the functions
