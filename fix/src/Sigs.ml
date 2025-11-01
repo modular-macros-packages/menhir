@@ -425,6 +425,12 @@ module type NUMBERING_OPERATIONS = sig
   (**A (numbered) type of elements. *)
   type t
 
+  (**[equal] tests whether two elements are equal. *)
+  val equal: t -> t -> bool
+
+  (**[compare] is a total order on elements. *)
+  val compare: t -> t -> int
+
   (**[init f] initializes a fresh array, indexed by elements. *)
   val init: (t -> 'a) -> 'a array
 

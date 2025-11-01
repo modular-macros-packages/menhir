@@ -4,9 +4,10 @@
 
 * New functor `Fix.Glue.ArraysAsImperativeMapsWithNumbering`.
 
-* New functor `Fix.GraphNumbering.ForNumberedType`.
-
-* New functor `Fix.DataFlow.ForNumberedType`.
+* New functors
+  `Fix.DataFlow.ForNumberedType`,
+  `Fix.GraphNumbering.ForNumberedType`,
+  `Fix.Numbering.ForNumberedType`.
 
 * New functor `Fix.Numbering.Operations`.
 

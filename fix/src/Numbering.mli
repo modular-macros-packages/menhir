@@ -26,6 +26,13 @@ module Make
      : TWO_PHASE_NUMBERING with type t = M.key
 
 (**{!ForOrderedType} is a special case of {!Make} where it suffices for
+   keys to be numbered. (Yes, it can be useful to renumber some elements
+   of a type whose elements are already numbered.) *)
+module ForNumberedType
+  (T : NUMBERING)
+     : TWO_PHASE_NUMBERING with type t = T.t
+
+(**{!ForOrderedType} is a special case of {!Make} where it suffices for
    keys to be ordered. *)
 module ForOrderedType
   (T : OrderedType)
