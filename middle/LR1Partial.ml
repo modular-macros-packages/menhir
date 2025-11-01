@@ -265,8 +265,7 @@ let loop () =
    of the grammar, because they do not exist in the canonical automaton. *)
 
 let (goal : node), (t : Terminal.t) =
-  init();
-  match loop() with
+  match init(); loop() with
   | () ->
       raise Oops
   | exception Goal (goal, t) ->
