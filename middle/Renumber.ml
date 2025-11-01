@@ -47,7 +47,7 @@ module G = struct
     SymbolMap.iter (fun _symbol node -> yield node) (A.transitions node)
 end
 
-include Fix.GraphNumbering.ForNumberedType(A)(G)
+include GraphNumberingRec.ForNumberedType(A)(G)
   (* type t = A.node        *)
   (* n : int                *)
   (* encode : A.node -> int *)
