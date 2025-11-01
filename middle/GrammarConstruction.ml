@@ -867,17 +867,21 @@ module Reductions = struct
   let has_conflict transitions reductions =
     nonempty (conflict_symbols transitions reductions)
 
+  (* If there are two reduction actions on [#], then I believe that this
+     should be considered a reduce/reduce conflict, not an end-of-stream
+     conflict. Thus, in [has_eos_conflict], I do not check whether there
+     exist multiple reduction actions on [#]. *)
+
   let has_eos_conflict transitions reductions =
     match TerminalMap.find_and_remove Terminal.sharp reductions with
     | exception Not_found ->
         (* There is no reduction action on [#], thus no conflict. *)
         false
     | prods, reductions ->
-        (* There is at least one reduction action on [#]. *)
-        (* If there are two reduction actions on [#], there is a conflict. *)
-        more_than_one Terminal.sharp prods ||
-        (* If there is only one reduction on [#], then there is a conflict if
-           and only if either there exists another shift or reduce action. *)
+        assert (prods <> []);
+        (* There is at least one reduction action on [#]. There is an
+           end-of-stream conflict if and only if either there exists
+           another shift or reduce action. *)
         not (TerminalMap.is_empty reductions) ||
         SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol)
           transitions
