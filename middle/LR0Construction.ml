@@ -418,11 +418,27 @@ let init f =
 let tabulate f =
   Array.get (init f)
 
+let start_node nt =
+  let prod = Production.start_production nt in
+  ProductionMap.find prod entry
+
 let items node =
   InfiniteArray.get states node
 
 let incoming_symbol node =
   InfiniteArray.get incoming node
+
+let is_start node =
+  incoming_symbol node = None
+
+let get_start node =
+  assert (is_start node);
+  let items = items node in
+  assert (Item.Set.cardinal items = 1);
+  let item = Item.Set.choose items in
+  let prod, pos = Item.export item in
+  assert (pos = 0);
+  Production.get_start prod
 
 let outgoing_edges node =
   InfiniteArray.get _transitions node

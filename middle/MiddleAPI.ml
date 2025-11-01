@@ -936,6 +936,14 @@ val tabulate: (node -> 'a) -> (node -> 'a)
    in the LR(0) automaton. *)
 val entry: node ProductionMap.t
 
+(**[start_node nt] is the start node associated with the (user)
+   nonterminal symbol [nt]. *)
+val start_node: Nonterminal.t -> node
+
+(**[get_start] maps a start node to a user start symbol.
+   [get_start node] is equivalent to [Option.get (test_start node)]. *)
+val get_start: node -> Nonterminal.t
+
 (**Each node in the LR(0) represents a set of LR(0) items.
    [items node] returns this set. This set is not closed. *)
 val items: node -> Item.Set.t
@@ -1208,6 +1216,10 @@ module type LR1 = sig
   (**[print] produces a string representation of a node. The node is displayed
      as a number. This function should be used for debugging only. *)
   val print: node -> string
+
+  (**[start_node nt] is the start node associated with the user
+     nonterminal symbol [nt]. *)
+  val start_node: Nonterminal.t -> node
 
   (**[is_start node] determines whether the node [node] is a start node. *)
   val is_start: node -> bool

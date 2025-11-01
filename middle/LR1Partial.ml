@@ -35,7 +35,7 @@ let () =
 (* [start2item] converts a start node into the single item that it contains.  *)
 
 (* Perhaps this function could be placed elsewhere. For now, it is used here
-   and nowhere else. *)
+   and nowhere else. It is related with [Lr0.get_start]. *)
 
 let start2item (node : A.node) : Item.t =
   let state : Lr0.ALR1.t = A.state node in
