@@ -408,6 +408,19 @@ let foreach_conflict_node yield =
   if not (TerminalSet.is_empty ts) then
     yield node ts
 
+(* The following code reverses the order in which the conflict nodes are
+   enumerated. It is temporarily inserted here in order to minimize the
+   diff with the previous version of Menhir. It will be removed in an
+   upcoming commit. *)
+
+let conflict_nodes =
+  let accu = ref [] in
+  foreach_conflict_node (fun node ts -> accu := (node, ts) :: !accu);
+  !accu
+
+let foreach_conflict_node yield =
+  List.iter (fun (node, ts) -> yield node ts) conflict_nodes
+
 (* -------------------------------------------------------------------------- *)
 
 (* [count z state] counts the shift and reduce items
