@@ -48,7 +48,23 @@ module Run
     () =
 struct
 
-open Default
+(* ------------------------------------------------------------------------ *)
+
+(* [find_erroneous s zs] finds whether there is a terminal [z] in [zs] such
+   that state [s] will initiate an error on the lookahead symbol [z]. All
+   terminals in [zs] must be real. *)
+
+let find_erroneous s zs : Terminal.t option =
+  match Lr1.test_default_reduction s with
+  | Some _ ->
+      None
+  | None ->
+      let transitions = Lr1.transitions s
+      and reductions = Lr1.reductions s in
+      zs |> TerminalSet.pick @@ fun z ->
+      assert (Terminal.real z);
+      not (TerminalMap.mem z reductions) &&
+      not (SymbolMap.mem (Symbol.T z) transitions)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -100,7 +116,7 @@ let validate nt s' elements : ReferenceInterpreter.target =
   | OUnexpectedAccept ->
       fail "input was unexpectedly accepted"
   | OK ((state, _) as target) ->
-      if Lr1.Node.compare state s' <> 0 then
+      if not (Lr1.equal state s') then
         fail "error occurred in state %d instead of %d"
           (Lr1.encode state)
           (Lr1.encode s')
@@ -187,7 +203,7 @@ let visit node' path =
         let w = List.fold_right Core.Graph.append_word ws (Word.singleton z) in
         (* Check that the reference interpreter confirms our finding.
            At the same time, compute a list of spurious reductions. *)
-        let nt = Lr1.nt_of_entry (Core.Graph.state node) in
+        let nt = Lr1.get_start (Core.Graph.state node) in
         let target = validate nt s' (Word.elements w) in
         (* Store this new data. *)
         domain := Lr1.NodeSet.add s' !domain;

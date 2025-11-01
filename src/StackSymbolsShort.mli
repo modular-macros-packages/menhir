@@ -8,7 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module performs a single call to [StackSymbols.Short()] after conflict
-   resolution has taken place. *)
+(* This module performs a single call to [StackSymbols.Short()]. *)
 
-include StackSymbols.STACK_SYMBOLS
+open MiddleAPI
+
+include STACK_SYMBOLS
+with module G = Grammar
+ and type node = Lr1.node

@@ -22,6 +22,20 @@ module Run () = struct
 
 (* ------------------------------------------------------------------------ *)
 
+(* [fold_entry] enumerates the start states of the LR(1) automaton.
+   The user function [f] is applied to the start production [prod],
+   the start state [state], the (user) start nonterminal symbol [nt],
+   and the OCaml type of this symbol [ty]. *)
+
+let fold_entry f accu =
+  ProductionMap.fold (fun prod state accu ->
+    let nt = Production.get_start prod in
+    let ty = Nonterminal.ocamltype_of_start_symbol nt in
+    f prod state nt ty accu
+  ) Lr1.entry accu
+
+(* ------------------------------------------------------------------------ *)
+
 (* Conventional names for modules, exceptions, record fields, functions. *)
 
 let menhirlib =
@@ -483,7 +497,7 @@ let marshal2 name m n (matrix : int list list) =
 (* The action table. *)
 
 let action node t =
-  match Default.test_default_reduction node with
+  match Lr1.test_default_reduction node with
   | Some _ ->
 
       (* [node] has a default reduction; in that case, the action
@@ -499,7 +513,7 @@ let action node t =
         (* [node] has a transition to [target]. If [target] has a default
            reduction on [#], use [ShiftNoDiscard], otherwise [ShiftDiscard]. *)
 
-        match Default.test_default_reduction target with
+        match Lr1.test_default_reduction target with
         | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
             assert (TerminalSet.cardinal toks = 1);
             encode_ShiftNoDiscard target
@@ -550,7 +564,7 @@ let error node t =
 (* The default reductions table. *)
 
 let default_reduction node =
-  match Default.test_default_reduction node with
+  match Lr1.test_default_reduction node with
   | Some (prod, _) ->
       encode_DefRed prod
   | None ->
@@ -731,7 +745,7 @@ let monolithic_entry_point state nt t =
 (* The whole monolithic API. *)
 
 let monolithic_api : IL.valdef list =
-  Lr1.fold_entry (fun _prod state nt t api ->
+  fold_entry (fun _prod state nt t api ->
     monolithic_entry_point state nt t ::
     api
   ) []
@@ -765,7 +779,7 @@ let incremental_entry_point state nt t =
 (* The whole incremental API. *)
 
 let incremental_api : IL.valdef list =
-  Lr1.fold_entry (fun _prod state nt t api ->
+  fold_entry (fun _prod state nt t api ->
     incremental_entry_point state nt t ::
     api
   ) []
@@ -1052,7 +1066,7 @@ let unparsing_API () : structure =
   let module A = struct
     (* A list of the start symbols and start states. *)
     let entry =
-      Lr1.fold_entry (fun _prod state nt _ty accu ->
+      fold_entry (fun _prod state nt _ty accu ->
         (nt, Lr1.encode state) :: accu
       ) []
   end in

@@ -24,7 +24,7 @@ let is_unit prod =
   Production.length prod = 1
 
 let _may_perform_unit_reduction s =
-  match Default.test_default_reduction s with
+  match Lr1.test_default_reduction s with
   | Some (prod, _) ->
       is_unit prod
   | None ->
@@ -33,7 +33,7 @@ let _may_perform_unit_reduction s =
       ) (Lr1.reductions s) false
 
 let has_default_unit_reduction s =
-  match Default.test_default_reduction s with
+  match Lr1.test_default_reduction s with
   | Some (prod, _) ->
       is_unit prod
   | None ->
@@ -163,7 +163,7 @@ let must_query_lexer_upon_entering mode s =
   | Some (Symbol.T _) ->
       (* The state [s] either is an initial state or is entered via a shift
          transition. *)
-      match Default.test_default_reduction s with
+      match Lr1.test_default_reduction s with
       | Some (_, toks)
         when TerminalSet.mem Terminal.sharp toks ->
           assert (TerminalSet.cardinal toks = 1);
@@ -446,7 +446,7 @@ let rec run mode s =
      perform a similar case analysis, while pretending that the current token
      is the [error] token. *)
 
-  match Default.test_default_reduction s, mode with
+  match Lr1.test_default_reduction s, mode with
   | Some (prod, _), _ ->
       jump (Reduce (mode, prod))
   | None, NormalMode ->
@@ -734,7 +734,8 @@ let goto mode nt =
 
   let has_case_tag =
     case_tag state @@ fun branch ->
-    Lr1.targets (Symbol.N nt) @@ fun sources target ->
+    Lr1.targets (Symbol.N nt) |> Lr1.NodeSet.iter @@ fun target ->
+    let sources = Lr1.NodeSet.elements (Lr1.predecessors target) in
     (* If the current state is a member of [sources], jump to [target]. *)
     branch
       (List.map Tag.lazy_make sources)
@@ -777,8 +778,9 @@ let rec act_goto mode prod =
 
   let has_case_tag =
     case_tag state @@ fun branch ->
-    Lr1.targets symbol @@ fun sources target ->
-    sources |> List.iter @@ fun source ->
+    Lr1.targets symbol |> Lr1.NodeSet.iter @@ fun target ->
+    let sources = Lr1.predecessors target in
+    sources |> Lr1.NodeSet.iter @@ fun source ->
     (* Generate one branch per edge of [source] to [target]. *)
     branch [Tag.lazy_make source] @@ fun () ->
     (* Assign [beforeendp]; execute the semantic action; jump to
@@ -896,7 +898,7 @@ let entry =
 (* A map of the represented states to their types. *)
 
 let states =
-  Lr1.fold (fun states s ->
+  Lr1.fold (fun s states ->
     if represented s then
       let bty = make_block_type (Long.stack s) (Origin.run s) in
       Tag.Map.add (Tag.make s) bty states

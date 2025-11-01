@@ -11,7 +11,4 @@
 (* An artificial dependency. We must ensure that [Conflict] runs first, so
    that the automaton is in its definitive shape, before we analyze it. *)
 
-module C =
-  Conflict
-
-include StackSymbols.Short()
+include StackSymbols.Short(Lr1)()

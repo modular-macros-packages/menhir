@@ -201,7 +201,7 @@ let test program nt =
 let test program =
   (* For each start symbol [nt], test this entry point. *)
   Lr1.entry |> ProductionMap.iter begin fun _prod s ->
-    let nt = Lr1.nt_of_entry s in
+    let nt = Lr1.get_start s in
     test program nt
   end;
   Time.tick "Testing the StackLang program"

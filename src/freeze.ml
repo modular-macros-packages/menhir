@@ -8,14 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The automaton is now frozen and will no longer be modified. It is
-   time to dump a new description of it, if requested by the user. *)
-
-let () =
-  if Settings.dump_resolved then
-    let module D = Dump.Make(Default) in
-    D.dump (Settings.base ^ ".automaton.resolved")
-
 let () =
   if Settings.automaton_graph then
     AutomatonGraph.print_automaton_graph()

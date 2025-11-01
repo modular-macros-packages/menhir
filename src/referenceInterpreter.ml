@@ -59,7 +59,7 @@ module T = struct
   let find_production  = Production.i2p
 
   let default_reduction (s : state) defred nodefred env =
-    match Default.test_default_reduction s with
+    match Lr1.test_default_reduction s with
     | Some (prod, _) ->
         defred env prod
     | None ->
@@ -77,7 +77,7 @@ module T = struct
          [ShiftNoDiscard], depending on the existence of a default
          reduction on [#] at [s']. *)
 
-      match Default.test_default_reduction s' with
+      match Lr1.test_default_reduction s' with
       | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
           shift env false tok value s'
       | _ ->
@@ -104,7 +104,7 @@ module T = struct
       None
 
   let may_reduce_prod (s : state) (tok : terminal) (prod : production) =
-    match Default.test_default_reduction s with
+    match Lr1.test_default_reduction s with
     | Some (prod', _) ->
         prod = prod'
     | None ->
@@ -224,7 +224,7 @@ module T = struct
       }
 
   let may_reduce node prod =
-    Lr1.NodeSet.mem node (Lr1.production_where prod)
+    Lr1.NodeSet.mem node (Lr1.reduction_sites prod)
 
 end
 
@@ -257,7 +257,7 @@ let interpret nt log lexer lexbuf =
   (* Run it. *)
 
   try
-    let cst = E.entry strategy (Lr1.entry_of_nt nt) lexer lexbuf in
+    let cst = E.entry strategy (Lr1.start_node nt) lexer lexbuf in
     Some cst
   with T.Error | T.Abort ->
     None
@@ -306,7 +306,7 @@ let check_error_path log nt input =
 
   (* Determine the initial state. *)
 
-  let entry = Lr1.entry_of_nt nt in
+  let entry = Lr1.start_node nt in
 
   (* This function helps extract the current parser state out of [env].
      It may become unnecessary if the [Engine] API offers it. *)

@@ -55,7 +55,7 @@ module Run () = struct
       | Some (Inferred _) -> assert false (* We cannot infer Coq types *)
 
   let is_final_state node =
-    match Default.test_default_reduction node with
+    match Lr1.test_default_reduction node with
       | Some (prod, _) -> Production.is_start prod
       | None -> false
 
@@ -68,7 +68,7 @@ module Run () = struct
       f node
 
   let lr1_foldx_nonfinal f =
-    Lr1.fold @@ fun accu node ->
+    Lr1.fold @@ fun node accu ->
     if not (Lr1.is_start node) && not (is_final_state node) then
       f accu node
     else
@@ -296,9 +296,10 @@ module Run () = struct
   let write_start_nt f =
     fprintf f "Definition start_nt (init:initstate) : nonterminal :=\n";
     fprintf f "  match init with\n";
-    Lr1.fold_entry (fun _prod node startnt _t () ->
+    ProductionMap.iter (fun prod node ->
+      let startnt = Production.get_start prod in
       fprintf f "  | %s => %s\n" (print_init node) (print_nterm startnt)
-    ) ();
+    ) Lr1.entry;
     fprintf f "  end.\n\n"
 
   let write_actions f =
@@ -306,7 +307,7 @@ module Run () = struct
     fprintf f "  match state with\n";
     lr1_iter_nonfinal (fun node ->
       fprintf f "  | %s => " (print_st node);
-      match Default.test_default_reduction node with
+      match Lr1.test_default_reduction node with
         | Some (prod, _) ->
           fprintf f "Default_reduce_act %s\n" (print_prod prod)
         | None ->
@@ -497,7 +498,8 @@ module Run () = struct
         fprintf f "Proof eq_refl true<:MenhirLibParser.complete_validator tt = true.\n\n";
       end;
 
-    Lr1.fold_entry (fun _prod node startnt _t () ->
+    ProductionMap.iter (fun prod node ->
+          let startnt = Production.get_start prod in
           let funName = Nonterminal.print true startnt in
           fprintf f "Definition %s : nat -> MenhirLibParser.Inter.buffer -> MenhirLibParser.Inter.parse_result %s := MenhirLibParser.parse safe Aut.%s.\n\n"
             funName (print_type (Nonterminal.ocamltype startnt)) (print_init node);
@@ -526,7 +528,7 @@ module Run () = struct
               fprintf f "  end.\n";
               fprintf f "Proof. apply MenhirLibParser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n" (print_init node);
             end
-    ) ()
+    ) Lr1.entry
 
   let write_all f =
     if not Settings.coq_no_actions then

@@ -12,6 +12,14 @@ open Grammar
 
 (* -------------------------------------------------------------------------- *)
 
+(* If requested, print the reference graph of the grammar. *)
+
+let () =
+  if Settings.reference_graph then
+    ReferenceGraph.print_reference_graph()
+
+(* -------------------------------------------------------------------------- *)
+
 (* If [--random-sentence] was specified on the command line, obey it. *)
 
 let () =

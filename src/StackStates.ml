@@ -220,7 +220,7 @@ let truncate_join height (f : Lr1.node -> property) nodes =
 
 let production_states : Production.t -> property =
   Production.tabulate (fun prod ->
-    let sites = Lr1.production_where prod in
+    let sites = Lr1.reduction_sites prod in
     let height = production_height prod in
     truncate_join height stack_states sites
   )
@@ -236,7 +236,7 @@ let goto_states : Nonterminal.t -> property =
     let symbol = Symbol.N nt in
     (* Compute the join of the stack shapes at every target of an edge
        labeled with [nt]. *)
-    let targets = Lr1.all_targets symbol in
+    let targets = Lr1.targets symbol in
     let height = goto_height nt in
     truncate_join height stack_states targets
   )

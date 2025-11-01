@@ -14,6 +14,15 @@
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
+
+(* [foreach_source symbol] enumerates the states that have an outgoing edge
+   labeled [symbol]. *)
+
+let foreach_source symbol yield =
+  Lr1.targets symbol |> Lr1.NodeSet.iter @@ fun target ->
+  Lr1.predecessors target |> Lr1.NodeSet.iter yield
+
+(* ------------------------------------------------------------------------ *)
 (* This artificial dependency ensures that Freeze runs before we execute
    the costly analyses that follow. *)
 
@@ -145,9 +154,8 @@ let () =
 let () =
   Nonterminal.iter @@ fun nt ->
   let symbol = Symbol.N nt in
-  if Lr1.ntargets symbol > 1 then
-    Lr1.targets symbol @@ fun sources _ ->
-    List.iter represent sources
+  if Lr1.NodeSet.cardinal (Lr1.targets symbol) > 1 then
+    foreach_source symbol represent
 
 (* Enforce condition (2b) above. *)
 
@@ -157,9 +165,7 @@ let () =
   if n > 0 && Action.has_beforeend (Production.action prod) then
     let nt = Production.nt prod in
     let symbol = Symbol.N nt in
-    Lr1.targets symbol @@ fun sources _ ->
-    sources |> List.iter @@ fun source ->
-    represent source
+    foreach_source symbol represent
 
 (* Define an accessor. *)
 
@@ -171,7 +177,7 @@ let represented state =
 let () =
   Error.logC 1 (fun f ->
     let count =
-      Lr1.fold (fun count node ->
+      Lr1.fold (fun node count ->
         if represented node then count + 1 else count
       ) 0
     in
@@ -354,11 +360,9 @@ let () =
              symbol of [s] is [sym], and if [prod] is not an epsilon
              production, then [sym] must keep track of its end position. *)
           if length > 0 then
-            Lr1.all_sources (Symbol.N nt) |> Lr1.NodeSet.iter begin fun s ->
-              Lr1.incoming_symbol s |> Option.iter begin fun sym ->
-                F.source true (sym, WhereEnd)
-              end
-            end
+            foreach_source (Symbol.N nt) @@ fun s ->
+            Lr1.incoming_symbol s |> Option.iter @@ fun sym ->
+            F.source true (sym, WhereEnd)
       | Position (Left, _, _) ->
           (* [$startpos] and [$endpos] have been expanded away. *)
           assert false
@@ -638,7 +642,7 @@ module Long () = struct
   (* Compute. *)
 
   module StackSymbolsLong =
-    StackSymbols.Long()
+    StackSymbols.Long(Lr1)()
 
   module StackStatesLong =
     StackStates.Run(StackSymbolsLong)

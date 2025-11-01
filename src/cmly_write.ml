@@ -145,10 +145,11 @@ let lr1_state (node : Lr1.node) : C.lr1_state_def =
       TerminalMap.fold_rev add (Lr1.reductions node) []
     );
     C.lr1_default_reduction =
-      Option.map (fun (p, _ts) -> p2i p) (Default.test_default_reduction node);
+      Option.map (fun (p, _ts) -> p2i p) (Lr1.test_default_reduction node);
   }
 
-let entry_point prod node nt _typ accu : (C.nonterminal * C.production * C.lr1) list =
+let entry_point prod node accu : (C.nonterminal * C.production * C.lr1) list =
+  let nt = Production.get_start prod in
   (n2i nt, p2i prod, Lr1.encode node) :: accu
 
 let priority_level input level = {
@@ -263,7 +264,7 @@ let encode () : C.grammar =
     C.g_productions  = Production.init production;
     C.g_lr0_states   = Array.init Lr0.n lr0_state;
     C.g_lr1_states   = Array.of_list (Lr1.map lr1_state);
-    C.g_entry_points = Lr1.fold_entry entry_point [];
+    C.g_entry_points = ProductionMap.fold entry_point Lr1.entry [];
     C.g_attributes   = attributes Grammar.attributes;
     C.g_parameters   = List.map value Front.grammar.parameters;
     C.g_start_symbols = StringSet.elements Front.grammar.start_symbols;
