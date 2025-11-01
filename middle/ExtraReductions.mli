@@ -26,6 +26,7 @@ end)
 : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
+                         and type node = A.node
 
   (**[diagnostics()] emits a warning if at least one severe conflict
      has been resolved. *)

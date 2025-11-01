@@ -25,6 +25,7 @@ end)
 : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
+                         and type node = A.node
 
   (**[diagnostics()] logs a message indicating how many default reductions
      have been introduced. *)
