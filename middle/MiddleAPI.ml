@@ -1193,6 +1193,22 @@ module type LR1 = sig
   include LR1_AUTOMATON
   open Lr0.G
 
+  (**[equal] tests whether two nodes are equal. *)
+  val equal: t -> t -> bool
+
+  (**[iter] enumerates the nodes. *)
+  val iter: (t -> unit) -> unit
+
+  (**[fold] enumerates the nodes. *)
+  val fold: (t -> 'a -> 'a) -> 'a -> 'a
+
+  (**[map] enumerates the nodes. *)
+  val map: (t -> 'a) -> 'a list
+
+  (**[tabulate] tabulates a function [f] whose domain is the nodes,
+     producing a new function whose time complexity is O(1). *)
+  val tabulate: (node -> 'a) -> (node -> 'a)
+
   (**Sets whose elements are nodes. *)
   module NodeSet : sig
 
@@ -1213,41 +1229,19 @@ module type LR1 = sig
   (**Maps whose keys are nodes. *)
   module NodeMap : Map.S with type key = node
 
-  (**[print] produces a string representation of a node. The node is displayed
-     as a number. This function should be used for debugging only. *)
+  (**[print] produces a string representation of a node.
+     The node is displayed as a number. *)
   val print: node -> string
 
-  (**[start_node nt] is the start node associated with the user
-     nonterminal symbol [nt]. *)
+  (**[start_node nt] is the start node associated with the user nonterminal
+     symbol [nt]. *)
   val start_node: Nonterminal.t -> node
 
   (**[is_start node] determines whether the node [node] is a start node. *)
   val is_start: node -> bool
 
-  (**[test_start node] determines whether the node [node] is a start node. If
-     it is a start node, then the user start symbol that this node is
-     associated with is returned. If it is a regular node, nothing is
-     returned. *)
-  val test_start: node -> Nonterminal.t option
-
-  (**[get_start] maps a start node to a user start symbol.
-     [get_start node] is equivalent to [Option.get (test_start node)]. *)
+  (**[get_start] maps a start node to a user start symbol. *)
   val get_start: t -> Nonterminal.t
-
-  (**[entry_of_nt] maps a user nonterminal start symbol to the corresponding
-     start node. *)
-  val entry_of_nt: Nonterminal.t -> node
-
-  (**[start2item] converts a start node into the single item that it
-     contains. *)
-  val start2item: node -> Item.t
-
-  (**[fold_entry] folds over [entry]. For convenience, it gives access not
-     only to the start production and start state, but also to the nonterminal
-     symbol and to the OCaml type associated with this production. *)
-  val fold_entry:
-    (Production.t -> node -> Nonterminal.t -> ocamltype -> 'a -> 'a) ->
-    'a -> 'a
 
   (**All of the edges that enter a node carry the same symbol. If a node has at
      least one incoming edge, then this common symbol is known as the incoming
@@ -1256,59 +1250,18 @@ module type LR1 = sig
      [incoming_symbol node] is the incoming symbol of the node [node]. *)
   val incoming_symbol: node -> Symbol.t option
 
-  (**[targets symbol] enumerates the families of (shift or goto) edges that
-     carry the symbol [symbol]. A family is a group of edges that have the
-     same target node. A family is represented as a pair [(sources, target)],
-     where [sources] is the set of the sources of the edges in the family and
-     [target] is their common target. *)
-  val targets: Symbol.t -> (node list -> node -> unit) -> unit
+  (**[targets symbol] is a list of the nodes whose incoming symbol is
+     [symbol]. In other words, it is a list of all targets of edges
+     labeled with [symbol]. *)
+  val targets: Symbol.t -> NodeSet.t
 
-  (**[ntargets symbol] counts the number of distinct targets of edges labeled
-     with [symbol]. In other words, it counts the number of families that are
-     enumerated by [targets symbol]. If [symbol] is a nonterminal symbol [nt]
-     then this is the number of branches in the [goto] function associated
-     with [nt]. *)
-  val ntargets: Symbol.t -> int
-
-  (**[foreach_predecessor node] enumerates the predecessors of the node
-     [node]. *)
-  val foreach_predecessor: node -> (node -> unit) -> unit
-
-  (**[all_sources symbol] is the set of all sources of all edges labeled
-     with [symbol]. *)
-  val all_sources: Symbol.t -> NodeSet.t
-
-  (**[all_targets symbol] is the set of all targets of edges labeled
-     with [symbol]. *)
-  val all_targets: Symbol.t -> NodeSet.t
+  (**[predecessors node] returns the set of the predecessors
+     of the node [node]. *)
+  val predecessors: node -> NodeSet.t
 
   (**[reduction_sites prod] is the set of all nodes where production [prod]
      might be reduced. *)
   val reduction_sites: Production.t -> NodeSet.t
-
-  (**[iter] enumerates the nodes. *)
-  val iter: (t -> unit) -> unit
-
-  (**[fold] enumerates the nodes. *)
-  val fold: (t -> 'a -> 'a) -> 'a -> 'a
-
-  (**[map] enumerates the nodes. *)
-  val map: (t -> 'a) -> 'a list
-
-  (**[tabulate] tabulates a function [f] whose domain is the nodes,
-     producing a new function whose time complexity is O(1). *)
-  val tabulate: (node -> 'a) -> (node -> 'a)
-
-  (**[iterx] enumerates the nodes except the start nodes. *)
-  val iterx: (t -> unit) -> unit
-
-  (**[foldx] enumerates the nodes except the start nodes. *)
-  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
-
-  (**[find_unacceptable_terminal node zs] tests whether the set [zs] contains a
-     terminal symbol [z] such that node [node] has no action on [z].
-     All members of the set [zs] must be real terminal symbols. *)
-  val find_unacceptable: node -> TerminalSet.t -> Terminal.t option
 
 end (* LR1 *)
 
