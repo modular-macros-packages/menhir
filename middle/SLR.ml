@@ -59,16 +59,16 @@ let make_slr_state (s : Lr0.node) : Lr0.CLR1.t =
 
 let count_violations () : int =
   let count = ref 0 in
-  for s = 0 to Lr0.n - 1 do
-    let s = make_slr_state s in
-    if Lr0.CLR1.has_conflict s then
-      let () = incr count in
-      if tell_me_everything then
-        Printf.fprintf
-          stderr
-          "The following SLR(1) state has a conflict:\n%s"
-          (Lr0.CLR1.print "" s)
-  done;
+  Lr0.iter (fun s ->
+  let s = make_slr_state s in
+  if Lr0.CLR1.has_conflict s then
+    let () = incr count in
+    if tell_me_everything then
+      Printf.fprintf
+        stderr
+        "The following SLR(1) state has a conflict:\n%s"
+        (Lr0.CLR1.print "" s)
+  );
   !count
 
 end (* Make *)

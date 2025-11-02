@@ -936,16 +936,22 @@ module type LR0 = sig
 module G : GRAMMAR
   open G
 
-(**A state of the LR(0) automaton is known as a node.
-   A node is an integer in the interval [\[0, n)]. *)
-type node =
-  int
-  (* We would ideally make [node] an abstract type, but this would make our
-     life unduly hard, as we like to index arrays with nodes, apply the
-     functor [Fix.DataFlow.ForIntSegment] to the type [node], etc. *)
+(**A state of the LR(0) automaton is known as a node. *)
+type node
+type t = node
 
 (**[n] is the number of nodes in the LR(0) automaton. *)
 val n: int
+
+(**[encode] converts a node to an integer in the range [\[0, n)]. *)
+val encode: node -> int
+
+(**[decode] converts an integer in the range [\[0, n)] to a node. This
+   function is {b unsafe} and should be used as little as possible. *)
+val decode: int -> node
+
+(**[iter] enumerates the nodes. *)
+val iter: (t -> unit) -> unit
 
 (**[init f] initializes a fresh array, indexed by the nodes. *)
 val init: (node -> 'a) -> 'a array

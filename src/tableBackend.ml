@@ -438,9 +438,6 @@ let marshal11 (table : int array) =
 
 (* List-based versions of the above functions. *)
 
-let marshal1_list (table : int list) =
-  marshal1 (Array.of_list table)
-
 let marshal11_list (table : int list) =
   marshal11 (Array.of_list table)
 
@@ -611,8 +608,8 @@ let error =
 let default_reduction =
   define_and_measure (
     "default_reduction",
-    marshal1_list (
-      Lr1.map (fun node ->
+    marshal1 (
+      Lr1.init (fun node ->
         default_reduction node
       )
     )
@@ -897,7 +894,7 @@ let lr0_incoming () =
   assert Settings.inspection;
   define_and_measure (
     "lr0_incoming",
-    marshal1 (Array.init Lr0.n (fun node ->
+    marshal1 (Lr0.init (fun node ->
       encode_symbol_option (Lr0.incoming_symbol node)
     ))
   )
@@ -930,8 +927,8 @@ let lr0_core () =
   assert Settings.inspection;
   define_and_measure (
     "lr0_core",
-    marshal1_list (Lr1.map (fun (node : Lr1.node) ->
-      Lr0.ALR1.core (Lr1.state node)
+    marshal1 (Lr1.init (fun (node : Lr1.node) ->
+      Lr0.encode (Lr0.ALR1.core (Lr1.state node))
     ))
   )
 
@@ -940,7 +937,7 @@ let lr0_core () =
 let lr0_items () =
   assert Settings.inspection;
   let items : int array array =
-    Array.init Lr0.n (fun node ->
+    Lr0.init (fun node ->
       Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
     )
   in
@@ -958,8 +955,8 @@ let nullable () =
   assert Settings.inspection;
   define_and_measure (
     "nullable",
-    marshal11_list (
-      Nonterminal.map (fun nt ->
+    marshal11 (
+      Nonterminal.init (fun nt ->
         encode_bool (Analysis.nullable nt)
       )
     )

@@ -298,7 +298,10 @@ module SymbolicClosure =
 (* Nodes are numbered sequentially. *)
 
 type node =
-    int
+  int
+
+type t =
+  node
 
 (* A symbolic transition is a pair of the target state number and an array of
    symbolic lookahead sets. The variables in these sets are numbered in [0,g)
@@ -411,6 +414,16 @@ let n =
 (* -------------------------------------------------------------------------- *)
 
 (* Accessors. *)
+
+let encode node : int=
+  node
+
+let decode (i : int) : node =
+  assert (0 <= i && i < n);
+  i
+
+let iter yield =
+  for node = 0 to n-1 do yield node done
 
 let init f =
   Array.init n f

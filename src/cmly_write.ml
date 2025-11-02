@@ -137,7 +137,7 @@ let transition (sym, node) : C.symbol * C.lr1 =
 
 let lr1_state (node : Lr1.node) : C.lr1_state_def =
   {
-    C.lr1_lr0 = Lr0.ALR1.core (Lr1.state node);
+    C.lr1_lr0 = Lr0.encode (Lr0.ALR1.core (Lr1.state node));
     C.lr1_transitions =
       List.map transition (SymbolMap.bindings (Lr1.transitions node));
     C.lr1_reductions = (
@@ -262,8 +262,8 @@ let encode () : C.grammar =
     C.g_terminals    = Terminal.init terminal;
     C.g_nonterminals = Nonterminal.init nonterminal;
     C.g_productions  = Production.init production;
-    C.g_lr0_states   = Array.init Lr0.n lr0_state;
-    C.g_lr1_states   = Array.of_list (Lr1.map lr1_state);
+    C.g_lr0_states   = Lr0.init lr0_state;
+    C.g_lr1_states   = Lr1.init lr1_state;
     C.g_entry_points = ProductionMap.fold entry_point Lr1.entry [];
     C.g_attributes   = attributes Grammar.attributes;
     C.g_parameters   = List.map value Front.grammar.parameters;

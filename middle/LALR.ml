@@ -23,9 +23,29 @@ type lr1state =
 (* -------------------------------------------------------------------------- *)
 
 (* The LALR automaton has exactly the same states as the LR(0) automaton, up
-   to lookahead information. Therefore, we can use the same state numbers.
-   Thus, the states and the transitions of the LALR automaton are the same as
-   those of the LR(0) automaton! *)
+   to lookahead information. Therefore, we can use the same nodes. Thus, the
+   states and the transitions of the LALR automaton are the same as those of
+   the LR(0) automaton! *)
+
+type node =
+  Lr0.node
+
+let n =
+  Lr0.n
+
+let encode =
+  Lr0.encode
+
+let decode =
+  Lr0.decode
+
+let entry =
+  Lr0.entry
+
+let transitions =
+  Lr0.outgoing_edges
+
+(* -------------------------------------------------------------------------- *)
 
 (* This means that we have almost nothing to do: in fact, the only thing that
    we have to do is compute a mapping of LR(0) nodes to LR(1) states. *)
@@ -34,9 +54,6 @@ type lr1state =
    a special kind of fixed point computation: it can be viewed as a forward
    data flow analysis where the graph is the LR(0) automaton and a property is
    an LR(1) state. *)
-
-type node =
-  int
 
 (* A property is an LR(1) state. The function [leq_join] is used to detect
    stabilization and to merge the contribution of a predecessor state into a
@@ -68,7 +85,7 @@ module G = struct
      function [Lr0.ALR1.transition]. *)
 
   let foreach_successor node state yield =
-    Lr0.foreach_outgoing_edge node @@ fun symbol (successor_node : node) ->
+    Lr0.foreach_outgoing_edge node @@ fun symbol successor_node ->
     let successor_state : lr1state = Lr0.ALR1.transition symbol state in
     yield successor_node successor_state
 
@@ -76,7 +93,7 @@ end
 
 (* Run the data flow computation. *)
 
-module F = Fix.DataFlow.ForIntSegment(Lr0)(P)(G)
+module F = Fix.DataFlow.ForNumberedType(Lr0)(P)(G)
   (* [solution : variable -> property option]. *)
   (* Because every node is reachable, this function never returns [None]. *)
 
@@ -84,34 +101,9 @@ module F = Fix.DataFlow.ForIntSegment(Lr0)(P)(G)
 
 (* Expose the mapping of nodes to LR(1) states. *)
 
-let n =
-  Lr0.n
-
-let states : lr1state array =
-  Array.init n (fun node -> Option.get (F.solution node))
-
 let state : node -> lr1state =
-  Array.get states
-
-(* -------------------------------------------------------------------------- *)
-
-(* Expose the entry nodes and transitions of the LALR automaton. *)
-
-(* Because we re-use LR(0) node numbers, these are exactly the same as those
-   of the LR(0) automaton! *)
-
-let entry : node ProductionMap.t =
-  Lr0.entry
-
-let transitions : node -> node SymbolMap.t =
-  Lr0.outgoing_edges
-
-(* -------------------------------------------------------------------------- *)
-
-(* Expose the bijection between nodes and numbers. *)
-
-let encode (i : node) : int = i
-let decode (i : int) : node = i
+  Lr0.tabulate @@ fun node ->
+  Option.get (F.solution node)
 
 (* -------------------------------------------------------------------------- *)
 

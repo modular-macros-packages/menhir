@@ -137,7 +137,15 @@ end
    latter statement is stronger.) *)
 
 let families : S.t array =
-  Array.make Lr0.n S.empty
+  Lr0.init @@ fun _ -> S.empty
+
+let get_families (c : lr0state) =
+  let i = Lr0.encode c in
+  families.(i)
+
+let set_families (c : lr0state) (ss : S.t) =
+  let i = Lr0.encode c in
+  families.(i) <- ss
 
 (* -------------------------------------------------------------------------- *)
 
@@ -223,7 +231,7 @@ let rec examine (candidate : lr1state) =
      candidate state. *)
 
   let c : lr0state = Lr0.ALR1.core candidate in
-  let family : S.t = families.(c) in
+  let family : S.t = get_families c in
   if debug then assert (well_formed family);
 
   (* Is the candidate state a subset of an existing state? *)
@@ -293,7 +301,7 @@ and fuse (c : lr0state) (family : S.t) (candidate : lr1state) =
 
       let family = S.add candidate family in
       if debug then assert (well_formed family);
-      families.(c) <- family;
+      set_families c family;
       schedule candidate
 
 (* -------------------------------------------------------------------------- *)
@@ -304,8 +312,8 @@ and fuse (c : lr0state) (family : S.t) (candidate : lr1state) =
 let () =
   G.foreach_root @@ fun state ->
   let c = Lr0.ALR1.core state in
-  if debug then assert (S.is_empty families.(c));
-  families.(c) <- S.singleton state;
+  if debug then assert (S.is_empty (get_families c));
+  set_families c (S.singleton state);
   schedule state
 
 let () =
@@ -327,7 +335,7 @@ let () =
 
 let redirect candidate =
   let c = Lr0.ALR1.core candidate in
-  let family = families.(c) in
+  let family = get_families c in
   match S.select (subsume candidate) family with
   | Some successor ->
       successor

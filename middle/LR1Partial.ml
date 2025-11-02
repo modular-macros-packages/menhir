@@ -133,14 +133,14 @@ let queue : node Queue.t =
 (* A mapping of LR(0) state numbers to lists of nodes. *)
 
 let map : node list array =
-  Array.make Lr0.n []
+  Lr0.init @@ fun _ -> []
 
 let[@inline] similar state =
-  let k = Lr0.ALR1.core state in
+  let k = Lr0.encode (Lr0.ALR1.core state) in
   map.(k)
 
 let[@inline] record_similar state node =
-  let k = Lr0.ALR1.core state in
+  let k = Lr0.encode (Lr0.ALR1.core state) in
   map.(k) <- node :: map.(k)
 
 (* -------------------------------------------------------------------------- *)
