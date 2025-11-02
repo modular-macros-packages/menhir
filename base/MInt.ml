@@ -61,3 +61,15 @@ let[@inline] mapij i j f =
 
 let[@inline] mapi n f =
   mapij 0 n f
+
+let[@inline] initij i j f =
+  if j <= i then
+    [||]
+  else
+    Array.init (j - i) (fun k -> f (i + k))
+
+let[@inline] initi n f =
+  if n <= 0 then
+    [||]
+  else
+    Array.init n f
