@@ -30,6 +30,9 @@ type lr1state =
 type node =
   Lr0.node
 
+type t =
+  node
+
 let n =
   Lr0.n
 

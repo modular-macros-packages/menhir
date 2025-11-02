@@ -13,7 +13,7 @@ open MiddleAPI
 module Make (A : MINIMAL_LR1_AUTOMATON) = struct
 open A.Lr0.G
 
-include Fix.Numbering.Operations(struct include A type t = node end)  (* TODO *)
+include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
 

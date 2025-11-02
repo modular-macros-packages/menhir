@@ -1138,28 +1138,29 @@ module type MINIMAL_LR1_AUTOMATON = sig
 
   (**A state of the LR(1) automaton is known as a node. *)
   type node
+  type t = node
 
   (**[n] is the number of nodes in the LR(1) automaton. *)
   val n: int
 
   (**[encode] converts a node to an integer in the range [\[0, n)]. *)
-  val encode: node -> int
+  val encode: t -> int
 
   (**[decode] converts an integer in the range [\[0, n)] to a node. This
      function is {b unsafe} and should be used as little as possible. *)
-  val decode: int -> node
+  val decode: int -> t
 
   (**[entry] is a map of each start production to the corresponding start node
      in the LR(1) automaton. *)
-  val entry: node ProductionMap.t
+  val entry: t ProductionMap.t
 
   (**[transitions node] returns the outgoing (shift and goto) transitions of
      the node [node], in the form a map of symbols to successor nodes. *)
-  val transitions: node -> node SymbolMap.t
+  val transitions: t -> t SymbolMap.t
 
   (**[state node] is the LR(1) state that corresponds to the node [node].
      It is not necessarily closed. *)
-  val state: node -> Lr0.ALR1.t
+  val state: t -> Lr0.ALR1.t
 
 end (* MINIMAL_LR1_AUTOMATON *)
 
@@ -1174,22 +1175,20 @@ module type LR1_AUTOMATON = sig
   include MINIMAL_LR1_AUTOMATON
   open Lr0.G
 
-  type t = node
-
   (**[reductions node] is the reduction table at the node [node]. In an ideal
      automaton (that is, in the absence of conflict resolution), this table is
      obtained by applying [Lr0.ALR1.reductions] to the state [state node]. If
      some reductions have been removed by a conflict resolution process, or if
      some reductions have added to obey [%on_error_reduce] declarations, then
      this reduction table can differ from the ideal table. *)
-  val reductions: node -> Reductions.t
+  val reductions: t -> Reductions.t
 
   (**When set, the flag [forbid_default_reduction node] forbids adding a
      default reduction at the node [node]. In an ideal automaton, this flag
      is [false]. It can be set to [true] during silent conflict resolution:
      when a shift/reduce conflict is solved in favor of neither action, we
      set it to [true]. *)
-  val forbid_default_reduction: node -> bool
+  val forbid_default_reduction: t -> bool
 
   (**[test_default_reduction node] returns [Some (prod, ts)] if the node
      [node] has a default reduction of the production [prod] on the set set of
@@ -1212,7 +1211,7 @@ module type LR1_AUTOMATON = sig
      If [node] has a default reduction then [forbid_default_reduction node]
      must be false. It is up to the automaton construction procedure to
      respect this rule. *)
-  val test_default_reduction : node -> (Production.t * TerminalSet.t) option
+  val test_default_reduction : t -> (Production.t * TerminalSet.t) option
 
 end (* LR1_AUTOMATON *)
 
@@ -1237,16 +1236,16 @@ module type LR1 = sig
   val map: (t -> 'a) -> 'a list
 
   (**[init f] initializes a fresh array, indexed by the nodes. *)
-  val init: (node -> 'a) -> 'a array
+  val init: (t -> 'a) -> 'a array
 
   (**[tabulate] tabulates a function [f] whose domain is the nodes,
      producing a new function whose time complexity is O(1). *)
-  val tabulate: (node -> 'a) -> (node -> 'a)
+  val tabulate: (t -> 'a) -> (t -> 'a)
 
   (**Sets whose elements are nodes. *)
   module NodeSet : sig
 
-    include Set.S with type elt = node
+    include Set.S with type elt = t
 
     (**[leq_join p q] computes the union of the sets [p] and [q]. If the
        result is logically equal to [q], then [q] itself is returned. Thus,
@@ -1261,18 +1260,18 @@ module type LR1 = sig
   end
 
   (**Maps whose keys are nodes. *)
-  module NodeMap : Map.S with type key = node
+  module NodeMap : Map.S with type key = t
 
   (**[print] produces a string representation of a node.
      The node is displayed as a number. *)
-  val print: node -> string
+  val print: t -> string
 
   (**[start_node nt] is the start node associated with the user nonterminal
      symbol [nt]. *)
-  val start_node: Nonterminal.t -> node
+  val start_node: Nonterminal.t -> t
 
   (**[is_start node] determines whether the node [node] is a start node. *)
-  val is_start: node -> bool
+  val is_start: t -> bool
 
   (**[get_start] maps a start node to a user start symbol. *)
   val get_start: t -> Nonterminal.t
@@ -1282,7 +1281,7 @@ module type LR1 = sig
      symbol of this node. A node that has no incoming edges has no incoming
      symbol. A node has no incoming symbol if and only if it is a start node.
      [incoming_symbol node] is the incoming symbol of the node [node]. *)
-  val incoming_symbol: node -> Symbol.t option
+  val incoming_symbol: t -> Symbol.t option
 
   (**[targets symbol] is a list of the nodes whose incoming symbol is
      [symbol]. In other words, it is a list of all targets of edges
@@ -1291,7 +1290,7 @@ module type LR1 = sig
 
   (**[predecessors node] returns the set of the predecessors
      of the node [node]. *)
-  val predecessors: node -> NodeSet.t
+  val predecessors: t -> NodeSet.t
 
   (**[reduction_sites prod] is the set of all nodes where production [prod]
      might be reduced. *)

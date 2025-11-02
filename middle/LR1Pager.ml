@@ -364,13 +364,16 @@ end
 (* The remainder of this file is identical to [LR1Canonical], except for one
    use of [redirect] in the definition of [transition]. *)
 
-type node =
-  int
-
 include Fix.GraphNumbering.ForOrderedType(Lr0.ALR1)(G')
   (* This defines [n : int],
                   [encode : lr1state -> node],
                   [decode : node -> lr1state]. *)
+
+type node =
+  int
+
+type t =
+  node
 
 (* -------------------------------------------------------------------------- *)
 

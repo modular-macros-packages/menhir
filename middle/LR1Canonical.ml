@@ -47,13 +47,16 @@ end
 (* Traversing this graph yields a numbering of the LR(1) states in the
    canonical automaton. *)
 
-type node =
-  int
-
 include Fix.GraphNumbering.ForOrderedType(Lr0.ALR1)(G)
   (* This defines [n : int],
                   [encode : lr1state -> node],
                   [decode : node -> lr1state]. *)
+
+type node =
+  int
+
+type t =
+  node
 
 (* -------------------------------------------------------------------------- *)
 
