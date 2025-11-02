@@ -947,57 +947,57 @@ type t = node
 val n: int
 
 (**[encode] converts a node to an integer in the range [\[0, n)]. *)
-val encode: node -> int
+val encode: t -> int
 
 (**[decode] converts an integer in the range [\[0, n)] to a node. This
    function is {b unsafe} and should be used as little as possible. *)
-val decode: int -> node
+val decode: int -> t
 
 (**[iter] enumerates the nodes. *)
 val iter: (t -> unit) -> unit
 
 (**[init f] initializes a fresh array, indexed by the nodes. *)
-val init: (node -> 'a) -> 'a array
+val init: (t -> 'a) -> 'a array
 
 (**[tabulate] tabulates a function [f] whose domain is the nodes,
   producing a new function whose time complexity is O(1). *)
-val tabulate: (node -> 'a) -> (node -> 'a)
+val tabulate: (t -> 'a) -> (t -> 'a)
 
 (**[entry] is a map of each start production to the corresponding start node
    in the LR(0) automaton. *)
-val entry: node ProductionMap.t
+val entry: t ProductionMap.t
 
 (**[start_node nt] is the start node associated with the (user)
    nonterminal symbol [nt]. *)
-val start_node: Nonterminal.t -> node
+val start_node: Nonterminal.t -> t
 
 (**[get_start] maps a start node to a user start symbol.
    [get_start node] is equivalent to [Option.get (test_start node)]. *)
-val get_start: node -> Nonterminal.t
+val get_start: t -> Nonterminal.t
 
 (**Each node in the LR(0) represents a set of LR(0) items.
    [items node] returns this set. This set is not closed. *)
-val items: node -> Item.Set.t
+val items: t -> Item.Set.t
 
 (**All of the edges that enter a node carry the same symbol. If a node has at
    least one incoming edge, then this common symbol is known as the incoming
    symbol of this node. A node that has no incoming edges has no incoming
    symbol. A node has no incoming symbol if and only if it is a start node.
    [incoming_symbol node] is the incoming symbol of the node [node]. *)
-val incoming_symbol: node -> Symbol.t option
+val incoming_symbol: t -> Symbol.t option
 
 (**[outgoing_edges node] returns the outgoing (shift and goto) edges of the
    node [node], in the form of a map of symbols (which serve as edge labels)
    to successor nodes. *)
-val outgoing_edges: node -> node SymbolMap.t
+val outgoing_edges: t -> t SymbolMap.t
 
 (**[foreach_outgoing_edge node] enumerates the outgoing edges of the node
    [node]. *)
-val foreach_outgoing_edge: node -> (Symbol.t -> node -> unit) -> unit
+val foreach_outgoing_edge: t -> (Symbol.t -> t -> unit) -> unit
 
 (**[outgoing_symbols node] constructs a map whose domain is the outgoing
    symbols of the node [node]. *)
-val outgoing_symbols: node -> (Symbol.t -> 'a) -> 'a SymbolMap.t
+val outgoing_symbols: t -> (Symbol.t -> 'a) -> 'a SymbolMap.t
 
 (* -------------------------------------------------------------------------- *)
 
