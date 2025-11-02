@@ -16,7 +16,8 @@ open Grammar
 
 let () =
   if Settings.reference_graph then
-    ReferenceGraph.print_reference_graph()
+    let module R = ReferenceGraph.Make(Grammar) in
+    R.print (Settings.base ^ ".dot")
 
 (* -------------------------------------------------------------------------- *)
 

@@ -8,54 +8,49 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+open MiddleAPI
 
-let print_reference_graph() =
+module Make (G : GRAMMAR) = struct
 
-  (* Allocate. *)
+  open G
+  module Set = NonterminalSet
+  module Map = NonterminalMap
 
-  let forward : NonterminalSet.t NonterminalMap.t ref =
-    ref NonterminalMap.empty
-  in
+  (* Construct the graph in memory. *)
+
+  let forward : Set.t Map.t ref =
+    ref Map.empty
 
   let successors nt =
-    try
-      NonterminalMap.find nt !forward
-    with Not_found ->
-      NonterminalSet.empty
-  in
+    try Map.find nt !forward with Not_found -> Set.empty
 
-  (* Populate. *)
-
-  Production.iter (fun prod ->
+  let () =
+    Production.iter @@ fun prod ->
     let nt1 = Production.nt prod
     and rhs = Production.rhs prod in
-    Array.iter (function
-      | Symbol.T _ ->
-          ()
-      | Symbol.N nt2 ->
-          forward := NonterminalMap.add
-            nt1
-            (NonterminalSet.add nt2 (successors nt1))
-            !forward
-    ) rhs
-  );
+    rhs |> Array.iter @@ fun symbol ->
+    match symbol with
+    | Symbol.T _   -> ()
+    | Symbol.N nt2 ->
+        forward := Map.add nt1 (Set.add nt2 (successors nt1)) !forward
 
-  (* Print. *)
+  (* Prepare to print. *)
 
-  let module P = Dot.Print (struct
+  module P = Dot.Print (struct
     type vertex = Nonterminal.t
     let name nt =
       Printf.sprintf "nt%d" (Nonterminal.n2i nt)
     let successors (f : ?style:Dot.style -> label:string -> vertex -> unit) nt =
-      NonterminalSet.iter (fun successor ->
-        f ~label:"" successor
-      ) (successors nt)
+      successors nt |> Set.iter @@ fun successor ->
+      f ~label:"" successor
     let iter (f : ?shape:Dot.shape -> ?style:Dot.style -> label:string -> vertex -> unit) =
-      Nonterminal.iter (fun nt ->
-        f ~label:(Nonterminal.print false nt) nt
-      )
-  end) in
-  let f = open_out (Settings.base ^ ".dot") in
-  P.print f;
-  close_out f
+      Nonterminal.iter @@ fun nt ->
+      f ~label:(Nonterminal.print false nt) nt
+  end)
+
+  let print filename =
+    let f = open_out filename in
+    P.print f;
+    close_out f
+
+end (* Make *)
