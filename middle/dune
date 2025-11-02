@@ -8,6 +8,7 @@
   (libraries
     base
     front
+    menhirLib
     menhirSdk
   )
   (flags :standard -open Base -open Front -open MenhirSdk)
