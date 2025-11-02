@@ -293,11 +293,6 @@
 
 ## Code Cleanup
 
-* Rename `n2i` and `i2n` (and friends) to `encode` and `decode`.
-
-* The type `node` in LR0 can be made abstract
-  provided the signature NUMBERING is satisfied.
-
 * `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
    They could move into TokenType.
 
