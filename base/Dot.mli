@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module displays graphs in graphviz dot format. It is much more
+(**This module displays graphs in graphviz dot format. It is much more
    basic than the one bundled with the ocamlgraph library, but offers
    the advantage of being stand-alone. *)
 
@@ -64,14 +64,25 @@ module Print (G : sig
 
   type vertex
 
+  (**[name] maps a vertex to an internal name. *)
   val name: vertex -> string
 
-  val successors: (?style:style -> label:string -> vertex -> unit) -> vertex -> unit
+  (**[successors] enumerates the outgoing edges of a vertex. Each edge is
+     optionally decorated with a style, and must carry a (visible) label. *)
+  val successors:
+    (?style:style -> label:string -> vertex -> unit) ->
+    vertex -> unit
 
-  val iter: (?shape:shape -> ?style:style -> label:string -> vertex -> unit) -> unit
+  (**[iter] enumerates the vertices. Each vertex is optionally decorated with
+     a shape and a style, and must carry a (visible) label. *)
+  val iter:
+    (?shape:shape -> ?style:style -> label:string -> vertex -> unit) ->
+    unit
 
 end) : sig
 
+  (**[print ... f] writes a description of the graph [G] to the output
+     channel [f] in [.dot] format. *)
   val print:
       ?directed: bool ->
       ?size: size ->
