@@ -38,8 +38,8 @@ module NamingConventions (G : sig
     val print: bool -> t -> string
   end
   module Production : sig
-    type index
-    val attributes: index -> attributes
+    type t
+    val attributes: t -> attributes
   end
 end)
 = struct
@@ -181,15 +181,15 @@ module Code (G : sig
       | T of Terminal.t
   end
   module Production : sig
-    type index
-    val encode: index -> int
-    val print: index -> string
-    val rhs: index -> Symbol.t array
-    val attributes: index -> attributes
-    val positions: index -> Range.range list
-    val error_free: index -> bool
-    val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
-    val mapx: (index -> 'a) -> 'a list
+    type t
+    val encode: t -> int
+    val print: t -> string
+    val rhs: t -> Symbol.t array
+    val attributes: t -> attributes
+    val positions: t -> Range.range list
+    val error_free: t -> bool
+    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+    val mapx: (t -> 'a) -> 'a list
   end
 end)
 (A : sig
@@ -708,13 +708,13 @@ module Interface (G : sig
       | T of Terminal.t
   end
   module Production : sig
-    type index
-    val print: index -> string
-    val rhs: index -> Symbol.t array
-    val attributes: index -> attributes
-    val error_free: index -> bool
-    val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
-    val mapx: (index -> 'a) -> 'a list
+    type t
+    val print: t -> string
+    val rhs: t -> Symbol.t array
+    val attributes: t -> attributes
+    val error_free: t -> bool
+    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+    val mapx: (t -> 'a) -> 'a list
   end
 end)
 (A : sig
@@ -986,7 +986,7 @@ let unparsing_API (grammar : grammar) : interface =
       else
         Symbol.T symbol
     module Production = struct
-      type index = nonterminal * branch
+      type t = nonterminal * branch
       let print (nt, branch) = print_production nt branch
       let rhs (_nt, branch) =
         branch.producers
@@ -1001,7 +1001,7 @@ let unparsing_API (grammar : grammar) : interface =
         assert (StringMap.mem nt grammar.rules);
         let rule = StringMap.find nt grammar.rules in
         List.map (fun branch -> f (nt, branch)) rule.branches
-      let productions grammar : index list =
+      let productions grammar : t list =
         StringMap.fold (fun nt rule accu ->
           List.map (fun branch -> (nt, branch)) rule.branches @
           accu

@@ -35,15 +35,15 @@ module Code (G : sig
       | T of Terminal.t
   end
   module Production : sig
-    type index
-    val encode: index -> int
-    val rhs: index -> Symbol.t array
-    val attributes: index -> attributes
-    val positions: index -> ranges
-    val print: index -> string
-    val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
-    val mapx: (index -> 'a) -> 'a list
-    val error_free: index -> bool
+    type t
+    val encode: t -> int
+    val rhs: t -> Symbol.t array
+    val attributes: t -> attributes
+    val positions: t -> ranges
+    val print: t -> string
+    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+    val mapx: (t -> 'a) -> 'a list
+    val error_free: t -> bool
   end
 end)
 (A : sig
@@ -77,13 +77,13 @@ module Interface (G : sig
       | T of Terminal.t
   end
   module Production : sig
-    type index
-    val print: index -> string
-    val rhs: index -> Symbol.t array
-    val attributes: index -> attributes
-    val error_free: index -> bool
-    val mapnt:  Nonterminal.t -> (index -> 'a) -> 'a list
-    val mapx: (index -> 'a) -> 'a list
+    type t
+    val print: t -> string
+    val rhs: t -> Symbol.t array
+    val attributes: t -> attributes
+    val error_free: t -> bool
+    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+    val mapx: (t -> 'a) -> 'a list
   end
 end)
 (A : sig

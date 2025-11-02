@@ -534,9 +534,8 @@ end
 
 module Production = struct
 
-  type index =
-      int
-  type t = index
+  type t =
+    int
 
   let compare = (-)
 
@@ -612,7 +611,7 @@ module Production = struct
      the first non-start production. [startprods] is a mapping of the start
      symbols to the corresponding start productions. *)
 
-  let (start : int), (startprods : index NonterminalMap.t) =
+  let (start : int), (startprods : t NonterminalMap.t) =
     StringSet.fold (fun nonterminal (k, startprods) ->
       let nt = Nonterminal.lookup nonterminal
       and nt' = Nonterminal.lookup (nonterminal ^ "'") in

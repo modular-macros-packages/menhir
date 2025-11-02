@@ -442,8 +442,7 @@ module Production : sig
      integer. Two conversion functions exist. They are exploited in
      the encoding of items. They are considered unsafe and should
      be used as little as possible. *)
-  type index
-  type t = index
+  type t
 
   (**[compare] compares two symbols according to a fixed but unspecified
      total order. *)
