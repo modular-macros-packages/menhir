@@ -436,11 +436,6 @@ let marshal11 (table : int array) =
   assert (bits = 1);
   EStringConst text
 
-(* List-based versions of the above functions. *)
-
-let marshal11_list (table : int list) =
-  marshal11 (Array.of_list table)
-
 (* [linearize_and_marshal1] marshals an array of integer arrays (of possibly
    different lengths). *)
 
@@ -448,23 +443,20 @@ let linearize_and_marshal1 (table : int array array) =
   let data, entry = MenhirLib.LinearizedArray.make table in
   ETuple [ marshal1 data; marshal1 entry ]
 
-(* [flatten_and_marshal11_list] marshals a two-dimensional bitmap,
+(* [flatten_and_marshal11] marshals a two-dimensional bitmap,
    whose width (for now) is assumed to be [Terminal.n - 1]. *)
 
-let flatten_and_marshal11_list (table : int list list) =
+let flatten_and_marshal11 (table : int array list) =
   ETuple [
     (* Store the table width. *)
     EIntConst (Terminal.n - 1);
     (* View the table as a one-dimensional array, and marshal it. *)
-    marshal11_list (List.flatten table)
+    marshal11 (Array.concat table)
   ]
 
 (* [marshal2] marshals a two-dimensional table, with row displacement. *)
 
-let marshal2 name m n (matrix : int list list) =
-  let matrix : int array array =
-    Array.of_list (List.map Array.of_list matrix)
-  in
+let marshal2 name m n (matrix : int array array) =
   let (displacement : int array), (data : int array) =
     let insignificant x = (x = hole) in
     if Settings.pack_classic then
@@ -573,8 +565,8 @@ let action =
   define_and_measure (
     "action",
     marshal2 "action" Lr1.n (Terminal.n - 1) (
-      Lr1.map (fun node ->
-        Terminal.mapx (fun t ->
+      Lr1.init (fun node ->
+        Terminal.initx (fun t ->
           action node t
         )
       )
@@ -585,8 +577,8 @@ let goto =
   define_and_measure (
     "goto",
     marshal2 "goto" Lr1.n Nonterminal.n (
-      Lr1.map (fun node ->
-        Nonterminal.map (fun nt ->
+      Lr1.init (fun node ->
+        Nonterminal.init (fun nt ->
           goto node nt
         )
       )
@@ -596,9 +588,9 @@ let goto =
 let error =
   define_and_measure (
     "error",
-    flatten_and_marshal11_list (
+    flatten_and_marshal11 (
       Lr1.map (fun node ->
-        Terminal.mapx (fun t ->
+        Terminal.initx (fun t ->
           error node t
         )
       )
@@ -971,9 +963,9 @@ let first () =
   assert Settings.inspection;
   define_and_measure (
     "first",
-    flatten_and_marshal11_list (
+    flatten_and_marshal11 (
       Nonterminal.map (fun nt ->
-        Terminal.mapx (fun t ->
+        Terminal.initx (fun t ->
           encode_bool (TerminalSet.mem t (Analysis.first nt))
         )
       )
