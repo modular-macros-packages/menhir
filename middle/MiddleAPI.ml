@@ -1227,6 +1227,9 @@ module type LR1 = sig
   (**[map] enumerates the nodes. *)
   val map: (t -> 'a) -> 'a list
 
+  (**[init f] initializes a fresh array, indexed by the nodes. *)
+  val init: (node -> 'a) -> 'a array
+
   (**[tabulate] tabulates a function [f] whose domain is the nodes,
      producing a new function whose time complexity is O(1). *)
   val tabulate: (node -> 'a) -> (node -> 'a)
