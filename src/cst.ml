@@ -23,38 +23,7 @@ type cst =
   | CstNonTerminal of Production.t * cst array
   | CstError
 
-(* The fringe of a concrete syntax tree. *)
-
-let rec fringe cst accu =
-  match cst with
-  | CstTerminal tok ->
-      tok :: accu
-  | CstNonTerminal (_, csts) ->
-      fringe_rhs csts (Array.length csts) 0 accu
-  | CstError ->
-      (* Not sure if this is appropriate. *)
-      Terminal.error :: accu
-
-and fringe_rhs csts n i accu =
-  if i = n then
-    accu
-  else
-    fringe csts.(i) (fringe_rhs csts n (i + 1) accu)
-
-let fringe cst =
-  fringe cst []
-
-(* This is a (mostly) unambiguous printer for concrete syntax trees,
-   in an sexp-like notation. *)
-
-let rec pcst b = function
-  | CstTerminal tok ->
-
       (* A leaf is denoted by a terminal symbol. *)
-
-      Printf.bprintf b "%s" (Terminal.print tok)
-
-  | CstNonTerminal (prod, csts) ->
 
       (* A node is denoted by a bracketed, whitespace-separated list,
          whose head is a non-terminal symbol (followed with a colon)
@@ -68,30 +37,7 @@ let rec pcst b = function
          acceptable for the moment. The cases where ambiguity actually
          arises should be rare. *)
 
-      Printf.bprintf b "[%s:%a]"
-        (Nonterminal.print false (Production.nt prod))
-        pcsts csts
-
-  | CstError ->
-
       (* An error leaf is denoted by [error]. *)
-
-      Printf.bprintf b "error"
-
-and pcsts b (csts : cst array) =
-  Array.iter (fun cst ->
-    Printf.bprintf b " %a" pcst cst
-  ) csts
-
-(* This is the public interface. *)
-
-let wrap print f x =
-  let b = Buffer.create 32768 in
-  print b x;
-  Buffer.output_buffer f b
-
-let print =
-  wrap pcst
 
 (* This is a pretty-printer for concrete syntax trees. The notation is
    the same as that used by the above printer; the only difference is

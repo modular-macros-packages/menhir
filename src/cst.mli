@@ -23,15 +23,6 @@ type cst =
   | CstNonTerminal of Production.t * cst array
   | CstError
 
-(* The fringe of a concrete syntax tree. *)
-
-val fringe: cst -> Terminal.t list
-
-(* This is a (mostly) unambiguous printer for concrete syntax trees,
-   in an sexp-like notation. *)
-
-val print: out_channel -> cst -> unit
-
 (* This is a pretty-printer for concrete syntax trees. The notation is
    the same as that used by the above printer; the only difference is
    that the [Pprint] library is used to manage indentation. *)
