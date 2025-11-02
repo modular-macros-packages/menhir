@@ -761,6 +761,28 @@ val grammar_uses_error_token: unit -> bool
 
 (* -------------------------------------------------------------------------- *)
 
+(** {2 Concrete Syntax Trees} *)
+
+module CST : sig
+
+  (**A concrete syntax tree is a terminal node (which carries a terminal
+     symbol and has no children) or a non-terminal node -- which carries
+     a production, and whose children correspond to the right-hand side
+     of this production; or an error node (which corresponds to a point
+     where the [error] token was shifted). *)
+  type cst =
+    | CstTerminal of Terminal.t
+    | CstNonTerminal of Production.t * cst array
+    | CstError
+
+  (**[show c cst] pretty-prints the concrete syntax tree [cst] on the
+     output channel [c]. *)
+  val show: out_channel -> cst -> unit
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (** {2 Analyses of the Grammar} *)
 
 module Analysis : sig

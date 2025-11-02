@@ -1040,6 +1040,63 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
+(* Concrete syntax trees. *)
+
+module CST = struct
+
+  type cst =
+    | CstTerminal of Terminal.t
+    | CstNonTerminal of Production.t * cst array
+    | CstError
+
+  (* This is a pretty-printer for concrete syntax trees. *)
+
+  (* A leaf is denoted by a terminal symbol. *)
+
+  (* A node is denoted by a bracketed, whitespace-separated list,
+     whose head is a non-terminal symbol (followed with a colon)
+     and whose tail consists of the node's descendants. *)
+
+  (* There is in fact some ambiguity in this notation, since we
+     only print the non-terminal symbol that forms the left-hand
+     side of production [prod], instead of the production itself.
+
+     This abuse makes things much more readable, and should be
+     acceptable for the moment. The cases where ambiguity actually
+     arises should be rare. *)
+
+  (* An error leaf is denoted by [error]. *)
+
+  open PPrint
+
+  let rec build : cst -> document = function
+    | CstTerminal tok ->
+        string (Terminal.print tok)
+    | CstNonTerminal (prod, csts) ->
+        brackets (
+          group (
+            string (Nonterminal.print false (Production.nt prod)) ^^
+            colon ^^
+            group (
+              nest 2 (
+                Array.fold_left (fun doc cst ->
+                  doc ^/^ build cst
+                ) empty csts
+              )
+            ) ^^
+            break 0
+          )
+        )
+    | CstError ->
+        string "error"
+
+  let show f cst =
+    ToChannel.pretty 0.8 80 f (build cst)
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (* Properties of the grammar. *)
 
 let attributes =

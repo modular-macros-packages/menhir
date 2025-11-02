@@ -9,7 +9,6 @@
 (******************************************************************************)
 
 open Grammar
-open Cst
 open Logging
 
 (* This reference interpreter animates the LR automaton. It uses the grammar
@@ -26,7 +25,7 @@ val interpret:
   log ->
   (Lexing.lexbuf -> Terminal.t) ->
   Lexing.lexbuf ->
-  cst option
+  CST.cst option
 
 (* This variant of the reference interpreter is used internally by us. We use
    it to debug [LRijkstra]. It checks that a sentence leads to a syntax error

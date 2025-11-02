@@ -157,7 +157,7 @@ let interpret show_cst ((_, toks) as sentence) : unit =
       begin match show_cst with
       | `ShowCST ->
           print_newline();
-          Cst.show stdout cst
+          CST.show stdout cst
       | `DoNotShowCST ->
           ()
       end
