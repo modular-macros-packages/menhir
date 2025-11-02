@@ -15,6 +15,19 @@ include FrontTypes
 
 (* -------------------------------------------------------------------------- *)
 
+(** {2 Numbered Types} *)
+
+(**The signature [NUMBERED] describes a type [t] whose elements are in a
+   bijection with an integer segment [\[0, n)]. This signature provides
+   the integer constant [n] as well as the operations [encode], [decode],
+   [equal], [compare], [init], [tabulate], [iter], [fold], [map]. Please
+   note that [decode] is considered {b unsafe} and should be used as
+   little as possible. *)
+module type NUMBERED =
+  Fix.NUMBERED
+
+(* -------------------------------------------------------------------------- *)
+
 (**The signature [GRAMMAR] offers a rich view of a grammar. This view is
    well-suited to the computations that the middle-end performs. It offers
    abstract types of terminal symbols, nonterminal symbols, symbols, and
