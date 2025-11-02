@@ -144,8 +144,6 @@ end
 
 module OperationsForIntSegment (T : sig val n: int end) = struct
 
-  type t = int
-
   include T
 
   (* Define [encode] and [decode]. *)

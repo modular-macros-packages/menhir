@@ -61,4 +61,4 @@ module Operations (T : NUMBERING)
 (**{!OperationsForIntSegment} creates a view of the type [int],
    restricted to the segment [\[0, n)], as a numbered type. *)
 module OperationsForIntSegment (T : sig val n: int end)
-     : NUMBERED with type t = int
+     : NUMBERED with type t := int
