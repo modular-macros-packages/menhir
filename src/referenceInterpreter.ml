@@ -9,11 +9,14 @@
 (******************************************************************************)
 
 open Printf
-open Grammar
+open MiddleAPI
+
+module Make (Lr1 : LR1) = struct
+open Lr1.Lr0.G
 open CST
 let dummy_pos = Lexing.dummy_pos
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* The signature [MenhirLib.EngineTypes.LOG] defines a set of logging hooks.
    We implement these hooks for use by the reference interpreter. *)
@@ -89,7 +92,7 @@ end)
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Set up all of the information required by the LR engine. Everything is
    read directly from [Grammar] and [Lr1]. *)
@@ -305,7 +308,7 @@ module T (X : sig val strategy: [`Legacy | `Simplified] end) = struct
 
 end
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Define a palatable user entry point. *)
 
@@ -336,7 +339,7 @@ let interpret strategy show count nt lexer lexbuf =
   with T.Error | T.Abort ->
     None
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Another entry point, used internally by [LRijkstra] to check that the
    sentences that [LRijkstra] produces do lead to an error in the expected
@@ -468,3 +471,7 @@ let check_error_path strategy show count nt input =
   in
 
   loop (E.start entry dummy_pos) []
+
+(* -------------------------------------------------------------------------- *)
+
+end (* Make *)

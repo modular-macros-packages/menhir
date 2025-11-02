@@ -22,8 +22,14 @@ val run: unit -> unit
 
 open Grammar
 
+type target =
+  Lr1.node * spurious_reduction list
+
+and spurious_reduction =
+  Lr1.node * Production.t
+
 val print_messages_item:
-  Nonterminal.t * Terminal.t list * ReferenceInterpreter.target -> unit
+  Nonterminal.t * Terminal.t list * target -> unit
 
 (* [stream] turns a finite list of terminals into a stream of terminals,
    represented as a pair of a lexer and a lexing buffer, so as to be usable

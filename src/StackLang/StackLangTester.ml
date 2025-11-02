@@ -11,6 +11,7 @@
 open Printf
 open Grammar
 open StackLang
+module R = ReferenceInterpreter.Make(Lr1)
 
 let debug = false
 
@@ -49,7 +50,7 @@ let run_reference nt sentence : outcome * int =
   and show = Settings.trace
   and count = ref 0 in
   let outcome =
-    match ReferenceInterpreter.interpret strategy show count nt lexer lexbuf with
+    match R.interpret strategy show count nt lexer lexbuf with
     | Some _cst ->
         Accepted
     | None ->

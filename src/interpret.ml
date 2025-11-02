@@ -13,6 +13,7 @@
 open Printf
 open Grammar
 open SentenceParserAux
+module R = ReferenceInterpreter.Make(Lr1)
 
 (* A delimiter. *)
 
@@ -28,7 +29,10 @@ type message =
    as which spurious reductions are performed at the end. *)
 
 type target =
-  ReferenceInterpreter.target
+  Lr1.node * spurious_reduction list
+
+and spurious_reduction =
+  Lr1.node * Production.t
 
 let target2state (s, _spurious) =
   s
@@ -150,7 +154,7 @@ let interpret show_cst ((_, toks) as sentence) : unit =
   and show = Settings.trace
   and count = ref 0 (* unused *) in
   begin match
-    ReferenceInterpreter.interpret strategy show count nt lexer lexbuf
+    R.interpret strategy show count nt lexer lexbuf
   with
 
   | Some cst ->
@@ -182,17 +186,16 @@ let interpret show_cst ((_, toks) as sentence) : unit =
 
 let interpret_error_aux show poss ((_, terminals) as sentence) fail succeed =
   let nt = start poss sentence in
-  let open ReferenceInterpreter in
   let strategy = Settings.strategy
   and count = ref 0 (* unused *) in
-  match check_error_path strategy show count nt terminals with
-  | OInputReadPastEnd ->
+  match R.check_error_path strategy show count nt terminals with
+  | R.OInputReadPastEnd ->
       fail "no syntax error occurs."
-  | OInputNotFullyConsumed ->
+  | R.OInputNotFullyConsumed ->
       fail "a syntax error occurs before the last token is reached."
-  | OUnexpectedAccept ->
+  | R.OUnexpectedAccept ->
       fail "no syntax error occurs; in fact, this input is accepted."
-  | OK target ->
+  | R.OK target ->
       succeed nt terminals target
 
 (* --------------------------------------------------------------------------- *)

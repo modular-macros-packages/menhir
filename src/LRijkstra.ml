@@ -30,6 +30,7 @@
    path. *)
 
 open Grammar
+module R = ReferenceInterpreter.Make(Lr1)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -104,21 +105,20 @@ let fail msg =
 let fail format =
   Printf.ksprintf fail format
 
-let validate nt s' elements : ReferenceInterpreter.target =
-  let open ReferenceInterpreter in
+let validate nt s' elements (* : target *) =
   let strategy = Settings.strategy
   and show = false
   and count = ref 0 (* unused *) in
   match
-    check_error_path strategy show count nt elements
+    R.check_error_path strategy show count nt elements
   with
-  | OInputReadPastEnd ->
+  | R.OInputReadPastEnd ->
       fail "input was read past its end"
-  | OInputNotFullyConsumed ->
+  | R.OInputNotFullyConsumed ->
       fail "input was not fully consumed"
-  | OUnexpectedAccept ->
+  | R.OUnexpectedAccept ->
       fail "input was unexpectedly accepted"
-  | OK ((state, _) as target) ->
+  | R.OK ((state, _) as target) ->
       if not (Lr1.equal state s') then
         fail "error occurred in state %d instead of %d"
           (Lr1.encode state)
@@ -174,7 +174,7 @@ let explored =
 let domain =
   ref Lr1.NodeSet.empty
 
-let data : (Nonterminal.t * Word.t * ReferenceInterpreter.target) list ref =
+let data : (Nonterminal.t * Word.t * _ (* target *)) list ref =
   ref []
 
 (* The set [reachable] counts all reachable LR(1) states (not just those where
