@@ -422,8 +422,20 @@ let decode (i : int) : node =
   assert (0 <= i && i < n);
   i
 
-let iter yield =
-  for node = 0 to n-1 do yield node done
+let equal =
+  Int.equal
+
+let compare =
+  (-)
+
+let iter f =
+  MInt.iteri n f
+
+let fold f =
+  MInt.foldi n f
+
+let map f =
+  MInt.mapi n f
 
 let init f =
   Array.init n f

@@ -17,12 +17,16 @@ include FrontTypes
 
 (** {2 Numbered Types} *)
 
-(**The signature [NUMBERED] describes a type [t] whose elements are in a
+(**The signature [NUMBERING] describes a type [t] whose elements are in a
    bijection with an integer segment [\[0, n)]. This signature provides
-   the integer constant [n] as well as the operations [encode], [decode],
-   [equal], [compare], [init], [tabulate], [iter], [fold], [map]. Please
-   note that [decode] is considered {b unsafe} and should be used as
-   little as possible. *)
+   the integer constant [n] as well as the operations [encode], [decode].
+   Please note that [decode] is considered {b unsafe} and should be used
+   as little as possible. *)
+module type NUMBERING =
+  Fix.NUMBERING
+
+(**The signature [NUMBERED] extends [NUMBERING] with more operations:
+   [equal], [compare], [init], [tabulate], [iter], [fold], [map]. *)
 module type NUMBERED =
   Fix.NUMBERED
 
@@ -53,12 +57,8 @@ module Nonterminal : sig
      little as possible. *)
   type t
 
-  (**[equal] determines whether two nonterminal symbols are equal. *)
-  val equal: t -> t -> bool
-
-  (**[compare] compares two nonterminal symbols according to a fixed but
-     unspecified total order. *)
-  val compare: t -> t -> int
+  (**This type is numbered. *)
+  include NUMBERED with type t := t
 
   (**[is_internal_start nt] tells whether the nonterminal symbol [nt] is one
      of the internal start symbols, that is, one of the new symbols [S']
@@ -69,19 +69,6 @@ module Nonterminal : sig
      user start symbol, that is, one of the start symbols that the user
      has defined. *)
   val is_user_start: t -> bool
-
-  (**[n] is the total number of nonterminal symbols, including the internal
-     start symbols. *)
-  val n: int
-
-  (**[encode] converts a nonterminal symbol to an integer in the range
-     [\[0, n)]. *)
-  val encode: t -> int
-
-  (**[decode] converts an integer in the range [\[0, n)] to a nonterminal
-     symbol. This function is {b unsafe} and should be used as little as
-     possible. *)
-  val decode: int -> t
 
   (**[lookup] maps an identifier [s] to a nonterminal symbol. If there is
      no nonterminal symbol named [s] then [Not_found] is raised. *)
@@ -130,26 +117,6 @@ module Nonterminal : sig
      symbol [nt]. *)
   val attributes: t -> attributes
 
-  (**[init f] initializes a fresh array, indexed by the nonterminal
-     symbols. *)
-  val init: (t -> 'a) -> 'a array
-
-  (**[tabulate] tabulates a function [f] whose domain is the nonterminal
-     symbols, producing a new function whose time complexity is O(1). *)
-  val tabulate: (t -> 'a) -> (t -> 'a)
-
-  (**In every iteration function, the order in which elements are yielded
-     corresponds to the integer indices produced by {!n2i}. *)
-
-  (**[iter] enumerates the nonterminal symbols. *)
-  val iter: (t -> unit) -> unit
-
-  (**[fold] enumerates the nonterminal symbols. *)
-  val fold: (t -> 'a -> 'a) -> 'a -> 'a
-
-  (**[map] enumerates the nonterminal symbols. *)
-  val map: (t -> 'a) -> 'a list
-
   (**[iterx] enumerates the nonterminal symbols
      except the internal start symbols. *)
   val iterx: (t -> unit) -> unit
@@ -193,23 +160,8 @@ module Terminal : sig
      and should be used as little as possible. *)
   type t
 
-  (**[equal] determines whether two terminal symbols are equal. *)
-  val equal: t -> t -> bool
-
-  (**[compare] compares two terminal symbols according to a fixed but
-     unspecified total order. *)
-  val compare: t -> t -> int
-
-  (**[n] is the total number of terminal symbols, including the special
-     symbols [#] and [error]. *)
-  val n: int
-
-  (**[encode] converts a terminal symbol to an integer in the range [\[0, n)]. *)
-  val encode: t -> int
-
-  (**[decode] converts an integer in the range [\[0, n)] to a terminal symbol.
-     This function is {b unsafe} and should be used as little as possible. *)
-  val decode: int -> t
+  (**This type is numbered. *)
+  include NUMBERED with type t := t
 
   (**[lookup] maps an identifier [s] to a terminal symbol. If there is no
      terminal symbol named [s] then [Not_found] is raised. *)
@@ -267,25 +219,6 @@ module Terminal : sig
   (**[every_token_has_an_alias] is [true] if a token alias has been defined
      by the user for every (real) token. *)
   val every_token_has_an_alias: bool
-
-  (**[init f] initializes a fresh array, by the terminal symbols. *)
-  val init: (t -> 'a) -> 'a array
-
-  (**[tabulate] tabulates a function [f] whose domain is the terminal
-     symbols, producing a new function whose time complexity is O(1). *)
-  val tabulate: (t -> 'a) -> (t -> 'a)
-
-  (**In every iteration function, the order in which elements are yielded
-     corresponds to the integer indices produced by {!t2i}. *)
-
-  (**[iter] enumerates the terminal symbols. *)
-  val iter: (t -> unit) -> unit
-
-  (**[fold] enumerates the terminal symbols. *)
-  val fold: (t -> 'a -> 'a) -> 'a -> 'a
-
-  (**[map] enumerates the terminal symbols. *)
-  val map: (t -> 'a) -> 'a list
 
   (**[iterx] enumerates the terminal symbols except [#]. *)
   val iterx: (t -> unit) -> unit
@@ -457,20 +390,8 @@ module Production : sig
      be used as little as possible. *)
   type t
 
-  (**[compare] compares two symbols according to a fixed but unspecified
-     total order. *)
-  val compare: t -> t -> int
-
-  (**[n] is the total number of productions, including the start
-     productions. *)
-  val n: int
-
-  (**[encode] converts a production to an integer in the range [\[0, n)]. *)
-  val encode: t -> int
-
-  (**[decode] converts an integer in the range [\[0, n)] to a production. This
-     function is {b unsafe} and should be used as little as possible. *)
-  val decode: int -> t
+  (**This type is numbered. *)
+  include NUMBERED with type t := t
 
   (**The integer index [start] is published so as to allow the table back-end
      to produce code for [is_start]. It should not be used otherwise. *)
@@ -556,25 +477,6 @@ module Production : sig
      of the form "accepting <nt>" or "reducing <nt> -> <rhs>". The Boolean
      flag [gerund] allows choosing between gerund and infinitive forms. *)
   val describe: bool -> t -> string
-
-  (**In every iteration function, the order in which elements are yielded
-     corresponds to the integer indices produced by {!p2i}. *)
-
-  (**[init f] initializes a fresh array, indexed by the productions. *)
-  val init: (t -> 'a) -> 'a array
-
-  (**[tabulate] tabulates a function [f] whose domain is the productions,
-     producing a new function whose time complexity is O(1). *)
-  val tabulate: (t -> 'a) -> (t -> 'a)
-
-  (**[iter] enumerates the productions. *)
-  val iter: (t -> unit) -> unit
-
-  (**[fold] enumerates the productions. *)
-  val fold: (t -> 'a -> 'a) -> 'a -> 'a
-
-  (**[map] enumerates the productions. *)
-  val map: (t -> 'a) -> 'a list
 
   (**[iterx] enumerates the productions except the start productions. *)
   val iterx: (t -> unit) -> unit
@@ -955,25 +857,8 @@ module G : GRAMMAR
 type node
 type t = node
 
-(**[n] is the number of nodes in the LR(0) automaton. *)
-val n: int
-
-(**[encode] converts a node to an integer in the range [\[0, n)]. *)
-val encode: t -> int
-
-(**[decode] converts an integer in the range [\[0, n)] to a node. This
-   function is {b unsafe} and should be used as little as possible. *)
-val decode: int -> t
-
-(**[iter] enumerates the nodes. *)
-val iter: (t -> unit) -> unit
-
-(**[init f] initializes a fresh array, indexed by the nodes. *)
-val init: (t -> 'a) -> 'a array
-
-(**[tabulate] tabulates a function [f] whose domain is the nodes,
-  producing a new function whose time complexity is O(1). *)
-val tabulate: (t -> 'a) -> (t -> 'a)
+(**This type is numbered. *)
+include NUMBERED with type t := t
 
 (**[entry] is a map of each start production to the corresponding start node
    in the LR(0) automaton. *)
@@ -1152,15 +1037,8 @@ module type MINIMAL_LR1_AUTOMATON = sig
   type node
   type t = node
 
-  (**[n] is the number of nodes in the LR(1) automaton. *)
-  val n: int
-
-  (**[encode] converts a node to an integer in the range [\[0, n)]. *)
-  val encode: t -> int
-
-  (**[decode] converts an integer in the range [\[0, n)] to a node. This
-     function is {b unsafe} and should be used as little as possible. *)
-  val decode: int -> t
+  (**This type is numbered. *)
+  include NUMBERING with type t := t
 
   (**[entry] is a map of each start production to the corresponding start node
      in the LR(1) automaton. *)

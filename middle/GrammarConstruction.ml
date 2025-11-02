@@ -537,6 +537,9 @@ module Production = struct
   type t =
     int
 
+  let equal =
+    Int.equal
+
   let compare = (-)
 
   (* For every start symbol [S], a new production S' -> S is created.
