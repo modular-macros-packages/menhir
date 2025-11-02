@@ -94,7 +94,7 @@ end
 (* Set up all of the information required by the LR engine. Everything is
    read directly from [Grammar] and [Lr1]. *)
 
-module T = struct
+module T (X : sig val strategy: [`Legacy | `Simplified] end) = struct
 
   type state =
       Lr1.node
@@ -285,7 +285,7 @@ module T = struct
          the semantic action aborts the parser. We might otherwise enter an
          infinite loop. *)
 
-      if Settings.strategy = `Simplified
+      if X.strategy = `Simplified
       && not (Production.error_free prod) then
         raise Abort;
 
@@ -307,19 +307,13 @@ end
 
 (* ------------------------------------------------------------------------ *)
 
-(* The strategy used by the reference interpreter is determined by the
-   command line switch [--strategy]. *)
-
-let strategy =
-  Settings.strategy
-
-(* ------------------------------------------------------------------------ *)
-
 (* Define a palatable user entry point. *)
 
-let interpret show count nt lexer lexbuf =
+let interpret strategy show count nt lexer lexbuf =
 
   (* Instantiate the LR engine. *)
+
+  let module T = T(struct let strategy = strategy end) in
 
   let module E =
     MenhirLib.Engine.Make (struct
@@ -370,9 +364,11 @@ type check_error_path_outcome =
      LR automaton. *)
 | OK of target
 
-let check_error_path show count nt input =
+let check_error_path strategy show count nt input =
 
   (* Instantiate the LR engine. *)
+
+  let module T = T(struct let strategy = strategy end) in
 
   let module E =
     MenhirLib.Engine.Make (struct

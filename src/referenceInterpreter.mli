@@ -14,14 +14,20 @@
 
 open Grammar
 
-(**[interpret show count nt lexer lexbuf] runs the parser, starting with the
-   start non-terminal symbol [nt], with the lexer [lexer] and the lexing
-   buffer [lexbuf]. It either succeeds and returns [Some cst], where [cst] is
-   a concrete syntax tree, or fails and returns [None]. The parameter [show]
-   determines whether log messages are emitted; it corresponds to [--trace].
-   The parameter [count] is incremented with the number of log messages that
-   are emitted or that would be emitted if [show] was [true]. *)
+(**[interpret strategy show count nt lexer lexbuf] runs the parser, starting
+   with the start non-terminal symbol [nt], with the lexer [lexer] and the
+   lexing buffer [lexbuf]. It either succeeds and returns [Some cst], where
+   [cst] is a concrete syntax tree, or fails and returns [None].
+
+   The parameter [strategy] is the error handling strategy. See
+   [IncrementalEngine] for an explanation of the available strategies.
+
+   The parameter [show] determines whether log messages are emitted; it
+   corresponds to [--trace]. The parameter [count] is incremented with the
+   number of log messages that are emitted or that would be emitted if [show]
+   was [true]. *)
 val interpret:
+  [`Legacy | `Simplified] ->
   bool -> int ref ->
   Nonterminal.t ->
   (Lexing.lexbuf -> Terminal.t) ->
@@ -55,11 +61,20 @@ and target =
 and spurious_reduction =
   Lr1.node * Production.t
 
-(**[check_error_path show count nt input] runs the parser, starting with the
-   start non-terminal symbol [nt], with the input stream [input]. We expect
-   [input] to be a minimal invalid input: the parser is expected to fail after
-   reading all of [input]. *)
+(**[check_error_path strategy show count nt input] runs the parser, starting
+   with the start non-terminal symbol [nt], with the input stream [input]. We
+   expect [input] to be a minimal invalid input: the parser is expected to
+   fail after reading all of [input].
+
+   The parameter [strategy] is the error handling strategy. See
+   [IncrementalEngine] for an explanation of the available strategies.
+
+   The parameter [show] determines whether log messages are emitted; it
+   corresponds to [--trace]. The parameter [count] is incremented with the
+   number of log messages that are emitted or that would be emitted if [show]
+   was [true]. *)
 val check_error_path:
+  [`Legacy | `Simplified] ->
   bool -> int ref ->
   Nonterminal.t ->
   Terminal.t list ->

@@ -106,10 +106,11 @@ let fail format =
 
 let validate nt s' elements : ReferenceInterpreter.target =
   let open ReferenceInterpreter in
-  let show = false
+  let strategy = Settings.strategy
+  and show = false
   and count = ref 0 (* unused *) in
   match
-    check_error_path show count nt elements
+    check_error_path strategy show count nt elements
   with
   | OInputReadPastEnd ->
       fail "input was read past its end"

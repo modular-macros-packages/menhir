@@ -45,10 +45,11 @@ let print_outcome = function
 
 let run_reference nt sentence : outcome * int =
   let lexer, lexbuf = Interpret.stream sentence in
-  let show = Settings.trace
+  let strategy = Settings.strategy
+  and show = Settings.trace
   and count = ref 0 in
   let outcome =
-    match ReferenceInterpreter.interpret show count nt lexer lexbuf with
+    match ReferenceInterpreter.interpret strategy show count nt lexer lexbuf with
     | Some _cst ->
         Accepted
     | None ->
