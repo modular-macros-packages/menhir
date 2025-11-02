@@ -56,7 +56,9 @@ val mapi:         int -> (int -> 'a) -> 'a list
 (**[mapij i j f] produces the list [ f i; ...; f (j-1) ]. *)
 val mapij: int -> int -> (int -> 'a) -> 'a list
 
-(**[initi j f] produces the array [ f 0; ...; f (j-1) ]. *)
+(**[initi j f] produces the array [ f 0; ...; f (j-1) ].
+   It is the same as [Array.init] except it allows [j] to be negative;
+   then it returns an empty array. *)
 val initi:         int -> (int -> 'a) -> 'a array
 
 (**[initij i j f] produces the array [ f i; ...; f (j-1) ]. *)
