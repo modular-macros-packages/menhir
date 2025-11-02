@@ -45,16 +45,10 @@ let print_outcome = function
 
 let run_reference nt sentence : outcome * int =
   let lexer, lexbuf = Interpret.stream sentence in
-  let count = ref 0 in
-  let module Log =
-    Logging.Make(struct
-      let show = Settings.trace
-      let count = count
-    end)
-  in
-  let log = (module Log : Logging.LOG) in
+  let show = Settings.trace
+  and count = ref 0 in
   let outcome =
-    match ReferenceInterpreter.interpret nt log lexer lexbuf with
+    match ReferenceInterpreter.interpret show count nt lexer lexbuf with
     | Some _cst ->
         Accepted
     | None ->

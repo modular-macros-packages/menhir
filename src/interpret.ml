@@ -146,9 +146,10 @@ let interpret show_cst ((_, toks) as sentence) : unit =
      sentences be supplied). *)
 
   let lexer, lexbuf = stream toks in
-  let log = Logging.maybe Settings.trace in
+  let show = Settings.trace
+  and count = ref 0 (* unused *) in
   begin match
-    ReferenceInterpreter.interpret nt log lexer lexbuf
+    ReferenceInterpreter.interpret show count nt lexer lexbuf
   with
 
   | Some cst ->
@@ -178,10 +179,10 @@ let interpret show_cst ((_, toks) as sentence) : unit =
 (* [interpret_error_aux] interprets a sentence, expecting it to end in an
    error. Failure or success is reported via two continuations. *)
 
-let interpret_error_aux log poss ((_, terminals) as sentence) fail succeed =
+let interpret_error_aux show count poss ((_, terminals) as sentence) fail succeed =
   let nt = start poss sentence in
   let open ReferenceInterpreter in
-  match check_error_path log nt terminals with
+  match check_error_path show count nt terminals with
   | OInputReadPastEnd ->
       fail "no syntax error occurs."
   | OInputNotFullyConsumed ->
@@ -319,8 +320,9 @@ let succeed nt terminals target =
   exit 0
 
 let interpret_error sentence =
-  let log = Logging.maybe Settings.trace in
-  interpret_error_aux log [] sentence fail succeed
+  let show = Settings.trace
+  and count = ref 0 (* unused *) in
+  interpret_error_aux show count [] sentence fail succeed
 
 (* --------------------------------------------------------------------------- *)
 
@@ -368,8 +370,9 @@ let validate_located_sentence c (poss, sentence) : targeted_sentence =
   (* First, validate every symbol. *)
   let sentence = validate_sentence c sentence in
   (* Then, check that this sentence leads to an error state. *)
-  let log = Logging.never in
-  interpret_error_aux log poss sentence
+  let show = false
+  and count = ref 0 (* unused *) in
+  interpret_error_aux show count poss sentence
     (* failure: *)
     (fun msg ->
        Error.signal c poss

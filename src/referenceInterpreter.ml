@@ -8,9 +8,86 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Printf
 open Grammar
 open CST
 let dummy_pos = Lexing.dummy_pos
+
+(* ------------------------------------------------------------------------ *)
+
+(* The signature [MenhirLib.EngineTypes.LOG] defines a set of logging hooks.
+   We implement these hooks for use by the reference interpreter. *)
+
+(* Our implementation is parameterized with [show] and [count]. *)
+
+module MakeLoggingHooks (X : sig
+
+  (* [show] determines whether the messages must be sent to [stderr]
+     or suppressed. *)
+  val show : bool
+
+  (* The reference [count] is used to count the number of messages,
+     regardless of whether these messages are visible. Each message
+     occupies one line. *)
+  val count : int ref
+
+end)
+: MenhirLib.EngineTypes.LOG
+  with type state := Lr1.node
+   and type terminal := Terminal.t
+   and type production := Production.t
+= struct
+  open X
+
+  (* [emit] does nothing if [show] is false. *)
+
+  let emit format =
+    ksprintf (fun s -> if show then eprintf "%s%!" s) format
+
+  (* [newline] increments [count], and performs the bounds check,
+      even if [show] is false. *)
+
+  let newline() =
+    incr count;
+    emit "\n"
+
+  let state s =
+    emit "State %d:" (Lr1.encode s);
+    newline()
+
+  let shift tok s' =
+    emit "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.encode s');
+    newline()
+
+  let reduce_or_accept prod =
+    match Production.test_start prod with
+    | Some _ ->
+       emit "Accepting";
+       newline()
+    | None ->
+       emit "Reducing production %s" (Production.print prod);
+       newline()
+
+  let lookahead_token tok startp endp =
+    emit "Lookahead token is now %s (%d-%d)"
+      (Terminal.print tok)
+      startp.Lexing.pos_cnum
+      endp.Lexing.pos_cnum;
+    newline()
+
+  let initiating_error_handling () =
+    emit "Initiating error handling";
+    newline()
+
+  let resuming_error_handling () =
+    emit "Resuming error handling";
+    newline()
+
+  let handling_error s =
+    emit "Handling error in state %d" (Lr1.encode s);
+    newline()
+
+end
 
 (* ------------------------------------------------------------------------ *)
 
@@ -240,7 +317,7 @@ let strategy =
 
 (* Define a palatable user entry point. *)
 
-let interpret nt log lexer lexbuf =
+let interpret show count nt lexer lexbuf =
 
   (* Instantiate the LR engine. *)
 
@@ -248,7 +325,10 @@ let interpret nt log lexer lexbuf =
     MenhirLib.Engine.Make (struct
       include T
       (* The logging hooks. *)
-      module Log = (val log : Logging.LOG)
+      module Log = MakeLoggingHooks(struct
+        let show = show
+        let count = count
+      end)
       (* We want our logging hooks to be called. *)
       let log = true
     end)
@@ -290,7 +370,7 @@ type check_error_path_outcome =
      LR automaton. *)
 | OK of target
 
-let check_error_path log nt input =
+let check_error_path show count nt input =
 
   (* Instantiate the LR engine. *)
 
@@ -298,7 +378,10 @@ let check_error_path log nt input =
     MenhirLib.Engine.Make (struct
       include T
       (* The logging hooks. *)
-      module Log = (val log : Logging.LOG)
+      module Log = MakeLoggingHooks(struct
+        let show = show
+        let count = count
+      end)
       (* We want our logging hooks to be called. *)
       let log = true
     end)

@@ -9,20 +9,19 @@
 (******************************************************************************)
 
 open Grammar
-open Logging
 
 (* This reference interpreter animates the LR automaton. It uses the grammar
    and automaton descriptions, as provided by [Grammar] and [Lr1], as well as
    the generic LR engine in [MenhirLib.Engine]. *)
 
-(* [interpret nt log lexer lexbuf] requires a start symbol [nt], a set of
+(* [interpret show count nt lexer lexbuf] requires a start symbol [nt], a set of
    logging hooks [log] that can be used to produce a trace, a lexer [lexer],
    and a lexing buffer [lexbuf]. It either succeeds and returns [Some cst],
    where [cst] is a concrete syntax tree, or fails and returns [None]. *)
 
 val interpret:
+  bool -> int ref -> (* logging *)
   Nonterminal.t ->
-  log ->
   (Lexing.lexbuf -> Terminal.t) ->
   Lexing.lexbuf ->
   CST.cst option
@@ -55,7 +54,7 @@ type check_error_path_outcome =
 | OK of target
 
 val check_error_path:
-  log ->             (* logging hooks *)
+  bool -> int ref -> (* logging *)
   Nonterminal.t ->   (* initial non-terminal symbol *)
   Terminal.t list -> (* input  *)
   check_error_path_outcome
