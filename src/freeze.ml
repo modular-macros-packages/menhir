@@ -10,7 +10,8 @@
 
 let () =
   if Settings.automaton_graph then
-    AutomatonGraph.print_automaton_graph()
+    let module A = AutomatonGraph.Make(Lr1) in
+    A.print (Settings.base ^ ".dot")
 
 (* Let [Interpret] handle the command line options [--interpret],
    [--interpret-error], [--compile-errors], [--compare-errors]. *)

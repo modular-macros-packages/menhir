@@ -8,8 +8,17 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* Build and print the LR(1) automaton as a graph. Each state of the automaton
-   gives rise to a node. Edges are labeled with nonterminal and terminal
-   symbols. The reduction actions that exist in each state are not shown. *)
+(**This module prints an LR(1) automaton as a graph in [.dot] format.
+   Each state of the automaton gives rise to a node. Edges are labeled
+   with nonterminal and terminal symbols. The reduction actions that
+   exist in each state are not shown. *)
 
-val print_automaton_graph: unit -> unit
+open MiddleAPI
+
+module Make (A : MINIMAL_LR1_AUTOMATON) : sig
+
+  (**[print filename] writes a description of the graph of the automaton [A]
+     to a new file named [filename]. *)
+  val print: string -> unit
+
+end
