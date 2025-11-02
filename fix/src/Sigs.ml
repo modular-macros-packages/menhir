@@ -452,6 +452,12 @@ module type NUMBERING_OPERATIONS = sig
 
 end
 
+(**The combination of [NUMBERING] and [NUMBERING_OPERATIONS]. *)
+module type NUMBERED = sig
+  include NUMBERING
+  include NUMBERING_OPERATIONS with type t := t
+end
+
 (**The signature {!TWO_PHASE_NUMBERING} combines the signatures
    {!ONGOING_NUMBERING} and {!NUMBERING}. It describes a numbering process
    that is organized in two phases. During the first phase, the numbering is

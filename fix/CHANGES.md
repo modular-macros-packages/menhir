@@ -2,6 +2,8 @@
 
 ## 2025/MM/DD
 
+* New signatures `NUMBERING_OPERATIONS` and `NUMBERED`.
+
 * New functor `Fix.Glue.ArraysAsImperativeMapsWithNumbering`.
 
 * New functors
