@@ -42,11 +42,6 @@ module Nonterminal = struct
 
   type t = int
 
-  let equal (nt1 : t) (nt2 : t) =
-    nt1 = nt2
-
-  let compare = (-)
-
   (* Determine how many nonterminals we have, and build mappings both ways
      between names and indices. For each user start symbol [S], an internal
      start symbol [S'] is created. No name collision is possible because the
@@ -70,12 +65,6 @@ module Nonterminal = struct
   let is_user_start nt =
     StringSet.mem name.(nt) grammar.start_symbols
 
-  let[@inline] encode i = i
-
-  let decode i =
-    assert (0 <= i && i < n);
-    i
-
   let lookup symbol =
     StringMap.find symbol map
 
@@ -85,20 +74,7 @@ module Nonterminal = struct
     else
       name.(nt)
 
-  let[@inline] init f =
-    Array.init n f
-
-  let tabulate f =
-    Array.get (init f)
-
-  let[@inline] iter f =
-    MInt.iteri n f
-
-  let[@inline] fold f accu =
-    MInt.foldi n f accu
-
-  let[@inline] map f =
-    MInt.mapi n f
+  include Fix.Numbering.OperationsForIntSegment(struct let n = n end)
 
   let[@inline] iterx f =
     MInt.iterij start n f
@@ -182,11 +158,6 @@ module Terminal = struct
 
   type t = int
 
-  let compare = (-)
-
-  let equal (t1 : t) (t2 : t) =
-    t1 = t2
-
   (* Determine how many terminals we have and build mappings
      both ways between names and indices. A new terminal "#"
      is created. A new terminal "error" is created. The fact
@@ -203,14 +174,10 @@ module Terminal = struct
   let (n : int), (name : string array), (map : int StringMap.t) =
     index ("error" :: tokens grammar @ [ "#" ])
 
-  let[@inline] encode i = i
-
-  let decode i =
-    assert (0 <= i && i < n);
-    i
-
   let lookup name =
     StringMap.find name map
+
+  include Fix.Numbering.OperationsForIntSegment(struct let n = n end)
 
   let print t =
     name.(t)
@@ -267,21 +234,6 @@ module Terminal = struct
   let unquoted_alias t =
     alias t
     |> Option.map MString.unquote
-
-  let init f =
-    Array.init n f
-
-  let tabulate f =
-    Array.get (init f)
-
-  let[@inline] iter f =
-    MInt.iteri n f
-
-  let[@inline] fold f accu =
-    MInt.foldi n f accu
-
-  let[@inline] map f =
-    MInt.mapi n f
 
   let () =
     assert (sharp = n - 1)
@@ -537,11 +489,6 @@ module Production = struct
   type t =
     int
 
-  let equal =
-    Int.equal
-
-  let compare = (-)
-
   (* For every start symbol [S], a new production S' -> S is created.
      It is known as a start production. *)
 
@@ -554,12 +501,7 @@ module Production = struct
     ) grammar.rules 0 in
     n + StringSet.cardinal grammar.start_symbols
 
-  let encode prod =
-    prod
-
-  let decode prod =
-    assert (prod >= 0 && prod < n);
-    prod
+  include Fix.Numbering.OperationsForIntSegment(struct let n = n end)
 
   (* Create a number of uninitialized tables that map a production index to
      information about this production. *)
@@ -740,21 +682,6 @@ module Production = struct
         Printf.sprintf "reduc%s production %s" ending (print prod)
 
   (* Iteration. *)
-
-  let init f =
-    Array.init n f
-
-  let tabulate f =
-    Array.get (init f)
-
-  let[@inline] iter f =
-    MInt.iteri n f
-
-  let[@inline] fold f accu =
-    MInt.foldi n f accu
-
-  let[@inline] map f =
-    MInt.mapi n f
 
   let[@inline] iterx f =
     MInt.iterij start n f

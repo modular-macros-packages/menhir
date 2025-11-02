@@ -415,33 +415,7 @@ let n =
 
 (* Accessors. *)
 
-let encode node : int=
-  node
-
-let decode (i : int) : node =
-  assert (0 <= i && i < n);
-  i
-
-let equal =
-  Int.equal
-
-let compare =
-  (-)
-
-let iter f =
-  MInt.iteri n f
-
-let fold f =
-  MInt.foldi n f
-
-let map f =
-  MInt.mapi n f
-
-let init f =
-  Array.init n f
-
-let tabulate f =
-  Array.get (init f)
+include Fix.Numbering.OperationsForIntSegment(struct let n = n end)
 
 let start_node nt =
   let prod = Production.start_production nt in
