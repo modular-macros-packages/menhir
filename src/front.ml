@@ -239,7 +239,9 @@ let grammar, ocaml_types_have_been_checked =
 (* Expand away some of the position keywords. *)
 
 let grammar =
-  KeywordExpansion.expand_grammar grammar
+  KeywordExpansion.expand grammar
+    (* TODO KeywordExpansion is currently in middle/
+            because it depends on GrammarConstruction *)
 
 (* ------------------------------------------------------------------------- *)
 

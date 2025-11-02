@@ -14,13 +14,6 @@ open Keyword
 open IL
 open ILConstruction
 
-(* [posvar_ keyword] constructs the conventional name of the variable
-   that stands for the position keyword [keyword]. *)
-
-let posvar_ = function
-  | Position (subject, where, flavor) ->
-      posvar subject where flavor
-
 (* [symbolstartpos producers i n] constructs an expression which, beginning at
    index [i], looks for the first non-empty producer and returns its start
    position. If none is found, this expression returns the end position of the
@@ -55,7 +48,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
   if i = n then
     (* Return [$endpos]. *)
     let keyword = Position (Left, WhereEnd, FlavorPosition) in
-    EVar (posvar_ keyword), KeywordSet.singleton keyword
+    EVar (kposvar keyword), KeywordSet.singleton keyword
   else
     (* [symbol] is the symbol that appears in the right-hand side at position i.
        [x] is the identifier that is bound to it. We generate code that compares
@@ -70,7 +63,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
     and   endp = Position (RightNamed x, WhereEnd,   FlavorPosition) in
     if not (nullable symbol) then
       (* The start and end positions must differ. *)
-      EVar (posvar_ startp),
+      EVar (kposvar startp),
       KeywordSet.singleton startp
     else
       let continue, keywords = symbolstartpos analysis producers (i + 1) n in
@@ -81,8 +74,8 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
       else
         (* In the general case, a runtime test is required. *)
         EIfThenElse (
-          EApp (EVar "(!=)", [ EVar (posvar_ startp); EVar (posvar_ endp) ]),
-          EVar (posvar_ startp),
+          EApp (EVar "(!=)", [ EVar (kposvar startp); EVar (kposvar endp) ]),
+          EVar (kposvar startp),
           continue
         ),
         KeywordSet.add startp (KeywordSet.add endp keywords)
@@ -95,8 +88,8 @@ let define keyword1 f keyword2 =
     keyword1
     (KeywordSet.singleton keyword2)
     (mlet
-       [ PVar (posvar_ keyword1) ]
-       [ f (EVar (posvar_ keyword2)) ])
+       [ PVar (kposvar keyword1) ]
+       [ f (EVar (kposvar keyword2)) ])
 
 (* A [loc] keyword is expanded away. *)
 
@@ -109,8 +102,8 @@ let define_as_tuple keyword keywords =
     keyword
     (List.fold_right KeywordSet.add keywords KeywordSet.empty)
     (mlet
-       [ PVar (posvar_ keyword) ]
-       [ ETuple (List.map (fun keyword -> EVar (posvar_ keyword)) keywords) ])
+       [ PVar (kposvar keyword) ]
+       [ ETuple (List.map (fun keyword -> EVar (kposvar keyword)) keywords) ])
 
 let expand_loc keyword action =
   match keyword with
@@ -148,7 +141,7 @@ let expand_symbolstartpos analysis producers n keyword action =
   | Position (Left, WhereSymbolStart, FlavorPosition) ->
       let expansion, keywords = symbolstartpos analysis producers 0 n in
       Action.define keyword keywords
-        (mlet [ PVar (posvar_ keyword) ] [ expansion ])
+        (mlet [ PVar (kposvar keyword) ] [ expansion ])
         action
   | Position (RightNamed _, WhereSymbolStart, FlavorPosition) ->
       (* [$symbolstartpos(x)] does not exist. *)
@@ -250,3 +243,6 @@ let expand_rule analysis rule =
 let expand_grammar grammar =
   let analysis = analysis grammar in
   { grammar with rules = StringMap.map (expand_rule analysis) grammar.rules }
+
+let expand =
+  expand_grammar
