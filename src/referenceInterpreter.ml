@@ -94,8 +94,7 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* Set up all of the information required by the LR engine. Everything is
-   read directly from [Grammar] and [Lr1]. *)
+(* Set up all of the information required by the LR engine. *)
 
 module T (X : sig val strategy: [`Legacy | `Simplified] end) = struct
 
@@ -149,32 +148,35 @@ module T (X : sig val strategy: [`Legacy | `Simplified] end) = struct
 
     (* Check whether [s] has an outgoing shift transition along [tok]. *)
 
-    try
+    match SymbolMap.find (Symbol.T tok) (Lr1.transitions s) with
 
-      let s' : state = SymbolMap.find (Symbol.T tok) (Lr1.transitions s) in
+    | (s' : state) ->
 
-      (* There is such a transition. Return either [ShiftDiscard] or
-         [ShiftNoDiscard], depending on the existence of a default
-         reduction on [#] at [s']. *)
+        (* There is such a transition. Return either [ShiftDiscard] or
+           [ShiftNoDiscard], depending on the existence of a default
+           reduction on [#] at [s']. *)
 
-      match Lr1.test_default_reduction s' with
-      | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
-          shift env false tok value s'
-      | _ ->
-          shift env true tok value s'
+        let discard =
+          match Lr1.test_default_reduction s' with
+          | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
+              false
+          | _ ->
+              true
+        in
+        shift env discard tok value s'
 
     (* There is no such transition. Look for a reduction. *)
 
-    with Not_found ->
-      try
+    | exception Not_found ->
 
-        let prod = MList.single (TerminalMap.find tok (Lr1.reductions s)) in
-        reduce env prod
-
-      (* There is no reduction either. Fail. *)
-
-      with Not_found ->
-        fail env
+        match TerminalMap.find tok (Lr1.reductions s) with
+        | prods ->
+            (* There is a reduction. *)
+            let prod = MList.single prods in
+            reduce env prod
+        | exception Not_found ->
+            (* There is no transition and no reduction. Fail. *)
+            fail env
 
   let maybe_shift_t (s : state) (tok : terminal) : state option =
     try
@@ -310,7 +312,7 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* Define a palatable user entry point. *)
+(* This is the interpreter's main entry point. *)
 
 let interpret strategy show count nt lexer lexbuf =
 
@@ -341,9 +343,9 @@ let interpret strategy show count nt lexer lexbuf =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Another entry point, used internally by [LRijkstra] to check that the
-   sentences that [LRijkstra] produces do lead to an error in the expected
-   state. *)
+(* This is a second entry point. It is used internally by [LRijkstra]
+   to check that the sentences that [LRijkstra] produces do lead to an
+   error in the expected state. *)
 
 type spurious_reduction =
   Lr1.node * Production.t
