@@ -9,9 +9,13 @@
 * New functors
   `Fix.DataFlow.ForNumberedType`,
   `Fix.GraphNumbering.ForNumberedType`,
+  and
   `Fix.Numbering.ForNumberedType`.
 
-* New functor `Fix.Numbering.Operations`.
+* New functors
+  `Fix.Numbering.Operations`
+  and
+  `Fix.Numbering.OperationsForIntSegment`.
 
 ## 2025/09/19
 

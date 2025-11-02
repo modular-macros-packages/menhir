@@ -141,3 +141,49 @@ module Operations (T : NUMBERING) = struct
     List.rev !accu
 
 end
+
+module OperationsForIntSegment (T : sig val n: int end) = struct
+
+  type t = int
+
+  include T
+
+  (* Define [encode] and [decode]. *)
+
+  let[@inline] encode i = i
+
+  let decode i =
+    assert (0 <= i && i < n);
+    i
+
+  (* One could call [Operations] and include its result, but I am not sure
+     whether OCaml would optimize away the calls to [encode] and [decode]. *)
+
+  let equal =
+    Int.equal
+
+  let compare =
+    (-)
+    (* overflow is impossible if [n] is small *)
+
+  let[@inline] init f =
+    Array.init n f
+
+  let tabulate f =
+    let table = init f in
+    fun x -> table.(x)
+
+  let iter yield =
+    for i = 0 to n - 1 do yield i done
+
+  let fold yield accu =
+    let accu = ref accu in
+    for i = 0 to n - 1 do accu := yield i !accu done;
+    !accu
+
+  let map f =
+    let accu = ref [] in
+    for i = 0 to n - 1 do accu := f i :: !accu done;
+    List.rev !accu
+
+end

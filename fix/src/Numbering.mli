@@ -54,7 +54,11 @@ module type OPERATIONS =
   NUMBERING_OPERATIONS
 
 (**{!Operations} extends a numbered type
-   with a number of common operations,
-   including [tabulate], [iter], [fold], [map]. *)
+   with a number of common operations. *)
 module Operations (T : NUMBERING)
      : OPERATIONS with type t := T.t
+
+(**{!OperationsForIntSegment} creates a view of the type [int],
+   restricted to the segment [\[0, n)], as a numbered type. *)
+module OperationsForIntSegment (T : sig val n: int end)
+     : NUMBERED with type t = int
