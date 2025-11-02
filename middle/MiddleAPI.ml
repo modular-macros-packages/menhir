@@ -283,6 +283,9 @@ module Terminal : sig
   (**[mapx] enumerates the terminal symbols except [#]. *)
   val mapx: (t -> 'a) -> 'a list
 
+  (**[initx] enumerates the terminal symbols except [#]. *)
+  val initx: (t -> 'a) -> 'a array
+
   (**[iter_real] enumerates the real terminal symbols, that is,
      the terminal symbols except [#] and [error]. *)
   val iter_real: (t -> unit) -> unit

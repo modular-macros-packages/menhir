@@ -295,6 +295,9 @@ module Terminal = struct
   let[@inline] mapx f =
     MInt.mapi sharp f
 
+  let[@inline] initx f =
+    MInt.initi sharp f
+
   let () =
     assert (error = 0)
 
