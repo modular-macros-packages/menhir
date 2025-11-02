@@ -55,8 +55,8 @@ module T = struct
   type production =
       Production.t
 
-  let production_index = Production.p2i
-  let find_production  = Production.i2p
+  let production_index = Production.encode
+  let find_production  = Production.decode
 
   let default_reduction (s : state) defred nodefred env =
     match Lr1.test_default_reduction s with

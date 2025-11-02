@@ -163,7 +163,7 @@ module Code (G : sig
   module Terminal : sig
     type t
     val sharp: t
-    val t2i: t -> int
+    val encode: t -> int
     val print: t -> string
     val real: t -> bool
     val unquoted_alias: t -> string option
@@ -182,7 +182,7 @@ module Code (G : sig
   end
   module Production : sig
     type index
-    val p2i: index -> int
+    val encode: index -> int
     val print: index -> string
     val rhs: index -> Symbol.t array
     val attributes: index -> attributes
@@ -248,7 +248,7 @@ let prod_method_name prod =
   with Not_found ->
     (* If no [@name] attribute exists, we generate a unique internal name
        for this method, which will be private. *)
-    sprintf "prod_%d" (Production.p2i prod)
+    sprintf "prod_%d" (Production.encode prod)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -393,7 +393,7 @@ and dcst_constructor_def prod : structure =
              to an array of subtrees that matches the right-hand side of the
              production [prod]. *)
           EApp (evar idcst_nonterminal, [
-            EIntConst (Production.p2i prod);
+            EIntConst (Production.encode prod);
             EArray (dcst_constructor_subtrees prod)
           ])
         )
@@ -543,7 +543,7 @@ and nt_method_branch prod =
   branch (
     (* The pattern matches production [prod], based on its integer index.
        The array of subtrees is bound to the local variable [csts]. *)
-    PData (icst_nonterminal, [pint (Production.p2i prod); pvar csts])
+    PData (icst_nonterminal, [pint (Production.encode prod); pvar csts])
   ) (
     (* The body is a call to the method associated with production [prod]. *)
     EApp (
@@ -675,7 +675,7 @@ and settle_def (state : int) : expr =
         ETuple [
           evar t;
           EIntConst state;
-          EIntConst Terminal.(t2i sharp)
+          EIntConst (Terminal.encode Terminal.sharp)
         ]
       ]
     )

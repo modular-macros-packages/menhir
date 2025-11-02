@@ -303,7 +303,7 @@ let print addr =
         sprintf "run_%s" s
         |> mode_prefix mode
     | Reduce (mode, prod) ->
-        let prod = MString.padded_index Production.n (Production.p2i prod) in
+        let prod = MString.padded_index Production.n (Production.encode prod) in
         sprintf "reduce_%s" prod
         |> mode_prefix mode
     | Goto (mode, nt) ->
@@ -311,7 +311,7 @@ let print addr =
         sprintf "goto_%s" nt
         |> mode_prefix mode
     | ActGoto (mode, prod) ->
-        let prod = MString.padded_index Production.n (Production.p2i prod) in
+        let prod = MString.padded_index Production.n (Production.encode prod) in
         sprintf "act_goto_%s" prod
         |> mode_prefix mode
     | Stop s ->

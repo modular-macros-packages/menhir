@@ -61,14 +61,14 @@ module Nonterminal : sig
      start symbols. *)
   val n: int
 
-  (**[n2i] converts a nonterminal symbol to an integer in the range
+  (**[encode] converts a nonterminal symbol to an integer in the range
      [\[0, n)]. *)
-  val n2i: t -> int
+  val encode: t -> int
 
-  (**[i2n] converts an integer in the range [\[0, n)] to a nonterminal
+  (**[decode] converts an integer in the range [\[0, n)] to a nonterminal
      symbol. This function is {b unsafe} and should be used as little as
      possible. *)
-  val i2n: int -> t
+  val decode: int -> t
 
   (**[lookup] maps an identifier [s] to a nonterminal symbol. If there is
      no nonterminal symbol named [s] then [Not_found] is raised. *)
@@ -191,12 +191,12 @@ module Terminal : sig
      symbols [#] and [error]. *)
   val n: int
 
-  (**[t2i] converts a terminal symbol to an integer in the range [\[0, n)]. *)
-  val t2i: t -> int
+  (**[encode] converts a terminal symbol to an integer in the range [\[0, n)]. *)
+  val encode: t -> int
 
-  (**[i2t] converts an integer in the range [\[0, n)] to a terminal symbol.
+  (**[decode] converts an integer in the range [\[0, n)] to a terminal symbol.
      This function is {b unsafe} and should be used as little as possible. *)
-  val i2t: int -> t
+  val decode: int -> t
 
   (**[lookup] maps an identifier [s] to a terminal symbol. If there is no
      terminal symbol named [s] then [Not_found] is raised. *)
@@ -453,12 +453,12 @@ module Production : sig
      productions. *)
   val n: int
 
-  (**[p2i] converts a production to an integer in the range [\[0, n)]. *)
-  val p2i: t -> int
+  (**[encode] converts a production to an integer in the range [\[0, n)]. *)
+  val encode: t -> int
 
-  (**[i2p] converts an integer in the range [\[0, n)] to a production. This
+  (**[decode] converts an integer in the range [\[0, n)] to a production. This
      function is {b unsafe} and should be used as little as possible. *)
-  val i2p: int -> t
+  val decode: int -> t
 
   (**The integer index [start] is published so as to allow the table back-end
      to produce code for [is_start]. It should not be used otherwise. *)

@@ -328,7 +328,7 @@ let start_def =
 (* Encodings of entries in the default reduction table. *)
 
 let encode_DefRed prod =            (* 1 + prod *)
-  1 + Production.p2i prod
+  1 + Production.encode prod
 
 let encode_NoDefRed =               (* 0 *)
   0
@@ -336,7 +336,7 @@ let encode_NoDefRed =               (* 0 *)
 (* Encodings of entries in the action table. *)
 
 let encode_Reduce prod =            (* prod | 01 *)
-  (Production.p2i prod lsl 2) lor 1
+  (Production.encode prod lsl 2) lor 1
 
 let encode_ShiftDiscard s =         (*    s | 10 *)
   ((Lr1.encode s) lsl 2) lor 0b10
@@ -376,10 +376,10 @@ let encode_no_symbol =
   0                                          (* 0 | 0 *)
 
 let encode_terminal tok =
-  (Terminal.t2i tok + 1) lsl 1          (*  t + 1 | 0 *)
+  (Terminal.encode tok + 1) lsl 1          (*  t + 1 | 0 *)
 
 let encode_nonterminal nt =
-  ((Nonterminal.n2i nt) lsl 1) lor 1        (* nt | 1 *)
+  ((Nonterminal.encode nt) lsl 1) lor 1        (* nt | 1 *)
 
 let encode_symbol = function
   | Symbol.T tok ->
@@ -529,7 +529,7 @@ let action node t =
    right-most row. For sanity, we check this fact here. *)
 
 let () =
-  assert (Terminal.t2i Terminal.sharp = Terminal.n - 1)
+  assert (Terminal.encode Terminal.sharp = Terminal.n - 1)
 
 (* The goto table. *)
 
@@ -612,7 +612,7 @@ let lhs =
     "lhs",
     marshal1 (
       Production.init (fun prod ->
-        Nonterminal.n2i (Production.nt prod)
+        Nonterminal.encode (Production.nt prod)
       )
     )
   )
@@ -663,7 +663,7 @@ let token2terminal =
     "token2terminal"
     tint
     false
-    (fun tok -> EIntConst (Terminal.t2i tok))
+    (fun tok -> EIntConst (Terminal.encode tok))
 
 let token2value =
   destructuretokendef
@@ -838,7 +838,7 @@ let terminal () =
       EMatch (EVar t,
         Terminal.mapx (fun tok ->
           branch
-            (pint (Terminal.t2i tok))
+            (pint (Terminal.encode tok))
             (xsymbol (Symbol.T tok))
         ) @ [
           branch
@@ -864,7 +864,7 @@ let nonterminal () =
       EMatch (EVar nt,
         Nonterminal.foldx (fun nt branches ->
           branch
-            (pint (Nonterminal.n2i nt))
+            (pint (Nonterminal.encode nt))
             (xsymbol (Symbol.N nt))
           :: branches
         ) [
@@ -1110,7 +1110,7 @@ let program =
            defined here are visible in the semantic actions. *)
         SIValDefs (false, [
           token2terminal;
-          define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
+          define ("error_terminal", EIntConst (Terminal.encode Terminal.error));
           token2value;
           default_reduction;
           error;

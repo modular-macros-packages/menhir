@@ -158,8 +158,8 @@ module Run () = struct
     let sources = Vector.make' any (fun () -> Index.of_int Lr1C.n 0)
     let targets = Vector.make' any (fun () -> Index.of_int Lr1C.n 0)
 
-    let t_symbols = Vector.make' shift (fun () -> Terminal.i2t 0)
-    let nt_symbols = Vector.make' goto (fun () -> Nonterminal.i2n 0)
+    let t_symbols = Vector.make' shift (fun () -> Terminal.decode 0)
+    let nt_symbols = Vector.make' goto (fun () -> Nonterminal.decode 0)
 
     (* Hash tables to associate information to the pair of
        a transition and a symbol.
@@ -170,14 +170,14 @@ module Run () = struct
     let nt_pack lr1 goto =
       (* Custom function to key into nt_table: compute a unique integer from
          an lr1 state and a non-terminal. *)
-      Index.to_int lr1 * Nonterminal.n + Nonterminal.n2i goto
+      Index.to_int lr1 * Nonterminal.n + Nonterminal.encode goto
 
     let t_table = Hashtbl.create 7
 
     let t_pack lr1 t =
       (* Custom function to key into t_table: compute a unique integer from
          an lr1 state and a terminal. *)
-      Index.to_int lr1 * Terminal.n + Terminal.t2i t
+      Index.to_int lr1 * Terminal.n + Terminal.encode t
 
     (* A vector to store the predecessors of an lr1 state.
        We cannot compute them directly, we discover them by exploring the
@@ -483,9 +483,9 @@ module Run () = struct
     let t_singletons =
       let table =
         Array.init Terminal.n
-          (fun t -> [|TerminalSet.singleton (Terminal.i2t t)|])
+          (fun t -> [|TerminalSet.singleton (Terminal.decode t)|])
       in
-      fun t -> table.(Terminal.t2i t)
+      fun t -> table.(Terminal.encode t)
 
     let all_terminals =
       [|all_terminals|]

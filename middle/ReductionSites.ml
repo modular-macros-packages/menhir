@@ -42,10 +42,10 @@ let _sites : A.node list array =
 (* Read and write accessors. *)
 
 let[@inline] reduction_sites prod =
-  _sites.(Production.p2i prod)
+  _sites.(Production.encode prod)
 
 let[@inline] record prod node =
-  let i = Production.p2i prod in
+  let i = Production.encode prod in
   _sites.(i) <- node :: _sites.(i)
 
 (* -------------------------------------------------------------------------- *)

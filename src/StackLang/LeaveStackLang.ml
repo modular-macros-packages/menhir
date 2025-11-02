@@ -76,7 +76,7 @@ let tag_branch tag body =
 (* The name of the semantic action function for production [prod]. *)
 
 let actionname prod =
-  let prod = MString.padded_index Production.n (Production.p2i prod) in
+  let prod = MString.padded_index Production.n (Production.encode prod) in
   prefix (sprintf "action_%s" prod)
 
 (* A type scheme for the type [token], qualified with the module name

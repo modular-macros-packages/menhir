@@ -70,9 +70,9 @@ module Nonterminal = struct
   let is_user_start nt =
     StringSet.mem name.(nt) grammar.start_symbols
 
-  let n2i i = i
+  let[@inline] encode i = i
 
-  let i2n i =
+  let decode i =
     assert (0 <= i && i < n);
     i
 
@@ -203,9 +203,9 @@ module Terminal = struct
   let (n : int), (name : string array), (map : int StringMap.t) =
     index ("error" :: tokens grammar @ [ "#" ])
 
-  let t2i i = i
+  let[@inline] encode i = i
 
-  let i2t i =
+  let decode i =
     assert (0 <= i && i < n);
     i
 
@@ -552,10 +552,10 @@ module Production = struct
     ) grammar.rules 0 in
     n + StringSet.cardinal grammar.start_symbols
 
-  let p2i prod =
+  let encode prod =
     prod
 
-  let i2p prod =
+  let decode prod =
     assert (prod >= 0 && prod < n);
     prod
 
@@ -934,10 +934,10 @@ module Item = struct
   let[@inline] import (prod, pos) =
     assert (0 <= pos && pos <= Production.length prod);
     assert (pos < low_limit);
-    (Production.p2i prod) lsl low_bits + pos
+    (Production.encode prod) lsl low_bits + pos
 
   let[@inline] export item =
-    Production.i2p (item lsr low_bits),
+    Production.decode (item lsr low_bits),
     item mod low_limit
 
   let[@inline] marshal item =

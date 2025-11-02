@@ -39,7 +39,7 @@ module Make (G : GRAMMAR) = struct
   module P = Dot.Print (struct
     type vertex = Nonterminal.t
     let name nt =
-      Printf.sprintf "nt%d" (Nonterminal.n2i nt)
+      Printf.sprintf "nt%d" (Nonterminal.encode nt)
     let successors (f : ?style:Dot.style -> label:string -> vertex -> unit) nt =
       successors nt |> Set.iter @@ fun successor ->
       f ~label:"" successor

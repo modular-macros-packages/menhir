@@ -13,9 +13,9 @@ open Syntax
 open PlainSyntax
 open Grammar
 let value, position, map = Located.(value, position, map)
-let n2i = Nonterminal.n2i
-let t2i = Terminal.t2i
-let p2i = Production.p2i
+let n2i = Nonterminal.encode
+let t2i = Terminal.encode
+let p2i = Production.encode
 module C = Cmly_format
 
 let ocamltype (typ : ocamltype) : C.ocamltype =

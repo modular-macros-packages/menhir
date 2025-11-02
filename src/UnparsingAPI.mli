@@ -16,7 +16,7 @@ open IL
 module Code (G : sig
   module Terminal : sig
     type t
-    val t2i: t -> int
+    val encode: t -> int
     val print: t -> string
     val sharp: t
     val real: t -> bool
@@ -36,7 +36,7 @@ module Code (G : sig
   end
   module Production : sig
     type index
-    val p2i: index -> int
+    val encode: index -> int
     val rhs: index -> Symbol.t array
     val attributes: index -> attributes
     val positions: index -> ranges

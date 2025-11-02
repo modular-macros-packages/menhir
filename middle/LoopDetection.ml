@@ -189,7 +189,7 @@ let () =
   let module T = Fix.SCC.Run (struct
     type node = Nonterminal.t
     let n = Nonterminal.n
-    let index = Nonterminal.n2i
+    let index = Nonterminal.encode
     let iter = Nonterminal.iter
     (* The relation S is computed as follows. *)
     let successors =
