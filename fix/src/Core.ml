@@ -341,6 +341,16 @@ end
 
 (* Special cases, for easier use. *)
 
+module ForIntSegment
+  (T : sig val n: int end)
+  (P : PROPERTY)
+     = Make(Glue.ArraysAsImperativeMaps(T))(P)
+
+module ForNumberedType
+  (T : NUMBERING)
+  (P : PROPERTY)
+     = Make(Glue.ArraysAsImperativeMapsWithNumbering(T))(P)
+
 module ForOrderedType
   (T : OrderedType)
   (P : PROPERTY)

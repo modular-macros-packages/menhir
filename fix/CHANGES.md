@@ -4,18 +4,19 @@
 
 * New signatures `NUMBERING_OPERATIONS` and `NUMBERED`.
 
-* New functor `Fix.Glue.ArraysAsImperativeMapsWithNumbering`.
+* New functor `Fix.ForIntSegment`.
 
 * New functors
+  `Fix.ForNumberedType`,
   `Fix.DataFlow.ForNumberedType`,
   `Fix.GraphNumbering.ForNumberedType`,
-  and
   `Fix.Numbering.ForNumberedType`.
 
 * New functors
-  `Fix.Numbering.Operations`
-  and
+  `Fix.Numbering.Operations` and
   `Fix.Numbering.OperationsForIntSegment`.
+
+* New functor `Fix.Glue.ArraysAsImperativeMapsWithNumbering`.
 
 ## 2025/09/19
 

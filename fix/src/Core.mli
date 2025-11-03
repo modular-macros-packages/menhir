@@ -35,6 +35,26 @@ module Make
        with type variable = M.key
         and type property = P.property
 
+(**{!ForIntSegment} is a special case of {!Make} where it
+   suffices to pass an integer interval [T] as an argument.
+   An array is used to hold the memoization table. *)
+module ForIntSegment
+  (T : sig val n: int end)
+  (P : PROPERTY)
+     : SOLVER
+       with type variable = int
+        and type property = P.property
+
+(**{!ForNumberedType} is a special case of {!Make} where it
+   suffices to pass a numbered type [T] as an argument.
+   An array is used to hold the memoization table. *)
+module ForNumberedType
+  (T : NUMBERING)
+  (P : PROPERTY)
+     : SOLVER
+       with type variable = T.t
+        and type property = P.property
+
 (**{!ForOrderedType} is a special case of {!Make} where it
    suffices to pass an ordered type [T] as an argument.
    A reference to a persistent map is used to hold the
