@@ -11,6 +11,7 @@
  (* This module discovers information about the shape and content of the stack
     in each of the automaton's states. *)
 
+open MiddleAPI
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
@@ -60,6 +61,12 @@ module F = Freeze
 let short_states_needed =
   (not Settings.represent_states) || Settings.backend = `CoqBackend
 
+module type FOO =
+  STACK_STATES
+  with module G = Grammar
+   and type node := Lr1.node
+   and type property = Lr1.NodeSet.t array
+
 module StackStatesShort = struct
 
   open StackStates
@@ -67,9 +74,9 @@ module StackStatesShort = struct
   include
     (val
       if short_states_needed then
-        (module Run(StackSymbolsShort) : STACK_STATES)
+        (module Run(Lr1)(StackSymbolsShort) : FOO)
       else
-        (module Dummy(StackSymbolsShort) : STACK_STATES)
+        (module Dummy(Lr1)(StackSymbolsShort) : FOO)
     )
 
 end
@@ -654,7 +661,7 @@ module Long () = struct
     StackSymbols.Long(Lr1)()
 
   module StackStatesLong =
-    StackStates.Run(StackSymbolsLong)
+    StackStates.Run(Lr1)(StackSymbolsLong)
 
   let () =
     Error.logC 3 @@ fun f ->

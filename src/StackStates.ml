@@ -8,82 +8,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+open MiddleAPI
 
-(**The functors [Run] and [Dummy] assume that the height of the known suffix
-   of the stack is known at every state. This height information must be
-   consistent: the height at a state [s] must be no greater than the minimum
-   of the height at the predecessors of [s], plus one. *)
-module type STACK_HEIGHTS = sig
-
-  (**[stack_height s] is the height of the known suffix of the stack
-     at state [s]. *)
-  val stack_height: Lr1.node -> int
-
-  (**[production_height prod] is the height of the known suffix of the stack
-     at a state where production [prod] can be reduced. *)
-  val production_height: Production.t -> int
-
-  (**[goto_height nt] is the height of the known suffix of the stack at a
-     state where an edge labeled [nt] has just been followed. *)
-  val goto_height: Nonterminal.t -> int
-
-  (**[variant] distinguishes the short invariant and the long invariant. *)
-  val variant: [`Short | `Long]
-
-end
-
-(**This signature describes the output of the functors [Run] and [Dummy]. *)
-module type STACK_STATES = sig
-
-  (**A property is a description of the known suffix of the stack at state
-     [s]. It is represented as an array. By convention, the top of the stack
-     is the end of the array. Each array element is a set of states that may
-     appear in this stack cell. *)
-  type property =
-    Lr1.NodeSet.t array
-
-  (**[stack_states s] is the known suffix of the stack at state [s]. *)
-  val stack_states: Lr1.node -> property
-
-  (**[production_states prod] is the known suffix of the stack at a state
-     where production [prod] can be reduced. In the short invariant, the
-     length of this suffix is [Production.length prod]. In the long
-     invariant, its length can be greater. *)
-  val production_states: Production.t -> property
-
-  (**[goto_states nt] is the known suffix of the stack at a state where an
-     edge labeled [nt] has just been followed. If [long] is false, then the
-     length of this suffix is [1]. If [long] is true, then its length can be
-     greater. *)
-  val goto_states: Nonterminal.t -> property
-
-  (**[print c] writes the value of [stack_states] at every node and the value
-     of [production_states] at every production to the output channel [c]. *)
-  val print: out_channel -> unit
-
-end
-
-module Run (S : sig
-
-  (**[stack_height s] is the height of the known suffix of the stack
-     at state [s]. *)
-  val stack_height: Lr1.node -> int
-
-  (**[production_height prod] is the height of the known suffix of the stack
-     at a state where production [prod] can be reduced. *)
-  val production_height: Production.t -> int
-
-  (**[goto_height nt] is the height of the known suffix of the stack at a
-     state where an edge labeled [nt] has just been followed. *)
-  val goto_height: Nonterminal.t -> int
-
-  (**[variant] distinguishes the short invariant and the long invariant. *)
-  val variant: [`Short | `Long]
-
-end) = struct
-
+module Run
+(Lr1 : LR1)
+(S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
+= struct
 open S
+open G
+
+module G = S.G
 
 (* We now wish to compute, at each state [s], a vector of sets of states,
    whose length is [stack_height s].  *)
@@ -96,7 +30,7 @@ open S
    properties are vectors of sets of states. On large automata, the speed
    difference can be more than 2x. *)
 
-module G = struct
+module Graph = struct
 
   (* A stack cell is identified by a node [s] in the LR(1) automaton and
      an index [i] into the known suffix of the stack at state [s]. This
@@ -149,23 +83,23 @@ module G = struct
         contribute (target, i + 1) states
     )
 
-end
+end (* Graph *)
 
 (* Compute the least fixed point. *)
 
 module T = struct
-  type t = G.variable
+  type t = Graph.variable
 end
 
-let stack_states : G.variable -> G.property option =
-  let module F = Fix.DataFlow.ForType(T)(G)(G) in
+let stack_states : Graph.variable -> Graph.property option =
+  let module F = Fix.DataFlow.ForType(T)(Graph)(Graph) in
   F.solution
 
 (* If every state is reachable, then the least fixed point must be non-[None]
    everywhere, so we may view it as a function that produces a vector of sets
    of states. *)
 
-let stack_states (cell : G.variable) : G.property =
+let stack_states (cell : Graph.variable) : Graph.property =
   assert (let (s, i) = cell in 0 <= i && i < stack_height s);
   Option.get (stack_states cell)
 
@@ -263,7 +197,12 @@ end (* Run *)
 
 (* The following dummy module is used to skip the above computation. *)
 
-module Dummy (S : STACK_HEIGHTS) = struct
+module Dummy
+(Lr1 : LR1)
+(S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
+= struct
+
+  module G = S.G
 
   type property =
     Lr1.NodeSet.t array
