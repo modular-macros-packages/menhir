@@ -166,12 +166,7 @@ let stack_states : G.variable -> G.property option =
 
 let stack_states (cell : G.variable) : G.property =
   assert (let (s, i) = cell in 0 <= i && i < stack_height s);
-  match stack_states cell with
-  | None ->
-      (* Apparently this node is unreachable. *)
-      assert false
-  | Some states ->
-      states
+  Option.get (stack_states cell)
 
 (* To the end user, we want to propose an API that is based on vectors of
    sets of states. *)
