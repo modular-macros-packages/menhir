@@ -177,13 +177,11 @@ type property =
 (* Adapt [stack_states] to the external API. *)
 
 let stack_states : Lr1.node -> property =
-  Lr1.tabulate (fun node ->
-    let n = stack_height node in
-    Array.init n (fun i ->
-      let i = n - 1 - i in
-      stack_states (node, i)
-    )
-  )
+  Lr1.tabulate @@ fun node ->
+  let n = stack_height node in
+  Array.init n @@ fun i ->
+  let i = n - 1 - i in
+  stack_states (node, i)
 
 (* [truncate_join height f nodes] computes a join of the images through [f] of
    the nodes in the set [nodes], truncated at height [height]. *)
