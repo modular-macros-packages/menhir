@@ -1256,6 +1256,9 @@ module type STACK_SYMBOLS = sig
 
 end
 
+(**[STACK_STATES] is the result of an analysis of the shape of the stack in an
+   LR(1) automaton. Here, a stack shape is not just an array of symbols; it is
+   an array of nonempty sets of nodes. *)
 module type STACK_STATES = sig
 
   module G : GRAMMAR
@@ -1264,9 +1267,9 @@ module type STACK_STATES = sig
   type node
 
   (**A property is a description of the known suffix of the stack at a node.
-     It is represented as an array of sets of nodes. By convention, the top of
-     the stack is the end of the array. Each array element is a set of states
-     that may appear in this stack cell. *)
+     It is represented as an array of nonempty sets of nodes. By convention,
+     the top of the stack is the end of the array. Each array element is a set
+     of states that may appear in this stack cell. *)
   type property
 
   (**[stack_states node] is the known suffix of the stack at node [node]. *)
