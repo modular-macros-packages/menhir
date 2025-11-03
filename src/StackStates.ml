@@ -107,6 +107,9 @@ module G = struct
      the next cell is numbered 1, and so on. (That is, we count from the
      right towards the left.) *)
 
+  (* Below, we exploit the fact that this type supports OCaml's generic
+     equality and hashing. *)
+
   type variable =
     Lr1.node * int
 
@@ -149,19 +152,14 @@ module G = struct
 
 end
 
-(* Maps. *)
-
-module M =
-  Fix.Glue.HashTablesAsImperativeMaps(struct
-    type t = G.variable
-    let equal (t1 : t) (t2 : t) = (t1 = t2)
-    let hash (t : t) = Hashtbl.hash t
-  end)
-
 (* Compute the least fixed point. *)
 
+module T = struct
+  type t = G.variable
+end
+
 let stack_states : G.variable -> G.property option =
-  let module F = Fix.DataFlow.Run(M)(G)(G) in
+  let module F = Fix.DataFlow.ForType(T)(G)(G) in
   F.solution
 
 (* If every state is reachable, then the least fixed point must be non-[None]
