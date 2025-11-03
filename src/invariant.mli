@@ -98,10 +98,6 @@ val append: word -> word -> word
    the predicate [p]. *)
 val filter: (cell -> bool) -> word -> word
 
-(**[suffix w k] is the suffix of length [k] of the word [w]. The length of
-   [w] must be at least [k]. *)
-val suffix: word -> int -> word
-
 (**[push w cell] is the stack [w], onto which the cell [cell] has been
    pushed. *)
 val push: word -> cell -> word

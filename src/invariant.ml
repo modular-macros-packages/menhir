@@ -537,8 +537,8 @@ let meet w1 w2 =
         that their meet is bottom. *)
     None
 
-let push, pop, top, suffix, filter =
-  MArray.(push, pop, last, suffix, filter)
+let push, pop, top, filter =
+  MArray.(push, pop, last, filter)
 
 let get, length, fold_left, append, to_list =
   Array.(get, length, fold_left, append, to_list)
