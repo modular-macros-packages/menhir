@@ -62,9 +62,6 @@ module type STACK_STATES = sig
      greater. *)
   val goto_states: Nonterminal.t -> property
 
-  (* At log level [-lc 3], the result of the analysis is logged, in an
-     unspecified format. *)
-
 end
 
 (**The functor [Run] performs a simple data flow analysis to determine
@@ -73,3 +70,6 @@ module Run (S : STACK_HEIGHTS) : STACK_STATES
 
 (**The dummy module [Dummy] is used to skip the above computation. *)
 module Dummy (S : STACK_HEIGHTS) : STACK_STATES
+
+  (* At log level [-lc 3], the result of the analysis is logged, in an
+     unspecified format. *)
