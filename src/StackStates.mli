@@ -32,9 +32,8 @@ module type STACK_HEIGHTS = sig
      state where an edge labeled [nt] has just been followed. *)
   val goto_height: Nonterminal.t -> int
 
-  (**The string [variant] should be "short" or "long" and is printed
-     when --timings is enabled. *)
-  val variant: string
+  (**[variant] distinguishes the short invariant and the long invariant. *)
+  val variant: [`Short | `Long]
 
 end
 

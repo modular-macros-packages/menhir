@@ -1232,8 +1232,7 @@ module type STACK_SYMBOLS = sig
   (**[goto_height nt] is [Array.length (goto_symbols nt)]. *)
   val goto_height: Nonterminal.t -> int
 
-  (**The string [variant] is "short" or "long" and is printed when
-     --timings is enabled. *)
-  val variant: string
+  (**[variant] distinguishes the short invariant and the long invariant. *)
+  val variant: [`Short | `Long]
 
 end

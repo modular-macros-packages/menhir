@@ -28,9 +28,8 @@ module type STACK_HEIGHTS = sig
      state where an edge labeled [nt] has just been followed. *)
   val goto_height: Nonterminal.t -> int
 
-  (**The string [variant] should be "short" or "long" and is printed
-     when --timings is enabled. *)
-  val variant: string
+  (**[variant] distinguishes the short invariant and the long invariant. *)
+  val variant: [`Short | `Long]
 
 end
 
@@ -78,9 +77,8 @@ module Run (S : sig
      state where an edge labeled [nt] has just been followed. *)
   val goto_height: Nonterminal.t -> int
 
-  (**The string [variant] should be "short" or "long" and is printed
-     when --timings is enabled. *)
-  val variant: string
+  (**[variant] distinguishes the short invariant and the long invariant. *)
+  val variant: [`Short | `Long]
 
 end) = struct
 
@@ -253,13 +251,13 @@ let () =
   Error.logC 3 (fun f ->
     Lr1.iter (fun node ->
       Printf.fprintf f "%sstack(%s) = %s\n"
-        variant
+        (match variant with `Short -> "short" | `Long -> "long")
         (Lr1.print node)
         (print (stack_states node))
     );
     Production.iterx (fun prod ->
       Printf.fprintf f "%sprodstack(%s) = %s\n"
-        variant
+        (match variant with `Short -> "short" | `Long -> "long")
         (Production.print prod)
         (print (production_states prod))
     )

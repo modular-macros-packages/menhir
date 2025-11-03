@@ -79,7 +79,7 @@ module Short (Lr1 : LR1_AUTOMATON) () = struct
     Array.length (goto_symbols nt)
 
   let variant =
-    "short"
+    `Short
 
 end
 
@@ -217,6 +217,6 @@ module Long (Lr1 : LR1) () = struct
     Array.length (goto_symbols nt)
 
   let variant =
-    "long"
+    `Long
 
 end
