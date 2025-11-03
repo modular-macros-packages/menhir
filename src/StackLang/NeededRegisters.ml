@@ -16,9 +16,6 @@ let empty, singleton, mem, (+), (-) =
 let maybe = function Some s -> s | None -> empty
 let union = List.fold_left ( + ) empty
 
-module Variable =
-  Fix.Glue.HashTablesAsImperativeMaps(Label)
-
 (* -------------------------------------------------------------------------- *)
 
 (* The set of registers defined by a [tokpat]. *)
@@ -201,7 +198,7 @@ module Property =
   Fix.Prop.Set(Reg.Set)
 
 module F =
-  Fix.Make(Variable)(Property)
+  Fix.Fix.ForHashedType(Label)(Property)
 
 let update program =
 

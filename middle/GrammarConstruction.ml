@@ -1167,9 +1167,7 @@ end = struct
      when and where [lfp] is called by the user. *)
 
   module F =
-    Fix.Make
-      (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
-      (P)
+    Fix.Fix.ForIntSegment(Nonterminal)(P)
 
   let nonterminal =
     F.lfp nonterminal
