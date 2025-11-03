@@ -1191,14 +1191,42 @@ end (* LR1 *)
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(**[STACK_SYMBOLS] is the result of an analysis of the shape of the stack
-   in an LR(1) automaton. *)
-module type STACK_SYMBOLS = sig
+(**[STACK_HEIGHTS] is the result of an analysis of the height of the stack in
+   an LR(1) automaton. This height information must be sound in the following
+   sense: the height at a node [node] must be no greater than the minimum of
+   the height at the predecessors of [node], plus one. *)
+module type STACK_HEIGHTS = sig
 
   module G : GRAMMAR
     open G
 
   type node
+
+  (**[stack_height s] is the height of the known suffix of the stack
+     at state [s]. *)
+  val stack_height: node -> int
+
+  (**[production_height prod] is the height of the known suffix of the stack
+     at a state where production [prod] can be reduced. *)
+  val production_height: Production.t -> int
+
+  (**[goto_height nt] is the height of the known suffix of the stack at a
+     state where an edge labeled [nt] has just been followed. *)
+  val goto_height: Nonterminal.t -> int
+
+  (**[variant] distinguishes the short invariant and the long invariant.
+     See [StackSymbols], [StackStates], and [Invariant]. *)
+  val variant: [`Short | `Long]
+
+end
+
+(**[STACK_SYMBOLS] is the result of an analysis of the shape of the stack
+   in an LR(1) automaton. It is an extension of [STACK_HEIGHTS]: out of a
+   stack shape, a stack height can be obtained via [Array.length]. *)
+module type STACK_SYMBOLS = sig
+
+  include STACK_HEIGHTS
+  open G
 
   (**A property is a description of the known suffix of the stack at state
      [s]. It is represented as an array of symbols. By convention, the top
@@ -1211,28 +1239,16 @@ module type STACK_SYMBOLS = sig
      the stack is the end of the array. *)
   val stack_symbols: node -> property
 
-  (**[stack_height s] is [Array.length (stack_symbols s)]. *)
-  val stack_height: node -> int
-
   (**[production_symbols prod] is the known suffix of the stack at a state
      where production [prod] can be reduced. In the short invariant, the
      length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
   val production_symbols: Production.t -> property
 
-  (**[production_height prod] is [Array.length (production_symbols prod)]. *)
-  val production_height: Production.t -> int
-
   (**[goto_symbols nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. In the short invariant, the
      length of this suffix is [1]. In the long invariant, its length can be
      greater. *)
   val goto_symbols: Nonterminal.t -> property
-
-  (**[goto_height nt] is [Array.length (goto_symbols nt)]. *)
-  val goto_height: Nonterminal.t -> int
-
-  (**[variant] distinguishes the short invariant and the long invariant. *)
-  val variant: [`Short | `Long]
 
 end
