@@ -62,6 +62,10 @@ module type STACK_STATES = sig
      greater. *)
   val goto_states: Nonterminal.t -> property
 
+  (**[print c] writes the value of [stack_states] at every node and the value
+     of [production_states] at every production to the output channel [c]. *)
+  val print: out_channel -> unit
+
 end
 
 (**The functor [Run] performs a simple data flow analysis to determine

@@ -58,8 +58,9 @@ module type STACK_STATES = sig
      greater. *)
   val goto_states: Nonterminal.t -> property
 
-  (* At log level [-lc 3], the result of the analysis is logged, in an
-     unspecified format. *)
+  (**[print c] writes the value of [stack_states] at every node and the value
+     of [production_states] at every production to the output channel [c]. *)
+  val print: out_channel -> unit
 
 end
 
@@ -230,31 +231,31 @@ let goto_states : Nonterminal.t -> property =
     truncate_join height stack_states targets
   )
 
-(* Debugging output. *)
+(* Diagnostics. *)
 
-let print (v : property) =
+let print_vector (v : property) =
   if Array.length v = 0 then
     "epsilon"
   else
     MString.separated_list Lr1.NodeSet.print "; " (Array.to_list v)
 
-(* Dump. *)
+let print_stack_states f =
+  Lr1.iter @@ fun node ->
+  Printf.fprintf f "%sstack(%s) = %s\n"
+    (match variant with `Short -> "short" | `Long -> "long")
+    (Lr1.print node)
+    (print_vector (stack_states node))
 
-let () =
-  Error.logC 3 (fun f ->
-    Lr1.iter (fun node ->
-      Printf.fprintf f "%sstack(%s) = %s\n"
-        (match variant with `Short -> "short" | `Long -> "long")
-        (Lr1.print node)
-        (print (stack_states node))
-    );
-    Production.iterx (fun prod ->
-      Printf.fprintf f "%sprodstack(%s) = %s\n"
-        (match variant with `Short -> "short" | `Long -> "long")
-        (Production.print prod)
-        (print (production_states prod))
-    )
-  )
+let print_production_states f =
+  Production.iterx @@ fun prod ->
+  Printf.fprintf f "%sprodstack(%s) = %s\n"
+    (match variant with `Short -> "short" | `Long -> "long")
+    (Production.print prod)
+    (print_vector (production_states prod))
+
+let print f =
+  print_stack_states f;
+  print_production_states f
 
 end (* Run *)
 
@@ -281,5 +282,8 @@ module Dummy (S : STACK_HEIGHTS) = struct
 
   let goto_states nt =
     dummy (S.goto_height nt)
+
+  let print _f =
+    ()
 
 end

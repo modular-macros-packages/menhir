@@ -76,6 +76,11 @@ end
 
 let () =
   if short_states_needed then
+    Error.logC 3 @@ fun f ->
+    StackStatesShort.print f
+
+let () =
+  if short_states_needed then
     Time.tick "Computing stack states (short)"
 
 (* ------------------------------------------------------------------------ *)
@@ -650,6 +655,10 @@ module Long () = struct
 
   module StackStatesLong =
     StackStates.Run(StackSymbolsLong)
+
+  let () =
+    Error.logC 3 @@ fun f ->
+    StackStatesLong.print f
 
   let () =
     Time.tick "Computing stack states (long)"
