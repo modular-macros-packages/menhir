@@ -265,9 +265,6 @@ let () =
     )
   )
 
-let () =
-  Time.tick (Printf.sprintf "Computing stack states (%s)" variant)
-
 end (* Run *)
 
 (* -------------------------------------------------------------------------- *)

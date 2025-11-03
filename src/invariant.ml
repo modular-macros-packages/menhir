@@ -74,6 +74,10 @@ module StackStatesShort = struct
 
 end
 
+let () =
+  if short_states_needed then
+    Time.tick "Computing stack states (short)"
+
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
    explicitly pushed onto the stack. For simplicity, a state is either
@@ -646,6 +650,9 @@ module Long () = struct
 
   module StackStatesLong =
     StackStates.Run(StackSymbolsLong)
+
+  let () =
+    Time.tick "Computing stack states (long)"
 
   (* Validate. *)
 
