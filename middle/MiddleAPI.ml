@@ -1202,16 +1202,19 @@ module type STACK_HEIGHTS = sig
 
   type node
 
-  (**[stack_height s] is the height of the known suffix of the stack
-     at state [s]. *)
+  (**[stack_height node] is the height of the known suffix of the stack
+     at node [node]. *)
   val stack_height: node -> int
 
-  (**[production_height prod] is the height of the known suffix of the stack
-     at a state where production [prod] can be reduced. *)
+  (**[production_height prod] is the height of the known suffix of the stack at
+     a node where production [prod] can be reduced. In the short invariant, this
+     height is [Production.length prod]. In the long invariant, its length can
+     be greater. *)
   val production_height: Production.t -> int
 
-  (**[goto_height nt] is the height of the known suffix of the stack at a
-     state where an edge labeled [nt] has just been followed. *)
+  (**[goto_height nt] is the height of the known suffix of the stack at a node
+     where an edge labeled [nt] has just been followed. In the short invariant,
+     this height is [1]. In the long invariant, its length can be greater. *)
   val goto_height: Nonterminal.t -> int
 
   (**[variant] distinguishes the short invariant and the long invariant.
@@ -1228,27 +1231,57 @@ module type STACK_SYMBOLS = sig
   include STACK_HEIGHTS
   open G
 
-  (**A property is a description of the known suffix of the stack at state
-     [s]. It is represented as an array of symbols. By convention, the top
-     of the stack is the end of the array. *)
+  (**A property is a description of the known suffix of the stack at a node.
+     It is represented as an array of symbols. By convention, the top of the
+     stack is the end of the array. *)
   type property =
     Symbol.t array
 
-  (**[stack_symbols s] is the known suffix of the stack at state [s]. It
-     is represented as an array of symbols. By convention, the top of
-     the stack is the end of the array. *)
+  (**[stack_symbols node] is the known suffix of the stack at node [node]. It
+     is represented as an array of symbols. By convention, the top of the
+     stack is the end of the array. *)
   val stack_symbols: node -> property
 
-  (**[production_symbols prod] is the known suffix of the stack at a state
+  (**[production_symbols prod] is the known suffix of the stack at a node
      where production [prod] can be reduced. In the short invariant, the
      length of this suffix is [Production.length prod]. In the long
      invariant, its length can be greater. *)
   val production_symbols: Production.t -> property
 
-  (**[goto_symbols nt] is the known suffix of the stack at a state where an
+  (**[goto_symbols nt] is the known suffix of the stack at a node where an
      edge labeled [nt] has just been followed. In the short invariant, the
      length of this suffix is [1]. In the long invariant, its length can be
      greater. *)
   val goto_symbols: Nonterminal.t -> property
+
+end
+
+module type STACK_STATES = sig
+
+  module G : GRAMMAR
+    open G
+
+  type node
+
+  (**A property is a description of the known suffix of the stack at a node.
+     It is represented as an array of sets of nodes. By convention, the top of
+     the stack is the end of the array. Each array element is a set of states
+     that may appear in this stack cell. *)
+  type property
+
+  (**[stack_states node] is the known suffix of the stack at node [node]. *)
+  val stack_states: node -> property
+
+  (**[production_states prod] is the known suffix of the stack at a node
+     where production [prod] can be reduced. In the short invariant, the
+     length of this suffix is [Production.length prod]. In the long
+     invariant, its length can be greater. *)
+  val production_states: Production.t -> property
+
+  (**[goto_states nt] is the known suffix of the stack at a node where an
+     edge labeled [nt] has just been followed. If [long] is false, then the
+     length of this suffix is [1]. If [long] is true, then its length can be
+     greater. *)
+  val goto_states: Nonterminal.t -> property
 
 end
