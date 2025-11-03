@@ -18,9 +18,6 @@
    need to physically exist on the stack at runtime) and which symbols
    need to keep track of (start or end) positions.
 
-   It also determines which automaton states could have to deal with an
-   [error] token.
-
    The information computed in this module is used in the code back-end,
    in the Coq back-end, and in the automated production of .messages files.
    It is not used in the table back-end. *)
