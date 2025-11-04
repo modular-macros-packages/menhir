@@ -1191,38 +1191,6 @@ end (* LR1 *)
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-module type STACK = sig
-
-  module G : GRAMMAR
-    open G
-
-  type node
-
-  (**A word is a description of the known suffix of the stack at a node. It is
-     represented as an array of cells. By convention, the top of the stack is
-     the end of the array. *)
-  type word
-  (* = array of cells *)
-
-  (**[stack node] is the known suffix of the stack at node [node]. *)
-  val stack: node -> word
-
-  (**[production_stack prod] is the known suffix of the stack at a node where
-     production [prod] can be reduced. In the short invariant, the length of
-     this suffix is [Production.length prod]. In the long invariant, its
-     length can be greater. If there are no nodes where [prod] can be reduced,
-     then every cell contains an empty set of nodes. *)
-  val production_stack: Production.t -> word
-
-  (**[goto_stack nt] is the known suffix of the stack at a node where an edge
-     labeled [nt] has just been followed. In the short invariant, the length
-     of this suffix is [1]: indeed, it consists of just one cell, associated
-     with the symbol [nt]. In the long invariant, its length can be
-     greater. *)
-  val goto_stack: Nonterminal.t -> word
-
-end
-
 (**[SHAPE] is the result of an analysis of the shape of the stack in an LR(1)
    automaton.
 
@@ -1258,8 +1226,9 @@ module type SHAPE = sig
      In the short invariant, the length of this shape is [Production.length
      prod]. In the long invariant, its length can be greater.
 
-     If there are no nodes where [prod] can be reduced, then this shape may
-     be a bottom shape. *)
+     If there are no nodes where [prod] can be reduced, then this shape may be
+     a bottom shape. By this I mean, in the case of the analysis [StackStates],
+     that each stack cell may contain an empty set of nodes. *)
   val production_shape: Production.t -> shape
 
   (**[goto_shape nt] is the shape of the stack at a node where an edge

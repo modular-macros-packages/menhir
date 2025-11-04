@@ -394,8 +394,8 @@ let wt_subtype env context target =
        Expected shape: %s\n"
       context
       message
-      (print actual)
-      (print expected)
+      (show_shape actual)
+      (show_shape expected)
   in
   let n1, n2 = length actual, length expected in
   if n1 < n2 then

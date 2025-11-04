@@ -584,10 +584,11 @@ let split w k =
     let upper = MArray.suffix w k in
     lower, upper
 
-let print w =
+let show_shape w =
   w
   |> Array.map symbol
   |> Symbol.print_array false
+    (* This is incomplete information *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -598,9 +599,9 @@ let print w =
    states. Then, we want to construct and tabulate a function that maps
    things to vectors of cells. *)
 
-let publish (long : bool) tabulate symbols states =
+let publish (variant : [`Short | `Long]) tabulate symbols states =
   tabulate @@ fun thing ->
-  if not (long || short_states_needed) then
+  if not (variant = `Long || short_states_needed) then
     (* In this special case, all states are represented, so the vectors
        [states] and [symbols] must have the same length; no truncation
        is necessary. Furthermore, we want to avoid evaluating [states]
@@ -627,22 +628,25 @@ module Short = struct
 
   module G = Grammar
 
-  let long = false
+  let variant = `Short
 
-  let stack : Lr1.node -> word =
-    publish long (lazily Lr1.tabulate)
+  let node_shape : Lr1.node -> word =
+    publish variant (lazily Lr1.tabulate)
       StackSymbolsShort.node_shape
       StackStatesShort.node_shape
 
-  let production_stack : Production.t -> word =
-    publish long (lazily Production.tabulate)
+  let production_shape : Production.t -> word =
+    publish variant (lazily Production.tabulate)
       StackSymbolsShort.production_shape
       StackStatesShort.production_shape
 
-  let goto_stack : Nonterminal.t -> word =
-    publish long (lazily Nonterminal.tabulate)
+  let goto_shape : Nonterminal.t -> word =
+    publish variant (lazily Nonterminal.tabulate)
       StackSymbolsShort.goto_shape
       StackStatesShort.goto_shape
+
+  let show_shape =
+    show_shape
 
 end
 
@@ -708,33 +712,36 @@ module Long () = struct
     else
       validate states
 
-  let stack_states s =
+  let node_shape s =
     validate @@ StackStatesLong.node_shape s
 
-  let production_states prod =
+  let production_shape prod =
     validate @@ StackStatesLong.production_shape prod
 
-  let goto_states nt =
+  let goto_shape nt =
     validate @@ StackStatesLong.goto_shape nt
 
   (* Publish. *)
 
-  let long = true
+  let variant = `Long
 
-  let stack : Lr1.node -> word =
-    publish long Lr1.tabulate
+  let node_shape : Lr1.node -> word =
+    publish variant Lr1.tabulate
       StackSymbolsLong.node_shape
-      stack_states
+      node_shape
 
-  let production_stack : Production.t -> word =
-    publish long Production.tabulate
+  let production_shape : Production.t -> word =
+    publish variant Production.tabulate
       StackSymbolsLong.production_shape
-      production_states
+      production_shape
 
-  let goto_stack : Nonterminal.t -> word =
-    publish long Nonterminal.tabulate
+  let goto_shape : Nonterminal.t -> word =
+    publish variant Nonterminal.tabulate
       StackSymbolsLong.goto_shape
-      goto_states
+      goto_shape
+
+  let show_shape =
+    show_shape
 
   let () =
     Time.tick "Publishing the invariant (long)"

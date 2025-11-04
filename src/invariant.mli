@@ -130,7 +130,7 @@ val meet: word -> word -> word option
 (**[print w] prints the sequence of symbols associated with the word [w].
    This is used in the code back-end to generate comments in the definition
    of the algebraic data type [state]. *)
-val print: word -> string
+val show_shape: word -> string
 
 (**[to_list w] converts the word [w] to a list. *)
 val to_list: word -> cell list
@@ -140,10 +140,10 @@ val to_list: word -> cell list
 (* In the short invariant, the length of the known suffix of the stack is
    the one reported by [StackSymbols.Short()]. *)
 
-module Short : STACK
+module Short : SHAPE
   with module G = Grammar
    and type node := Lr1.node
-   and type word := word
+   and type shape := word
 
 (* ------------------------------------------------------------------------- *)
 (* Information about which states and positions need to physically
@@ -169,7 +169,7 @@ val track_endp: Symbol.t -> bool
    is possibly longer than the suffix proposed in the "short invariant",
    whose length is always the maximum position of the bullet in the items
    of the state at hand. *)
-module Long () : STACK
+module Long () : SHAPE
   with module G = Grammar
    and type node := Lr1.node
-   and type word := word
+   and type shape := word

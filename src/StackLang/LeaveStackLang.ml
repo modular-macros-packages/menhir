@@ -400,7 +400,7 @@ let statetypedef =
           Some (sprintf
             "State %s.\n        Stack shape : %s.\n        Start symbol: %s."
             (Tag.print tag)
-            (Invariant.print stack)
+            (Invariant.show_shape stack)
             (StackLangPrinter.ToString.final final)
           );
         unboxed =

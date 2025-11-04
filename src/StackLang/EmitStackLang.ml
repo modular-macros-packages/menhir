@@ -395,7 +395,7 @@ let rec run mode s =
   (* If [run] is expected to push a new cell onto the stack, do so now. *)
 
   if must_push then begin
-    let cell = top (Short.stack s) in
+    let cell = top (Short.node_shape s) in
     if present cell then
       push (components cell state semv startp endp) cell
   end;
@@ -578,7 +578,7 @@ let act prod =
 
   let symbol = Symbol.N nt
   and is_epsilon = (n = 0)
-  and stack = Short.production_stack prod in
+  and stack = Short.production_shape prod in
   assert (length stack = n);
 
   (* Log that we are reducing production [prod]. *)
@@ -638,7 +638,7 @@ let reduce mode prod =
      is stored in the register [state] and thus becomes the new current
      state. *)
 
-  let stack = Short.production_stack prod in
+  let stack = Short.production_shape prod in
   assert (length stack = n);
 
   let pops = ref 0 in
@@ -815,7 +815,7 @@ and assign_beforeendp source =
   end
   else begin
     comment "Defining $endpos($0) by peeking at the top stack cell";
-    let stack = Short.stack source in
+    let stack = Short.node_shape source in
     assert (length stack > 0);
     let cell = top stack in
     assert (present cell);
@@ -844,31 +844,31 @@ let code label =
 
   | Run (mode, s) ->
       (* If [run] does not push a new stack cell, then the shape of the stack
-         at the beginning of [run] is given by [Long.stack]. If [run] pushes a
-         new cell, then we must pop one cell off this shape. *)
-      let stack = Long.stack s in
+         at the beginning of [run] is given by [Long.node_shape]. If [run]
+         pushes a new cell, then we must pop one cell off this shape. *)
+      let stack = Long.node_shape s in
       let stack = if runpushes s then pop stack else stack in
       set_block_type stack (Origin.run s);
       run mode s
 
   | Reduce (mode, prod) ->
-      let stack = Long.production_stack prod in
+      let stack = Long.production_shape prod in
       set_block_type stack (Origin.reduce prod);
       reduce mode prod
 
   | Goto (mode, nt) ->
-      (* The function [Long.goto_stack] provides the shape of the stack
+      (* The function [Long.goto_shape] provides the shape of the stack
          *after* the goto transition has been taken. Here, we want the shape
          of the stack when the [goto] function is invoked, that is, *before*
          the goto transition is taken. This is why we pop one cell. *)
-      let stack = pop (Long.goto_stack nt) in
+      let stack = pop (Long.goto_shape nt) in
       set_block_type stack (Origin.goto nt);
       goto mode nt
 
   | ActGoto (mode, prod) ->
       (* Same type as in the previous case. *)
       let nt = Production.nt prod in
-      let stack = pop (Long.goto_stack nt) in
+      let stack = pop (Long.goto_shape nt) in
       set_block_type stack (Origin.goto nt);
       act_goto mode prod
 
@@ -900,7 +900,7 @@ let entry =
 let states =
   Lr1.fold (fun s states ->
     if represented s then
-      let bty = make_block_type (Long.stack s) (Origin.run s) in
+      let bty = make_block_type (Long.node_shape s) (Origin.run s) in
       Tag.Map.add (Tag.make s) bty states
     else
       states
