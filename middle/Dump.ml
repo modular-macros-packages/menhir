@@ -40,7 +40,7 @@ let print_known_stack_suffix out node =
   fprintf out
     "## Known stack suffix:\n\
      ##%s\n"
-    (Symbol.print_array' false (Short.stack_symbols node))
+    (Symbol.print_array' false (Short.node_shape node))
 
 let print_items out node =
   fprintf out "## LR(1) items:\n%s"

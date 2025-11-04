@@ -249,7 +249,7 @@ let print_messages_auto (nt, sentence, target) : unit =
     "## The known suffix of the stack is as follows:\n\
      ##%s\n\
      ##\n"
-    (Symbol.print_array' false (StackSymbolsShort.stack_symbols s'))
+    (Symbol.print_array' false (StackSymbolsShort.node_shape s'))
   ;
 
   (* If interpreting this sentence causes spurious reductions (that is,

@@ -12,6 +12,7 @@
 
 open MiddleAPI
 
-include STACK_SYMBOLS
+include SHAPE
 with module G = Grammar
  and type node = Lr1.node
+ and type shape = Grammar.Symbol.t array

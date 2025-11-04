@@ -16,7 +16,8 @@ open MiddleAPI
 
 (**The functor [Run] performs a simple data flow analysis to determine which
    states may appear in each stack cell at each node. It requires the height
-   of the stack at each node to be already known.
+   of the stack at each node to be already known. The parameter [S] provides
+   this height information.
 
    In this computation, there is no distinction between the "short" invariant
    and the "long" invariant; the difference between them resides in the stack
@@ -26,6 +27,9 @@ open MiddleAPI
    one of the functions returned by this functor is invoked. *)
 module Run
 (Lr1 : LR1)
-(S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
+(S : SHAPE
+ with module G = Lr1.Lr0.G
+  and type node := Lr1.node
+  and type shape := int)
    : STACK_STATES  with module G = Lr1.Lr0.G and type node := Lr1.node
                     and type property = Lr1.NodeSet.t array

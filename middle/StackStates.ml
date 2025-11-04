@@ -13,15 +13,18 @@ open MiddleAPI
 
 module Run
 (Lr1 : LR1)
-(S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
+(S : SHAPE
+ with module G = Lr1.Lr0.G
+  and type node := Lr1.node
+  and type shape := int)
 = struct
-open S
+module G = S.G
 open G
 
-module G = S.G
+(* The parameter [S] is our stack height oracle. *)
 
 (* We wish to compute, at each node [node], a vector of sets of nodes,
-   whose length is [stack_height node]. *)
+   whose length is [S.node_shape node]. *)
 
 (* Define a data flow graph [F]. *)
 
@@ -35,7 +38,7 @@ module F = struct
 
   (* A stack cell is identified by a node [node] in the LR(1) automaton and
      an index [i] into the known suffix of the stack at node [node]. This
-     index is comprised between 0 and [stack_height node], excluded. *)
+     index is comprised between 0 and [node_shape node], excluded. *)
 
   (* Unlike our usual convention, here, the top stack cell is numbered 0,
      the next cell is numbered 1, and so on. (That is, we count from the
@@ -64,7 +67,7 @@ module F = struct
     Lr1.iter @@ fun source ->
     let property = Lr1.NodeSet.singleton source in
     Lr1.transitions source |> SymbolMap.iter @@ fun _symbol target ->
-    assert (0 < stack_height target);
+    assert (0 < S.node_shape target);
     contribute (target, 0) property
 
   (* The edges of the data flow graph are the transitions of the automaton.
@@ -80,7 +83,7 @@ module F = struct
 
   let foreach_successor (source, i) states contribute =
     Lr1.transitions source |> SymbolMap.iter @@ fun _symbol target ->
-    if i + 1 < stack_height target then
+    if i + 1 < S.node_shape target then
       contribute (target, i + 1) states
 
 end (* F *)
@@ -103,7 +106,7 @@ let stack_states : F.variable -> F.property option =
    of states. *)
 
 let stack_states (cell : F.variable) : F.property =
-  assert (let (s, i) = cell in 0 <= i && i < stack_height s);
+  assert (let (s, i) = cell in 0 <= i && i < S.node_shape s);
   Option.get (stack_states cell)
 
 (* To the end user, we want to propose an API that is based on vectors of
@@ -116,7 +119,7 @@ type property =
 
 let stack_states : Lr1.node -> property =
   lazily Lr1.tabulate @@ fun node ->
-  let n = stack_height node in
+  let n = S.node_shape node in
   Array.init n @@ fun i ->
   let i = n - 1 - i in
   stack_states (node, i)
@@ -142,20 +145,20 @@ let truncate_join height (f : Lr1.node -> property) nodes =
 (* From the above information, deduce, for each production, the shape
    of the stack when this production is reduced. *)
 
-(* We produce a vector of states whose length is [production_height prod].
-   It is up to the user to provide an appropriate height oracle. *)
+(* We produce a vector of states whose length is [S.production_shape prod].
+   It is up to the user to provide an appropriate height oracle [S]. *)
 
 let production_states : Production.t -> property =
   lazily Production.tabulate @@ fun prod ->
   let sites = Lr1.reduction_sites prod in
-  let height = production_height prod in
+  let height = S.production_shape prod in
   truncate_join height stack_states sites
 
 (* Compute the shape of the stack when a transition on the nonterminal
    symbol [nt] is taken. *)
 
-(* We produce a vector of states whose length is [goto_height nt].
-   It is up to the user to provide an appropriate height oracle. *)
+(* We produce a vector of states whose length is [S.goto_shape nt].
+   It is up to the user to provide an appropriate height oracle [S]. *)
 
 let goto_states : Nonterminal.t -> property =
   lazily Nonterminal.tabulate @@ fun nt ->
@@ -163,7 +166,7 @@ let goto_states : Nonterminal.t -> property =
   (* Compute the join of the stack shapes at every target of an edge
      labeled with [nt]. *)
   let targets = Lr1.targets symbol in
-  let height = goto_height nt in
+  let height = S.goto_shape nt in
   truncate_join height stack_states targets
 
 (* Diagnostics. *)
@@ -177,14 +180,14 @@ let print_vector (v : property) =
 let print_stack_states f =
   Lr1.iter @@ fun node ->
   Printf.fprintf f "%sstack(%s) = %s\n"
-    (match variant with `Short -> "short" | `Long -> "long")
+    (match S.variant with `Short -> "short" | `Long -> "long")
     (Lr1.print node)
     (print_vector (stack_states node))
 
 let print_production_states f =
   Production.iterx @@ fun prod ->
   Printf.fprintf f "%sproduction_stack(%s) = %s\n"
-    (match variant with `Short -> "short" | `Long -> "long")
+    (match S.variant with `Short -> "short" | `Long -> "long")
     (Production.print prod)
     (print_vector (production_states prod))
 

@@ -11,7 +11,23 @@
  (* This module discovers information about the shape and content of the stack
     in each of the automaton's states. *)
 
+open MiddleAPI
 open Grammar
+
+(* ------------------------------------------------------------------------ *)
+
+(* This functor transforms an analysis where a stack shape is an array of
+   symbols into a simpler analysis where a stack shape is just a height. *)
+
+module Height (S : SHAPE with type shape = Symbol.t array) = struct
+  include S
+  let node_shape node =
+    Array.length (node_shape node)
+  let production_shape node =
+    Array.length (production_shape node)
+  let goto_shape node =
+    Array.length (goto_shape node)
+end
 
 (* ------------------------------------------------------------------------ *)
 
@@ -57,7 +73,7 @@ module F = Freeze
    skipped. *)
 
 module StackStatesShort =
-  StackStates.Run(Lr1)(StackSymbolsShort)
+  StackStates.Run(Lr1)(Height(StackSymbolsShort))
 
 let short_states_needed =
   (not Settings.represent_states) || Settings.backend = `CoqBackend
@@ -578,17 +594,17 @@ module Short = struct
 
   let stack : Lr1.node -> word =
     publish long (lazily Lr1.tabulate)
-      StackSymbolsShort.stack_symbols
+      StackSymbolsShort.node_shape
       StackStatesShort.stack_states
 
   let production_stack : Production.t -> word =
     publish long (lazily Production.tabulate)
-      StackSymbolsShort.production_symbols
+      StackSymbolsShort.production_shape
       StackStatesShort.production_states
 
   let goto_stack : Nonterminal.t -> word =
     publish long (lazily Nonterminal.tabulate)
-      StackSymbolsShort.goto_symbols
+      StackSymbolsShort.goto_shape
       StackStatesShort.goto_states
 
 end
@@ -628,7 +644,7 @@ module Long () = struct
     StackSymbols.Long(Lr1)()
 
   module StackStatesLong =
-    StackStates.Run(Lr1)(StackSymbolsLong)
+    StackStates.Run(Lr1)(Height(StackSymbolsLong))
 
   let () =
     Error.logC 3 @@ fun f ->
@@ -669,17 +685,17 @@ module Long () = struct
 
   let stack : Lr1.node -> word =
     publish long Lr1.tabulate
-      StackSymbolsLong.stack_symbols
+      StackSymbolsLong.node_shape
       stack_states
 
   let production_stack : Production.t -> word =
     publish long Production.tabulate
-      StackSymbolsLong.production_symbols
+      StackSymbolsLong.production_shape
       production_states
 
   let goto_stack : Nonterminal.t -> word =
     publish long Nonterminal.tabulate
-      StackSymbolsLong.goto_symbols
+      StackSymbolsLong.goto_shape
       goto_states
 
   let () =

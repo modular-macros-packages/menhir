@@ -16,8 +16,9 @@ open MiddleAPI
    state: it is the maximum position of the bullet over all items.
    Every state in the automaton must be reachable. *)
 module Short (Lr1 : LR1_AUTOMATON) ()
-: STACK_SYMBOLS with module G = Lr1.Lr0.G
-                 and type node = Lr1.node
+: SHAPE with module G = Lr1.Lr0.G
+         and type node = Lr1.node
+         and type shape = Lr1.Lr0.G.Symbol.t array
 
 (**This module computes the known suffix of the stack, a sequence of
    symbols, in each of the automaton's states. The length of this
@@ -26,8 +27,9 @@ module Short (Lr1 : LR1_AUTOMATON) ()
    a suffix of the sequence computed by [Long].
    Every state in the automaton must be reachable. *)
 module Long (Lr1 : LR1) ()
-: STACK_SYMBOLS with module G = Lr1.Lr0.G
-                 and type node = Lr1.node
+: SHAPE with module G = Lr1.Lr0.G
+         and type node = Lr1.node
+         and type shape = Lr1.Lr0.G.Symbol.t array
 
 (* The "long invariant" was used in Menhir until 2012/08/25. However, the
    extra information that it contains, compared to the "short invariant",

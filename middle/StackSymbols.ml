@@ -39,13 +39,13 @@ module Short (Lr1 : LR1_AUTOMATON) () = struct
     open G
   type node = Lr1.node
 
-  type property =
+  type shape =
     Symbol.t array
 
   (* Compute and tabulate this information at the level of the LR(0)
      automaton. *)
 
-  let stack_symbols : Lr0.node -> property =
+  let node_shape : Lr0.node -> shape =
     let dummy = [||] in
     Lr0.tabulate @@ fun node ->
     Item.Set.fold (fun item accu ->
@@ -56,27 +56,18 @@ module Short (Lr1 : LR1_AUTOMATON) () = struct
 
   (* Extend it to the LR(1) automaton. *)
 
-  let stack_symbols (node : Lr1.node) : property =
-    stack_symbols (Lr0.ALR1.core (Lr1.state node))
+  let node_shape (node : Lr1.node) : shape =
+    node_shape (Lr0.ALR1.core (Lr1.state node))
 
-  let stack_height (node : Lr1.node) : int =
-    Array.length (stack_symbols node)
+  (* Add a trivial definition of [production_shape]. *)
 
-  (* Add a trivial definition of [production_symbols]. *)
-
-  let production_symbols =
+  let production_shape =
     Production.rhs
 
-  let production_height prod =
-    Array.length (production_symbols prod)
+  (* Add a trivial definition of [goto_shape]. *)
 
-  (* Add a trivial definition of [goto_symbols]. *)
-
-  let goto_symbols nt =
+  let goto_shape nt =
     [| Symbol.N nt |]
-
-  let goto_height nt =
-    Array.length (goto_symbols nt)
 
   let variant =
     `Short
@@ -96,6 +87,9 @@ module Long (Lr1 : LR1) () = struct
   module G = Lr0.G
     open G
   type node = Lr1.node
+
+  type shape =
+    Symbol.t array
 
   (* Vectors of symbols. *)
 
@@ -151,7 +145,7 @@ module Long (Lr1 : LR1) () = struct
 
   (* Compute the least fixed point. *)
 
-  let stack_symbols : Lr1.node -> property option =
+  let node_shape : Lr1.node -> property option =
     let module F = Fix.DataFlow.ForNumberedType(Lr1)(SymbolVector)(Graph) in
     F.solution
 
@@ -159,11 +153,8 @@ module Long (Lr1 : LR1) () = struct
      must be non-[None] everywhere, so we may view it as a function
      that produces a vector of symbols. *)
 
-  let stack_symbols (node : Lr1.node) : property =
-    Option.get (stack_symbols node)
-
-  let stack_height (node : Lr1.node) : int =
-    Array.length (stack_symbols node)
+  let node_shape (node : Lr1.node) : property =
+    Option.get (node_shape node)
 
   (* [join1 f nodes] computes the join of the images through [f] of the
      nodes in the set [nodes]. Because our join does not have a bottom
@@ -182,7 +173,7 @@ module Long (Lr1 : LR1) () = struct
   (* We *can* produce a vector whose length is greater than that
      of the production [prod]. *)
 
-  let production_symbols : Production.t -> property =
+  let production_shape : Production.t -> property =
     Production.tabulate @@ fun prod ->
     let nodes = Lr1.reduction_sites prod in
     if Lr1.NodeSet.is_empty nodes then
@@ -193,15 +184,12 @@ module Long (Lr1 : LR1) () = struct
     else
       (* Compute a join over the set of nodes where this production
          is reduced. *)
-      join1 stack_symbols nodes
-
-  let production_height prod =
-    Array.length (production_symbols prod)
+      join1 node_shape nodes
 
   (* Compute the shape of the stack when a transition on the nonterminal
      symbol [nt] is taken. *)
 
-  let goto_symbols : Nonterminal.t -> property =
+  let goto_shape : Nonterminal.t -> property =
     Nonterminal.tabulate @@ fun nt ->
     let symbol = Symbol.N nt in
     (* Compute the join of the stack shapes at every target of an edge
@@ -211,10 +199,7 @@ module Long (Lr1 : LR1) () = struct
       (* No edge is labeled [nt]. *)
       [| symbol |]
     else
-      join1 stack_symbols targets
-
-  let goto_height nt =
-    Array.length (goto_symbols nt)
+      join1 node_shape targets
 
   let variant =
     `Long

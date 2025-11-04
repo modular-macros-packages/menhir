@@ -1191,71 +1191,6 @@ end (* LR1 *)
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(**[STACK_HEIGHTS] is the result of an analysis of the height of the stack in
-   an LR(1) automaton. This height information must be sound in the following
-   sense: the height at a node [node] must be no greater than the minimum of
-   the height at the predecessors of [node], plus one. *)
-module type STACK_HEIGHTS = sig
-
-  module G : GRAMMAR
-    open G
-
-  type node
-
-  (**[stack_height node] is the height of the known suffix of the stack
-     at node [node]. *)
-  val stack_height: node -> int
-
-  (**[production_height prod] is the height of the known suffix of the stack at
-     a node where production [prod] can be reduced. In the short invariant, this
-     height is [Production.length prod]. In the long invariant, its length can
-     be greater. *)
-  val production_height: Production.t -> int
-
-  (**[goto_height nt] is the height of the known suffix of the stack at a node
-     where an edge labeled [nt] has just been followed. In the short invariant,
-     this height is [1]. In the long invariant, its length can be greater. *)
-  val goto_height: Nonterminal.t -> int
-
-  (**[variant] distinguishes the short invariant and the long invariant.
-     See [StackSymbols], [StackStates], and [Invariant]. *)
-  val variant: [`Short | `Long]
-
-end
-
-(**[STACK_SYMBOLS] is the result of an analysis of the shape of the stack
-   in an LR(1) automaton. It is an extension of [STACK_HEIGHTS]: out of a
-   stack shape, a stack height can be obtained via [Array.length]. *)
-module type STACK_SYMBOLS = sig
-
-  include STACK_HEIGHTS
-  open G
-
-  (**A property is a description of the known suffix of the stack at a node.
-     It is represented as an array of symbols. By convention, the top of the
-     stack is the end of the array. *)
-  type property =
-    Symbol.t array
-
-  (**[stack_symbols node] is the known suffix of the stack at node [node]. It
-     is represented as an array of symbols. By convention, the top of the
-     stack is the end of the array. *)
-  val stack_symbols: node -> property
-
-  (**[production_symbols prod] is the known suffix of the stack at a node
-     where production [prod] can be reduced. In the short invariant, the
-     length of this suffix is [Production.length prod]. In the long
-     invariant, its length can be greater. *)
-  val production_symbols: Production.t -> property
-
-  (**[goto_symbols nt] is the known suffix of the stack at a node where an
-     edge labeled [nt] has just been followed. In the short invariant, the
-     length of this suffix is [1]. In the long invariant, its length can be
-     greater. *)
-  val goto_symbols: Nonterminal.t -> property
-
-end
-
 (**[STACK_STATES] is the result of an analysis of the shape of the stack in
    an LR(1) automaton. Here, a stack shape is not just an array of symbols;
    it is an array of sets of nodes. *)
@@ -1325,5 +1260,57 @@ module type STACK = sig
      with the symbol [nt]. In the long invariant, its length can be
      greater. *)
   val goto_stack: Nonterminal.t -> word
+
+end
+
+(**[SHAPE] is the result of an analysis of the shape of the stack in an LR(1)
+   automaton.
+
+   A stack shape describes just a suffix of the stack, not the whole stack.
+
+   This shape information must be sound in the following sense: whenever there
+   is an edge from [node1] to [node2] in the automaton, the shape at [node1],
+   onto which a new cell is pushed, must flow into the shape at [node2]; where
+   the relation "[shape1] flows into [shape2]" allows forgetting information
+   by truncating a shape at its left end. For example, in the case of an
+   analysis of the height of the stack, this soundness condition becomes: the
+   height at [node1], plus 1, must be greater than or equal to the height at
+   [node2]. In other words, the height at a node [node] must be at most the
+   minimum of the heights at the predecessors of [node], plus one. *)
+module type SHAPE = sig
+
+  module G : GRAMMAR
+    open G
+
+  type node
+
+  (**A shape is a description of the known suffix of the stack at a node. It
+     is typically (but not necessarily) represented as an array of cells. By
+     convention, the top of the stack is the right end of the array. *)
+  type shape
+
+  (**[node_shape node] is the shape of the stack at the node [node]. *)
+  val node_shape: node -> shape
+
+  (**[production_shape prod] is the shape of the stack at a node where the
+     production [prod] can be reduced.
+
+     In the short invariant, the length of this shape is [Production.length
+     prod]. In the long invariant, its length can be greater.
+
+     If there are no nodes where [prod] can be reduced, then this shape may
+     be a bottom shape. *)
+  val production_shape: Production.t -> shape
+
+  (**[goto_shape nt] is the shape of the stack at a node where an edge
+     labeled with the nonterminal symbol [nt] has just been followed.
+
+     In the short invariant, the length of this shape is [1]: indeed, this
+     shape consists of just one cell, associated with the symbol [nt].
+     In the long invariant, its length can be greater. *)
+  val goto_shape: Nonterminal.t -> shape
+
+  (**[variant] distinguishes the short invariant and the long invariant. *)
+  val variant: [`Short | `Long]
 
 end
