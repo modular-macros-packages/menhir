@@ -23,7 +23,7 @@ module G = S.G
 (* We wish to compute, at each node [node], a vector of sets of nodes,
    whose length is [stack_height node]. *)
 
-(* Define the data flow graph. We name it [F] for Flow. *)
+(* Define a data flow graph [F]. *)
 
 (* Its vertices are the stack cells of interest. (2021/10/15) Defining a
    data flow graph where vertices are individual stack cells and properties
