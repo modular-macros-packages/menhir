@@ -540,27 +540,6 @@ let print w =
 
 (* Publish the short invariant. *)
 
-module type STACK = sig
-
-  (**[stack s] is the known suffix of the stack at state [s]. *)
-  val stack: Lr1.node -> word
-
-  (**[production_stack prod] is the known suffix of the stack at a state where
-     production [prod] can be reduced. In the short invariant, the length of
-     this suffix is [Production.length prod]. In the long invariant, its
-     length can be greater. If there are no states where [prod] can be
-     reduced, then every cell contains an empty set of states. *)
-  val production_stack: Production.t -> word
-
-  (**[goto_stack nt] is the known suffix of the stack at a state where an
-     edge labeled [nt] has just been followed. In the short invariant, the
-     length of this suffix is [1]: indeed, it consists of just one cell,
-     associated with the symbol [nt]. In the long invariant, its length can
-     be greater. *)
-  val goto_stack: Nonterminal.t -> word
-
-end
-
 (* Suppose we have a function [symbols] that maps things to vectors of
    symbols and a function [states] that maps things to vectors of sets of
    states. Then, we want to construct and tabulate a function that maps
@@ -592,6 +571,8 @@ let publish (long : bool) tabulate symbols states =
 module Short = struct
 
   open MLazy
+
+  module G = Grammar
 
   let long = false
 
@@ -638,6 +619,8 @@ let () =
    forget about any stack cells that are not equi-represented. *)
 
 module Long () = struct
+
+  module G = Grammar
 
   (* Compute. *)
 
