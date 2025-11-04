@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open MLazy
 open MiddleAPI
 
 module Run
@@ -22,7 +23,7 @@ module G = S.G
 (* We wish to compute, at each node [node], a vector of sets of nodes,
    whose length is [stack_height node]. *)
 
-(* Define the data flow graph. *)
+(* Define the data flow graph. We name it [F] for Flow. *)
 
 (* Its vertices are the stack cells of interest. (2021/10/15) Defining a
    data flow graph where vertices are individual stack cells and properties
@@ -30,7 +31,7 @@ module G = S.G
    properties are vectors of sets of states. On large automata, the speed
    difference can be more than 2x. *)
 
-module Graph = struct
+module F = struct
 
   (* A stack cell is identified by a node [node] in the LR(1) automaton and
      an index [i] into the known suffix of the stack at node [node]. This
@@ -82,23 +83,26 @@ module Graph = struct
     if i + 1 < stack_height target then
       contribute (target, i + 1) states
 
-end (* Graph *)
+end (* F *)
 
-(* Compute the least fixed point. *)
+(* On demand, compute the least fixed point. *)
 
 module T = struct
-  type t = Graph.variable
+  type t = F.variable
 end
 
-let stack_states : Graph.variable -> Graph.property option =
-  let module F = Fix.DataFlow.ForType(T)(Graph)(Graph) in
+let stack_states () : F.variable -> F.property option =
+  let module F = Fix.DataFlow.ForType(T)(F)(F) in
   F.solution
+
+let stack_states : F.variable -> F.property option =
+  lazily stack_states ()
 
 (* If every state is reachable, then the least fixed point must be non-[None]
    everywhere, so we may view it as a function that produces a vector of sets
    of states. *)
 
-let stack_states (cell : Graph.variable) : Graph.property =
+let stack_states (cell : F.variable) : F.property =
   assert (let (s, i) = cell in 0 <= i && i < stack_height s);
   Option.get (stack_states cell)
 
@@ -111,7 +115,7 @@ type property =
 (* Adapt [stack_states] to the external API. *)
 
 let stack_states : Lr1.node -> property =
-  Lr1.tabulate @@ fun node ->
+  lazily Lr1.tabulate @@ fun node ->
   let n = stack_height node in
   Array.init n @@ fun i ->
   let i = n - 1 - i in
@@ -142,7 +146,7 @@ let truncate_join height (f : Lr1.node -> property) nodes =
    It is up to the user to provide an appropriate height oracle. *)
 
 let production_states : Production.t -> property =
-  Production.tabulate @@ fun prod ->
+  lazily Production.tabulate @@ fun prod ->
   let sites = Lr1.reduction_sites prod in
   let height = production_height prod in
   truncate_join height stack_states sites
@@ -154,7 +158,7 @@ let production_states : Production.t -> property =
    It is up to the user to provide an appropriate height oracle. *)
 
 let goto_states : Nonterminal.t -> property =
-  Nonterminal.tabulate @@ fun nt ->
+  lazily Nonterminal.tabulate @@ fun nt ->
   let symbol = Symbol.N nt in
   (* Compute the join of the stack shapes at every target of an edge
      labeled with [nt]. *)
@@ -189,37 +193,3 @@ let print f =
   print_production_states f
 
 end (* Run *)
-
-(* -------------------------------------------------------------------------- *)
-
-(* The following dummy module is used to skip the above computation. *)
-
-module Dummy
-(Lr1 : LR1)
-(S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
-= struct
-
-  module G = S.G
-
-  type property =
-    Lr1.NodeSet.t array
-
-  let bottom height : property =
-    Array.make height Lr1.NodeSet.empty
-
-  let dummy =
-    bottom
-
-  let stack_states node =
-    dummy (S.stack_height node)
-
-  let production_states prod =
-    dummy (S.production_height prod)
-
-  let goto_states nt =
-    dummy (S.goto_height nt)
-
-  let print _f =
-    ()
-
-end

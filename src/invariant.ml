@@ -11,7 +11,6 @@
  (* This module discovers information about the shape and content of the stack
     in each of the automaton's states. *)
 
-open MiddleAPI
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
@@ -49,46 +48,24 @@ module F = Freeze
       which passes it on to the Coq validator.
 
    For large automata, this computation can be somewhat costly; e.g., about
-   1.5 seconds for cca_cpp, a 10,000-state automaton. So, if possible, we
-   skip it. In particular, because [--table] implies [--represent-states],
-   this computation is skipped in [--table] mode.
+   1.5 seconds for cca_cpp, a 10,000-state automaton.
 
-   Skipping this computation is a bit fragile / risky / inelegant, but it
-   should be entirely internal to this module. In the definition of the
-   type [cell], we use an [option] type in order to try and detect attempts
-   to use a piece of information that has not been computed. *)
+   Fortunately, [StackStates.Run] is written in such a way that the analysis
+   is performed only if its result is demanded. Thus, in the situations where
+   this analysis is not necessary, it is skipped. In particular, when the
+   table back-end is used, all states are represented, so this computation is
+   skipped. *)
+
+module StackStatesShort =
+  StackStates.Run(Lr1)(StackSymbolsShort)
 
 let short_states_needed =
   (not Settings.represent_states) || Settings.backend = `CoqBackend
-
-module type FOO =
-  STACK_STATES
-  with module G = Grammar
-   and type node := Lr1.node
-   and type property = Lr1.NodeSet.t array
-
-module StackStatesShort = struct
-
-  open StackStates
-
-  include
-    (val
-      if short_states_needed then
-        (module Run(Lr1)(StackSymbolsShort) : FOO)
-      else
-        (module Dummy(Lr1)(StackSymbolsShort) : FOO)
-    )
-
-end
 
 let () =
   if short_states_needed then
     Error.logC 3 @@ fun f ->
     StackStatesShort.print f
-
-let () =
-  if short_states_needed then
-    Time.tick "Computing stack states (short)"
 
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
@@ -609,20 +586,22 @@ let publish (long : bool) tabulate symbols states =
 
 module Short = struct
 
+  open MLazy
+
   let long = false
 
   let stack : Lr1.node -> word =
-    publish long Lr1.tabulate
+    publish long (lazily Lr1.tabulate)
       StackSymbolsShort.stack_symbols
       StackStatesShort.stack_states
 
   let prodstack : Production.t -> word =
-    publish long Production.tabulate
+    publish long (lazily Production.tabulate)
       StackSymbolsShort.production_symbols
       StackStatesShort.production_states
 
   let gotostack : Nonterminal.t -> word =
-    publish long Nonterminal.tabulate
+    publish long (lazily Nonterminal.tabulate)
       StackSymbolsShort.goto_symbols
       StackStatesShort.goto_states
 
@@ -666,9 +645,6 @@ module Long () = struct
   let () =
     Error.logC 3 @@ fun f ->
     StackStatesLong.print f
-
-  let () =
-    Time.tick "Computing stack states (long)"
 
   (* Validate. *)
 

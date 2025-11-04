@@ -20,9 +20,3 @@ module Run
 (Lr1 : LR1)
 (S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
    : STACK_STATES  with module G = Lr1.Lr0.G and type node := Lr1.node and type property = Lr1.NodeSet.t array
-
-(**The dummy module [Dummy] is used to skip the above computation. *)
-module Dummy
-(Lr1 : LR1)
-(S : STACK_HEIGHTS with module G = Lr1.Lr0.G and type node := Lr1.node)
-   : STACK_STATES  with module G = Lr1.Lr0.G and type node := Lr1.node and type property = Lr1.NodeSet.t array
