@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open MLazy
 open MiddleAPI
 
 (* We compute a lower bound on the height of the stack at every state, and at
@@ -50,7 +51,7 @@ module Short (Lr1 : LR1_AUTOMATON) () = struct
 
   let node_shape : Lr0.node -> shape =
     let dummy = [||] in
-    Lr0.tabulate @@ fun node ->
+    lazily Lr0.tabulate @@ fun node ->
     Item.Set.fold (fun item accu ->
       let prod, pos = Item.export item in
       let rhs = Production.rhs prod in
