@@ -28,7 +28,7 @@ include MenhirBasics
 type ('s, 'r) _menhir_state = 
   | MenhirState00 : ('s, _menhir_box_main) _menhir_state
     (** State 00.
-        Stack shape : .
+        Stack shape : <empty>.
         Start symbol: main. *)
 
   | MenhirState01 : (('s, _menhir_box_main) _menhir_cell1_MINUS, _menhir_box_main) _menhir_state
