@@ -568,19 +568,26 @@ end
 
 let publish (long : bool) tabulate symbols states =
   tabulate @@ fun thing ->
-  let symbols, states = symbols thing, states thing in
-  assert (Array.length symbols >= Array.length states);
-  (* We allow [states] to be shorter than [symbols]. This is required in the
-     computation of the long invariant, where [validate] can reject sets of
-     states that are not equi-represented. In that case, we truncate
-     [symbols] to match [states]. *)
-  let k = Array.length states in
-  let symbols = MArray.suffix symbols k in
-  Array.init k @@ fun i ->
-    let ostates =
-      if long || short_states_needed then Some states.(i) else None
-    in
-    cell symbols.(i) ostates
+  if not (long || short_states_needed) then
+    (* In this special case, all states are represented, so the vectors
+       [states] and [symbols] must have the same length; no truncation
+       is necessary. Furthermore, we want to avoid evaluating [states]
+       because that would cause the on-demand analysis to run. *)
+    let symbols = symbols thing in
+    let k = Array.length symbols in
+    Array.init k @@ fun i ->
+    cell symbols.(i) None
+  else
+    let symbols, states = symbols thing, states thing in
+    assert (Array.length symbols >= Array.length states);
+    (* We allow [states] to be shorter than [symbols]. This is required in the
+       computation of the long invariant, where [validate] can reject sets of
+       states that are not equi-represented. In that case, we truncate
+       [symbols] to match [states]. *)
+    let k = Array.length states in
+    let symbols = MArray.suffix symbols k in
+    Array.init k @@ fun i ->
+    cell symbols.(i) (Some states.(i))
 
 module Short = struct
 
