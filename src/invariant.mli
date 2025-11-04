@@ -8,19 +8,20 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module discovers and publishes information about the automaton.
+(**This module discovers and publishes information about the automaton.
 
-   It determines the shape of the stack when a state is about to be
-   entered, when a production is about to be reduced, and when a goto
-   transition is about to be taken.
+   Using [StackSymbols] and [StackStates], it determines the shape of the
+   stack in several places, namely when a state is about to be entered, when
+   a production is about to be reduced, and when a goto transition is about
+   to be taken.
 
-   It also determines which states should be represented (that is,
-   need to physically exist on the stack at runtime) and which symbols
-   need to keep track of (start or end) positions.
+   Furthermore, it determines which states should be represented (that is,
+   which states need to physically exist on the stack at runtime) and which
+   symbols need to keep track of their start or end positions (that is,
+   which positions need to physically exist on the stack at runtime).
 
-   The information computed in this module is used in the code back-end,
-   in the Coq back-end, and in the automated production of .messages files.
-   It is not used in the table back-end. *)
+   The information computed in this module is used in the code back-end and
+   in the Coq back-end. It is not used in the table back-end. *)
 
 open Grammar
 
