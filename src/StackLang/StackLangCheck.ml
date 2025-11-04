@@ -390,8 +390,8 @@ let wt_subtype env context target =
   let fail message =
     wt_fail env
       "Failed stack subtype check (%s) : %s\n\
-       Actual shape: %s\n\
-       Expected shape: %s\n"
+       Actual shape:%s\n\
+       Expected shape:%s\n"
       context
       message
       (show_shape actual)

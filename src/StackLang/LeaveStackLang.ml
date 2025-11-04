@@ -398,7 +398,7 @@ let statetypedef =
           ];
         comment =
           Some (sprintf
-            "State %s.\n        Stack shape : %s.\n        Start symbol: %s."
+            "State %s.\n        Stack shape :%s.\n        Start symbol: %s."
             (Tag.print tag)
             (Invariant.show_shape stack)
             (StackLangPrinter.ToString.final final)

@@ -585,10 +585,10 @@ let split w k =
     lower, upper
 
 let show_shape w =
-  w
-  |> Array.map symbol
-  |> Symbol.print_array false
-    (* This is incomplete information *)
+  if length w > 0 then
+    Symbol.print_array' false (Array.map symbol w)
+  else
+    " <empty>"
 
 (* ------------------------------------------------------------------------ *)
 
