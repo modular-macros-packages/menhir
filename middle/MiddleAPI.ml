@@ -1256,9 +1256,9 @@ module type STACK_SYMBOLS = sig
 
 end
 
-(**[STACK_STATES] is the result of an analysis of the shape of the stack in an
-   LR(1) automaton. Here, a stack shape is not just an array of symbols; it is
-   an array of nonempty sets of nodes. *)
+(**[STACK_STATES] is the result of an analysis of the shape of the stack in
+   an LR(1) automaton. Here, a stack shape is not just an array of symbols;
+   it is an array of sets of nodes. *)
 module type STACK_STATES = sig
 
   module G : GRAMMAR
@@ -1267,10 +1267,11 @@ module type STACK_STATES = sig
   type node
 
   (**A property is a description of the known suffix of the stack at a node.
-     It is represented as an array of nonempty sets of nodes. By convention,
-     the top of the stack is the end of the array. Each array element is a set
-     of states that may appear in this stack cell. *)
+     It is represented as an array of sets of nodes. By convention, the top
+     of the stack is the end of the array. Each array element is a set of
+     states that may appear in this stack cell. *)
   type property
+  (* = array of sets of nodes *)
 
   (**[stack_states node] is the known suffix of the stack at node [node]. *)
   val stack_states: node -> property
@@ -1278,7 +1279,9 @@ module type STACK_STATES = sig
   (**[production_states prod] is the known suffix of the stack at a node
      where production [prod] can be reduced. In the short invariant, the
      length of this suffix is [Production.length prod]. In the long
-     invariant, its length can be greater. *)
+     invariant, its length can be greater. If there are no nodes where
+     [prod] can be reduced, then every stack cell contains an empty set of
+     nodes. *)
   val production_states: Production.t -> property
 
   (**[goto_states nt] is the known suffix of the stack at a node where an
@@ -1290,5 +1293,37 @@ module type STACK_STATES = sig
   (**[print c] writes the value of [stack_states] at every node and the value
      of [production_states] at every production to the output channel [c]. *)
   val print: out_channel -> unit
+
+end
+
+module type STACK = sig
+
+  module G : GRAMMAR
+    open G
+
+  type node
+
+  (**A word is a description of the known suffix of the stack at a node. It is
+     represented as an array of cells. By convention, the top of the stack is
+     the end of the array. *)
+  type word
+  (* = array of cells *)
+
+  (**[stack node] is the known suffix of the stack at node [node]. *)
+  val stack: node -> word
+
+  (**[prodstack prod] is the known suffix of the stack at a node where
+     production [prod] can be reduced. In the short invariant, the length of
+     this suffix is [Production.length prod]. In the long invariant, its
+     length can be greater. If there are no nodes where [prod] can be reduced,
+     then every cell contains an empty set of nodes. *)
+  val prodstack: Production.t -> word
+
+  (**[gotostack nt] is the known suffix of the stack at a node where an edge
+     labeled [nt] has just been followed. In the short invariant, the length
+     of this suffix is [1]: indeed, it consists of just one cell, associated
+     with the symbol [nt]. In the long invariant, its length can be
+     greater. *)
+  val gotostack: Nonterminal.t -> word
 
 end
