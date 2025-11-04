@@ -21,12 +21,48 @@ open Grammar
 
 module Height (S : SHAPE with type shape = Symbol.t array) = struct
   include S
+  let show_shape height =
+    Printf.sprintf "%d" height
   let node_shape node =
     Array.length (node_shape node)
   let production_shape node =
     Array.length (production_shape node)
   let goto_shape node =
     Array.length (goto_shape node)
+end
+
+(* ------------------------------------------------------------------------ *)
+
+(* This functor prints the results of an analysis to an output channel. *)
+
+module Print (S : SHAPE with type node := Lr1.node) = struct
+  open Printf
+  open S
+  open G
+
+  let print_node_shape f =
+    Lr1.iter @@ fun node ->
+    fprintf f "%s_node_shape(%s) = %s\n"
+      (match variant with `Short -> "short" | `Long -> "long")
+      (Lr1.print node)
+      (show_shape (node_shape node))
+
+  let print_production_shape f =
+    Production.iterx @@ fun prod ->
+    fprintf f "%s_production_shape(%s) = %s\n"
+      (match variant with `Short -> "short" | `Long -> "long")
+      (Production.print prod)
+      (show_shape (production_shape prod))
+
+  let print_goto_shape _f =
+    (* At the moment, this data is not printed. *)
+    ()
+
+  let print f =
+    print_node_shape f;
+    print_production_shape f;
+    print_goto_shape f
+
 end
 
 (* ------------------------------------------------------------------------ *)
@@ -81,7 +117,8 @@ let short_states_needed =
 let () =
   if short_states_needed then
     Error.logC 3 @@ fun f ->
-    StackStatesShort.print f
+    let module P = Print(StackStatesShort) in
+    P.print f
 
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
@@ -142,7 +179,7 @@ let represent state =
 
 (* Enforce condition (1) above. *)
 
-let share (v : StackStatesShort.property) =
+let share (v : StackStatesShort.shape) =
   Array.iter (fun states ->
     let dummy = UnionFind.fresh false in
     Lr1.NodeSet.iter (fun state ->
@@ -152,10 +189,10 @@ let share (v : StackStatesShort.property) =
 
 let () =
   Lr1.iter (fun node ->
-    share (StackStatesShort.stack_states node)
+    share (StackStatesShort.node_shape node)
   );
   Production.iter (fun prod ->
-    share (StackStatesShort.production_states prod)
+    share (StackStatesShort.production_shape prod)
   )
 
 (* Enforce condition (2a) above. *)
@@ -595,17 +632,17 @@ module Short = struct
   let stack : Lr1.node -> word =
     publish long (lazily Lr1.tabulate)
       StackSymbolsShort.node_shape
-      StackStatesShort.stack_states
+      StackStatesShort.node_shape
 
   let production_stack : Production.t -> word =
     publish long (lazily Production.tabulate)
       StackSymbolsShort.production_shape
-      StackStatesShort.production_states
+      StackStatesShort.production_shape
 
   let goto_stack : Nonterminal.t -> word =
     publish long (lazily Nonterminal.tabulate)
       StackSymbolsShort.goto_shape
-      StackStatesShort.goto_states
+      StackStatesShort.goto_shape
 
 end
 
@@ -648,7 +685,8 @@ module Long () = struct
 
   let () =
     Error.logC 3 @@ fun f ->
-    StackStatesLong.print f
+    let module P = Print(StackStatesLong) in
+    P.print f
 
   (* Validate. *)
 
@@ -671,13 +709,13 @@ module Long () = struct
       validate states
 
   let stack_states s =
-    validate @@ StackStatesLong.stack_states s
+    validate @@ StackStatesLong.node_shape s
 
   let production_states prod =
-    validate @@ StackStatesLong.production_states prod
+    validate @@ StackStatesLong.production_shape prod
 
   let goto_states nt =
-    validate @@ StackStatesLong.goto_states nt
+    validate @@ StackStatesLong.goto_shape nt
 
   (* Publish. *)
 

@@ -19,6 +19,7 @@ module Run
   and type shape := int)
 = struct
 module G = S.G
+let variant = S.variant
 open G
 
 (* The parameter [S] is our stack height oracle. *)
@@ -94,50 +95,56 @@ module T = struct
   type t = F.variable
 end
 
-let stack_states () : F.variable -> F.property option =
+let node_shape () : F.variable -> F.property option =
   let module F = Fix.DataFlow.ForType(T)(F)(F) in
   F.solution
 
-let stack_states : F.variable -> F.property option =
-  lazily stack_states ()
+let node_shape : F.variable -> F.property option =
+  lazily node_shape ()
 
 (* If every state is reachable, then the least fixed point must be non-[None]
    everywhere, so we may view it as a function that produces a vector of sets
    of states. *)
 
-let stack_states (cell : F.variable) : F.property =
+let node_shape (cell : F.variable) : F.property =
   assert (let (s, i) = cell in 0 <= i && i < S.node_shape s);
-  Option.get (stack_states cell)
+  Option.get (node_shape cell)
 
 (* To the end user, we want to propose an API that is based on vectors of
    sets of states. *)
 
-type property =
+type shape =
   Lr1.NodeSet.t array
 
-(* Adapt [stack_states] to the external API. *)
+let show_shape (v : shape) =
+  if Array.length v = 0 then
+    "epsilon"
+  else
+    MString.separated_list Lr1.NodeSet.print "; " (Array.to_list v)
 
-let stack_states : Lr1.node -> property =
+(* Adapt [node_shape] to the external API. *)
+
+let node_shape : Lr1.node -> shape =
   lazily Lr1.tabulate @@ fun node ->
   let n = S.node_shape node in
   Array.init n @@ fun i ->
   let i = n - 1 - i in
-  stack_states (node, i)
+  node_shape (node, i)
 
 (* [truncate_join height f nodes] computes a join of the images through [f] of
    the nodes in the set [nodes], truncated at height [height]. *)
 
-let bottom height : property =
+let bottom height : shape =
   Array.make height Lr1.NodeSet.empty
 
-let truncate k (v : property) : property =
+let truncate k (v : shape) : shape =
   assert (k <= Array.length v);
   MArray.suffix v k
 
-let leq_join (v1 : property) (v2 : property) : property =
+let leq_join (v1 : shape) (v2 : shape) : shape =
   MArray.leq_join Lr1.NodeSet.leq_join v1 v2
 
-let truncate_join height (f : Lr1.node -> property) nodes =
+let truncate_join height (f : Lr1.node -> shape) nodes =
   Lr1.NodeSet.fold (fun node accu ->
     leq_join (truncate height (f node)) accu
   ) nodes (bottom height)
@@ -148,11 +155,11 @@ let truncate_join height (f : Lr1.node -> property) nodes =
 (* We produce a vector of states whose length is [S.production_shape prod].
    It is up to the user to provide an appropriate height oracle [S]. *)
 
-let production_states : Production.t -> property =
+let production_shape : Production.t -> shape =
   lazily Production.tabulate @@ fun prod ->
   let sites = Lr1.reduction_sites prod in
   let height = S.production_shape prod in
-  truncate_join height stack_states sites
+  truncate_join height node_shape sites
 
 (* Compute the shape of the stack when a transition on the nonterminal
    symbol [nt] is taken. *)
@@ -160,39 +167,13 @@ let production_states : Production.t -> property =
 (* We produce a vector of states whose length is [S.goto_shape nt].
    It is up to the user to provide an appropriate height oracle [S]. *)
 
-let goto_states : Nonterminal.t -> property =
+let goto_shape : Nonterminal.t -> shape =
   lazily Nonterminal.tabulate @@ fun nt ->
   let symbol = Symbol.N nt in
   (* Compute the join of the stack shapes at every target of an edge
      labeled with [nt]. *)
   let targets = Lr1.targets symbol in
   let height = S.goto_shape nt in
-  truncate_join height stack_states targets
-
-(* Diagnostics. *)
-
-let print_vector (v : property) =
-  if Array.length v = 0 then
-    "epsilon"
-  else
-    MString.separated_list Lr1.NodeSet.print "; " (Array.to_list v)
-
-let print_stack_states f =
-  Lr1.iter @@ fun node ->
-  Printf.fprintf f "%sstack(%s) = %s\n"
-    (match S.variant with `Short -> "short" | `Long -> "long")
-    (Lr1.print node)
-    (print_vector (stack_states node))
-
-let print_production_states f =
-  Production.iterx @@ fun prod ->
-  Printf.fprintf f "%sproduction_stack(%s) = %s\n"
-    (match S.variant with `Short -> "short" | `Long -> "long")
-    (Production.print prod)
-    (print_vector (production_states prod))
-
-let print f =
-  print_stack_states f;
-  print_production_states f
+  truncate_join height node_shape targets
 
 end (* Run *)

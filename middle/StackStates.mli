@@ -28,8 +28,10 @@ open MiddleAPI
 module Run
 (Lr1 : LR1)
 (S : SHAPE
- with module G = Lr1.Lr0.G
-  and type node := Lr1.node
-  and type shape := int)
-   : STACK_STATES  with module G = Lr1.Lr0.G and type node := Lr1.node
-                    and type property = Lr1.NodeSet.t array
+     with module G = Lr1.Lr0.G
+      and type node := Lr1.node
+      and type shape := int)
+   : SHAPE
+     with module G = Lr1.Lr0.G
+      and type node := Lr1.node
+      and type shape = Lr1.NodeSet.t array

@@ -42,6 +42,9 @@ module Short (Lr1 : LR1_AUTOMATON) () = struct
   type shape =
     Symbol.t array
 
+  let show_shape symbols =
+    Symbol.print_array' false symbols
+
   (* Compute and tabulate this information at the level of the LR(0)
      automaton. *)
 
@@ -90,6 +93,9 @@ module Long (Lr1 : LR1) () = struct
 
   type shape =
     Symbol.t array
+
+  let show_shape symbols =
+    Symbol.print_array' false symbols
 
   (* Vectors of symbols. *)
 
