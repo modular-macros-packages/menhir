@@ -545,19 +545,19 @@ module type STACK = sig
   (**[stack s] is the known suffix of the stack at state [s]. *)
   val stack: Lr1.node -> word
 
-  (**[prodstack prod] is the known suffix of the stack at a state where
+  (**[production_stack prod] is the known suffix of the stack at a state where
      production [prod] can be reduced. In the short invariant, the length of
      this suffix is [Production.length prod]. In the long invariant, its
      length can be greater. If there are no states where [prod] can be
      reduced, then every cell contains an empty set of states. *)
-  val prodstack: Production.t -> word
+  val production_stack: Production.t -> word
 
-  (**[gotostack nt] is the known suffix of the stack at a state where an
+  (**[goto_stack nt] is the known suffix of the stack at a state where an
      edge labeled [nt] has just been followed. In the short invariant, the
      length of this suffix is [1]: indeed, it consists of just one cell,
      associated with the symbol [nt]. In the long invariant, its length can
      be greater. *)
-  val gotostack: Nonterminal.t -> word
+  val goto_stack: Nonterminal.t -> word
 
 end
 
@@ -600,12 +600,12 @@ module Short = struct
       StackSymbolsShort.stack_symbols
       StackStatesShort.stack_states
 
-  let prodstack : Production.t -> word =
+  let production_stack : Production.t -> word =
     publish long (lazily Production.tabulate)
       StackSymbolsShort.production_symbols
       StackStatesShort.production_states
 
-  let gotostack : Nonterminal.t -> word =
+  let goto_stack : Nonterminal.t -> word =
     publish long (lazily Nonterminal.tabulate)
       StackSymbolsShort.goto_symbols
       StackStatesShort.goto_states
@@ -689,12 +689,12 @@ module Long () = struct
       StackSymbolsLong.stack_symbols
       stack_states
 
-  let prodstack : Production.t -> word =
+  let production_stack : Production.t -> word =
     publish long Production.tabulate
       StackSymbolsLong.production_symbols
       production_states
 
-  let gotostack : Nonterminal.t -> word =
+  let goto_stack : Nonterminal.t -> word =
     publish long Nonterminal.tabulate
       StackSymbolsLong.goto_symbols
       goto_states

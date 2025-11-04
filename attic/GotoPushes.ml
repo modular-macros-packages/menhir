@@ -124,7 +124,7 @@ let goto nt =
      which we are about to jump. *)
 
   if gotopushes nt then begin
-    let cell = top (Long.gotostack nt) in
+    let cell = top (Long.goto_stack nt) in
     if present cell then
       push (components cell state semv startp endp) cell
   end;

@@ -578,7 +578,7 @@ let act prod =
 
   let symbol = Symbol.N nt
   and is_epsilon = (n = 0)
-  and stack = Short.prodstack prod in
+  and stack = Short.production_stack prod in
   assert (length stack = n);
 
   (* Log that we are reducing production [prod]. *)
@@ -638,7 +638,7 @@ let reduce mode prod =
      is stored in the register [state] and thus becomes the new current
      state. *)
 
-  let stack = Short.prodstack prod in
+  let stack = Short.production_stack prod in
   assert (length stack = n);
 
   let pops = ref 0 in
@@ -852,23 +852,23 @@ let code label =
       run mode s
 
   | Reduce (mode, prod) ->
-      let stack = Long.prodstack prod in
+      let stack = Long.production_stack prod in
       set_block_type stack (Origin.reduce prod);
       reduce mode prod
 
   | Goto (mode, nt) ->
-      (* The function [Long.gotostack] provides the shape of the stack
+      (* The function [Long.goto_stack] provides the shape of the stack
          *after* the goto transition has been taken. Here, we want the shape
          of the stack when the [goto] function is invoked, that is, *before*
          the goto transition is taken. This is why we pop one cell. *)
-      let stack = pop (Long.gotostack nt) in
+      let stack = pop (Long.goto_stack nt) in
       set_block_type stack (Origin.goto nt);
       goto mode nt
 
   | ActGoto (mode, prod) ->
       (* Same type as in the previous case. *)
       let nt = Production.nt prod in
-      let stack = pop (Long.gotostack nt) in
+      let stack = pop (Long.goto_stack nt) in
       set_block_type stack (Origin.goto nt);
       act_goto mode prod
 

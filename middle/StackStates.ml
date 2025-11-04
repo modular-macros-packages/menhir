@@ -183,7 +183,7 @@ let print_stack_states f =
 
 let print_production_states f =
   Production.iterx @@ fun prod ->
-  Printf.fprintf f "%sprodstack(%s) = %s\n"
+  Printf.fprintf f "%sproduction_stack(%s) = %s\n"
     (match variant with `Short -> "short" | `Long -> "long")
     (Production.print prod)
     (print_vector (production_states prod))

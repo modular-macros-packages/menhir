@@ -1312,18 +1312,18 @@ module type STACK = sig
   (**[stack node] is the known suffix of the stack at node [node]. *)
   val stack: node -> word
 
-  (**[prodstack prod] is the known suffix of the stack at a node where
+  (**[production_stack prod] is the known suffix of the stack at a node where
      production [prod] can be reduced. In the short invariant, the length of
      this suffix is [Production.length prod]. In the long invariant, its
      length can be greater. If there are no nodes where [prod] can be reduced,
      then every cell contains an empty set of nodes. *)
-  val prodstack: Production.t -> word
+  val production_stack: Production.t -> word
 
-  (**[gotostack nt] is the known suffix of the stack at a node where an edge
+  (**[goto_stack nt] is the known suffix of the stack at a node where an edge
      labeled [nt] has just been followed. In the short invariant, the length
      of this suffix is [1]: indeed, it consists of just one cell, associated
      with the symbol [nt]. In the long invariant, its length can be
      greater. *)
-  val gotostack: Nonterminal.t -> word
+  val goto_stack: Nonterminal.t -> word
 
 end
