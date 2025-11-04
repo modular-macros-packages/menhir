@@ -10,6 +10,11 @@
 
 (* --------------------------------------------------------------------------- *)
 
+module StackSymbolsShort =
+  StackSymbols.Short(Lr1)()
+
+(* --------------------------------------------------------------------------- *)
+
 open Printf
 open Grammar
 open SentenceParserAux

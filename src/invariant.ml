@@ -82,8 +82,11 @@ module F = Freeze
 
 (* ------------------------------------------------------------------------ *)
 
-(* The known suffix of the stack at every state, a sequence of symbols, has
-   already been computed by [StackSymbolsShort]. It is the short invariant. *)
+(* Compute the known suffix of the stack at every state, a sequence of symbols.
+   This is the short invariant. *)
+
+module StackSymbolsShort =
+  StackSymbols.Short(Lr1)()
 
 (* Now, compute which states may be held in the known suffix of the stack. *)
 
