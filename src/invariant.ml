@@ -114,14 +114,10 @@ module StackSymbolsShort =
 module StackStatesShort =
   StackStates.Run(Lr1)(Height(StackSymbolsShort))
 
-let short_states_needed =
-  (not Settings.represent_states) || Settings.backend = `CoqBackend
-
 let () =
-  if short_states_needed then
-    Error.logC 3 @@ fun f ->
-    let module P = Print(StackStatesShort) in
-    P.print f
+  Error.logC 3 @@ fun f ->
+  let module P = Print(StackStatesShort) in
+  P.print f
 
 (* ------------------------------------------------------------------------ *)
 (* We now determine which states must be represented, that is,
@@ -161,9 +157,6 @@ let () =
 module RepresentedStates () : sig
   val represented : Lr1.node -> bool
 end = struct
-
-let () =
-  assert short_states_needed
 
 (* Data. *)
 
@@ -263,23 +256,11 @@ let represented : Lr1.node -> bool =
 
 let representeds states =
   Settings.represent_states ||
+  let states = Lazy.force states in
   if Lr1.NodeSet.is_empty states then
     false
   else
     represented (Lr1.NodeSet.choose states)
-
-let representedo ostates =
-  match ostates with
-  | Some states ->
-      representeds states
-  | None ->
-      (* If this set of states is missing, then [short_states_needed] must
-         be false, which implies that [--represent-states] must be true,
-         which implies that every state is represented, so the correct
-         result is [true]. *)
-      assert (not short_states_needed);
-      assert Settings.represent_states;
-      true
 
 (* ------------------------------------------------------------------------ *)
 
@@ -478,9 +459,7 @@ let track_startp, track_endp =
 
 type cell = {
   symbol: Symbol.t;
-  ostates: Lr1.NodeSet.t option;
-  (* If [short_states_needed] is false and if this cell is part of the short
-     invariant, then [ostates] is [None]. *)
+  states: Lr1.NodeSet.t Lazy.t;
   holds_semv: bool;
   holds_state: bool;
   holds_startp: bool;
@@ -511,11 +490,11 @@ let has_semv symbol =
       | Some _ocamltype ->
           true
 
-let cell symbol ostates =
+let cell symbol states =
   let holds_semv = has_semv symbol in
-  let holds_state = representedo ostates in
+  let holds_state = representeds states in
   let holds_startp, holds_endp = track_startp symbol, track_endp symbol in
-  { symbol; ostates; holds_semv; holds_state; holds_startp; holds_endp }
+  { symbol; states; holds_semv; holds_state; holds_startp; holds_endp }
 
 (* Accessors. *)
 
@@ -523,13 +502,7 @@ let symbol cell =
   cell.symbol
 
 let states cell =
-  match cell.ostates with
-  | Some states ->
-      states
-  | None ->
-      (* Someone wants a piece of information that we have not computed.
-         This should not happen. *)
-      assert false
+  Lazy.force cell.states
 
 let holds_semv cell =
   cell.holds_semv
@@ -551,7 +524,7 @@ let similar cell1 cell2 =
   cell1.holds_state = cell2.holds_state
     (* The fields [holds_semv], [holds_startp] and [holds_endp]
        do not need to be compared, because they are determined
-       by the field [symbol]. The field [ostates] does not need
+       by the field [symbol]. The field [states] does not need
        to be compared because it does not influence the layout
        of the cell; comparing the field [holds_state] suffices. *)
 
@@ -562,7 +535,7 @@ let meet w1 w2 =
   if MArray.for_all2 similar suffix1 suffix2 then
     (* [w1] and [w2] agree on their common suffix. The meet is
        then the longest of the two words. (We could compute the
-       intersection of the [ostates] fields, but we assume that
+       intersection of the [states] fields, but we assume that
        the caller is not interested in this information.) *)
     Some (if n1 < n2 then w2 else w1)
   else
@@ -602,9 +575,9 @@ let show_shape w =
    states. Then, we want to construct and tabulate a function that maps
    things to vectors of cells. *)
 
-let publish (variant : [`Short | `Long]) tabulate symbols states =
+let publish tabulate symbols states =
   tabulate @@ fun thing ->
-  if not (variant = `Long || short_states_needed) then
+  if Settings.represent_states then
     (* In this special case, all states are represented, so the vectors
        [states] and [symbols] must have the same length; no truncation
        is necessary. Furthermore, we want to avoid evaluating [states]
@@ -612,7 +585,7 @@ let publish (variant : [`Short | `Long]) tabulate symbols states =
     let symbols = symbols thing in
     let k = Array.length symbols in
     Array.init k @@ fun i ->
-    cell symbols.(i) None
+    cell symbols.(i) (lazy (states thing).(i))
   else
     let symbols, states = symbols thing, states thing in
     assert (Array.length symbols >= Array.length states);
@@ -623,7 +596,7 @@ let publish (variant : [`Short | `Long]) tabulate symbols states =
     let k = Array.length states in
     let symbols = MArray.suffix symbols k in
     Array.init k @@ fun i ->
-    cell symbols.(i) (Some states.(i))
+    cell symbols.(i) (lazy states.(i))
 
 module Short = struct
 
@@ -634,17 +607,17 @@ module Short = struct
   let variant = `Short
 
   let node_shape : Lr1.node -> word =
-    publish variant (lazily Lr1.tabulate)
+    publish (lazily Lr1.tabulate)
       StackSymbolsShort.node_shape
       StackStatesShort.node_shape
 
   let production_shape : Production.t -> word =
-    publish variant (lazily Production.tabulate)
+    publish (lazily Production.tabulate)
       StackSymbolsShort.production_shape
       StackStatesShort.production_shape
 
   let goto_shape : Nonterminal.t -> word =
-    publish variant (lazily Nonterminal.tabulate)
+    publish (lazily Nonterminal.tabulate)
       StackSymbolsShort.goto_shape
       StackStatesShort.goto_shape
 
@@ -729,17 +702,17 @@ module Long () = struct
   let variant = `Long
 
   let node_shape : Lr1.node -> word =
-    publish variant Lr1.tabulate
+    publish Lr1.tabulate
       StackSymbolsLong.node_shape
       node_shape
 
   let production_shape : Production.t -> word =
-    publish variant Production.tabulate
+    publish Production.tabulate
       StackSymbolsLong.production_shape
       production_shape
 
   let goto_shape : Nonterminal.t -> word =
-    publish variant Nonterminal.tabulate
+    publish Nonterminal.tabulate
       StackSymbolsLong.goto_shape
       goto_shape
 
