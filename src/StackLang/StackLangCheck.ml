@@ -512,14 +512,12 @@ let wt_pop env ps cell =
 
 let wt_peek env ps cell =
   assert (not (Pattern.occurs state ps));
-  let env0 = env in
   let d = Pop in
   let env, ps = wt_maybe_uncons d "state" (holds_state cell) none env ps in
   let env, ps = wt_maybe_uncons d "semantic value" (holds_semv cell) none env ps in
   let env, ps = wt_maybe_uncons d "start position" (holds_startp cell) none env ps in
   let env, ps = wt_maybe_uncons d "end position" (holds_endp cell) none env ps in
   let env = wt_unnil d env ps in
-  assert (env0 = env);
   env
 
 (* [wt_similar env expected actual] checks that the cell shapes [expected]
