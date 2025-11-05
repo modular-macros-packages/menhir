@@ -549,7 +549,10 @@ let similar cell1 cell2 =
 Caveat: all [states] fields are ignored in this computation;
      the [states] fields of the result are not as accurate as they could be, and
      some opportunities to return [None], based on an inspection of the [states]
-     fields, are missed. *)
+     fields, are missed. This is intentional: the result [None] allows the StackLang
+type-checker to declare a branch dead. This decision should be based on symbols
+alone and not on sets of states, because the OCaml type-checker has access to
+symbols only. *)
 
 let meet w1 w2 =
   let n1, n2 = Array.length w1, Array.length w2 in
