@@ -108,7 +108,7 @@ type cell =
    of a production, and in the module Invariant): the right end of this array
    represents the top of the stack. *)
 type stack =
-  Invariant.word
+  Invariant.shape
 
 (**The result type of a block (once this block is translated to an OCaml
    function). If this block is reachable from only one start symbol [nt],

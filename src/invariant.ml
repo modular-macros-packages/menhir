@@ -466,12 +466,12 @@ type cell = {
   holds_endp: bool;
 }
 
-type word =
+type shape =
   cell array
 
 (* Constructors. *)
 
-let empty : word =
+let empty : shape =
   [||]
 
 (* If [--represent-values] is passed on the command line, then every semantic
@@ -534,7 +534,7 @@ let meet w1 w2 =
   let suffix1, suffix2 = MArray.suffix w1 n, MArray.suffix w2 n in
   if MArray.for_all2 similar suffix1 suffix2 then
     (* [w1] and [w2] agree on their common suffix. The meet is
-       then the longest of the two words. (We could compute the
+       then the longest of the two shapes. (We could compute the
        intersection of the [states] fields, but we assume that
        the caller is not interested in this information.) *)
     Some (if n1 < n2 then w2 else w1)
@@ -606,17 +606,17 @@ module Short = struct
 
   let variant = `Short
 
-  let node_shape : Lr1.node -> word =
+  let node_shape : Lr1.node -> shape =
     publish (lazily Lr1.tabulate)
       StackSymbolsShort.node_shape
       StackStatesShort.node_shape
 
-  let production_shape : Production.t -> word =
+  let production_shape : Production.t -> shape =
     publish (lazily Production.tabulate)
       StackSymbolsShort.production_shape
       StackStatesShort.production_shape
 
-  let goto_shape : Nonterminal.t -> word =
+  let goto_shape : Nonterminal.t -> shape =
     publish (lazily Nonterminal.tabulate)
       StackSymbolsShort.goto_shape
       StackStatesShort.goto_shape
@@ -701,17 +701,17 @@ module Long () = struct
 
   let variant = `Long
 
-  let node_shape : Lr1.node -> word =
+  let node_shape : Lr1.node -> shape =
     publish Lr1.tabulate
       StackSymbolsLong.node_shape
       node_shape
 
-  let production_shape : Production.t -> word =
+  let production_shape : Production.t -> shape =
     publish Production.tabulate
       StackSymbolsLong.production_shape
       production_shape
 
-  let goto_shape : Nonterminal.t -> word =
+  let goto_shape : Nonterminal.t -> shape =
     publish Nonterminal.tabulate
       StackSymbolsLong.goto_shape
       goto_shape

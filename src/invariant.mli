@@ -74,49 +74,49 @@ val present: cell -> bool
    all fields except [states]. *)
 val similar: cell -> cell -> bool
 
-(**A word is a representation of a stack suffix. A word is an immutable
+(**A shape is a representation of a stack suffix. A shape is an immutable
    array of cells, whose right end represents the top of the stack. Thus,
    the index 0 in the array corresponds to the cell that lies deepest in
    the stack. Many of the functions that follow are just copies of the
    functions by the same names in the modules Array or MArray. *)
-type word
+type shape
 
-(**[empty] is the empty word. *)
-val empty: word
+(**[empty] is the empty shape. *)
+val empty: shape
 
-(**[get w i] is the [i]-th cell in the word [w]. *)
-val get: word -> int -> cell
+(**[get w i] is the [i]-th cell in the shape [w]. *)
+val get: shape -> int -> cell
 
-(**[length w] is the length of the word [w]. *)
-val length: word -> int
+(**[length w] is the length of the shape [w]. *)
+val length: shape -> int
 
 (**[fold_left] performs left-to-right iteration, with an accumulator,
-   over a word. *)
-val fold_left: ('a -> cell -> 'a) -> 'a -> word -> 'a
+   over a shape. *)
+val fold_left: ('a -> cell -> 'a) -> 'a -> shape -> 'a
 
-(**[append w1 w2] is the concatenation of the words [w1] and [w2]. *)
-val append: word -> word -> word
+(**[append w1 w2] is the concatenation of the shapes [w1] and [w2]. *)
+val append: shape -> shape -> shape
 
-(**[filter p w] is the subsequence of the cells in the word [w] that satisfy
+(**[filter p w] is the subsequence of the cells in the shape [w] that satisfy
    the predicate [p]. *)
-val filter: (cell -> bool) -> word -> word
+val filter: (cell -> bool) -> shape -> shape
 
 (**[push w cell] is the stack [w], onto which the cell [cell] has been
    pushed. *)
-val push: word -> cell -> word
+val push: shape -> cell -> shape
 
 (**[pop w] is the stack [w], deprived of its top element. The stack [w]
    must be nonempty. *)
-val pop: word -> word
+val pop: shape -> shape
 
 (**[top w] is the top element of the stack [w]. The stack [w] must be
    nonempty. *)
-val top: word -> cell
+val top: shape -> cell
 
-(**[split w k] splits the word [w] into two parts: a lower part of length
+(**[split w k] splits the shape [w] into two parts: a lower part of length
    [length w - k] and an upper part of length [k]. The length of [w] must be
    at least [k]. *)
-val split: word -> int -> word * word
+val split: shape -> int -> shape * shape
 
 (**[meet w1 w2] is the meet of the two stacks [w1] and [w2], that is, the
    logical conjunction of the information contained in [w1] and [w2]. If [w1]
@@ -125,13 +125,13 @@ val split: word -> int -> word * word
    the [states] fields of the result are not as accurate as they could be, and
    some opportunities to return [None], based on an inspection of the [states]
    fields, are missed. *)
-val meet: word -> word -> word option
+val meet: shape -> shape -> shape option
 
-(**[show_shape w] prints the sequence of symbols associated with the word [w]. *)
-val show_shape: word -> string
+(**[show_shape w] prints the sequence of symbols associated with the shape [w]. *)
+val show_shape: shape -> string
 
-(**[to_list w] converts the word [w] to a list. *)
-val to_list: word -> cell list
+(**[to_list w] converts the shape [w] to a list. *)
+val to_list: shape -> cell list
 
 (* ------------------------------------------------------------------------- *)
 
@@ -141,7 +141,7 @@ val to_list: word -> cell list
 module Short : SHAPE
   with module G = Grammar
    and type node := Lr1.node
-   and type shape := word
+   and type shape := shape
 
 (* ------------------------------------------------------------------------- *)
 (* Information about which states and positions need to physically
@@ -170,4 +170,4 @@ val track_endp: Symbol.t -> bool
 module Long () : SHAPE
   with module G = Grammar
    and type node := Lr1.node
-   and type shape := word
+   and type shape := shape
