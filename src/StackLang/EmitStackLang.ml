@@ -833,9 +833,6 @@ and assign_beforeendp source =
    we compute here. Because we are inside the functor [L()], this computation
    is performed only if necessary. *)
 
-module Long =
-  Invariant.Long()
-
 let code label =
   (* A potential confusion exists between the [pop] functions provided by the
      modules [Invariant] and [StackLangBuilder]. *)
