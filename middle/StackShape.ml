@@ -475,7 +475,7 @@ end = struct
   let () =
     log
       "%d out of %d symbols keep track of their start position.\n\
-       %d out of %d symbols keep track of their end position.\n"
+       %d out of %d symbols keep track of their end position."
       (sum_over_every_symbol track_startp) (Terminal.n + Nonterminal.n)
       (sum_over_every_symbol track_endp) (Terminal.n + Nonterminal.n)
 
