@@ -1246,3 +1246,137 @@ module type SHAPE = sig
   val show_shape: shape -> string
 
 end
+
+(**A kindergarten offers a set of operations on shapes. *)
+module type KINDERGARTEN = sig
+
+  (**A shape is a description of a suffix of the stack. It can be thought of
+     as an array of cells. By convention, the top of the stack is the right
+     end of the array. Thus, the index 0 in this array corresponds to the cell
+     that lies deepest in the stack. *)
+  type shape
+
+  (**A cell is a description of a stack cell. *)
+  type cell
+
+  (**A symbol. *)
+  type symbol
+
+  (**A node. *)
+  type node
+
+  (**A set of nodes. *)
+  type nodes
+
+  (* Operations on shapes. *)
+
+  (**[empty] is the empty shape. *)
+  val empty: shape
+
+  (**[get sh i] is the [i]-th cell in the shape [sh]. *)
+  val get: shape -> int -> cell
+
+  (**[length sh] is the length of the shape [sh]. *)
+  val length: shape -> int
+
+  (**[fold_left] enumerates the cells in a shape, from left to right. *)
+  val fold_left: ('a -> cell -> 'a) -> 'a -> shape -> 'a
+
+  (**[append sh1 sh2] is the concatenation of the shapes [sh1] and [sh2]. *)
+  val append: shape -> shape -> shape
+
+  (**[filter p sh] is the subsequence of the cells in the shape [sh]
+     that satisfy the predicate [p]. *)
+  val filter: (cell -> bool) -> shape -> shape
+
+  (**[push sh cell] is the shape [sh], onto which the cell [cell]
+     has been pushed. *)
+  val push: shape -> cell -> shape
+
+  (**[pop sh] is the shape [sh], deprived of its top element.
+     The shape [sh] must be nonempty. *)
+  val pop: shape -> shape
+
+  (**[top sh] is the top element of the shape [sh].
+     The shape [sh] must be nonempty. *)
+  val top: shape -> cell
+
+  (**[split sh k] splits the shape [sh] into two parts: a lower part of length
+     [length sh - k] and an upper part of length [k]. The length of [sh] must
+     be at least [k]. *)
+  val split: shape -> int -> shape * shape
+
+  (**[meet sh1 sh2] is the meet of the two shapes [sh1] and [sh2], that is, the
+     logical conjunction of the information contained in [sh1] and [sh2]. It is
+     computed roughly as follows. If the shapes [sh1] and [sh2] agree on a
+     suffix of length [min (length sh1) (length s2)], then they are compatible.
+     Then, their meet has length [max (length sh1) (length sh2)]. Otherwise,
+     [sh1] and [sh2] are incompatible: they contradict each other. Then, their
+     meet is bottom: [meet sh1 sh2] is [None]. *)
+  val meet: shape -> shape -> shape option
+
+  (**[show_shape sh] prints the sequence of symbols associated with the shape
+     [sh]. *)
+  val show_shape: shape -> string
+
+  (**[to_list sh] converts the shape [sh] to a list of cells. *)
+  val to_list: shape -> cell list
+
+  (* Operations on cells. *)
+
+  (**[symbol cell] is the symbol associated with the cell [cell]. This symbol
+     determines the presence and the type of the semantic value stored in this
+     cell. It also determines whether a start position and an end position are
+     stored in this cell: see {!track_startp} and {!track_endp}. *)
+  val symbol: cell -> symbol
+
+  (**[states cell] is the set of the states that might be stored at runtime
+     in this cell. The states in this set have the property that either all
+     of them are represented, in which case [holds_state] is [true], or none
+     of them is represented, in which case [holds_state] is [false]. *)
+  val states: cell -> nodes
+
+  (**[holds_semv cell] tells whether a semantic value is stored in the cell
+     [cell]. By convention, if [symbol cell] is a nonterminal symbol, then a
+     semantic value is stored. (We do not attempt to detect the situation where
+     the semantic value could be omitted because it has type [unit], or the
+     situation where it could be omitted because it is never used.) If [symbol
+     cell] is a terminal symbol, then a semantic value is stored if and only if
+     the [%token] declaration was annotated with a type. *)
+  val holds_semv: cell -> bool
+
+  (**[holds_state cell] tells whether a state is stored in the cell [cell]. *)
+  val holds_state: cell -> bool
+
+  (**[holds_startp cell] tells whether a start position is stored in the cell
+     [cell]. It is equivalent to [track_startp (symbol cell)]. *)
+  val holds_startp: cell -> bool
+
+  (**[holds_endp cell] tells whether a start position is stored in the cell
+     [cell]. It is equivalent to [track_endp (symbol cell)]. *)
+  val holds_endp: cell -> bool
+
+  (**[present cell] determines whether at least one of the four fields
+     [state], [semv], [startp] or [endp] is present in the cell [cell]. *)
+  val present: cell -> bool
+
+  (**[similar] determines whether two stack cells have the same layout in
+     memory, that is, the same OCaml type. This is equivalent to comparing
+     all fields except [states]. *)
+  val similar: cell -> cell -> bool
+
+  (* Miscellaneous operations. *)
+
+  (**[represented node] tells whether the node [node] has an explicit
+     representation, that is, whether it is pushed onto the stack. *)
+  val represented: node -> bool
+
+  (**[track_startp symbol] tells whether a start position must be recorded
+     for the symbol [symbol]. *)
+  val track_startp: symbol -> bool
+
+  (**[track_endp symbol] tells whether an end position must be recorded
+     for the symbol [symbol]. *)
+  val track_endp: symbol -> bool
+
+end (* KINDERGARTEN *)
