@@ -62,20 +62,40 @@ end)
      and type node := Lr1.node
      and type nodes := Lr1.NodeSet.t
 
+  (**[print_represented c] prints which states are represented on the
+     output channel [c]. *)
+  val print_represented: out_channel -> unit
+
   (**In the "short invariant", the length of the known shape of the stack
      at a node [node] is the maximum position of the bullet in the items
      of this node. *)
-  module Short : SHAPE
-    with module G = Lr1.Lr0.G
-     and type node := Lr1.node
-     and type shape := shape
+  module Short : sig
+
+    include SHAPE
+      with module G = Lr1.Lr0.G
+       and type node := Lr1.node
+       and type shape := shape
+
+    (**[print_stack_states c] prints the results of the stack states
+       analysis on the output channel [c]. *)
+    val print_stack_states: out_channel -> unit
+
+  end
 
   (**In the "long invariant", the length of the known shape of the stack
      can be longer than in the short invariant. It is obtained via a data
      flow analysis of the LR(1) automaton. *)
-  module Long : SHAPE
-    with module G = Lr1.Lr0.G
-     and type node := Lr1.node
-     and type shape := shape
+  module Long : sig
+
+    include SHAPE
+      with module G = Lr1.Lr0.G
+       and type node := Lr1.node
+       and type shape := shape
+
+    (**[print_stack_states c] prints the results of the stack states
+       analysis on the output channel [c]. *)
+    val print_stack_states: out_channel -> unit
+
+  end
 
 end

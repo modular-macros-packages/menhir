@@ -135,11 +135,6 @@ module StackSymbolsShort =
 module StackStatesShort =
   StackStates.Run(Lr1)(Height(StackSymbolsShort))
 
-(* TODO *)
-let _print_stack_states_short () =
-  let module P = Print(StackStatesShort) in
-  P.print stderr
-
 (* -------------------------------------------------------------------------- *)
 
 (* Determine which states must be represented, that is, explicitly pushed
@@ -259,14 +254,6 @@ end = struct
   let () =
     log "%d out of %d states are represented." count Lr1.n
 
-  (* If requested, show a detailed table of which states are represented. *)
-
-  (* TODO *)
-  let _print_represented () =
-    Lr1.iter @@ fun node ->
-    Printf.eprintf "represented(%s) = %b\n"
-      (Lr1.print node) (represented node)
-
 end (* RepresentedStates *)
 
 (* This is the final definition of the function [represented]. *)
@@ -298,6 +285,13 @@ let representeds (states : Lr1.NodeSet.t Lazy.t) =
   let states = Lazy.force states in
   not (Lr1.NodeSet.is_empty states) &&
   represented (Lr1.NodeSet.choose states)
+
+(* Printing. *)
+
+let print_represented c =
+  Lr1.iter @@ fun node ->
+  Printf.fprintf c "represented(%s) = %b\n"
+    (Lr1.print node) (represented node)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -719,6 +713,10 @@ module Short = struct
   let show_shape =
     show_shape
 
+  let print_stack_states c =
+    let module P = Print(StackStatesShort) in
+    P.print c
+
 end
 
 (* -------------------------------------------------------------------------- *)
@@ -743,22 +741,15 @@ end
    invariant shorter (in some places) that it could otherwise be. This seems
    to work well. *)
 
+module StackSymbolsLong =
+  StackSymbols.Long(Lr1)()
+
+module StackStatesLong =
+  StackStates.Run(Lr1)(Height(StackSymbolsLong))
+
 module Long = struct
 
   module G = Lr1.Lr0.G
-
-  (* Compute. *)
-
-  module StackSymbolsLong =
-    StackSymbols.Long(Lr1)()
-
-  module StackStatesLong =
-    StackStates.Run(Lr1)(Height(StackSymbolsLong))
-
-  (* TODO *)
-  let _print_stack_states_long () =
-    let module P = Print(StackStatesLong) in
-    P.print stderr
 
   (* Validation: we truncate shapes so as to ensure that every set of states
      that is exposed to the client is equi-represented. *)
@@ -808,6 +799,10 @@ module Long = struct
 
   let show_shape =
     show_shape
+
+  let print_stack_states c =
+    let module P = Print(StackStatesLong) in
+    P.print c
 
 end (* Long *)
 
