@@ -11,6 +11,7 @@
 open Printf
 open Grammar
 open Invariant
+module Origin = Origin.Make(Lr1)
 let prefix = CodePieces.prefix
 open StackLang
 open StackLangBuilder
@@ -56,7 +57,7 @@ let push (rs : register list) =
 
 (* Auxiliary functions for constructing block types. *)
 
-(* [origin_to_final] converts an origin, as defined by the module Invariant,
+(* [origin_to_final] converts an origin, as defined by the module Origin,
    to a final, as defined by StackLang. In short, if a block is reachable
    from a single start symbol [nt], then its final is [Some nt]; otherwise
    it is [None], which means that this block is polymorphic. *)

@@ -18,26 +18,31 @@
    analyses that have only one branch) while preserving the well-typedness of
    the OCaml code. *)
 
-open Grammar
+open MiddleAPI
 
-type origin =
-  | Dead
-    (**[Dead] indicates that this point in unreachable.*)
-  | SingleOrigin of Nonterminal.t
-    (**[SingleOrigin nt] indicates that the point of interest is reachable
-       only via the start symbol [nt]. *)
-  | MultipleOrigins
-    (**[MultipleOrigins] indicates that this point is reachable via several
-       start symbols. *)
+module Make (Lr1 : LR1_AUTOMATON) : sig
+  open Lr1.Lr0.G
 
-(**[run node] determines via which start symbols the node [node] is
-   reachable. *)
-val run: Lr1.node -> origin
+  type origin =
+    | Dead
+      (**[Dead] indicates that this point in unreachable.*)
+    | SingleOrigin of Nonterminal.t
+      (**[SingleOrigin nt] indicates that the point of interest is reachable
+         only via the start symbol [nt]. *)
+    | MultipleOrigins
+      (**[MultipleOrigins] indicates that this point is reachable via several
+         start symbols. *)
 
-(**[reduce prod] determines via which start symbols a node where production
-   [prod] can be reduced is reachable. *)
-val reduce: Production.t -> origin
+  (**[run node] determines via which start symbols the node [node] is
+     reachable. *)
+  val run: Lr1.node -> origin
 
-(**[goto nt] determines via which start symbols an edge labeled with the
-   nonterminal symbol [nt] is reachable. *)
-val goto: Nonterminal.t -> origin
+  (**[reduce prod] determines via which start symbols a node where production
+     [prod] can be reduced is reachable. *)
+  val reduce: Production.t -> origin
+
+  (**[goto nt] determines via which start symbols an edge labeled with the
+     nonterminal symbol [nt] is reachable. *)
+  val goto: Nonterminal.t -> origin
+
+end

@@ -8,7 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+open MLazy
+open MiddleAPI
+
+module Make (Lr1 : LR1_AUTOMATON) = struct
+open Lr1.Lr0.G
 
 (* The desired information is computed via a forward data flow analysis. *)
 
@@ -52,6 +56,13 @@ module G = struct
     let nt = Production.get_start prod in
     yield (Run node) (SingleOrigin nt)
 
+  let yield_run yield origin _label node =
+    yield (Run node) origin
+
+  let yield_reduce yield origin _t prods =
+    let prod = MList.single prods in
+    yield (Reduce prod) origin
+
   let foreach_successor v origin yield =
     match v with
     | Run node ->
@@ -59,13 +70,8 @@ module G = struct
            calls the function [run node']. In the case of [goto] transitions,
            this is not a direct call (it goes through [reduce] and [goto]
            functions), but it is nevertheless accounted for here. *)
-        Lr1.transitions node |> SymbolMap.iter begin fun _label node' ->
-          yield (Run node') origin
-        end;
-        Lr1.reductions node |> TerminalMap.iter begin fun _tok prods ->
-          let prod = MList.single prods in
-          yield (Reduce prod) origin
-        end
+        SymbolMap.iter (yield_run yield origin) (Lr1.transitions node);
+        TerminalMap.iter (yield_reduce yield origin) (Lr1.reductions node)
     | Reduce prod ->
         (* A [reduce] function ends with a call to a [goto] function. *)
         let nt = Production.nt prod in
@@ -79,12 +85,12 @@ end
 
 (* Run the analysis on demand. *)
 
-let solution : (G.variable -> P.property option) Lazy.t =
-  lazy (
-    let module D = Fix.DataFlow.ForType(G)(P)(G) in
-    Time.tick "Computing origins";
-    D.solution
-  )
+let solve () : G.variable -> P.property option =
+  let module D = Fix.DataFlow.ForType(G)(P)(G) in
+  D.solution
+
+let solution : G.variable -> P.property option =
+  lazily solve ()
 
 (* Convert a [property option] to something clearer for the end user. *)
 
@@ -105,10 +111,12 @@ let convert op =
 (* Publish the data. *)
 
 let run node =
-  convert (Lazy.force solution (G.Run node))
+  convert (solution (G.Run node))
 
 let reduce prod =
-  convert (Lazy.force solution (G.Reduce prod))
+  convert (solution (G.Reduce prod))
 
 let goto nt =
-  convert (Lazy.force solution (G.Goto nt))
+  convert (solution (G.Goto nt))
+
+end (* Make *)
