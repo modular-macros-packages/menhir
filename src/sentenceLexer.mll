@@ -14,7 +14,7 @@
 {
 
   open Lexing
-  open SentenceParser
+  open RawSentenceParser
 
   (* A short-hand. *)
 

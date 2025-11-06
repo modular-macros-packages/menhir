@@ -19,31 +19,35 @@
    $ notation, do not use Menhir's standard library, and collect positions
    manually. */
 
-/* ------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 /* Tokens. */
 
 %token COLON EOF EOL
-%token<SentenceParserAux.raw_symbol> TERMINAL
-%token<SentenceParserAux.raw_symbol> NONTERMINAL
-%token<string> COMMENT
+%token<RawSentence.raw_symbol> TERMINAL
+%token<RawSentence.raw_symbol> NONTERMINAL
+%token<string>                 COMMENT
   /* only manually-written comments, beginning with a single # */
 
-/* ------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 /* Types. */
 
 %{
 
+  open Lexing
+  open RawSentence
+
   (* Computing the start and end positions of a sentence. *)
 
-  let locate_sentence (nto, terminals) =
-    let opening =
+  let locate_sentence (raw_sentence : raw_sentence) : located_raw_sentence =
+    let nto, terminals = raw_sentence in
+    let opening : position =
       match nto, terminals with
       | Some (_, opening, _), _
       | None, (_, opening, _) :: _ ->
           opening
       | None, [] ->
           Lexing.dummy_pos (* cannot happen *)
-    and closing =
+    and closing : position =
       match nto, List.rev terminals with
       | _, (_, _, closing) :: _
       | Some (_, _, closing), _ ->
@@ -56,20 +60,24 @@
 
 %}
 
-%type <SentenceParserAux.raw_sentence> sentence
+%type <RawSentence.raw_sentence>
+  sentence
 
-%type <SentenceParserAux.located_raw_sentence> located_sentence
+%type <RawSentence.located_raw_sentence>
+  located_sentence
 
-%type <SentenceParserAux.raw_sentence option> optional_sentence
+%type <RawSentence.raw_sentence option>
+  optional_sentence
 
-%type<SentenceParserAux.located_raw_sentence OrComment.t list> entry
+%type<RawSentence.entry>
+  entry
 
 %start optional_sentence
 %start entry
 
 %%
 
-/* ------------------------------------------------------------------------ */
+/* -------------------------------------------------------------------------- */
 
 /* An entry is a list of located sentences or comments. */
 entry: located_sentences_or_comments EOF

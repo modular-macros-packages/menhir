@@ -17,12 +17,12 @@ module StackSymbolsShort =
 
 open Printf
 open OrComment
+open RawSentence
 open Grammar
-open SentenceParserAux
 module R = ReferenceInterpreter.Make(Lr1)
 
 type sentence =
-  Nonterminal.t option * Terminal.t list
+  Sentence.sentence
 
 type located_sentence =
   Range.ranges * sentence
@@ -399,7 +399,7 @@ let validate_located_sentence c (poss, sentence) : targeted_sentence =
     (fun _nt _terminals target -> (poss, sentence), target)
 
 (* [validate_entry] validates a list of located sentences or comments,
-   as returned by [SentenceParser.entry]. If a sentence contains an
+   as returned by [RawSentenceParser.entry]. If a sentence contains an
    error, then an error message is emitted, this sentence is removed
    from the list, and the validation process continues. *)
 
@@ -434,7 +434,7 @@ let setup () : unit -> sentence option =
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = "(stdin)" };
 
   let read () =
-    match SentenceParser.optional_sentence SentenceLexer.lex lexbuf with
+    match RawSentenceParser.optional_sentence SentenceLexer.lex lexbuf with
     | exception Parsing.Parse_error ->
         Error.error [Range.current lexbuf] "ill-formed input sentence."
     | osentence ->
@@ -499,7 +499,7 @@ let read_messages strict filename : run or_comment list =
         loop (mkcomment comments accu) segments
     | (Segment, _, lexbuf) :: segments ->
         (* Read a series of located sentences. *)
-        match SentenceParser.entry SentenceLexer.lex lexbuf with
+        match RawSentenceParser.entry SentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
             Error.error
               [Range.current lexbuf]

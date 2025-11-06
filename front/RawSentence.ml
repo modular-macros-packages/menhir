@@ -8,8 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module defines a few concrete types for use by [RawSentenceParser]. *)
+
+open Lexing
+open Range
+
 type raw_symbol =
-  string * Lexing.position * Lexing.position
+  string * position * position
 
 type raw_nonterminal =
   raw_symbol
@@ -21,4 +26,7 @@ type raw_sentence =
   raw_nonterminal option * raw_terminal list
 
 type located_raw_sentence =
-  Range.ranges * raw_sentence
+  ranges * raw_sentence
+
+type entry =
+  located_raw_sentence OrComment.t list
