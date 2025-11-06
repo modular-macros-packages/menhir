@@ -130,6 +130,9 @@ module[@inline] Make (M : MINIMAL_IMPERATIVE_MAPS) = struct
 
 end
 
+module ForNumberedType (T : NUMBERING) =
+  Make(Glue.ArraysAsImperativeMapsWithNumbering(T))
+
 module ForOrderedType (T : OrderedType) =
   Make(Glue.PersistentMapsToImperativeMaps(Map.Make(T)))
 

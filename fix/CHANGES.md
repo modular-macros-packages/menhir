@@ -4,12 +4,13 @@
 
 * New signatures `NUMBERING_OPERATIONS` and `NUMBERED`.
 
-* New functor `Fix.ForIntSegment`.
+* New functor `Fix.Fix.ForIntSegment`.
 
 * New functors
-  `Fix.ForNumberedType`,
+  `Fix.Fix.ForNumberedType`,
   `Fix.DataFlow.ForNumberedType`,
   `Fix.GraphNumbering.ForNumberedType`,
+  `Fix.Memoize.ForNumberedType`,
   `Fix.Numbering.ForNumberedType`.
 
 * New functors

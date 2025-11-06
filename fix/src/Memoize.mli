@@ -23,6 +23,14 @@ module Make
      : MEMOIZER with type key = M.key
                  and type 'a t = 'a M.t
 
+(**{!ForNumberedType} is a special case of {!Make} where it
+   suffices to pass a numbered type [T] as an argument.
+   An array is used to hold the memoization table. *)
+module ForNumberedType
+  (T : NUMBERING)
+     : MEMOIZER with type key = T.t
+                 and type 'a t = 'a option array
+
 (**{!ForOrderedType} is a special case of {!Make} where it
    suffices to pass an ordered type [T] as an argument.
    A reference to a persistent map is used to hold the
