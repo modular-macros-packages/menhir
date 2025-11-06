@@ -293,10 +293,14 @@
 
 ## Code Cleanup
 
-* The whole timing system should be redesigned so that each timed task has an
-  explicit beginning and end. Also, the process of recording and the process
-  of printing time information should be separated, so that tasks that are
-  performed only on demand can be timed. `StackStates.Run` is an example.
+* The whole timing system (Time) should be redesigned so that each timed task
+  has an explicit beginning and end. Also, the process of recording and the
+  process of printing time information should be separated, so that tasks that
+  are performed only on demand can be timed.
+  Currently not timed:
+  `StackStates.Run`,
+  all of `Invariant`,
+  `Origin`.
 
 * `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
    They could move into TokenType.
