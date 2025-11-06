@@ -16,6 +16,7 @@ module StackSymbolsShort =
 (* --------------------------------------------------------------------------- *)
 
 open Printf
+open OrComment
 open Grammar
 open SentenceParserAux
 module R = ReferenceInterpreter.Make(Lr1)
@@ -511,7 +512,7 @@ let read_messages strict filename : run or_comment list =
             | (Whitespace, delimiter, _) ::
               (Segment, message, _) ::
               segments ->
-                if count_things elements = 0 then
+                if OrComment.count elements = 0 then
                   (* There remain zero sentences. Skip this entry. *)
                   loop accu segments
                 else
@@ -541,8 +542,8 @@ let read_messages strict filename : run or_comment list =
    must return an updated accumulator. *)
 
 let foreach_targeted_sentence f accu (runs : run or_comment list) =
-  List.fold_left (or_comment_fold (fun accu run ->
-    List.fold_left (or_comment_fold (fun accu sentence ->
+  List.fold_left (OrComment.fold (fun accu run ->
+    List.fold_left (OrComment.fold (fun accu sentence ->
       f accu sentence run.message
     )) accu run.elements
   )) accu runs
@@ -594,12 +595,17 @@ let compile_runs filename (runs : run or_comment list) : unit =
      the user, who can then produce a generic error message. *)
   } in
   let branches =
-    List.fold_left (or_comment_fold (fun branches run ->
+    List.fold_left (OrComment.fold (fun branches run ->
       (* Create an or-pattern for these states. *)
-      let states = MList.filter_map (or_comment_filter_map (fun (_, target) ->
-        let s = target2state target in
-        pint (Lr1.encode s)
-      )) run.elements in
+      let states =
+        run.elements |> MList.filter_map @@ fun sentence_or_element ->
+        sentence_or_element
+        |> OrComment.map (fun (_, target) ->
+            let s = target2state target in
+            pint (Lr1.encode s)
+          )
+        |> OrComment.to_option
+      in
       (* Map all these states to this message. *)
       { branchpat = POr states;
         branchbody = EStringConst run.message } :: branches
@@ -842,7 +848,7 @@ let toplevel_comment filename =
 let is_default_run (p : Lr1.node -> bool) (run : run) =
   run.message = default_message &&
   let sentences : targeted_sentence list =
-    List.fold_left (or_comment_fold (fun xs x -> x :: xs)) [] run.elements
+    List.fold_left (OrComment.fold (fun xs x -> x :: xs)) [] run.elements
   in
   match sentences with
   | [ (_sentence, target) ] ->
@@ -886,7 +892,7 @@ let keep_default_runs (runs : run or_comment list) =
 (* [targets run] is the set of target states of a run. *)
 
 let targets (run : run) : Lr1.NodeSet.t =
-  List.fold_left (or_comment_fold (fun states (_, target) ->
+  List.fold_left (OrComment.fold (fun states (_, target) ->
     let s = target2state target in
     Lr1.NodeSet.add s states
   )) Lr1.NodeSet.empty run.elements
@@ -1180,8 +1186,8 @@ let () =
     let runs : run or_comment list = read_messages strict filename in
 
     (* Echo. *)
-    List.iter (or_comment_iter (fun run ->
-      List.iter (or_comment_iter (fun ((_, sentence), _target) ->
+    List.iter (OrComment.iter (fun run ->
+      List.iter (OrComment.iter (fun ((_, sentence), _target) ->
         print_string (Sentence.print `Abstract sentence)
       )) run.elements
     )) runs;
@@ -1200,8 +1206,8 @@ let () =
     let runs : run or_comment list = read_messages strict filename in
 
     (* Echo. *)
-    List.iter (or_comment_iter (fun run ->
-      List.iter (or_comment_iter (fun ((_, sentence), _target) ->
+    List.iter (OrComment.iter (fun run ->
+      List.iter (OrComment.iter (fun ((_, sentence), _target) ->
         print_string (Sentence.print `Abstract sentence);
         if Terminal.every_token_has_an_alias then
           printf

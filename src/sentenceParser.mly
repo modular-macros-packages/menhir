@@ -33,6 +33,7 @@
 
 %{
 
+  open OrComment
   open SentenceParserAux
 
   (* Computing the start and end positions of a sentence. *)
@@ -64,7 +65,7 @@
 
 %type <SentenceParserAux.raw_sentence option> optional_sentence
 
-%type<SentenceParserAux.located_raw_sentence SentenceParserAux.or_comment list> entry
+%type<SentenceParserAux.located_raw_sentence OrComment.t list> entry
 
 %start optional_sentence
 %start entry
