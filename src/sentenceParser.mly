@@ -33,9 +33,6 @@
 
 %{
 
-  open OrComment
-  open SentenceParserAux
-
   (* Computing the start and end positions of a sentence. *)
 
   let locate_sentence (nto, terminals) =
@@ -59,9 +56,9 @@
 
 %}
 
-%type <raw_sentence> sentence
+%type <SentenceParserAux.raw_sentence> sentence
 
-%type <located_raw_sentence> located_sentence
+%type <SentenceParserAux.located_raw_sentence> located_sentence
 
 %type <SentenceParserAux.raw_sentence option> optional_sentence
 
@@ -81,8 +78,10 @@ entry: located_sentences_or_comments EOF
 /* A list of located sentences or comments. */
 located_sentences_or_comments:
   { [] }
-| located_sentence located_sentences_or_comments { Thing   $1 :: $2 }
-| COMMENT          located_sentences_or_comments { Comment $1 :: $2 }
+| located_sentence located_sentences_or_comments
+    { OrComment.Thing   $1 :: $2 }
+| COMMENT          located_sentences_or_comments
+    { OrComment.Comment $1 :: $2 }
 
 /* A located sentence. */
 located_sentence: sentence

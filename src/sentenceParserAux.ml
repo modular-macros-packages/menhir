@@ -8,8 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
-
 type raw_symbol =
   string * Lexing.position * Lexing.position
 
@@ -24,9 +22,3 @@ type raw_sentence =
 
 type located_raw_sentence =
   Range.ranges * raw_sentence
-
-type sentence =
-  Nonterminal.t option * Terminal.t list
-
-type located_sentence =
-  Range.ranges * sentence

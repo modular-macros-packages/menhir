@@ -21,6 +21,12 @@ open Grammar
 open SentenceParserAux
 module R = ReferenceInterpreter.Make(Lr1)
 
+type sentence =
+  Nonterminal.t option * Terminal.t list
+
+type located_sentence =
+  Range.ranges * sentence
+
 (* A delimiter. *)
 
 type delimiter =
