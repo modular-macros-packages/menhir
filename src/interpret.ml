@@ -343,7 +343,7 @@ let interpret_error sentence =
 
 (* --------------------------------------------------------------------------- *)
 
-(* The lexer [SentenceLexer] produces sentences that contain raw symbols,
+(* The lexer [RawSentenceLexer] produces sentences that contain raw symbols,
    that is, strings that are not yet known to represent valid nonterminal
    or terminal symbols. This check is performed here. It either succeeds
    or signals an error in the category [c] and raises [Invalid]. *)
@@ -434,8 +434,8 @@ let setup () : unit -> sentence option =
   lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = "(stdin)" };
 
   let read () =
-    match RawSentenceParser.optional_sentence SentenceLexer.lex lexbuf with
-    | exception SentenceLexer.Error ->
+    match RawSentenceParser.optional_sentence RawSentenceLexer.lex lexbuf with
+    | exception RawSentenceLexer.Error ->
         Error.error [Range.current lexbuf]
           "unexpected character.\n\
            (I believe I am reading a sentence, but may be off.)"
@@ -503,7 +503,7 @@ let read_messages strict filename : run or_comment list =
         loop (mkcomment comments accu) segments
     | (Segment, _, lexbuf) :: segments ->
         (* Read a series of located sentences. *)
-        match RawSentenceParser.entry SentenceLexer.lex lexbuf with
+        match RawSentenceParser.entry RawSentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
             Error.error
               [Range.current lexbuf]

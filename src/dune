@@ -27,7 +27,6 @@
   lexer
   lexmli
   lexdep
-  sentenceLexer
   segment
   lexpointfree
 )

@@ -8,8 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This lexer is used to read the sentences provided on the standard input
-   channel when [--interpret] is enabled. *)
+(* This lexer is used in conjunction with [RawSentenceParser]. *)
 
 {
 

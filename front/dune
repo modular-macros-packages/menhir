@@ -30,6 +30,7 @@
 
 (ocamllex
   Lex
+  RawSentenceLexer
 )
 
 ;; The following parsers are built by ocamlyacc.
