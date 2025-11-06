@@ -120,7 +120,7 @@ let fail nts nt =
    every nonterminal symbol is reachable and inhabited. *)
 
 let () =
-  let module M = Fix.Memoize.ForType(Nonterminal) in
+  let module M = Fix.Memoize.ForNumberedType(Nonterminal) in
   let successors_R =
     successors ~require_nullable_suffix:true ~require_nonempty_prefix:false
     |> adapt
