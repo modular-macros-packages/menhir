@@ -10,19 +10,7 @@
 
 open Grammar
 
-(* Compute which entry states can reach each [run], [reduce], and [goto]
-   function. *)
-
-(* This information is computed only on demand. *)
-
-(* This information is used in the code back-end to determine in which states
-   we have static knowledge of the final result type of the parser, ['final].
-   This information can be built into the GADT that describes the states, and
-   this in turn can be used to perform certain optimizations (such as removing
-   case analyses that have only one branch) while preserving the
-   well-typedness of the OCaml code. *)
-
-(* This information is computed via a forward data flow analysis. *)
+(* The desired information is computed via a forward data flow analysis. *)
 
 (* The join semi-lattice of properties is as follows. *)
 
