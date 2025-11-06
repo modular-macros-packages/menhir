@@ -435,6 +435,10 @@ let setup () : unit -> sentence option =
 
   let read () =
     match RawSentenceParser.optional_sentence SentenceLexer.lex lexbuf with
+    | exception SentenceLexer.Error ->
+        Error.error [Range.current lexbuf]
+          "unexpected character.\n\
+           (I believe I am reading a sentence, but may be off.)"
     | exception Parsing.Parse_error ->
         Error.error [Range.current lexbuf] "ill-formed input sentence."
     | osentence ->

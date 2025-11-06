@@ -16,10 +16,7 @@
   open Lexing
   open RawSentenceParser
 
-  (* A short-hand. *)
-
-  let error lexbuf =
-    Error.error [Range.current lexbuf]
+  exception Error
 
 }
 
@@ -67,5 +64,4 @@ rule lex = parse
   | ':'
       { COLON }
   | _
-      { error lexbuf "unexpected character.\n\
-                       (I believe I am reading a sentence, but may be off.)" }
+      { raise Error }
