@@ -474,17 +474,15 @@ let read_messages strict filename : run or_comment list =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [foreach_targeted_sentence f accu runs] iterates over the targeted
-   sentences in the list [runs]. The function [f] receives the current
-   accumulator, a targeted sentence, and the corresponding message, and
-   must return an updated accumulator. *)
+(* [foreach_targeted_sentence runs] enumerates the targeted sentences and
+   corresponding messages in the list [runs]. *)
 
-let foreach_targeted_sentence f accu (runs : run or_comment list) =
-  List.fold_left (OrComment.fold (fun accu run ->
-    List.fold_left (OrComment.fold (fun accu sentence ->
-      f accu sentence run.message
-    )) accu run.elements
-  )) accu runs
+let foreach_targeted_sentence (runs : run or_comment list) yield =
+  runs |> List.iter @@ fun run ->
+  run |> OrComment.iter @@ fun run ->
+  run.elements |> List.iter @@ fun sentence ->
+  sentence |> OrComment.iter @@ fun sentence ->
+  yield sentence run.message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -498,18 +496,20 @@ let message_table
   : (located_sentence * message) Lr1.NodeMap.t =
 
   Report.monitor `Strict @@ fun c ->
-  foreach_targeted_sentence (fun table (sentence2, target) message ->
+  let table = ref Lr1.NodeMap.empty in
+  let () =
+    foreach_targeted_sentence runs @@ fun (sentence2, target) message ->
     let s = target2state target in
-    match Lr1.NodeMap.find s table with
+    match Lr1.NodeMap.find s !table with
     | sentence1, _ ->
         if detect_redundancy then
           Report.signal c (fst sentence1 @ fst sentence2)
             "these sentences both cause an error in state %d."
-            (Lr1.encode s);
-        table
+            (Lr1.encode s)
     | exception Not_found ->
-        Lr1.NodeMap.add s (sentence2, message) table
-  ) Lr1.NodeMap.empty runs
+        table := Lr1.NodeMap.add s (sentence2, message) !table
+  in
+  !table
 
 (* --------------------------------------------------------------------------- *)
 
@@ -675,39 +675,36 @@ let compare_errors filename1 filename2 =
      left-hand file is processed by the following loop: *)
 
   Report.monitor `Strict @@ fun c ->
-  foreach_targeted_sentence (fun () (sentence1, target1) message1 ->
+  foreach_targeted_sentence runs1 @@ fun (sentence1, target1) message1 ->
+  let s = target2state target1 in
 
-    let s = target2state target1 in
+  (* 1. Check that the target state [s] appears in [table2]. *)
 
-    (* 1. Check that the target state [s] appears in [table2]. *)
+  match Lr1.NodeMap.find s table2 with
 
-    match Lr1.NodeMap.find s table2 with
+  | exception Not_found ->
+      let poss1 = fst sentence1 in
+      Report.signal c poss1
+        "this sentence leads to an error in state %d.\n\
+         No sentence that leads to this state exists in \"%s\"."
+        (Lr1.encode s) filename2
 
-    | exception Not_found ->
-        let poss1 = fst sentence1 in
-        Report.signal c poss1
-          "this sentence leads to an error in state %d.\n\
-           No sentence that leads to this state exists in \"%s\"."
-          (Lr1.encode s) filename2
+  (* 2. Check that [s] is mapped by [table1] and [table2] to the same
+     error message. As an exception, if the message found in [table1] is
+     the default message, then no comparison takes place. This allows
+     using [--list-errors] and [--compare-errors] in conjunction to ensure
+     that a [.messages] file is complete, without seeing warnings about
+     different messages. *)
 
-    (* 2. Check that [s] is mapped by [table1] and [table2] to the same
-       error message. As an exception, if the message found in [table1] is
-       the default message, then no comparison takes place. This allows
-       using [--list-errors] and [--compare-errors] in conjunction to ensure
-       that a [.messages] file is complete, without seeing warnings about
-       different messages. *)
-
-    | sentence2, message2 ->
-        if message1 <> default_message && message1 <> message2 then begin
-          let poss1 = fst sentence1
-          and poss2 = fst sentence2 in
-          Report.warning c (poss1 @ poss2)
-            "these sentences lead to an error in state %d.\n\
-             The corresponding messages in \"%s\" and \"%s\" differ."
-            (Lr1.encode s) filename1 filename2
-        end
-
-  ) () runs1
+  | sentence2, message2 ->
+      if message1 <> default_message && message1 <> message2 then begin
+        let poss1 = fst sentence1
+        and poss2 = fst sentence2 in
+        Report.warning c (poss1 @ poss2)
+          "these sentences lead to an error in state %d.\n\
+           The corresponding messages in \"%s\" and \"%s\" differ."
+          (Lr1.encode s) filename1 filename2
+      end
 
 let () =
   Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
