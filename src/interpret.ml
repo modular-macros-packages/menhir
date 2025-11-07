@@ -1112,43 +1112,39 @@ let () =
    manner. *)
 
 let () =
-  Settings.echo_errors |> Option.iter (fun filename ->
+  Settings.echo_errors |> Option.iter @@ fun filename ->
 
-    (* Read the file. *)
-    let runs : run or_comment list = read_messages `Lax filename in
+  (* Read the file. *)
+  let runs : run or_comment list = read_messages `Lax filename in
 
-    (* Echo. *)
-    List.iter (OrComment.iter (fun run ->
-      List.iter (OrComment.iter (fun ((_, sentence), _target) ->
-        print_string (Sentence.print `Abstract sentence)
-      )) run.elements
-    )) runs;
+  (* Echo. *)
+  let () =
+    foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
+    print_string (Sentence.print `Abstract sentence)
+  in
 
-    exit 0
-  )
+  exit 0
 
 (* [--echo-errors-concrete] works like [--echo-errors], except every sentence
    is followed with an auto-generated comment that shows its concrete syntax. *)
 
 let () =
-  Settings.echo_errors_concrete |> Option.iter (fun filename ->
+  Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
 
-    (* Read the file. *)
-    let runs : run or_comment list = read_messages `Lax filename in
+  (* Read the file. *)
+  let runs : run or_comment list = read_messages `Lax filename in
 
-    (* Echo. *)
-    List.iter (OrComment.iter (fun run ->
-      List.iter (OrComment.iter (fun ((_, sentence), _target) ->
-        print_string (Sentence.print `Abstract sentence);
-        if Terminal.every_token_has_an_alias then
-          printf
-            "## Concrete syntax: %s\n"
-            (Sentence.print `Concrete sentence)
-      )) run.elements
-    )) runs;
+  (* Echo. *)
+  let () =
+    foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
+    print_string (Sentence.print `Abstract sentence);
+    if Terminal.every_token_has_an_alias then
+      printf
+        "## Concrete syntax: %s\n"
+        (Sentence.print `Concrete sentence)
+  in
 
-    exit 0
-  )
+  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
