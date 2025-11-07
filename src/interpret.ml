@@ -629,31 +629,31 @@ let () =
 (* If [--compile-errors <filename>] is set, compile the error message
    descriptions found in file [filename] down to OCaml code, then stop. *)
 
+let compile_errors filename =
+  (* Read the file. Compute the target state of every sentence. Stop if a
+     sentence does not end in an error state, as expected. *)
+  let runs : run or_comment list = read_messages `Strict filename in
+
+  (* Build a mapping of states to located sentences. This allows us to
+     detect if two sentences lead to the same state. *)
+  let _ = message_table true runs in
+
+  (* In principle, we would like to check whether this set of sentences is
+     complete (i.e., covers all states where an error can arise), but this
+     may be costly -- it requires running [LRijkstra]. Instead, we offer a
+     separate facility for comparing two [.messages] files, one of which can
+     be produced via [--list-errors]. This can be used to ensure
+     completeness. *)
+
+  (* Now, compile this information down to OCaml code. We wish to
+     produce a function that maps a state number to a message. By
+     convention, we call this function [message]. *)
+  compile_runs filename runs
+
 let () =
-  Settings.compile_errors |> Option.iter (fun filename ->
-
-    (* Read the file. Compute the target state of every sentence. Stop if a
-       sentence does not end in an error state, as expected. *)
-    let runs : run or_comment list = read_messages `Strict filename in
-
-    (* Build a mapping of states to located sentences. This allows us to
-       detect if two sentences lead to the same state. *)
-    let _ = message_table true runs in
-
-    (* In principle, we would like to check whether this set of sentences is
-       complete (i.e., covers all states where an error can arise), but this
-       may be costly -- it requires running [LRijkstra]. Instead, we offer a
-       separate facility for comparing two [.messages] files, one of which can
-       be produced via [--list-errors]. This can be used to ensure
-       completeness. *)
-
-    (* Now, compile this information down to OCaml code. We wish to
-       produce a function that maps a state number to a message. By
-       convention, we call this function [message]. *)
-    compile_runs filename runs;
-
-    exit 0
-  )
+  Settings.compile_errors |> Option.iter @@ fun filename ->
+  compile_errors filename;
+  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
@@ -711,10 +711,9 @@ let compare_errors filename1 filename2 =
       end
 
 let () =
-  Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
-    compare_errors filename1 filename2;
-    exit 0
-  )
+  Settings.compare_errors |> Option.iter @@ fun (filename1, filename2) ->
+  compare_errors filename1 filename2;
+  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
@@ -1071,10 +1070,9 @@ let merge_errors filename1 filename2 =
   List.iter write_run (space runs)
 
 let () =
-  Settings.merge_errors |> Option.iter (fun (filename1, filename2) ->
-    merge_errors filename1 filename2;
-    exit 0
-  )
+  Settings.merge_errors |> Option.iter @@ fun (filename1, filename2) ->
+  merge_errors filename1 filename2;
+  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
@@ -1083,27 +1081,27 @@ let () =
    the auto-comments, which are marked with ##, while leaving the
    rest untouched. *)
 
+let update_errors filename =
+  (* Read the file. *)
+  let runs : run or_comment list = read_messages `Lax filename in
+
+  (* We might wish to detect if two sentences lead to the same state. We
+     might also wish to detect if this set of sentences is incomplete,
+     and complete it automatically. However, the first task is carried
+     out by [--compile-errors] already, and the second task is carried
+     out by [--list-errors] and [--compare-errors] together. For now,
+     let's try and keep things as simple as possible. The task of
+     [--update-errors] should be to update the auto-generated comments,
+     without failing, and without adding or removing sentences. *)
+
+  (* Now, write a new [.messages] to the standard output channel, with
+     new auto-generated comments. *)
+  List.iter write_run runs
+
 let () =
-  Settings.update_errors |> Option.iter (fun filename ->
-
-    (* Read the file. *)
-    let runs : run or_comment list = read_messages `Lax filename in
-
-    (* We might wish to detect if two sentences lead to the same state. We
-       might also wish to detect if this set of sentences is incomplete,
-       and complete it automatically. However, the first task is carried
-       out by [--compile-errors] already, and the second task is carried
-       out by [--list-errors] and [--compare-errors] together. For now,
-       let's try and keep things as simple as possible. The task of
-       [--update-errors] should be to update the auto-generated comments,
-       without failing, and without adding or removing sentences. *)
-
-    (* Now, write a new [.messages] to the standard output channel, with
-       new auto-generated comments. *)
-    List.iter write_run runs;
-
-    exit 0
-  )
+  Settings.update_errors |> Option.iter @@ fun filename ->
+  update_errors filename;
+  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
@@ -1115,46 +1113,40 @@ let () =
    not possible at the moment, because our code is organized in too rigid a
    manner. *)
 
-let () =
-  Settings.echo_errors |> Option.iter @@ fun filename ->
-
+let echo_errors filename =
   (* Read the file. *)
   let runs : run or_comment list = read_messages `Lax filename in
-
   (* Echo. *)
-  let () =
-    foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
-    print_string (Sentence.print `Abstract sentence)
-  in
+  foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
+  print_string (Sentence.print `Abstract sentence)
 
+let () =
+  Settings.echo_errors |> Option.iter @@ fun filename ->
+  echo_errors filename;
   exit 0
 
 (* [--echo-errors-concrete] works like [--echo-errors], except every sentence
    is followed with an auto-generated comment that shows its concrete syntax. *)
 
-let () =
-  Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
-
+let echo_errors_concrete filename =
   (* Read the file. *)
   let runs : run or_comment list = read_messages `Lax filename in
-
   (* Echo. *)
-  let () =
-    foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
-    print_string (Sentence.print `Abstract sentence);
-    if Terminal.every_token_has_an_alias then
-      printf
-        "## Concrete syntax: %s\n"
-        (Sentence.print `Concrete sentence)
-  in
+  foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
+  print_string (Sentence.print `Abstract sentence);
+  if Terminal.every_token_has_an_alias then
+    printf
+      "## Concrete syntax: %s\n"
+      (Sentence.print `Concrete sentence)
 
+let () =
+  Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
+  echo_errors_concrete filename;
   exit 0
 
 (* --------------------------------------------------------------------------- *)
 
-(* End of the functor [Run]. *)
-
-end
+end (* Run *)
 
 let run () =
   let module R = Run() in
