@@ -826,16 +826,12 @@ module Sentence : sig
   open RawSentence
   open Validate
 
-  (**[validate_sentence] validates a raw sentence: it checks that every
-     symbol in it is defined. *)
+  (**[validate_sentence] validates a raw sentence: it checks that every symbol
+     in it is defined and that a start symbol is provided, unless the grammar
+     has only one start symbol, in which case it fills in the unique start
+     symbol. Therefore, the sentence that is returned is always of the form
+     [(Some _, _)]. *)
   val validate_sentence: (raw_sentence, sentence) validator
-
-  (**[validate_located_sentence] validates a raw sentence: it checks that
-     every symbol in it is defined and that a start symbol is provided, unless
-     the grammar has only one start symbol, in which case it fills in the
-     unique start symbol. Therefore, the sentence that is returned is always
-     of the form [(Some _, _)]. *)
-  val validate_located_sentence: (located_raw_sentence, sentence) validator
 
   (**[start sentence] returns the start symbol of the sentence [sentence].
      This sentence must have the form [(Some _, _)]. *)

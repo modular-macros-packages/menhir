@@ -1810,34 +1810,35 @@ module Sentence = struct
         "\"%s\" is not a known terminal symbol." symbol;
       raise Invalid
 
-  (* [validate_sentence] checks that the start symbol, if present, is indeed
-     a valid start symbol. It does not require a start symbol to be present. *)
+  (* This first version of [validate_sentence] checks that the start symbol,
+     if present, is indeed a valid start symbol. It does not require a start
+     symbol to be present. *)
 
   let validate_sentence c raw_sentence : sentence =
     let (nto, terminals) = raw_sentence in
     Option.map (validate_start_symbol c) nto,
     List.map (validate_terminal_symbol c) terminals
 
-  (* [validate_located_sentence] requires the start symbol to be present
-     unless the grammar has only one start symbol. *)
+  (* This second version of [validate_sentence] requires the start symbol to
+     be present unless the grammar has only one start symbol. *)
 
-  let validate_located_sentence c located_raw_sentence : sentence =
-    let ranges, raw_sentence = located_raw_sentence in
+  let validate_nto c raw_sentence nto =
+    match nto with
+    | Some nt ->
+        nt
+    | None ->
+        if Nonterminal.start > 1 then
+          Report.error c [RawSentence.range raw_sentence]
+            "because the grammar has multiple start symbols, each of the\n\
+             sentences provided on the standard input channel must be of the\n\
+             form: <start symbol>: <token>*"
+        else
+          List.hd Nonterminal.user_start_symbols
+
+  let validate_sentence c raw_sentence : sentence =
     let sentence = validate_sentence c raw_sentence in
     let nto, terminals = sentence in
-    let nt =
-      match nto with
-      | Some nt ->
-          nt
-      | None ->
-          if Nonterminal.start > 1 then
-            Report.error c ranges
-              "because the grammar has multiple start symbols, each of the\n\
-               sentences provided on the standard input channel must be of the\n\
-               form: <start symbol>: <token>*"
-          else
-            List.hd Nonterminal.user_start_symbols
-    in
+    let nt = validate_nto c raw_sentence nto in
     Some nt, terminals
 
   let start (nto, _terminals) =

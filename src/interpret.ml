@@ -26,6 +26,7 @@ module R = ReferenceInterpreter.Make(Lr1)
 type sentence =
   Sentence.sentence
 
+(* TODO maybe this type is no longer useful *)
 type located_sentence =
   Range.ranges * sentence
 
@@ -122,38 +123,11 @@ end
 
 (* --------------------------------------------------------------------------- *)
 
-(* [start sentence] returns the start symbol that we should use to interpret
-   the sentence [sentence]. *)
-
-(* If a start symbol was explicitly provided as part of the sentence, we use
-   it. Otherwise, we use the grammar's unique start symbol, if there is
-   one. *)
-
-let start poss ((nto, _) : sentence) : Nonterminal.t =
-  match nto with
-  | Some nt ->
-      nt
-  | None ->
-      if not (ProductionMap.is_singleton Lr1.entry) then
-        Error.error poss
-          "because the grammar has multiple start symbols, each of the\n\
-           sentences provided on the standard input channel must be of the\n\
-           form: <start symbol>: <token>*"
-      else
-        let prod, _ = ProductionMap.choose Lr1.entry in
-        match Production.test_start prod with
-        | Some nt ->
-            nt
-        | None ->
-            assert false
-
-(* --------------------------------------------------------------------------- *)
-
 (* [interpret] interprets a sentence. *)
 
 let interpret show_cst ((_, toks) as sentence) : unit =
 
-  let nt = start [] sentence in
+  let nt = Sentence.start sentence in
 
   (* Run the reference interpreter. This can produce a concrete syntax tree
      ([Some cst]), fail with a parser error ([None]), or fail with a lexer error
@@ -198,8 +172,8 @@ let interpret show_cst ((_, toks) as sentence) : unit =
 (* [interpret_error_aux] interprets a sentence, expecting it to end in an
    error. Failure or success is reported via two continuations. *)
 
-let interpret_error_aux show poss ((_, terminals) as sentence) fail succeed =
-  let nt = start poss sentence in
+let interpret_error_aux show ((_, terminals) as sentence) fail succeed =
+  let nt = Sentence.start sentence in
   let strategy = Settings.strategy
   and count = ref 0 (* unused *) in
   match R.check_error_path strategy show count nt terminals with
@@ -308,8 +282,8 @@ let write_run : run or_comment -> unit =
       (* First, print every sentence and human comment. *)
       List.iter (fun sentence_or_comment ->
         match sentence_or_comment with
-        | Thing ((poss, ((_, toks) as sentence)), target) ->
-            let nt = start poss sentence in
+        | Thing ((_poss, ((_, toks) as sentence)), target) ->
+            let nt = Sentence.start sentence in
             (* Every sentence is followed with newly generated auto-comments. *)
             print_messages_auto (nt, toks, target)
         | Comment c ->
@@ -341,7 +315,7 @@ let succeed nt terminals target =
 
 let interpret_error sentence =
   let show = Settings.trace in
-  interpret_error_aux show [] sentence fail succeed
+  interpret_error_aux show sentence fail succeed
 
 (* --------------------------------------------------------------------------- *)
 
@@ -352,12 +326,13 @@ let interpret_error sentence =
 
 (* We also check that every sentence leads to an error state. *)
 
-let validate_located_sentence
-: (located_raw_sentence, targeted_sentence) validator =
-fun c (ranges, sentence) ->
+let validate_sentence
+: (raw_sentence, targeted_sentence) validator =
+fun c raw_sentence ->
   (* First, validate every symbol. *)
-  let sentence = Sentence.validate_sentence c sentence in
+  let sentence = Sentence.validate_sentence c raw_sentence in
   (* Then, check that this sentence leads to an error state. *)
+  let ranges = [RawSentence.range raw_sentence] in
   let show = false
   and fail msg =
     Report.signal c ranges
@@ -366,7 +341,7 @@ fun c (ranges, sentence) ->
   and succeed _nt _terminals target =
     (ranges, sentence), target
   in
-  interpret_error_aux show ranges sentence fail succeed
+  interpret_error_aux show sentence fail succeed
 
 (* [validate_entry] validates a list of located sentences or comments,
    as returned by [RawSentenceParser.entry]. If a sentence contains an
@@ -374,7 +349,7 @@ fun c (ranges, sentence) ->
    from the list, and the validation process continues. *)
 
 let validate_entry : (raw_entry, targeted_sentence or_comment list) validator =
-  Validate.robust_list (OrComment.validate validate_located_sentence)
+  Validate.robust_list (OrComment.validate validate_sentence)
 
 let validate_optional_sentence =
   Validate.option Sentence.validate_sentence
