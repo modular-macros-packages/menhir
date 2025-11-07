@@ -17,7 +17,6 @@ module StackSymbolsShort =
 
 open Printf
 open OrComment
-open RawSentence
 open Grammar
 module R = ReferenceInterpreter.Make(Lr1)
 
@@ -350,51 +349,18 @@ let interpret_error sentence =
 
 (* We also check that every sentence leads to an error state. *)
 
-exception Invalid
-
-let validate_nonterminal_symbol c (lid, startpos, endpos) =
-  match Nonterminal.lookup lid with
-  | exception Not_found ->
-      Error.signal c [Range.make (startpos, endpos)]
-        "\"%s\" is not a known non-terminal symbol." lid;
-      raise Invalid
-  | nt ->
-      if Nonterminal.is_user_start nt then
-        nt
-      else begin
-        Error.signal c [Range.make (startpos, endpos)]
-          "\"%s\" is not a start symbol." lid;
-        raise Invalid
-      end
-
-let validate_terminal_symbol c (uid, startpos, endpos) =
-  try
-    Terminal.lookup uid
-  with Not_found ->
-    Error.signal c [Range.make (startpos, endpos)]
-      "\"%s\" is not a known terminal symbol." uid;
-    raise Invalid
-
-let validate_sentence c (sentence : raw_sentence) : sentence =
-  let (nto, terminals) = sentence in
-  Option.map (validate_nonterminal_symbol c) nto,
-  List.map (validate_terminal_symbol c) terminals
-
-let validate_optional_sentence c =
-  Option.map (validate_sentence c)
-
 let validate_located_sentence c (poss, sentence) : targeted_sentence =
   (* First, validate every symbol. *)
-  let sentence = validate_sentence c sentence in
+  let sentence = Sentence.validate_sentence c sentence in
   (* Then, check that this sentence leads to an error state. *)
   let show = false in
   interpret_error_aux show poss sentence
     (* failure: *)
     (fun msg ->
-       Error.signal c poss
+       Report.signal c poss
          "this sentence does not end with a syntax error, as it should:\n%s"
          msg;
-       raise Invalid)
+       raise Validate.Invalid)
     (* success: *)
     (fun _nt _terminals target -> (poss, sentence), target)
 
@@ -404,23 +370,11 @@ let validate_located_sentence c (poss, sentence) : targeted_sentence =
    from the list, and the validation process continues. *)
 
 let validate_entry c entry : targeted_sentence or_comment list =
-  MList.filter_map (function
-  | Thing sentence ->
-      begin try
-        Some (Thing (validate_located_sentence c sentence))
-      with Invalid ->
-        None
-      end
-  | Comment c ->
-      Some (Comment c)
-  ) entry
-
-(* This wrapper causes Menhir to exit if at least one error was signaled
-   during validation of [x] by [validate]. *)
-
-let strictly validate x =
-  Error.with_new_category @@ fun c ->
-  validate c x
+  Validate.list (fun c x ->
+    OrComment.map (fun sentence ->
+      validate_located_sentence c sentence
+    ) x
+  ) c entry
 
 (* --------------------------------------------------------------------------- *)
 
@@ -442,7 +396,7 @@ let setup () : unit -> sentence option =
     | exception Parsing.Parse_error ->
         Error.error [Range.current lexbuf] "ill-formed input sentence."
     | osentence ->
-        strictly validate_optional_sentence osentence
+        Validate.apply `Strict Sentence.validate_optional_sentence osentence
   in
 
   read
@@ -469,8 +423,7 @@ let stats (runs : run or_comment list) =
   ) runs;
   eprintf
     "Read %d sample input sentences and %d error messages.\n%!"
-    !s !m;
-  runs
+    !s !m
 
 (* --------------------------------------------------------------------------- *)
 
@@ -489,7 +442,7 @@ let mkcomment c accu =
 
 let read_messages strict filename : run or_comment list =
   let open Segment in
-  let c = Error.new_category() in
+  Report.monitor strict @@ fun c ->
   (* Read and segment the file. *)
   let segments : (tag * string * Lexing.lexbuf) list = segment filename in
   (* Process the segments, two by two. We expect one segment to contain
@@ -505,8 +458,7 @@ let read_messages strict filename : run or_comment list =
         (* Read a series of located sentences. *)
         match RawSentenceParser.entry RawSentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
-            Error.error
-              [Range.current lexbuf]
+            Report.error c [Range.current lexbuf]
               "ill-formed sentence."
         | elements ->
             (* [elements] is a list of located raw sentences or comments.
@@ -531,8 +483,7 @@ let read_messages strict filename : run or_comment list =
                   loop (Thing run :: accu) segments
             | []
             | [ _ ] ->
-                Error.error
-                  [Range.current lexbuf]
+                Report.error c [Range.current lexbuf]
                   "missing a final message. I may be desynchronized."
             | (Segment, _, _) :: _
             | (Whitespace, _, _) :: (Whitespace, _, _) :: _ ->
@@ -540,8 +491,9 @@ let read_messages strict filename : run or_comment list =
                    two kinds of segments. *)
                 assert false
   in
-  let runs = stats (loop [] segments) in
-  if strict then Error.exit_if c;
+  let runs = loop [] segments in
+  Report.flush stderr c; (* optional: show error messages before statistics *)
+  stats runs;
   runs
 
 (* --------------------------------------------------------------------------- *)
@@ -700,8 +652,7 @@ let () =
 
     (* Read the file. Compute the target state of every sentence. Stop if a
        sentence does not end in an error state, as expected. *)
-    let strict = true in
-    let runs : run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages `Strict filename in
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
@@ -733,9 +684,8 @@ let compare_errors filename1 filename2 =
 
   (* Read both files. *)
 
-  let strict = false in
-  let runs1 = read_messages strict filename1
-  and runs2 = read_messages strict filename2 in
+  let runs1 = read_messages `Lax filename1
+  and runs2 = read_messages `Lax filename2 in
 
   (* Convert the right-hand file to a table for quick lookup. *)
 
@@ -1006,9 +956,8 @@ let rec space (xs : 'a or_comment list) : 'a or_comment list =
 
 let merge_errors filename1 filename2 =
 
-  let strict = false in
-  let runs1 = read_messages strict filename1
-  and runs2 = read_messages strict filename2 in
+  let runs1 = read_messages `Lax filename1
+  and runs2 = read_messages `Lax filename2 in
 
   (* Remove the default runs on the right-hand side whose target state also
      appears on the left-hand side. We lose no information in doing so. *)
@@ -1159,8 +1108,7 @@ let () =
   Settings.update_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let strict = false in
-    let runs : run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages `Lax filename in
 
     (* We might wish to detect if two sentences lead to the same state. We
        might also wish to detect if this set of sentences is incomplete,
@@ -1192,8 +1140,7 @@ let () =
   Settings.echo_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let strict = false in
-    let runs : run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages `Lax filename in
 
     (* Echo. *)
     List.iter (OrComment.iter (fun run ->
@@ -1212,8 +1159,7 @@ let () =
   Settings.echo_errors_concrete |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let strict = false in
-    let runs : run or_comment list = read_messages strict filename in
+    let runs : run or_comment list = read_messages `Lax filename in
 
     (* Echo. *)
     List.iter (OrComment.iter (fun run ->
