@@ -26,7 +26,6 @@ module R = ReferenceInterpreter.Make(Lr1)
 type sentence =
   Sentence.sentence
 
-(* TODO maybe this type is no longer useful *)
 type located_sentence =
   Range.ranges * sentence
 
@@ -343,10 +342,10 @@ fun c raw_sentence ->
   in
   interpret_error_aux show sentence fail succeed
 
-(* [validate_entry] validates a list of located sentences or comments,
-   as returned by [RawSentenceParser.entry]. If a sentence contains an
-   error, then an error message is emitted, this sentence is removed
-   from the list, and the validation process continues. *)
+(* [validate_entry] validates a list of sentences or comments, as returned by
+   [RawSentenceParser.entry]. If a sentence contains an error, then an error
+   message is emitted, this sentence is removed from the list, and the
+   validation process continues. *)
 
 let validate_entry : (raw_entry, targeted_sentence or_comment list) validator =
   Validate.robust_list (OrComment.validate validate_sentence)
@@ -433,17 +432,17 @@ let read_messages strict filename : run or_comment list =
     | (Whitespace, comments, _) :: segments ->
         loop (mkcomment comments accu) segments
     | (Segment, _, lexbuf) :: segments ->
-        (* Read a series of located sentences. *)
+        (* Read a series of raw sentences. *)
         match RawSentenceParser.entry RawSentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
             Report.error c [Range.current lexbuf]
               "ill-formed sentence."
         | elements ->
-            (* [elements] is a list of located raw sentences or comments.
-               Validate it. Any sentences that do not pass validation are
-               removed (and error messages are emitted). In an effort to
-               be robust, we continue. If there remain zero sentences,
-               then this entry is removed entirely. *)
+            (* [elements] is a list of raw sentences or comments. Validate it.
+               Any sentences that do not pass validation are removed (and
+               error messages are emitted). In an effort to be robust, we
+               continue. If there remain zero sentences, then this entry is
+               removed entirely. *)
             let elements = validate_entry c elements in
             (* In principle, we should now find a segment of whitespace
                followed with a segment of text. By construction, the two
