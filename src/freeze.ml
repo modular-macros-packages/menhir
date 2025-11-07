@@ -13,17 +13,53 @@ let () =
     let module A = AutomatonGraph.Make(Lr1) in
     A.print (Settings.base ^ ".dot")
 
-(* Let [Interpret] handle the command line options [--interpret],
-   [--interpret-error], [--compile-errors], [--compare-errors]. *)
+(* Handle the command line options [--interpret], [--interpret-error],
+   [--compile-errors], [--compare-errors], etc. *)
 
 let () =
-  Interpret.run()
+  match Settings.interpret with
+  | `No ->
+      ()
+  | `Normal show_cst ->
+      Interpret.Command.interpret show_cst
+  | `Error ->
+      Interpret.Command.interpret_error()
+
+let () =
+  Settings.compile_errors |> Option.iter @@ fun filename ->
+  Interpret.Command.compile_errors filename;
+  exit 0
+
+let () =
+  Settings.compare_errors |> Option.iter @@ fun (filename1, filename2) ->
+  Interpret.Command.compare_errors filename1 filename2;
+  exit 0
+
+let () =
+  Settings.merge_errors |> Option.iter @@ fun (filename1, filename2) ->
+  Interpret.Command.merge_errors filename1 filename2;
+  exit 0
+
+let () =
+  Settings.update_errors |> Option.iter @@ fun filename ->
+  Interpret.Command.update_errors filename;
+  exit 0
+
+let () =
+  Settings.echo_errors |> Option.iter @@ fun filename ->
+  Interpret.Command.echo_errors filename;
+  exit 0
+
+let () =
+  Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
+  Interpret.Command.echo_errors_concrete filename;
+  exit 0
 
 (* If [--list-errors] is set, produce a list of erroneous input sentences,
    then stop. *)
 
 let () =
-  if Settings.list_errors then begin
+  if Settings.list_errors then
     let module X = struct
       (* Undocumented: if [--log-automaton 2] is set, be verbose. *)
       let verbose = Settings.logA >= 2
@@ -34,7 +70,6 @@ let () =
       include LRijkstra.Run(X)()
     end in
     exit 0
-  end
 
 (* If requested, generate a .cmly file. *)
 

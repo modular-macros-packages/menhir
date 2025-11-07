@@ -39,6 +39,10 @@ type delimiter =
 type message =
   string
 
+(* The name of a [.messages] file. *)
+type filename =
+  string
+
 (* A target tells us which state a sentence leads to, as well
    as which spurious reductions are performed at the end. *)
 
@@ -573,10 +577,7 @@ let compile_runs filename (runs : run or_comment list) : unit =
 
 (* --------------------------------------------------------------------------- *)
 
-(* The rest of this file is the function [run], internally written as a functor
-   [Run] for syntactic convenience. *)
-
-module Run () = struct
+module Command = struct
 
 (* --------------------------------------------------------------------------- *)
 
@@ -586,7 +587,7 @@ module Run () = struct
 (* We read a series of sentences from the standard input channel. To allow
    interactive use, we interpret each sentence as soon as it is read. *)
 
-let cmd_interpret_loop show_cst =
+let interpret show_cst =
   Report.monitor `Strict @@ fun c ->
   let read = setup c in
   printf "Ready!\n%!";
@@ -604,7 +605,7 @@ let cmd_interpret_loop show_cst =
 (* We read just one sentence, confirm that this sentence ends in an error,
    and display the number of the state that is reached. *)
 
-let cmd_interpret_error () =
+let interpret_error () =
   Report.monitor `Strict @@ fun c ->
   let read = setup c in
   match read() with
@@ -612,17 +613,6 @@ let cmd_interpret_error () =
       exit 1 (* abnormal: no input *)
   | Some sentence ->
       interpret_error sentence (* never returns *)
-
-(* Honor [Settings.interpret]. *)
-
-let () =
-  match Settings.interpret with
-  | `No ->
-      ()
-  | `Normal show_cst ->
-      cmd_interpret_loop show_cst
-  | `Error ->
-      cmd_interpret_error()
 
 (* --------------------------------------------------------------------------- *)
 
@@ -649,11 +639,6 @@ let compile_errors filename =
      produce a function that maps a state number to a message. By
      convention, we call this function [message]. *)
   compile_runs filename runs
-
-let () =
-  Settings.compile_errors |> Option.iter @@ fun filename ->
-  compile_errors filename;
-  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
@@ -709,11 +694,6 @@ let compare_errors filename1 filename2 =
            The corresponding messages in \"%s\" and \"%s\" differ."
           (Lr1.encode s) filename1 filename2
       end
-
-let () =
-  Settings.compare_errors |> Option.iter @@ fun (filename1, filename2) ->
-  compare_errors filename1 filename2;
-  exit 0
 
 (* --------------------------------------------------------------------------- *)
 
@@ -1069,11 +1049,6 @@ let merge_errors filename1 filename2 =
 
   List.iter write_run (space runs)
 
-let () =
-  Settings.merge_errors |> Option.iter @@ fun (filename1, filename2) ->
-  merge_errors filename1 filename2;
-  exit 0
-
 (* --------------------------------------------------------------------------- *)
 
 (* If [--update-errors <filename>] is set, update the error message
@@ -1098,11 +1073,6 @@ let update_errors filename =
      new auto-generated comments. *)
   List.iter write_run runs
 
-let () =
-  Settings.update_errors |> Option.iter @@ fun filename ->
-  update_errors filename;
-  exit 0
-
 (* --------------------------------------------------------------------------- *)
 
 (* If [--echo-errors <filename>] is set, echo the error sentences found in file
@@ -1120,11 +1090,6 @@ let echo_errors filename =
   foreach_targeted_sentence runs @@ fun ((_, sentence), _target) _message ->
   print_string (Sentence.print `Abstract sentence)
 
-let () =
-  Settings.echo_errors |> Option.iter @@ fun filename ->
-  echo_errors filename;
-  exit 0
-
 (* [--echo-errors-concrete] works like [--echo-errors], except every sentence
    is followed with an auto-generated comment that shows its concrete syntax. *)
 
@@ -1139,15 +1104,6 @@ let echo_errors_concrete filename =
       "## Concrete syntax: %s\n"
       (Sentence.print `Concrete sentence)
 
-let () =
-  Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
-  echo_errors_concrete filename;
-  exit 0
-
 (* --------------------------------------------------------------------------- *)
 
-end (* Run *)
-
-let run () =
-  let module R = Run() in
-  ()
+end (* Command *)
