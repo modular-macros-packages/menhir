@@ -1772,12 +1772,51 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* Facilities for printing sentences. *)
+(* Facilities for reading and printing sentences. *)
 
 module Sentence = struct
 
   type sentence =
     Nonterminal.t option * Terminal.t list
+
+  open Validate
+
+  let validate_nonterminal_symbol c raw_symbol =
+    let (symbol, startpos, endpos) = raw_symbol in
+    match Nonterminal.lookup symbol with
+    | exception Not_found ->
+        Report.signal c [Range.make (startpos, endpos)]
+          "\"%s\" is not a known non-terminal symbol." symbol;
+        raise Invalid
+    | nt ->
+        nt
+
+  let validate_start_symbol c raw_symbol =
+    let nt = validate_nonterminal_symbol c raw_symbol in
+    if Nonterminal.is_user_start nt then
+      nt
+    else
+      let (symbol, startpos, endpos) = raw_symbol in
+      Report.signal c [Range.make (startpos, endpos)]
+        "\"%s\" is not a start symbol." symbol;
+      raise Invalid
+
+  let validate_terminal_symbol c raw_symbol =
+    let (symbol, startpos, endpos) = raw_symbol in
+    try
+      Terminal.lookup symbol
+    with Not_found ->
+      Report.signal c [Range.make (startpos, endpos)]
+        "\"%s\" is not a known terminal symbol." symbol;
+      raise Invalid
+
+  let validate_sentence c raw_sentence : sentence =
+    let (nto, terminals) = raw_sentence in
+    Option.map (validate_start_symbol c) nto,
+    List.map (validate_terminal_symbol c) terminals
+
+  let validate_optional_sentence c =
+    Option.map (validate_sentence c)
 
   open Printf
 

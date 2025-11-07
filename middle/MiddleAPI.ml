@@ -818,11 +818,21 @@ end
 module Sentence : sig
 
   (**A sentence is a pair of an optional start symbol and a sequence of
-     terminal symbols. Our convention is that the start symbol can be omitted
-     if this is unambiguous, that is, if the grammar has exactly one start
-     symbol. *)
+     terminal symbols. The start symbol can be omitted if this omission is
+     unambiguous, that is, if the grammar has exactly one start symbol. *)
   type sentence =
     Nonterminal.t option * Terminal.t list
+
+  open RawSentence
+  open Validate
+
+  (**[validate_sentence] validates a raw sentence: it checks that every
+     symbol in it is defined. *)
+  val validate_sentence: (raw_sentence, sentence) validator
+
+  (**[validate_optional_sentence] validates an optional raw sentence. *)
+  val validate_optional_sentence:
+    (raw_sentence option, sentence option) validator
 
   (**[print style sentence] prints a sentence as a space-separated list of
      terminal symbols. If [style] is [`Abstract] then each terminal symbol is
