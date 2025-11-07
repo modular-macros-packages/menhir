@@ -8,20 +8,15 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* --------------------------------------------------------------------------- *)
-
-module StackSymbolsShort =
-  StackSymbols.Short(Lr1)()
-
-(* --------------------------------------------------------------------------- *)
-
 open Printf
 open OrComment
 open RawSentence
 open Validate
 open Grammar
 
-module R = ReferenceInterpreter.Make(Lr1)
+(* --------------------------------------------------------------------------- *)
+
+(* Type definitions. *)
 
 type sentence =
   Sentence.sentence
@@ -29,19 +24,8 @@ type sentence =
 type located_sentence =
   Range.ranges * sentence
 
-(* A delimiter. *)
-
-type delimiter =
-  string
-
-(* An error message. *)
-
-type message =
-  string
-
-(* The name of a [.messages] file. *)
-type filename =
-  string
+let ranges ((ranges, _) : located_sentence) =
+  ranges
 
 (* A target tells us which state a sentence leads to, as well
    as which spurious reductions are performed at the end. *)
@@ -61,6 +45,16 @@ let target2state (s, _spurious) =
 type targeted_sentence =
   located_sentence * target
 
+(* A delimiter. *)
+
+type delimiter =
+  string
+
+(* An error message. *)
+
+type message =
+  string
+
 (* A run is a series of targeted sentences or comments, followed with a
    delimiter (composed at least one blank line and possibly comments),
    followed with an error message. *)
@@ -73,6 +67,18 @@ type run = {
   (* A message. *)
   message: message;
 }
+
+(* The name of a [.messages] file. *)
+type filename =
+  string
+
+(* --------------------------------------------------------------------------- *)
+
+module R =
+  ReferenceInterpreter.Make(Lr1)
+
+module StackSymbolsShort =
+  StackSymbols.Short(Lr1)()
 
 (* --------------------------------------------------------------------------- *)
 
@@ -507,7 +513,7 @@ let message_table
     match Lr1.NodeMap.find s !table with
     | sentence1, _ ->
         if detect_redundancy then
-          Report.signal c (fst sentence1 @ fst sentence2)
+          Report.signal c (ranges sentence1 @ ranges sentence2)
             "these sentences both cause an error in state %d."
             (Lr1.encode s)
     | exception Not_found ->
@@ -672,7 +678,7 @@ let compare_errors filename1 filename2 =
   match Lr1.NodeMap.find s table2 with
 
   | exception Not_found ->
-      let poss1 = fst sentence1 in
+      let poss1 = ranges sentence1 in
       Report.signal c poss1
         "this sentence leads to an error in state %d.\n\
          No sentence that leads to this state exists in \"%s\"."
@@ -687,8 +693,8 @@ let compare_errors filename1 filename2 =
 
   | sentence2, message2 ->
       if message1 <> default_message && message1 <> message2 then begin
-        let poss1 = fst sentence1
-        and poss2 = fst sentence2 in
+        let poss1 = ranges sentence1
+        and poss2 = ranges sentence2 in
         Report.warning c (poss1 @ poss2)
           "these sentences lead to an error in state %d.\n\
            The corresponding messages in \"%s\" and \"%s\" differ."
