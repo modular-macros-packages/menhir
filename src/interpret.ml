@@ -171,8 +171,9 @@ let interpret show_cst ((_, toks) as sentence) : unit =
 (* [interpret_error_aux] interprets a sentence, expecting it to end in an
    error. Failure or success is reported via two continuations. *)
 
-let interpret_error_aux show ((_, terminals) as sentence) fail succeed =
-  let nt = Sentence.start sentence in
+let interpret_error_aux show sentence fail succeed =
+  let nt = Sentence.start sentence
+  and (_, terminals) = sentence in
   let strategy = Settings.strategy
   and count = ref 0 (* unused *) in
   match R.check_error_path strategy show count nt terminals with
@@ -305,15 +306,15 @@ let write_run : run or_comment -> unit =
    Failure or success is reported on the standard output channel. This is
    used by [--interpret-error]. *)
 
-let fail msg =
-  Error.error [] "%s" msg
-
-let succeed nt terminals target =
-  print_messages_item (nt, terminals, target);
-  exit 0
-
 let interpret_error sentence =
-  let show = Settings.trace in
+  Report.monitor `Strict @@ fun c ->
+  let show = Settings.trace
+  and fail msg =
+    Report.error c [] "%s" msg
+  and succeed nt terminals target =
+    print_messages_item (nt, terminals, target);
+    exit 0
+  in
   interpret_error_aux show sentence fail succeed
 
 (* --------------------------------------------------------------------------- *)
@@ -350,15 +351,12 @@ fun c raw_sentence ->
 let validate_entry : (raw_entry, targeted_sentence or_comment list) validator =
   Validate.robust_list (OrComment.validate validate_sentence)
 
-let validate_optional_sentence =
-  Validate.option Sentence.validate_sentence
-
 (* --------------------------------------------------------------------------- *)
 
-(* [setup()] returns a function [read] which reads one sentence from the
+(* [setup c] returns a function [read] which reads one sentence from the
    standard input channel and immediately validates it. *)
 
-let setup () : unit -> sentence option =
+let setup c : unit -> sentence option =
 
   let open Lexing in
   let lexbuf = from_channel stdin in
@@ -367,13 +365,14 @@ let setup () : unit -> sentence option =
   let read () =
     match RawSentenceParser.optional_sentence RawSentenceLexer.lex lexbuf with
     | exception RawSentenceLexer.Error ->
-        Error.error [Range.current lexbuf]
+        Report.error c [Range.current lexbuf]
           "unexpected character.\n\
            (I believe I am reading a sentence, but may be off.)"
     | exception Parsing.Parse_error ->
-        Error.error [Range.current lexbuf] "ill-formed input sentence."
+        Report.error c [Range.current lexbuf]
+          "ill-formed input sentence."
     | osentence ->
-        Validate.apply `Strict validate_optional_sentence osentence
+        Validate.option Sentence.validate_sentence c osentence
   in
 
   read
@@ -498,19 +497,19 @@ let message_table
     (runs : run or_comment list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
-  Error.with_new_category @@ fun c ->
-    foreach_targeted_sentence (fun table (sentence2, target) message ->
-      let s = target2state target in
-      match Lr1.NodeMap.find s table with
-      | sentence1, _ ->
-          if detect_redundancy then
-            Error.signal c (fst sentence1 @ fst sentence2)
-                 "these sentences both cause an error in state %d."
-                 (Lr1.encode s);
-          table
-      | exception Not_found ->
-          Lr1.NodeMap.add s (sentence2, message) table
-    ) Lr1.NodeMap.empty runs
+  Report.monitor `Strict @@ fun c ->
+  foreach_targeted_sentence (fun table (sentence2, target) message ->
+    let s = target2state target in
+    match Lr1.NodeMap.find s table with
+    | sentence1, _ ->
+        if detect_redundancy then
+          Report.signal c (fst sentence1 @ fst sentence2)
+            "these sentences both cause an error in state %d."
+            (Lr1.encode s);
+        table
+    | exception Not_found ->
+        Lr1.NodeMap.add s (sentence2, message) table
+  ) Lr1.NodeMap.empty runs
 
 (* --------------------------------------------------------------------------- *)
 
@@ -595,7 +594,8 @@ let () =
      interactive use, we interpret each sentence as soon as it is read. *)
 
   | `Normal show_cst ->
-      let read = setup() in
+      Report.monitor `Strict @@ fun c ->
+      let read = setup c in
       printf "Ready!\n%!";
       while true do
         match read() with
@@ -612,7 +612,8 @@ let () =
      and display the number of the state that is reached. *)
 
   | `Error ->
-      let read = setup() in
+      Report.monitor `Strict @@ fun c ->
+      let read = setup c in
       match read() with
       | None ->
         exit 1 (* abnormal: no input *)
@@ -673,40 +674,40 @@ let compare_errors filename1 filename2 =
      in an order that respects the left-hand file. Indeed, the
      left-hand file is processed by the following loop: *)
 
-  Error.with_new_category @@ fun c ->
-    foreach_targeted_sentence (fun () (sentence1, target1) message1 ->
+  Report.monitor `Strict @@ fun c ->
+  foreach_targeted_sentence (fun () (sentence1, target1) message1 ->
 
-      let s = target2state target1 in
+    let s = target2state target1 in
 
-      (* 1. Check that the target state [s] appears in [table2]. *)
+    (* 1. Check that the target state [s] appears in [table2]. *)
 
-      match Lr1.NodeMap.find s table2 with
+    match Lr1.NodeMap.find s table2 with
 
-      | exception Not_found ->
-          let poss1 = fst sentence1 in
-          Error.signal c poss1
-            "this sentence leads to an error in state %d.\n\
-             No sentence that leads to this state exists in \"%s\"."
-            (Lr1.encode s) filename2
+    | exception Not_found ->
+        let poss1 = fst sentence1 in
+        Report.signal c poss1
+          "this sentence leads to an error in state %d.\n\
+           No sentence that leads to this state exists in \"%s\"."
+          (Lr1.encode s) filename2
 
-      (* 2. Check that [s] is mapped by [table1] and [table2] to the same
-         error message. As an exception, if the message found in [table1] is
-         the default message, then no comparison takes place. This allows
-         using [--list-errors] and [--compare-errors] in conjunction to ensure
-         that a [.messages] file is complete, without seeing warnings about
-         different messages. *)
+    (* 2. Check that [s] is mapped by [table1] and [table2] to the same
+       error message. As an exception, if the message found in [table1] is
+       the default message, then no comparison takes place. This allows
+       using [--list-errors] and [--compare-errors] in conjunction to ensure
+       that a [.messages] file is complete, without seeing warnings about
+       different messages. *)
 
-      | sentence2, message2 ->
-          if message1 <> default_message && message1 <> message2 then begin
-            let poss1 = fst sentence1
-            and poss2 = fst sentence2 in
-            Error.warning (poss1 @ poss2)
-              "these sentences lead to an error in state %d.\n\
-               The corresponding messages in \"%s\" and \"%s\" differ."
-              (Lr1.encode s) filename1 filename2
-          end
+    | sentence2, message2 ->
+        if message1 <> default_message && message1 <> message2 then begin
+          let poss1 = fst sentence1
+          and poss2 = fst sentence2 in
+          Report.warning c (poss1 @ poss2)
+            "these sentences lead to an error in state %d.\n\
+             The corresponding messages in \"%s\" and \"%s\" differ."
+            (Lr1.encode s) filename1 filename2
+        end
 
-    ) () runs1
+  ) () runs1
 
 let () =
   Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
