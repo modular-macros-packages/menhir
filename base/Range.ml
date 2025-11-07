@@ -64,3 +64,7 @@ let current lexbuf =
 
 type ranges =
   range list
+
+let bprint b ranges =
+  ranges |> List.iter @@ fun range ->
+  bprintf b "%s:\n" (show range)

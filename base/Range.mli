@@ -59,3 +59,8 @@ val show : range -> string
 (**[ranges] is an abbreviation for [range list]. *)
 type ranges =
   range list
+
+(**[bprint b ranges] prints a string representation of the ranges [ranges]
+   to the buffer [b]. Each range is converted to a string via [show] and is
+   terminated with a colon and a newline. *)
+val bprint : Buffer.t -> ranges -> unit
