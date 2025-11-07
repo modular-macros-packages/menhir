@@ -580,45 +580,49 @@ module Run () = struct
 
 (* --------------------------------------------------------------------------- *)
 
+(* If [--interpret] is set, interpret the sentences found on the standard
+   input channel, then stop, without generating a parser. *)
+
+(* We read a series of sentences from the standard input channel. To allow
+   interactive use, we interpret each sentence as soon as it is read. *)
+
+let cmd_interpret_loop show_cst =
+  Report.monitor `Strict @@ fun c ->
+  let read = setup c in
+  printf "Ready!\n%!";
+  while true do
+    match read() with
+    | None ->
+        exit 0
+    | Some sentence ->
+        interpret show_cst sentence
+  done
+
+(* If [--interpret-error] is set, interpret one sentence found on the
+   standard input channel, then stop, without generating a parser. *)
+
+(* We read just one sentence, confirm that this sentence ends in an error,
+   and display the number of the state that is reached. *)
+
+let cmd_interpret_error () =
+  Report.monitor `Strict @@ fun c ->
+  let read = setup c in
+  match read() with
+  | None ->
+      exit 1 (* abnormal: no input *)
+  | Some sentence ->
+      interpret_error sentence (* never returns *)
+
 (* Honor [Settings.interpret]. *)
 
 let () =
   match Settings.interpret with
   | `No ->
       ()
-
-  (* If [--interpret] is set, interpret the sentences found on the standard
-     input channel, then stop, without generating a parser. *)
-
-  (* We read a series of sentences from the standard input channel. To allow
-     interactive use, we interpret each sentence as soon as it is read. *)
-
   | `Normal show_cst ->
-      Report.monitor `Strict @@ fun c ->
-      let read = setup c in
-      printf "Ready!\n%!";
-      while true do
-        match read() with
-        | None ->
-            exit 0
-        | Some sentence ->
-            interpret show_cst sentence
-      done
-
-  (* If [--interpret-error] is set, interpret one sentence found on the
-     standard input channel, then stop, without generating a parser. *)
-
-  (* We read just one sentence, confirm that this sentence ends in an error,
-     and display the number of the state that is reached. *)
-
+      cmd_interpret_loop show_cst
   | `Error ->
-      Report.monitor `Strict @@ fun c ->
-      let read = setup c in
-      match read() with
-      | None ->
-        exit 1 (* abnormal: no input *)
-      | Some sentence ->
-          interpret_error sentence (* never returns *)
+      cmd_interpret_error()
 
 (* --------------------------------------------------------------------------- *)
 
