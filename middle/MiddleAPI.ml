@@ -830,10 +830,6 @@ module Sentence : sig
      symbol in it is defined. *)
   val validate_sentence: (raw_sentence, sentence) validator
 
-  (**[validate_optional_sentence] validates an optional raw sentence. *)
-  val validate_optional_sentence:
-    (raw_sentence option, sentence option) validator
-
   (**[print style sentence] prints a sentence as a space-separated list of
      terminal symbols. If [style] is [`Abstract] then each terminal symbol is
      printed as a symbolic name. If [style] is [`Concrete] then each terminal

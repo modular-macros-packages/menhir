@@ -50,3 +50,6 @@ let count accu = function
 
 let count xs =
   List.fold_left count 0 xs
+
+let validate validate c =
+  map (validate c)

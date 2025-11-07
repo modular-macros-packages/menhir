@@ -69,7 +69,7 @@
 %type <RawSentence.raw_sentence option>
   optional_sentence
 
-%type<RawSentence.entry>
+%type<RawSentence.raw_entry>
   entry
 
 %start optional_sentence

@@ -27,10 +27,18 @@ type ('a, 'b) validator =
    validator, which cannot raise [Invalid], but can return [None]. *)
 val robustly: ('a, 'b) validator -> ('a, 'b option) validator
 
-(**[list validate] is a robust list validator. It cannot raise [Invalid],
+(**[option validate] is a list validator. If validating the content raises
+   [Invalid] then this exception is propagated. *)
+val option: ('a, 'b) validator -> ('a option, 'b option) validator
+
+(**[list validate] is a list validator. If validating an element raises
+   [Invalid] then this exception is propagated. *)
+val list: ('a, 'b) validator -> ('a list, 'b list) validator
+
+(**[robust_list validate] is a robust list validator. It cannot raise [Invalid],
    but dismisses invalid elements, so the output list can be shorter than
    the input list. *)
-val list: ('a, 'b) validator -> ('a list, 'b list) validator
+val robust_list: ('a, 'b) validator -> ('a list, 'b list) validator
 
 (**[apply strict validate x] applies the validator function [validate] to the
    input data [x] in the scope of [Report.monitor strict]. Therefore all error

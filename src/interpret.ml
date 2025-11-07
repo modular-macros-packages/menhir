@@ -17,7 +17,10 @@ module StackSymbolsShort =
 
 open Printf
 open OrComment
+open RawSentence
+open Validate
 open Grammar
+
 module R = ReferenceInterpreter.Make(Lr1)
 
 type sentence =
@@ -349,32 +352,32 @@ let interpret_error sentence =
 
 (* We also check that every sentence leads to an error state. *)
 
-let validate_located_sentence c (poss, sentence) : targeted_sentence =
+let validate_located_sentence
+: (located_raw_sentence, targeted_sentence) validator =
+fun c (ranges, sentence) ->
   (* First, validate every symbol. *)
   let sentence = Sentence.validate_sentence c sentence in
   (* Then, check that this sentence leads to an error state. *)
-  let show = false in
-  interpret_error_aux show poss sentence
-    (* failure: *)
-    (fun msg ->
-       Report.signal c poss
-         "this sentence does not end with a syntax error, as it should:\n%s"
-         msg;
-       raise Validate.Invalid)
-    (* success: *)
-    (fun _nt _terminals target -> (poss, sentence), target)
+  let show = false
+  and fail msg =
+    Report.signal c ranges
+      "this sentence does not end with a syntax error, as it should:\n%s" msg;
+    raise Invalid
+  and succeed _nt _terminals target =
+    (ranges, sentence), target
+  in
+  interpret_error_aux show ranges sentence fail succeed
 
 (* [validate_entry] validates a list of located sentences or comments,
    as returned by [RawSentenceParser.entry]. If a sentence contains an
    error, then an error message is emitted, this sentence is removed
    from the list, and the validation process continues. *)
 
-let validate_entry c entry : targeted_sentence or_comment list =
-  Validate.list (fun c x ->
-    OrComment.map (fun sentence ->
-      validate_located_sentence c sentence
-    ) x
-  ) c entry
+let validate_entry : (raw_entry, targeted_sentence or_comment list) validator =
+  Validate.robust_list (OrComment.validate validate_located_sentence)
+
+let validate_optional_sentence =
+  Validate.option Sentence.validate_sentence
 
 (* --------------------------------------------------------------------------- *)
 
@@ -396,7 +399,7 @@ let setup () : unit -> sentence option =
     | exception Parsing.Parse_error ->
         Error.error [Range.current lexbuf] "ill-formed input sentence."
     | osentence ->
-        Validate.apply `Strict Sentence.validate_optional_sentence osentence
+        Validate.apply `Strict validate_optional_sentence osentence
   in
 
   read

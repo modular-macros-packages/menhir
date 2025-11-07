@@ -15,17 +15,19 @@ exception Invalid
 type ('a, 'b) validator =
   channel -> 'a -> 'b (* may raise [Invalid] *)
 
-let robustly (validate : ('a, 'b) validator) : ('a, 'b option) validator =
-fun c x ->
+let option validate c o =
+  Option.map (validate c) o
+
+let list validate c xs =
+  List.map (validate c) xs
+
+let robustly validate c x =
   try Some (validate c x) with Invalid -> None
 
-let list (validate : ('a, 'b) validator)
-: ('a list, 'b list) validator =
-fun c xs ->
+let robust_list validate c xs =
   xs |> MList.filter_map @@ fun x ->
   robustly validate c x
 
-let apply strict (validate : ('a, 'b) validator) : 'a -> 'b =
-fun x ->
+let apply strict validate x =
   monitor strict @@ fun c ->
   validate c x

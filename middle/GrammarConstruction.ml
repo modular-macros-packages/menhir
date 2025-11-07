@@ -1815,9 +1815,6 @@ module Sentence = struct
     Option.map (validate_start_symbol c) nto,
     List.map (validate_terminal_symbol c) terminals
 
-  let validate_optional_sentence c =
-    Option.map (validate_sentence c)
-
   open Printf
 
   let print_abstract (nto, terminals) : string =

@@ -35,3 +35,8 @@ val to_option : 'a t -> 'a option
 
 (**[count] counts the things in a list of things or comments. *)
 val count : 'a t list -> int
+
+open Validate
+
+(**[validate] builds a validator. *)
+val validate : ('a, 'b) validator -> ('a t, 'b t) validator

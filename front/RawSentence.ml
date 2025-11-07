@@ -28,5 +28,5 @@ type raw_sentence =
 type located_raw_sentence =
   ranges * raw_sentence
 
-type entry =
+type raw_entry =
   located_raw_sentence OrComment.t list
