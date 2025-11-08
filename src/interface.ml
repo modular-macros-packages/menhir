@@ -13,6 +13,9 @@ open PlainSyntaxAccessors
 open IL
 open ILConstruction
 
+module TokenType =
+  TokenType.Make(Settings)
+
 (* -------------------------------------------------------------------------- *)
 
 (* The [Error] exception. *)
@@ -82,7 +85,7 @@ let entrytypescheme_incremental grammar symbol =
 
 let monolithic_api grammar =
 
-  TokenType.tokentypedef Settings.mode grammar @
+  TokenType.tokentypedef grammar @
 
   IIComment "This exception is raised by the monolithic API functions." ::
   IIExcDecls [ excdef ] ::
@@ -106,7 +109,7 @@ let inspection_api grammar () =
 
   (* Define the types [terminal] and [nonterminal]. *)
 
-  TokenType.tokengadtdef Settings.mode grammar @
+  TokenType.tokengadtdef grammar @
   NonterminalType.nonterminalgadtdef grammar @
 
   (* Include the signature that lists the inspection functions, with

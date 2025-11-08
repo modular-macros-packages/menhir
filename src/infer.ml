@@ -12,6 +12,9 @@ open PlainSyntax
 open IL
 open ILConstruction
 
+module TokenType =
+  TokenType.Make(Settings)
+
 (* ------------------------------------------------------------------------- *)
 
 (* [invoke command] invokes an external command (which expects no input)
@@ -270,7 +273,7 @@ let program grammar =
      it or to its data constructors. *)
 
   [ SIFunctor (grammar.parameters,
-    interface_to_structure (TokenType.tokentypedef Settings.mode grammar) @
+    interface_to_structure (TokenType.tokentypedef grammar) @
     SIFragment grammar.preludes ::
     SIValDefs (false, [ begindef; def; enddef ]) ::
     SIFragment grammar.postludes ::

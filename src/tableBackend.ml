@@ -13,10 +13,13 @@ open Grammar
 open IL
 open Interface
 open Printf
-open TokenType
 open NonterminalType
 open CodePieces
 open PlainSyntax
+
+module TokenType =
+  TokenType.Make(Settings)
+open TokenType
 
 module Run () = struct
 
@@ -782,7 +785,7 @@ let incremental_api : IL.valdef list =
    the terminal GADT. *)
 
 let eterminal (t : Terminal.t) : expr =
-  EData (tokengadtdata Settings.mode (Terminal.print t), [])
+  EData (tokengadtdata (Terminal.print t), [])
 
 (* [enonterminal nt] is a value of type ['a nonterminal] (for some
    ['a]) that encodes the nonterminal symbol [nt]. It is just a data
@@ -1004,7 +1007,7 @@ let inspection_API () =
 
   SIModuleDef (symbols, MStruct (
     interface_to_structure (
-      tokengadtdef Settings.mode grammar @
+      tokengadtdef grammar @
       nonterminalgadtdef grammar
     )
   )) ::

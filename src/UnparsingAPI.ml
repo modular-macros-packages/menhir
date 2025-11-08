@@ -14,6 +14,9 @@ open IL
 open ILConstruction
 open MiddleAPI
 
+module TokenType =
+  TokenType.Make(Settings)
+
 (* This module generates the code and the signature of the unparsing API. *)
 
 (* It is organized in three sections, each of which is a functor. The first
@@ -253,7 +256,7 @@ let isettle =
 (* Auxiliary functions for code generation. *)
 
 let tokendata t =
-  TokenType.tokendata Settings.mode t
+  TokenType.tokendata t
 
 (* [tokpat tok pat] is a pattern that matches the token [tok] and binds
    its semantic value (if it has one) to the pattern [pat]. *)

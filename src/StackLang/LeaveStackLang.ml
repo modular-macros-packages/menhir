@@ -29,6 +29,9 @@ let exvars rs = map exvar rs
 let pxvars rs = map pxvar rs
 let exlab (l : label) = EVar (Label.export l)
 
+module TokenType =
+  TokenType.Make(Settings)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Naming conventions. *)

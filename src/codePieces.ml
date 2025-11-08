@@ -16,6 +16,9 @@ open IL
 open ILConstruction
 open Grammar
 
+module TokenType =
+  TokenType.Make(Settings)
+
 (* ------------------------------------------------------------------------ *)
 (* Here is a bunch of naming conventions. Our names are chosen to minimize
    the likelihood that a name in a semantic action is captured. In other
@@ -157,8 +160,8 @@ let semvtype = function
 
 (* Patterns for tokens. *)
 
-let tokendata t =
-  TokenType.tokendata Settings.mode t
+let tokendata =
+  TokenType.tokendata
 
 (* [tokpat tok pat] is a pattern that matches the token [tok] and binds
    its semantic value (if it has one) to the pattern [pat]. *)
@@ -268,7 +271,7 @@ let mbasics grammar = [
 
     (* The type [token]. *)
     interface_to_structure (
-      TokenType.tokentypedef Settings.mode grammar
+      TokenType.tokentypedef grammar
     )
 
   ));

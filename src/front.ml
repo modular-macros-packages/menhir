@@ -10,6 +10,9 @@
 
 (* The front-end. This module performs a series of toplevel side effects. *)
 
+module TokenType =
+  TokenType.Make(Settings)
+
 (* ------------------------------------------------------------------------- *)
 
 (* Reading a grammar from a file. *)
@@ -179,7 +182,7 @@ let grammar =
 let () =
   let open Settings in
   if token_type_only then begin
-    TokenType.write base inspection comment mode grammar;
+    TokenType.write base inspection comment grammar;
     exit 0
   end
 

@@ -13,8 +13,16 @@ open PlainSyntaxAccessors
 open IL
 open ILConstruction
 
-type mode =
-  [ `DefineTokenType | `UseExternalTokenType of string]
+module Make (X : sig
+
+  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+     then they are defined as abbreviations for pre-existing types [M.token]
+     and ['a M.Interpreter.terminal]. *)
+  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
+
+end) = struct
+open X
 
 let interpreter =
   "MenhirInterpreter"
@@ -44,7 +52,7 @@ let ttokengadtdata token =
    type [_ terminal] must be prefixed with [M.Interpreter.]. This was fixed
    on 2023/04/28. *)
 
-let tokenprefix mode id =
+let tokenprefix id =
   match mode with
   | `UseExternalTokenType m ->
       m ^ "." ^ id
@@ -54,7 +62,7 @@ let tokenprefix mode id =
 let tokendata =
   tokenprefix
 
-let tokengadtprefix mode id =
+let tokengadtprefix id =
   match mode with
   | `UseExternalTokenType m ->
       let m' = m ^ "." ^ interpreter in
@@ -62,10 +70,10 @@ let tokengadtprefix mode id =
   | `DefineTokenType ->
       id
 
-let tokengadtdata mode token =
-  tokengadtprefix mode (ttokengadtdata token)
+let tokengadtdata token =
+  tokengadtprefix (ttokengadtdata token)
 
-let tokentyperhs mode grammar =
+let tokentyperhs grammar =
   match mode with
   | `DefineTokenType ->
       (* Algebraic data type. *)
@@ -81,15 +89,15 @@ let tokentyperhs mode grammar =
       )
   | `UseExternalTokenType _ ->
       (* Type abbreviation. *)
-      TAbbrev (TypApp (tokenprefix mode tctoken, []))
+      TAbbrev (TypApp (tokenprefix tctoken, []))
 
-let tokentypedef mode grammar =
+let tokentypedef grammar =
   [
     IIComment "The type of tokens.";
     IITypeDecls [{
       typename = tctoken;
       typeparams = [];
-      typerhs = tokentyperhs mode grammar;
+      typerhs = tokentyperhs grammar;
       typeconstraint = None
     }]
   ]
@@ -99,7 +107,7 @@ let tokentypedef mode grammar =
    the [error] token, because this GADT must describe all of the tokens that
    are allowed to appear in a production. *)
 
-let tokengadt_param_rhs mode grammar =
+let tokengadt_param_rhs grammar =
   match mode with
   | `DefineTokenType ->
       (* Generalized algebraic data type. *)
@@ -125,10 +133,10 @@ let tokengadt_param_rhs mode grammar =
       (* Type abbreviation. *)
       let param = "a" in
       param,
-      TAbbrev (TypApp (tokengadtprefix mode tctokengadt, [ TypVar param ]))
+      TAbbrev (TypApp (tokengadtprefix tctokengadt, [ TypVar param ]))
 
-let tokengadtdef mode grammar =
-  let param, rhs = tokengadt_param_rhs mode grammar in
+let tokengadtdef grammar =
+  let param, rhs = tokengadt_param_rhs grammar in
   [
     IIComment "The indexed type of terminal symbols.";
     IITypeDecls [{
@@ -144,7 +152,7 @@ let tokengadtdef mode grammar =
 (* Creating both an [.mli] file and an [.ml] file is made necessary by the
    fact that the two files can differ when there are functor parameters. *)
 
-let write base inspection comment mode grammar =
+let write base inspection comment grammar =
   (* Settings. *)
   let module F = struct
     let print_line_directives = None
@@ -152,9 +160,9 @@ let write base inspection comment mode grammar =
   end in
   (* Construct the definitions of the types [token] and [_ terminal]. *)
   let i : interface =
-    tokentypedef mode grammar @
+    tokentypedef grammar @
     MList.ifn inspection
-      [ IIModule (interpreter, MTSigEnd (tokengadtdef mode grammar)) ]
+      [ IIModule (interpreter, MTSigEnd (tokengadtdef grammar)) ]
   in
   (* Write an [.mli] file. *)
   let f = open_out (base ^ ".mli") in
@@ -164,3 +172,5 @@ let write base inspection comment mode grammar =
   let f = open_out (base ^ ".ml") in
   let module P = ILPrinter.Make (struct include F let f = f end) in
   P.program [ SIFunctor (grammar.parameters, interface_to_structure i) ]
+
+end (* Make *)
