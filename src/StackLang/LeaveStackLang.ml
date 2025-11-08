@@ -19,6 +19,8 @@ let state = EmitStackLang.state
 (* Our target language: *)
 open IL
 open ILConstruction
+module CodePieces =
+  CodePieces.Make(Grammar)(Settings)
 let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
 let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics =
   CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit,

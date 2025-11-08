@@ -14,12 +14,15 @@ open IL
 open Interface
 open Printf
 open NonterminalType
-open CodePieces
 open PlainSyntax
 
 module TokenType =
   TokenType.Make(Settings)
 open TokenType
+
+module CodePieces =
+  CodePieces.Make(Grammar)(Settings)
+open CodePieces
 
 module Run () = struct
 

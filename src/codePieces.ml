@@ -14,12 +14,40 @@
 
 open IL
 open ILConstruction
-open Grammar
+open MiddleAPI
+
+module Make (G : GRAMMAR) (X : sig
+
+  (**[exn_carries_state] determines whether the exception [Error] should carry
+     an argument, which is a state number. This is the state where a syntax
+     error is detected. This feature is supported only by the code back-end. *)
+  val exn_carries_state: bool
+
+  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+     then they are defined as abbreviations for pre-existing types [M.token]
+     and ['a M.Interpreter.terminal]. *)
+  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
+
+  (**If [represent_values] is [true] then every stack cell is forced to
+     contain a semantic value. If it is [false] then a stack cell that
+     corresponds to a terminal symbol whose OCaml type is [unit] does not
+     contain a semantic value. *)
+  val represent_values: bool
+
+ (**If [noprefix] is [false] then most identifiers begin with an unlikely
+    prefix, in order to avoid name collisions. If [noprefix] is [true] then
+    this prefix is removed. This makes the code more readable but can cause
+    name collisions. *)
+  val noprefix: bool
+
+end) = struct
+open G
 
 module TokenType =
-  TokenType.Make(Settings)
+  TokenType.Make(X)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 (* Here is a bunch of naming conventions. Our names are chosen to minimize
    the likelihood that a name in a semantic action is captured. In other
    words, all global definitions as well as the parameters to [reduce]
@@ -28,27 +56,27 @@ module TokenType =
    about unused variables with ocaml 3.09 and later. *)
 
 let prefix name =
-  if Settings.noprefix then
+  if X.noprefix then
     name
   else
     (* This prefix must begin with an underscore. *)
     "_menhir_" ^ name
 
 let dataprefix name =
-  if Settings.noprefix then
+  if X.noprefix then
     name
   else
     (* This prefix must begin with a capital letter. *)
     "Menhir" ^ name
 
 let tvprefix name =
-  if Settings.noprefix then
+  if X.noprefix then
     name
   else
     (* This prefix must begin with an ordinary letter (not an underscore). *)
     "ttv_" ^ name
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Naming conventions. *)
 
@@ -105,7 +133,7 @@ let endpos ids i =
   Keyword.(posvar (RightNamed ids.(i)) WhereEnd FlavorPosition)
     (* sprintf "_endpos_%s_" ids.(i) *)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Types for semantic values. *)
 
@@ -139,7 +167,7 @@ let semvtypetok tok =
       (* Token has unit type and is omitted in stack cell,
          unless [--represent-values] has been passed. *)
 
-      if Settings.represent_values then [ tunit ] else []
+      if X.represent_values then [ tunit ] else []
 
   | Some ocamltype ->
 
@@ -156,7 +184,7 @@ let semvtype = function
   | Symbol.N nt ->
       [ semvtypent nt ]
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Patterns for tokens. *)
 
@@ -219,7 +247,7 @@ let destructuretokendef name codomain bindsemv branch = {
     (arrow TokenType.ttoken codomain)
 }
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A toplevel function [stop] raises the exception [Error]. *)
 
@@ -230,14 +258,14 @@ let stop =
   "_eRR"
 
 let call_stop (s : int) =
-  if Settings.exn_carries_state then
+  if X.exn_carries_state then
     EApp (EVar stop, [EIntConst s])
   else
     EApp (EVar stop, [EUnit])
 
 let stopdef =
   let s = "_s" in
-  let args = if Settings.exn_carries_state then [ EVar s ] else [] in
+  let args = if X.exn_carries_state then [ EVar s ] else [] in
   {
     valpat = PVar stop;
     valval =
@@ -246,7 +274,7 @@ let stopdef =
       )
   }
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Define the internal sub-module [Basics], which contains the definitions
    of the exception [Error] and of the type [token]. Then, include this
@@ -280,3 +308,7 @@ let mbasics grammar = [
   SIInclude (MVar basics);
 
 ]
+
+(* -------------------------------------------------------------------------- *)
+
+end (* Make *)

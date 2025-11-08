@@ -12,6 +12,8 @@ open Printf
 open Grammar
 open Invariant
 module Origin = Origin.Make(Lr1)
+module CodePieces =
+  CodePieces.Make(Grammar)(Settings)
 let prefix = CodePieces.prefix
 open StackLang
 open StackLangBuilder

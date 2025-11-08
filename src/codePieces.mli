@@ -8,12 +8,40 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module defines many internal naming conventions for use by the
-   two code generators, [CodeBackend] and [TableBackend]. It also offers
-   a few code generation facilities. *)
+(**This module defines many internal naming conventions for use by the
+   two code generators, [CodeBackend] and [TableBackend]. It also
+   offers a few code generation facilities. *)
 
 open IL
-open Grammar
+open MiddleAPI
+
+module Make (G : GRAMMAR) (X : sig
+
+  (**[exn_carries_state] determines whether the exception [Error] should carry
+     an argument, which is a state number. This is the state where a syntax
+     error is detected. This feature is supported only by the code back-end. *)
+  val exn_carries_state: bool
+
+  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+     then they are defined as abbreviations for pre-existing types [M.token]
+     and ['a M.Interpreter.terminal]. *)
+  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
+
+  (**If [represent_values] is [true] then every stack cell is forced to
+     contain a semantic value. If it is [false] then a stack cell that
+     corresponds to a terminal symbol whose OCaml type is [unit] does not
+     contain a semantic value. *)
+  val represent_values: bool
+
+ (**If [noprefix] is [false] then most identifiers begin with an unlikely
+    prefix, in order to avoid name collisions. If [noprefix] is [true] then
+    this prefix is removed. This makes the code more readable but can cause
+    name collisions. *)
+  val noprefix: bool
+
+end) : sig
+open G
 
 (* -------------------------------------------------------------------------- *)
 
@@ -124,3 +152,5 @@ val call_stop: int -> expr
 val basics: string
 
 val mbasics: PlainSyntax.grammar -> structure
+
+end
