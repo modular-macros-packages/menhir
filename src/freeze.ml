@@ -47,12 +47,12 @@ let () =
 
 let () =
   Settings.echo_errors |> Option.iter @@ fun filename ->
-  Messages.echo_errors filename;
+  Messages.echo_errors false filename;
   exit 0
 
 let () =
   Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
-  Messages.echo_errors_concrete filename;
+  Messages.echo_errors true filename;
   exit 0
 
 (* If [--list-errors] is set, produce a list of erroneous input sentences,
