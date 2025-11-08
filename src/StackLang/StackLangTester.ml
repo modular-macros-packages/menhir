@@ -49,10 +49,9 @@ let print_outcome = function
 let run_reference nt sentence : outcome * int =
   let module T = TerminalStream.Make(Grammar) in
   let lexer, lexbuf = T.stream sentence in
-  let trace = Settings.trace
-  and count = ref 0 in
+  let count = ref 0 in
   let outcome =
-    match R.interpret trace count nt lexer lexbuf with
+    match R.interpret count nt lexer lexbuf with
     | Some _cst ->
         Accepted
     | None ->

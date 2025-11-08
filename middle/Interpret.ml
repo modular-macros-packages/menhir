@@ -63,10 +63,9 @@ let interpret_sentence show_cst sentence : unit =
      error ([EndOfStream]). *)
 
   let lexer, lexbuf = T.stream toks in
-  let trace = X.trace
-  and count = ref 0 (* unused *) in
+  let count = ref 0 (* unused *) in
   begin match
-    R.interpret trace count nt lexer lexbuf
+    R.interpret count nt lexer lexbuf
   with
 
   | Some cst ->
@@ -100,7 +99,7 @@ let interpret_error_sentence sentence fail succeed =
   let nt = Sentence.start sentence
   and (_, terminals) = sentence in
   let count = ref 0 (* unused *) in
-  match R.check_error_path X.trace count nt terminals with
+  match R.check_error_path count nt terminals with
   | R.OInputReadPastEnd ->
       fail "no syntax error occurs."
   | R.OInputNotFullyConsumed ->

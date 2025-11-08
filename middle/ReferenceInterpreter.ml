@@ -18,6 +18,10 @@ module Make (Lr1 : LR1) (X : sig
      [IncrementalEngine]. *)
   val strategy: [`Legacy | `Simplified]
 
+  (**[trace] determines whether the interpreter should log its actions
+     to the standard error channel. *)
+  val trace: bool
+
 end) = struct
 open Lr1.Lr0.G
 open X
@@ -29,13 +33,9 @@ let dummy_pos = Lexing.dummy_pos
 (* The signature [MenhirLib.EngineTypes.LOG] defines a set of logging hooks.
    We implement these hooks for use by the reference interpreter. *)
 
-(* Our implementation is parameterized with [trace] and [count]. *)
+(* Our implementation is parameterized with [count]. *)
 
 module MakeLoggingHooks (X : sig
-
-  (* [trace] determines whether the messages must be sent to [stderr]
-     or suppressed. *)
-  val trace : bool
 
   (* The reference [count] is used to count the number of messages,
      regardless of whether these messages are visible. Each message
@@ -322,7 +322,7 @@ end
 
 (* This is the interpreter's main entry point. *)
 
-let interpret trace count nt lexer lexbuf =
+let interpret count nt lexer lexbuf =
 
   (* Instantiate the LR engine. *)
 
@@ -331,7 +331,6 @@ let interpret trace count nt lexer lexbuf =
       include T
       (* The logging hooks. *)
       module Log = MakeLoggingHooks(struct
-        let trace = trace
         let count = count
       end)
       (* We want our logging hooks to be called. *)
@@ -375,7 +374,7 @@ type check_error_path_outcome =
      LR automaton. *)
 | OK of target
 
-let check_error_path trace count nt input =
+let check_error_path count nt input =
 
   (* Instantiate the LR engine. *)
 
@@ -384,7 +383,6 @@ let check_error_path trace count nt input =
       include T
       (* The logging hooks. *)
       module Log = MakeLoggingHooks(struct
-        let trace = trace
         let count = count
       end)
       (* We want our logging hooks to be called. *)
