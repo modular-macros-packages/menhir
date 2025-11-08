@@ -21,16 +21,12 @@ open IL
 (**The type ['a terminal] describes the terminal symbols.
    A terminal symbol is just a tag; it does not carry a semantic value. *)
 
+(**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+   are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+   then they are defined as abbreviations for pre-existing types [M.token] and
+   ['a M.Interpreter.terminal]. *)
 type mode =
-
-  | DefineTokenType
-    (**Generate definitions of the type [token] and ['a terminal] as
-       algebraic data types. *)
-
-  | UseExternalTokenType of string
-    (**Generate definitions of the type [token] and ['a terminal] as
-       abbreviations for pre-existing types [M.token] and
-       ['a M.Interpreter.terminal]. *)
+  [ `DefineTokenType | `UseExternalTokenType of string]
 
 (**[interpreter] is the name of the [Interpreter] submodule,
    which is generated when the table back-end is used. *)

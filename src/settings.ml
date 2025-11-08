@@ -27,13 +27,13 @@ let set_backend b () =
   backend := b
 
 let mode =
-  ref TokenType.DefineTokenType
+  ref `DefineTokenType
 
 let token_type_only =
   ref false
 
 let only_tokens () =
-  mode := TokenType.DefineTokenType;
+  mode := `DefineTokenType;
   token_type_only := true
 
 let is_uppercase_ascii c =
@@ -49,7 +49,7 @@ let codeonly m =
     fprintf stderr "Error: %s is not a valid OCaml module name.\n" m;
     exit 1
   end;
-  mode := TokenType.UseExternalTokenType m;
+  mode := `UseExternalTokenType m;
   token_type_only := false
 
 let version =

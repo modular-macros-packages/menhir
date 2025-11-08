@@ -22,10 +22,11 @@ val backend: [
 (** The list of file names that appear on the command line. *)
 val filenames: string list
 
-(**[mode] influences the generation of the types [token] and [_ terminal]
-   as well as the manner in which the data constructors of these types are
-   qualified. See [TokenType]. *)
-val mode: TokenType.mode
+(**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+   are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+   then they are defined as abbreviations for pre-existing types [M.token] and
+   ['a M.Interpreter.terminal]. *)
+val mode: [ `DefineTokenType | `UseExternalTokenType of string]
 
 (**If [token_type_only] is true then Menhir stops after generating the
    definition of the type [token]. This corresponds to [--only-tokens]. *)

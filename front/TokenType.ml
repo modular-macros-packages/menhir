@@ -14,8 +14,7 @@ open IL
 open ILConstruction
 
 type mode =
-  | DefineTokenType
-  | UseExternalTokenType of string
+  [ `DefineTokenType | `UseExternalTokenType of string]
 
 let interpreter =
   "MenhirInterpreter"
@@ -37,19 +36,19 @@ let ttokengadtdata token =
 
 (* The token type and the token GADT can be referred to via an unqualified
    name, regardless of how they have been defined (either directly or as an
-   abbreviation). However, if the mode is [UseExternalTokenType _], then the
+   abbreviation). However, if the mode is [`UseExternalTokenType _], then the
    data constructors must be qualified. *)
 
-(* If the mode is [UseExternalTokenType M] then the data constructors of the
+(* If the mode is [`UseExternalTokenType M] then the data constructors of the
    type [token] must be prefixed with [M.] and the data constructors of the
    type [_ terminal] must be prefixed with [M.Interpreter.]. This was fixed
    on 2023/04/28. *)
 
 let tokenprefix mode id =
   match mode with
-  | UseExternalTokenType m ->
+  | `UseExternalTokenType m ->
       m ^ "." ^ id
-  | DefineTokenType ->
+  | `DefineTokenType ->
       id
 
 let tokendata =
@@ -57,10 +56,10 @@ let tokendata =
 
 let tokengadtprefix mode id =
   match mode with
-  | UseExternalTokenType m ->
+  | `UseExternalTokenType m ->
       let m' = m ^ "." ^ interpreter in
       m' ^ "." ^ id
-  | DefineTokenType ->
+  | `DefineTokenType ->
       id
 
 let tokengadtdata mode token =
@@ -68,7 +67,7 @@ let tokengadtdata mode token =
 
 let tokentyperhs mode grammar =
   match mode with
-  | DefineTokenType ->
+  | `DefineTokenType ->
       (* Algebraic data type. *)
       TDefSum (
         List.map (fun (tok, typo) -> {
@@ -80,7 +79,7 @@ let tokentyperhs mode grammar =
           unboxed = false;
         }) (typed_tokens grammar)
       )
-  | UseExternalTokenType _ ->
+  | `UseExternalTokenType _ ->
       (* Type abbreviation. *)
       TAbbrev (TypApp (tokenprefix mode tctoken, []))
 
@@ -102,7 +101,7 @@ let tokentypedef mode grammar =
 
 let tokengadt_param_rhs mode grammar =
   match mode with
-  | DefineTokenType ->
+  | `DefineTokenType ->
       (* Generalized algebraic data type. *)
       let param = "_" in
       param,
@@ -122,7 +121,7 @@ let tokengadt_param_rhs mode grammar =
           unboxed = false;
         }) (("error", None) :: typed_tokens grammar)
       )
-  | UseExternalTokenType _ ->
+  | `UseExternalTokenType _ ->
       (* Type abbreviation. *)
       let param = "a" in
       param,
