@@ -12,6 +12,7 @@ open Printf
 open Attribute
 open IL
 open ILConstruction
+open MiddleAPI
 
 (* This module generates the code and the signature of the unparsing API. *)
 
@@ -27,21 +28,7 @@ open ILConstruction
 
 (* Naming conventions. *)
 
-module NamingConventions (G : sig
-  module Terminal : sig
-    type t
-    val print: t -> string
-  end
-  module Nonterminal : sig
-    type t
-    val print: bool -> t -> string
-  end
-  module Production : sig
-    type t
-    val attributes: t -> attributes
-  end
-end)
-= struct
+module NamingConventions (G : GRAMMAR) = struct
 open G
 
 (* ------------------------------------------------------------------------ *)
@@ -158,39 +145,7 @@ end
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
 
-module Code (G : sig
-  module Terminal : sig
-    type t
-    val sharp: t
-    val encode: t -> int
-    val print: t -> string
-    val real: t -> bool
-    val unquoted_alias: t -> string option
-    val ocamltype: t -> ocamltype option
-    val map_real: (t -> 'a) -> 'a list
-  end
-  module Nonterminal : sig
-    type t
-    val print: bool -> t -> string
-    val mapx: (t -> 'a) -> 'a list
-  end
-  module Symbol : sig
-    type t =
-      | N of Nonterminal.t
-      | T of Terminal.t
-  end
-  module Production : sig
-    type t
-    val encode: t -> int
-    val print: t -> string
-    val rhs: t -> Symbol.t array
-    val attributes: t -> attributes
-    val positions: t -> Range.range list
-    val error_free: t -> bool
-    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
-    val mapx: (t -> 'a) -> 'a list
-  end
-end)
+module Code (G : GRAMMAR)
 (A : sig
   (* A list of the start symbols and corresponding start states. *)
   val entry: (G.Nonterminal.t * int) list
@@ -687,41 +642,9 @@ end
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
 
-module Interface (G : sig
-  module Terminal : sig
-    type t
-    val print: t -> string
-    val real: t -> bool
-    val unquoted_alias: t -> string option
-    val ocamltype: t -> ocamltype option
-    val map_real: (t -> 'a) -> 'a list
-  end
-  module Nonterminal : sig
-    type t
-    val print: bool -> t -> string
-    val mapx: (t -> 'a) -> 'a list
-  end
-  module Symbol : sig
-    type t =
-      | N of Nonterminal.t
-      | T of Terminal.t
-  end
-  module Production : sig
-    type t
-    val print: t -> string
-    val rhs: t -> Symbol.t array
-    val attributes: t -> attributes
-    val error_free: t -> bool
-    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
-    val mapx: (t -> 'a) -> 'a list
-  end
-end)
-(A : sig
-  val entry: G.Nonterminal.t list
-end)
+module Interface (G : GRAMMAR)
 = struct
 open G
-open A
 
 include NamingConventions(G)
 
@@ -934,7 +857,7 @@ and prod_method_params prod : typ list =
 
 and all_settle_decls () : interface =
   (* For each start symbol [nt], we expose a resolution algorithm. *)
-  List.map settle_decl entry
+  List.map settle_decl Nonterminal.user_start_symbols
 
 and settle_decl nt : interface_item =
   IIValDecls [(settle_name nt, type2scheme (settle_type nt))]
@@ -950,9 +873,7 @@ end
 (* ------------------------------------------------------------------------ *)
 
 (* The following glue code re-packages the functor [Interface] as a function
-   that takes a grammar as an argument. This is required in order to avoid a
-   dependency of [UnparsingAPI] on [Grammar]. It will hopefully be removed at
-   some point in the future (see TODO.md). *)
+   that takes a grammar as an argument. *)
 
 open PlainSyntax
 
@@ -960,8 +881,5 @@ let unparsing_API (grammar : grammar) : interface =
   let module G = GrammarConstruction.Make(struct
     let grammar = grammar
   end)() in
-  let module A = struct
-    let entry = G.Nonterminal.user_start_symbols
-  end in
-  let module I = Interface(G)(A) in
+  let module I = Interface(G) in
   I.unparsing_API()

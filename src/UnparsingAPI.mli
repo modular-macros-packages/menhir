@@ -8,44 +8,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Attribute
+(**This module generates the code and the signature of the unparsing API. *)
+
 open IL
+open MiddleAPI
 
-(* This module generates the code and the signature of the unparsing API. *)
-
-module Code (G : sig
-  module Terminal : sig
-    type t
-    val encode: t -> int
-    val print: t -> string
-    val sharp: t
-    val real: t -> bool
-    val unquoted_alias: t -> string option
-    val ocamltype: t -> ocamltype option
-    val map_real: (t -> 'a) -> 'a list
-  end
-  module Nonterminal : sig
-    type t
-    val print: bool -> t -> string
-    val mapx: (t -> 'a) -> 'a list
-  end
-  module Symbol : sig
-    type t =
-      | N of Nonterminal.t
-      | T of Terminal.t
-  end
-  module Production : sig
-    type t
-    val encode: t -> int
-    val rhs: t -> Symbol.t array
-    val attributes: t -> attributes
-    val positions: t -> ranges
-    val print: t -> string
-    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
-    val mapx: (t -> 'a) -> 'a list
-    val error_free: t -> bool
-  end
-end)
+module Code (G : GRAMMAR)
 (A : sig
   (* A list of the start symbols and corresponding start states. *)
   val entry: (G.Nonterminal.t * int) list
@@ -57,38 +25,7 @@ end)
   val unparsing_API : unit -> structure
 end
 
-module Interface (G : sig
-  module Terminal : sig
-    type t
-    val print: t -> string
-    val real: t -> bool
-    val unquoted_alias: t -> string option
-    val ocamltype: t -> ocamltype option
-    val map_real: (t -> 'a) -> 'a list
-  end
-  module Nonterminal : sig
-    type t
-    val print: bool -> t -> string
-    val mapx: (t -> 'a) -> 'a list
-  end
-  module Symbol : sig
-    type t =
-      | N of Nonterminal.t
-      | T of Terminal.t
-  end
-  module Production : sig
-    type t
-    val print: t -> string
-    val rhs: t -> Symbol.t array
-    val attributes: t -> attributes
-    val error_free: t -> bool
-    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
-    val mapx: (t -> 'a) -> 'a list
-  end
-end)
-(A : sig
-  val entry: G.Nonterminal.t list
-end)
+module Interface (G : GRAMMAR)
 : sig
   val unparsing_API : unit -> interface
 end
