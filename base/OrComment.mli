@@ -29,12 +29,16 @@ val fold : ('a -> 'b -> 'a) -> 'a -> 'b t -> 'a
 (**[fold] transforms the things (of which there are zero or one). *)
 val map : ('a -> 'b) -> 'a t -> 'b t
 
-(**[to_option] transforms the things (of which there are zero or one)
-   into an option. *)
-val to_option : 'a t -> 'a option
+(**[things xs] keeps the things in the list [xs], throwing away the
+   comments. *)
+val things: 'a t list -> 'a list
 
 (**[count] counts the things in a list of things or comments. *)
 val count : 'a t list -> int
+
+(**[gather] turns a list of things and comments into a list of
+   things-followed-with-comments. Any leading comments are silently lost. *)
+val gather : 'a t list -> ('a * comment list) list
 
 open Validate
 

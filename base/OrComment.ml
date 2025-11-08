@@ -42,6 +42,9 @@ let to_option = function
   | Comment _ ->
       None
 
+let things xs =
+  MList.filter_map to_option xs
+
 let count accu = function
   | Thing _ ->
       accu + 1
@@ -53,3 +56,19 @@ let count xs =
 
 let validate validate c =
   map (validate c)
+
+let rec gather (xs : 'a t list) : ('a * comment list) list =
+  match xs with
+  | Comment _ :: xs ->
+      gather xs
+  | Thing x :: xs ->
+      gather_thing x [] xs
+  | [] ->
+      []
+
+and gather_thing x cs xs =
+  match xs with
+  | Comment c :: xs ->
+      gather_thing x (c :: cs) xs
+  | _ ->
+      (x, List.rev cs) :: gather xs
