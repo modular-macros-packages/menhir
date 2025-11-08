@@ -26,6 +26,9 @@ let () =
   | `Error ->
       I.interpret_error()
 
+module Messages =
+  Messages.Make(Lr1)(Settings)
+
 let () =
   Settings.compile_errors |> Option.iter @@ fun filename ->
   Messages.compile_errors filename;

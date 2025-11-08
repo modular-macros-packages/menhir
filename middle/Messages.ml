@@ -12,14 +12,27 @@ open Printf
 open OrComment
 open RawSentence
 open Validate
-open Grammar
+open MiddleAPI
 
-module Settings = struct
-  include Settings
-  let trace = false
-end
+module Make (Lr1 : LR1) (X : sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+  (**[comment] determines whether comments should be included in the
+     OCaml code that is generated. *)
+  val comment: bool
+
+end) = struct
+open Lr1.Lr0.G
+
 module R =
-  ReferenceInterpreter.Make(Lr1)(Settings)
+  ReferenceInterpreter.Make(Lr1)(struct
+  include X
+  let trace = false
+end)
 
 (* --------------------------------------------------------------------------- *)
 
@@ -326,7 +339,7 @@ let compile_runs filename (oruns : oruns) : unit =
   let module P = ILPrinter.Make (struct
     let f = stdout
     let print_line_directives = None
-    let print_comments = Settings.comment
+    let print_comments = X.comment
   end) in
   P.program program
 
@@ -768,3 +781,7 @@ let echo_errors (concrete : bool) filename =
     printf
       "## Concrete syntax: %s\n"
       (Sentence.print `Concrete sentence)
+
+(* --------------------------------------------------------------------------- *)
+
+end (* Make *)

@@ -10,6 +10,21 @@
 
 (**This module contains most of the code that deals with [.messages] files. *)
 
+open MiddleAPI
+
+module Make (Lr1 : LR1) (X : sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+  (**[comment] determines whether comments should be included in the
+     OCaml code that is generated. *)
+  val comment: bool
+
+end) : sig
+
 (**The name of a [.messages] file. *)
 type filename =
   string
@@ -44,3 +59,5 @@ val update_errors: filename -> unit
    every sentence is followed with an auto-generated comment that shows its
    concrete syntax. *)
 val echo_errors: bool -> filename -> unit
+
+end
