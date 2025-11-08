@@ -51,3 +51,11 @@ val flush: out_channel -> channel -> unit
    the number of messages that have been written to the channel [c] is nonzero
    then the process is aborted with exit status 1. *)
 val monitor : [`Strict | `Lax] -> (channel -> 'a) -> 'a
+
+(**[create()] creates a fresh channel. *)
+val create: unit -> channel
+
+(**[exit_if c] flushes the channel [c] to [stderr]. Furthermore, if the number
+   of messages that have been written to the channel [c] is nonzero then the
+   process is aborted with exit status 1. *)
+val exit_if: channel -> unit

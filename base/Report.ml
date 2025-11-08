@@ -26,6 +26,10 @@ let flush f c =
   Printf.fprintf f "%s%!" (Buffer.contents b);
   Buffer.clear b
 
+let exit_if c =
+  flush stderr c;
+  if count c > 0 then exit 1
+
 let monitor (strict : [`Strict | `Lax]) action =
   let c = create() in
   match action c with
