@@ -40,13 +40,21 @@ end
 
 module DCST : sig
   
+  (* The type of DCSTs for the nonterminal symbol [main]. *)
+  
+  type main
+  
   (* The type of DCSTs for the nonterminal symbol [expr]. *)
   
   type expr
   
-  (* The type of DCSTs for the nonterminal symbol [main]. *)
+  (* The binary choice constructor at type [main]. *)
   
-  type main
+  val main_choice: main -> main -> main
+  
+  (* main -> expr EOL *)
+  
+  val eol: expr -> main
   
   (* The binary choice constructor at type [expr]. *)
   
@@ -80,25 +88,17 @@ module DCST : sig
   
   val div: expr -> expr -> expr
   
-  (* The binary choice constructor at type [main]. *)
-  
-  val main_choice: main -> main -> main
-  
-  (* main -> expr EOL *)
-  
-  val eol: expr -> main
-  
 end
 
 module CST : sig
   
-  (* The type of CSTs for the nonterminal symbol [expr]. *)
-  
-  type expr
-  
   (* The type of CSTs for the nonterminal symbol [main]. *)
   
   type main
+  
+  (* The type of CSTs for the nonterminal symbol [expr]. *)
+  
+  type expr
   
   (* This visitor helps transform concrete syntax trees into something else. *)
   
@@ -136,13 +136,11 @@ module CST : sig
     
     (* One method per nonterminal symbol. *)
     
-    method visit_expr : expr -> 'r
-    
     method visit_main : main -> 'r
     
-    (* One method per production. *)
+    method visit_expr : expr -> 'r
     
-    method case_eol : expr -> 'r
+    (* One method per production. *)
     
     method case_int : (int) -> 'r
     
@@ -157,6 +155,8 @@ module CST : sig
     method case_mul : expr -> expr -> 'r
     
     method case_div : expr -> expr -> 'r
+    
+    method case_eol : expr -> 'r
     
   end
   
