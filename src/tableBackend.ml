@@ -1069,7 +1069,7 @@ let unparsing_API () : structure =
     (* The internal name of the module that contains the parse tables. *)
     let tables = interpreter ^ "." ^ et
   end in
-  let module C = UnparsingAPI.Code(Grammar)(A)(N) in
+  let module C = UnparsingAPI.Code(Grammar)(A)(N)(Settings) in
   C.unparsing_API()
 
 (* ------------------------------------------------------------------------ *)

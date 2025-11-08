@@ -22,9 +22,11 @@ open ILConstruction
 module CodePieces =
   CodePieces.Make(Grammar)(Settings)
 let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
-let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics =
-  CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit,
-              basics, mbasics)
+let semvtype, call_stop, basics, mbasics =
+  CodePieces.(semvtype, call_stop, basics, mbasics)
+module ILTokens =
+  ILTokens.Make(Grammar)(Settings)
+open ILTokens
 let exvar (r : register) = EVar (Reg.export r)
 let pxvar (r : register) = PVar (Reg.export r)
 let exvars rs = map exvar rs

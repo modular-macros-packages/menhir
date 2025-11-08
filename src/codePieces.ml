@@ -46,6 +46,9 @@ open G
 
 module TokenType =
   TokenType.Make(X)
+module ILTokens =
+  ILTokens.Make(G)(X)
+open ILTokens
 
 (* -------------------------------------------------------------------------- *)
 (* Here is a bunch of naming conventions. Our names are chosen to minimize
@@ -187,39 +190,6 @@ let semvtype = function
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns for tokens. *)
-
-let tokendata =
-  TokenType.tokendata
-
-(* [tokpat tok pat] is a pattern that matches the token [tok] and binds
-   its semantic value (if it has one) to the pattern [pat]. *)
-
-let tokpat tok pat =
-  let data = tokendata (Terminal.print tok) in
-  PData (
-    data,
-    if Terminal.ocamltype tok = None then [] else [ pat ]
-  )
-
-(* [tok_bind_unit tok pat e] binds the pattern [pat] to the unit value
-   in the expression [e] if the token [tok] has no semantic value.
-   Otherwise, it returns just [e]. *)
-
-let tok_bind_unit tok pat e =
-  if Terminal.ocamltype tok = None then
-    blet ([ (pat, EUnit) ], e)
-  else
-    e
-
-(* [tokspat toks] is a pattern that matches any token in the set [toks],
-   without binding its semantic value. *)
-
-let tokspat toks =
-  POr (
-    TerminalSet.fold (fun tok pats ->
-      tokpat tok PWildcard :: pats
-    ) toks []
-  )
 
 (* [destructuretokendef name codomain bindsemv branch] generates the
    definition of a function that destructures tokens. [name] is the

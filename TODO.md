@@ -302,9 +302,6 @@
   all of `Invariant`,
   `Origin`.
 
-* `tokpat` are duplicated in CodePieces and UnparsingAPI.
-   They could move into TokenType.
-
 * Grep for `artificial dependency` and remove these artificial dependencies.
   Ideally, there should be no implicit (global) state ("the" grammar, "the"
   automaton). The grammar, the automaton, the settings, etc., should be

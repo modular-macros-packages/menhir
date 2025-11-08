@@ -155,10 +155,24 @@ module Code (G : GRAMMAR)
 end)
 (N : sig
   val tables: string
-end) = struct
+end)
+(X : sig
+
+  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+     then they are defined as abbreviations for pre-existing types [M.token]
+     and ['a M.Interpreter.terminal]. *)
+  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
+
+end)
+= struct
 open G
 open A
 open N
+
+module ILTokens =
+  ILTokens.Make(G)(X)
+open ILTokens
 
 (* ------------------------------------------------------------------------ *)
 
@@ -250,33 +264,6 @@ let icst_nonterminal =
 
 let isettle =
   settle ^ ".settle"
-
-(* ------------------------------------------------------------------------ *)
-
-(* Auxiliary functions for code generation. *)
-
-let tokendata t =
-  TokenType.tokendata t
-
-(* [tokpat tok pat] is a pattern that matches the token [tok] and binds
-   its semantic value (if it has one) to the pattern [pat]. *)
-
-let tokpat tok pat =
-  let data = tokendata (Terminal.print tok) in
-  PData (
-    data,
-    if Terminal.ocamltype tok = None then [] else [ pat ]
-  )
-
-(* [tokexpr tok e] is an expression that constructs the token [tok],
-   taking its semantic value (if it needs one) from the expression [e]. *)
-
-let tokexpr tok e =
-  let data = tokendata (Terminal.print tok) in
-  EData (
-    data,
-    if Terminal.ocamltype tok = None then [] else [ e ]
-  )
 
 (* ------------------------------------------------------------------------ *)
 
