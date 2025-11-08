@@ -28,4 +28,4 @@ val incremental: string
 
 (* This writes the interface of the generated parser to the [.mli] file. *)
 
-val write: grammar -> unit -> unit
+val write: grammar -> string -> unit -> unit

@@ -34,6 +34,7 @@ let write program =
 (* Construct and print the code using an appropriate back-end. *)
 
 let () =
+  let mli = Settings.base ^ ".mli" in
   match Settings.backend with
   | `ReferenceInterpreter ->
       (* This case is handled in Freeze. *)
@@ -41,7 +42,7 @@ let () =
   | `TableBackend ->
       let module B = TableBackend.Run () in
       write B.program;
-      Interface.write Front.grammar ()
+      Interface.write Front.grammar mli ()
   | `CoqBackend ->
       let module B = CoqBackend.Run () in
       let filename = Settings.base ^ ".v" in
@@ -50,7 +51,7 @@ let () =
   | `CodeBackend ->
       let module B = CodeBackend.Run () in
       write B.program;
-      Interface.write Front.grammar ()
+      Interface.write Front.grammar mli ()
   | `NoBackend ->
       (* If no back-end was selected then we must have exited earlier. *)
       assert false

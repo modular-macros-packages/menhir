@@ -317,7 +317,7 @@ let depend postprocess grammar =
     IO.moving_away mlname @@ fun () ->
     IO.moving_away mliname @@ fun () ->
     IO.with_file mlname (write grammar mlname) @@ fun () ->
-    IO.with_file mliname (Interface.write grammar) @@ fun () ->
+    IO.with_file mliname (Interface.write grammar mliname) @@ fun () ->
     invoke ocamldep_command
   in
 

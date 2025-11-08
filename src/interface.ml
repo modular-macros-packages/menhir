@@ -191,9 +191,8 @@ let interface grammar = [
 
 (* Writing the interface to a file. *)
 
-let write grammar () =
-  assert (not Settings.token_type_only);
-  let mli = open_out (Settings.base ^ ".mli") in
+let write grammar mliname () =
+  let mli = open_out mliname in
   let module P = ILPrinter.Make (struct
     let f = mli
     let print_line_directives = None
