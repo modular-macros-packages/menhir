@@ -154,14 +154,8 @@ let semvtypes = function
 
 (* -------------------------------------------------------------------------- *)
 
-(* Patterns for tokens. *)
-
-(* [destruct_token_def name codomain bindsemv branch] generates the
-   definition of a function that destructures tokens. [name] is the
-   name of the function that is generated. [codomain] is its return
-   type. [bindsemv] tells whether the variable [semv] should be
-   bound. [branch] is applied to each (real) terminal and must
-   produce code for each branch. *)
+(* [destruct_token_def] constructs the definition of a function that
+   deconstructs tokens. *)
 
 let destruct_token_def name codomain bindsemv branch = {
   valpat = PVar name;
@@ -169,12 +163,9 @@ let destruct_token_def name codomain bindsemv branch = {
     annotate (
       EFun ([ PVar token ],
         EMatch (EVar token,
-          Terminal.fold (fun tok branches ->
-            if Terminal.special tok then
-              branches
-            else
-              { branchpat = tokpat tok (if bindsemv then PVar semv else PWildcard);
-                branchbody = branch tok } :: branches
+          Terminal.fold_real (fun t branches ->
+            { branchpat = tokpat t (if bindsemv then PVar semv else PWildcard);
+              branchbody = branch t } :: branches
           ) []
         )
       )
