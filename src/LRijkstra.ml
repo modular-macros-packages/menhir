@@ -227,7 +227,7 @@ let () =
         let c = Nonterminal.compare nt1 nt2 in
         if c <> 0 then c else Word.compare w2 w1
     )
-  |> List.map (fun (nt, w, target) -> (nt, Word.elements w, target))
+  |> List.map (fun (nt, w, target) -> ((Some nt, Word.elements w), target))
   |> List.iter Interpret.print_messages_item
 
 (* ------------------------------------------------------------------------ *)

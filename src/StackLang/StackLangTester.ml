@@ -45,7 +45,8 @@ let print_outcome = function
    of the trace (regardless of whether the trace is actually visible). *)
 
 let run_reference nt sentence : outcome * int =
-  let lexer, lexbuf = Interpret.stream sentence in
+  let module T = TerminalStream.Make(Grammar) in
+  let lexer, lexbuf = T.stream sentence in
   let strategy = Settings.strategy
   and show = Settings.trace
   and count = ref 0 in
@@ -55,7 +56,7 @@ let run_reference nt sentence : outcome * int =
         Accepted
     | None ->
         Rejected
-    | exception Interpret.EndOfStream ->
+    | exception T.EndOfStream ->
         Overshoot
     | exception e ->
         Crash e
@@ -69,7 +70,8 @@ let run_reference nt sentence : outcome * int =
 exception BoundExceeded
 
 let run_candidate candidate bound sentence : outcome * int =
-  let lexer, lexbuf = Interpret.stream sentence in
+  let module T = TerminalStream.Make(Grammar) in
+  let lexer, lexbuf = T.stream sentence in
   let count = ref 0 in
   let log s =
     if Settings.trace then prerr_string s;
@@ -87,7 +89,7 @@ let run_candidate candidate bound sentence : outcome * int =
         Rejected
     | exception BoundExceeded ->
         TraceTooLong bound
-    | exception Interpret.EndOfStream ->
+    | exception T.EndOfStream ->
         Overshoot
     | exception e ->
         Crash e

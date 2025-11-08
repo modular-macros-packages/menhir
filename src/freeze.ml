@@ -27,32 +27,32 @@ let () =
 
 let () =
   Settings.compile_errors |> Option.iter @@ fun filename ->
-  Interpret.Command.compile_errors filename;
+  Messages.compile_errors filename;
   exit 0
 
 let () =
   Settings.compare_errors |> Option.iter @@ fun (filename1, filename2) ->
-  Interpret.Command.compare_errors filename1 filename2;
+  Messages.compare_errors filename1 filename2;
   exit 0
 
 let () =
   Settings.merge_errors |> Option.iter @@ fun (filename1, filename2) ->
-  Interpret.Command.merge_errors filename1 filename2;
+  Messages.merge_errors filename1 filename2;
   exit 0
 
 let () =
   Settings.update_errors |> Option.iter @@ fun filename ->
-  Interpret.Command.update_errors filename;
+  Messages.update_errors filename;
   exit 0
 
 let () =
   Settings.echo_errors |> Option.iter @@ fun filename ->
-  Interpret.Command.echo_errors filename;
+  Messages.echo_errors filename;
   exit 0
 
 let () =
   Settings.echo_errors_concrete |> Option.iter @@ fun filename ->
-  Interpret.Command.echo_errors_concrete filename;
+  Messages.echo_errors_concrete filename;
   exit 0
 
 (* If [--list-errors] is set, produce a list of erroneous input sentences,
