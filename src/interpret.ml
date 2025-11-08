@@ -9,7 +9,12 @@
 (******************************************************************************)
 
 open Printf
-open Grammar
+open MiddleAPI
+
+module Make (Lr1 : LR1) = struct
+module Lr0 = Lr1.Lr0
+module G = Lr0.G
+open G
 
 module R =
   ReferenceInterpreter.Make(Lr1)
@@ -39,7 +44,7 @@ type target =
 let interpret_sentence show_cst sentence : unit =
   let nt = Sentence.start sentence
   and _, toks = sentence in
-  let module T = TerminalStream.Make(Grammar) in
+  let module T = TerminalStream.Make(G) in
 
   (* Run the reference interpreter. This can produce a concrete syntax tree
      ([Some cst]), fail with a parser error ([None]), or fail with a lexer
@@ -251,3 +256,5 @@ module Command = struct
         interpret_error sentence (* never returns *)
 
 end (* Command *)
+
+end (* Make *)

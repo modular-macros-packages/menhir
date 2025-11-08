@@ -31,6 +31,7 @@
 
 open Grammar
 module R = ReferenceInterpreter.Make(Lr1)
+module I = Interpret.Make(Lr1)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -228,7 +229,7 @@ let () =
         if c <> 0 then c else Word.compare w2 w1
     )
   |> List.map (fun (nt, w, target) -> ((Some nt, Word.elements w), target))
-  |> List.iter Interpret.print_messages_item
+  |> List.iter I.print_messages_item
 
 (* ------------------------------------------------------------------------ *)
 

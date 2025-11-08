@@ -17,13 +17,14 @@ let () =
    [--compile-errors], [--compare-errors], etc. *)
 
 let () =
+  let module I = Interpret.Make(Lr1) in
   match Settings.interpret with
   | `No ->
       ()
   | `Normal show_cst ->
-      Interpret.Command.interpret show_cst
+      I.Command.interpret show_cst
   | `Error ->
-      Interpret.Command.interpret_error()
+      I.Command.interpret_error()
 
 let () =
   Settings.compile_errors |> Option.iter @@ fun filename ->

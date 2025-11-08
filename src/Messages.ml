@@ -13,7 +13,9 @@ open OrComment
 open RawSentence
 open Validate
 open Grammar
-open Interpret
+
+module I =
+  Interpret.Make(Lr1)
 
 (* --------------------------------------------------------------------------- *)
 
@@ -97,7 +99,7 @@ let write_tso (tso : tso) =
   match tso with
   | Thing ((_ranges, sentence), target) ->
       (* Every sentence is followed with newly generated auto-comments. *)
-      print_messages_auto (sentence, target)
+      I.print_messages_auto (sentence, target)
   | Comment c ->
       print_string c
 
@@ -138,7 +140,7 @@ fun c raw_sentence ->
   and succeed target =
     (ranges, sentence), target
   in
-  interpret_error_sentence trace sentence fail succeed
+  I.interpret_error_sentence trace sentence fail succeed
 
 (* [validate_entry] validates a raw entry. *)
 
@@ -392,7 +394,7 @@ let compare_errors filename1 filename2 : unit =
      different messages. *)
 
   | sentence2, message2 ->
-      if message1 <> default_message && message1 <> message2 then
+      if message1 <> I.default_message && message1 <> message2 then
         let ranges1 = ranges sentence1
         and ranges2 = ranges sentence2 in
         Report.warning c (ranges1 @ ranges2)
@@ -469,7 +471,7 @@ let toplevel_comment filename =
    additionally tests whether the sentence's target state satisfies [p]. *)
 
 let is_default_run (p : Lr1.node -> bool) (run : run) =
-  run.message = default_message &&
+  run.message = I.default_message &&
   let sentences : targeted_sentence list =
     List.fold_left (OrComment.fold (fun xs x -> x :: xs)) [] run.elements
   in
@@ -642,7 +644,7 @@ let merge_errors filename1 filename2 =
   | Thing run1 ->
 
       let message1 = run1.message in
-      assert (message1 <> default_message);
+      assert (message1 <> I.default_message);
 
       (* The sentences in the queue [retained] are to be associated with
          [message1], forming a run, which is to be inserted at the end. *)
@@ -675,7 +677,7 @@ let merge_errors filename1 filename2 =
               List.iter retain comments
 
           | _sentence2, message2 ->
-              assert (message2 <> default_message);
+              assert (message2 <> I.default_message);
               if message1 <> message2 then
 
                 (* This sentence exists on the right-hand side, with a different

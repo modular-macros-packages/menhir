@@ -8,7 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Grammar
+open MiddleAPI
+
+module Make (Lr1 : LR1) : sig
+open Lr1.Lr0.G
 
 (**A target indicates which state a sentence leads to
    and which spurious reductions are performed at the end.
@@ -68,3 +71,5 @@ module Command : sig
   val interpret_error: unit -> unit
 
 end
+
+end (* Make *)
