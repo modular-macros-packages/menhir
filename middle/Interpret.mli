@@ -23,8 +23,6 @@ module Make (Lr1 : LR1) (X : sig
 
 end) : sig
 
-module Command : sig
-
   (**[interpret show_cst] is a potentially endless interactive loop. It reads
      sentences from the standard input channel and interprets them. If an empty
      sentence is read then the process is stopped with exit code 0. To allow
@@ -37,7 +35,5 @@ module Command : sig
      the number of the state that is reached. Then the process is stopped with
      exit code 0. This behavior corresponds to [--interpret-error]. *)
   val interpret_error: unit -> unit
-
-end
 
 end (* Make *)

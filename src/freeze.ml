@@ -22,9 +22,9 @@ let () =
   | `No ->
       ()
   | `Normal show_cst ->
-      I.Command.interpret show_cst
+      I.interpret show_cst
   | `Error ->
-      I.Command.interpret_error()
+      I.interpret_error()
 
 let () =
   Settings.compile_errors |> Option.iter @@ fun filename ->

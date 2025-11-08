@@ -71,21 +71,6 @@ let interpret_sentence show_cst sentence : unit =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [interpret_error] interprets a sentence, expecting it to end in an error.
-   Failure or success is reported on the standard output channel. *)
-
-let interpret_error sentence =
-  Report.monitor `Strict @@ fun c ->
-  let fail msg =
-    Report.error c [] "%s" msg
-  and succeed target =
-    R.print_messages_item (sentence, target);
-    exit 0
-  in
-  R.interpret_error_sentence sentence fail succeed
-
-(* -------------------------------------------------------------------------- *)
-
 (* [setup c] returns a function [read] which reads one raw sentence from the
    standard input channel and immediately validates it, producing a sentence. *)
 
@@ -114,30 +99,34 @@ let setup c : unit -> Sentence.sentence option =
 
 (* The two commands. *)
 
-module Command = struct
-
-  let interpret show_cst =
-    Report.monitor `Strict @@ fun c ->
-    let read = setup c in
-    printf "Ready!\n%!";
-    while true do
-      match read() with
-      | None ->
-          exit 0
-      | Some sentence ->
-          interpret_sentence show_cst sentence;
-          print_newline()
-    done
-
-  let interpret_error () =
-    Report.monitor `Strict @@ fun c ->
-    let read = setup c in
+let interpret show_cst =
+  Report.monitor `Strict @@ fun c ->
+  let read = setup c in
+  printf "Ready!\n%!";
+  while true do
     match read() with
     | None ->
-        exit 1 (* abnormal: no input *)
+        exit 0
     | Some sentence ->
-        interpret_error sentence (* never returns *)
+        interpret_sentence show_cst sentence;
+        print_newline()
+  done
 
-end (* Command *)
+let interpret_error () =
+  Report.monitor `Strict @@ fun c ->
+  let read = setup c in
+  match read() with
+  | None ->
+      exit 1 (* abnormal: no input *)
+  | Some sentence ->
+      Report.monitor `Strict @@ fun c ->
+      let fail msg =
+        Report.error c [] "%s" msg
+      and succeed target =
+        R.print_messages_item (sentence, target);
+        exit 0
+      in
+      R.interpret_error_sentence sentence fail succeed
+        (* never returns *)
 
 end (* Make *)
