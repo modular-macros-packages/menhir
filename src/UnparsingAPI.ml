@@ -10,7 +10,6 @@
 
 open Printf
 open Attribute
-open PlainSyntaxAccessors
 open IL
 open ILConstruction
 
@@ -958,60 +957,12 @@ end
 open PlainSyntax
 
 let unparsing_API (grammar : grammar) : interface =
-  let module G = struct
-    module Terminal = struct
-      type t = terminal
-      let print t = t
-      let real t = (t <> "error")
-      let unquoted_alias t = unquoted_alias grammar t
-      let ocamltype t = ocamltype_of_token grammar t
-      let map_real f = List.map f (tokens grammar)
-    end
-    module Nonterminal = struct
-      type t = nonterminal
-      let print normalize nt =
-        if normalize then MString.normalize nt else nt
-      let mapx f =
-        List.rev_map f (nonterminals grammar)
-    end
-    module Symbol = struct
-      type t =
-        | N of Nonterminal.t
-        | T of Terminal.t
-    end
-    let producer2symbol producer =
-      let symbol = producer.prod_symbol in
-      if is_nonterminal grammar symbol then
-        Symbol.N symbol
-      else
-        Symbol.T symbol
-    module Production = struct
-      type t = nonterminal * branch
-      let print (nt, branch) = print_production nt branch
-      let rhs (_nt, branch) =
-        branch.producers
-        |> List.map producer2symbol
-        |> Array.of_list
-      let attributes (_nt, branch) = branch.br_attributes
-      let error_free_producer producer =
-        producer.prod_symbol <> "error"
-      let error_free (_nt, branch) =
-        List.for_all error_free_producer branch.producers
-      let mapnt nt f =
-        assert (StringMap.mem nt grammar.rules);
-        let rule = StringMap.find nt grammar.rules in
-        List.map (fun branch -> f (nt, branch)) rule.branches
-      let productions grammar : t list =
-        StringMap.fold (fun nt rule accu ->
-          List.map (fun branch -> (nt, branch)) rule.branches @
-          accu
-        ) grammar.rules []
-      let mapx f =
-        List.map f (productions grammar)
-    end
-  end in
+  let module G = GrammarConstruction.Make(struct
+    let grammar = grammar
+  end)() in
   let module A = struct
-    let entry = StringSet.elements grammar.start_symbols
+    let entry =
+      List.map G.Nonterminal.lookup (StringSet.elements grammar.start_symbols)
   end in
   let module I = Interface(G)(A) in
   I.unparsing_API()
