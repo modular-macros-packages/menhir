@@ -23,10 +23,15 @@ module Make (Lr1 : LR1) (X : sig
   val trace: bool
 
 end) = struct
-open Lr1.Lr0.G
+module Lr0 = Lr1.Lr0
+module G = Lr0.G
+open G
 open X
 open CST
 let dummy_pos = Lexing.dummy_pos
+
+module StackSymbolsShort =
+  StackSymbols.Short(Lr1)()
 
 (* -------------------------------------------------------------------------- *)
 
@@ -475,6 +480,111 @@ let check_error_path count nt input =
   in
 
   loop (E.start entry dummy_pos) []
+
+(* -------------------------------------------------------------------------- *)
+
+(* [interpret_error_sentence] interprets a sentence, expecting it to end
+   in an error. Failure or success is reported via two continuations. *)
+
+let interpret_error_sentence sentence fail succeed =
+  let nt = Sentence.start sentence
+  and (_, terminals) = sentence in
+  let count = ref 0 (* unused *) in
+  match check_error_path count nt terminals with
+  | OInputReadPastEnd ->
+      fail "no syntax error occurs."
+  | OInputNotFullyConsumed ->
+      fail "a syntax error occurs before the last token is reached."
+  | OUnexpectedAccept ->
+      fail "no syntax error occurs; in fact, this input is accepted."
+  | OK target ->
+      succeed target
+
+(* -------------------------------------------------------------------------- *)
+
+(* This default error message is produced by [--list-errors] when it creates a
+   [.messages] file, and is recognized by [--compare-errors] when it compares
+   two such files. *)
+
+let default_message =
+  "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+
+(* -------------------------------------------------------------------------- *)
+
+(* [print_messages_auto (sentence, target)] displays the sentence [sentence],
+   leading to the state [target]. It then displays a bunch of auto-generated
+   comments. *)
+
+let print_messages_auto (sentence, target) =
+
+  (* Print the sentence. *)
+  print_string (Sentence.print `Abstract sentence);
+
+  (* If a token alias has been defined for every terminal symbol, then
+     we can convert this sentence into concrete syntax. Do so. We make
+     a few assumptions about the concrete syntax of the language:
+       1. It is permitted to insert one space between two tokens;
+       2. No token contains a newline character.
+          (Our lexer enforces this assumption.)
+     The name of the start symbol cannot be printed in a meaningful
+     manner, so it is omitted. *)
+  if Terminal.every_token_has_an_alias then
+    printf
+      "##\n\
+       ## Concrete syntax: %s\n"
+      (Sentence.print `Concrete sentence)
+  ;
+
+  (* Show which state this sentence leads to. *)
+  let (s', spurious) = target in
+  printf
+    "##\n\
+     ## Ends in an error in state: %d.\n\
+     ##\n\
+     %s##\n"
+    (Lr1.encode s')
+    (* [Lr0.ALR1.print] prints just the state's kernel, not its closure.
+       Displaying the closure could be helpful, but is usually intolerably
+       verbose. *)
+    (Lr0.ALR1.print "## " (Lr1.state s'))
+  ;
+
+  (* Show the known suffix of the stack in this state. *)
+  printf
+    "## The known suffix of the stack is as follows:\n\
+     ##%s\n\
+     ##\n"
+    (Symbol.print_array' false (StackSymbolsShort.node_shape s'))
+  ;
+
+  (* If interpreting this sentence causes spurious reductions (that is,
+     reductions that take place after the last terminal symbol has been
+     shifted), say so, and show them. *)
+  if spurious <> [] then begin
+    printf
+      "## WARNING: This example involves spurious reductions.\n\
+       ## This implies that, although the LR(1) items shown above provide an\n\
+       ## accurate view of the past (what has been recognized so far), they\n\
+       ## may provide an INCOMPLETE view of the future (what was expected next).\n"
+    ;
+    List.iter (fun (s, prod) ->
+      printf
+        "## In state %d, spurious reduction of production %s\n"
+        (Lr1.encode s)
+        (Production.print prod)
+    ) spurious;
+    printf "##\n"
+  end
+
+(* -------------------------------------------------------------------------- *)
+
+(* [print_messages_item] displays one entry in the [.messages] file format. *)
+
+let print_messages_item (sentence, target) =
+  (* Print the sentence, followed with auto-generated comments. *)
+  print_messages_auto (sentence, target);
+  (* Then, print a proposed error message, between two blank lines. *)
+  printf "\n%s\n" default_message
 
 (* -------------------------------------------------------------------------- *)
 
