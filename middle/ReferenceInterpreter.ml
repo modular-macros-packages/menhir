@@ -21,13 +21,13 @@ let dummy_pos = Lexing.dummy_pos
 (* The signature [MenhirLib.EngineTypes.LOG] defines a set of logging hooks.
    We implement these hooks for use by the reference interpreter. *)
 
-(* Our implementation is parameterized with [show] and [count]. *)
+(* Our implementation is parameterized with [trace] and [count]. *)
 
 module MakeLoggingHooks (X : sig
 
-  (* [show] determines whether the messages must be sent to [stderr]
+  (* [trace] determines whether the messages must be sent to [stderr]
      or suppressed. *)
-  val show : bool
+  val trace : bool
 
   (* The reference [count] is used to count the number of messages,
      regardless of whether these messages are visible. Each message
@@ -42,13 +42,13 @@ end)
 = struct
   open X
 
-  (* [emit] does nothing if [show] is false. *)
+  (* [emit] does nothing if [trace] is false. *)
 
   let emit format =
-    ksprintf (fun s -> if show then eprintf "%s%!" s) format
+    ksprintf (fun s -> if trace then eprintf "%s%!" s) format
 
   (* [newline] increments [count], and performs the bounds check,
-      even if [show] is false. *)
+      even if [trace] is false. *)
 
   let newline() =
     incr count;
@@ -314,7 +314,7 @@ end
 
 (* This is the interpreter's main entry point. *)
 
-let interpret strategy show count nt lexer lexbuf =
+let interpret strategy trace count nt lexer lexbuf =
 
   (* Instantiate the LR engine. *)
 
@@ -325,7 +325,7 @@ let interpret strategy show count nt lexer lexbuf =
       include T
       (* The logging hooks. *)
       module Log = MakeLoggingHooks(struct
-        let show = show
+        let trace = trace
         let count = count
       end)
       (* We want our logging hooks to be called. *)
@@ -369,7 +369,7 @@ type check_error_path_outcome =
      LR automaton. *)
 | OK of target
 
-let check_error_path strategy show count nt input =
+let check_error_path strategy trace count nt input =
 
   (* Instantiate the LR engine. *)
 
@@ -380,7 +380,7 @@ let check_error_path strategy show count nt input =
       include T
       (* The logging hooks. *)
       module Log = MakeLoggingHooks(struct
-        let show = show
+        let trace = trace
         let count = count
       end)
       (* We want our logging hooks to be called. *)
