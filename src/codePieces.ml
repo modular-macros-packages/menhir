@@ -51,18 +51,15 @@ module ILTokens =
 open ILTokens
 
 (* -------------------------------------------------------------------------- *)
-(* Here is a bunch of naming conventions. Our names are chosen to minimize
-   the likelihood that a name in a semantic action is captured. In other
-   words, all global definitions as well as the parameters to [reduce]
-   are given far-fetched names, unless [--no-prefix] was specified. Note
-   that the prefix must begin with '_'. This allows avoiding warnings
-   about unused variables with ocaml 3.09 and later. *)
+
+(* Prefixes. *)
 
 let prefix name =
   if X.noprefix then
     name
   else
-    (* This prefix must begin with an underscore. *)
+    (* This prefix must begin with an underscore. This allows avoiding
+       warnings about unused variables with OCaml 3.09 and later. *)
     "_menhir_" ^ name
 
 let dataprefix name =
@@ -83,34 +80,24 @@ let tvprefix name =
 
 (* Naming conventions. *)
 
-(* The type variable associated with a nonterminal [nt]. *)
-
 let ntvar nt =
   Infer.ntvar (Nonterminal.print true nt)
-
-(* A variable used to hold a semantic value. *)
 
 let semv =
   "_v"
 
-(* A variable used to hold a stack. *)
-
 let stack =
   prefix "stack"
-
-(* A variable used to hold a state. *)
 
 let state =
   prefix "s"
 
-(* A variable used to hold a token. *)
-
 let token =
   "_tok"
 
-(* Variables used to hold start and end positions. Do not change these
-   names! They are chosen to coincide with the $startpos and $endpos
-   keywords, which the lexer rewrites to _startpos and _endpos, so
+(* The following variables are used to hold start and end positions. Do not
+   change these names! They are chosen to coincide with the $startpos and
+   $endpos keywords, which the lexer rewrites to _startpos and _endpos, so
    that binding these variables before executing a semantic action is
    meaningful. *)
 
@@ -140,65 +127,43 @@ let endpos ids i =
 
 (* Types for semantic values. *)
 
-(* [semvtypent nt] is the type of the semantic value associated
-   with nonterminal [nt]. *)
-
-let semvtypent nt =
+let semvtype nt =
   match Nonterminal.ocamltype nt with
   | None ->
-
-      (* [nt] has unknown type. If we have run [Infer], then this
-         can't happen. However, running type inference is only an
-         option, so we still have to deal with that case. *)
-
+      (* [nt] has unknown type. If we have performed type inference, this
+         cannot happen. However, type inference is still optional, so we
+         must tolerate this. *)
       ntvar nt
-
   | Some ocamltype ->
-
-      (* [nt] has known type. *)
-
       TypTextual ocamltype
-
-(* [semvtypetok tok] is the type of the semantic value associated with
-   token [tok]. There is no such type if the token does not have a
-   semantic value. *)
 
 let semvtypetok tok =
   match Terminal.ocamltype tok with
   | None ->
-
-      (* Token has unit type and is omitted in stack cell,
-         unless [--represent-values] has been passed. *)
-
+      (* This terminal symbol has type [unit], so it is omitted in every
+         stack cell, unless [X.represent_values] is true. *)
       if X.represent_values then [ tunit ] else []
-
   | Some ocamltype ->
-
-      (* Token has known type. *)
-
       [ TypTextual ocamltype ]
 
-(* [semvtype symbol] is the type of the semantic value associated with
-   [symbol]. *)
-
-let semvtype = function
+let semvtypes = function
   | Symbol.T tok ->
       semvtypetok tok
   | Symbol.N nt ->
-      [ semvtypent nt ]
+      [ semvtype nt ]
 
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns for tokens. *)
 
-(* [destructuretokendef name codomain bindsemv branch] generates the
+(* [destruct_token_def name codomain bindsemv branch] generates the
    definition of a function that destructures tokens. [name] is the
    name of the function that is generated. [codomain] is its return
    type. [bindsemv] tells whether the variable [semv] should be
    bound. [branch] is applied to each (real) terminal and must
    produce code for each branch. *)
 
-let destructuretokendef name codomain bindsemv branch = {
+let destruct_token_def name codomain bindsemv branch = {
   valpat = PVar name;
   valval =
     annotate (

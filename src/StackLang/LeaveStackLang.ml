@@ -22,8 +22,8 @@ open ILConstruction
 module CodePieces =
   CodePieces.Make(Grammar)(Settings)
 let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
-let semvtype, call_stop, basics, mbasics =
-  CodePieces.(semvtype, call_stop, basics, mbasics)
+let semvtypes, call_stop, basics, mbasics =
+  CodePieces.(semvtypes, call_stop, basics, mbasics)
 module ILTokens =
   ILTokens.Make(Grammar)(Settings)
 open ILTokens
@@ -152,7 +152,7 @@ let print_token =
 (* The definition of this function. *)
 
 let printtokendef =
-  CodePieces.destructuretokendef
+  CodePieces.destruct_token_def
     print_token
     tstring
     false
@@ -307,7 +307,7 @@ let celltypedef cell =
     datavalparams =
       tvar tvtail ::
       if1 holds_state (TypApp (tcstate, [ tvar tvtail; tvar tvfinal ])) @
-      ifn holds_semv (semvtype symbol) @
+      ifn holds_semv (semvtypes symbol) @
       if1 holds_startp tposition @
       if1 holds_endp tposition ;
     datatypeparams = None;
@@ -356,7 +356,7 @@ let finaldatadef nt =
   (* The data constructor definition. *)
   let datadef = {
     dataname       = finaldataname nt;
-    datavalparams  = semvtype (Symbol.N nt);
+    datavalparams  = semvtypes (Symbol.N nt);
     datatypeparams = None;
     comment        = None;
     unboxed        = true;

@@ -45,73 +45,71 @@ open G
 
 (* -------------------------------------------------------------------------- *)
 
-(* These functions are used to generate names in menhir's namespace. *)
+(* Prefixes. *)
+
+(**[prefix] is applied to a variable in order to reduce the likelihood
+   of a name collision. *)
 val prefix: string -> string
+
+(**[dataprefix] is applied to a data constructor in order to reduce the
+   likelihood of a name collision. *)
 val dataprefix: string -> string
-  (* only stacklang *)
+
+(**[tvprefix] is applied to a type variable in order to reduce the likelihood
+   of a name collision. *)
 val tvprefix: string -> string
-  (* only stacklang *)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* Naming conventions. *)
+(* Conventional names. *)
 
-(* A variable used to hold a semantic value. *)
+(**[ntvar nt] is the type variable that is associated with the nonterminal
+   symbol [nt]. *)
+val ntvar: Nonterminal.t -> typ
 
+(**The variable [semv] is used to hold a semantic value. *)
 val semv : string
 
-(* A variable used to hold a stack. *)
-
+(**The variable [stack] is used to hold a stack. *)
 val stack: string
 
-(* A variable used to hold a state. *)
-
+(**The variable [state] is used to hold a state. *)
 val state: string
 
-(* A variable used to hold a token. *)
-
+(**The variable [token] is used to hold a token. *)
 val token: string
-  (* only stacklang *)
 
-(* Variables used to hold start and end positions. *)
-
+(**The following variables are used to hold start and end positions. *)
 val beforeendp: string
-val startp: string
-val endp: string
+val startp:     string
+val endp:       string
+val startpos:   string array -> int -> string
+val endpos:     string array -> int -> string
 
-val startpos: string array -> int -> string
-  (* only stacklang *)
-val endpos: string array -> int -> string
-  (* only stacklang *)
-
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Types for semantic values. *)
 
-(* [semvtypent nt] is the type of the semantic value associated
-   with nonterminal [nt]. *)
+(**[semvtype nt] is the type of the semantic value associated with the
+   nonterminal symbol [nt]. *)
+val semvtype: Nonterminal.t -> typ
 
-val semvtypent : Nonterminal.t -> typ
+(**[semvtypes symbol] is the type of the semantic value associated with
+   [symbol]. Because a terminal symbol whose semantic value has type [unit]
+   actually carries no semantic value at runtime, this type can be absent.
+   Thus, [semvtypes symbol] is a list of length 0 or 1. *)
+val semvtypes: Symbol.t -> typ list
 
-(* [semvtype symbol] is the type of the semantic value associated with
-   [symbol]. *)
+(* -------------------------------------------------------------------------- *)
 
-val semvtype : Symbol.t -> typ list
+(**[destruct_token_def name codomain bindsemv branch] generates the definition
+   of a function that deconstructs tokens. [name] is the name of the function
+   that is generated. [codomain] is its return type. [bindsemv] determines
+   whether the variable [semv] should be bound. [branch] is applied to each
+   (real) terminal symbol [t] and must produce code for the branch [t]. *)
+val destruct_token_def: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
-(* ------------------------------------------------------------------------ *)
-
-(* Patterns for tokens. *)
-
-(* [destructuretokendef name codomain bindsemv branch] generates the
-   definition of a function that destructure tokens. [name] is the
-   name of the function that is generated. [codomain] is its return
-   type. [bindsemv] tells whether the variable [semv] should be
-   bound. [branch] is applied to each (real) terminal and must
-   produce code for each branch. *)
-
-val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
-
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A toplevel function [stop] raises the exception [Error]. *)
 
@@ -123,7 +121,7 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 val call_stop: int -> expr
   (* only stacklang *)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* The structure items [mbasics grammar] define and include the internal
    sub-module [Basics], which contains the definitions of the exception

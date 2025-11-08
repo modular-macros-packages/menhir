@@ -192,7 +192,7 @@ let reducecellcasts prod i symbol casts =
   let ids = Production.identifiers prod in
   let id = ids.(i) in
   let t : typ =
-    match semvtype symbol with
+    match semvtypes symbol with
     | [] ->
         tunit
     | [ t ] ->
@@ -271,7 +271,7 @@ let reducebody prod =
     Production.action prod
   in
   let act =
-    annotate (Action.expr action) (semvtypent nt)
+    annotate (Action.expr action) (semvtype nt)
   in
 
   EComment (
@@ -665,14 +665,14 @@ let trace =
    its semantic value, respectively. *)
 
 let token2terminal =
-  destructuretokendef
+  destruct_token_def
     "token2terminal"
     tint
     false
     (fun tok -> EIntConst (Terminal.encode tok))
 
 let token2value =
-  destructuretokendef
+  destruct_token_def
     "token2value"
     tobj
     true
