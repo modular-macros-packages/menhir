@@ -20,9 +20,9 @@ let state = EmitStackLang.state
 open IL
 open ILConstruction
 let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
-let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics, trace =
+let semvtype, call_stop, tokpat, tokspat, tok_bind_unit, basics, mbasics =
   CodePieces.(semvtype, call_stop, tokpat, tokspat, tok_bind_unit,
-              basics, mbasics, trace)
+              basics, mbasics)
 let exvar (r : register) = EVar (Reg.export r)
 let pxvar (r : register) = PVar (Reg.export r)
 let exvars rs = map exvar rs
@@ -85,6 +85,18 @@ let actionname prod =
 let stoken =
   let tctoken = sprintf "%s.%s" basics TokenType.tctoken in
   type2scheme (IL.TypApp (tctoken, []))
+
+(* ------------------------------------------------------------------------ *)
+
+(* If [Settings.trace] is [true] then [trace format args] expands to a
+   local definition [() = eprintf format args]. If [Settings.trace] is
+   [false] then [trace format args] expands to nothing at all. *)
+
+let trace (format : string) (args : expr list) : (pattern * expr) list =
+  if Settings.trace then
+    [ PUnit, eprintf format args ]
+  else
+    []
 
 (* -------------------------------------------------------------------------- *)
 

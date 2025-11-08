@@ -17,14 +17,6 @@ open ILConstruction
 open Grammar
 
 (* ------------------------------------------------------------------------ *)
-
-let trace (format : string) (args : expr list) : (pattern * expr) list =
-  if Settings.trace then
-    [ PUnit, eprintf format args ]
-  else
-    []
-
-(* ------------------------------------------------------------------------ *)
 (* Here is a bunch of naming conventions. Our names are chosen to minimize
    the likelihood that a name in a semantic action is captured. In other
    words, all global definitions as well as the parameters to [reduce]
