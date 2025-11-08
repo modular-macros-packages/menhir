@@ -29,7 +29,7 @@ module G = Lr0.G
 open G
 
 module R =
-  ReferenceInterpreter.Make(Lr1)
+  ReferenceInterpreter.Make(Lr1)(X)
 
 module StackSymbolsShort =
   StackSymbols.Short(Lr1)()
@@ -63,11 +63,10 @@ let interpret_sentence show_cst sentence : unit =
      error ([EndOfStream]). *)
 
   let lexer, lexbuf = T.stream toks in
-  let strategy = X.strategy
-  and trace = X.trace
+  let trace = X.trace
   and count = ref 0 (* unused *) in
   begin match
-    R.interpret strategy trace count nt lexer lexbuf
+    R.interpret trace count nt lexer lexbuf
   with
 
   | Some cst ->
@@ -100,9 +99,8 @@ let interpret_sentence show_cst sentence : unit =
 let interpret_error_sentence sentence fail succeed =
   let nt = Sentence.start sentence
   and (_, terminals) = sentence in
-  let strategy = X.strategy
-  and count = ref 0 (* unused *) in
-  match R.check_error_path strategy X.trace count nt terminals with
+  let count = ref 0 (* unused *) in
+  match R.check_error_path X.trace count nt terminals with
   | R.OInputReadPastEnd ->
       fail "no syntax error occurs."
   | R.OInputNotFullyConsumed ->

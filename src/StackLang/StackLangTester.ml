@@ -11,7 +11,9 @@
 open Printf
 open Grammar
 open StackLang
-module R = ReferenceInterpreter.Make(Lr1)
+
+module R =
+  ReferenceInterpreter.Make(Lr1)(Settings)
 
 let debug = false
 
@@ -47,11 +49,10 @@ let print_outcome = function
 let run_reference nt sentence : outcome * int =
   let module T = TerminalStream.Make(Grammar) in
   let lexer, lexbuf = T.stream sentence in
-  let strategy = Settings.strategy
-  and show = Settings.trace
+  let trace = Settings.trace
   and count = ref 0 in
   let outcome =
-    match R.interpret strategy show count nt lexer lexbuf with
+    match R.interpret trace count nt lexer lexbuf with
     | Some _cst ->
         Accepted
     | None ->

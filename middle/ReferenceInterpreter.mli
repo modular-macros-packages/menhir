@@ -14,23 +14,26 @@
 
 open MiddleAPI
 
-module Make (Lr1 : LR1) : sig
+module Make (Lr1 : LR1) (X : sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+end) : sig
 open Lr1.Lr0.G
 
-  (**[interpret strategy trace count nt lexer lexbuf] runs the parser, starting
+  (**[interpret trace count nt lexer lexbuf] runs the parser, starting
      with the start non-terminal symbol [nt], with the lexer [lexer] and the
      lexing buffer [lexbuf]. It either succeeds and returns [Some cst], where
      [cst] is a concrete syntax tree, or fails and returns [None].
-
-     The parameter [strategy] is the error handling strategy. See
-     [IncrementalEngine] for an explanation of the available strategies.
 
      The parameter [trace] determines whether log messages are emitted; it
      corresponds to [--trace]. The parameter [count] is incremented with the
      number of log messages that are emitted or that would be emitted if
      [trace] was [true]. *)
   val interpret:
-    [`Legacy | `Simplified] ->
     bool -> int ref ->
     Nonterminal.t ->
     (Lexing.lexbuf -> Terminal.t) ->
@@ -65,20 +68,16 @@ open Lr1.Lr0.G
   and spurious_reduction =
     Lr1.node * Production.t
 
-  (**[check_error_path strategy trace count nt input] runs the parser, starting
+  (**[check_error_path trace count nt input] runs the parser, starting
      with the start non-terminal symbol [nt], with the input stream [input].
      We expect [input] to be a minimal invalid input: the parser is expected
      to fail after reading all of [input].
-
-     The parameter [strategy] is the error handling strategy. See
-     [IncrementalEngine] for an explanation of the available strategies.
 
      The parameter [trace] determines whether log messages are emitted; it
      corresponds to [--trace]. The parameter [count] is incremented with the
      number of log messages that are emitted or that would be emitted if
      [trace] was [true]. *)
   val check_error_path:
-    [`Legacy | `Simplified] ->
     bool -> int ref ->
     Nonterminal.t ->
     Terminal.t list ->

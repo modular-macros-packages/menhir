@@ -11,8 +11,16 @@
 open Printf
 open MiddleAPI
 
-module Make (Lr1 : LR1) = struct
+module Make (Lr1 : LR1) (X : sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+end) = struct
 open Lr1.Lr0.G
+open X
 open CST
 let dummy_pos = Lexing.dummy_pos
 
@@ -96,7 +104,7 @@ end
 
 (* Set up all of the information required by the LR engine. *)
 
-module T (X : sig val strategy: [`Legacy | `Simplified] end) = struct
+module T = struct
 
   type state =
       Lr1.node
@@ -290,7 +298,7 @@ module T (X : sig val strategy: [`Legacy | `Simplified] end) = struct
          the semantic action aborts the parser. We might otherwise enter an
          infinite loop. *)
 
-      if X.strategy = `Simplified
+      if strategy = `Simplified
       && not (Production.error_free prod) then
         raise Abort;
 
@@ -314,11 +322,9 @@ end
 
 (* This is the interpreter's main entry point. *)
 
-let interpret strategy trace count nt lexer lexbuf =
+let interpret trace count nt lexer lexbuf =
 
   (* Instantiate the LR engine. *)
-
-  let module T = T(struct let strategy = strategy end) in
 
   let module E =
     MenhirLib.Engine.Make (struct
@@ -369,11 +375,9 @@ type check_error_path_outcome =
      LR automaton. *)
 | OK of target
 
-let check_error_path strategy trace count nt input =
+let check_error_path trace count nt input =
 
   (* Instantiate the LR engine. *)
-
-  let module T = T(struct let strategy = strategy end) in
 
   let module E =
     MenhirLib.Engine.Make (struct
