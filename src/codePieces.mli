@@ -20,11 +20,14 @@ open Grammar
 (**[trace format args] returns a list of (effectful) bindings which,
    when [--trace] is enabled, log a tracing message onto [stderr]. *)
 val trace: string -> expr list -> (pattern * expr) list
+  (* only stacklang *)
 
 (* These functions are used to generate names in menhir's namespace. *)
 val prefix: string -> string
 val dataprefix: string -> string
+  (* only stacklang *)
 val tvprefix: string -> string
+  (* only stacklang *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -45,14 +48,18 @@ val state: string
 (* A variable used to hold a token. *)
 
 val token: string
+  (* only stacklang *)
 
 (* Variables used to hold start and end positions. *)
 
 val beforeendp: string
 val startp: string
 val endp: string
+
 val startpos: string array -> int -> string
+  (* only stacklang *)
 val endpos: string array -> int -> string
+  (* only stacklang *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -76,22 +83,20 @@ val semvtype : Symbol.t -> typ list
    its semantic value (if it has one) to the pattern [pat]. *)
 
 val tokpat: Terminal.t -> pattern -> pattern
-
-(* [tokexpr tok e] is an expression that constructs the token [tok],
-   taking its semantic value (if it needs one) from the expression [e]. *)
-
-val tokexpr: Terminal.t -> expr -> expr
+  (* only stacklang *)
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
 
 val tokspat: TerminalSet.t -> pattern
+  (* only stacklang *)
 
 (* [tok_bind_unit tok pat e] binds the pattern [pat] to the unit value
    in the expression [e] if the token [tok] has no semantic value.
    Otherwise, it returns just [e]. *)
 
 val tok_bind_unit: Terminal.t -> pattern -> expr -> expr
+  (* only stacklang *)
 
 (* [destructuretokendef name codomain bindsemv branch] generates the
    definition of a function that destructure tokens. [name] is the
@@ -112,6 +117,7 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
    its argument. *)
 
 val call_stop: int -> expr
+  (* only stacklang *)
 
 (* ------------------------------------------------------------------------ *)
 

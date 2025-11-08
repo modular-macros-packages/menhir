@@ -302,7 +302,7 @@
   all of `Invariant`,
   `Origin`.
 
-* `tokpat` and `tokexpr` are duplicated in CodePieces and UnparsingAPI.
+* `tokpat` are duplicated in CodePieces and UnparsingAPI.
    They could move into TokenType.
 
 * Grep for `artificial dependency` and remove these artificial dependencies.
