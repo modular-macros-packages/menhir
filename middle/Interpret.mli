@@ -10,7 +10,18 @@
 
 open MiddleAPI
 
-module Make (Lr1 : LR1) : sig
+module Make (Lr1 : LR1) (X : sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+  (**[trace] determines whether the interpreter should log its actions
+     to the standard error channel. *)
+  val trace: bool
+
+end) : sig
 open Lr1.Lr0.G
 
 (**A target indicates which state a sentence leads to
@@ -40,16 +51,13 @@ val print_messages_auto: Sentence.sentence * target -> unit
    lines. *)
 val print_messages_item: Sentence.sentence * target -> unit
 
-(**[interpret_error_sentence show sentence fail succeed] interprets the sentence
-   [sentence], expecting it to end in an error. The parameter [trace] determines
-   whether log messages are emitted; it corresponds to [--trace]. Failure or
-   success is reported via the continuations [fail] and [succeed]. The
-   continuation [fail] is invoked if the expected error is {i not} encountered;
-   its an argument is an error message. The continuation [succeed] is invoked if
-   the expected error is encountered: its argument is the target that has been
-   reached. *)
+(**[interpret_error_sentence sentence fail succeed] interprets the sentence
+   [sentence], expecting it to end in an error. Failure or success is reported
+   via the continuations [fail] and [succeed]. The continuation [fail] is
+   invoked if the expected error is {i not} encountered; its an argument is an
+   error message. The continuation [succeed] is invoked if the expected error is
+   encountered: its argument is the target that has been reached. *)
 val interpret_error_sentence:
-  (* trace:    *) bool ->
   (* sentence: *) Sentence.sentence ->
   (* failure:  *) (string -> 'a) ->
   (* success:  *) (target -> 'a) ->

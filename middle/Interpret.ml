@@ -11,7 +11,19 @@
 open Printf
 open MiddleAPI
 
-module Make (Lr1 : LR1) = struct
+module Make (Lr1 : LR1) (X : sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+  (**[trace] determines whether the interpreter should log its actions
+     to the standard error channel. *)
+  val trace: bool
+
+end) = struct
+
 module Lr0 = Lr1.Lr0
 module G = Lr0.G
 open G
@@ -51,11 +63,11 @@ let interpret_sentence show_cst sentence : unit =
      error ([EndOfStream]). *)
 
   let lexer, lexbuf = T.stream toks in
-  let strategy = Settings.strategy
-  and show = Settings.trace
+  let strategy = X.strategy
+  and trace = X.trace
   and count = ref 0 (* unused *) in
   begin match
-    R.interpret strategy show count nt lexer lexbuf
+    R.interpret strategy trace count nt lexer lexbuf
   with
 
   | Some cst ->
@@ -85,12 +97,12 @@ let interpret_sentence show_cst sentence : unit =
 (* [interpret_error_sentence] interprets a sentence, expecting it to end
    in an error. Failure or success is reported via two continuations. *)
 
-let interpret_error_sentence show sentence fail succeed =
+let interpret_error_sentence sentence fail succeed =
   let nt = Sentence.start sentence
   and (_, terminals) = sentence in
-  let strategy = Settings.strategy
+  let strategy = X.strategy
   and count = ref 0 (* unused *) in
-  match R.check_error_path strategy show count nt terminals with
+  match R.check_error_path strategy X.trace count nt terminals with
   | R.OInputReadPastEnd ->
       fail "no syntax error occurs."
   | R.OInputNotFullyConsumed ->
@@ -193,14 +205,13 @@ let print_messages_item (sentence, target) =
 
 let interpret_error sentence =
   Report.monitor `Strict @@ fun c ->
-  let show = Settings.trace
-  and fail msg =
+  let fail msg =
     Report.error c [] "%s" msg
   and succeed target =
     print_messages_item (sentence, target);
     exit 0
   in
-  interpret_error_sentence show sentence fail succeed
+  interpret_error_sentence sentence fail succeed
 
 (* --------------------------------------------------------------------------- *)
 

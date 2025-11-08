@@ -17,7 +17,7 @@ let () =
    [--compile-errors], [--compare-errors], etc. *)
 
 let () =
-  let module I = Interpret.Make(Lr1) in
+  let module I = Interpret.Make(Lr1)(Settings) in
   match Settings.interpret with
   | `No ->
       ()

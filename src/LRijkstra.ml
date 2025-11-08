@@ -30,8 +30,13 @@
    path. *)
 
 open Grammar
+
+module Settings = struct
+  include Settings
+  let trace = false
+end
 module R = ReferenceInterpreter.Make(Lr1)
-module I = Interpret.Make(Lr1)
+module I = Interpret.Make(Lr1)(Settings)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -108,10 +113,10 @@ let fail format =
 
 let validate nt s' elements (* : target *) =
   let strategy = Settings.strategy
-  and show = false
+  and trace = false
   and count = ref 0 (* unused *) in
   match
-    R.check_error_path strategy show count nt elements
+    R.check_error_path strategy trace count nt elements
   with
   | R.OInputReadPastEnd ->
       fail "input was read past its end"

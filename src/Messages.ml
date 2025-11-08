@@ -14,8 +14,12 @@ open RawSentence
 open Validate
 open Grammar
 
+module Settings = struct
+  include Settings
+  let trace = false
+end
 module I =
-  Interpret.Make(Lr1)
+  Interpret.Make(Lr1)(Settings)
 
 (* --------------------------------------------------------------------------- *)
 
@@ -132,15 +136,14 @@ fun c raw_sentence ->
   let sentence = Sentence.validate_sentence c raw_sentence in
   (* Then, check that it leads to an error state. *)
   let ranges = [RawSentence.range raw_sentence] in
-  let trace = false
-  and fail msg =
+  let fail msg =
     Report.signal c ranges
       "this sentence does not end with a syntax error, as it should:\n%s" msg;
     raise Invalid
   and succeed target =
     (ranges, sentence), target
   in
-  I.interpret_error_sentence trace sentence fail succeed
+  I.interpret_error_sentence sentence fail succeed
 
 (* [validate_entry] validates a raw entry. *)
 
