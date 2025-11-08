@@ -961,8 +961,7 @@ let unparsing_API (grammar : grammar) : interface =
     let grammar = grammar
   end)() in
   let module A = struct
-    let entry =
-      List.map G.Nonterminal.lookup (StringSet.elements grammar.start_symbols)
+    let entry = G.Nonterminal.user_start_symbols
   end in
   let module I = Interface(G)(A) in
   I.unparsing_API()

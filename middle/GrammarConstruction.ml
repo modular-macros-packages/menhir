@@ -127,18 +127,14 @@ module Nonterminal = struct
   let[@inline] iter_internal_start f =
     MInt.iteri start f
 
-  (* Build a list of the user start symbols and sort it,
-     so that [iter_user_start] produces elements in the
-     correct order. *)
+  (* Build a list of the user start symbols and sort it, so that
+     elements appear in the correct order. *)
 
   let user_start_symbols =
     grammar.start_symbols
     |> StringSet.elements
     |> List.map lookup
     |> List.sort Int.compare
-
-  let iter_user_start f =
-    List.iter f user_start_symbols
 
 end
 

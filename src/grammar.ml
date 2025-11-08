@@ -57,7 +57,7 @@ let errors =
    token must be read. *)
 
 let () =
-  iter_user_start @@ fun nt ->
+  Nonterminal.user_start_symbols |> List.iter @@ fun nt ->
   if not (nonempty nt) then
     Error.signal errors
       (positions nt)

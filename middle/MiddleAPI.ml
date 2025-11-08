@@ -129,11 +129,8 @@ module Nonterminal : sig
      except the internal start symbols. *)
   val mapx: (t -> 'a) -> 'a list
 
-  (**[iter_internal_start] enumerates just the internal start symbols. *)
-  val iter_internal_start: (t -> unit) -> unit
-
-  (**[iter_user_start] enumerates just the user start symbols. *)
-  val iter_user_start: (t -> unit) -> unit
+  (**[user_start_symbols] is a list of the user start symbols. *)
+  val user_start_symbols: t list
 
 end
 
