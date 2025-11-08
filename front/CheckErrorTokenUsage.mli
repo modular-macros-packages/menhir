@@ -10,10 +10,16 @@
 
 open PlainSyntax
 
-(**Under the simplified strategy, [filter_grammar] warns when the [error]
-   token is used elsewhere than at the end of a production, and returns a
-   grammar where the faulty productions have been removed. Under the legacy
-   strategy, [filter_grammar] is an identity function. *)
+module Make (E : sig
+
+  (**[warning ranges format ...] reports a warning. It does not abort. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end) : sig
+
+(**[filter_grammar] warns when the [error] token is used elsewhere than at the
+   end of a production. It returns a grammar where the faulty productions have
+   been removed. *)
 val filter_grammar : grammar -> grammar
 
 (* Why do we do this? The simplified strategy does not query the lexer for a
@@ -23,3 +29,5 @@ val filter_grammar : grammar -> grammar
    take place, whose semantic action will abort the parser. However, if the
    [error] token was used inside a production, then we could very well fall
    into an endless shift cycle. *)
+
+end

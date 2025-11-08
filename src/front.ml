@@ -164,7 +164,12 @@ let () =
    token is used only at the end of productions (2021/10/31). *)
 
 let grammar =
-  CheckErrorTokenUsage.filter_grammar grammar
+  let module C = CheckErrorTokenUsage.Make(Error) in
+  match Settings.strategy with
+  | `Simplified ->
+      C.filter_grammar grammar
+  | `Legacy ->
+      grammar
 
 (* ------------------------------------------------------------------------- *)
 
