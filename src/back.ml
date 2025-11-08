@@ -36,7 +36,7 @@ let write program =
 let () =
   match Settings.backend with
   | `ReferenceInterpreter ->
-      (* This case is handled in Interpret. *)
+      (* This case is handled in Freeze. *)
       assert false
   | `TableBackend ->
       let module B = TableBackend.Run () in

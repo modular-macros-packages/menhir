@@ -791,7 +791,7 @@ and record_string openingrange buffer = parse
 | '\\' 'n'
     (* We disallow this escape sequence in a token alias because we wish
        to use this string (unescaped) when we print a concrete sentence
-       in a .messages file (see [Interpret]), and we want this sentence
+       in a [.messages] file (see [Messages]), and we want this sentence
        to fit on a single line. *)
     { error lexbuf "'\\n' is not permitted in a token alias." }
 | '\\' _
