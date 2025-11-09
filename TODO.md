@@ -293,9 +293,8 @@
 
 ## Code Cleanup
 
-* `tokentypedef` and `basics_def` expect `grammar` as an argument, whereas
-  other modules expect `G : GRAMMAR`. (Actually `basics_def` expects both!)
-  See also `NonterminalType` and `Interface`. This is confusing.
+* Perhaps many modules in `front` and `middle` could take a report channel
+  as an argument instead of the functions `error`, `signal`, `warning`, etc.
 
 * The whole timing system (Time) should be redesigned so that each timed task
   has an explicit beginning and end. Also, the process of recording and the
@@ -317,16 +316,9 @@
   Once the OCaml parser abandons the `error` token, remove support for the
   `error` token.
 
-* `TableBackend` relies on the view of the grammar published by `Grammar`,
-  whereas `Interface` relies on `Front.grammar`. This is strange and can lead
-  to inconsistency or code duplication. Unfortunately, `Interface` cannot
-  depend on `Grammar` because that would create a dependency of `Interface` on
-  `Front`, and `Front` already depends (through `Infer`) on `Interface`. The
-  dependency of `Infer` on `Interface` exists only because `menhir --depend`
-  and `menhir --raw-depend` create an `.mli` file. (See comment at the end of
-  `nonterminalType.mli`.) This dependency could be removed simply by no longer
-  creating this `.mli` file, or by dropping support for `--depend` and
-  `--raw-depend` altogether. We might then also drop support for `--infer`.
+* Split the code that deals with type inference and the code that deals with
+  `--depend` and `--raw-depend`. In the long run, drop support for `--depend`
+  and `--raw-depend`. Maybe also drop support for `--infer`.
 
 ## Standard library
 
