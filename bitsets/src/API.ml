@@ -159,7 +159,7 @@ module type SET = sig
 
   (**[compare_minimum], a total order on sets, is defined as follows:
 
-     - The empty set is less than any nonemptyset.
+     - The empty set is less than any nonempty set.
      - If the sets [s1] and [s2] are nonempty, then [compare_minimum s1 s2]
        is [compare (minimum s1) (minimum s2)]. *)
   val compare_minimum : t -> t -> int
