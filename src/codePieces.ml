@@ -157,21 +157,16 @@ let semvtypes = function
 (* [destruct_token_def] constructs the definition of a function that
    deconstructs tokens. *)
 
-let destruct_token_def name codomain bindsemv branch = {
-  valpat = PVar name;
-  valval =
-    annotate (
-      EFun ([ PVar token ],
-        EMatch (EVar token,
-          Terminal.fold_real (fun t branches ->
-            { branchpat = tokpat t (if bindsemv then PVar semv else PWildcard);
-              branchbody = branch t } :: branches
-          ) []
-        )
-      )
-    )
-    (arrow TokenType.ttoken codomain)
-}
+let destruct_token_def name codomain bindsemv mkbranch =
+  let branches =
+    Terminal.fold_real (fun t branches ->
+      { branchpat = tokpat t (if bindsemv then PVar semv else PWildcard);
+        branchbody = mkbranch t } :: branches
+    ) []
+  in
+  let body = EFun ([ PVar token ], EMatch (EVar token, branches))
+  and ty = arrow TokenType.ttoken codomain in
+  def name (annotate body ty)
 
 (* -------------------------------------------------------------------------- *)
 
