@@ -26,62 +26,12 @@ end) = struct
   type sets =
     set list
 
-  (* Leftist heaps whose keys are sets. *)
-
-  type 'v heap =
-    | Leaf
-    | Node of 'v heap * set * 'v * 'v heap * int
-
-  let singleton k v =
-    Node (Leaf, k, v, Leaf, 1)
-
-  let rank t =
-    match t with
-    | Leaf -> 0
-    | Node (_, _, _, _, r) -> r
-
-  let rec merge t1 t2 =
-    match t1, t2 with
-    | Leaf, t
-    | t, Leaf ->
-        t
-    | Node (l, k1, v1, r, _), Node (_, k2, _, _, _) ->
-        if Set.compare_minimum k1 k2 > 0 then
-          merge t2 t1
-        else
-          let merged = merge r t2 in (* always merge with right *)
-          let lrank = rank l
-          and rrank = rank merged in
-          if lrank >= rrank
-          then Node (l, k1, v1, merged, rrank + 1)
-          else Node (merged, k1, v1, l, lrank + 1)
-               (* left becomes right due to being shorter *)
-
-  let insert k v t =
-    merge (singleton k v) t
-
-  type 'v pop =
-    | Head of set * 'v * set * 'v * 'v heap
-    | Tail of set * 'v
-    | Done
-
-  let pop2 (t : 'v heap) : 'v pop =
-    match t with
-    | Leaf ->
-        Done
-    | Node (Leaf, k, v, _, _) ->
-        Tail (k, v)
-    | Node (Node (ll, lk, lv, lr, _), k, v, Leaf, _) ->
-        Head (k, v, lk, lv, merge ll lr)
-    | Node (
-        (Node (ll, lk, lv, lr, _) as l),
-        k, v,
-        (Node (rl, rk, rv, rr, _) as r),
-        _
-      ) ->
-        if Set.compare_minimum lk rk <= 0
-        then Head (k, v, lk, lv, merge (merge ll lr) r)
-        else Head (k, v, rk, rv, merge (merge rl rr) l)
+  module H =
+    LeftistHeap.Make(struct
+      type t = Set.t
+      let compare = Set.compare_minimum
+    end)
+  open H
 
   type part =
     set * IntSet.t
@@ -93,7 +43,7 @@ end) = struct
     if not (Set.is_empty s) then (s, k) :: parts else parts
 
   let[@inline] insert_if_nonempty s k heap : 'v heap =
-    if not (Set.is_empty s) then insert s k heap else heap
+    if not (Set.is_empty s) then H.insert s k heap else heap
 
   let rec aux (parts : parts) (heap : IntSet.t heap) : parts =
     match pop2 heap with
@@ -121,7 +71,7 @@ end) = struct
         let i = !c in
         c := i + 1;
         insert s (IntSet.singleton i) h
-      ) Leaf xs
+      ) empty xs
     in
     aux [] heap
 
