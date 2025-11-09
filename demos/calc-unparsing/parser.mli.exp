@@ -38,6 +38,8 @@ end
 
 (* The unparsing API. *)
 
+(* Constructing disjunctive concrete syntax trees (DCSTs). *)
+
 module DCST : sig
   
   (* The type of DCSTs for the nonterminal symbol [main]. *)
@@ -89,6 +91,8 @@ module DCST : sig
   val div: expr -> expr -> expr
   
 end
+
+(* Deconstructing concrete syntax trees (CSTs). *)
 
 module CST : sig
   
@@ -161,6 +165,8 @@ module CST : sig
   end
   
 end
+
+(* Transforming DCSTs to CSTs. *)
 
 module Settle : sig
   
