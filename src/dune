@@ -27,7 +27,6 @@
   lexer
   lexmli
   lexdep
-  lexpointfree
 )
 
 ;; The Menhir standard library "standard.mly" is embedded in the source code of

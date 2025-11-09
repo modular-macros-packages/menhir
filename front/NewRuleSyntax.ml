@@ -12,10 +12,6 @@ open Range
 open Located
 open Syntax
 
-(* Because the main function, [NewRuleSyntax.rule], is called by the stage 2
-   parser (fancy-parser) and nowhere else, this file is type-checked and
-   compiled only at stage 2, not at stage 1. Be sure to run [make bootstrap]. *)
-
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
@@ -98,10 +94,11 @@ let check_linearity (ps : pattern list) =
   in
 
   let m = List.fold_left build StringMap.empty ps in
-  StringMap.iter (fun x positions ->
-    if List.length positions > 1 then
-      Error.error positions "The variable %s is bound several times." x
-  ) m
+  m |> StringMap.iter @@ fun x positions ->
+  if List.length positions > 1 then
+    Report.monitor `Strict @@ fun c ->
+    Report.error c positions
+      "The variable %s is bound several times." x
 
 let rec patterns (e : seq_expression) : pattern list =
   let e = value e in
@@ -139,7 +136,8 @@ let tilde_used_warning positions =
       if n = 1 then "variable has", "a ~ pattern", "a wildcard pattern _"
       else "variables have", "~ patterns", "wildcard patterns _"
     in
-    Error.warning positions
+    Report.monitor `Lax @@ fun c ->
+    Report.warning c positions
       "%s nameless %s been introduced by %s,\n\
        yet this sequence does not end in a point-free semantic action <...>.\n\
        Perhaps %s should be used instead."
