@@ -8,77 +8,42 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(** [Refine] computes the refined partition of a list of overlapping set: the
-    smallest list of non-overlapping sets such that each set is a subset of one
-    of the input set.
+(**This module implements a [partition] function, which, given a list [xs] of
+   possibly-overlapping sets, computes the coarsest partition of the the set
+   [U xs] that refines [xs]. In other words, it computes the coarsest family
+   [ys] of non-overlapping sets such that each set in the list [xs] can be
+   written as a disjoint union of members of [ys].
 
-    This is useful when computing the set of transitions of a DFA when the
-    alphabet is large: rather than representing a transition for each letter
-    separately, we group them by subset having the same destination.
-*)
+   This is useful when representing the transitions of a DFA whose alphabet is
+   large. Rather than representing one transition per symbol, we group the
+   symbols into classes whose elements are never distinguished. *)
 
-module type DECOMPOSABLE = sig
-
+(**The operations required by [Make] form a fragment of the signature
+   [Bitsets.API.SET]. *)
+module Make (Set : sig
   type t
-  (** The abstract type representing sets that we want to refine. *)
-
   val is_empty : t -> bool
-  (** [is_empty s] determines whether the set [s] is empty. *)
-
   val compare_minimum : t -> t -> int
-  (** [compare_minimum s1 s2] compares the nonempty sets [s1] and [s2]
-      based on their minimum elements. *)
-
   val big_union : t list -> t
-  (** [big_union ss] computes the union of all sets in the list [ss]. *)
-
   val extract_unique_prefix : t -> t -> t * t
-  (** [extract_unique_prefix s1 s2] requires [compare_minimum s1 s2 < 0],
-      that is, [minimum s1 < minimum s2]. It splits [s1] in two disjoint
-      subsets [head1] and [tail1] such that [head1] is exactly the subset
-      of [s1] whose elements are less than [minimum s2]. Therefore, [head1]
-      must be nonempty, whereas [tail1] may be empty. *)
-
   val extract_shared_prefix : t -> t -> t * (t * t)
-  (** [extract_shared_prefix s1 s2] requires [compare_minimum s1 s2 = 0],
-      that is, [minimum s1 = minimum s2]. It splits [s1] and [s2] into
-      three subsets [head], [tail1], and [tail2], as follows:
+end) : sig
 
-      - [s1] is [head U tail1] and [s2] is [head U tail2].
-        This implies that [head] is a subset of both [s1] and [s2].
-      - An element in [head] is smaller than every element in [tail1]
-        and [tail2].
-      - [head] is maximal with respect to the previous two properties.
+  open Set
 
-      In summary, [head] is the maximal shared prefix of the sets [s1]
-      and [s2]. *)
-end
+  (**If [xs] is a list of nonempty sets then [partition xs] is the coarsest
+     partition of the set [U xs] that refines [xs].
 
-(** The type of refined sets *)
-module type S = sig
+     The list [ys] is a partition of the set [U xs] iff:
 
-  type t
-  (** Type of a set, like [DECOMPOSABLE.t] *)
-
-  val partition : t list -> t list
-  (* [partition xs] computes the coarsest partition [ys] that refines
-     a list [xs] of nonempty sets.
-
-     [ys] is a partition of [U xs] iff:
-
-     - No two sets in the list [ys] overlap, that is,
-       [forall y1, y2 ∈ ys, z1 ∩ z2 = ∅].
-     - The lists [ys] and [xs] cover the same universe, that is,
-       [U ys = U xs]
+     - The sets in the list [ys] are pairwise disjoint;
+     - The union of the sets in the list [ys] is [U xs].
 
      [ys] refines [xs] iff:
 
-     - Every element of [xs] can be decomposed as a union of elements of [ys],
-       that is,
-       [forall x ∈ xs, exists zs ⊆ ys, x = U zs].
+     - Every set in the list [xs] is a union of elements of [ys].
 
-     The list [ys] returned by [partition xs] is sorted by [compare_minimum]. *)
+     The list [partition xs] is sorted by [compare_minimum]. *)
+  val partition : t list -> t list
 
 end
-
-module Make (Set : DECOMPOSABLE) : S with type t := Set.t

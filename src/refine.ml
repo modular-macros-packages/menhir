@@ -11,21 +11,15 @@
 module IntSet =
   Bitsets.SparseBitSet
 
-module type DECOMPOSABLE = sig
+module Make (Set : sig
   type t
   val is_empty : t -> bool
   val compare_minimum : t -> t -> int
   val big_union : t list -> t
   val extract_unique_prefix : t -> t -> t * t
   val extract_shared_prefix : t -> t -> t * (t * t)
-end
+end) = struct
 
-module type S = sig
-  type t
-  val partition : t list -> t list
-end
-
-module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
   type leftist =
     | Leaf
     | Node of leftist * Set.t * IntSet.t * leftist * int
