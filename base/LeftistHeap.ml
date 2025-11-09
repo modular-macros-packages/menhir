@@ -31,8 +31,27 @@ end) = struct
 
   let[@inline] rank t =
     match t with
-    | Leaf -> 0
-    | Node (_, _, _, _, r) -> r
+    | Leaf ->
+        0
+    | Node (_, _, _, _, rank) ->
+        rank
+
+  let rec check (parent_key : key option) t =
+    match t with
+    | Leaf ->
+        ()
+    | Node (l, k, _v, r, rk) ->
+        check (Some k) l;
+        check (Some k) r;
+        (* The rank [rk] is the length of the right spine. *)
+        assert (rk = rank r + 1);
+        parent_key |> Option.iter @@ fun pk ->
+        (* The heap property holds: the key [k] of this node is less
+           than the key [pk] of the parent node. *)
+        assert (Key.compare pk k <= 0)
+
+  let check t =
+    check None t
 
   let rec merge t1 t2 =
     match t1, t2 with

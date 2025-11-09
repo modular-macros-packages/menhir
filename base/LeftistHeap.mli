@@ -50,4 +50,8 @@ end) : sig
      according to the ordering [Key.compare]. *)
   val pop2 : 'a t -> 'a pop2
 
+  (**/**)
+
+  val check: 'a t -> unit
+
 end
