@@ -18,21 +18,21 @@ open MiddleAPI
    The first section defines common naming conventions. The second section
    generates the code. The last section generates a signature. *)
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* Naming conventions. *)
 
 module NamingConventions (G : GRAMMAR) = struct
 open G
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Public conventional names. *)
 
 (* These names are visible in the unparsing API. *)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (**The DCST submodule. *)
 let mDCST =
@@ -54,7 +54,7 @@ let dcst_constructor_name prod = (* can raise [Not_found] *)
   find_attribute "name" (Production.attributes prod)
   |> String.lowercase_ascii
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (**The CST submodule. *)
 let mCST =
@@ -103,7 +103,7 @@ let cat_method_name =
 let text_method_name =
   "text"
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (**The [Settle] submodule. *)
 let mSettle =
@@ -113,7 +113,7 @@ let mSettle =
 let settle_name nt =
   Nonterminal.print true nt
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Internal names. *)
 
@@ -137,8 +137,8 @@ end
 
 (* End of the naming conventions *)
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 module Code
 (G : GRAMMAR)
@@ -167,7 +167,7 @@ module ILTokens =
   ILTokens.Make(G)(X)
 open ILTokens
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Check the names of all productions. If a production has no name, or if two
    productions have the same name, fail. *)
@@ -195,7 +195,7 @@ let () =
   Report.signal c []
     "The production name %s is not unique." name
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Public naming conventions. *)
 
@@ -211,7 +211,7 @@ let prod_method_name prod =
        for this method, which will be private. *)
     sprintf "prod_%d" (Production.encode prod)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Internal names. *)
 
@@ -255,7 +255,7 @@ let icst_nonterminal =
 let isettle =
   settle ^ ".settle"
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Generated code for the unparsing API. *)
 
@@ -619,8 +619,8 @@ and settle_def (state : int) : expr =
 
 end
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 module Interface (G : GRAMMAR)
 = struct
@@ -851,17 +851,13 @@ and settle_type nt : typ =
 
 end
 
-(* ------------------------------------------------------------------------ *)
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
-(* The following glue code re-packages the functor [Interface] as a function
-   that takes a grammar as an argument. *)
+(* Re-package the functor [Interface]
+   as a function that expects a grammar as an argument. *)
 
-open PlainSyntax
-
-let unparsing_API (grammar : grammar) : interface =
-  let module G = GrammarConstruction.Make(struct
-    let grammar = grammar
-  end)() in
+let unparsing_API grammar =
+  let module G = GrammarConstruction.Make(struct let grammar = grammar end)() in
   let module I = Interface(G) in
   I.unparsing_API()

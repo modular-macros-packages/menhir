@@ -44,6 +44,7 @@ end)
 
 end
 
+(* This functor is currently unused. *)
 module Interface (G : GRAMMAR)
 : sig
 
