@@ -20,11 +20,17 @@ module Make (Set : sig
   val extract_shared_prefix : t -> t -> t * (t * t)
 end) = struct
 
-  (* Leftist heaps. *)
+  type set =
+    Set.t
 
-  type heap =
+  type sets =
+    set list
+
+  (* Leftist heaps whose keys are sets. *)
+
+  type 'v heap =
     | Leaf
-    | Node of heap * Set.t * IntSet.t * heap * int
+    | Node of 'v heap * set * 'v * 'v heap * int
 
   let singleton k v =
     Node (Leaf, k, v, Leaf, 1)
@@ -54,12 +60,12 @@ end) = struct
   let insert k v t =
     merge (singleton k v) t
 
-  type pop =
-    | Head of Set.t * IntSet.t * Set.t * IntSet.t * heap
-    | Tail of Set.t * IntSet.t
+  type 'v pop =
+    | Head of set * 'v * set * 'v * 'v heap
+    | Tail of set * 'v
     | Done
 
-  let pop2 (t : heap) : pop =
+  let pop2 (t : 'v heap) : 'v pop =
     match t with
     | Leaf ->
         Done
@@ -78,7 +84,7 @@ end) = struct
         else Head (k, v, rk, rv, merge (merge rl rr) l)
 
   type part =
-    Set.t * IntSet.t
+    set * IntSet.t
 
   type parts =
     part list
@@ -86,10 +92,10 @@ end) = struct
   let[@inline] cons_if_nonempty s k parts : parts =
     if not (Set.is_empty s) then (s, k) :: parts else parts
 
-  let[@inline] insert_if_nonempty s k heap : heap =
+  let[@inline] insert_if_nonempty s k heap : 'v heap =
     if not (Set.is_empty s) then insert s k heap else heap
 
-  let rec aux (parts : parts) (heap : heap) : parts =
+  let rec aux (parts : parts) (heap : IntSet.t heap) : parts =
     match pop2 heap with
     | Head (s1, k1, s2, k2, heap) ->
         let sp, s1 = Set.extract_unique_prefix s1 s2 in
@@ -104,29 +110,29 @@ end) = struct
     | Done ->
         parts
 
-  type sets =
-    Set.t list
-
   let compute_parts (xs : sets) : parts =
-    let heap, _ =
-      List.fold_left (fun (h, i) s ->
-        insert s (IntSet.singleton i) h, i + 1
-      ) (Leaf, 0) xs
+    let c = ref 0 in
+    let heap =
+      List.fold_left (fun h s ->
+        let i = !c in
+        c := i + 1;
+        insert s (IntSet.singleton i) h
+      ) Leaf xs
     in
     aux [] heap
 
   let compare_parts (_, k1) (_, k2) =
     IntSet.compare k1 k2
 
-  let rec merge accu ss key parts : sets =
+  let rec merge accu ss v parts : sets =
     match parts with
     | [] ->
         Set.big_union ss :: accu
-    | (s, key') :: parts ->
-        if IntSet.equal key key' then
-          merge accu (s :: ss) key parts
+    | (s, v') :: parts ->
+        if IntSet.equal v v' then
+          merge accu (s :: ss) v parts
         else
-          merge (Set.big_union ss :: accu) [s] key' parts
+          merge (Set.big_union ss :: accu) [s] v' parts
 
   let union_parts (parts : parts) : sets =
     match List.sort compare_parts parts with
