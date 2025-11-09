@@ -101,7 +101,11 @@ end) = struct
         let sp, s1 = Set.extract_unique_prefix s1 s2 in
         let sc, (s1, s2) = Set.extract_shared_prefix s1 s2 in
         let parts = cons_if_nonempty sp k1 parts in
-        let heap = insert_if_nonempty sc (IntSet.union k1 k2) heap in
+        let heap =
+          (* [insert_if_nonempty sc (IntSet.union k1 k2)] *)
+          if not (Set.is_empty sc) then insert sc (IntSet.union k1 k2) heap
+          else heap
+        in
         let heap = insert_if_nonempty s1 k1 heap in
         let heap = insert_if_nonempty s2 k2 heap in
         aux parts heap
