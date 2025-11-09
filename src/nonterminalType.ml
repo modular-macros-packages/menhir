@@ -29,10 +29,16 @@ let tnonterminalgadtdata nt =
 (* This is the definition of the nonterminal GADT. Here, the data
    constructors have no value argument, but have a type index. *)
 
+(* Generating this definition requires the type of every nonterminal symbol to
+   be known. We assume that this check has been carried out up front. This
+   said, when [--depend] or [--raw-depend] is used, [nonterminalgadtdef] can
+   be invoked by [Infer.depend] via [Interface.write]. Then, we may encounter
+   a nonterminal symbol whose type is not known. In that case, we give up and
+   define ['a nonterminal] as an abstract type.*)
+
 exception MissingOCamlType of string
 
 let nonterminalgadtdef grammar =
-  assert Settings.inspection;
   let comment, datadefs =
     try
 
@@ -61,36 +67,12 @@ let nonterminalgadtdef grammar =
         }
       ) (nonterminals grammar)
 
-    with MissingOCamlType nt ->
-      (* If the type of some nonterminal symbol is unknown, give up
-         and define ['a nonterminal] as an abstract type. This is
-         useful when we are in [--(raw)-depend] mode and we do not
-         wish to fail. Instead, we produce a mock [.mli] file that
-         is an approximation of the real [.mli] file. When we are
-         not in [--(raw)-depend] mode, though, this is a problem.
-         We display an error message and stop. *)
-      Settings.(match infer with
-      | IMDependRaw
-      | IMDependPostprocess ->
-          "The indexed type of nonterminal symbols (mock!).",
-          []
-      | IMNone ->
-          Error.error [] "\
-            the type of the nonterminal symbol %s is unknown.\n\
-            When --inspection is set, the type of every nonterminal symbol must be known.\n\
-            Please enable type inference (see --infer and --infer-read-reply)\n\
-            or specify the type of every symbol via %%type declarations."
-            nt
-      | IMInfer
-      | IMReadReply _ ->
-          (* This should not happen: when [--infer] or [--infer-read-reply]
-             is set, the types of all nonterminal symbols should be known. *)
-          assert false
-      | IMWriteQuery _ ->
-          (* This should not happen: when [--infer-write-query] is set, we
-             write a mock [.ml] file, but no [.mli] file, so this function
-             should never be called. *)
-          assert false)
+    with MissingOCamlType _nt ->
+      (* Give up and define ['a nonterminal] as an abstract type. This is
+         useful when we are in [--(raw)-depend] mode. Then, we produce a mock
+         [.mli] file that is an approximation of the real [.mli] file. *)
+      "The indexed type of nonterminal symbols (mock!).",
+      []
 
   in
   [
