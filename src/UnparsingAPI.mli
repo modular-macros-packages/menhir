@@ -11,15 +11,22 @@
 (**This module generates the code and the signature of the unparsing API. *)
 
 open IL
+open PlainSyntax
 open MiddleAPI
 
-module Code (G : GRAMMAR)
+module Code
+(G : GRAMMAR)
 (A : sig
-  (* A list of the start symbols and corresponding start states. *)
+
+  (**[entry] is a list of the start symbols and corresponding start states. *)
   val entry: (G.Nonterminal.t * int) list
+
 end)
 (N : sig
+
+  (**[tables] is the name of the module that contains the parse tables. *)
   val tables: string
+
 end)
 (X : sig
 
@@ -31,12 +38,19 @@ end)
 
 end)
 : sig
+
+  (**[unparsing_API] is the code of the unparsing API. *)
   val unparsing_API : unit -> structure
+
 end
 
 module Interface (G : GRAMMAR)
 : sig
+
+  (**[unparsing_API] is the interface of the unparsing API. *)
   val unparsing_API : unit -> interface
+
 end
 
-val unparsing_API : PlainSyntax.grammar -> interface
+(**[unparsing_API] is the functor {!Interface}, re-packaged as a function. *)
+val unparsing_API : grammar -> interface
