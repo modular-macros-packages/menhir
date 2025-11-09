@@ -1094,7 +1094,7 @@ let program =
        sub-module. This sub-module is used again below, as part of the
        application of the functor [TableInterpreter.Make]. *)
 
-    mbasics grammar @
+    basics_def grammar @
 
     (* In order to avoid hiding user-defined identifiers, only the
        exception [Error] and the type [token] should be defined (at

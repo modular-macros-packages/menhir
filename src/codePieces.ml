@@ -8,10 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module defines many internal naming conventions for use by the
-   two code generators, [CodeBackend] and [TableBackend]. It also offers
-   a few code generation facilities. *)
-
 open IL
 open ILConstruction
 open MiddleAPI
@@ -160,8 +156,9 @@ let semvtypes = function
 let destruct_token_def name codomain bindsemv mkbranch =
   let branches =
     Terminal.fold_real (fun t branches ->
-      { branchpat = tokpat t (if bindsemv then PVar semv else PWildcard);
-        branchbody = mkbranch t } :: branches
+      let pat  = tokpat t (if bindsemv then PVar semv else PWildcard)
+      and body = mkbranch t in
+      branch pat body :: branches
     ) []
   in
   let body = EFun ([ PVar token ], EMatch (EVar token, branches))
@@ -170,43 +167,32 @@ let destruct_token_def name codomain bindsemv mkbranch =
 
 (* -------------------------------------------------------------------------- *)
 
-(* A toplevel function [stop] raises the exception [Error]. *)
-
-(* If --exn-carries-state is passed, the exception [Error] carries an integer
-   parameter, a state number. *)
+(* The toplevel function [stop]. *)
 
 let stop =
   "_eRR"
 
 let call_stop (s : int) =
-  if X.exn_carries_state then
-    EApp (EVar stop, [EIntConst s])
-  else
-    EApp (EVar stop, [EUnit])
+  EApp (EVar stop,
+    if X.exn_carries_state then [EIntConst s] else [EUnit]
+  )
 
 let stopdef =
   let s = "_s" in
   let args = if X.exn_carries_state then [ EVar s ] else [] in
-  {
-    valpat = PVar stop;
-    valval =
-      EFun ([PVar s],
-        ERaise (EData (Interface.excname, args))
-      )
-  }
+  let body = EFun ([PVar s], ERaise (EData (Interface.excname, args))) in
+  def stop body
 
 (* -------------------------------------------------------------------------- *)
 
-(* Define the internal sub-module [Basics], which contains the definitions
-   of the exception [Error] and of the type [token]. Then, include this
-   sub-module. This is used both in the code and table back-ends. *)
+(* The internal sub-module [Basics]. *)
 
 let basics =
   "MenhirBasics"
   (* 2017/01/20 This name must be an unlikely name, as it might
      otherwise hide a user-defined module by the same name. *)
 
-let mbasics grammar = [
+let basics_def grammar = [
 
   (* The module [Basics]. *)
   SIModuleDef (basics, MStruct (

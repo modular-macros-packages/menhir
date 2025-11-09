@@ -22,8 +22,8 @@ open ILConstruction
 module CodePieces =
   CodePieces.Make(Grammar)(Settings)
 let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
-let semvtypes, call_stop, basics, mbasics =
-  CodePieces.(semvtypes, call_stop, basics, mbasics)
+let semvtypes, call_stop, basics, basics_def =
+  CodePieces.(semvtypes, call_stop, basics, basics_def)
 module ILTokens =
   ILTokens.Make(Grammar)(Settings)
 open ILTokens
@@ -983,7 +983,7 @@ let grammar =
 let program =
   [ SIFunctor (grammar.parameters,
 
-      mbasics grammar @
+      basics_def grammar @
 
       SIFragment grammar.preludes ::
 

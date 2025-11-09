@@ -111,25 +111,24 @@ val destruct_token_def: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
 (* -------------------------------------------------------------------------- *)
 
-(* A toplevel function [stop] raises the exception [Error]. *)
+(**A toplevel function [stop] raises the exception [Error]. *)
 
-(* If --exn-carries-state is passed, the exception [Error] carries an integer
+(**If [exn_carries_state] is [true], the exception [Error] carries an integer
    parameter, a state number. This state number must be passed as an argument
-   to [call_stop]. In the absence of --exn-carries-state, [call_stop] ignores
+   to [call_stop]. If [exn_carries_state] is [false] then [call_stop] ignores
    its argument. *)
 
+(**[call_stop] emits a call to [stop], which raises the exception [Error]. *)
 val call_stop: int -> expr
-  (* only stacklang *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* The structure items [mbasics grammar] define and include the internal
-   sub-module [Basics], which contains the definitions of the exception
-   [Error] and of the type [token]. Then, they define the global variable
-   mentioned above, which holds the exception [Error]. *)
-
+(**The name of the internal submodule [Basics]. *)
 val basics: string
 
-val mbasics: PlainSyntax.grammar -> structure
+(**The structure items [basics_def grammar] define and include the internal
+   submodule [Basics]. This submodule defines the exception [Error], the
+   function [stop], and the type [token]. *)
+val basics_def: PlainSyntax.grammar -> structure
 
 end
