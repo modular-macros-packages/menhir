@@ -14,17 +14,9 @@ open IL
 open ILConstruction
 open MiddleAPI
 
-module TokenType =
-  TokenType.Make(Settings)
-
-(* This module generates the code and the signature of the unparsing API. *)
-
-(* It is organized in three sections, each of which is a functor. The first
-   section defines common naming conventions. The second section generates
-   the code. The last section generates a signature. *)
-
-(* The input signature of each functor is a minimal subset of the signature
-   exposed by the [Grammar] module. *)
+(* This module is organized in three sections, each of which is a functor.
+   The first section defines common naming conventions. The second section
+   generates the code. The last section generates a signature. *)
 
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
