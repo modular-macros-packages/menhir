@@ -176,27 +176,24 @@ open ILTokens
    it may be somewhat difficult for the user to ensure that names are
    unique. *)
 
-let c = Error.new_category()
-
-let find_name_attribute prod : string list =
+let find_name_attribute c prod : string list =
   try
     [find_attribute "name" (Production.attributes prod)]
   with Not_found ->
-    Error.signal c (Production.positions prod)
+    Report.signal c (Production.positions prod)
       "This production has no @name attribute.";
     []
 
 let () =
-  let names = List.flatten (Production.mapx find_name_attribute) in
+  Report.monitor `Strict @@ fun c ->
+  let names = List.flatten (Production.mapx (find_name_attribute c)) in
   MList.foreach_duplicate String.compare names @@ fun name ->
   (* We provide no source code positions for this error message. We could
      try, but the [@name] attributes that are synthesized during inlining
      sometimes carry no meaningful position, because they are constructed
      by concatenation of several names. *)
-  Error.signal c [] "The production name %s is not unique." name
-
-let () =
-  Error.exit_if c
+  Report.signal c []
+    "The production name %s is not unique." name
 
 (* ------------------------------------------------------------------------ *)
 
