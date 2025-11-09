@@ -23,8 +23,6 @@ end
 module type S = sig
   type t
   val partition : t list -> t list
-  val annotated_partition : (t * 'a) list -> (t * 'a list) list
-  val partition_and_total : t list -> t list * t
 end
 
 module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
@@ -116,33 +114,4 @@ module Make (Set : DECOMPOSABLE) : S with type t := Set.t = struct
 
   let partition xs = union_parts (compute_parts xs)
 
-  let partition_and_total xs =
-    let parts = compute_parts xs in
-    let total = Set.big_union (List.rev_map fst parts) in
-    let union = union_parts parts in
-    union, total
-
-  let keyed_union_parts parts =
-    match List.sort (fun (_, k1) (_, k2) -> IntSet.compare k1 k2) parts with
-    | [] -> []
-    | (s1, k1) :: rest ->
-      let rec merge acc ss key = function
-        | [] -> (Set.big_union ss, key) :: acc
-        | (s, key') :: rest ->
-          if IntSet.equal key key' then
-            merge acc (s :: ss) key rest
-          else
-            merge ((Set.big_union ss, key) :: acc) [s] key' rest
-      in
-      merge [] [s1] k1 rest
-
-  let annotated_partition xs =
-    let sets, annotations = List.split xs in
-    let annotations = Array.of_list annotations in
-    let parts = compute_parts sets in
-    let union = keyed_union_parts parts in
-    let annotate key =
-      IntSet.fold (fun i acc -> annotations.(i) :: acc) key []
-    in
-    List.map (fun (set, key) -> set, annotate key) union
 end

@@ -79,16 +79,6 @@ module type S = sig
 
      The list [ys] returned by [partition xs] is sorted by [compare_minimum]. *)
 
-  val annotated_partition : (t * 'a) list -> (t * 'a list) list
-  (* [annotated_partition] is analogous to [partition], but allows every set
-     in the list [xs] to carry a piece of data (say, a name). Every set is
-     the result list [ys] is an intersection of some sets in the list [xs];
-     it is accompanied with a list of the names of these sets. *)
-
-  val partition_and_total : t list -> t list * t
-  (* [partition_and_total xs] returns both [partition xs] and the union of
-     all sets in the list [xs]. *)
-
 end
 
 module Make (Set : DECOMPOSABLE) : S with type t := Set.t
