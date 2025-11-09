@@ -1003,6 +1003,10 @@ let grammar =
 
 let inspection_API () =
 
+  (* Check that the type of every nonterminal symbol is known. *)
+
+  Nonterminal.check_every_symbol_has_ocaml_type "inspection API";
+
   (* Define the internal sub-module [symbols], which contains type
      definitions. Then, include this sub-module. This sub-module is used
      again below, as part of the application of the functor
