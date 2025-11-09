@@ -293,6 +293,10 @@
 
 ## Code Cleanup
 
+* `tokentypedef` and `basics_def` expect `grammar` as an argument, whereas
+  other modules expect `G : GRAMMAR`. (Actually `basics_def` expects both!)
+  See also `NonterminalType` and `Interface`. This is confusing.
+
 * The whole timing system (Time) should be redesigned so that each timed task
   has an explicit beginning and end. Also, the process of recording and the
   process of printing time information should be separated, so that tasks that
