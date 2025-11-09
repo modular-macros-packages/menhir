@@ -103,9 +103,10 @@ module Nonterminal : sig
      has a known type, this function has result type [ocamltype]. *)
   val ocamltype_of_start_symbol: t -> ocamltype
 
-  (**[symbols_without_ocamltype()] returns a list of the nonterminal symbols
-     that do not have a known OCaml type. *)
-  val symbols_without_ocamltype: unit -> t list
+  (**[check_every_symbol_has_ocaml_type reason] checks that every nonterminal
+     symbol has a known OCaml type. If this is not the case then the process
+     is aborted with a fatal error. *)
+  val check_every_symbol_has_ocaml_type: string -> unit
 
   (**[positions nt] is a list of the positions associated with the definition
      of the nonterminal symbol [nt]. [nt] should not be an internal start

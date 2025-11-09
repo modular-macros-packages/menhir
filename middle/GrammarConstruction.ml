@@ -99,15 +99,6 @@ module Nonterminal = struct
   let ocamltype_of_start_symbol nt =
     Option.get (ocamltype nt)
 
-  let symbols_without_ocamltype () =
-    foldx (fun nt accu ->
-      match ocamltype nt with
-      | Some _ ->
-          accu
-      | None ->
-          nt :: accu
-    ) []
-
   let positions : t -> ranges =
     tabulate @@ fun nt ->
     if is_internal_start nt then []
@@ -135,6 +126,38 @@ module Nonterminal = struct
     |> StringSet.elements
     |> List.map lookup
     |> List.sort Int.compare
+
+  (* Generating the [state] GADT (in the code back-end) or generating the
+     inspection API (in the table back-end) requires that the type of every
+     nonterminal symbol be known. *)
+
+  let symbols_without_ocaml_type () =
+    foldx (fun nt accu ->
+      match ocamltype nt with
+      | Some _ ->
+          accu
+      | None ->
+          nt :: accu
+    ) []
+
+  let check_every_symbol_has_ocaml_type reason =
+    let nts = symbols_without_ocaml_type() in
+    if nts <> [] then
+      let b = Buffer.create 1024 in
+      Printf.bprintf b "\
+        the %s requires the type of every nonterminal symbol to be\n\
+        known. Please specify the type of every symbol via %%type declarations, or\n\
+        enable type inference (look up --infer in the manual).\n\
+        Type inference is automatically enabled when Menhir is used via Dune,\n\
+        provided the dune-project file says (using menhir 2.0) or later.\n"
+        reason
+      ;
+      Printf.bprintf b "The types of the following nonterminal symbols are unknown:";
+      List.iter (fun nt ->
+        Printf.bprintf b "\n%s" (print false nt)
+      ) nts;
+      Report.monitor `Strict @@ fun c ->
+      Report.error c [] "%s" (Buffer.contents b)
 
 end
 

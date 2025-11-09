@@ -213,25 +213,10 @@ module Run (P : sig val program : StackLang.program end) = struct open P
 (* -------------------------------------------------------------------------- *)
 
 (* Generating the [state] GADT requires that the type of every nonterminal
-   symbol be known. Check that this is indeed the case. *)
+   symbol be known. *)
 
 let () =
-  let nts = Nonterminal.symbols_without_ocamltype() in
-  if nts <> [] then begin
-    let b = Buffer.create 1024 in
-    bprintf b "\
-      the code back-end requires the type of every nonterminal symbol to be\n\
-      known. Please specify the type of every symbol via %%type declarations, or\n\
-      enable type inference (look up --infer in the manual).\n\
-      Type inference is automatically enabled when Menhir is used via Dune,\n\
-      provided the dune-project file says (using menhir 2.0) or later.\n"
-    ;
-    bprintf b "The types of the following nonterminal symbols are unknown:";
-    nts |> List.iter begin fun nt ->
-      bprintf b "\n%s" (Nonterminal.print false nt)
-    end;
-    Error.error [] "%s" (Buffer.contents b)
-  end
+  Nonterminal.check_every_symbol_has_ocaml_type "code back-end"
 
 (* -------------------------------------------------------------------------- *)
 
