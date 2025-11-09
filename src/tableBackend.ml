@@ -20,9 +20,9 @@ module TokenType =
   TokenType.Make(Settings)
 open TokenType
 
-module CodePieces =
-  CodePieces.Make(Grammar)(Settings)
-open CodePieces
+module Conventions =
+  Conventions.Make(Grammar)(Settings)
+open Conventions
 
 module Run () = struct
 

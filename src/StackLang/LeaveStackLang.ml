@@ -19,11 +19,11 @@ let state = EmitStackLang.state
 (* Our target language: *)
 open IL
 open ILConstruction
-module CodePieces =
-  CodePieces.Make(Grammar)(Settings)
-let prefix, dataprefix, tvprefix = CodePieces.(prefix, dataprefix, tvprefix)
+module Conventions =
+  Conventions.Make(Grammar)(Settings)
+let prefix, dataprefix, tvprefix = Conventions.(prefix, dataprefix, tvprefix)
 let semvtypes, call_stop, basics, basics_def =
-  CodePieces.(semvtypes, call_stop, basics, basics_def)
+  Conventions.(semvtypes, call_stop, basics, basics_def)
 module ILTokens =
   ILTokens.Make(Grammar)(Settings)
 open ILTokens
@@ -152,7 +152,7 @@ let print_token =
 (* The definition of this function. *)
 
 let printtokendef =
-  CodePieces.destruct_token_def
+  Conventions.destruct_token_def
     print_token
     tstring
     false

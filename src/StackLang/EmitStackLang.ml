@@ -12,9 +12,9 @@ open Printf
 open Grammar
 open Invariant
 module Origin = Origin.Make(Lr1)
-module CodePieces =
-  CodePieces.Make(Grammar)(Settings)
-let prefix = CodePieces.prefix
+module Conventions =
+  Conventions.Make(Grammar)(Settings)
+let prefix = Conventions.prefix
 open StackLang
 open StackLangBuilder
 
@@ -243,7 +243,7 @@ let required =
    read from the lexing buffer before the lexer is ever invoked. *)
 
 let token, state, semv, beforeendp, startp, endp =
-  CodePieces.(
+  Conventions.(
     token |> Reg.import,
     state |> Reg.import,
     semv |> Reg.import,
@@ -253,10 +253,10 @@ let token, state, semv, beforeendp, startp, endp =
   )
 
 let startpos ids i =
-  CodePieces.(startpos ids i |> Reg.import)
+  Conventions.(startpos ids i |> Reg.import)
 
 let endpos ids i =
-  CodePieces.(endpos ids i |> Reg.import)
+  Conventions.(endpos ids i |> Reg.import)
 
 let initp =
   "initp" |> prefix |> Reg.import
