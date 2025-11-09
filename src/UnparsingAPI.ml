@@ -140,7 +140,8 @@ end
 (* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
 
-module Code (G : GRAMMAR)
+module Code
+(G : GRAMMAR)
 (A : sig
   (* A list of the start symbols and corresponding start states. *)
   val entry: (G.Nonterminal.t * int) list
@@ -632,9 +633,11 @@ include NamingConventions(G)
 
 let rec unparsing_API () : interface =
   IIComment "The unparsing API." ::
-  (* TODO comment each submodule *)
+  IIComment "Constructing disjunctive concrete syntax trees (DCSTs)." ::
   IIModule (mDCST, MTSigEnd (all_dcst_decls())) ::
+  IIComment "Deconstructing concrete syntax trees (CSTs)." ::
   IIModule (mCST, MTSigEnd (all_cst_decls())) ::
+  IIComment "Transforming DCSTs to CSTs." ::
   IIModule (mSettle, MTSigEnd (all_settle_decls())) ::
   []
 
