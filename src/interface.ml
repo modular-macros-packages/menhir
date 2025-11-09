@@ -15,6 +15,9 @@ open ILConstruction
 
 module TokenType =
   TokenType.Make(Settings)
+open TokenType
+
+open NonterminalType
 
 (* -------------------------------------------------------------------------- *)
 
@@ -23,15 +26,15 @@ module TokenType =
 let excname =
   "Error"
 
-(* If --fixed-exception is passed, then the exception [Error] is defined as
-   a synonym for [Parsing.Parse_error]. *)
+(* If [fixedexc] is [true] then the exception [Error] is defined as a
+   synonym for [Parsing.Parse_error]. Otherwise it is defined as a new
+   exception. *)
 
 let exceq =
   if Settings.fixedexc then Some "Parsing.Parse_error" else None
 
-(* If --exn-carries-state is passed, the exception [Error] carries an integer
-   parameter, a state number. This information can be exploited by the caller
-   to select a suitable syntax error message. *)
+(* If [exn_carries_state] is [true] then the exception [Error] carries an
+   integer parameter, a state number. *)
 
 let excparams =
   if Settings.exn_carries_state then [ tint ] else []
@@ -41,122 +44,110 @@ let excdef =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The type of the monolithic entry point for the start symbol [symbol]. *)
-
-let entrytypescheme grammar symbol =
-  let typ = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  type2scheme (marrow [ arrow tlexbuf TokenType.ttoken; tlexbuf ] typ)
-
-(* -------------------------------------------------------------------------- *)
-
 (* When the table back-end is active, the generated parser contains,
-   as a sub-module, an application of [Engine.Make]. This sub-module
-   is named as follows. *)
+   as a submodule, an application of [Engine.Make]. This submodule
+   is named [Interpreter]. *)
 
 let interpreter =
-  TokenType.interpreter
+  interpreter
+
+(* The type [checkpoint] is defined in the incremental API.
+   See [IncrementalEngine]. *)
 
 let checkpoint t =
   TypApp (interpreter ^ ".checkpoint", [ t ])
 
-let lr1state =
-  "lr1state"
+(* -------------------------------------------------------------------------- *)
 
-let tlr1state a : typ =
-  TypApp (lr1state, [a])
+(* The type of the entry point associated with the start symbol [symbol]
+   in the monolithic API. *)
+
+let monolithic_decl grammar symbol =
+  let ty = TypTextual (ocamltype_of_start_symbol grammar symbol) in
+  let scheme = type2scheme (marrow [ arrow tlexbuf ttoken; tlexbuf ] ty) in
+  MString.normalize symbol, scheme
+
+let monolithic_decls grammar =
+  StringSet.fold (fun symbol decls ->
+    monolithic_decl grammar symbol :: decls
+  ) grammar.start_symbols []
 
 (* -------------------------------------------------------------------------- *)
 
-(* The name of the sub-module that contains the incremental entry points. *)
-
-let incremental =
-  "Incremental"
-
-(* The type of the incremental entry point for the start symbol [symbol]. *)
-
-let entrytypescheme_incremental grammar symbol =
-  let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  type2scheme (arrow tposition (checkpoint t))
-
-(* -------------------------------------------------------------------------- *)
-
-(* The monolithic (traditional) API: the type [token], the exception [Error],
-   and the parser's entry points. *)
+(* The monolithic API contains the type [token], the exception [Error],
+   and the monolithic entry points. *)
 
 let monolithic_api grammar =
-
-  TokenType.tokentypedef grammar @
-
+  tokentypedef grammar @
   IIComment "This exception is raised by the monolithic API functions." ::
   IIExcDecls [ excdef ] ::
-
   IIComment "The monolithic API." ::
-  IIValDecls (
-    StringSet.fold (fun symbol decls ->
-      (MString.normalize symbol, entrytypescheme grammar symbol) :: decls
-    ) grammar.start_symbols []
-  ) ::
-
+  IIValDecls (monolithic_decls grammar) ::
   []
+
+(* -------------------------------------------------------------------------- *)
+
+(* The type of the entry point associated with the start symbol [symbol]
+   in the incremental API. *)
+
+let incremental_decl grammar symbol =
+  let ty = TypTextual (ocamltype_of_start_symbol grammar symbol) in
+  let scheme = type2scheme (arrow tposition (checkpoint ty)) in
+  MString.normalize symbol, scheme
+
+let incremental_decls grammar =
+  StringSet.fold (fun symbol decls ->
+    incremental_decl grammar symbol :: decls
+  ) grammar.start_symbols []
 
 (* -------------------------------------------------------------------------- *)
 
 (* The inspection API. *)
 
+(* This API forms an optional add-on to the incremental API. *)
+
 let inspection_api grammar () =
-
   let a = "a" in
-
-  (* Define the types [terminal] and [nonterminal]. *)
-
-  TokenType.tokengadtdef grammar @
-  NonterminalType.nonterminalgadtdef grammar @
-
-  (* Include the signature that lists the inspection functions, with
-     appropriate type instantiations. *)
-
+  (* Definitions of the types [terminal] and [nonterminal]. *)
+  tokengadtdef grammar @
+  nonterminalgadtdef grammar @
+  (* Include the signature [INSPECTION] with suitable type instantiations. *)
   IIComment "The inspection API." ::
   IIInclude (
     with_types WKDestructive
       "MenhirLib.IncrementalEngine.INSPECTION" [
-        [ a ], "lr1state", tlr1state (TypVar a);
+        [ a ], "lr1state", TypApp ("lr1state", [TypVar a]);
         [], "production", TypApp ("production", []);
-        [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
-        [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a);
+        [ a ], tctokengadt, ttokengadt (TypVar a);
+        [ a ], tcnonterminalgadt, tnonterminalgadt (TypVar a);
         [ a ], "env", TypApp ("env", [ TypVar a ]);
       ]
   ) ::
-
   []
 
 (* -------------------------------------------------------------------------- *)
 
 (* The incremental API. *)
 
+let incremental =
+  "Incremental"
+
 let incremental_engine () : module_type =
   with_types WKNonDestructive
     "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
     [
-      [],
-      "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
-      TokenType.ttoken
+      [], "token", ttoken
+        (* we cannot use [tctoken], which may be qualified *)
     ]
 
 let incremental_entry_points grammar : interface =
-
   IIComment "The entry point(s) to the incremental API." ::
   IIModule (incremental, MTSigEnd [
-    IIValDecls (
-      StringSet.fold (fun symbol decls ->
-        (symbol, entrytypescheme_incremental grammar symbol) :: decls
-      ) grammar.start_symbols []
-    )
+    IIValDecls (incremental_decls grammar)
   ]) ::
-
   []
 
 let incremental_api grammar () : interface =
-
   IIModule (
     interpreter,
     MTSigEnd (
@@ -165,9 +156,8 @@ let incremental_api grammar () : interface =
       MList.ifnlazy Settings.inspection (inspection_api grammar)
     )
   ) ::
-
-  (* The entry points must come after the incremental API, because
-     their type refers to the type [checkpoint]. *)
+  (* The entry points must come after the incremental API,
+     because their type refers to the type [checkpoint]. *)
   incremental_entry_points grammar
 
 (* -------------------------------------------------------------------------- *)

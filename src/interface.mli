@@ -8,24 +8,28 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module defines the interface of the generated parser. *)
+(**This module constructs the interface (that is, the [.mli] file)
+   of the generated parser. *)
 
 open IL
 open PlainSyntax
 
-(* This is the [Error] exception. *)
-
+(**[excname] is the name of the exception [Error],
+   which is used to report a syntax error. *)
 val excname: string
+
+(**[excndef] is the definition of the exception [Error]. *)
 val excdef: excdef
 
-(* The type ['a checkpoint], defined in the interpreter sub-module. *)
-
-val checkpoint: typ -> typ
-
-(* The name of the sub-module that contains the incremental entry points. *)
-
+(**[incremental] is the the name of the submodule that contains the
+   entry points of the incremental API. *)
 val incremental: string
 
-(* This writes the interface of the generated parser to the [.mli] file. *)
+(**[checkpoint] constructs an application of the parameterized type
+   ['a checkpoint], which is defined in the submodule [Interpreter].
+   This type exists in the incremental API only. *)
+val checkpoint: typ -> typ
 
+(**[write grammar filename ()] writes the interface of the generated
+   parser to the [.mli] file named [filename]. *)
 val write: grammar -> string -> unit -> unit
