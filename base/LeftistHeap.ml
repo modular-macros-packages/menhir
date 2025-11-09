@@ -16,8 +16,6 @@ end) = struct
   type key =
     Key.t
 
-  (* Leftist heaps. *)
-
   type 'a heap =
     | Leaf
     | Node of 'a heap * key * 'a * 'a heap * int
