@@ -40,14 +40,14 @@ end) : sig
      new queue. *)
   val merge : 'a t -> 'a t -> 'a t
 
-  type 'v pop2 =
-    | Head of key * 'v * key * 'v * 'v t
-    | Tail of key * 'v
+  type 'a pop2 =
+    | Head of key * 'a * key * 'a * 'a t
+    | Tail of key * 'a
     | Done
 
   (**[pop2 q] extracts at most two elements out of the queue [q].
      The element or elements that are extracted have minimal keys
      according to the ordering [Key.compare]. *)
-  val pop2 : 'v t -> 'v pop2
+  val pop2 : 'a t -> 'a pop2
 
 end
