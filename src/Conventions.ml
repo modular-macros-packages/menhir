@@ -14,11 +14,6 @@ open MiddleAPI
 
 module Make (G : GRAMMAR) (X : sig
 
-  (**[exn_carries_state] determines whether the exception [Error] should carry
-     an argument, which is a state number. This is the state where a syntax
-     error is detected. This feature is supported only by the code back-end. *)
-  val exn_carries_state: bool
-
   (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
      are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
      then they are defined as abbreviations for pre-existing types [M.token]
@@ -164,57 +159,6 @@ let destruct_token_def name codomain bindsemv mkbranch =
   let body = EFun ([ PVar token ], EMatch (EVar token, branches))
   and ty = arrow TokenType.ttoken codomain in
   def name (annotate body ty)
-
-(* -------------------------------------------------------------------------- *)
-
-(* The toplevel function [stop]. *)
-
-let stop =
-  "_eRR"
-
-let call_stop (s : int) =
-  EApp (EVar stop,
-    if X.exn_carries_state then [EIntConst s] else [EUnit]
-  )
-
-let stopdef =
-  let s = "_s" in
-  let args = if X.exn_carries_state then [ EVar s ] else [] in
-  let body = EFun ([PVar s], ERaise (EData (Interface.excname, args))) in
-  def stop body
-
-(* -------------------------------------------------------------------------- *)
-
-(* The internal sub-module [Basics]. *)
-
-let basics =
-  "MenhirBasics"
-  (* 2017/01/20 This name must be an unlikely name, as it might
-     otherwise hide a user-defined module by the same name. *)
-
-let basics_def grammar = [
-
-  (* The module [Basics]. *)
-  SIModuleDef (basics, MStruct (
-
-    (* The exception [Error]. *)
-    SIExcDefs [ Interface.excdef ] ::
-
-    (* The definition of [stop] must be placed at this particular point
-       so as to avoid the risk of a name collision. *)
-    SIValDefs (false, [ stopdef ]) ::
-
-    (* The type [token]. *)
-    interface_to_structure (
-      TokenType.tokentypedef grammar
-    )
-
-  ));
-
-  (* Include the above submodule. *)
-  SIInclude (MVar basics);
-
-]
 
 (* -------------------------------------------------------------------------- *)
 

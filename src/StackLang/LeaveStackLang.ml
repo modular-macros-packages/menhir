@@ -11,30 +11,29 @@
 open Printf
 let map, concat = List.(map, concat)
 let if1, ifn = MList.(if1, ifn)
+
 (* Our source language: *)
 open Grammar
 open StackLang
 let mem, elements = Reg.Set.(mem, elements)
 let state = EmitStackLang.state
+
 (* Our target language: *)
 open IL
 open ILConstruction
-module Conventions =
-  Conventions.Make(Grammar)(Settings)
-let prefix, dataprefix, tvprefix = Conventions.(prefix, dataprefix, tvprefix)
-let semvtypes, call_stop, basics, basics_def =
-  Conventions.(semvtypes, call_stop, basics, basics_def)
-module ILTokens =
-  ILTokens.Make(Grammar)(Settings)
+module TokenType  = TokenType.Make(Settings)
+module ILTokens   = ILTokens.Make(Grammar)(Settings)
 open ILTokens
+module Basics     = Interface.Basics(Settings)
+open Basics
+module Conventions = Conventions.Make(Grammar)(Settings)
+let prefix, dataprefix, tvprefix, semvtypes =
+  Conventions.(prefix, dataprefix, tvprefix, semvtypes)
 let exvar (r : register) = EVar (Reg.export r)
 let pxvar (r : register) = PVar (Reg.export r)
 let exvars rs = map exvar rs
 let pxvars rs = map pxvar rs
 let exlab (l : label) = EVar (Label.export l)
-
-module TokenType =
-  TokenType.Make(Settings)
 
 (* -------------------------------------------------------------------------- *)
 

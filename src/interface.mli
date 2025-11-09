@@ -9,17 +9,11 @@
 (******************************************************************************)
 
 (**This module constructs the interface (that is, the [.mli] file)
-   of the generated parser. *)
+   of the generated parser. It also provides the definition of the
+   internal submodule [Basics]. *)
 
 open IL
 open PlainSyntax
-
-(**[excname] is the name of the exception [Error],
-   which is used to report a syntax error. *)
-val excname: string
-
-(**[excndef] is the definition of the exception [Error]. *)
-val excdef: excdef
 
 (**[incremental] is the the name of the submodule that contains the
    entry points of the incremental API. *)
@@ -33,3 +27,34 @@ val checkpoint: typ -> typ
 (**[write grammar filename ()] writes the interface of the generated
    parser to the [.mli] file named [filename]. *)
 val write: grammar -> string -> unit -> unit
+
+(**The internal submodule [Basics] exists both when the code back-end
+   is used and when the table back-end is used. *)
+module Basics (X : sig
+
+  (**[exn_carries_state] determines whether the exception [Error] should carry
+     an argument, which is a state number. This is the state where a syntax
+     error is detected. This feature is supported only by the code back-end. *)
+  val exn_carries_state: bool
+
+end) : sig
+
+  (**A toplevel function [stop] raises the exception [Error]. *)
+
+  (**If [exn_carries_state] is [true], the exception [Error] carries an integer
+     parameter, a state number. This state number must be passed as an argument
+     to [call_stop]. If [exn_carries_state] is [false] then [call_stop] ignores
+     its argument. *)
+
+  (**[call_stop] emits a call to [stop], which raises the exception [Error]. *)
+  val call_stop: int -> expr
+
+  (**The name of the internal submodule [Basics]. *)
+  val basics: string
+
+  (**The structure items [basics_def grammar] define and include the internal
+     submodule [Basics]. This submodule defines the exception [Error], the
+     function [stop], and the type [token]. *)
+  val basics_def: grammar -> structure
+
+end

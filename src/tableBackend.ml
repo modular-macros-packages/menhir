@@ -20,6 +20,10 @@ module TokenType =
   TokenType.Make(Settings)
 open TokenType
 
+module Basics =
+  Interface.Basics(Settings)
+open Basics
+
 module Conventions =
   Conventions.Make(Grammar)(Settings)
 open Conventions

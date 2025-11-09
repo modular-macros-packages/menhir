@@ -8,19 +8,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module defines many internal naming conventions for use by the
-   two code generators, [CodeBackend] and [TableBackend]. It also
-   offers a few code generation facilities. *)
+(**This module defines some internal naming conventions for use by the two
+   code generators, [CodeBackend] and [TableBackend]. It also offers a few
+   code generation facilities. *)
 
 open IL
 open MiddleAPI
 
 module Make (G : GRAMMAR) (X : sig
-
-  (**[exn_carries_state] determines whether the exception [Error] should carry
-     an argument, which is a state number. This is the state where a syntax
-     error is detected. This feature is supported only by the code back-end. *)
-  val exn_carries_state: bool
 
   (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
      are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
@@ -108,27 +103,5 @@ val semvtypes: Symbol.t -> typ list
    whether the variable [semv] should be bound. [branch] is applied to each
    (real) terminal symbol [t] and must produce code for the branch [t]. *)
 val destruct_token_def: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
-
-(* -------------------------------------------------------------------------- *)
-
-(**A toplevel function [stop] raises the exception [Error]. *)
-
-(**If [exn_carries_state] is [true], the exception [Error] carries an integer
-   parameter, a state number. This state number must be passed as an argument
-   to [call_stop]. If [exn_carries_state] is [false] then [call_stop] ignores
-   its argument. *)
-
-(**[call_stop] emits a call to [stop], which raises the exception [Error]. *)
-val call_stop: int -> expr
-
-(* -------------------------------------------------------------------------- *)
-
-(**The name of the internal submodule [Basics]. *)
-val basics: string
-
-(**The structure items [basics_def grammar] define and include the internal
-   submodule [Basics]. This submodule defines the exception [Error], the
-   function [stop], and the type [token]. *)
-val basics_def: PlainSyntax.grammar -> structure
 
 end
