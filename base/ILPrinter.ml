@@ -26,7 +26,7 @@ module Printer (X : sig
   val print_line_directives: string option
 
   (* Whether comments should be printed. *)
-  val print_comments: bool
+  val comment: bool
 
 end) = struct
 open X
@@ -410,7 +410,7 @@ and exprk k f e =
   if member e k then
     match e with
     | EComment (c, e) ->
-        if print_comments then begin
+        if comment then begin
           line := !line + LineCount.count 0 (Lexing.from_string c);
           fprintf f "(* %s *)%t%a" c nl (exprk k) e
         end
@@ -977,7 +977,7 @@ end
 module Make (X : sig
   val f: out_channel
   val print_line_directives: string option
-  val print_comments: bool
+  val comment: bool
 end) = struct
   include Printer(struct
     type channel = out_channel
@@ -994,7 +994,7 @@ end
 module MakeBuffered (X : sig
   val f: Buffer.t
   val print_line_directives: string option
-  val print_comments: bool
+  val comment: bool
 end) = struct
   include Printer(struct
     type channel = Buffer.t
@@ -1013,7 +1013,7 @@ let print_expr f e =
     Make (struct
       let f = f
       let print_line_directives = None
-      let print_comments = false
+      let comment = false
     end)
   in
   P.expr e
@@ -1024,7 +1024,7 @@ let string_of_expr e =
     MakeBuffered (struct
       let f = b
       let print_line_directives = None
-      let print_comments = false
+      let comment = false
     end)
   in
   P.expr e

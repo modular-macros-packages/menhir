@@ -27,7 +27,7 @@ let write program =
          bar.mly] will produce different files. Nevertheless, this seems
          useful/reasonable. *)
       Some filename
-    let print_comments = Settings.comment
+    include Settings
   end) in
   P.program program
 

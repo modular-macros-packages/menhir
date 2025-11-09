@@ -287,7 +287,7 @@ let write grammar filename () =
   let module P = ILPrinter.Make (struct
     let f = ml
     let print_line_directives = Some filename
-    let print_comments = false
+    let comment = false
   end) in
   P.program (program grammar);
   close_out ml

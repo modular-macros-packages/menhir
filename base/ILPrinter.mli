@@ -34,9 +34,9 @@ module Make (X : sig
      perhaps where we think that they decrease readability (e.g., in a
      generated .mli file). *)
 
-  (**[print_comments] controls whether the comments carried by [EComment]
+  (**[comment] determines whether the comments carried by [EComment]
      are printed or erased. *)
-  val print_comments: bool
+  val comment: bool
 
 end) : sig
 

@@ -339,7 +339,7 @@ let compile_runs filename (oruns : oruns) : unit =
   let module P = ILPrinter.Make (struct
     let f = stdout
     let print_line_directives = None
-    let print_comments = X.comment
+    include X
   end) in
   P.program program
 

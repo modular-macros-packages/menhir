@@ -156,7 +156,7 @@ let write base inspection comment grammar =
   (* Settings. *)
   let module F = struct
     let print_line_directives = None
-    let print_comments = comment
+    let comment = comment
   end in
   (* Construct the definitions of the types [token] and [_ terminal]. *)
   let i : interface =

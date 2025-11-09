@@ -189,7 +189,7 @@ let write grammar mliname () =
   let module P = ILPrinter.Make (struct
     let f = mli
     let print_line_directives = None
-    let print_comments = Settings.comment
+    include Settings
   end) in
   P.interface (interface grammar);
   close_out mli
