@@ -185,4 +185,31 @@ module type SET = sig
      [head] is the maximal shared prefix of the sets [s1] and [s2]. *)
   val extract_shared_prefix : t -> t -> t * (t * t)
 
+  (**If [xs] is a list of sets then [partition xs] is the coarsest
+     partition of the set [U xs] that refines [xs].
+
+     The list [ys] is a partition of the set [U xs] iff:
+
+     - Every set in the list [ys] is nonempty.
+     - The sets in the list [ys] are pairwise disjoint.
+     - The union of the sets in the list [ys] is [U xs].
+
+     [ys] refines [xs] iff:
+
+     - Every set in the list [xs] is a union of elements of [ys].
+
+     The order of the list [partition xs] is unspecified. *)
+  val partition : t list -> t list
+
 end (* SET *)
+
+(**The signature [MINI] describes a subset of operations that are needed
+   by [Partition.Make]. *)
+module type MINI = sig
+  type elt
+  type t
+  val singleton: elt -> t
+  val union: t -> t -> t
+  val equal: t -> t -> bool
+  val compare: t -> t -> int
+end

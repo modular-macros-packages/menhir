@@ -1,10 +1,12 @@
 (******************************************************************************)
 (*                                                                            *)
-(*                                    Menhir                                  *)
+(*                                  Bitsets                                   *)
 (*                                                                            *)
-(*   Copyright Inria. All rights reserved. This file is distributed under     *)
-(*   the terms of the GNU General Public License version 2, as described in   *)
-(*   the file LICENSE.                                                        *)
+(*                       François Pottier, Inria Paris                        *)
+(*                                                                            *)
+(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
+(*       distributed under the terms of the GNU Library General Public        *)
+(*       License, with an exception, as described in the file LICENSE.        *)
 (*                                                                            *)
 (******************************************************************************)
 
@@ -102,6 +104,13 @@ end) = struct
 
   let[@inline] insert k v t =
     merge (singleton k v) t
+
+  let pop (t : 'a heap) : ((key * 'a) * 'a heap) option =
+    match t with
+    | Leaf ->
+        None
+    | Node (l, k, v, r, _) ->
+        Some ((k, v), merge l r)
 
   type 'a pop2 =
     | Head of key * 'a * key * 'a * 'a heap

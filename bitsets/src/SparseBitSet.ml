@@ -451,6 +451,16 @@ let rec extract_shared_prefix s1 s2 =
   | _, _ ->
       empty, (s1, s2)
 
+include Partition.Make(struct
+  type nonrec t = t
+  let is_empty = is_empty
+  let compare = compare
+  let compare_minimum = compare_minimum
+  let big_union = big_union
+  let extract_unique_prefix = extract_unique_prefix
+  let extract_shared_prefix = extract_shared_prefix
+end)
+
 (* -------------------------------------------------------------------------- *)
 
 (* View. *)

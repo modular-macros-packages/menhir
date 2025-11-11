@@ -1,10 +1,12 @@
 (******************************************************************************)
 (*                                                                            *)
-(*                                    Menhir                                  *)
+(*                                  Bitsets                                   *)
 (*                                                                            *)
-(*   Copyright Inria. All rights reserved. This file is distributed under     *)
-(*   the terms of the GNU General Public License version 2, as described in   *)
-(*   the file LICENSE.                                                        *)
+(*                       François Pottier, Inria Paris                        *)
+(*                                                                            *)
+(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
+(*       distributed under the terms of the GNU Library General Public        *)
+(*       License, with an exception, as described in the file LICENSE.        *)
 (*                                                                            *)
 (******************************************************************************)
 
@@ -40,14 +42,18 @@ end) : sig
      new queue. *)
   val merge : 'a t -> 'a t -> 'a t
 
+  (**[pop q] extracts a key-value pair whose key is minimal out of the queue
+     [q]. [None] is returned only in the case where [q] is empty. *)
+  val pop: 'a t -> ((key * 'a) * 'a t) option
+
   type 'a pop2 =
     | Head of key * 'a * key * 'a * 'a t
     | Tail of key * 'a
     | Done
 
-  (**[pop2 q] extracts at most two elements out of the queue [q].
-     The element or elements that are extracted have minimal keys
-     according to the ordering [Key.compare]. *)
+  (**[pop2 q] extracts two key-value pairs whose keys are minimal out of the
+     queue [q]. [Tail] is returned only in the case where [q] has only one
+     element; [Done] is returned only in the case where [q] is empty. *)
   val pop2 : 'a t -> 'a pop2
 
   (**/**)

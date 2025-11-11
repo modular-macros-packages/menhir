@@ -18,14 +18,6 @@ module Run () = struct
   (* The set of all real terminals, useful for encoding default reduction *)
   let all_terminals = TerminalSet.universe
 
-  (* Partition refinement algorithm for sets of terminals *)
-  let terminal_partition =
-    let module TerminalPartition = Refine.Make(TerminalSet) in
-    fun sets ->
-      (* Removing duplicates can speed up partitioning significantly *)
-      let sets = List.sort_uniq TerminalSet.compare sets in
-      TerminalPartition.partition sets
-
   (* Testing class inclusion *)
   let quick_subset = TerminalSet.quick_subset
 
@@ -427,7 +419,7 @@ module Run () = struct
     let visit_scc _ nodes =
       (* Compute approximation for an SCC, as described in section 6.2 *)
       let coarse_classes =
-        terminal_partition (List.fold_left classes_of [] nodes)
+        TerminalSet.partition (List.fold_left classes_of [] nodes)
       in
       match nodes with
       | [node] -> Vector.set classes node coarse_classes
@@ -444,7 +436,7 @@ module Run () = struct
             Vector.set classes node (
               coarse_classes
               |> List.map (TerminalSet.inter !coarse)
-              |> terminal_partition
+              |> TerminalSet.partition
             )
         end nodes;
         List.iter begin fun node ->
@@ -453,7 +445,7 @@ module Run () = struct
           | L lr1 ->
             let acc = ref [] in
             Gr.visit_lr1 (fun n -> acc := Vector.get classes n @ !acc) lr1;
-            Vector.set classes node (terminal_partition !acc)
+            Vector.set classes node (TerminalSet.partition !acc)
         end nodes
 
     let () = Scc.rev_topological_iter visit_scc

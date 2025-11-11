@@ -1,10 +1,12 @@
 (******************************************************************************)
 (*                                                                            *)
-(*                                    Menhir                                  *)
+(*                                  Bitsets                                   *)
 (*                                                                            *)
-(*   Copyright Inria. All rights reserved. This file is distributed under     *)
-(*   the terms of the GNU General Public License version 2, as described in   *)
-(*   the file LICENSE.                                                        *)
+(*                       François Pottier, Inria Paris                        *)
+(*                                                                            *)
+(*       Copyright 2025--2025 Inria. All rights reserved. This file is        *)
+(*       distributed under the terms of the GNU Library General Public        *)
+(*       License, with an exception, as described in the file LICENSE.        *)
 (*                                                                            *)
 (******************************************************************************)
 
@@ -19,10 +21,11 @@
    symbols into classes whose elements are never distinguished. *)
 
 (**The operations required by [Make] form a fragment of the signature
-   [Bitsets.API.SET]. *)
+   {!API.SET}. *)
 module Make (Set : sig
   type t
   val is_empty : t -> bool
+  val compare : t -> t -> int
   val compare_minimum : t -> t -> int
   val big_union : t list -> t
   val extract_unique_prefix : t -> t -> t * t
@@ -31,19 +34,7 @@ end) : sig
 
   open Set
 
-  (**If [xs] is a list of nonempty sets then [partition xs] is the coarsest
-     partition of the set [U xs] that refines [xs].
-
-     The list [ys] is a partition of the set [U xs] iff:
-
-     - The sets in the list [ys] are pairwise disjoint;
-     - The union of the sets in the list [ys] is [U xs].
-
-     [ys] refines [xs] iff:
-
-     - Every set in the list [xs] is a union of elements of [ys].
-
-     The list [partition xs] is sorted by [compare_minimum]. *)
+  (**[partition] is also documented in {!API.SET}. *)
   val partition : t list -> t list
 
 end
