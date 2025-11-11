@@ -94,10 +94,10 @@ val inline: bool
 (** Whether comments should be printed or discarded. *)
 val comment: bool
 
-(** This undocumented flag suppresses prefixing of identifiers with an
-    unlikely prefix in the generated code. This increases the code's
-    readability, but can cause identifiers in semantic actions to be
-    captured. *)
+(**If [noprefix] is [false] then most identifiers begin with an unlikely
+  prefix, in order to avoid name collisions. If [noprefix] is [true] then
+  this prefix is removed. This makes the code more readable but can cause
+  name collisions. This flag is not documented. *)
 val noprefix: bool
 
 (** This undocumented flag causes the code to be transformed by
@@ -113,8 +113,10 @@ val represent_positions: bool
    is [false] by default. It influences the code back-end only. *)
 val represent_states: bool
 
-(**[represent_values] forces every stack cell to contain a semantic value.
-   This flag is [false] by default. It influences the code back-end only. *)
+(**If [represent_values] is [true] then every stack cell is forced to
+   contain a semantic value. If it is [false] then a stack cell that
+   corresponds to a terminal symbol whose OCaml type is [unit] does not
+   contain a semantic value. *)
 val represent_values: bool
 
 (** How [ocamlc] and [ocamldep] should be invoked. *)
@@ -150,12 +152,17 @@ val interpret :
   | `Normal of [`ShowCST | `DoNotShowCST]
   | `Error ]
 
-(** Whether to generate the inspection API (which requires GADTs, and
-   requires producing more tables). *)
+(**[inspection] determines whether the inspection API must be generated. This
+   API involves GADTs, and requires producing more tables, so this flag is off
+   by default. This flag can be [true] only if the table back-end has been
+   selected. In other words, [inspection] implies [incremental]. The
+   inspection API is an extension of the incremental API. *)
 val inspection : bool
 
-(** Whether to generate the unparsing API (which offers facilities for
-    constructing and displaying concrete syntax trees). *)
+(**[unparsing] determines whether the unparsing API must be generated. This
+   API offers facilities for constructing and displaying concrete syntax
+   trees. This flag can be [true] only if the table back-end has been
+   selected. In other words, [unparsing] implies [incremental]. *)
 val unparsing : bool
 
 (** Whether the standard menhir library should be used. *)
@@ -174,14 +181,14 @@ val coq_no_actions : bool
    productions that are never reduced, etc. should be treated as errors. *)
 val strict: bool
 
-(** This flag causes the exception [Error] to be declared equal to
-   [Parsing.Parse_error]. This is useful when full compatibility with
-   ocamlyacc is desired. *)
+(**[fixedexc] determines whether the exception [Error] should be declared
+   equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
+   can be useful when full compatibility with ocamlyacc is desired. *)
 val fixedexc: bool
 
-(**This flag causes the exception [Error] to carry an integer state.
-   This is the state where a syntax error is detected.
-   This feature is supported only by the code back-end. *)
+(**[exn_carries_state] determines whether the exception [Error] should carry
+   an argument, which is a state number. This is the state where a syntax
+   error is detected. This feature is supported only by the code back-end. *)
 val exn_carries_state: bool
 
 (** This is a set of tokens which may be unused and about which we should not

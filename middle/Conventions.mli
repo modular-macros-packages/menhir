@@ -29,10 +29,10 @@ module Make (G : GRAMMAR) (X : sig
      contain a semantic value. *)
   val represent_values: bool
 
- (**If [noprefix] is [false] then most identifiers begin with an unlikely
+  (**If [noprefix] is [false] then most identifiers begin with an unlikely
     prefix, in order to avoid name collisions. If [noprefix] is [true] then
     this prefix is removed. This makes the code more readable but can cause
-    name collisions. *)
+    name collisions. This flag is not documented. *)
   val noprefix: bool
 
 end) : sig
