@@ -72,7 +72,7 @@ let tvprefix name =
 (* Naming conventions. *)
 
 let ntvar nt =
-  Infer.ntvar (Nonterminal.print true nt)
+  TypVar (Printf.sprintf "tv_%s" (Nonterminal.print true nt))
 
 let semv =
   "_v"
