@@ -320,9 +320,6 @@
   `--depend` and `--raw-depend`. In the long run, drop support for `--depend`
   and `--raw-depend`. Maybe also drop support for `--infer`.
 
-* Consider moving `Refine` into `bitsets`. In `Refine`, consider implementing
-  `IntSet` using `BoundedBitSet`; the bound would be the length of `xs`.
-
 ## Standard library
 
 * We currently have only two visibility levels (`%public` means globally
