@@ -14,7 +14,6 @@ open PlainSyntaxAccessors
 open IL
 open ILConstruction
 open FrontAPI
-open MiddleAPI
 open NonterminalType
 
 (* -------------------------------------------------------------------------- *)

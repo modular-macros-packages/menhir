@@ -15,7 +15,6 @@
 open IL
 open PlainSyntax
 open FrontAPI
-open MiddleAPI
 
 (**The internal submodule [Basics] exists both when the code back-end
    is used and when the table back-end is used. *)

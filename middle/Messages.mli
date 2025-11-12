@@ -10,6 +10,7 @@
 
 (**This module contains most of the code that deals with [.messages] files. *)
 
+open FrontAPI
 open MiddleAPI
 
 module Make (Lr1 : LR1) (X : sig

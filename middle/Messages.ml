@@ -12,6 +12,7 @@ open Printf
 open OrComment
 open RawSentence
 open Validate
+open FrontAPI
 open MiddleAPI
 
 module Make (Lr1 : LR1) (X : sig
