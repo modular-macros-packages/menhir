@@ -41,9 +41,6 @@ let[@inline] ifn c xs =
 let[@inline] if1 c x =
   if c then [x] else []
 
-let[@inline] cons_if c x xs =
-  if c then x :: xs else xs
-
 let[@inline] provided c xs =
   if c then xs() else []
 

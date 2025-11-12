@@ -311,7 +311,7 @@ module Run () = struct
       | None ->
         let raw =
           let add t ps acc =
-            MList.cons_if (t <> Terminal.error) (t, List.hd ps) acc
+            if t <> Terminal.error then (t, List.hd ps) :: acc else acc
           in
           TerminalMap.fold add (Lr1.reductions lr1) []
         in

@@ -39,11 +39,6 @@ val provided : bool -> (unit -> 'a list) -> 'a list
    expression [x] is evaluated even if the condition [c] is false. *)
 val if1 : bool -> 'a -> 'a list
 
-(**[cons_if c x xs] constructs the list [if c then x :: xs else xs]. Be
-   careful: the expression [x] is evaluated even if the condition [c] is
-   false. *)
-val cons_if : bool -> 'a -> 'a list -> 'a list
-
 (**The sum of a list of integers. *)
 val sum : int list -> int
 
