@@ -20,16 +20,9 @@
 
 open PlainSyntax
 open IL
+open FrontAPI
 
-module Make (X : sig
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
-
-end) : sig
+module Make (X : TOKEN_TYPE_SETTINGS) : sig
 
 (**[interpreter] is the name of the [Interpreter] submodule,
    which is generated when the table back-end is used. *)

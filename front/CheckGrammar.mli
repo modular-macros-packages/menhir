@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Syntax
+open FrontAPI
 
 module Make (E : sig
 
@@ -26,17 +27,9 @@ module Make (E : sig
      Therefore, it is possible to report several errors. *)
   val signal: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
-end) (X : sig
-
-  (**[ignore_unused_token t] returns [true] if an ignored-token warning
-     about the token [t] should be suppressed. *)
-  val ignore_unused_token : terminal -> bool
-
-  (**If [require_aliases] is [true] then a token without an alias causes
-     a warning to be emitted. *)
-  val require_aliases : bool
-
-end) : sig
+end)
+(X : CHECK_GRAMMAR_SETTINGS)
+: sig
 
   (**[check g] performs a number of well-formedness checks on the grammar
      [g]. Multiple warnings and errors can be reported via [warning] and
