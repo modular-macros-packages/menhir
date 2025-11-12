@@ -13,6 +13,7 @@
 open FrontAPI
 open MiddleAPI
 
+include API_SETTINGS
 include CHECK_GRAMMAR_SETTINGS
 include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
@@ -120,23 +121,6 @@ val interpret :
   [ `No
   | `Normal of [`ShowCST | `DoNotShowCST]
   | `Error ]
-
-(**[incremental] determines whether the incremental API must be generated.
-   This flag is [true] if and only if the table back-end has been selected. *)
-val incremental: bool
-
-(**[inspection] determines whether the inspection API must be generated. This
-   API involves GADTs, and requires producing more tables, so this flag is off
-   by default. This flag can be [true] only if the table back-end has been
-   selected. In other words, [inspection] implies [incremental]. The
-   inspection API is an extension of the incremental API. *)
-val inspection : bool
-
-(**[unparsing] determines whether the unparsing API must be generated. This
-   API offers facilities for constructing and displaying concrete syntax
-   trees. This flag can be [true] only if the table back-end has been
-   selected. In other words, [unparsing] implies [incremental]. *)
-val unparsing : bool
 
 (** Whether the standard menhir library should be used. *)
 val no_stdlib : bool
