@@ -64,7 +64,7 @@
 open MiddleAPI
 
 module Make (Lr0 : LR0)
-(X : sig val mode : [`Pager | `InclusionOnly] end)
+(X : sig val construction_mode : [`Pager | `InclusionOnly] end)
 = struct
 module Lr0 = Lr0
 open Lr0.G
@@ -186,7 +186,7 @@ let compatible candidate state =
    that no artificial conflicts can be created by this construction. *)
 
 let compatible candidate state =
-  match X.mode with
+  match X.construction_mode with
   | `Pager ->
       compatible candidate state
   | `InclusionOnly ->

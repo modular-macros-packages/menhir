@@ -11,8 +11,10 @@
 (** This module parses the command line. *)
 
 open FrontAPI
+open MiddleAPI
 
 include CHECK_GRAMMAR_SETTINGS
+include CONSTRUCTION_MODE_SETTINGS
 include TOKEN_TYPE_SETTINGS
 
 (** The back-end that must be used. *)
@@ -30,17 +32,6 @@ val filenames: string list
 (**If [token_type_only] is true then Menhir stops after generating the
    definition of the type [token]. This corresponds to [--only-tokens]. *)
 val token_type_only: bool
-
-(** How to construct the automaton. *)
-val construction_mode: [
-  | `Canonical     (** --canonical: canonical Knuth LR(1) automaton *)
-  | `InclusionOnly (** --no-pager : states are merged when there is an inclusion
-                                      relationship, default reductions are used *)
-  | `Pager         (** normal mode: states are merged as per Pager's criterion,
-                                      default reductions are used *)
-  | `LALR          (** --lalr     : states are merged as in an LALR generator,
-                                      i.e. as soon as they have the same LR(0) core *)
-]
 
 (** Whether conflicts should be explained. *)
 val explain: bool

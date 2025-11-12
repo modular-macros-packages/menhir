@@ -1391,3 +1391,24 @@ module type KINDERGARTEN = sig
   val track_endp: symbol -> bool
 
 end (* KINDERGARTEN *)
+
+(* -------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
+
+(* Fragments of settings. *)
+
+module type CONSTRUCTION_MODE_SETTINGS = sig
+
+  (**[construction_mode] determines which construction method is used.
+     In short,
+     - Knuth's canonical LR(1) construction performs no fusion.
+       This is the minimal amount of fusion.
+     - In "inclusion-only" mode, two states are fused only
+       if one is a subset of the other.
+     - In "Pager" mode, two states are fused if they compatible
+       according to a variant of Pager's weak compatibility criterion.
+     - In LALR mode, all states with the same LR(0) core must be fused.
+       This is the maximal amount of fusion. *)
+  val construction_mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
+
+end

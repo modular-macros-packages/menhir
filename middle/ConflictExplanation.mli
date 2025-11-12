@@ -19,13 +19,7 @@ open MiddleAPI
 
 module Run
 (A : LR1_AUTOMATON)
-(X : sig
-
-  (**[construction_mode] determines which construction method was used.
-     See [LR1Construction]. *)
-  val construction_mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
-
-end)
+(X : CONSTRUCTION_MODE_SETTINGS)
 (E : sig
 
   (**[log format ...] emits an information message. *)
