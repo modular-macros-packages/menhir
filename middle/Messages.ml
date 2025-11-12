@@ -15,11 +15,7 @@ open Validate
 open MiddleAPI
 
 module Make (Lr1 : LR1) (X : sig
-
-  (**[stragegy] determines which error-handling strategy the interpreter
-     should use. For an explanation of the available strategies, see
-     [IncrementalEngine]. *)
-  val strategy: [`Legacy | `Simplified]
+  include STRATEGY_SETTINGS
 
   (**[comment] determines whether comments should be included in the
      OCaml code that is generated. *)

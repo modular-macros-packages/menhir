@@ -15,6 +15,7 @@ open MiddleAPI
 
 include CHECK_GRAMMAR_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
+include STRATEGY_SETTINGS
 include TOKEN_TYPE_SETTINGS
 
 (** The back-end that must be used. *)
@@ -244,11 +245,6 @@ val dollars: dollars
    indicates whether the sentence should be displayed in concrete syntax; if
    it is [`Concrete], then every token must have a token alias. *)
 val random_sentence : (string * int * [`Abstract | `Concrete]) option
-
-(**[stragegy] determines which error-handling strategy the interpreter
-   should use. For an explanation of the available strategies, see
-   [IncrementalEngine]. *)
-val strategy: [`Legacy | `Simplified]
 
 (**The setting -O allows choosing an optimization level. It is used only by
    the code back-end. *)

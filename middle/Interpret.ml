@@ -12,11 +12,7 @@ open Printf
 open MiddleAPI
 
 module Make (Lr1 : LR1) (X : sig
-
-  (**[stragegy] determines which error-handling strategy the interpreter
-     should use. For an explanation of the available strategies, see
-     [IncrementalEngine]. *)
-  val strategy: [`Legacy | `Simplified]
+  include STRATEGY_SETTINGS
 
   (**[trace] determines whether the interpreter should log its actions
      to the standard error channel. *)

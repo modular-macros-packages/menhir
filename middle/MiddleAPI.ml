@@ -1412,3 +1412,12 @@ module type CONSTRUCTION_MODE_SETTINGS = sig
   val construction_mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
 
 end
+
+module type STRATEGY_SETTINGS = sig
+
+  (**[stragegy] determines which error-handling strategy the interpreter
+     should use. For an explanation of the available strategies, see
+     [IncrementalEngine]. *)
+  val strategy: [`Legacy | `Simplified]
+
+end
