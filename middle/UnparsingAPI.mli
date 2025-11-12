@@ -12,6 +12,7 @@
 
 open IL
 open PlainSyntax
+open FrontAPI
 open MiddleAPI
 
 module Code
@@ -28,15 +29,7 @@ end)
   val tables: string
 
 end)
-(X : sig
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
-
-end)
+(X : TOKEN_TYPE_SETTINGS)
 : sig
 
   (**[unparsing_API] is the code of the unparsing API. *)

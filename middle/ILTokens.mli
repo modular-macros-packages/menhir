@@ -11,17 +11,10 @@
 (**This module helps generate IL code that deals with tokens. *)
 
 open IL
+open FrontAPI
 open MiddleAPI
 
-module Make (G : GRAMMAR) (X : sig
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
-
-end) : sig
+module Make (G : GRAMMAR) (X : TOKEN_TYPE_SETTINGS)  : sig
   open G
 
   (**[tokpat t pat] is a pattern that matches a token for the terminal symbol

@@ -12,6 +12,7 @@ open Printf
 open Attribute
 open IL
 open ILConstruction
+open FrontAPI
 open MiddleAPI
 
 (* This module is organized in three sections, each of which is a functor.
@@ -149,15 +150,7 @@ end)
 (N : sig
   val tables: string
 end)
-(X : sig
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
-
-end)
+(X : TOKEN_TYPE_SETTINGS)
 = struct
 open G
 open A

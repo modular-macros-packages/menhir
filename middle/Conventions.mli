@@ -13,15 +13,12 @@
    code generation facilities. *)
 
 open IL
+open FrontAPI
 open MiddleAPI
 
 module Make (G : GRAMMAR) (X : sig
 
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
+  include TOKEN_TYPE_SETTINGS
 
   (**If [represent_values] is [true] then every stack cell is forced to
      contain a semantic value. If it is [false] then a stack cell that

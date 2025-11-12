@@ -10,17 +10,10 @@
 
 open IL
 open ILConstruction
+open FrontAPI
 open MiddleAPI
 
-module Make (G : GRAMMAR) (X : sig
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
-
-end) = struct
+module Make (G : GRAMMAR) (X : TOKEN_TYPE_SETTINGS) = struct
   open G
 
   module TokenType =
