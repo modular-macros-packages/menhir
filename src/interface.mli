@@ -17,6 +17,30 @@ open PlainSyntax
 open FrontAPI
 open MiddleAPI
 
+(**The internal submodule [Basics] exists both when the code back-end
+   is used and when the table back-end is used. *)
+module Basics (X : sig
+  include EXN_SETTINGS
+  include TOKEN_TYPE_SETTINGS
+end) : sig
+
+  (**[call_stop s] is a call to the internal function [stop], which raises the
+     exception [Error]. If [exn_carries_state] is [true], the exception
+     [Error] carries an integer parameter, a state number [s]. This state
+     number must be passed to [call_stop]. If [exn_carries_state] is [false]
+     then [call_stop] ignores its argument. *)
+  val call_stop: int -> expr
+
+  (**The name of the internal submodule [Basics]. *)
+  val basics: string
+
+  (**The structure items [basics_def grammar] define and include the internal
+     submodule [Basics]. This submodule defines the exception [Error], the
+     function [stop], and the type [token]. *)
+  val basics_def: grammar -> structure
+
+end (* Basics *)
+
 module Make (X : sig
   include API_SETTINGS
   include COMMENT_SETTINGS
@@ -38,30 +62,3 @@ end) : sig
   val write: grammar -> string -> unit -> unit
 
 end (* Make *)
-
-(**The internal submodule [Basics] exists both when the code back-end
-   is used and when the table back-end is used. *)
-module Basics (X : sig
-  include EXN_SETTINGS
-  include TOKEN_TYPE_SETTINGS
-end) : sig
-
-  (**A toplevel function [stop] raises the exception [Error]. *)
-
-  (**If [exn_carries_state] is [true], the exception [Error] carries an integer
-     parameter, a state number. This state number must be passed as an argument
-     to [call_stop]. If [exn_carries_state] is [false] then [call_stop] ignores
-     its argument. *)
-
-  (**[call_stop] emits a call to [stop], which raises the exception [Error]. *)
-  val call_stop: int -> expr
-
-  (**The name of the internal submodule [Basics]. *)
-  val basics: string
-
-  (**The structure items [basics_def grammar] define and include the internal
-     submodule [Basics]. This submodule defines the exception [Error], the
-     function [stop], and the type [token]. *)
-  val basics_def: grammar -> structure
-
-end (* Basics *)

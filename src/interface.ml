@@ -18,7 +18,7 @@ open NonterminalType
 
 (* -------------------------------------------------------------------------- *)
 
-(* The submodule [Basics]. *)
+(* The internal submodule [Basics]. *)
 
 module Basics (X : sig
   include EXN_SETTINGS
@@ -27,7 +27,7 @@ end) = struct
 
   module TokenType =
     TokenType.Make(X)
-  let tokentypedef = TokenType.tokentypedef
+  open TokenType
 
   (* The exception [Error]. *)
 
@@ -41,8 +41,8 @@ end) = struct
   let exceq =
     if X.fixedexc then Some "Parsing.Parse_error" else None
 
-  (* If [exn_carries_state] is [true] then the exception [Error] carries an
-     integer parameter, a state number. *)
+  (* If [exn_carries_state] is [true] then this exception carries an integer
+     parameter, which is a state number. Otherwise it carries no parameter. *)
 
   let excparams =
     if X.exn_carries_state then [ tint ] else []
@@ -50,7 +50,7 @@ end) = struct
   let excdef =
     { excname; exceq; excparams }
 
-  (* The toplevel function [stop]. *)
+  (* The toplevel function [stop] raises the exception [Error]. *)
 
   let stop =
     "_eRR"
@@ -66,12 +66,14 @@ end) = struct
     let body = EFun ([PVar s], ERaise (EData (excname, args))) in
     def stop body
 
-  (* The internal submodule [Basics]. *)
+  (* The name of the internal submodule [Basics]. *)
 
   let basics =
     "MenhirBasics"
     (* 2017/01/20 This name must be an unlikely name, as it might
        otherwise hide a user-defined module by the same name. *)
+
+  (* The definition of the internal submodule [Basics]. *)
 
   let basics_def grammar = [
 
