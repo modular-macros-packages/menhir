@@ -89,7 +89,7 @@ let actionname prod =
    [MenhirBasics], so as to avoid the risk of a capture. *)
 
 let stoken =
-  let tctoken = sprintf "%s.%s" basics TokenType.tctoken in
+  let tctoken = sprintf "%s.%s" basics_submodule_name TokenType.tctoken in
   type2scheme (IL.TypApp (tctoken, []))
 
 (* ------------------------------------------------------------------------ *)

@@ -1100,7 +1100,7 @@ let program =
     SIComment "This generated code requires the following version of MenhirLib:" ::
     valdef versiondef ::
 
-    (* Define the internal sub-module [basics], which contains the definitions
+    (* Define the internal sub-module [Basics], which contains the definitions
        of the exception [Error] and of the type [token]. Then, include this
        sub-module. This sub-module is used again below, as part of the
        application of the functor [TableInterpreter.Make]. *)
@@ -1119,9 +1119,9 @@ let program =
 
     SIModuleDef (tables,
       MStruct [
-        (* The internal sub-module [basics] contains the definitions of the
+        (* The internal sub-module [Basics] contains the definitions of the
            exception [Error] and of the type [token]. *)
-        SIInclude (MVar basics);
+        SIInclude (MVar basics_submodule_name);
 
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)

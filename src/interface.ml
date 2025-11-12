@@ -68,7 +68,7 @@ end) = struct
 
   (* The name of the internal submodule [Basics]. *)
 
-  let basics =
+  let basics_submodule_name =
     "MenhirBasics"
     (* 2017/01/20 This name must be an unlikely name, as it might
        otherwise hide a user-defined module by the same name. *)
@@ -78,7 +78,7 @@ end) = struct
   let basics_def grammar = [
 
     (* The module [Basics]. *)
-    SIModuleDef (basics, MStruct (
+    SIModuleDef (basics_submodule_name, MStruct (
 
       (* The exception [Error]. *)
       SIExcDefs [ excdef ] ::
@@ -95,7 +95,7 @@ end) = struct
     ));
 
     (* Include the above submodule. *)
-    SIInclude (MVar basics);
+    SIInclude (MVar basics_submodule_name);
 
   ]
 

@@ -31,8 +31,8 @@ end) : sig
      then [call_stop] ignores its argument. *)
   val call_stop: int -> expr
 
-  (**The name of the internal submodule [Basics]. *)
-  val basics: string
+  (**[basics_submodule_name] is the name of the internal submodule [Basics]. *)
+  val basics_submodule_name: string
 
   (**The structure items [basics_def grammar] define and include the internal
      submodule [Basics]. This submodule defines the exception [Error], the
