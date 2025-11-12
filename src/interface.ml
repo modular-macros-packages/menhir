@@ -131,10 +131,10 @@ open TokenType
 let interpreter =
   interpreter
 
-(* The type [checkpoint] is defined in the incremental API.
+(* The type [tcheckpoint] is defined in the incremental API.
    See [IncrementalEngine]. *)
 
-let checkpoint t =
+let tcheckpoint t =
   TypApp (interpreter ^ ".checkpoint", [ t ])
 
 (* -------------------------------------------------------------------------- *)
@@ -172,7 +172,7 @@ let monolithic_api grammar =
 
 let incremental_decl grammar symbol =
   let ty = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  let scheme = type2scheme (arrow tposition (checkpoint ty)) in
+  let scheme = type2scheme (arrow tposition (tcheckpoint ty)) in
   MString.normalize symbol, scheme
 
 let incremental_decls grammar =

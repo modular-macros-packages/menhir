@@ -52,10 +52,10 @@ end) : sig
      contains the entry points of the incremental API. *)
   val incremental_submodule_name: string
 
-  (**[checkpoint] constructs an application of the parameterized type
+  (**[tcheckpoint] constructs an application of the parameterized type
      ['a checkpoint], which is defined in the submodule [Interpreter].
      This type exists in the incremental API only. *)
-  val checkpoint: typ -> typ
+  val tcheckpoint: typ -> typ
 
   (**[write grammar filename ()] writes the interface of the generated
      parser to the [.mli] file named [filename]. *)

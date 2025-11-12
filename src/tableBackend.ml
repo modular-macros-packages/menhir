@@ -774,7 +774,7 @@ let incremental_entry_point state nt t =
           )
         )
       )
-      (checkpoint (TypTextual t))
+      (tcheckpoint (TypTextual t))
     )
   )
 
