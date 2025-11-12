@@ -17,6 +17,7 @@ include CHECK_GRAMMAR_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
 include STRATEGY_SETTINGS
 include TOKEN_TYPE_SETTINGS
+include TRACE_SETTINGS
 
 (** The back-end that must be used. *)
 val backend: [
@@ -48,9 +49,6 @@ val reference_graph: bool
 
 (** Whether the automaton's graph should be dumped. *)
 val automaton_graph: bool
-
-(** Whether tracing instructions should be generated. *)
-val trace: bool
 
 type preprocess_mode =
   | PMNormal

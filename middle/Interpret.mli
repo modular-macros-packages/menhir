@@ -12,11 +12,7 @@ open MiddleAPI
 
 module Make (Lr1 : LR1) (X : sig
   include STRATEGY_SETTINGS
-
-  (**[trace] determines whether the interpreter should log its actions
-     to the standard error channel. *)
-  val trace: bool
-
+  include TRACE_SETTINGS
 end) : sig
 
   (**[interpret show_cst] is a potentially endless interactive loop. It reads

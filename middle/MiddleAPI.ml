@@ -1421,3 +1421,11 @@ module type STRATEGY_SETTINGS = sig
   val strategy: [`Legacy | `Simplified]
 
 end
+
+module type TRACE_SETTINGS = sig
+
+  (**[trace] determines whether the interpreter should log its actions
+     to the standard error channel. *)
+  val trace: bool
+
+end
