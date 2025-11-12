@@ -1157,7 +1157,7 @@ let program =
 
     SIValDefs (false, monolithic_api) ::
 
-    SIModuleDef (incremental, MStruct [
+    SIModuleDef (incremental_submodule_name, MStruct [
       SIValDefs (false, incremental_api)
     ]) ::
 

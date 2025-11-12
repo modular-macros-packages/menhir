@@ -48,9 +48,9 @@ module Make (X : sig
   include TOKEN_TYPE_SETTINGS
 end) : sig
 
-  (**[incremental] is the the name of the submodule that contains the
-     entry points of the incremental API. *)
-  val incremental: string
+  (**[incremental_submodule_name] is the the name of the submodule that
+     contains the entry points of the incremental API. *)
+  val incremental_submodule_name: string
 
   (**[checkpoint] constructs an application of the parameterized type
      ['a checkpoint], which is defined in the submodule [Interpreter].

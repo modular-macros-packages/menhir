@@ -209,7 +209,7 @@ let inspection_api grammar () =
 
 (* The incremental API. *)
 
-let incremental =
+let incremental_submodule_name =
   "Incremental"
 
 let incremental_engine () : module_type =
@@ -222,7 +222,7 @@ let incremental_engine () : module_type =
 
 let incremental_entry_points grammar : interface =
   IIComment "The entry point(s) to the incremental API." ::
-  IIModule (incremental, MTSigEnd [
+  IIModule (incremental_submodule_name, MTSigEnd [
     IIValDecls (incremental_decls grammar)
   ]) ::
   []
