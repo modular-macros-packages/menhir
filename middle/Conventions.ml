@@ -14,21 +14,9 @@ open FrontAPI
 open MiddleAPI
 
 module Make (G : GRAMMAR) (X : sig
-
+  include NOPREFIX_SETTINGS
+  include REPRESENT_SETTINGS (* actually, just [represent_values] *)
   include TOKEN_TYPE_SETTINGS
-
-  (**If [represent_values] is [true] then every stack cell is forced to
-     contain a semantic value. If it is [false] then a stack cell that
-     corresponds to a terminal symbol whose OCaml type is [unit] does not
-     contain a semantic value. *)
-  val represent_values: bool
-
- (**If [noprefix] is [false] then most identifiers begin with an unlikely
-    prefix, in order to avoid name collisions. If [noprefix] is [true] then
-    this prefix is removed. This makes the code more readable but can cause
-    name collisions. *)
-  val noprefix: bool
-
 end) = struct
 open G
 

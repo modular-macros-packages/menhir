@@ -1421,6 +1421,16 @@ module type CONSTRUCTION_MODE_SETTINGS = sig
 
 end
 
+module type NOPREFIX_SETTINGS = sig
+
+  (**If [noprefix] is [false] then most identifiers begin with an unlikely
+    prefix, in order to avoid name collisions. If [noprefix] is [true] then
+    this prefix is removed. This makes the code more readable but can cause
+    name collisions. This flag is not documented. *)
+  val noprefix: bool
+
+end
+
 module type REPRESENT_SETTINGS = sig
 
   (**If [represent_states] is [true] then every stack cell is forced to

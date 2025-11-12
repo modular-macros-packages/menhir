@@ -16,6 +16,7 @@ open MiddleAPI
 include CHECK_GRAMMAR_SETTINGS
 include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
+include NOPREFIX_SETTINGS
 include REPRESENT_SETTINGS
 include STRATEGY_SETTINGS
 include TOKEN_TYPE_SETTINGS
@@ -81,12 +82,6 @@ val infer: infer_mode
 (** Whether one should inline the non terminal definitions marked
     with the %inline keyword. *)
 val inline: bool
-
-(**If [noprefix] is [false] then most identifiers begin with an unlikely
-  prefix, in order to avoid name collisions. If [noprefix] is [true] then
-  this prefix is removed. This makes the code more readable but can cause
-  name collisions. This flag is not documented. *)
-val noprefix: bool
 
 (** This undocumented flag causes the code to be transformed by
     [Inline] or [StackLangTransform.inline]. It is on by default. *)
