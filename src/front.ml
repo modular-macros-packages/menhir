@@ -213,6 +213,7 @@ let () =
    then known, just as with [--infer]. *)
 
 let grammar, ocaml_types_have_been_checked =
+  let module Infer = Infer.Make(Settings) in
   Settings.(match infer with
   | IMNone ->
       grammar, false

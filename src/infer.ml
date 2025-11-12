@@ -11,11 +11,23 @@
 open PlainSyntax
 open IL
 open ILConstruction
+open FrontAPI
+open MiddleAPI
+
+module Make (X : sig
+  include API_SETTINGS
+  include BASE_SETTINGS
+  include COMMENT_SETTINGS
+  include EXN_SETTINGS
+  include INFER_SETTINGS
+  include TOKEN_TYPE_SETTINGS
+end)
+= struct
 
 module TokenType =
-  TokenType.Make(Settings)
+  TokenType.Make(X)
 module Interface =
-  Interface.Make(Settings)
+  Interface.Make(X)
 
 (* ------------------------------------------------------------------------- *)
 
@@ -54,14 +66,11 @@ let decode s =
 
 (* The name of the temporary file. *)
 
-let base =
-  Settings.base
-
 let mlname =
-  base ^ ".ml"
+  X.base ^ ".ml"
 
 let mliname =
-  base ^ ".mli"
+  X.base ^ ".mli"
 
 (* ------------------------------------------------------------------------- *)
 (* The type of a nonterminal symbol. *)
@@ -315,7 +324,7 @@ let depend postprocess grammar =
 
   let ocamldep_command =
     Printf.sprintf "%s %s %s"
-      Settings.ocamldep (Filename.quote mlname) (Filename.quote mliname)
+      X.ocamldep (Filename.quote mlname) (Filename.quote mliname)
   in
 
   let output : string =
@@ -361,10 +370,10 @@ let depend postprocess grammar =
     List.iter (fun ((_, target_filename), dependencies) ->
       if Filename.check_suffix target_filename ".cmo" then
         let dependencies = List.filter (fun (basename, _) ->
-          basename <> base
+          basename <> X.base
         ) dependencies in
         if List.length dependencies > 0 then begin
-          Printf.printf "%s.ml %s.mli:" base base;
+          Printf.printf "%s.ml %s.mli:" X.base X.base;
           List.iter (fun (_basename, filename) ->
             Printf.printf " %s" filename
           ) dependencies;
@@ -428,7 +437,7 @@ let infer grammar =
   (* Invoke ocamlc to do type inference for us. *)
 
   let ocamlc_command =
-    Printf.sprintf "%s -c -i %s" Settings.ocamlc (Filename.quote mlname)
+    Printf.sprintf "%s -c -i %s" X.ocamlc (Filename.quote mlname)
   in
 
   let output =
@@ -454,3 +463,5 @@ let write_query filename grammar =
 
 let read_reply filename grammar =
   read_reply (IO.read_whole_file filename) grammar
+
+end (* Make *)

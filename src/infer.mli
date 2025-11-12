@@ -9,6 +9,18 @@
 (******************************************************************************)
 
 open PlainSyntax
+open FrontAPI
+open MiddleAPI
+
+module Make (X : sig
+  include API_SETTINGS
+  include BASE_SETTINGS
+  include COMMENT_SETTINGS
+  include EXN_SETTINGS
+  include INFER_SETTINGS
+  include TOKEN_TYPE_SETTINGS
+end)
+: sig
 
 (* [ntvar symbol] is the name of the type variable associated with a
    nonterminal symbol. *)
@@ -40,3 +52,5 @@ val write_query: string -> grammar -> 'never_returns
    a [%type] declaration for every nonterminal symbol. *)
 
 val read_reply: string -> grammar -> grammar
+
+end
