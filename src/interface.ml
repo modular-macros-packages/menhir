@@ -60,7 +60,7 @@ end) = struct
       if X.exn_carries_state then [EIntConst s] else [EUnit]
     )
 
-  let stopdef =
+  let stop_def =
     let s = "_s" in
     let args = if X.exn_carries_state then [ EVar s ] else [] in
     let body = EFun ([PVar s], ERaise (EData (excname, args))) in
@@ -85,7 +85,7 @@ end) = struct
 
       (* The definition of [stop] must be placed at this particular point
          so as to avoid the risk of a name collision. *)
-      SIValDefs (false, [ stopdef ]) ::
+      SIValDefs (false, [ stop_def ]) ::
 
       (* The type [token]. *)
       interface_to_structure (
@@ -128,14 +128,11 @@ open TokenType
    as a submodule, an application of [Engine.Make]. This submodule
    is named [Interpreter]. *)
 
-let interpreter =
-  interpreter
-
 (* The type [tcheckpoint] is defined in the incremental API.
    See [IncrementalEngine]. *)
 
 let tcheckpoint t =
-  TypApp (interpreter ^ ".checkpoint", [ t ])
+  TypApp (interpreter_submodule_name ^ ".checkpoint", [ t ])
 
 (* -------------------------------------------------------------------------- *)
 
@@ -229,7 +226,7 @@ let incremental_entry_points grammar : interface =
 
 let incremental_api grammar () : interface =
   IIModule (
-    interpreter,
+    interpreter_submodule_name,
     MTSigEnd (
       IIComment "The incremental API." ::
       IIInclude (incremental_engine()) ::

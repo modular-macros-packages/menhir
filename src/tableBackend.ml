@@ -94,10 +94,10 @@ let fcurrent =
   field "current"
 
 let entry =
-  interpreter ^ ".entry"
+  interpreter_submodule_name ^ ".entry"
 
 let start =
-  interpreter ^ ".start"
+  interpreter_submodule_name ^ ".start"
 
 let staticVersion =
   menhirlib ^ ".StaticVersion"
@@ -1078,7 +1078,7 @@ let unparsing_API () : structure =
   end in
   let module N = struct
     (* The internal name of the module that contains the parse tables. *)
-    let tables = interpreter ^ "." ^ et
+    let tables = interpreter_submodule_name ^ "." ^ et
   end in
   let module C = UnparsingAPI.Code(Grammar)(A)(N)(Settings) in
   C.unparsing_API()
@@ -1141,7 +1141,7 @@ let program =
       ]
     ) ::
 
-    SIModuleDef (interpreter, MStruct (
+    SIModuleDef (interpreter_submodule_name, MStruct (
 
       (* Apply the functor [TableInterpreter.MakeEngineTable] to the tables. *)
       SIModuleDef (et, MApp (MVar make_engine_table, MVar tables)) ::

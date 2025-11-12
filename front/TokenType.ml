@@ -17,7 +17,7 @@ open FrontAPI
 module Make (X : TOKEN_TYPE_SETTINGS) = struct
 open X
 
-let interpreter =
+let interpreter_submodule_name =
   "MenhirInterpreter"
 
 let tctoken =
@@ -58,7 +58,7 @@ let tokendata =
 let tokengadtprefix id =
   match mode with
   | `UseExternalTokenType m ->
-      let m' = m ^ "." ^ interpreter in
+      let m' = m ^ "." ^ interpreter_submodule_name in
       m' ^ "." ^ id
   | `DefineTokenType ->
       id
@@ -155,7 +155,7 @@ let write base inspection comment grammar =
   let i : interface =
     tokentypedef grammar @
     MList.ifn inspection
-      [ IIModule (interpreter, MTSigEnd (tokengadtdef grammar)) ]
+      [ IIModule (interpreter_submodule_name, MTSigEnd (tokengadtdef grammar)) ]
   in
   (* Write an [.mli] file. *)
   let f = open_out (base ^ ".mli") in

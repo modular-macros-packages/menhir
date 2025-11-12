@@ -24,9 +24,9 @@ open FrontAPI
 
 module Make (X : TOKEN_TYPE_SETTINGS) : sig
 
-(**[interpreter] is the name of the [Interpreter] submodule,
+(**[interpreter_submodule_name] is the name of the [Interpreter] submodule,
    which is generated when the table back-end is used. *)
-val interpreter: string
+val interpreter_submodule_name: string
 
 (**[tctoken] is the unqualified conventional name of the type [token]. *)
 val tctoken: string
