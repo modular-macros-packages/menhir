@@ -10,7 +10,8 @@
 
 open Printf
 let map, concat = List.(map, concat)
-let if1, ifn = MList.(if1, ifn)
+let if1 = MList.if1
+let provided = MList.provided
 
 (* Our source language: *)
 open Grammar
@@ -291,7 +292,7 @@ let celltypedef cell =
     datavalparams =
       tvar tvtail ::
       if1 holds_state (TypApp (tcstate, [ tvar tvtail; tvar tvfinal ])) @
-      ifn holds_semv (semvtypes symbol) @
+      provided holds_semv (fun () -> semvtypes symbol) @
       if1 holds_startp tposition @
       if1 holds_endp tposition ;
     datatypeparams = None;

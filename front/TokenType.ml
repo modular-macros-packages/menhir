@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let provided = MList.provided
 open PlainSyntax
 open PlainSyntaxAccessors
 open IL
@@ -152,10 +153,12 @@ let write base inspection comment grammar =
     let comment = comment
   end in
   (* Construct the definitions of the types [token] and [_ terminal]. *)
+  let interpreter_submodule_def () =
+    [ IIModule (interpreter_submodule_name, MTSigEnd (tokengadtdef grammar)) ]
+  in
   let i : interface =
     tokentypedef grammar @
-    MList.ifn inspection
-      [ IIModule (interpreter_submodule_name, MTSigEnd (tokengadtdef grammar)) ]
+    provided inspection interpreter_submodule_def
   in
   (* Write an [.mli] file. *)
   let f = open_out (base ^ ".mli") in

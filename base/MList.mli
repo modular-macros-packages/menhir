@@ -28,10 +28,6 @@ val single: 'a list -> 'a
 (**An alias for [List.init], when it exists. *)
 val init : int -> (int -> 'a) -> 'a list
 
-(**[ifn c xs] constructs the list [if c then xs else []]. Be careful: the
-   expression [xs] is evaluated even if the condition [c] is false. *)
-val ifn : bool -> 'a list -> 'a list
-
 (**[provided c xs] constructs the list [if c then xs() else []]. *)
 val provided : bool -> (unit -> 'a list) -> 'a list
 

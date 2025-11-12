@@ -35,9 +35,6 @@ let[@inline] init n f =
   assert (0 <= n);
   init_aux 0 n f
 
-let[@inline] ifn c xs =
-  if c then xs else []
-
 let[@inline] if1 c x =
   if c then [x] else []
 
