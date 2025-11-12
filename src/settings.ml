@@ -305,9 +305,6 @@ let cmly =
 let coq_lib_path =
   ref (Some "MenhirLib")
 
-type dollars =
-  [`DollarsDisallowed | `DollarsAllowed]
-
 let dollars =
   ref `DollarsAllowed
 
