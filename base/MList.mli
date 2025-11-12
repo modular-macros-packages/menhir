@@ -32,8 +32,8 @@ val init : int -> (int -> 'a) -> 'a list
    expression [xs] is evaluated even if the condition [c] is false. *)
 val ifn : bool -> 'a list -> 'a list
 
-(**[ifnlazy c xs] constructs the list [if c then xs() else []]. *)
-val ifnlazy : bool -> (unit -> 'a list) -> 'a list
+(**[provided c xs] constructs the list [if c then xs() else []]. *)
+val provided : bool -> (unit -> 'a list) -> 'a list
 
 (**[if1 c x] constructs the list [if c then [x] else []]. Be careful: the
    expression [x] is evaluated even if the condition [c] is false. *)

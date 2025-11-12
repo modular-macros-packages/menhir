@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let provided = MList.provided
 open PlainSyntax
 open PlainSyntaxAccessors
 open IL
@@ -226,7 +227,7 @@ let incremental_api grammar () : interface =
     MTSigEnd (
       IIComment "The incremental API." ::
       IIInclude (incremental_engine()) ::
-      MList.ifnlazy X.inspection (inspection_api grammar)
+      provided X.inspection (inspection_api grammar)
     )
   ) ::
   (* The entry points must come after the incremental API,
@@ -247,8 +248,8 @@ let unparsing_api grammar () : interface =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    MList.ifnlazy X.incremental (incremental_api grammar) @
-    MList.ifnlazy X.unparsing (unparsing_api grammar) @
+    provided X.incremental (incremental_api grammar) @
+    provided X.unparsing (unparsing_api grammar) @
     []
   )
 ]

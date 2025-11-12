@@ -44,7 +44,7 @@ let[@inline] if1 c x =
 let[@inline] cons_if c x xs =
   if c then x :: xs else xs
 
-let[@inline] ifnlazy c xs =
+let[@inline] provided c xs =
   if c then xs() else []
 
 let[@inline] sum li =

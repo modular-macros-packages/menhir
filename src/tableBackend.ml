@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let provided = MList.provided
 open ILConstruction
 open Grammar
 open IL
@@ -1150,7 +1151,7 @@ let program =
       SIInclude (MVar ti) ::
 
       (* Optionally generate the inspection API. *)
-      MList.ifnlazy Settings.inspection inspection_API @
+      provided Settings.inspection inspection_API @
 
       []
     )) ::
@@ -1162,7 +1163,7 @@ let program =
     ]) ::
 
     (* Optionally generate the unparsing API. *)
-    MList.ifnlazy Settings.unparsing unparsing_API @
+    provided Settings.unparsing unparsing_API @
 
     SIFragment grammar.postludes ::
 
