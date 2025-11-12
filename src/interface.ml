@@ -21,19 +21,8 @@ open NonterminalType
 (* The submodule [Basics]. *)
 
 module Basics (X : sig
-
+  include EXN_SETTINGS
   include TOKEN_TYPE_SETTINGS
-
-  (**[exn_carries_state] determines whether the exception [Error] should carry
-     an argument, which is a state number. This is the state where a syntax
-     error is detected. This feature is supported only by the code back-end. *)
-  val exn_carries_state: bool
-
-  (**[fixedexc] determines whether the exception [Error] should be declared
-     equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
-     can be useful when full compatibility with ocamlyacc is desired. *)
-  val fixedexc: bool
-
 end) = struct
 
   module TokenType =
@@ -118,17 +107,8 @@ end (* Basics *)
 
 module Make (X : sig
   include COMMENT_SETTINGS
+  include EXN_SETTINGS
   include TOKEN_TYPE_SETTINGS
-
-  (**[exn_carries_state] determines whether the exception [Error] should carry
-     an argument, which is a state number. This is the state where a syntax
-     error is detected. This feature is supported only by the code back-end. *)
-  val exn_carries_state: bool
-
-  (**[fixedexc] determines whether the exception [Error] should be declared
-     equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
-     can be useful when full compatibility with ocamlyacc is desired. *)
-  val fixedexc: bool
 
   (**[incremental] determines whether the incremental API must be generated.
      This flag is [true] if and only if the table back-end has been selected. *)

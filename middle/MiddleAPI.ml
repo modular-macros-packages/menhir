@@ -1421,6 +1421,20 @@ module type CONSTRUCTION_MODE_SETTINGS = sig
 
 end
 
+module type EXN_SETTINGS = sig
+
+  (**[exn_carries_state] determines whether the exception [Error] should carry
+     an argument, which is a state number. This is the state where a syntax
+     error is detected. This feature is supported only by the code back-end. *)
+  val exn_carries_state: bool
+
+  (**[fixedexc] determines whether the exception [Error] should be declared
+     equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
+     can be useful when full compatibility with ocamlyacc is desired. *)
+  val fixedexc: bool
+
+end
+
 module type NOPREFIX_SETTINGS = sig
 
   (**If [noprefix] is [false] then most identifiers begin with an unlikely

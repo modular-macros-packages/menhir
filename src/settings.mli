@@ -16,6 +16,7 @@ open MiddleAPI
 include CHECK_GRAMMAR_SETTINGS
 include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
+include EXN_SETTINGS
 include NOPREFIX_SETTINGS
 include REPRESENT_SETTINGS
 include STRATEGY_SETTINGS
@@ -152,16 +153,6 @@ val coq_no_actions : bool
 (** Whether unresolved LR(1) conflicts, useless precedence declarations,
    productions that are never reduced, etc. should be treated as errors. *)
 val strict: bool
-
-(**[fixedexc] determines whether the exception [Error] should be declared
-   equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
-   can be useful when full compatibility with ocamlyacc is desired. *)
-val fixedexc: bool
-
-(**[exn_carries_state] determines whether the exception [Error] should carry
-   an argument, which is a state number. This is the state where a syntax
-   error is detected. This feature is supported only by the code back-end. *)
-val exn_carries_state: bool
 
 (** This flag suppresses all warnings about unused precedence levels. *)
 val ignore_all_unused_precedence_levels: bool
