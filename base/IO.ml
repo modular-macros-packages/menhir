@@ -71,6 +71,13 @@ let invoke command =
   | _ ->
       None
 
+let invoke_or_die (command : string) : string =
+  match invoke command with
+  | Some output ->
+      output
+  | None ->
+      exit 1
+
 (* In [read_whole_file], the file is opened in text mode, so that (under
    Windows) CRLF is converted to LF. This guarantees that one byte is one
    character and seems to be required in order to report accurate positions. *)

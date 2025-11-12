@@ -30,6 +30,11 @@ val write: string -> (out_channel -> unit) -> unit
    returned. *)
 val invoke: string -> string option
 
+(**[invoke_or_die command] invokes an external command (which expects no
+   input). If the command succeeds, its output is returned. Otherwise,
+   the process is stopped with exit code 1. *)
+val invoke_or_die: string -> string
+
 (**[read_whole_file filename] reads the file [filename] in text mode and
    returns its contents as a string. *)
 val read_whole_file: string -> string

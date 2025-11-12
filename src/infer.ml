@@ -30,18 +30,6 @@ module Interface =
   Interface.Make(X)
 
 (* ------------------------------------------------------------------------- *)
-
-(* [invoke command] invokes an external command (which expects no input)
-   and returns its output. If the command fails, we exit abruptly. *)
-
-let invoke (command : string) : string =
-  match IO.invoke command with
-  | Some output ->
-      output
-  | None ->
-      exit 1
-
-(* ------------------------------------------------------------------------- *)
 (* Naming conventions. *)
 
 (* The type variable associated with a nonterminal symbol. Its name begins
@@ -332,7 +320,7 @@ let depend postprocess grammar =
     IO.moving_away mliname @@ fun () ->
     IO.with_file mlname (write grammar mlname) @@ fun () ->
     IO.with_file mliname (Interface.write grammar mliname) @@ fun () ->
-    invoke ocamldep_command
+    IO.invoke_or_die ocamldep_command
   in
 
   (* Echo ocamldep's output. *)
@@ -442,7 +430,7 @@ let infer grammar =
 
   let output =
     write grammar mlname ();
-    let result = invoke ocamlc_command in
+    let result = IO.invoke_or_die ocamlc_command in
     (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
        fails. (Or if an exception is thrown.) *)
     Sys.remove mlname;
