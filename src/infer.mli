@@ -31,16 +31,16 @@ val infer: grammar -> grammar
 (* [depend postprocess grammar] prints (on the standard output channel) the
    OCaml dependencies induced by the semantic actions. If [postprocess] is
    [true], then ocamldep's output is postprocessed, otherwise it is echoed
-   unchanged. This function does not return; it terminates the program. *)
+   unchanged. *)
 
-val depend: bool -> grammar -> 'never_returns
+val depend: bool -> grammar -> unit
 
 (* [write_query filename grammar] writes the grammar's semantic actions to a
    mock [.ml] file named [filename]. This file can then be submitted to
    [ocamlc] for type inference. See [--infer-write-query <filename>] in the
    manual. *)
 
-val write_query: string -> grammar -> 'never_returns
+val write_query: string -> grammar -> unit
 
 (* [read_reply filename grammar] reads the types inferred by OCaml for the
    mock [.ml] file described above, and returns a new grammar, augmented with

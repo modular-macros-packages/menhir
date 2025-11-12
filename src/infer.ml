@@ -30,6 +30,7 @@ module Interface =
   Interface.Make(X)
 
 (* ------------------------------------------------------------------------- *)
+
 (* Naming conventions. *)
 
 (* The type variable associated with a nonterminal symbol. Its name begins
@@ -61,6 +62,7 @@ let mliname =
   X.base ^ ".mli"
 
 (* ------------------------------------------------------------------------- *)
+
 (* The type of a nonterminal symbol. *)
 
 (* 2020/05/25. We must be careful how we process the type information given to
@@ -369,11 +371,7 @@ let depend postprocess grammar =
         end
     ) lines
 
-  end;
-
-  (* Stop. *)
-
-  exit 0
+  end
 
 (* ------------------------------------------------------------------------- *)
 (* Augmenting a grammar with inferred type information. *)
@@ -441,8 +439,7 @@ let infer grammar =
 (* ------------------------------------------------------------------------- *)
 
 let write_query filename grammar =
-  write grammar filename ();
-  exit 0
+  write grammar filename ()
 
 (* ------------------------------------------------------------------------- *)
 
