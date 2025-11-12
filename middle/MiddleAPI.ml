@@ -1397,6 +1397,14 @@ end (* KINDERGARTEN *)
 
 (* Fragments of settings. *)
 
+module type COMMENT_SETTINGS = sig
+
+  (**[comment] determines whether comments should be included in the
+     OCaml code that is generated. *)
+  val comment: bool
+
+end
+
 module type CONSTRUCTION_MODE_SETTINGS = sig
 
   (**[construction_mode] determines which construction method is used.

@@ -13,12 +13,8 @@
 open MiddleAPI
 
 module Make (Lr1 : LR1) (X : sig
+  include COMMENT_SETTINGS
   include STRATEGY_SETTINGS
-
-  (**[comment] determines whether comments should be included in the
-     OCaml code that is generated. *)
-  val comment: bool
-
 end) : sig
 
 (**The name of a [.messages] file. *)

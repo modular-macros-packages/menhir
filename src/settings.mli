@@ -14,6 +14,7 @@ open FrontAPI
 open MiddleAPI
 
 include CHECK_GRAMMAR_SETTINGS
+include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
 include STRATEGY_SETTINGS
 include TOKEN_TYPE_SETTINGS
@@ -79,10 +80,6 @@ val infer: infer_mode
 (** Whether one should inline the non terminal definitions marked
     with the %inline keyword. *)
 val inline: bool
-
-(**[comment] determines whether comments should be included in the
-   OCaml code that is generated. *)
-val comment: bool
 
 (**If [noprefix] is [false] then most identifiers begin with an unlikely
   prefix, in order to avoid name collisions. If [noprefix] is [true] then

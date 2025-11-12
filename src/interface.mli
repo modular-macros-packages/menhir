@@ -15,14 +15,11 @@
 open IL
 open PlainSyntax
 open FrontAPI
+open MiddleAPI
 
 module Make (X : sig
-
+  include COMMENT_SETTINGS
   include TOKEN_TYPE_SETTINGS
-
-  (**[comment] determines whether comments should be included in the
-     OCaml code that is generated. *)
-  val comment: bool
 
   (**[exn_carries_state] determines whether the exception [Error] should carry
      an argument, which is a state number. This is the state where a syntax
