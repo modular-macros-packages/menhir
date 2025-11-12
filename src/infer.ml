@@ -378,17 +378,20 @@ let depend postprocess grammar =
 
 (* The parameter [output] is supposed to contain the output of [ocamlc -i]. *)
 
-let read_reply (output : string) grammar =
+type env =
+  (string * ocamltype) list
 
-  let env : (string * int * int) list =
+let build (output : string) : env =
+  try
     Lexmli.main (Lexing.from_string output)
-  in
+    |> List.map @@ fun (id, openingofs, closingofs) ->
+    let ty = String.sub output openingofs (closingofs - openingofs) in
+    decode id, Inferred ty
+  with Lexmli.Failure ->
+    Error.error [] "failed to make sense of ocamlc's output."
 
-  let env : (string * ocamltype) list =
-    List.map (fun (id, openingofs, closingofs) ->
-      decode id, Inferred (String.sub output openingofs (closingofs - openingofs))
-    ) env
-  in
+let read_reply (output : string) grammar =
+  let env = build output in
 
   (* Augment the grammar with new %type declarations. *)
 
@@ -410,7 +413,6 @@ let read_reply (output : string) grammar =
   in
 
   { grammar with types = types }
-
 
 (* ------------------------------------------------------------------------- *)
 (* Inferring types for a grammar's nonterminals. *)

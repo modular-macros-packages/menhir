@@ -14,8 +14,10 @@
 
 {
 
+  exception Failure
+
   let fail () =
-    Error.error [] "failed to make sense of ocamlc's output."
+    raise Failure
 
 }
 
@@ -61,4 +63,3 @@ and main = parse
 | _
 | eof
     { fail() }
-
