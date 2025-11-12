@@ -12,6 +12,7 @@ open PlainSyntax
 open PlainSyntaxAccessors
 open IL
 open ILConstruction
+open FrontAPI
 open NonterminalType
 
 (* -------------------------------------------------------------------------- *)
@@ -19,6 +20,8 @@ open NonterminalType
 (* The submodule [Basics]. *)
 
 module Basics (X : sig
+
+  include TOKEN_TYPE_SETTINGS
 
   (**[exn_carries_state] determines whether the exception [Error] should carry
      an argument, which is a state number. This is the state where a syntax
@@ -29,12 +32,6 @@ module Basics (X : sig
      equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
      can be useful when full compatibility with ocamlyacc is desired. *)
   val fixedexc: bool
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
 
 end) = struct
 
@@ -120,6 +117,8 @@ end (* Basics *)
 
 module Make (X : sig
 
+  include TOKEN_TYPE_SETTINGS
+
   (**[comment] determines whether comments should be included in the
      OCaml code that is generated. *)
   val comment: bool
@@ -133,12 +132,6 @@ module Make (X : sig
      equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
      can be useful when full compatibility with ocamlyacc is desired. *)
   val fixedexc: bool
-
-  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
-     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
-     then they are defined as abbreviations for pre-existing types [M.token]
-     and ['a M.Interpreter.terminal]. *)
-  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
 
   (**[incremental] determines whether the incremental API must be generated.
      This flag is [true] if and only if the table back-end has been selected. *)
