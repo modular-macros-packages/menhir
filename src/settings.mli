@@ -16,6 +16,7 @@ open MiddleAPI
 include CHECK_GRAMMAR_SETTINGS
 include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
+include REPRESENT_SETTINGS
 include STRATEGY_SETTINGS
 include TOKEN_TYPE_SETTINGS
 include TRACE_SETTINGS
@@ -90,21 +91,6 @@ val noprefix: bool
 (** This undocumented flag causes the code to be transformed by
     [Inline] or [StackLangTransform.inline]. It is on by default. *)
 val code_inlining: bool
-
-(**[represent_positions] forces every stack cell to contain a start position
-   and an end position. This flag is [false] by default. It influences the
-   code back-end only. *)
-val represent_positions: bool
-
-(**[represent_states] forces every stack cell to contain a state. This flag
-   is [false] by default. It influences the code back-end only. *)
-val represent_states: bool
-
-(**If [represent_values] is [true] then every stack cell is forced to
-   contain a semantic value. If it is [false] then a stack cell that
-   corresponds to a terminal symbol whose OCaml type is [unit] does not
-   contain a semantic value. *)
-val represent_values: bool
 
 (** How [ocamlc] and [ocamldep] should be invoked. *)
 val ocamlc: string
