@@ -18,6 +18,7 @@ include CHECK_GRAMMAR_SETTINGS
 include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
 include EXN_SETTINGS
+include INFER_SETTINGS
 include NOPREFIX_SETTINGS
 include REPRESENT_SETTINGS
 include STRATEGY_SETTINGS
@@ -88,10 +89,6 @@ val inline: bool
 (** This undocumented flag causes the code to be transformed by
     [Inline] or [StackLangTransform.inline]. It is on by default. *)
 val code_inlining: bool
-
-(** How [ocamlc] and [ocamldep] should be invoked. *)
-val ocamlc: string
-val ocamldep: string
 
 (** How verbose we should be. *)
 

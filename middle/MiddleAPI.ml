@@ -1456,6 +1456,18 @@ module type EXN_SETTINGS = sig
 
 end
 
+module type INFER_SETTINGS = sig
+
+  (**[ocamlc] is the command that should be used to invoke the OCaml
+     bytecode compiler. Its default value is the string ["ocamlc"]. *)
+  val ocamlc: string
+
+  (**[ocamldep] is the command that should be used to invoke the OCaml
+     dependency generator. Its default value is the string ["ocamldep"]. *)
+  val ocamldep: string
+
+end
+
 module type NOPREFIX_SETTINGS = sig
 
   (**If [noprefix] is [false] then most identifiers begin with an unlikely
