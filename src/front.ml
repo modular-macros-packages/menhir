@@ -213,27 +213,28 @@ let () =
    then known, just as with [--infer]. *)
 
 let grammar, ocaml_types_have_been_checked =
-  let module Infer = Infer.Make(Settings) in
+  let module G = struct let grammar = grammar end in
+  let module Infer = Infer.Make(G)(Settings) in
   Settings.(match infer with
   | IMNone ->
       grammar, false
   | IMInfer ->
       Error.enable();                    (* See comment in module [Error]. *)
-      let grammar = Infer.infer grammar in
+      let grammar = Infer.infer() in
       Time.tick "Inferring types for nonterminals";
       grammar, true
   | IMDependRaw ->
-      Infer.depend false grammar;
+      Infer.depend false;
       exit 0
   | IMDependPostprocess ->
-      Infer.depend true grammar;
+      Infer.depend true;
       exit 0
   | IMWriteQuery filename ->
-      Infer.write_query filename grammar;
+      Infer.write_query filename;
       exit 0
   | IMReadReply filename ->
       Error.enable();                    (* See comment in module [Error]. *)
-      let grammar = Infer.read_reply filename grammar in
+      let grammar = Infer.read_reply filename in
       Time.tick "Reading inferred types for nonterminals";
       grammar, true
   )

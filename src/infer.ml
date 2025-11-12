@@ -14,7 +14,9 @@ open ILConstruction
 open FrontAPI
 open MiddleAPI
 
-module Make (X : sig
+module Make
+(G : sig val grammar : grammar end)
+(X : sig
   include API_SETTINGS
   include BASE_SETTINGS
   include COMMENT_SETTINGS
@@ -23,13 +25,14 @@ module Make (X : sig
   include TOKEN_TYPE_SETTINGS
 end)
 = struct
+open G
 
 module TokenType =
   TokenType.Make(X)
 module Interface =
   Interface.Make(X)
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* Naming conventions. *)
 
@@ -61,7 +64,7 @@ let mlname =
 let mliname =
   X.base ^ ".mli"
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
 (* The type of a nonterminal symbol. *)
 
@@ -93,38 +96,38 @@ let mliname =
    type provided by the user. E.g., the user may declare the type [> `A ],
    while OCaml may infer the type [> `A | `B ]. *)
 
-(* [usertype grammar nt] is the type provided by the user for the nonterminal
+(* [usertype nt] is the type provided by the user for the nonterminal
    symbol [nt], if there is one. *)
 
-let usertype grammar nt =
+let usertype nt =
    try
      Some (TypTextual (StringMap.find nt grammar.types))
    with Not_found ->
      None
 
-(* [annotate_expr grammar e nt] annotates the expression [e] with type
+(* [annotate_expr e nt] annotates the expression [e] with type
    information associated with the nonterminal symbol [nt]. We annotate [e]
    with the type variable [ntvar nt], and additionally annotate it with the
-   type [usertype grammar nt], if it exists. *)
+   type [usertype nt], if it exists. *)
 
-let annotate_expr grammar e nt =
+let annotate_expr e nt =
   let e = annotate e (ntvar nt) in
-  let e = Option.fold (fun t e -> annotate e t) (usertype grammar nt) e in
+  let e = Option.fold (fun t e -> annotate e t) (usertype nt) e in
   e
 
-let annotate_pat grammar p nt =
+let annotate_pat p nt =
   let p = PAnnot (p, ntvar nt) in
-  let p = Option.fold (fun t p -> PAnnot (p, t)) (usertype grammar nt) p in
+  let p = Option.fold (fun t p -> PAnnot (p, t)) (usertype nt) p in
   p
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Code production. *)
 
-(* [tokentype grammar symbol] returns the type of the terminal symbol
+(* [tokentype symbol] returns the type of the terminal symbol
    [symbol], if [symbol] is indeed a terminal symbol. Otherwise, it
    raises [Not_found]. *)
 
-let tokentype grammar symbol =
+let tokentype symbol =
   let props = StringMap.find symbol grammar.tokens in
   match props.tk_ocamltype with
   | None ->
@@ -139,7 +142,7 @@ let tokentype grammar symbol =
    code. It would be nice if these conventions were more clearly
    isolated and perhaps moved to the [Action] or [Keyword] module. *)
 
-let actiondef grammar symbol branch =
+let actiondef symbol branch =
 
   (* Construct a list of the semantic action's formal parameters that
      depend on the production's right-hand side. *)
@@ -166,10 +169,10 @@ let actiondef grammar symbol branch =
       in
       let pid =
         try
-          PAnnot (pid, tokentype grammar symbol)
+          PAnnot (pid, tokentype symbol)
         with Not_found ->
           (* Symbol is a nonterminal. *)
-          annotate_pat grammar pid symbol
+          annotate_pat pid symbol
       in
       pid ::
       PAnnot (PVar startp, tposition) ::
@@ -201,11 +204,7 @@ let actiondef grammar symbol branch =
   (* Construct a function definition out of the above bindings and the
      semantic action. *)
 
-  let body =
-    annotate_expr grammar
-      (Action.expr branch.action)
-      symbol
-  in
+  let body = annotate_expr (Action.expr branch.action) symbol in
 
   match formals with
   | [] ->
@@ -215,14 +214,14 @@ let actiondef grammar symbol branch =
 
 (* [program] turns an entire grammar into a test program. *)
 
-let program grammar =
+let program () =
 
   (* Turn the grammar into a bunch of function definitions. *)
 
   let bindings =
     StringMap.fold (fun symbol rule bindings ->
       List.fold_left (fun bindings branch ->
-        let binding = (PWildcard, actiondef grammar symbol branch)
+        let binding = (PWildcard, actiondef symbol branch)
         and priority = Action.priority branch.action in
         (priority, binding) :: bindings
       ) bindings rule.branches
@@ -280,20 +279,20 @@ let program grammar =
     SIFragment grammar.postludes ::
   [])]
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Writing the program associated with a grammar to a file. *)
 
-let write grammar filename () =
+let write filename () =
   let ml = open_out filename in
   let module P = ILPrinter.Make (struct
     let f = ml
     let print_line_directives = Some filename
     let comment = false
   end) in
-  P.program (program grammar);
+  P.program (program());
   close_out ml
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Running ocamldep on the program. *)
 
 type entry =
@@ -302,7 +301,7 @@ type entry =
 type line =
     entry (* target *) * entry list (* dependencies *)
 
-let depend postprocess grammar =
+let depend postprocess =
 
   (* Create an [.ml] file and an [.mli] file, then invoke ocamldep to
      compute dependencies for us. *)
@@ -320,7 +319,7 @@ let depend postprocess grammar =
   let output : string =
     IO.moving_away mlname @@ fun () ->
     IO.moving_away mliname @@ fun () ->
-    IO.with_file mlname (write grammar mlname) @@ fun () ->
+    IO.with_file mlname (write mlname) @@ fun () ->
     IO.with_file mliname (Interface.write grammar mliname) @@ fun () ->
     IO.invoke_or_die ocamldep_command
   in
@@ -373,7 +372,7 @@ let depend postprocess grammar =
 
   end
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Augmenting a grammar with inferred type information. *)
 
 (* The parameter [output] is supposed to contain the output of [ocamlc -i]. *)
@@ -390,7 +389,7 @@ let build (output : string) : env =
   with Lexmli.Failure ->
     Error.error [] "failed to make sense of ocamlc's output."
 
-let read_reply (output : string) grammar =
+let read_reply (output : string) =
   let env = build output in
 
   (* Augment the grammar with new %type declarations. *)
@@ -414,10 +413,10 @@ let read_reply (output : string) grammar =
 
   { grammar with types = types }
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 (* Inferring types for a grammar's nonterminals. *)
 
-let infer grammar =
+let infer () =
 
   (* Invoke ocamlc to do type inference for us. *)
 
@@ -426,7 +425,7 @@ let infer grammar =
   in
 
   let output =
-    write grammar mlname ();
+    write mlname ();
     let result = IO.invoke_or_die ocamlc_command in
     (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
        fails. (Or if an exception is thrown.) *)
@@ -436,16 +435,16 @@ let infer grammar =
 
   (* Make sense out of ocamlc's output. *)
 
-  read_reply output grammar
+  read_reply output
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
-let write_query filename grammar =
-  write grammar filename ()
+let write_query filename =
+  write filename ()
 
-(* ------------------------------------------------------------------------- *)
+(* -------------------------------------------------------------------------- *)
 
-let read_reply filename grammar =
-  read_reply (IO.read_whole_file filename) grammar
+let read_reply filename =
+  read_reply (IO.read_whole_file filename)
 
 end (* Make *)
