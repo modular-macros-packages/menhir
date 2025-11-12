@@ -25,10 +25,6 @@ module Run
      See [LR1Construction]. *)
   val construction_mode: [`Canonical | `InclusionOnly | `Pager | `LALR]
 
-  (**[base] is the name of the [.conflicts] file that should be created,
-     without the [.conflicts] extension. *)
-  val base: string
-
 end)
 (E : sig
 
