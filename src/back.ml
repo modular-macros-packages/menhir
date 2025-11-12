@@ -10,6 +10,9 @@
 
 (* Driver for the back-end. *)
 
+module Interface =
+  Interface.Make(Settings)
+
 (* Define an .ml file writer . *)
 
 let write program =

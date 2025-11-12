@@ -12,35 +12,160 @@ open PlainSyntax
 open PlainSyntaxAccessors
 open IL
 open ILConstruction
-
-module TokenType =
-  TokenType.Make(Settings)
-open TokenType
-
 open NonterminalType
 
 (* -------------------------------------------------------------------------- *)
 
-(* The [Error] exception. *)
+(* The submodule [Basics]. *)
 
-let excname =
-  "Error"
+module Basics (X : sig
 
-(* If [fixedexc] is [true] then the exception [Error] is defined as a
-   synonym for [Parsing.Parse_error]. Otherwise it is defined as a new
-   exception. *)
+  (**[exn_carries_state] determines whether the exception [Error] should carry
+     an argument, which is a state number. This is the state where a syntax
+     error is detected. This feature is supported only by the code back-end. *)
+  val exn_carries_state: bool
 
-let exceq =
-  if Settings.fixedexc then Some "Parsing.Parse_error" else None
+  (**[fixedexc] determines whether the exception [Error] should be declared
+     equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
+     can be useful when full compatibility with ocamlyacc is desired. *)
+  val fixedexc: bool
 
-(* If [exn_carries_state] is [true] then the exception [Error] carries an
-   integer parameter, a state number. *)
+  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+     then they are defined as abbreviations for pre-existing types [M.token]
+     and ['a M.Interpreter.terminal]. *)
+  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
 
-let excparams =
-  if Settings.exn_carries_state then [ tint ] else []
+end) = struct
 
-let excdef =
-  { excname; exceq; excparams }
+  module TokenType =
+    TokenType.Make(X)
+  let tokentypedef = TokenType.tokentypedef
+
+  (* The exception [Error]. *)
+
+  let excname =
+    "Error"
+
+  (* If [fixedexc] is [true] then the exception [Error] is defined as a
+     synonym for [Parsing.Parse_error]. Otherwise it is defined as a new
+     exception. *)
+
+  let exceq =
+    if X.fixedexc then Some "Parsing.Parse_error" else None
+
+  (* If [exn_carries_state] is [true] then the exception [Error] carries an
+     integer parameter, a state number. *)
+
+  let excparams =
+    if X.exn_carries_state then [ tint ] else []
+
+  let excdef =
+    { excname; exceq; excparams }
+
+  (* The toplevel function [stop]. *)
+
+  let stop =
+    "_eRR"
+
+  let call_stop (s : int) =
+    EApp (EVar stop,
+      if X.exn_carries_state then [EIntConst s] else [EUnit]
+    )
+
+  let stopdef =
+    let s = "_s" in
+    let args = if X.exn_carries_state then [ EVar s ] else [] in
+    let body = EFun ([PVar s], ERaise (EData (excname, args))) in
+    def stop body
+
+  (* The internal submodule [Basics]. *)
+
+  let basics =
+    "MenhirBasics"
+    (* 2017/01/20 This name must be an unlikely name, as it might
+       otherwise hide a user-defined module by the same name. *)
+
+  let basics_def grammar = [
+
+    (* The module [Basics]. *)
+    SIModuleDef (basics, MStruct (
+
+      (* The exception [Error]. *)
+      SIExcDefs [ excdef ] ::
+
+      (* The definition of [stop] must be placed at this particular point
+         so as to avoid the risk of a name collision. *)
+      SIValDefs (false, [ stopdef ]) ::
+
+      (* The type [token]. *)
+      interface_to_structure (
+        tokentypedef grammar
+      )
+
+    ));
+
+    (* Include the above submodule. *)
+    SIInclude (MVar basics);
+
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
+end (* Basics *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* The interface. *)
+
+module Make (X : sig
+
+  (**[comment] determines whether comments should be included in the
+     OCaml code that is generated. *)
+  val comment: bool
+
+  (**[exn_carries_state] determines whether the exception [Error] should carry
+     an argument, which is a state number. This is the state where a syntax
+     error is detected. This feature is supported only by the code back-end. *)
+  val exn_carries_state: bool
+
+  (**[fixedexc] determines whether the exception [Error] should be declared
+     equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
+     can be useful when full compatibility with ocamlyacc is desired. *)
+  val fixedexc: bool
+
+  (**If [mode] is [`DefineTokenType] then the types [token] and ['a terminal]
+     are defined as algebraic data types. If it is [`UseExternalTokenType "M"]
+     then they are defined as abbreviations for pre-existing types [M.token]
+     and ['a M.Interpreter.terminal]. *)
+  val mode: [ `DefineTokenType | `UseExternalTokenType of string]
+
+  (**[incremental] determines whether the incremental API must be generated.
+     This flag is [true] if and only if the table back-end has been selected. *)
+  val incremental: bool
+
+  (**[inspection] determines whether the inspection API must be generated. This
+     API involves GADTs, and requires producing more tables, so this flag is off
+     by default. This flag can be [true] only if the table back-end has been
+     selected. In other words, [inspection] implies [incremental]. The
+     inspection API is an extension of the incremental API. *)
+  val inspection : bool
+
+  (**[unparsing] determines whether the unparsing API must be generated. This
+     API offers facilities for constructing and displaying concrete syntax
+     trees. This flag can be [true] only if the table back-end has been
+     selected. In other words, [unparsing] implies [incremental]. *)
+  val unparsing : bool
+
+end)
+= struct
+
+module B = Basics(X)
+let excdef = B.excdef
+
+module TokenType =
+  TokenType.Make(X)
+open TokenType
 
 (* -------------------------------------------------------------------------- *)
 
@@ -153,7 +278,7 @@ let incremental_api grammar () : interface =
     MTSigEnd (
       IIComment "The incremental API." ::
       IIInclude (incremental_engine()) ::
-      MList.ifnlazy Settings.inspection (inspection_api grammar)
+      MList.ifnlazy X.inspection (inspection_api grammar)
     )
   ) ::
   (* The entry points must come after the incremental API,
@@ -174,8 +299,8 @@ let unparsing_api grammar () : interface =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    MList.ifnlazy (Settings.backend = `TableBackend) (incremental_api grammar) @
-    MList.ifnlazy Settings.unparsing (unparsing_api grammar) @
+    MList.ifnlazy X.incremental (incremental_api grammar) @
+    MList.ifnlazy X.unparsing (unparsing_api grammar) @
     []
   )
 ]
@@ -189,71 +314,11 @@ let write grammar mliname () =
   let module P = ILPrinter.Make (struct
     let f = mli
     let print_line_directives = None
-    include Settings
+    include X
   end) in
   P.interface (interface grammar);
   close_out mli
 
 (* -------------------------------------------------------------------------- *)
 
-(* The submodule [Basics]. *)
-
-module Basics (X : sig
-
-  (**[exn_carries_state] determines whether the exception [Error] should carry
-     an argument, which is a state number. This is the state where a syntax
-     error is detected. This feature is supported only by the code back-end. *)
-  val exn_carries_state: bool
-
-end) = struct
-
-  (* The toplevel function [stop]. *)
-
-  let stop =
-    "_eRR"
-
-  let call_stop (s : int) =
-    EApp (EVar stop,
-      if X.exn_carries_state then [EIntConst s] else [EUnit]
-    )
-
-  let stopdef =
-    let s = "_s" in
-    let args = if X.exn_carries_state then [ EVar s ] else [] in
-    let body = EFun ([PVar s], ERaise (EData (excname, args))) in
-    def stop body
-
-  (* The internal submodule [Basics]. *)
-
-  let basics =
-    "MenhirBasics"
-    (* 2017/01/20 This name must be an unlikely name, as it might
-       otherwise hide a user-defined module by the same name. *)
-
-  let basics_def grammar = [
-
-    (* The module [Basics]. *)
-    SIModuleDef (basics, MStruct (
-
-      (* The exception [Error]. *)
-      SIExcDefs [ excdef ] ::
-
-      (* The definition of [stop] must be placed at this particular point
-         so as to avoid the risk of a name collision. *)
-      SIValDefs (false, [ stopdef ]) ::
-
-      (* The type [token]. *)
-      interface_to_structure (
-        tokentypedef grammar
-      )
-
-    ));
-
-    (* Include the above submodule. *)
-    SIInclude (MVar basics);
-
-  ]
-
-(* -------------------------------------------------------------------------- *)
-
-end (* Basics *)
+end (* Make *)

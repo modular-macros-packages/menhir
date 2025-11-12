@@ -91,7 +91,8 @@ val infer: infer_mode
     with the %inline keyword. *)
 val inline: bool
 
-(** Whether comments should be printed or discarded. *)
+(**[comment] determines whether comments should be included in the
+   OCaml code that is generated. *)
 val comment: bool
 
 (**If [noprefix] is [false] then most identifiers begin with an unlikely
@@ -151,6 +152,10 @@ val interpret :
   [ `No
   | `Normal of [`ShowCST | `DoNotShowCST]
   | `Error ]
+
+(**[incremental] determines whether the incremental API must be generated.
+   This flag is [true] if and only if the table back-end has been selected. *)
+val incremental: bool
 
 (**[inspection] determines whether the inspection API must be generated. This
    API involves GADTs, and requires producing more tables, so this flag is off
@@ -262,9 +267,9 @@ val require_aliases : bool
    it is [`Concrete], then every token must have a token alias. *)
 val random_sentence : (string * int * [`Abstract | `Concrete]) option
 
-(**The error handling strategy that should be used by the code back-end, the
-   table back-end, and the reference interpreter. See [IncrementalEngine] for
-   an explanation of the available strategies. *)
+(**[stragegy] determines which error-handling strategy the interpreter
+   should use. For an explanation of the available strategies, see
+   [IncrementalEngine]. *)
 val strategy: [`Legacy | `Simplified]
 
 (**The setting -O allows choosing an optimization level. It is used only by

@@ -874,3 +874,6 @@ let specialize_token =
 
 let pack_classic =
   !pack_classic
+
+let incremental =
+  backend = `TableBackend

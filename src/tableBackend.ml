@@ -11,7 +11,6 @@
 open ILConstruction
 open Grammar
 open IL
-open Interface
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -23,6 +22,10 @@ open TokenType
 module Basics =
   Interface.Basics(Settings)
 open Basics
+
+module Interface =
+  Interface.Make(Settings)
+open Interface
 
 module Conventions =
   Conventions.Make(Grammar)(Settings)

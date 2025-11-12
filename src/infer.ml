@@ -14,6 +14,8 @@ open ILConstruction
 
 module TokenType =
   TokenType.Make(Settings)
+module Interface =
+  Interface.Make(Settings)
 
 (* ------------------------------------------------------------------------- *)
 
