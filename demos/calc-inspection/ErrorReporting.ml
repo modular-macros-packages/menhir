@@ -35,26 +35,6 @@ module Make
     | _, _ :: xs ->
         drop (k - 1) xs
 
-  let rec uniq1 cmp x ys =
-    match ys with
-    | [] ->
-        []
-    | y :: ys ->
-        if cmp x y = 0 then
-          uniq1 cmp x ys
-        else
-          y :: uniq1 cmp y ys
-
-  let uniq cmp xs =
-    match xs with
-    | [] ->
-        []
-    | x :: xs ->
-        x :: uniq1 cmp x xs
-
-  let weed cmp xs =
-    xs |> List.sort cmp |> uniq cmp
-
   (* ------------------------------------------------------------------------ *)
 
   (* Explanations. *)
@@ -172,7 +152,7 @@ module Make
      the explanations that we produce. *)
 
   let investigate pos (checkpoint : _ checkpoint) : explanation list =
-    weed compare_explanations (
+    List.sort_uniq compare_explanations (
       foreach_terminal_but_error (fun symbol explanations ->
         match symbol with
         | X (N _) -> assert false
