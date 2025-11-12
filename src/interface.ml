@@ -124,12 +124,8 @@ open TokenType
 
 (* -------------------------------------------------------------------------- *)
 
-(* When the table back-end is active, the generated parser contains,
-   as a submodule, an application of [Engine.Make]. This submodule
-   is named [Interpreter]. *)
-
-(* The type [tcheckpoint] is defined in the incremental API.
-   See [IncrementalEngine]. *)
+(* The type ['a checkpoint] is defined in the submodule [Interpreter].
+   This type exists in the incremental API only. See [IncrementalEngine]. *)
 
 let tcheckpoint t =
   TypApp (interpreter_submodule_name ^ ".checkpoint", [ t ])
