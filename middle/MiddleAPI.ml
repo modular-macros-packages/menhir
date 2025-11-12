@@ -1418,6 +1418,15 @@ module type API_SETTINGS = sig
 
 end
 
+module type BASE_SETTINGS = sig
+
+  (**[base] is a base name, that is, a file name without an extension.
+     This base name should be used to construct the names of the files
+     that we generate. *)
+  val base: string
+
+end
+
 module type COMMENT_SETTINGS = sig
 
   (**[comment] determines whether comments should be included in the

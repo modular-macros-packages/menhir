@@ -14,6 +14,7 @@ open FrontAPI
 open MiddleAPI
 
 include API_SETTINGS
+include BASE_SETTINGS
 include CHECK_GRAMMAR_SETTINGS
 include COMMENT_SETTINGS
 include CONSTRUCTION_MODE_SETTINGS
@@ -100,10 +101,6 @@ val logC: int (** diagnostics on the generated code *)
 
 (** Whether tasks should be timed. *)
 val timings: out_channel option
-
-(** The base name that should be used for the files that we create.
-   This name can contain a path. *)
-val base: string
 
 (**This setting determines Menhir should behave as an interpreter of sentences
    provided by the user on the standard input channel. Two interpretation
