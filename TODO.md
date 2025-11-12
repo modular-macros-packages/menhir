@@ -293,6 +293,9 @@
 
 ## Code Cleanup
 
+* If `UnparsingAPI.unparsing_API` did not rely on the signature `GRAMMAR`
+  then it could move into `front`, and so could `Interface` and `Infer`.
+
 * Perhaps many modules in `front` and `middle` could take a report channel
   as an argument instead of the functions `error`, `signal`, `warning`, etc.
 
