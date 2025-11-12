@@ -75,7 +75,7 @@ end) = struct
 
   (* The definition of the internal submodule [Basics]. *)
 
-  let basics_def grammar = [
+  let basics_submodule_def grammar = [
 
     (* The module [Basics]. *)
     SIModuleDef (basics_submodule_name, MStruct (

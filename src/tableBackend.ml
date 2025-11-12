@@ -1105,7 +1105,7 @@ let program =
        sub-module. This sub-module is used again below, as part of the
        application of the functor [TableInterpreter.Make]. *)
 
-    basics_def grammar @
+    basics_submodule_def grammar @
 
     (* In order to avoid hiding user-defined identifiers, only the
        exception [Error] and the type [token] should be defined (at

@@ -34,10 +34,10 @@ end) : sig
   (**[basics_submodule_name] is the name of the internal submodule [Basics]. *)
   val basics_submodule_name: string
 
-  (**The structure items [basics_def grammar] define and include the internal
-     submodule [Basics]. This submodule defines the exception [Error], the
-     function [stop], and the type [token]. *)
-  val basics_def: grammar -> structure
+  (**The structure items [basics_submodule_def grammar] define and include the
+     internal submodule [Basics]. This submodule defines the exception
+     [Error], the function [stop], and the type [token]. *)
+  val basics_submodule_def: grammar -> structure
 
 end (* Basics *)
 

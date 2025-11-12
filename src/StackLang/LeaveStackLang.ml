@@ -967,7 +967,7 @@ let grammar =
 let program =
   [ SIFunctor (grammar.parameters,
 
-      basics_def grammar @
+      basics_submodule_def grammar @
 
       SIFragment grammar.preludes ::
 
