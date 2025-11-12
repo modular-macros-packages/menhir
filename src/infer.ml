@@ -228,15 +228,14 @@ let program () =
     ) grammar.rules []
   in
 
+  (* Grammar productions that come from Menhir's standard library are placed
+     first, so that type errors are not reported in them. *)
+
   let compare (p1, _) (p2, _) = Int.compare p1 p2 in
   let bindings =
     List.sort compare bindings
     |> List.map snd
   in
-
-  (* Grammar
-     productions that derive from the standard library are reflected
-     first, so that type errors are not reported in them. *)
 
   (* Create entry points whose types are the unknowns that we are looking for.
      Mentioning just the type variable [ntvar nt] suffices here. *)
