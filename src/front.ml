@@ -218,6 +218,7 @@ let grammar, ocaml_types_have_been_checked =
   | IMNone ->
       grammar, false
   | IMInfer ->
+      Error.enable();                    (* See comment in module [Error]. *)
       let grammar = Infer.infer grammar in
       Time.tick "Inferring types for nonterminals";
       grammar, true
@@ -228,6 +229,7 @@ let grammar, ocaml_types_have_been_checked =
   | IMWriteQuery filename ->
       Infer.write_query filename grammar (* never returns *)
   | IMReadReply filename ->
+      Error.enable();                    (* See comment in module [Error]. *)
       let grammar = Infer.read_reply filename grammar in
       Time.tick "Reading inferred types for nonterminals";
       grammar, true
