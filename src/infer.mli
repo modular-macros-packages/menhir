@@ -22,11 +22,6 @@ module Make (X : sig
 end)
 : sig
 
-(* [ntvar symbol] is the name of the type variable associated with a
-   nonterminal symbol. *)
-
-val ntvar: string -> IL.typ
-
 (* [infer grammar] analyzes the grammar [grammar] and returns a new
    grammar, augmented with a [%type] declaration for every nonterminal
    symbol. The [ocamlc] compiler is used to infer types. *)
