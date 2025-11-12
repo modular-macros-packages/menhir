@@ -101,14 +101,7 @@ let grammar : Syntax.grammar =
      as far as the user is concerned. *)
   (* Error.exit_if c; *)
 
-  let module X = struct
-    let ignore_unused_token t =
-      Settings.ignore_all_unused_tokens ||
-      Settings.token_type_only ||
-      StringSet.mem t Settings.ignored_unused_tokens
-    let require_aliases = Settings.require_aliases
-  end in
-  let module C = CheckGrammar.Make(E)(X) in
+  let module C = CheckGrammar.Make(E)(Settings) in
   C.check grammar;
   Error.exit_if c;
 

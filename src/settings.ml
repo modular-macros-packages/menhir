@@ -750,6 +750,11 @@ let ignored_unused_tokens =
 let ignore_all_unused_tokens =
   !ignore_all_unused_tokens
 
+let ignore_unused_token t =
+  ignore_all_unused_tokens ||
+  token_type_only ||
+  StringSet.mem t ignored_unused_tokens
+
 let ignore_all_unused_precedence_levels =
   !ignore_all_unused_precedence_levels
 
