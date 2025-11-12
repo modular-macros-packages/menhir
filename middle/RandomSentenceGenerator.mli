@@ -32,6 +32,9 @@ open MiddleAPI
 module Make (G : GRAMMAR) : sig
   open G
 
+  (**[nonterminal nt goal] returns a random sentence that is generated
+     by the nonterminal symbol [nt] and whose length is close to the
+     goal length [goal]. *)
   val nonterminal: Nonterminal.t -> int -> Terminal.t list
 
 end
