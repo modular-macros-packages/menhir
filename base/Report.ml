@@ -49,15 +49,18 @@ let display c continuation header positions format =
   Printf.kbprintf continuation b
     (header ^^ format ^^ "\n%!")
 
-let die c _b =
+let flush_and_die c _b =
   flush stderr c;
   exit 1
+
+let flush_and_ret c _b =
+  flush stderr c
 
 let ret _b =
   ()
 
 let error c positions format =
-  display c (die c) "Error: " positions format
+  display c (flush_and_die c) "Error: " positions format
 
 let signal c positions format =
   display c ret "Error: " positions format
@@ -71,3 +74,24 @@ let note c positions format =
 let log c format =
   let positions = [] in
   display c ret "" positions format
+
+(* One might be tempted to write:
+
+   let error' positions format =
+     monitor `Strict @@ fun c ->
+     error c positions format
+
+  This code has the desired type, but not the desired semantics:
+  the application of this function to the extra arguments that
+  follow [format] takes place outside the scope of [monitor], so
+  things go wrong. *)
+
+(* Fortunately, there is a simpler definition: *)
+
+let error' positions format =
+  let c = create() in
+  error c positions format
+
+let warning' positions format =
+  let c = create() in
+  display c (flush_and_ret c) "Warning: " positions format
