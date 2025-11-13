@@ -374,74 +374,83 @@ let depend mode =
 
 (* The parameter [output] contains the output of [ocamlc -i]. *)
 
+(* [build output] returns a map of (normalized) nonterminal symbols
+   to OCaml types. *)
+
 type env =
-  (string * ocamltype) list
+  ocamltype StringMap.t
+
+let extract (output : string) (id, startofs, endofs) : nonterminal * ocamltype =
+  let ty = String.sub output startofs (endofs - startofs) in
+  decode id, Inferred ty
 
 let build (output : string) : env =
   try
     Lexmli.main (Lexing.from_string output)
-    |> List.map @@ fun (id, openingofs, closingofs) ->
-    let ty = String.sub output openingofs (closingofs - openingofs) in
-    decode id, Inferred ty
+    |> List.map (extract output)
+    |> StringMap.of_list
   with Lexmli.Failure ->
     Report.error' [] "failed to make sense of ocamlc's output."
 
-let read_reply (output : string) =
+(* [lookup env nt] looks up the nonterminal symbol [nt] in the table [env]
+   and fails if it is absent. *)
+
+let lookup (env : env) (nt : nonterminal) : ocamltype =
+  try
+    StringMap.find (MString.normalize nt) env
+  with Not_found ->
+    (* No type information has been inferred for this symbol. This is
+       strange. Fail gracefully. *)
+    Report.error' [] "found no inferred type for %s." nt
+
+(* [augment env] augments the %type declaration table [grammar.types] with the
+   information contained in the table [env]. Every type declared type in the
+   table [grammar.types] is overridden with the inferred type obtained by
+   looking up [env]. *)
+
+let augment (env : env) : env =
+  StringMap.fold (fun nt _ types ->
+    StringMap.add nt (lookup env nt) types
+  ) grammar.rules grammar.types
+
+(* [read_reply] returns a new grammar, which is augmented with new %type
+   declarations. *)
+
+let read_reply (output : string) : grammar =
   let env = build output in
-
-  (* Augment the grammar with new %type declarations. *)
-
-  let types =
-    StringMap.fold (fun symbol _ types ->
-      let ocamltype =
-        try
-          List.assoc (MString.normalize symbol) env
-        with Not_found ->
-          (* No type information was inferred for this symbol.
-             Perhaps the mock [.ml] file or the inferred [.mli] file
-             are out of date. Fail gracefully. *)
-          Report.error' [] "found no inferred type for %s." symbol
-      in
-      (* Regardless of whether there was or wasn't a declared type,
-         use the type inferred by the OCaml type-checker. *)
-      StringMap.add symbol ocamltype types
-    ) grammar.rules grammar.types
-  in
-
-  { grammar with types = types }
+  let types = augment env in
+  { grammar with types }
 
 (* -------------------------------------------------------------------------- *)
-(* Inferring types for a grammar's nonterminals. *)
+
+(* Inferring types for a grammar's nonterminal symbols. *)
+
+(* We invoke [ocamlc] to perform type inference; then we call [read_reply] to
+   make sense out of its output. *)
 
 let infer () =
-
-  (* Invoke ocamlc to do type inference for us. *)
-
   let mlname = X.base ^ ".ml" in
-
   let ocamlc_command =
     sprintf "%s -c -i %s" X.ocamlc (Filename.quote mlname)
   in
-
-  let output =
-    write_ml mlname ();
-    let result = IO.invoke_or_die ocamlc_command in
-    (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
+  write_ml mlname ();
+  let output = IO.invoke_or_die ocamlc_command in
+  (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
        fails. (Or if an exception is thrown.) *)
-    Sys.remove mlname;
-    result
-  in
-
-  (* Make sense out of ocamlc's output. *)
-
+  Sys.remove mlname;
   read_reply output
 
 (* -------------------------------------------------------------------------- *)
+
+(* [write_query] is just [write_ml]. *)
 
 let write_query filename =
   write_ml filename ()
 
 (* -------------------------------------------------------------------------- *)
+
+(* [read_reply] reads the reply from the file [filename], which contains the
+   output of [ocamlc -i]. *)
 
 let read_reply filename =
   read_reply (IO.read_whole_file filename)
