@@ -24,7 +24,21 @@ open MiddleAPI
 
 (* Naming conventions. *)
 
-module NamingConventions (G : GRAMMAR) = struct
+module NamingConventions (G : sig
+  module Terminal : sig
+    type t
+    val print: t -> string
+  end
+  module Nonterminal : sig
+    type t
+    val print: bool -> t -> string
+  end
+  module Production : sig
+    type t
+    val attributes: t -> attributes
+  end
+end)
+= struct
 open G
 
 (* -------------------------------------------------------------------------- *)
@@ -615,7 +629,36 @@ end
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-module Interface (G : GRAMMAR)
+module Interface (G : sig
+  module Terminal : sig
+    type t
+    val print: t -> string
+    val real: t -> bool
+    val unquoted_alias: t -> string option
+    val ocamltype: t -> ocamltype option
+    val map_real: (t -> 'a) -> 'a list
+  end
+  module Nonterminal : sig
+    type t
+    val print: bool -> t -> string
+    val mapx: (t -> 'a) -> 'a list
+    val user_start_symbols: t list
+  end
+  module Symbol : sig
+    type t =
+      | N of Nonterminal.t
+      | T of Terminal.t
+  end
+  module Production : sig
+    type t
+    val print: t -> string
+    val rhs: t -> Symbol.t array
+    val attributes: t -> attributes
+    val error_free: t -> bool
+    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+    val mapx: (t -> 'a) -> 'a list
+  end
+end)
 = struct
 open G
 
