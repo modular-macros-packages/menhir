@@ -342,7 +342,8 @@ let depend postprocess =
         Lexdep.main lexbuf
       with Lexdep.Error msg ->
         (* Echo the error message, followed with ocamldep's output. *)
-        Error.error [] "%s" (msg ^ output)
+        Report.monitor `Strict @@ fun c ->
+        Report.error c [] "%s" (msg ^ output)
     in
 
     (* Look for the line that concerns the [.cmo] target, and echo a
@@ -386,7 +387,8 @@ let build (output : string) : env =
     let ty = String.sub output openingofs (closingofs - openingofs) in
     decode id, Inferred ty
   with Lexmli.Failure ->
-    Error.error [] "failed to make sense of ocamlc's output."
+    Report.monitor `Strict @@ fun c ->
+    Report.error c [] "failed to make sense of ocamlc's output."
 
 let read_reply (output : string) =
   let env = build output in
@@ -402,7 +404,8 @@ let read_reply (output : string) =
           (* No type information was inferred for this symbol.
              Perhaps the mock [.ml] file or the inferred [.mli] file
              are out of date. Fail gracefully. *)
-          Error.error [] "found no inferred type for %s." symbol
+          Report.monitor `Strict @@ fun c ->
+          Report.error c [] "found no inferred type for %s." symbol
       in
       (* Regardless of whether there was or wasn't a declared type,
          use the type inferred by the OCaml type-checker. *)
