@@ -30,6 +30,8 @@
 
 (ocamllex
   Lex
+  Lexdep
+  Lexmli
   Lexpointfree
   RawSentenceLexer
   Segment
