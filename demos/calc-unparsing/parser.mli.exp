@@ -146,6 +146,8 @@ module CST : sig
     
     (* One method per production. *)
     
+    method case_eol : expr -> 'r
+    
     method case_int : (int) -> 'r
     
     method case_paren : expr -> 'r
@@ -159,8 +161,6 @@ module CST : sig
     method case_mul : expr -> expr -> 'r
     
     method case_div : expr -> expr -> 'r
-    
-    method case_eol : expr -> 'r
     
   end
   
