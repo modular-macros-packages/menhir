@@ -96,8 +96,7 @@ let check_linearity (ps : pattern list) =
   let m = List.fold_left build StringMap.empty ps in
   m |> StringMap.iter @@ fun x positions ->
   if List.length positions > 1 then
-    Report.monitor `Strict @@ fun c ->
-    Report.error c positions
+    Report.error' positions
       "The variable %s is bound several times." x
 
 let rec patterns (e : seq_expression) : pattern list =
@@ -136,8 +135,7 @@ let tilde_used_warning positions =
       if n = 1 then "variable has", "a ~ pattern", "a wildcard pattern _"
       else "variables have", "~ patterns", "wildcard patterns _"
     in
-    Report.monitor `Lax @@ fun c ->
-    Report.warning c positions
+    Report.warning' positions
       "%s nameless %s been introduced by %s,\n\
        yet this sequence does not end in a point-free semantic action <...>.\n\
        Perhaps %s should be used instead."

@@ -75,8 +75,7 @@ let check_production_group (right_hand_sides : early_productions) =
       let ids' = defined_identifiers producers in
       try
         let id = IdSet.choose (IdSet.xor ids ids') in
-        Report.monitor `Strict @@ fun c ->
-        Report.error c [position id]
+        Report.error' [position id]
           "two productions that share a semantic action must define exactly\n\
            the same identifiers. Here, \"%s\" is defined\n\
            in one production, but not in all of them."
@@ -102,8 +101,7 @@ let normalize_producers (producers : early_producers) : producer list =
 let override pos o1 o2 =
   match o1, o2 with
   | Some _, Some _ ->
-      Report.monitor `Strict @@ fun c ->
-      Report.error c [ pos ]
+      Report.error' [ pos ]
         "this production carries two %%prec declarations."
   | None, Some _ ->
       o2
