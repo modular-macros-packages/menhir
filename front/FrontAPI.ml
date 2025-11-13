@@ -21,6 +21,15 @@ module type API_SETTINGS = sig
 
 end
 
+module type BASE_SETTINGS = sig
+
+  (**[base] is a base name, that is, a file name without an extension.
+     This base name should be used to construct the names of the files
+     that we generate. *)
+  val base: string
+
+end
+
 module type CHECK_GRAMMAR_SETTINGS = sig
 
   (**[ignore_unused_token t] returns [true] if an ignored-token warning

@@ -1397,15 +1397,6 @@ end (* KINDERGARTEN *)
 
 (* Fragments of settings. *)
 
-module type BASE_SETTINGS = sig
-
-  (**[base] is a base name, that is, a file name without an extension.
-     This base name should be used to construct the names of the files
-     that we generate. *)
-  val base: string
-
-end
-
 module type CONSTRUCTION_MODE_SETTINGS = sig
 
   (**[construction_mode] determines which construction method is used.
