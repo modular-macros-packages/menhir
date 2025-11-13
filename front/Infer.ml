@@ -101,10 +101,10 @@ let mliname =
    possibly twice: once with the type variable [ntvar nt] and once with the
    type that the user has possibly provided via a %type declaration. *)
 
-let opt_annotate_expr e (oty : ocamltype option) =
+let opt_annotate_expr (e : expr) (oty : ocamltype option) : expr =
   Option.fold (fun ty e -> annotate e (TypTextual ty)) oty e
 
-let annotate_expr e nt =
+let annotate_expr (e : expr) (nt : nonterminal) : expr =
   let e = annotate e (ntvar nt) in
   let e = opt_annotate_expr e (ocamltype_of_symbol grammar nt) in
   e
@@ -112,28 +112,41 @@ let annotate_expr e nt =
 (* [annotate_pat p nt] annotates the pattern [p] with the type information
    associated with the nonterminal symbol [nt]. *)
 
-let opt_annotate_pat p (oty : ocamltype option) =
+let opt_annotate_pat (p : pattern) (oty : ocamltype option) : pattern =
   Option.fold (fun ty p -> PAnnot (p, TypTextual ty)) oty p
 
-let annotate_pat p nt =
+let annotate_pat (p : pattern) (nt : nonterminal) : pattern =
   let p = PAnnot (p, ntvar nt) in
   let p = opt_annotate_pat p (ocamltype_of_symbol grammar nt) in
   p
 
-(* -------------------------------------------------------------------------- *)
-(* Code production. *)
-
-(* [tokentype symbol] returns the type of the terminal symbol
+(* [test_token_type symbol] returns the type of the terminal symbol
    [symbol], if [symbol] is indeed a terminal symbol. Otherwise, it
    raises [Not_found]. *)
 
-let tokentype symbol =
+let test_token_type (symbol : symbol) : typ =
   let props = StringMap.find symbol grammar.tokens in
   match props.tk_ocamltype with
   | None ->
       tunit
   | Some ocamltype ->
       TypTextual ocamltype
+
+(* [annotate_pat p symbol] annotates the pattern [p] with the type information
+   associated with the symbol [symbol], which may be a terminal or nonterminal
+   symbol. *)
+
+let annotate_pat (p : pattern) (symbol : symbol) : pattern =
+  try
+    (* If this succeeds then [symbol] is a terminal symbol. *)
+    PAnnot (p, test_token_type symbol)
+  with Not_found ->
+    (* If we reach this point then [symbol] is a nonterminal symbol. *)
+    annotate_pat p symbol
+
+(* -------------------------------------------------------------------------- *)
+
+(* Code production. *)
 
 (* [actiondef] turns a branch into a function definition. *)
 
@@ -142,7 +155,7 @@ let tokentype symbol =
    code. It would be nice if these conventions were more clearly
    isolated and perhaps moved to the [Action] or [Keyword] module. *)
 
-let actiondef symbol branch =
+let action_formals branch =
 
   (* Construct a list of the semantic action's formal parameters that
      depend on the production's right-hand side. *)
@@ -167,14 +180,7 @@ let actiondef symbol branch =
            unused-variable warning (or error) to be correctly located. *)
         pvarlocated lid
       in
-      let pid =
-        try
-          PAnnot (pid, tokentype symbol)
-        with Not_found ->
-          (* Symbol is a nonterminal. *)
-          annotate_pat pid symbol
-      in
-      pid ::
+      annotate_pat pid symbol ::
       PAnnot (PVar startp, tposition) ::
       PAnnot (PVar endp, tposition) ::
       PAnnot (PVar starto, tint) ::
@@ -201,16 +207,15 @@ let actiondef symbol branch =
     formals
   in
 
+  formals
+
+let actiondef symbol branch =
+
   (* Construct a function definition out of the above bindings and the
      semantic action. *)
-
-  let body = annotate_expr (Action.expr branch.action) symbol in
-
-  match formals with
-  | [] ->
-      body
-  | _ ->
-      EFun (formals, body)
+  let formals = action_formals branch
+  and body = annotate_expr (Action.expr branch.action) symbol in
+  efun formals body
 
 (* [program] turns an entire grammar into a test program. *)
 
