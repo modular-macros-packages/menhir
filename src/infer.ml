@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open PlainSyntax
+open PlainSyntaxAccessors
 open IL
 open ILConstruction
 open FrontAPI
@@ -95,28 +96,28 @@ let mliname =
    type provided by the user. E.g., the user may declare the type [> `A ],
    while OCaml may infer the type [> `A | `B ]. *)
 
-(* [usertype nt] is the type provided by the user for the nonterminal
-   symbol [nt], if there is one. *)
+(* [annotate_expr e nt] annotates the expression [e] with the type information
+   associated with the nonterminal symbol [nt]. The expression is annotated
+   possibly twice: once with the type variable [ntvar nt] and once with the
+   type that the user has possibly provided via a %type declaration. *)
 
-let usertype nt =
-   try
-     Some (TypTextual (StringMap.find nt grammar.types))
-   with Not_found ->
-     None
-
-(* [annotate_expr e nt] annotates the expression [e] with type
-   information associated with the nonterminal symbol [nt]. We annotate [e]
-   with the type variable [ntvar nt], and additionally annotate it with the
-   type [usertype nt], if it exists. *)
+let opt_annotate_expr e (oty : ocamltype option) =
+  Option.fold (fun ty e -> annotate e (TypTextual ty)) oty e
 
 let annotate_expr e nt =
   let e = annotate e (ntvar nt) in
-  let e = Option.fold (fun t e -> annotate e t) (usertype nt) e in
+  let e = opt_annotate_expr e (ocamltype_of_symbol grammar nt) in
   e
+
+(* [annotate_pat p nt] annotates the pattern [p] with the type information
+   associated with the nonterminal symbol [nt]. *)
+
+let opt_annotate_pat p (oty : ocamltype option) =
+  Option.fold (fun ty p -> PAnnot (p, TypTextual ty)) oty p
 
 let annotate_pat p nt =
   let p = PAnnot (p, ntvar nt) in
-  let p = Option.fold (fun t p -> PAnnot (p, t)) (usertype nt) p in
+  let p = opt_annotate_pat p (ocamltype_of_symbol grammar nt) in
   p
 
 (* -------------------------------------------------------------------------- *)
@@ -360,7 +361,7 @@ let depend postprocess =
           basename <> X.base
         ) dependencies in
         if List.length dependencies > 0 then begin
-          Printf.printf "%s.ml %s.mli:" X.base X.base;
+          Printf.printf "%s %s:" mlname mliname;
           List.iter (fun (_basename, filename) ->
             Printf.printf " %s" filename
           ) dependencies;
