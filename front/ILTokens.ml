@@ -11,9 +11,22 @@
 open IL
 open ILConstruction
 open FrontAPI
-open MiddleAPI
 
-module Make (G : GRAMMAR) (X : TOKEN_TYPE_SETTINGS) = struct
+module Make
+(G : sig
+  module Terminal : sig
+    type t
+    val print: t -> string
+    val ocamltype: t -> ocamltype option
+  end
+  module TerminalSet : sig
+    type elt = Terminal.t
+    type t
+    val fold: (elt -> 'a -> 'a) -> t -> 'a -> 'a
+  end
+end)
+(X : TOKEN_TYPE_SETTINGS)
+= struct
   open G
 
   module TokenType =

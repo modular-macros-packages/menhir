@@ -13,7 +13,6 @@ open Attribute
 open IL
 open ILConstruction
 open FrontAPI
-open MiddleAPI
 
 (* This module is organized in three sections, each of which is a functor.
    The first section defines common naming conventions. The second section
@@ -155,8 +154,44 @@ end
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-module Code
-(G : GRAMMAR)
+module Code (G : sig
+  module Terminal : sig
+    type t
+    val encode: t -> int
+    val print: t -> string
+    val sharp: t
+    val real: t -> bool
+    val unquoted_alias: t -> string option
+    val ocamltype: t -> ocamltype option
+    val map_real: (t -> 'a) -> 'a list
+  end
+  module TerminalSet : sig
+    type elt = Terminal.t
+    type t
+    val fold: (elt -> 'a -> 'a) -> t -> 'a -> 'a
+  end
+  module Nonterminal : sig
+    type t
+    val print: bool -> t -> string
+    val mapx: (t -> 'a) -> 'a list
+  end
+  module Symbol : sig
+    type t =
+      | N of Nonterminal.t
+      | T of Terminal.t
+  end
+  module Production : sig
+    type t
+    val encode: t -> int
+    val print: t -> string
+    val rhs: t -> Symbol.t array
+    val positions: t -> ranges
+    val attributes: t -> attributes
+    val error_free: t -> bool
+    val mapnt:  Nonterminal.t -> (t -> 'a) -> 'a list
+    val mapx: (t -> 'a) -> 'a list
+  end
+end)
 (A : sig
   (* A list of the start symbols and corresponding start states. *)
   val entry: (G.Nonterminal.t * int) list
@@ -899,9 +934,7 @@ end
    decision forced the function [unparsing_API] and its dependencies
    ([Interface], [Infer]) to be also part of the middle-end. I feel more
    comfortable breaking this dependency and moving these modules into the
-   front-end. To break this dependency, it is necessary to also split the
-   description of the unparsing API into two modules, [UnparsingIntf] and
-   [UnparsingImpl]. *)
+   front-end. *)
 
 open PlainSyntax
 open PlainSyntaxAccessors
