@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Printf
 open PlainSyntax
 open PlainSyntaxAccessors
 open IL
@@ -41,14 +42,14 @@ module Interface =
    cannot clash with OCaml keywords. *)
 
 let ntvar symbol =
-  TypVar (Printf.sprintf "tv_%s" (MString.normalize symbol))
+  TypVar (sprintf "tv_%s" (MString.normalize symbol))
 
 (* The term variable associated with a nonterminal symbol. Its name begins
    with a prefix which ensures that it begins with a lowercase letter and
    cannot clash with OCaml keywords. *)
 
 let encode symbol =
-  Printf.sprintf "xv_%s" (MString.normalize symbol)
+  sprintf "xv_%s" (MString.normalize symbol)
 
 let decode s =
   let n = String.length s in
@@ -146,78 +147,78 @@ let annotate_pat (p : pattern) (symbol : symbol) : pattern =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Code production. *)
+(* Code production for semantic actions. *)
 
-(* [actiondef] turns a branch into a function definition. *)
+(* [action_rhs_formals branch] constructs a list of formal parameters of the
+   semantic action of the production [branch]. This list contains only the
+   formal parameters that depend on the production's right-hand side. *)
 
-(* The names and types of the conventional internal variables that
-   correspond to keywords ($startpos,etc.) are hardwired in this
-   code. It would be nice if these conventions were more clearly
-   isolated and perhaps moved to the [Action] or [Keyword] module. *)
+(* The names and types of the conventional internal variables that correspond
+   to keywords ($startpos,etc.) are hardwired in this code. It would be nice
+   if these conventions were more clearly isolated and perhaps moved to the
+   [Action] or [Keyword] module. *)
 
-let action_formals branch =
+(* We use [pvarlocated] rather than [PVar] so that a binding is located in the
+   source file (not in the generated file) by the OCaml compiler. This is
+   important when a variable declared by the user turns out to be unused in a
+   semantic action. We want the unused-variable warning (or error) to be
+   correctly located. *)
 
-  (* Construct a list of the semantic action's formal parameters that
-     depend on the production's right-hand side. *)
-
-  let formals =
-    List.fold_left (fun formals producer ->
-      let symbol = producer.prod_symbol
-      and lid = producer.prod_id in
-      let id = Located.value lid in
-      let startp, endp, starto, endo, loc =
-        Printf.sprintf "_startpos_%s_" id,
-        Printf.sprintf "_endpos_%s_" id,
-        Printf.sprintf "_startofs_%s_" id,
-        Printf.sprintf "_endofs_%s_" id,
-        Printf.sprintf "_loc_%s_" id
-      in
-      let pid =
-        (* We use [PVarLocated] in preference to [PVar] so that this binding
-           can be located in the source file (not in the generated file) by
-           the OCaml compiler. This is important when a variable declared by
-           the user turns out to be unused in a semantic action. We want the
-           unused-variable warning (or error) to be correctly located. *)
-        pvarlocated lid
-      in
-      annotate_pat pid symbol ::
-      PAnnot (PVar startp, tposition) ::
-      PAnnot (PVar endp, tposition) ::
-      PAnnot (PVar starto, tint) ::
-      PAnnot (PVar endo, tint) ::
-      PAnnot (PVar loc, tlocation) ::
-      formals
-    ) [] branch.producers
-  in
-
-  (* Extend the list with parameters that do not depend on the
-     right-hand side. *)
-
-  let formals =
-    PAnnot (PVar "_startpos", tposition) ::
-    PAnnot (PVar "_endpos", tposition) ::
-    PAnnot (PVar "_endpos__0_", tposition) ::
-    PAnnot (PVar "_symbolstartpos", tposition) ::
-    PAnnot (PVar "_startofs", tint) ::
-    PAnnot (PVar "_endofs", tint) ::
-    PAnnot (PVar "_endofs__0_", tint) ::
-    PAnnot (PVar "_symbolstartofs", tint) ::
-    PAnnot (PVar "_sloc", tlocation) ::
-    PAnnot (PVar "_loc", tlocation) ::
+let action_rhs_formals branch : pattern list =
+  List.fold_left (fun formals producer ->
+    let symbol = producer.prod_symbol
+    and lid = producer.prod_id in
+    let id = Located.value lid in
+    let startp, endp, starofs, endofs, loc =
+      sprintf "_startpos_%s_" id,
+      sprintf "_endpos_%s_" id,
+      sprintf "_startofs_%s_" id,
+      sprintf "_endofs_%s_" id,
+      sprintf "_loc_%s_" id
+    in
+    annotate_pat (pvarlocated lid) symbol ::
+    PAnnot (PVar startp, tposition) ::
+    PAnnot (PVar endp, tposition) ::
+    PAnnot (PVar starofs, tint) ::
+    PAnnot (PVar endofs, tint) ::
+    PAnnot (PVar loc, tlocation) ::
     formals
-  in
+  ) [] branch.producers
 
+(* [action_fixed_formals formals] extends the list [formals] with the formal
+   parameters that do not depend on the right-hand side of the production. *)
+
+let action_fixed_formals formals : pattern list =
+  PAnnot (PVar "_startpos", tposition) ::
+  PAnnot (PVar "_endpos", tposition) ::
+  PAnnot (PVar "_endpos__0_", tposition) ::
+  PAnnot (PVar "_symbolstartpos", tposition) ::
+  PAnnot (PVar "_startofs", tint) ::
+  PAnnot (PVar "_endofs", tint) ::
+  PAnnot (PVar "_endofs__0_", tint) ::
+  PAnnot (PVar "_symbolstartofs", tint) ::
+  PAnnot (PVar "_sloc", tlocation) ::
+  PAnnot (PVar "_loc", tlocation) ::
   formals
 
-let actiondef symbol branch =
+(* [action_formals branch] is the list of all formal parameters of the
+   semantic action in the production [branch]. *)
 
-  (* Construct a function definition out of the above bindings and the
-     semantic action. *)
+let action_formals branch : pattern list =
+  action_fixed_formals (action_rhs_formals branch)
+
+(* [action_def nt branch] turns a branch into an OCaml function definition. *)
+
+let action_def nt branch : expr =
   let formals = action_formals branch
-  and body = annotate_expr (Action.expr branch.action) symbol in
+  and body = annotate_expr (Action.expr branch.action) nt in
   efun formals body
 
-(* [program] turns an entire grammar into a test program. *)
+(* -------------------------------------------------------------------------- *)
+
+(* Code production for the entire grammar. *)
+
+(* [program()] turns the grammar into an OCaml program. *)
 
 let program () =
 
@@ -226,7 +227,7 @@ let program () =
   let bindings =
     StringMap.fold (fun symbol rule bindings ->
       List.fold_left (fun bindings branch ->
-        let binding = (PWildcard, actiondef symbol branch)
+        let binding = (PWildcard, action_def symbol branch)
         and priority = Action.priority branch.action in
         (priority, binding) :: bindings
       ) bindings rule.branches
@@ -316,7 +317,7 @@ let depend mode =
      destroy existing files. *)
 
   let ocamldep_command =
-    Printf.sprintf "%s %s %s"
+    sprintf "%s %s %s"
       X.ocamldep (Filename.quote mlname) (Filename.quote mliname)
   in
 
@@ -368,11 +369,11 @@ let depend mode =
           basename <> X.base
         ) dependencies in
         if List.length dependencies > 0 then begin
-          Printf.printf "%s %s:" mlname mliname;
+          printf "%s %s:" mlname mliname;
           List.iter (fun (_basename, filename) ->
-            Printf.printf " %s" filename
+            printf " %s" filename
           ) dependencies;
-          Printf.printf "\n%!"
+          printf "\n%!"
         end
     ) lines
 
@@ -425,7 +426,7 @@ let infer () =
   (* Invoke ocamlc to do type inference for us. *)
 
   let ocamlc_command =
-    Printf.sprintf "%s -c -i %s" X.ocamlc (Filename.quote mlname)
+    sprintf "%s -c -i %s" X.ocamlc (Filename.quote mlname)
   in
 
   let output =
