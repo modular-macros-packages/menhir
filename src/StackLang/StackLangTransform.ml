@@ -461,8 +461,8 @@ let () =
 end (* SpecializeState *)
 
 let specialize_state program =
+  Time.time "StackLang: specialization with respect to the state" @@ fun () ->
   let module S = SpecializeState(struct let program = program end) in
-  Time.tick "StackLang: specialization with respect to the state";
   S.program
 
 (* -------------------------------------------------------------------------- *)
@@ -1011,8 +1011,8 @@ let program =
 end (* CommutePushes *)
 
 let commute_pushes program =
+  Time.time "StackLang: moving PUSHes" @@ fun () ->
   let module CP = CommutePushes(struct let program = program end) in
-  Time.tick "StackLang: moving PUSHes";
   CP.program
 
 (* -------------------------------------------------------------------------- *)
@@ -1081,6 +1081,7 @@ let in_degree program =
    considered ill-typed. *)
 
 let remove_unreachable_blocks program =
+  Time.time "StackLang: removing unreachable blocks" @@ fun () ->
   let degree = in_degree program in
   let cfg = Label.Map.fold (fun label block accu ->
     if Label.Map.mem label degree then
@@ -1088,7 +1089,6 @@ let remove_unreachable_blocks program =
     else
       accu
   ) program.cfg Label.Map.empty in
-  Time.tick "StackLang: removing unreachable blocks";
   { program with cfg }
 
 (* -------------------------------------------------------------------------- *)
@@ -1099,7 +1099,11 @@ let remove_unreachable_blocks program =
 module Inline (X : sig
   val cautious: bool
   val program : program
-end) = struct open X
+end) = struct
+open X
+
+let start_time =
+  Time.start()
 
 (* Compute every label's in-degree. *)
 
@@ -1204,9 +1208,9 @@ let program =
   { program with cfg = !cfg }
 
 let () =
-  Time.tick "StackLang: inlining"
+  Time.stop start_time "StackLang: inlining"
 
-end
+end (* Inline *)
 
 let inline cautious program =
   let module I = Inline(struct
@@ -2030,8 +2034,8 @@ end (* SpecializeToken *)
 (* Make this program transformation accessible to the outside as a function.  *)
 
 let specialize_token program =
+  Time.time "StackLang: specialization with respect to the token" @@ fun () ->
   let module S = SpecializeToken(struct let program = program end) in
-  Time.tick "StackLang: specialization with respect to the token";
   S.program
 
 (* -------------------------------------------------------------------------- *)
@@ -2111,6 +2115,6 @@ end (* StopEarlier *)
 (* Make this program transformation accessible to the outside as a function.  *)
 
 let stop_earlier program =
+  Time.time "StackLang: propagating STOP instructions" @@ fun () ->
   let module S = StopEarlier(struct let program = program end) in
-  Time.tick "StackLang: propagating STOP instructions";
   S.program

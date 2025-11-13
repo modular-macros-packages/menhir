@@ -41,6 +41,9 @@ include A
 open Lr0.G
 open E
 
+let start_time =
+  Time.start()
+
 include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
@@ -296,5 +299,10 @@ let warnings () =
   else if !severe_reduce_reduce > 1 then
     warning [] "%d states have reduce/reduce conflicts."
       !severe_reduce_reduce
+
+(* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.stop start_time "Resolving silent conflicts"
 
 end (* Run *)

@@ -44,20 +44,20 @@ let () =
       assert false
   | `TableBackend ->
       let module B = TableBackend.Run () in
+      Time.time "Printing" @@ fun () ->
       write B.program;
       Interface.write Front.grammar mli ()
   | `CoqBackend ->
       let module B = CoqBackend.Run () in
+      Time.time "Printing" @@ fun () ->
       let filename = Settings.base ^ ".v" in
       let f = open_out filename in
       B.write_all f
   | `CodeBackend ->
       let module B = CodeBackend.Run () in
+      Time.time "Printing" @@ fun () ->
       write B.program;
       Interface.write Front.grammar mli ()
   | `NoBackend ->
       (* If no back-end was selected then we must have exited earlier. *)
       assert false
-
-let () =
-  Time.tick "Printing"

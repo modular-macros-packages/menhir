@@ -207,18 +207,20 @@ let update program =
     F.lfp (fun label -> needed (lookup program label).block)
   in
   (* Force the fixed point, to obtain correct timing data. *)
-  Label.Map.iter (fun label _ -> ignore (needed label)) program.cfg;
-  Time.tick "StackLang: computing needed registers";
+  let () =
+    Time.time "StackLang: computing needed registers" @@ fun () ->
+    Label.Map.iter (fun label _ -> ignore (needed label)) program.cfg
+  in
 
   (* Transform every block by pruning its dead DEF and PRIM instructions
      and by updating its [needed] field. *)
   let cfg =
+    Time.time "StackLang: updating needed registers" @@ fun () ->
     Label.Map.mapi (fun _label tblock ->
       let needed, block = prune tblock.block needed in
       { tblock with needed; block }
     ) program.cfg
   in
-  Time.tick "StackLang: updating needed registers";
 
   (* Done. *)
   { program with cfg }

@@ -67,9 +67,6 @@ let () =
   slogA 1 "Built an LR(1) automaton with %d states."
     A0.n
 
-let () =
-  Time.tick "Construction of the LR(1) automaton"
-
 (* -------------------------------------------------------------------------- *)
 
 (* 1. Perform silent conflict resolution. *)
@@ -106,18 +103,15 @@ let () =
 let () =
   A1.warnings() (* warnings *)
 
-let () =
-  Time.tick "Resolving silent conflicts"
-
 (* -------------------------------------------------------------------------- *)
 
 (* Explain the conflicts that remain after silent conflict resolution. *)
 
 let () =
   if Settings.explain then
+    Time.time "Explaining conflicts" @@ fun () ->
     let module C = ConflictExplanation.Run(A2)(Settings)(ErrorA2) in
-    C.write (Settings.base ^ ".conflicts");
-    Time.tick "Explaining conflicts"
+    C.write (Settings.base ^ ".conflicts")
 
 (* -------------------------------------------------------------------------- *)
 
@@ -126,9 +120,9 @@ let () =
 
 let () =
   if Settings.dump then
+    Time.time "Dumping the automaton" @@ fun () ->
     let module D = Dump.Make(A2)() in
-    D.dump (Settings.base ^ ".automaton");
-    Time.tick "Dumping the automaton"
+    D.dump (Settings.base ^ ".automaton")
 
 (* -------------------------------------------------------------------------- *)
 
@@ -139,9 +133,6 @@ module A3 =
 
 let () =
   A3.diagnostics() (* warnings *)
-
-let () =
-  Time.tick "Resolving severe conflicts"
 
 (* -------------------------------------------------------------------------- *)
 
@@ -158,9 +149,6 @@ let () =
    later on, so as to produce a set of nodes. Note that it is important
    that the types [A3.node], [A4.node] and [A5.node] are the same type. *)
 
-let () =
-  Time.tick "Computing reduction sites"
-
 (* -------------------------------------------------------------------------- *)
 
 (* 4. Insert extra reductions on error
@@ -171,9 +159,6 @@ module A4 =
 
 let () =
   A4.diagnostics() (* logs and warnings *)
-
-let () =
-  Time.tick "Adding extra reductions"
 
 (* -------------------------------------------------------------------------- *)
 
@@ -193,9 +178,9 @@ let () =
 
 let () =
   if Settings.dump_resolved then
+    Time.time "Dumping the automaton" @@ fun () ->
     let module D = Dump.Make(A5)() in
-    D.dump (Settings.base ^ ".automaton.resolved");
-    Time.tick "Dumping the automaton"
+    D.dump (Settings.base ^ ".automaton.resolved")
 
 (* ------------------------------------------------------------------------ *)
 
@@ -260,6 +245,8 @@ module NodeMap =
 (* -------------------------------------------------------------------------- *)
 
 (* Accessors. *)
+
+(* The computations that follow (up to the end of this file) are not timed. *)
 
 let reduction_sites =
   Production.tabulate @@ fun prod ->

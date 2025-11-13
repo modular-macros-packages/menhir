@@ -13,6 +13,9 @@ open MiddleAPI
 module Make (Lr0 : LR0) (X : CONSTRUCTION_MODE_SETTINGS) () = struct
 open X
 
+let start_time =
+  Time.start()
+
 (* -------------------------------------------------------------------------- *)
 
 (* Select a construction algorithm based on the command-line settings. *)
@@ -62,5 +65,8 @@ let test_default_reduction (_i : node) =
   None
 
 (* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.stop start_time "Construction of the LR(1) automaton"
 
 end (* Make *)

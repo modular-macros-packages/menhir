@@ -40,8 +40,6 @@ let () =
 (* Perform loop detection before attempting to build the LR(0) automaton. *)
 
 let () =
+  Time.time "Detecting loops" @@ fun () ->
   let module L = LoopDetection.Run(Error)(Grammar) in
   ()
-
-let () =
-  Time.tick "Running loop detection"

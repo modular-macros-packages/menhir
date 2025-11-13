@@ -48,6 +48,9 @@ include A
 open Lr0.G
 open E
 
+let start_time =
+  Time.start()
+
 include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
@@ -183,5 +186,10 @@ let warn () =
 let diagnostics () =
   info();
   warn()
+
+(* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.stop start_time "Introducing extra reductions"
 
 end (* Run *)

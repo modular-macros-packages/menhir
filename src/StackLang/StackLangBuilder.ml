@@ -244,6 +244,9 @@ module Build (A : sig
 end) = struct
   open A
 
+  let start_time =
+    Time.start()
+
   (* The type [address] is not [label]. For convenience, we let the user pick
      her own (structured) type of addresses. *)
 
@@ -309,7 +312,7 @@ end) = struct
     StringMap.map print entry
 
   let () =
-    Time.tick "StackLang: producing code"
+    Time.stop start_time "StackLang: producing code"
 
   (* Construct a complete program, and annotate every block with the set
      of the registers that it uses. *)

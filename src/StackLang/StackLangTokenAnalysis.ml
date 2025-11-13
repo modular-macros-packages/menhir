@@ -129,8 +129,8 @@ let analyze program : label -> env option =
       let block = (lookup program label).block in
       exec jump env block
   end in
+  Time.time "StackLang: static analysis of the current token" @@ fun () ->
   let module D = Fix.DataFlow.ForHashedType(Label)(P)(G) in
-  Time.tick "StackLang: static analysis of the current token";
   D.solution
 
 (* -------------------------------------------------------------------------- *)
@@ -270,6 +270,7 @@ let map_tblock env tblock =
 (* The main transformation function. *)
 
 let transform program : program =
+  Time.time "StackLang: simplifying case analyses on the current token" @@ fun () ->
   let analysis : label -> env option = analyze program in
   let cfg = Label.Map.mapi (fun label tblock ->
     match analysis label with
@@ -279,5 +280,4 @@ let transform program : program =
         (* This block is apparently dead. No need to transform it. *)
         tblock
   ) program.cfg in
-  Time.tick "StackLang: simplifying case analyses on the current token";
   { program with cfg }

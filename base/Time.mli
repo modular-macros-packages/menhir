@@ -8,21 +8,30 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* Call [tick msg] to stop timing a task and start timing the next
-   task.  A message is displayed. The message includes [msg] as well
-   as timing information.  The very first task is deemed to begin when
-   this module is initialized. *)
+(**This module offers facilities for timing various tasks. Timing information
+   is acquired via {!time} and is stored in a global log. When the process
+   exits, this log is automatically flushed to the output channel that has
+   been selected via {!set_output_channel}. *)
 
-val tick: string -> unit
+(**[time msg task] executes [task()] and returns its result. If the task
+   terminates normally then the message [msg], followed with the execution
+   time of the task, are appended to the log. *)
+val time: string -> (unit -> 'a) -> 'a
 
-(* Another timing method, with separate chronometers; useful for more
-   precise profiling. *)
+(**[set_output_channel c] sets the output channel to [c].
+   If [c] is [None] then no output is produced. *)
+val set_output_channel: out_channel option -> unit
 
-type chrono
+(**Unfortunately, we cannot provide a concise and elegant way of timing
+   a functor application. Therefore, we also provide {!start} and {!stop}
+   functions. *)
 
-val fresh: unit -> chrono
+(**A start time. *)
+type start
 
-val chrono: chrono -> (unit -> 'a) -> 'a
+(**[start()] records a start time. *)
+val start: unit -> start
 
-val display: chrono -> string -> unit
-
+(**[stop start msg] records a stop time [stop]. Then the message [msg],
+   followed with the elapsed time [stop -. start], are appended to the log. *)
+val stop: start -> string -> unit

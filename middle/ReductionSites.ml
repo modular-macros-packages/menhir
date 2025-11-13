@@ -23,6 +23,9 @@ include A
 open Lr0.G
 open E
 
+let start_time =
+  Time.start()
+
 include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
@@ -92,5 +95,10 @@ let diagnostics () =
     let plural_mark, be = if !count > 1 then ("s", "are") else ("", "is") in
     warning []
       "in total, %d production%s %s never reduced." !count plural_mark be
+
+(* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.stop start_time "Computing reduction sites"
 
 end (* Run *)

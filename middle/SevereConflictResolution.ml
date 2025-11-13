@@ -32,6 +32,9 @@ include A
 open Lr0.G
 open E
 
+let start_time =
+  Time.start()
+
 include Fix.Numbering.Operations(A)
 
 (* -------------------------------------------------------------------------- *)
@@ -170,5 +173,10 @@ let diagnostics () =
   signal_conflicts "shift/reduce" !shift_reduce;
   signal_conflicts "reduce/reduce" !reduce_reduce;
   signal_conflicts "end-of-stream" !eos_conflicts
+
+(* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.stop start_time "Resolving severe conflicts"
 
 end (* Run *)

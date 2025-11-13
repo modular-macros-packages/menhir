@@ -22,6 +22,9 @@ end)
 open A.Lr0.G
 open E
 
+let start_time =
+  Time.start()
+
 (* -------------------------------------------------------------------------- *)
 
 (* Include the automaton [A]. Although this may seem surprising, almost every
@@ -60,5 +63,10 @@ include GraphNumberingRec.ForNumberedType(A)(G)
 let diagnostics () =
   if n < A.n then
     log "Only %d states remain after resolving shift/reduce conflicts." n
+
+(* -------------------------------------------------------------------------- *)
+
+let () =
+  Time.stop start_time "Renumbering the reachable states"
 
 end (* Run *)

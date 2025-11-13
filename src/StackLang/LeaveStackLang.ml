@@ -897,11 +897,14 @@ module G = struct
     Label.Map.iter (fun label _block -> yield label) program.cfg
 end
 
+let start_time =
+  Time.start()
+
 module S =
   Fix.SCC.Run(G)
 
 let () =
-  Time.tick "StackLang: computing the mutually recursive groups"
+  Time.stop start_time "StackLang: computing the mutually recursive groups"
 
 (* [recursive labels] determines whether the strongly connected component
    [labels] needs a [rec] flag. *)
@@ -1000,6 +1003,6 @@ end (* Run *)
 (* Wrap up. *)
 
 let compile program =
+  Time.time "StackLang: compiling down to IL" @@ fun () ->
   let module R = Run (struct let program = program end) in
-  Time.tick "StackLang: compiling down to IL";
   R.program

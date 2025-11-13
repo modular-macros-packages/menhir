@@ -106,6 +106,9 @@ module Run () = struct
     (* Pre-compute all information, such that functions of this module
        always operate in O(1) *)
 
+    let start_time =
+      Time.start()
+
     (* Create two fresh finite sets that will be populated with goto and shift
        transitions *)
     module Goto = Gensym()
@@ -227,13 +230,15 @@ module Run () = struct
 
     let target i = Vector.get targets i
 
-    let () = Time.tick "LRijkstraFast: populate transition table"
+    let () =
+      Time.stop start_time "LRijkstraFast: populate transition table"
 
     let () =
       if false then
         Printf.printf "%d terminals\n%d lr1 states\n%d transitions\n%!"
           Terminal.n Lr1.n (cardinal any)
-  end
+
+  end (* Transition *)
 
   (* ---------------------------------------------------------------------- *)
 
@@ -267,6 +272,9 @@ module Run () = struct
        following [tr]. *)
     val goto_transition: Transition.goto index -> t list
   end = struct
+
+    let start_time =
+      Time.start()
 
     type t = {
       production: Production.t;
@@ -337,8 +345,10 @@ module Run () = struct
 
     let goto_transition tr = Vector.get table tr
 
-    let () = Time.tick "LRijkstraFast: populate reduction table"
-  end
+    let () =
+      Time.stop start_time "LRijkstraFast: populate reduction table"
+
+  end (* Unreduce *)
 
   (* ---------------------------------------------------------------------- *)
 
@@ -353,6 +363,9 @@ module Run () = struct
   *)
 
   module Classes = struct
+
+    let start_time =
+      Time.start()
 
     (* A node of the graph is either an lr1 state or a goto transition *)
     module Node = (val sum Lr1C.n Transition.goto)
@@ -387,7 +400,11 @@ module Run () = struct
 
     module Scc = Fix.SCC.Run(Gr)
 
-    let () = Time.tick "LRijkstraFast: class graph SCC"
+    let () =
+      Time.stop start_time "LRijkstraFast: class graph SCC"
+
+    let start_time =
+      Time.start()
 
     (* Associate a class to each node *)
 
@@ -502,8 +519,10 @@ module Run () = struct
       | L edge -> for_edge edge
       | R _ -> all_terminals
 
-    let () = Time.tick "LRijkstraFast: token classes for each transition"
-  end
+    let () =
+      Time.stop start_time "LRijkstraFast: token classes for each transition"
+
+  end (* Classes *)
 
   (* ---------------------------------------------------------------------- *)
 
@@ -592,6 +611,10 @@ module Run () = struct
 
   (* The hash-consed tree of all matrix equations (products and minimums). *)
   module Tree = struct
+
+    let start_time =
+      Time.start()
+
     include ConsedTree()
 
     let goto_equations =
@@ -661,9 +684,11 @@ module Run () = struct
       let l, r = define node in
       Vector.set table_pre node (pre_classes l);
       Vector.set table_post node (post_classes r)
-  end
 
-  let () = Time.tick "LRijkstraFast: built equation tree"
+    let () =
+      Time.stop start_time "LRijkstraFast: built equation tree"
+
+  end (* Tree *)
 
   (* ---------------------------------------------------------------------- *)
 
@@ -810,7 +835,8 @@ module Run () = struct
     let cost t =
       let node, offset = decode_offset t in
       (Vector.get table node).(offset)
-  end
+
+  end (* Cells *)
 
   (* ---------------------------------------------------------------------- *)
 
@@ -926,6 +952,10 @@ module Run () = struct
 
   (* Represent the data flow problem to solve *)
   module Solver = struct
+
+    let start_time =
+      Time.start()
+
     let min_cost a b : int =
       if a < b then a else b
 
@@ -1009,7 +1039,8 @@ module Run () = struct
       Vector.set_cons dependents l dep;
       Vector.set_cons dependents r dep
 
-    let () = Time.tick "LRijkstraFast: reverse dependencies"
+    let () =
+      Time.stop start_time "LRijkstraFast: reverse dependencies"
 
     (* A graph representation suitable for the DataFlow solver *)
     module Graph = struct
@@ -1095,7 +1126,8 @@ module Run () = struct
             )
         in
         List.iter update_dep (Vector.get dependents node)
-    end
+
+    end (* Solver *)
 
     module Property = struct
       type property = int
@@ -1139,10 +1171,15 @@ module Run () = struct
           (if value then '\x01' else '\x00')
     end
 
+    let start_time =
+      Time.start()
+
     (* Run the solver *)
     include Fix.DataFlow.ForCustomMaps(Property)(Graph)(CostMap)(MarkMap)
 
-    let () = Time.tick "LRijkstraFast: data flow solution"
+    let () =
+      Time.stop start_time "LRijkstraFast: data flow solution"
+
   end
 
   (* ---------------------------------------------------------------------- *)

@@ -131,8 +131,3 @@ let () =
   fprintf f "sfollow(%s) = %s\n"
     (Nonterminal.print false nt)
     (SymbolSet.print false (sfollow nt))
-
-(* -------------------------------------------------------------------------- *)
-
-let () =
-  Time.tick "Analysis of the grammar"

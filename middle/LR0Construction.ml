@@ -12,6 +12,9 @@ open MiddleAPI
 
 module Make (G : GRAMMAR) = struct
 
+let start_time =
+  Time.start()
+
 module G = G
   open G
 
@@ -827,5 +830,8 @@ let print leading state =
 (* -------------------------------------------------------------------------- *)
 
 end (* ALR1 *)
+
+let () =
+  Time.stop start_time "Construction of the LR(0) automaton"
 
 end (* Make *)

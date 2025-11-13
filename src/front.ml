@@ -35,7 +35,7 @@ let load_grammar_from_file filename : Syntax.partial_grammar =
 let grammars () : Syntax.partial_grammar list =
   List.map load_grammar_from_file Settings.filenames
 
-let grammars : Syntax.partial_grammar list =
+let grammars () : Syntax.partial_grammar list =
   if Settings.no_stdlib || Settings.backend = `CoqBackend then
     grammars()
   else
@@ -56,19 +56,22 @@ let grammars : Syntax.partial_grammar list =
     in
     standard_library :: grammars()
 
-let () =
-  Time.tick "Lexing and parsing"
+let grammars =
+  Time.time "Lexing and parsing" @@ fun () ->
+  grammars()
 
 (* ------------------------------------------------------------------------- *)
 
 (* Eliminate anonymous rules. *)
 
 let grammars : Syntax.partial_grammar list =
+  Time.time "Eliminating anonymous rules" @@ fun () ->
   List.map EliminateAnonymousRules.transform grammars
 
 (* Remove all uses of token aliases. *)
 
 let grammars =
+  Time.time "Eliminating token aliases" @@ fun () ->
   let module E = ExpandTokenAliases.Make(Error) in
   E.transform grammars
 
@@ -94,7 +97,10 @@ let grammar : Syntax.grammar =
   end in
 
   let module J = JoinGrammars.Make(E) in
-  let grammar = J.join grammars in
+  let grammar =
+    Time.time "Joining" @@ fun () ->
+    J.join grammars
+  in
   (* We do NOT exit here if an error has been signaled. Thus we allow
      CheckGrammar to run: this allows us to signal even more errors
      and to blur the distinction between JoinGrammars and CheckGrammars
@@ -102,7 +108,10 @@ let grammar : Syntax.grammar =
   (* Error.exit_if c; *)
 
   let module C = CheckGrammar.Make(E)(Settings) in
-  C.check grammar;
+  let () =
+    Time.time "Checking the grammar" @@ fun () ->
+    C.check grammar
+  in
   Error.exit_if c;
 
   grammar
@@ -112,6 +121,7 @@ let grammar : Syntax.grammar =
 (* Check that the grammar is well-sorted; infer the sort of every symbol. *)
 
 let sorts =
+  Time.time "Inferring sorts" @@ fun () ->
   let module V = struct
     let verbose = Settings.logG >= 3
   end in
@@ -131,6 +141,7 @@ let grammar_before_expansion =
    to obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar : PlainSyntax.grammar =
+  Time.time "Expanding parameterized nonterminal symbols" @@ fun () ->
   let open SelectiveExpansion in
   (* First, perform a selective expansion: expand away all parameters of
      higher sort, keeping the parameters of sort [*]. This process always
@@ -148,9 +159,6 @@ let grammar : PlainSyntax.grammar =
   (* This yields an unparameterized grammar. *)
   Drop.drop grammar
 
-let () =
-  Time.tick "Joining and expanding"
-
 (* ------------------------------------------------------------------------- *)
 
 (* If [--strategy simplified] has been selected, then check that the [error]
@@ -160,6 +168,7 @@ let grammar =
   let module C = CheckErrorTokenUsage.Make(Error) in
   match Settings.strategy with
   | `Simplified ->
+      Time.time "Checking where the error token is used" @@ fun () ->
       C.filter_grammar grammar
   | `Legacy ->
       grammar
@@ -181,11 +190,9 @@ let () =
 (* Perform reachability analysis. *)
 
 let grammar =
+  Time.time "Detecting unreachable symbols" @@ fun () ->
   let module T = Trim.Make(Error) in
   T.trim grammar
-
-let () =
-  Time.tick "Trimming"
 
 (* ------------------------------------------------------------------------- *)
 
@@ -220,8 +227,10 @@ let grammar, ocaml_types_have_been_checked =
       grammar, false
   | IMInfer ->
       Error.enable();                    (* See comment in module [Error]. *)
-      let grammar = Infer.infer() in
-      Time.tick "Inferring types for nonterminals";
+      let grammar =
+        Time.time "Inferring types for nonterminal symbols" @@ fun () ->
+        Infer.infer()
+      in
       grammar, true
   | IMDependRaw ->
       Infer.depend `RawDepend;
@@ -234,8 +243,10 @@ let grammar, ocaml_types_have_been_checked =
       exit 0
   | IMReadReply filename ->
       Error.enable();                    (* See comment in module [Error]. *)
-      let grammar = Infer.read_reply filename in
-      Time.tick "Reading inferred types for nonterminals";
+      let grammar =
+        Time.time "Reading inferred types for nonterminals" @@ fun () ->
+        Infer.read_reply filename
+      in
       grammar, true
   )
 
@@ -244,6 +255,7 @@ let grammar, ocaml_types_have_been_checked =
 (* Expand away some of the position keywords. *)
 
 let grammar =
+  Time.time "Expanding away certain position keywords" @@ fun () ->
   KeywordExpansion.expand grammar
     (* TODO KeywordExpansion is currently in middle/
             because it depends on GrammarConstruction *)
@@ -276,12 +288,12 @@ let grammar =
       let module C = CheckInlineUsage.Make(Error) in
       C.check grammar
     end;
+    Time.time "Expanding away %inline nonterminal symbols" @@ fun () ->
     let module I = Inlining.Make(Error) in
     let grammar = I.inline grammar in
     (* 2018/05/23 Removed the warning that was issued when %inline was used
        but --infer was turned off. Most people should use ocamlbuild or dune
        anyway. *)
-    Time.tick "Inlining";
     grammar
   end
   else

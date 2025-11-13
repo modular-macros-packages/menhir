@@ -197,9 +197,8 @@ let test program nt =
 (* [test program nt sentence] tests the program [program]. *)
 
 let test program =
+  Time.time "Testing the StackLang program" @@ fun () ->
   (* For each start symbol [nt], test this entry point. *)
-  Lr1.entry |> ProductionMap.iter begin fun _prod s ->
-    let nt = Lr1.get_start s in
-    test program nt
-  end;
-  Time.tick "Testing the StackLang program"
+  Lr1.entry |> ProductionMap.iter @@ fun _prod s ->
+  let nt = Lr1.get_start s in
+  test program nt

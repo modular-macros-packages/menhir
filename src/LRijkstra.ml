@@ -189,6 +189,9 @@ let reachable =
 
 (* Perform the forward search. *)
 
+let start_time =
+  Time.start()
+
 module A =
   AStar.Make(G)
 
@@ -245,7 +248,9 @@ let max_heap_size =
     0 (* dummy *)
 
 let () =
-  Time.tick "Forward search";
+  Time.stop start_time "Forward search"
+
+let () =
   if X.verbose then begin
     Printf.eprintf
       "%d graph nodes explored by forward search.\n\

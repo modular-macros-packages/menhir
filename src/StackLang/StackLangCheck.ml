@@ -211,8 +211,8 @@ let wf_tblock program label { block; needed } =
   wf_block env block
 
 let wf program =
-  Label.Map.iter (wf_tblock program) program.cfg;
-  Time.tick "StackLang: checking well-formedness"
+  Time.time "StackLang: checking well-formedness" @@ fun () ->
+  Label.Map.iter (wf_tblock program) program.cfg
 
 let wf program =
   handle wf program;
@@ -723,8 +723,8 @@ and wt_casetag_branch env k (tagpat, block) : tagbranch =
 (* [wt] checks a program. *)
 
 let wt program =
+  Time.time "StackLang: checking well-typedness" @@ fun () ->
   let cfg = Label.Map.mapi (wt_tblock program) program.cfg in
-  Time.tick "StackLang: checking well-typedness";
   { program with cfg }
 
 let wt program =

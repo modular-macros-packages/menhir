@@ -34,6 +34,9 @@ open Conventions
 
 module Run () = struct
 
+let start_time =
+  Time.start()
+
 (* ------------------------------------------------------------------------ *)
 
 (* [fold_entry] enumerates the start states of the LR(1) automaton.
@@ -1170,6 +1173,6 @@ let program =
   [])]
 
 let () =
-  Time.tick "Producing tables and abstract syntax"
+  Time.stop start_time "Producing tables and abstract syntax"
 
-end
+end (* Run *)
