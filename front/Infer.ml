@@ -300,7 +300,7 @@ type entry =
 type line =
     entry (* target *) * entry list (* dependencies *)
 
-let depend postprocess =
+let depend mode =
 
   (* Create an [.ml] file and an [.mli] file, then invoke ocamldep to
      compute dependencies for us. *)
@@ -332,7 +332,9 @@ let depend postprocess =
      postprocessing of [ocamldep]'s output. For normal [make] users, who use
      [--depend], some postprocessing is required, which is performed below. *)
 
-  if postprocess then begin
+  match mode with
+  | `RawDepend -> ()
+  | `Depend ->
 
     (* Make sense out of ocamldep's output. *)
 
@@ -368,8 +370,6 @@ let depend postprocess =
           Printf.printf "\n%!"
         end
     ) lines
-
-  end
 
 (* -------------------------------------------------------------------------- *)
 (* Augmenting a grammar with inferred type information. *)

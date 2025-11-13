@@ -224,10 +224,10 @@ let grammar, ocaml_types_have_been_checked =
       Time.tick "Inferring types for nonterminals";
       grammar, true
   | IMDependRaw ->
-      Infer.depend false;
+      Infer.depend `RawDepend;
       exit 0
   | IMDependPostprocess ->
-      Infer.depend true;
+      Infer.depend `Depend;
       exit 0
   | IMWriteQuery filename ->
       Infer.write_query filename;
