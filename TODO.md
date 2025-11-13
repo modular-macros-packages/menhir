@@ -293,17 +293,11 @@
 
 ## Code Cleanup
 
-* If `UnparsingAPI.unparsing_API` did not rely on the signature `GRAMMAR`
-  then it could move into `front`, and so could `Interface` and `Infer`.
-
 * Perhaps many modules in `front` and `middle` could take a report channel
   as an argument instead of the functions `error`, `signal`, `warning`, etc.
 
-* The whole timing system (Time) should be redesigned so that each timed task
-  has an explicit beginning and end. Also, the process of recording and the
-  process of printing time information should be separated, so that tasks that
-  are performed only on demand can be timed.
-  Currently not timed:
+* Currently not timed:
+  analyses of the grammar in `GrammarConstruction`,
   `StackStates.Run`,
   all of `Invariant`,
   `Origin`.
