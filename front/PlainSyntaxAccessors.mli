@@ -26,8 +26,9 @@ val prod_attributes : producer -> attributes
 val ocamltype_of_token : grammar -> symbol -> ocamltype option
 
 (**[ocamltype_of_symbol grammar symbol] produces the OCaml type of the
-   nonterminal symbol [symbol] in the grammar [grammar], if this type is
-   known. [None] is returned if this type is unknown. *)
+   nonterminal symbol [symbol] in the grammar [grammar], if this type
+   has been explicitly specified via a %type declaration. Otherwise,
+   [None] is returned. *)
 val ocamltype_of_symbol : grammar -> symbol -> ocamltype option
 
 (**[ocamltype_of_start_symbol grammar symbol] produces the OCaml type of the
