@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open PlainSyntax
 open PlainSyntaxAccessors
 open IL
 
@@ -21,8 +22,8 @@ let tnonterminalgadtdata nt =
   "N_" ^ MString.normalize nt
 
 (* Generating the definition of the type [nonterminal] requires the type of
-   every nonterminal symbol to be known. We assume that this check has been
-   performed up front. *)
+   every nonterminal symbol to be explicitly given by a %type declaration.
+   We assume that this check has been performed up front. *)
 
 (* This said, when [--depend] or [--raw-depend] is used, [nonterminalgadtdef]
    can be invoked by [Infer.depend] via [Interface.write]. Then, we may
@@ -34,10 +35,11 @@ let tnonterminalgadtdata nt =
 exception MissingOCamlType
 
 let ocamltype_of_symbol grammar nt : typ =
-  match ocamltype_of_symbol grammar nt with
-  | Some t ->
-      TypTextual t
-  | None ->
+  (* Check that there is a %type declaration for [nt]. *)
+  match StringMap.find nt grammar.types with
+  | ty ->
+      TypTextual ty
+  | exception Not_found ->
       raise MissingOCamlType
 
 let datadef grammar nt : datadef =
