@@ -233,11 +233,6 @@ module type GRAMMAR = sig
 
     val reductions   : t -> (terminal * production list) list
     [@@ocaml.deprecated "Please use [get_reductions]"]
-
-    (**When true, a [silent] flag indicates that a conflict was silently
-       resolved by obeying precedence declarations. When false, it indicates
-       that this conflict was accidental and gave rise to a warning. *)
-    type silent = bool
   end
 
   module Print : sig

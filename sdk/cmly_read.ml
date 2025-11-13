@@ -355,7 +355,6 @@ module Lift (G : sig val grammar : grammar end) : GRAMMAR = struct
     let reductions i =
       List.map (fun (s, p) -> (s, [p]))
         table.(i).lr1_reductions
-    type silent = bool
   end
 
   module Print = struct
