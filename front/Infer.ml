@@ -57,14 +57,6 @@ let decode s =
     Lexmli.fail();
   String.sub s 3 (n - 3)
 
-(* The name of the temporary file. *)
-
-let mlname =
-  X.base ^ ".ml"
-
-let mliname =
-  X.base ^ ".mli"
-
 (* -------------------------------------------------------------------------- *)
 
 (* The type of a nonterminal symbol. *)
@@ -218,103 +210,103 @@ let action_def nt branch : expr =
 
 (* Code production for the entire grammar. *)
 
+(* [bindings()] turns the productions into a list of OCaml function definitions.
+   Each function is nameless. *)
+
+(* The productions that come from Menhir's standard library are placed first,
+   so that type errors are not reported in them. A notion of priority is used
+   for this purpose. *)
+
+let bindings () =
+  let cmp (prio1, _) (prio2, _) = Int.compare prio1 prio2 in
+  StringMap.fold (fun nt rule accu ->
+    List.fold_left (fun bindings branch ->
+      let binding = (PWildcard, action_def nt branch)
+      and priority = Action.priority branch.action in
+      (priority, binding) :: bindings
+    ) accu rule.branches
+  ) grammar.rules []
+  |> List.sort cmp
+  |> List.map snd
+
 (* [program()] turns the grammar into an OCaml program. *)
 
 let program () =
 
-  (* Turn the grammar into a bunch of function definitions. *)
+  (* Create entry points (toplevel variables) whose types are the unknowns
+     that we are looking for, that is, the type variables [ntvar nt].
+     Constrain these variables via the OCaml code in [bindings()]. *)
 
-  let bindings =
-    StringMap.fold (fun symbol rule bindings ->
-      List.fold_left (fun bindings branch ->
-        let binding = (PWildcard, action_def symbol branch)
-        and priority = Action.priority branch.action in
-        (priority, binding) :: bindings
-      ) bindings rule.branches
-    ) grammar.rules []
-  in
-
-  (* Grammar productions that come from Menhir's standard library are placed
-     first, so that type errors are not reported in them. *)
-
-  let compare (p1, _) (p2, _) = Int.compare p1 p2 in
-  let bindings =
-    List.sort compare bindings
-    |> List.map snd
-  in
-
-  (* Create entry points whose types are the unknowns that we are looking for.
-     Mentioning just the type variable [ntvar nt] suffices here. *)
-
-  let ps, ts =
-    StringMap.fold (fun nt _ (ps, ts) ->
-      PVar (encode (MString.normalize nt)) :: ps,
-      ntvar nt :: ts
+  let (pats : pattern list), (tys : typ list) =
+    StringMap.fold (fun nt _ (pats, tys) ->
+      PVar (encode (MString.normalize nt)) :: pats,
+      ntvar nt :: tys
     ) grammar.rules ([], [])
   in
 
-  let def = {
-    valpat = PTuple ps;
-    valval = ELet (bindings, annotate EBottom (TypTuple ts))
-  }
-  in
-
-  (* Insert markers to delimit the part of the file that we are
-     interested in. These markers are recognized by [Lexmli]. This
-     helps skip the values, types, exceptions, etc. that might be
-     defined by the prologue or postlogue. *)
-
-  let begindef = {
-    valpat = PVar "menhir_begin_marker";
-    valval = EIntConst 0
-  }
-  and enddef = {
-    valpat = PVar "menhir_end_marker";
-    valval = EIntConst 0
+  let main_def = {
+    valpat = PTuple pats;
+    valval = ELet (bindings(), annotate EBottom (TypTuple tys))
   } in
 
-  (* Issue the test program. We include the definition of the type of
-     tokens, because, in principle, the semantic actions may refer to
-     it or to its data constructors. *)
+  (* Insert markers to delimit the part of the file that we are interested in.
+     These markers are recognized by [Lexmli]. This lets us skip the values,
+     types, exceptions, etc., that might be defined by the user's prologue or
+     postlogue. *)
+
+  let begin_def = def "menhir_begin_marker" (EIntConst 0)
+  and end_def = def "menhir_end_marker" (EIntConst 0) in
+
+  (* Issue the test program. We include the definition of the type of tokens,
+     because, in principle, the semantic actions may refer to it or to its
+     data constructors. *)
 
   [ SIFunctor (grammar.parameters,
     interface_to_structure (TokenType.tokentypedef grammar) @
     SIFragment grammar.preludes ::
-    SIValDefs (false, [ begindef; def; enddef ]) ::
+    SIValDefs (false, [ begin_def; main_def; end_def ]) ::
     SIFragment grammar.postludes ::
   [])]
 
 (* -------------------------------------------------------------------------- *)
-(* Writing the program associated with a grammar to a file. *)
 
-let write filename () =
-  let ml = open_out filename in
-  let module P = ILPrinter.Make (struct
-    let f = ml
+(* [write_ml filename ()] writes the program [program()]
+   to the file [filename]. *)
+
+let write_ml filename () =
+  let f = open_out filename in
+  let module P = ILPrinter.Make(struct
+    let f = f
     let print_line_directives = Some filename
     let comment = false
   end) in
   P.program (program());
-  close_out ml
+  close_out f
+
+(* [write_mli filename ()] writes the parser's interface
+   to the file [filename]. *)
+
+let write_mli filename () =
+  Interface.write grammar filename ()
 
 (* -------------------------------------------------------------------------- *)
-(* Running ocamldep on the program. *)
+
+(* [depend mode] creates an [.ml] file and an [.mli] file, then invokes
+   [ocamldep] to compute dependencies for us. *)
+
+(* If an old [.ml] or [.mli] file exists, we are careful to preserve it. We
+   temporarily move it out of the way and restore it when we are done. There
+   is no reason why dependency analysis should destroy existing files. *)
 
 type entry =
-    string (* basename *) * string (* filename *)
+  string (* basename *) * string (* filename *)
 
 type line =
-    entry (* target *) * entry list (* dependencies *)
+  entry (* target *) * entry list (* dependencies *)
 
 let depend mode =
 
-  (* Create an [.ml] file and an [.mli] file, then invoke ocamldep to
-     compute dependencies for us. *)
-
-  (* If an old [.ml] or [.mli] file exists, we are careful to preserve
-     it. We temporarily move it out of the way and restore it when we
-     are done. There is no reason why dependency analysis should
-     destroy existing files. *)
+  let mlname, mliname = X.base ^ ".ml", X.base ^ ".mli" in
 
   let ocamldep_command =
     sprintf "%s %s %s"
@@ -324,8 +316,8 @@ let depend mode =
   let output : string =
     IO.moving_away mlname @@ fun () ->
     IO.moving_away mliname @@ fun () ->
-    IO.with_file mlname (write mlname) @@ fun () ->
-    IO.with_file mliname (Interface.write grammar mliname) @@ fun () ->
+    IO.with_file mlname (write_ml mlname) @@ fun () ->
+    IO.with_file mliname (write_mli mliname) @@ fun () ->
     IO.invoke_or_die ocamldep_command
   in
 
@@ -333,9 +325,9 @@ let depend mode =
 
   print_string output;
 
-  (* If [--raw-depend] was specified on the command line, stop here.  This
-     option is used by omake and by ocamlbuild, which performs their own
-     postprocessing of [ocamldep]'s output. For normal [make] users, who use
+  (* If [--raw-depend] was specified on the command line, stop here. This
+     option is used by [omake] and by [ocamlbuild], which perform their own
+     postprocessing of [ocamldep]'s output. For users of [make], who use
      [--depend], some postprocessing is required, which is performed below. *)
 
   match mode with
@@ -353,34 +345,34 @@ let depend mode =
         Report.error' [] "%s" (msg ^ output)
     in
 
-    (* Look for the line that concerns the [.cmo] target, and echo a
-       modified version of this line, where the [.cmo] target is
-       replaced with [.ml] and [.mli] targets, and where the dependency
-       over the [.cmi] file is dropped.
+    (* Look for the line that concerns the [.cmo] target, and echo a modified
+       version of this line, where the [.cmo] target is replaced with [.ml]
+       and [.mli] targets, and where the dependency over the [.cmi] file is
+       dropped.
 
-       In doing so, we assume that the user's [Makefile] supports
-       bytecode compilation, so that it makes sense to request [bar.cmo]
-       to be built, as opposed to [bar.cmx]. This is not optimal, but
-       will do. [camldep] exhibits the same behavior. *)
+       In doing so, we assume that the user's [Makefile] supports bytecode
+       compilation, so that it makes sense to request [bar.cmo] to be built,
+       as opposed to [bar.cmx]. This is not optimal, but will do. [ocamldep]
+       exhibits the same behavior. *)
 
-    List.iter (fun ((_, target_filename), dependencies) ->
-      if Filename.check_suffix target_filename ".cmo" then
-        let dependencies = List.filter (fun (basename, _) ->
-          basename <> X.base
-        ) dependencies in
-        if List.length dependencies > 0 then begin
-          printf "%s %s:" mlname mliname;
-          List.iter (fun (_basename, filename) ->
-            printf " %s" filename
-          ) dependencies;
-          printf "\n%!"
-        end
-    ) lines
+    lines |> List.iter @@ fun ((_, target), dependencies) ->
+    if Filename.check_suffix target ".cmo" then
+      let dependencies =
+        List.filter (fun (basename, _) -> basename <> X.base) dependencies
+      in
+      if List.length dependencies > 0 then begin
+        printf "%s %s:" mlname mliname;
+        List.iter (fun (_basename, filename) ->
+          printf " %s" filename
+        ) dependencies;
+        printf "\n%!"
+      end
 
 (* -------------------------------------------------------------------------- *)
+
 (* Augmenting a grammar with inferred type information. *)
 
-(* The parameter [output] is supposed to contain the output of [ocamlc -i]. *)
+(* The parameter [output] contains the output of [ocamlc -i]. *)
 
 type env =
   (string * ocamltype) list
@@ -425,12 +417,14 @@ let infer () =
 
   (* Invoke ocamlc to do type inference for us. *)
 
+  let mlname = X.base ^ ".ml" in
+
   let ocamlc_command =
     sprintf "%s -c -i %s" X.ocamlc (Filename.quote mlname)
   in
 
   let output =
-    write mlname ();
+    write_ml mlname ();
     let result = IO.invoke_or_die ocamlc_command in
     (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
        fails. (Or if an exception is thrown.) *)
@@ -445,7 +439,7 @@ let infer () =
 (* -------------------------------------------------------------------------- *)
 
 let write_query filename =
-  write filename ()
+  write_ml filename ()
 
 (* -------------------------------------------------------------------------- *)
 
