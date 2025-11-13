@@ -890,10 +890,77 @@ end
 (* -------------------------------------------------------------------------- *)
 (* -------------------------------------------------------------------------- *)
 
-(* Re-package the functor [Interface]
-   as a function that expects a grammar as an argument. *)
+(* Re-package [Interface] as a function that expects a grammar. *)
+
+(* 2025/11/13: it may seem tempting to use [GrammarConstruction.Make]
+   instead of the boilerplate code below. In fact, at one point I did remove
+   this boilerplate and switch to using [GrammarConstruction]. However,
+   because [GrammarConstruction] is part of the middle-end, this design
+   decision forced the function [unparsing_API] and its dependencies
+   ([Interface], [Infer]) to be also part of the middle-end. I feel more
+   comfortable breaking this dependency and moving these modules into the
+   front-end. To break this dependency, it is necessary to also split the
+   description of the unparsing API into two modules, [UnparsingIntf] and
+   [UnparsingImpl]. *)
+
+open PlainSyntax
+open PlainSyntaxAccessors
 
 let unparsing_API grammar =
-  let module G = GrammarConstruction.Make(struct let grammar = grammar end)() in
+  let module G = struct
+    module Terminal = struct
+      type t = terminal
+      let print t = t
+      let real t = (t <> "error")
+      let unquoted_alias t = unquoted_alias grammar t
+      let ocamltype t = ocamltype_of_token grammar t
+      let map_real f = List.map f (tokens grammar)
+    end
+    module Nonterminal = struct
+      type t = nonterminal
+      let print normalize nt =
+        if normalize then MString.normalize nt else nt
+      let mapx f =
+        List.map f (nonterminals grammar)
+      let user_start_symbols =
+        grammar.start_symbols
+        |> StringSet.elements
+    end
+    module Symbol = struct
+      type t =
+        | N of Nonterminal.t
+        | T of Terminal.t
+    end
+    let producer2symbol producer =
+      let symbol = producer.prod_symbol in
+      if is_nonterminal grammar symbol then
+        Symbol.N symbol
+      else
+        Symbol.T symbol
+    module Production = struct
+      type t = nonterminal * branch
+      let print (nt, branch) = print_production nt branch
+      let rhs (_nt, branch) =
+        branch.producers
+        |> List.map producer2symbol
+        |> Array.of_list
+      let attributes (_nt, branch) = branch.br_attributes
+      let error_free_producer producer =
+        producer.prod_symbol <> "error"
+      let error_free (_nt, branch) =
+        List.for_all error_free_producer branch.producers
+      let mapnt nt f =
+        assert (StringMap.mem nt grammar.rules);
+        let rule = StringMap.find nt grammar.rules in
+        List.map (fun branch -> f (nt, branch)) rule.branches
+      let productions grammar : t list =
+        StringMap.fold (fun nt rule accu ->
+          List.map (fun branch -> (nt, branch)) rule.branches @
+          accu
+        ) grammar.rules []
+      let mapx f =
+        List.map f (productions grammar)
+    end
+  end in
   let module I = Interface(G) in
   I.unparsing_API()
