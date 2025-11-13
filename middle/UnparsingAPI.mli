@@ -37,14 +37,5 @@ end)
 
 end
 
-(* This functor is currently unused. *)
-module Interface (G : GRAMMAR)
-: sig
-
-  (**[unparsing_API] is the interface of the unparsing API. *)
-  val unparsing_API : unit -> interface
-
-end
-
 (**[unparsing_API] is the functor {!Interface}, re-packaged as a function. *)
 val unparsing_API : grammar -> interface
