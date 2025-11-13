@@ -8,8 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let c =
-  Report.create()
+open Printf
+
+let b =
+  Buffer.create 1024
 
 let[@inline] now () =
   let open Unix in
@@ -20,7 +22,7 @@ let time msg (task : unit -> 'a) : 'a =
   let result = task() in
   let times2 = now() in
   let elapsed = times2 -. times1 in
-  Report.log c "%s: %.02fs" msg elapsed;
+  bprintf b "%s: %.02fs\n" msg elapsed;
   result
 
 let output_channel =
@@ -32,7 +34,7 @@ let set_output_channel ochannel =
 let () =
   at_exit @@ fun () ->
   !output_channel |> Option.iter @@ fun f ->
-  Report.flush f c;
+  fprintf f "%s" (Buffer.contents b);
   close_out f
 
 type start =
@@ -44,4 +46,4 @@ let start =
 let[@inline] stop times1 msg =
   let times2 = now() in
   let elapsed = times2 -. times1 in
-  Report.log c "%s: %.02fs" msg elapsed
+  bprintf b "%s: %.02fs\n" msg elapsed
