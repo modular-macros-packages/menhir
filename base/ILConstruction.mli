@@ -70,11 +70,15 @@ val type2scheme: typ -> typescheme
 
 (* Expressions. *)
 
-(** A variable as an expression. *)
+(**A variable as an expression. *)
 val evar: string -> expr
 
-(** A list of variables as expressions. *)
+(**A list of variables as expressions. *)
 val evars: string list -> expr list
+
+(**A function of several parameters.
+   If [ps] is empty then [efun ps e] is just [e]. *)
+val efun: pattern list -> expr -> expr
 
 (**This smart constructor constructs a tuple expression. A tuple of length
    zero is changed to [EUnit]. A tuple of length 1 is erased. *)

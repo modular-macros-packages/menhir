@@ -75,6 +75,13 @@ let evar s =
 let evars xs =
   List.map evar xs
 
+let efun ps e =
+  match ps with
+  | [] ->
+      e
+  | _ ->
+      EFun (ps, e)
+
 let etuple = function
   | [] ->
       EUnit
