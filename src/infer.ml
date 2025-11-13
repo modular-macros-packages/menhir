@@ -12,7 +12,6 @@ open PlainSyntax
 open IL
 open ILConstruction
 open FrontAPI
-open MiddleAPI
 
 module Make
 (G : sig val grammar : grammar end)

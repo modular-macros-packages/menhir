@@ -10,7 +10,6 @@
 
 open PlainSyntax
 open FrontAPI
-open MiddleAPI
 
 module Make
 (G : sig val grammar : grammar end)
