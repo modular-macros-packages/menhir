@@ -8,22 +8,32 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type channel = {
-  buffer: Buffer.t;
-  mutable count: int;
-}
+open Printf
+
+(* A dummy buffer is needed in order to use [ikbprintf]. *)
+let dummy =
+  Buffer.create 0
+
+type channel =
+| N
+| C of { buffer: Buffer.t; mutable count: int }
+
+let null =
+  N
 
 let create () =
   let buffer = Buffer.create 80
   and count = 0 in
-  { buffer; count }
+  C { buffer; count }
 
 let[@inline] count c =
+  match c with N -> 0 | C c ->
   c.count
 
 let flush f c =
+  match c with N -> () | C c ->
   let b = c.buffer in
-  Printf.fprintf f "%s%!" (Buffer.contents b);
+  fprintf f "%s%!" (Buffer.contents b);
   Buffer.clear b
 
 let exit_if c =
@@ -43,11 +53,16 @@ let monitor (strict : [`Strict | `Lax]) action =
       raise e
 
 let display c continuation header positions format =
-  c.count <- c.count + 1;
-  let b = c.buffer in
-  Range.bprint b positions;
-  Printf.kbprintf continuation b
-    (header ^^ format ^^ "\n%!")
+  let format = header ^^ format ^^ "\n%!" in
+  match c with
+  | N ->
+      (* [ikbprintf] appears in 4.11 and a synonym for [ikfprintf]. *)
+      ikfprintf continuation dummy format
+  | C c ->
+      c.count <- c.count + 1;
+      let b = c.buffer in
+      Range.bprint b positions;
+      kbprintf continuation b format
 
 let flush_and_die c _b =
   flush stderr c;
