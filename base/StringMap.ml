@@ -18,6 +18,10 @@ let filter p m =
       m
   ) m empty
 
+(* [of_list] appears in OCaml 5.1. *)
+let of_list bs =
+  List.fold_left (fun m (k, v) -> add k v m) empty bs
+
 let restrict domain m =
   filter (fun key _v -> StringSet.mem key domain) m
 

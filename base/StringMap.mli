@@ -14,6 +14,10 @@ include Map.S
   with type key = string
    and type 'a t = 'a Map.Make(String).t
 
+(**[of_list bs] adds the bindings of [bs] to the empty map, in list order. If
+   a key is bound twice in [bs] then the last binding takes over. *)
+val of_list : (key * 'a) list -> 'a t
+
 (**[restrict s m] restricts the domain of the map [m] to (its
    intersection with) the set [s]. *)
 val restrict: StringSet.t -> 'a t -> 'a t
