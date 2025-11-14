@@ -91,6 +91,9 @@ val create: unit -> channel
    the process with exit status 1. *)
 val null: channel
 
+(**[live c] tests whether the channel [c] is live, that is, not [null]. *)
+val live: channel -> bool
+
 (**[exit_if c] flushes the channel [c] to [stderr]. Furthermore, if the number
    of messages that have been written to the channel [c] is nonzero then the
    process is aborted with exit status 1. *)

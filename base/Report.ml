@@ -21,6 +21,9 @@ type channel =
 let null =
   N
 
+let live c =
+  match c with N -> false | C _ -> true
+
 let create () =
   let buffer = Buffer.create 80
   and count = 0 in
