@@ -64,3 +64,8 @@ type ranges =
    to the buffer [b]. Each range is converted to a string via [show] and is
    terminated with a colon and a newline. *)
 val bprint : Buffer.t -> ranges -> unit
+
+(**[fprint f ranges] prints a string representation of the ranges
+   [ranges] to the output channel [f]. Each range is converted to a
+   string via [show] and is terminated with a colon and a newline. *)
+val fprint : out_channel -> ranges -> unit

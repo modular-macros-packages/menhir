@@ -68,3 +68,7 @@ type ranges =
 let bprint b ranges =
   ranges |> List.iter @@ fun range ->
   bprintf b "%s:\n" (show range)
+
+let fprint f ranges =
+  ranges |> List.iter @@ fun range ->
+  fprintf f "%s:\n" (show range)
