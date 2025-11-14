@@ -39,10 +39,3 @@ val list: ('a, 'b) validator -> ('a list, 'b list) validator
    but dismisses invalid elements, so the output list can be shorter than
    the input list. *)
 val robust_list: ('a, 'b) validator -> ('a list, 'b list) validator
-
-(**[apply strict validate x] applies the validator function [validate] to the
-   input data [x] in the scope of [Report.monitor strict]. Therefore all error
-   messages are flushed to [stderr]. Furthermore, if [strict] is [`Strict] and
-   if the number of error messages is nonzero then the process is aborted with
-   exit status 1. *)
-val apply: [ `Lax | `Strict ] -> ('a, 'b) validator -> 'a -> 'b

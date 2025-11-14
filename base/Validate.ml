@@ -27,7 +27,3 @@ let robustly validate c x =
 let robust_list validate c xs =
   xs |> MList.filter_map @@ fun x ->
   robustly validate c x
-
-let apply strict validate x =
-  monitor strict @@ fun c ->
-  validate c x
