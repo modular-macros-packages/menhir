@@ -86,6 +86,13 @@ val monitor : [`Strict | `Lax] -> (channel -> 'a) -> 'a
 (**[create()] creates a fresh channel. *)
 val create: unit -> channel
 
+(**[exit_if c] flushes the channel [c] to [stderr]. Furthermore, if the number
+   of messages that have been written to the channel [c] is nonzero then the
+   process is aborted with exit status 1. *)
+val exit_if: channel -> unit
+
+(** {2 The Null Channel} *)
+
 (**The channel [null] drops all of the messages that are emitted on it. An
    operation on this channel has no effect, except [error], which aborts
    the process with exit status 1. *)
@@ -93,8 +100,3 @@ val null: channel
 
 (**[live c] tests whether the channel [c] is live, that is, not [null]. *)
 val live: channel -> bool
-
-(**[exit_if c] flushes the channel [c] to [stderr]. Furthermore, if the number
-   of messages that have been written to the channel [c] is nonzero then the
-   process is aborted with exit status 1. *)
-val exit_if: channel -> unit
