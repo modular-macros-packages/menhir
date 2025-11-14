@@ -342,7 +342,7 @@ let depend mode =
         Lexdep.main lexbuf
       with Lexdep.Error msg ->
         (* Echo the error message, followed with ocamldep's output. *)
-        Report.error' [] "%s" (msg ^ output)
+        Report.Just.error [] "%s" (msg ^ output)
     in
 
     (* Look for the line that concerns the [.cmo] target, and echo a modified
@@ -390,7 +390,7 @@ let build (output : string) : env =
     |> List.map (extract output)
     |> StringMap.of_list
   with Lexmli.Failure ->
-    Report.error' [] "failed to make sense of ocamlc's output."
+    Report.Just.error [] "failed to make sense of ocamlc's output."
 
 (* [lookup env nt] looks up the nonterminal symbol [nt] in the table [env]
    and fails if it is absent. *)
@@ -401,7 +401,7 @@ let lookup (env : env) (nt : nonterminal) : ocamltype =
   with Not_found ->
     (* No type information has been inferred for this symbol. This is
        strange. Fail gracefully. *)
-    Report.error' [] "found no inferred type for %s." nt
+    Report.Just.error [] "found no inferred type for %s." nt
 
 (* [augment env] augments the %type declaration table [grammar.types] with the
    information contained in the table [env]. Every type declared type in the

@@ -227,7 +227,7 @@ let find_name_attribute c prod : string list =
     []
 
 let () =
-  Report.monitor `Strict @@ fun c ->
+  Report.monitor `Normal @@ fun c ->
   let names = List.flatten (Production.mapx (find_name_attribute c)) in
   MList.foreach_duplicate String.compare names @@ fun name ->
   (* We provide no source code positions for this error message. We could

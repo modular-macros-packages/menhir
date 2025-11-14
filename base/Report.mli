@@ -8,94 +8,130 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(**This module offers facilities for delaying and displaying error messages.  *)
+(**This module offers facilities for displaying error messages.  *)
 
 open Range
 
-(**The functions offered by this module are organized in several groups. The
-   simpler functions, such as {!error'} and {!warning'}, do not take a channel
-   as an argument; they have an immediate effect. The more complex functions,
-   such as {!signal} and {!warning}, take a channel as an argument; they have
-   a delayed effect, since the error message is delayed (buffered) by the
-   channel. To obtain a fresh channel and use it in a correct way, the
-   recommended way is to use {!monitor}. The functions {!create} and
-   {!exit_if} offer an alternative way, which is slightly more powerful, but
-   more complex. *)
+(**The functions offered by this module are organized in several groups.
+
+   The simpler functions in the submodule {!Just} do not expect a channel as
+   an argument; they have immediate effect.
+
+   The more complex functions, such as {!error}, {!signal}, and {!warning},
+   take a channel as an argument. A channel combines an output channel (in the
+   usual sense) and a counter of the number of errors that have been signaled.
+
+   To obtain a fresh channel and use it in a correct way, the recommended way
+   is to use {!monitor}. The functions {!create} and {!exit_if} offer an
+   alternative way, which is slightly more powerful, but more complex. *)
 
 (** {2 Functions that Do Not Need a Channel} *)
 
-(**[error' ranges format ...] is a short-hand for
-   [let c = create() in error c ranges format ...].
-   The error message is displayed immediately
-   and the process is aborted with exit status 1.
-   [error'] is preferable to [error] in situations
-   where one wishes to immediately display a single message and abort. *)
-val error': ranges -> ('a, Buffer.t, unit, 'b) format4 -> 'a
+module Just : sig
 
-(**[warning' ranges format ...] is a short-hand for
-   [let c = create() in warning c ranges format ...; flush stderr c].
-   The warning is displayed immediately.
-   [warning'] is preferable to [warning] in situations
-   where one wishes to immediately display a single warning message. *)
-val warning': ranges -> ('a, Buffer.t, unit, unit) format4 -> 'a
+  (**[Just.error ranges format ...] is a short-hand for
+     [let c = create `Normal stderr in error c ranges format ...].
+     The error message is immediately written to [stderr]
+     and the process is aborted with exit status 1. *)
+  val error: ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+
+  (**[Just.warning ranges format ...] is a short-hand for
+     [let c = create `Normal stderr in warning c ranges format ...].
+     The warning is immediately written to [stderr]. *)
+  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+end
 
 (** {2 Functions that Need a Channel} *)
 
-(**A channel is a destination to which messages can be written. All output is
-   held in a buffer in memory. An explicit call to [flush] is necessary for
-   the output to become visible. *)
+(**A channel combines an output channel (to which messages are written), an
+   error counter, and a mode (which can be used to turn signals into warnings
+   or vice-versa). There is a special channel [null] whose output channel is
+   /dev/null and whose error counter is always zero. *)
 type channel
 
-(**[signal c ranges format ...] writes an error message to the channel [c].
+(**[error c ranges format ...] signals an error and writes an error message on
+   the channel [c], then aborts the process with exit status 1: therefore,
+   this function does not return.
+
    The message begins with the list of ranges [ranges]. The remainder of the
    message is determined by the format [("Error: " ^^ format ^^ "\n") ...].
-   Thus, the string produced by [format ...] should begin with a lowercase
-   letter and end with a dot. The channel is not flushed. *)
-val signal: channel -> ranges -> ('a, Buffer.t, unit, unit) format4 -> 'a
+   The string produced by [format ...] should begin with a lowercase letter
+   and end with a dot. *)
+val error: channel -> ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
 
-(**[error c ranges format ...] first invokes [signal c ranges format ...],
-   then flushes [c] to [stderr] and aborts the process with exit status 1. *)
-val error: channel -> ranges -> ('a, Buffer.t, unit, 'b) format4 -> 'a
+(**[signal c ranges format ...] signals an error and writes an error message
+   on the channel [c], then returns a value of type [unit]. The error counter
+   of the channel [c] is incremented.
 
-(**[warning] is like [signal], but says ["Warning: "] instead of ["Error: "]. *)
-val warning: channel -> ranges -> ('a, Buffer.t, unit, unit) format4 -> 'a
+   The message begins with the list of ranges [ranges]. The remainder of the
+   message is determined by the format [("Error: " ^^ format ^^ "\n") ...].
+   The string produced by [format ...] should begin with a lowercase letter
+   and end with a dot.
 
-(**[note] is like [signal], but says ["Note: "] instead of ["Error: "]. *)
-val note: channel -> ranges -> ('a, Buffer.t, unit, unit) format4 -> 'a
+   If the channel's mode is [`SignalIsWarning] then [signal] behaves like
+   [warning]. *)
+val signal: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
-(**[log] is like [signal], but says nothing instead of ["Error: "].
+(**[warning c ranges format ...] writes a warning message on the channel [c],
+   then returns a value of type [unit]. The error counter of the channel [c]
+   is {b not} incremented.
+
+   The message begins with the list of ranges [ranges]. The remainder of the
+   message is determined by the format [("Warning: " ^^ format ^^ "\n") ...].
+   The string produced by [format ...] should begin with a lowercase letter
+   and end with a dot.
+
+   If the channel's mode is [`WarningIsSignal] then [warning] behaves like
+   [signal]. *)
+val warning: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+(**[note c ranges format ...] writes an information message on the channel
+   [c], then returns a value of type [unit]. The error counter of the channel
+   [c] is {b not} incremented.
+
+   The message begins with the list of ranges [ranges]. The remainder of the
+   message is determined by the format [("Note: " ^^ format ^^ "\n") ...].
+   The string produced by [format ...] should begin with a lowercase letter
+   and end with a dot. *)
+val note: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+
+(**[log] is like [note], but prints nothing instead of ["Note: "].
    A newline "\n" is still appended to the message. *)
-val log: channel -> ('a, Buffer.t, unit, unit) format4 -> 'a
+val log: channel -> ('a, out_channel, unit, unit) format4 -> 'a
 
-(**[flush f c] emits the content of the channel [c] on the output channel [f].
-   The channel [c] is emptied, so two successive calls to [flush f c] have the
-   same effect as just one call. The number of messages that have been written
-   to the channel [c] is not reset, so that calling [flush] in the scope of
-   [monitor] is permitted and does not disturb [monitor]. *)
-val flush: out_channel -> channel -> unit
+(**[flush c] flushes the output channel that underlies the channel [c]. *)
+val flush: channel -> unit
 
 (** {2 Functions that Create Channels} *)
 
-(**[monitor strict action] applies the function [action] to a fresh channel [c].
-   Once [action] terminates (either normally or by raising an exception), the
-   channel is flushed to [stderr]. Furthermore, if [strict] is [`Strict] and if
-   the number of messages that have been written to the channel [c] is nonzero
-   then the process is aborted with exit status 1. *)
-val monitor : [`Strict | `Lax] -> (channel -> 'a) -> 'a
+(**The mode [`WarningIsSignal] causes [warning] to behave like [signal].
+   The mode [`SignalIsWarning] causes [signal] to behave like [warning]. *)
+type mode =
+  [`Normal | `WarningIsSignal | `SignalIsWarning]
 
-(**[create()] creates a fresh channel. *)
-val create: unit -> channel
+(**[monitor mode action] applies the function [action] to a fresh channel
+   [c], which is created by [create ?mode stderr]. Once [action] terminates
+   (either normally or by raising an exception), [exit_if c] is invoked. Thus,
+   if the number of errors that have been signaled on the channel [c] is
+   nonzero, then the process is aborted with exit status 1. *)
+val monitor : mode -> (channel -> 'a) -> 'a
 
-(**[exit_if c] flushes the channel [c] to [stderr]. Furthermore, if the number
-   of messages that have been written to the channel [c] is nonzero then the
-   process is aborted with exit status 1. *)
+(**[create mode f] creates a fresh channel whose mode is [mode] and whose
+   underlying output channel is [f]. *)
+val create: mode -> out_channel -> channel
+
+(**[exit_if c] tests whether the number of errors that have been signaled on
+   the channel [c] is nonzero. If so, the process is aborted with exit status
+   1. *)
 val exit_if: channel -> unit
 
 (** {2 The Null Channel} *)
 
-(**The channel [null] drops all of the messages that are emitted on it. An
-   operation on this channel has no effect, except [error], which aborts
-   the process with exit status 1. *)
+(**The channel [null] drops all of the messages that are emitted on it; one
+   might say that its underlying output channel is /dev/null. Its mode is
+   [`Normal]. An operation on this channel has no effect, except [error],
+   which prints nothing and aborts the process with exit status 1. *)
 val null: channel
 
 (**[live c] tests whether the channel [c] is live, that is, not [null]. *)

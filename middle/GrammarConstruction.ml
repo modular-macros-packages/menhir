@@ -156,7 +156,7 @@ module Nonterminal = struct
       List.iter (fun nt ->
         Printf.bprintf b "\n%s" (print false nt)
       ) nts;
-      Report.error' [] "%s" (Buffer.contents b)
+      Report.Just.error [] "%s" (Buffer.contents b)
 
 end
 

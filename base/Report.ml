@@ -10,13 +10,22 @@
 
 open Printf
 
-(* A dummy buffer is needed in order to use [ikbprintf]. *)
-let dummy =
-  Buffer.create 0
+type mode =
+  [`Normal | `WarningIsSignal | `SignalIsWarning]
 
 type channel =
 | N
-| C of { buffer: Buffer.t; mutable count: int }
+| C of {
+    out_channel: out_channel;
+    mode: mode;
+    mutable count: int
+  }
+
+let warning_is_signal c =
+  match c with C { mode = `WarningIsSignal; _ } -> true | _ -> false
+
+let signal_is_warning c =
+  match c with C { mode = `SignalIsWarning; _ } -> true | _ -> false
 
 let null =
   N
@@ -24,92 +33,90 @@ let null =
 let live c =
   match c with N -> false | C _ -> true
 
-let create () =
-  let buffer = Buffer.create 80
-  and count = 0 in
-  C { buffer; count }
+let create mode out_channel =
+  let count = 0 in
+  C { out_channel; mode; count }
 
 let[@inline] count c =
   match c with N -> 0 | C c ->
   c.count
 
-let flush f c =
+let flush c =
   match c with N -> () | C c ->
-  let b = c.buffer in
-  fprintf f "%s%!" (Buffer.contents b);
-  Buffer.clear b
+  flush c.out_channel
 
 let exit_if c =
-  flush stderr c;
+  flush c;
   if count c > 0 then exit 1
 
-let monitor (strict : [`Strict | `Lax]) action =
-  let c = create() in
+(* It might seem tempting to make [mode] an optional argument with the default
+   value [`Normal], so as to let the caller omit this argument when it is
+   [`Normal]. Unfortunately, then, the syntax [monitor @@ fun c -> ...] works
+   only with OCaml 4.13 or newer, where [@@] is type-checked just like an
+   ordinary function application. With older versions, a type error arises. *)
+
+let monitor mode action =
+  let c = create mode stderr in
   match action c with
   | result ->
-      flush stderr c;
-      if strict = `Strict && count c > 0 then exit 1;
+      exit_if c;
       result
   | exception e ->
-      flush stderr c;
-      if strict = `Strict && count c > 0 then exit 1;
+      exit_if c;
       raise e
 
-let display c continuation header positions format =
+let display c delta continuation header positions format =
   let format = header ^^ format ^^ "\n%!" in
   match c with
   | N ->
-      (* [ikbprintf] appears in 4.11 and a synonym for [ikfprintf]. *)
+      let dummy = stderr in (* uncanny *)
       ikfprintf continuation dummy format
   | C c ->
-      c.count <- c.count + 1;
-      let b = c.buffer in
-      Range.bprint b positions;
-      kbprintf continuation b format
+      c.count <- c.count + delta;
+      let f = c.out_channel in
+      Range.fprint f positions;
+      kfprintf continuation f format
 
-let flush_and_die c _b =
-  flush stderr c;
+let die _f =
   exit 1
 
-let flush_and_ret c _b =
-  flush stderr c
-
-let ret _b =
+let ret _f =
   ()
 
 let error c positions format =
-  display c (flush_and_die c) "Error: " positions format
+  let delta = 1 in
+  display c delta die "Error: " positions format
 
 let signal c positions format =
-  display c ret "Error: " positions format
+  let delta = 1 in
+  display c delta ret "Error: " positions format
 
 let warning c positions format =
-  display c ret "Warning: " positions format
+  let delta = 0 in
+  display c delta ret "Warning: " positions format
+
+let signal c =
+  if signal_is_warning c then warning c else signal c
+and warning c =
+  if warning_is_signal c then signal c else warning c
 
 let note c positions format =
-  display c ret "Note: " positions format
+  let delta = 0 in
+  display c delta ret "Note: " positions format
 
 let log c format =
-  let positions = [] in
-  display c ret "" positions format
+  let delta = 0
+  and positions = [] in
+  display c delta ret "" positions format
 
-(* One might be tempted to write:
+module Just = struct
 
-   let error' positions format =
-     monitor `Strict @@ fun c ->
-     error c positions format
+  let error positions format =
+    let c = create `Normal stderr in
+    error c positions format
 
-  This code has the desired type, but not the desired semantics:
-  the application of this function to the extra arguments that
-  follow [format] takes place outside the scope of [monitor], so
-  things go wrong. *)
+  let warning positions format =
+    let c = create `Normal stderr in
+    warning c positions format
 
-(* Fortunately, there is a simpler definition: *)
-
-let error' positions format =
-  let c = create() in
-  error c positions format
-
-let warning' positions format =
-  let c = create() in
-  display c (flush_and_ret c) "Warning: " positions format
+end

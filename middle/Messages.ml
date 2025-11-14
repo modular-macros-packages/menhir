@@ -183,15 +183,15 @@ let stats (oruns : oruns) : unit =
    [--update-errors]. *)
 
 (* Sentences that do not pass validation are removed (and error messages are
-   emitted). If one or more validation errors have occurred and if [strict]
-   is [true], then we stop at the end. *)
+   emitted). If one or more validation errors have occurred, then we stop at
+   the end, unless [mode] is [`SignalIsWarning]. *)
 
 let mkcomment c accu =
   if String.length c = 0 then accu else Comment c :: accu
 
-let read_messages strict filename : oruns =
+let read_messages mode filename : oruns =
+  Report.monitor mode @@ fun c ->
   let open Segment in
-  Report.monitor strict @@ fun c ->
   (* Read and segment the file. *)
   let segments : (tag * string * Lexing.lexbuf) list = segment filename in
   (* Process the segments, two by two. We expect one segment to contain
@@ -241,7 +241,6 @@ let read_messages strict filename : oruns =
                 assert false
   in
   let oruns = loop [] segments in
-  Report.flush stderr c; (* optional: show error messages before statistics *)
   stats oruns;
   oruns
 
@@ -264,7 +263,7 @@ let foreach_targeted_sentence (oruns : oruns) yield =
    error. *)
 
 let message_table (detect_redundancy : bool) (oruns : oruns) : table =
-  Report.monitor `Strict @@ fun c ->
+  Report.monitor `Normal @@ fun c ->
   let table = ref Lr1.NodeMap.empty in
   let () =
     foreach_targeted_sentence oruns @@ fun (sentence2, target) message ->
@@ -351,7 +350,7 @@ let compile_errors filename : unit =
 
   (* Read the file. Compute the target state of every sentence. Fail if a
      sentence does not end in an error state, as expected. *)
-  let oruns : oruns = read_messages `Strict filename in
+  let oruns : oruns = read_messages `Normal filename in
 
   (* Build a mapping of states to located sentences. Detect whether two
      sentences lead to the same state. *)
@@ -369,8 +368,8 @@ let compile_errors filename : unit =
 let compare_errors filename1 filename2 : unit =
 
   (* Read both files. *)
-  let oruns1 = read_messages `Lax filename1
-  and oruns2 = read_messages `Lax filename2 in
+  let oruns1 = read_messages `SignalIsWarning filename1
+  and oruns2 = read_messages `SignalIsWarning filename2 in
 
   (* Convert the right-hand file to a table for quick lookup. *)
   let table2 = message_table false oruns2 in
@@ -380,7 +379,7 @@ let compare_errors filename1 filename2 : unit =
      in an order that respects the left-hand file. Indeed, the
      left-hand file is processed by the following loop: *)
 
-  Report.monitor `Strict @@ fun c ->
+  Report.monitor `Normal @@ fun c ->
   foreach_targeted_sentence oruns1 @@ fun (sentence1, target1) message1 ->
   let s = state target1 in
 
@@ -601,9 +600,8 @@ let rec space (xs : 'a OrComment.t list) : 'a OrComment.t list =
    removed and replaced. *)
 
 let merge_errors filename1 filename2 =
-
-  let oruns1 = read_messages `Lax filename1
-  and oruns2 = read_messages `Lax filename2 in
+  let oruns1 = read_messages `SignalIsWarning filename1
+  and oruns2 = read_messages `SignalIsWarning filename2 in
 
   (* Remove the default runs on the right-hand side whose target state also
      appears on the left-hand side. We lose no information in doing so. *)
@@ -751,7 +749,7 @@ let merge_errors filename1 filename2 =
 
 let update_errors filename : unit =
   (* Read the file. *)
-  let oruns : oruns = read_messages `Lax filename in
+  let oruns : oruns = read_messages `SignalIsWarning filename in
   (* Write a new [.messages] file to the standard output channel,
      with new auto-generated comments. *)
   List.iter write_run oruns
@@ -766,7 +764,7 @@ let update_errors filename : unit =
 
 let echo_errors (concrete : bool) filename =
   (* Read the file. *)
-  let oruns : oruns = read_messages `Lax filename in
+  let oruns : oruns = read_messages `SignalIsWarning filename in
   (* Echo. *)
   foreach_targeted_sentence oruns @@ fun ((_, sentence), _target) _message ->
   print_string (Sentence.print `Abstract sentence);

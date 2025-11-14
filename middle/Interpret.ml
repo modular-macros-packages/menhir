@@ -92,7 +92,7 @@ let setup c : unit -> Sentence.sentence option =
 (* The two commands. *)
 
 let interpret show_cst =
-  Report.monitor `Strict @@ fun c ->
+  Report.monitor `Normal @@ fun c ->
   let read = setup c in
   printf "Ready!\n%!";
   while true do
@@ -105,13 +105,12 @@ let interpret show_cst =
   done
 
 let interpret_error () =
-  Report.monitor `Strict @@ fun c ->
+  Report.monitor `Normal @@ fun c ->
   let read = setup c in
   match read() with
   | None ->
       exit 1 (* abnormal: no input *)
   | Some sentence ->
-      Report.monitor `Strict @@ fun c ->
       let fail msg =
         Report.error c [] "%s" msg
       and succeed target =
