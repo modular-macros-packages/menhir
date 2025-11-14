@@ -193,9 +193,6 @@ let ocamldep =
 let logG, logA, logC =
   ref 0, ref 0, ref 0
 
-let timings =
-  ref None
-
 let filenames =
   ref StringSet.empty
 
@@ -692,9 +689,6 @@ let ocamldep =
 
 let logG, logA, logC =
   !logG, !logA, !logC
-
-let timings =
-  !timings
 
 let interpret =
   !interpret
