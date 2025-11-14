@@ -1,6 +1,6 @@
 Each test consists of two files `lhsXX.messages` and `rhsXX.messages` that
-must be merged and a file `mergedXX.exp` that contains the expected result of
-the merge operation.
+must be merged and two files `mergedXX.xout` and `mergedXX.xerr` that
+contains the expected output of the merge operation.
 
 Here is a table of the tests:
 
