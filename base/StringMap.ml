@@ -10,14 +10,6 @@
 
 include Map.Make(String)
 
-let filter p m =
-  fold (fun key v m ->
-    if p key v then
-      add key v m
-    else
-      m
-  ) m empty
-
 (* [of_list] appears in OCaml 5.1. *)
 let of_list bs =
   List.fold_left (fun m (k, v) -> add k v m) empty bs
