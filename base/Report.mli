@@ -87,8 +87,7 @@ val signal: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 val warning: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
 (**[note c ranges format ...] writes an information message on the channel
-   [c], then returns a value of type [unit]. The error counter of the channel
-   [c] is {b not} incremented.
+   [c], then returns a value of type [unit].
 
    The message begins with the list of ranges [ranges]. The remainder of the
    message is determined by the format [("Note: " ^^ format ^^ "\n") ...].
@@ -96,8 +95,10 @@ val warning: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
    and end with a dot. *)
 val note: channel -> ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
-(**[log] is like [note], but prints nothing instead of ["Note: "].
-   A newline "\n" is still appended to the message. *)
+(**[log c format ...] writes an information message on the channel [c], then
+   returns a value of type [unit]. The string produced by [format ...] should
+   begin with a lowercase letter and end with a dot. A newline character is
+   appended to the message. *)
 val log: channel -> ('a, out_channel, unit, unit) format4 -> 'a
 
 (**[flush c] flushes the output channel that underlies the channel [c]. *)
