@@ -126,7 +126,7 @@ let grammar : Syntax.grammar =
 
 let sorts =
   Time.time "Inferring sorts" @@ fun () ->
-  SortInference.infer main (getG 3) grammar
+  SortInference.infer (main()) (getG 3) grammar
 
 (* ------------------------------------------------------------------------- *)
 

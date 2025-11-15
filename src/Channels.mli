@@ -10,8 +10,8 @@
 
 open Report
 
-(**[main] is our main channel for reporting errors. *)
-val main: channel
+(**[main()] is our main channel for reporting errors. *)
+val main: unit -> channel
 
 (**[logG] is the maximum enabled level of verbosity
    for messages that concern the grammar. *)

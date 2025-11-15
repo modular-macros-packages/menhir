@@ -11,10 +11,13 @@
 let main =
   Report.create `Normal stderr
 
+let[@inline] main() =
+  main
+
 let get max_enabled_level level =
   if level <= max_enabled_level then
     (* This verbosity level is enabled. *)
-    main
+    main()
   else
     (* This verbosity level is disabled. *)
     Report.null
@@ -22,11 +25,11 @@ let get max_enabled_level level =
 let logG, logA, logC =
   ref 0, ref 0, ref 0
 
-let getG level =
+let[@inline] getG level =
   get !logG level
 
-let getA level =
+let[@inline] getA level =
   get !logA level
 
-let getC level =
+let[@inline] getC level =
   get !logC level
