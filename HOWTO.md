@@ -22,6 +22,10 @@ The code is organized in several libraries and directories:
 * The library `MenhirSdk`, which resides in [`sdk`](sdk/),
   allows reading automaton description (`.cmly`) files.
 
+* The library `MenhirCST`, which resides in [`cst`](cst/),
+  is the runtime support library for the unparsing API,
+  which is described in [this paper](https://cambium.inria.fr/~fpottier/publis/pottier-unparsing-2024.pdf).
+
 * The internal library `Base`, which resides in [`base`](base/),
   provides general-purpose modules,
   which are essentially independent of Menhir.
@@ -37,8 +41,8 @@ The code is organized in several libraries and directories:
   In the front-end, a grammar is described by the types
   [`Syntax.partial_grammar`](front/Syntax.ml),
   [`Syntax.grammar`](front/Syntax.ml),
-   or
-   [`PlainSyntax.grammar`](front/PlainSyntax.ml).
+  or
+  [`PlainSyntax.grammar`](front/PlainSyntax.ml).
 
 * The internal library `Middle`, which resides in [`middle`](middle/),
   contains many modules that form Menhir's middle-end.
