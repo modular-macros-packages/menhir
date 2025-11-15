@@ -11,6 +11,10 @@
 open Channels
 open Grammar
 
+(* -------------------------------------------------------------------------- *)
+
+(* This channel is used to report and count warnings and errors. *)
+
 let main =
   create()
 
@@ -74,7 +78,7 @@ module A1 =
   SilentConflictResolution.Run(A0)(Precedence)
 
 let () =
-  A1.log (getA 1)
+  A1.log (getA 1) (* info *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -84,7 +88,7 @@ module A2 =
   Renumber.Run(A1)
 
 let () =
-  A2.diagnostics (getA 1)
+  A2.diagnostics (getA 1) (* info *)
 
 (* Warn about unused precedence declarations. *)
 
@@ -93,7 +97,7 @@ let () =
     Precedence.diagnostics main (* warnings *)
 
 let () =
-  A1.warnings main
+  A1.warnings main (* warnings *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -177,11 +181,10 @@ let () =
     let module D = Dump.Make(A5)() in
     D.dump (Settings.base ^ ".automaton.resolved")
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
-(* If any warnings about the grammar have been emitted up to this point,
-   and if [--strict] is enabled, now is the time to stop, before going
-   into the back-end. *)
+(* If any errors have been emitted up to this point, stop now. This includes
+   the case where warnings have been emitted and [--strict] has been passed. *)
 
 let () =
   Report.exit_if main

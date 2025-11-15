@@ -53,4 +53,5 @@ let () =
 include LR0Construction.Make(Grammar)
 
 let () =
-  Report.log (getA 1) "Built an LR(0) automaton with %d states." n
+  Report.log (getA 1)
+    "Built an LR(0) automaton with %d states." n
