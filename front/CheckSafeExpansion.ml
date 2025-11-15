@@ -9,15 +9,8 @@
 (******************************************************************************)
 
 let value = Located.value
+let error = Report.error
 open Syntax
-
-module Make (E : sig
-
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-end) = struct
-open E
 
 (* This test accepts a parameterized grammar, with the restriction that all
    parameters must have sort [*]. This implies that the head of every
@@ -230,7 +223,7 @@ module T = Fix.SCC.Run(G)
    source and destination of every dangerous edge and ensuring that they lie
    in distinct components. *)
 
-let (finished : unit) =
+let finished main : unit =
   G.iter @@ fun source ->
     source |> successors @@ fun edge target ->
       match edge with
@@ -239,7 +232,7 @@ let (finished : unit) =
       | Dangerous ->
           if T.representative source = T.representative target then
             let (nt, i) = source in
-            error []
+            error main []
               "the parameterized nonterminal symbols in this grammar\n\
                cannot be expanded away: expansion would not terminate.\n\
                The %s formal parameter of \"%s\" grows without bound."
@@ -251,8 +244,6 @@ end (* of the functor *)
 
 (* Re-package the above functor as a function. *)
 
-let check g =
+let check main g =
   let module T = Run(struct let g = g end) in
-  T.finished
-
-end (* Make *)
+  T.finished main

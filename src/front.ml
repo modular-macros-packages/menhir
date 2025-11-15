@@ -141,6 +141,7 @@ let grammar_before_expansion =
    to obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar : PlainSyntax.grammar =
+  monitor @@ fun c ->
   Time.time "Expanding parameterized nonterminal symbols" @@ fun () ->
   let open SelectiveExpansion in
   (* First, perform a selective expansion: expand away all parameters of
@@ -149,8 +150,7 @@ let grammar : PlainSyntax.grammar =
   let grammar1 = expand ExpandHigherSort sorts grammar in
   (* This "first-order parameterized grammar" can then be submitted to
      the termination check. *)
-  let module C = CheckSafeExpansion.Make(Error) in
-  C.check grammar1;
+  CheckSafeExpansion.check c grammar1;
   (* If it passes the check, then full expansion is safe. We drop [grammar1]
      and start over from [grammar]. This is required in order to get correct
      names. (Expanding [grammar1] would yield an equivalent grammar, with
