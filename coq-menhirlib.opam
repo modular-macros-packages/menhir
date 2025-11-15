@@ -25,3 +25,4 @@ tags: [
   "date:DATEDASH"
   "logpath:MenhirLib"
 ]
+x-maintenance-intent: ["(latest)"]

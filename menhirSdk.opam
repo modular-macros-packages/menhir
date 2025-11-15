@@ -20,3 +20,4 @@ conflicts: [
   "menhir" { != version  }
 ]
 synopsis: "Compile-time library for auxiliary tools related to Menhir"
+x-maintenance-intent: ["(latest)"]
