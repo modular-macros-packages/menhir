@@ -8,23 +8,18 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module expands away token aliases. *)
+
+(**Token aliases are quoted strings that are used to provide syntactic sugar
+   for terminal symbols, for example, to allow "+" to be used in grammar rules
+   instead of PLUS, or to allow ")" instead of RPAREN. *)
+
+open Report
 open Syntax
 
-module Make (E : sig
-
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-end) : sig
-
-  (**Token aliases are quoted strings that are used to provide syntactic sugar
-     for terminal symbols, for example, to allow "+" to be used in grammar rules
-     instead of PLUS, or to allow ")" instead of RPAREN.
-
-     This transformation eliminates all references to token aliases in a list of
-     partial grammars. (An alias declared in one partial grammar can be used in
-     another partial grammar.) Declarations of token aliases are preserved, and
-     could be used if desired (e.g. for printing). *)
-  val transform: partial_grammar list -> partial_grammar list
-
-end
+(**[transform main gs] eliminates all references to token aliases in the list
+   of partial grammars [gs]. (An alias declared in one partial grammar can be
+   used in another partial grammar.) Declarations of token aliases are
+   preserved, and could be used if desired (e.g. for printing). The channel
+   [main] is used to report errors. *)
+val transform: channel -> partial_grammar list -> partial_grammar list

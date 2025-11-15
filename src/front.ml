@@ -74,8 +74,7 @@ let grammars : Syntax.partial_grammar list =
 
 let grammars =
   Time.time "Eliminating token aliases" @@ fun () ->
-  let module E = ExpandTokenAliases.Make(Error) in
-  E.transform grammars
+  ExpandTokenAliases.transform (main()) grammars
 
 (* ------------------------------------------------------------------------- *)
 
