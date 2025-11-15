@@ -14,18 +14,11 @@ open PlainSyntaxAccessors
 open MiddleAPI
 
 module Make
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
 (F : sig
   val grammar : grammar
 end)
 (G : GRAMMAR)
 = struct
-open E
 open F
 open G
 
@@ -90,11 +83,11 @@ module Tok = struct
   let level' (t : Terminal.t) =
     level (Terminal.print t)
 
-  (* [diagnostics()] prints warnings about useless precedence declarations
+  (* [diagnostics c] prints warnings about useless precedence declarations
      for terminal symbols (%left, %right, %nonassoc). It should be invoked
      after the automaton has been constructed. *)
 
-  let diagnostics () =
+  let diagnostics c =
     (* Iterate over all tokens and pseudo-tokens. *)
     grammar.tokens |> StringMap.iter @@ fun tok properties ->
     if not (StringSet.mem tok !ever_useful) then
@@ -102,7 +95,7 @@ module Tok = struct
       | UndefinedPrecedence ->
           ()
       | PrecedenceLevel fl ->
-          warning [position fl]
+          Report.warning c [position fl]
             "the precedence level assigned to %s is never useful." tok
 
 end (* Tok *)
@@ -175,18 +168,18 @@ module Prod = struct
             let tick2, level = Tok.level' tok in
             combine tick1 tick2, level
 
-  (* [diagnostics()] prints warnings about useless precedence annotations for
+  (* [diagnostics c] prints warnings about useless precedence annotations for
      productions (%prec). It should be invoked after the automaton has been
      constructed. *)
 
-  let diagnostics () =
+  let diagnostics c =
     Production.iterx @@ fun prod ->
     let osym = Production.prec_decl prod in
     osym |> Option.iter @@ fun sym ->
     (* Check whether this %prec annotation was useless. *)
     let pos = position sym in
     if not (Hashtbl.mem ever_useful pos) then begin
-      warning [pos] "this %%prec declaration is never useful.";
+      Report.warning c [pos] "this %%prec declaration is never useful.";
       (* Hack: avoid two warnings at the same position. *)
       Hashtbl.add ever_useful pos ()
     end
@@ -254,8 +247,8 @@ let reduce_reduce prod1 prod2 : Production.t option =
 
 (* Combine the two [diagnostics] functions. *)
 
-let diagnostics () =
-  Tok.diagnostics();
-  Prod.diagnostics()
+let diagnostics c =
+  Tok.diagnostics c;
+  Prod.diagnostics c
 
 end (* Make *)

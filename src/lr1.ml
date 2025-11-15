@@ -77,13 +77,10 @@ let () =
    be solved by prodiving precedence declarations. *)
 
 module Precedence =
-  Precedence.Make(Error)(Front)(Grammar)
+  Precedence.Make(Front)(Grammar)
 
 module A1 =
   SilentConflictResolution.Run(A0)(Precedence)
-
-let () =
-  Report.exit_if main
 
 let () =
   A1.log (getA 1)
@@ -102,7 +99,7 @@ let () =
 
 let () =
   if not Settings.ignore_all_unused_precedence_levels then
-    Precedence.diagnostics() (* warnings *)
+    Precedence.diagnostics main (* warnings *)
 
 let () =
   A1.warnings main
@@ -191,6 +188,9 @@ let () =
 (* If any warnings about the grammar have been emitted up to this point,
    and if [--strict] is enabled, now is the time to stop, before going
    into the back-end. *)
+
+let () =
+  Report.exit_if main
 
 let () =
   Error.(exit_if warnings)

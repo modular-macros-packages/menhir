@@ -20,16 +20,11 @@
    the pseudo-tokens (that is, the names that appear in %prec annotations).
    This information is not accessible elsewhere. *)
 
+open Report
 open PlainSyntax
 open MiddleAPI
 
 module Make
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
 (F : sig
   val grammar : grammar
 end)
@@ -86,10 +81,11 @@ open G
   val reduce_reduce:
     Production.t -> Production.t -> Production.t option
 
-  (**[diagnostics()] should be called after the automaton has been constructed,
-     that is, after all calls to {!shift_reduce} have taken place. This function
-     prints warnings about useless precedence declarations for terminal symbols
-     (%left, %right, %nonassoc) and productions (%prec). *)
-  val diagnostics: unit -> unit
+  (**[diagnostics c] should be called after the automaton has been
+     constructed, that is, after all calls to {!shift_reduce} have taken
+     place. It emits warnings on the channel [c] about useless precedence
+     declarations for terminal symbols (%left, %right, %nonassoc) and
+     productions (%prec). *)
+  val diagnostics: channel -> unit
 
 end
