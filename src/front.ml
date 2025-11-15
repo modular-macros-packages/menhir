@@ -123,7 +123,7 @@ let grammar : Syntax.grammar =
 let sorts =
   Time.time "Inferring sorts" @@ fun () ->
   let module V = struct
-    let verbose = Settings.logG >= 3
+    let verbose = !Channels.logG >= 3
   end in
   let module S = SortInference.Make(Error)(V) in
   S.infer grammar

@@ -93,12 +93,6 @@ val code_inlining: bool
 
 (** How verbose we should be. *)
 
-val logG: int (** diagnostics on the grammar *)
-
-val logA: int (** diagnostics on the automaton *)
-
-val logC: int (** diagnostics on the generated code *)
-
 (**This setting determines Menhir should behave as an interpreter of sentences
    provided by the user on the standard input channel. Two interpretation
    modes exist. In the mode [`Normal], Menhir interprets the sentence and

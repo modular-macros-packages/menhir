@@ -190,9 +190,6 @@ let ocamlc =
 let ocamldep =
   ref "ocamldep"
 
-let logG, logA, logC =
-  ref 0, ref 0, ref 0
-
 let filenames =
   ref StringSet.empty
 
@@ -398,9 +395,9 @@ let options = Arg.align [
   "--interpret-error", Arg.Unit (fun () -> interpret := `Error), " Interpret an error sentence";
   "--lalr", Arg.Unit (fun () -> construction_mode := `LALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
-  "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
-  "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
-  "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
+  "--log-automaton", Arg.Set_int Channels.logA, "<level> Log information about the automaton";
+  "--log-code", Arg.Set_int Channels.logC, "<level> Log information about the generated code";
+  "--log-grammar", Arg.Set_int Channels.logG, "<level> Log information about the grammar";
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
   "--no-code-generation", Arg.Unit (set_backend `NoBackend), " Do not produce any code";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
@@ -461,9 +458,9 @@ let options = Arg.align [
   "--update-errors", Arg.String set_update_errors, "<filename> Update auto-comments in a .messages file";
   "--version", Arg.Set version, " Show version number and exit";
   "-b", Arg.Set_string base, "<basename> Synonymous with --base <basename>";
-  "-lg", Arg.Set_int logG, " Synonymous with --log-grammar";
-  "-la", Arg.Set_int logA, " Synonymous with --log-automaton";
-  "-lc", Arg.Set_int logC, " Synonymous with --log-code";
+  "-lg", Arg.Set_int Channels.logG, " Synonymous with --log-grammar";
+  "-la", Arg.Set_int Channels.logA, " Synonymous with --log-automaton";
+  "-lc", Arg.Set_int Channels.logC, " Synonymous with --log-code";
   "-O", Arg.Set_int optimization_level, " (0|1|2) Set optimization level";
   "-t", Arg.Unit (set_backend `TableBackend), " Synonymous with --table";
   "-v", Arg.Unit v, " Synonymous with --dump --explain";
@@ -686,9 +683,6 @@ let ocamlc =
 
 let ocamldep =
   !ocamldep
-
-let logG, logA, logC =
-  !logG, !logA, !logC
 
 let interpret =
   !interpret

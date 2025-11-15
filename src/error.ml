@@ -52,13 +52,13 @@ let selective_log kind verbosity msg =
     Printf.fprintf stderr "%t%!" msg
 
 let logG =
-  selective_log Settings.logG
+  selective_log !Channels.logG
 
 let logA =
-  selective_log Settings.logA
+  selective_log !Channels.logA
 
 let logC =
-  selective_log Settings.logC
+  selective_log !Channels.logC
 
 let slog kind level format =
   let format = format ^^ "\n%!" in
@@ -68,13 +68,13 @@ let slog kind level format =
     Printf.ifprintf stderr format
 
 let slogG level format =
-  slog Settings.logG level format
+  slog !Channels.logG level format
 
 let slogC level format =
-  slog Settings.logC level format
+  slog !Channels.logC level format
 
 let slogA level format =
-  slog Settings.logA level format
+  slog !Channels.logA level format
 
 (* ---------------------------------------------------------------------------- *)
 

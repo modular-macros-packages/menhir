@@ -32,7 +32,7 @@ end
 (* This feature is not very useful; it is here mainly for fun. *)
 
 let () =
-  if Settings.logG >= 1 then
+  if !Channels.logG >= 1 then
     let module SLR = SLR.Make(Lr0) in
     let count = SLR.count_violations() in
     if count = 0 then
