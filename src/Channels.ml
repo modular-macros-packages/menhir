@@ -8,28 +8,60 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(* A mechanism to turn off warnings and information messages. *)
+
+(* When [!enabled] is false, no messages are printed. *)
+
+let enabled =
+  ref true
+
+let enable () =
+  enabled := true
+
+let disable () =
+  enabled := false
+
+(* -------------------------------------------------------------------------- *)
+
+(* A mechanism to turn warnings into errors. *)
+
+(* When [!strict] is true, warnings are changed into errors. *)
+
 let strict =
   ref false
 
 let mode () =
   if !strict then `WarningIsSignal else `Normal
 
-let monitor action =
-  Report.monitor (mode()) action
+(* -------------------------------------------------------------------------- *)
+
+let logG, logA, logC =
+  ref 0, ref 0, ref 0
+
+(* -------------------------------------------------------------------------- *)
+
+(* A report channel for information messages. *)
 
 let info =
   Report.create `Normal stderr
 
+(* -------------------------------------------------------------------------- *)
+
+(* Accessors. *)
+
+let monitor action =
+  if !enabled then
+    Report.monitor (mode()) action
+  else
+    action Report.null
+
 let get max_enabled_level level =
-  if level <= max_enabled_level then
+  if !enabled && level <= max_enabled_level then
     (* This verbosity level is enabled. *)
     info
   else
     (* This verbosity level is disabled. *)
     Report.null
-
-let logG, logA, logC =
-  ref 0, ref 0, ref 0
 
 let[@inline] getG level =
   get !logG level

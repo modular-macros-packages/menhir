@@ -12,57 +12,24 @@ open Printf
 
 (* ---------------------------------------------------------------------------- *)
 
-(* A mechanism to turn all display (logging, warnings, errors) on and off. *)
-
-let enabled =
-  ref true
-
-let enable () =
-  enabled := true
-
-let disable () =
-  enabled := false
-
-(* ---------------------------------------------------------------------------- *)
-
-(* The new OCaml type inference protocol means that Menhir is called twice, first
-   with [--infer-write-query], then with [--infer-read-reply]. This means that any
-   information messages or warnings issued before OCaml type inference takes place
-   are duplicated, unless we do something about it. To address this issue, when
-   [--infer-read-reply] is set, we disable all output until the point where we
-   read the inferred [.mli] file. Then, we enable it again and continue. *)
-
-(* An alternative idea would be to disable all output when [--infer-write-query]
-   is set. However, we would then have no output at all if this command fails. *)
-
-let () =
-  Settings.(match infer with
-  | IMReadReply _ ->
-      disable()
-  | _ ->
-      ()
-  )
-
-(* ---------------------------------------------------------------------------- *)
-
 (* Logging and log levels. *)
 
 let selective_log kind verbosity msg =
-  if kind >= verbosity && !enabled then
+  if kind >= verbosity then
     Printf.fprintf stderr "%t%!" msg
 
-let logG =
-  selective_log !Channels.logG
+let logG level =
+  selective_log !Channels.logG level
 
-let logA =
-  selective_log !Channels.logA
+let logA level =
+  selective_log !Channels.logA level
 
-let logC =
-  selective_log !Channels.logC
+let logC level =
+  selective_log !Channels.logC level
 
 let slog kind level format =
   let format = format ^^ "\n%!" in
-  if kind >= level && !enabled then
+  if kind >= level then
     Printf.eprintf format
   else
     Printf.ifprintf stderr format
@@ -86,8 +53,7 @@ let print_positions f positions =
   ) positions
 
 let display continuation header positions format =
-  let kprintf = if !enabled then Printf.kfprintf else Printf.ikfprintf in
-  kprintf continuation stderr
+  Printf.kfprintf continuation stderr
     ("%a" ^^ header ^^ format ^^ "\n%!")
     print_positions positions
 

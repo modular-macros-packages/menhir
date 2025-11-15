@@ -14,6 +14,23 @@ open Channels
 
 (* ------------------------------------------------------------------------- *)
 
+(* When the new OCaml type inference protocol is used, Menhir is called twice:
+   first with [--infer-write-query], then with [--infer-read-reply]. This
+   means that any warnings or information messages that are issued before
+   OCaml type inference takes place are duplicated, unless we do something
+   about it. To address this issue, when [--infer-read-reply] is set, we
+   disable all output until the point where the inferred [.mli] file is read.
+   Then, we enable output again, and continue. *)
+
+let () =
+  match Settings.infer with
+  | Settings.IMReadReply _ ->
+      Channels.disable()
+  | _ ->
+      ()
+
+(* ------------------------------------------------------------------------- *)
+
 (* Reading a grammar from a file. *)
 
 let load_grammar_from_contents filename content =
@@ -27,7 +44,7 @@ let load_grammar_from_file filename : Syntax.partial_grammar =
     let contents = IO.read_whole_file filename in
     load_grammar_from_contents filename contents
   with Sys_error msg ->
-    Error.error [] "%s" msg
+    Report.Just.error [] "%s" msg
 
 (* ------------------------------------------------------------------------- *)
 
@@ -226,7 +243,6 @@ let grammar, ocaml_types_have_been_checked =
   | IMNone ->
       grammar, false
   | IMInfer ->
-      Error.enable();                    (* See comment in module [Error]. *)
       let grammar =
         Time.time "Inferring types for nonterminal symbols" @@ fun () ->
         Infer.infer()
@@ -242,7 +258,7 @@ let grammar, ocaml_types_have_been_checked =
       Infer.write_query filename;
       exit 0
   | IMReadReply filename ->
-      Error.enable();                    (* See comment in module [Error]. *)
+      Channels.enable();
       let grammar =
         Time.time "Reading inferred types for nonterminals" @@ fun () ->
         Infer.read_reply filename

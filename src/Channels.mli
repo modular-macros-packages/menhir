@@ -16,6 +16,12 @@ open Report
 
 (** {2 Settings} *)
 
+(**[disable()] disables all error, warning, and information messages. *)
+val disable: unit -> unit
+
+(**[ensable()] undoes the effect of [disable()]. *)
+val enable: unit -> unit
+
 (**[strict] determines whether warnings should be changed into errors. *)
 val strict: bool ref
 

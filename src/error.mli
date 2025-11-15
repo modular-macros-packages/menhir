@@ -14,13 +14,6 @@ open Range
 
 (* ---------------------------------------------------------------------------- *)
 
-(* A mechanism to turn all display (logging, warnings, errors) on and off. *)
-
-val enable: unit -> unit
-val disable: unit -> unit
-
-(* ---------------------------------------------------------------------------- *)
-
 (* Logging and log levels. *)
 
 val logG: int -> (out_channel -> unit) -> unit
