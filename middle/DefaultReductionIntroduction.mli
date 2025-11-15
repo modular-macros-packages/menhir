@@ -12,23 +12,16 @@
    reductions. End-of-stream conflicts must have already been resolved
    by running [SevereConflictResolution]. *)
 
+open Report
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-: sig
+module Run (A : LR1_AUTOMATON) : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
                          and type node = A.node
 
-  (**[diagnostics()] logs a message indicating how many default reductions
-     have been introduced. *)
-  val diagnostics: unit -> unit
+  (**[diagnostics c] logs a message on the channel [c] indicating how
+     many default reductions have been introduced. *)
+  val diagnostics: channel -> unit
 
 end

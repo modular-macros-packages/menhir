@@ -14,10 +14,6 @@ open Grammar
 let main =
   create()
 
-module ErrorC1 = struct
-  let log format = Error.slogC 1 format
-end
-
 (* -------------------------------------------------------------------------- *)
 
 (* At log level 1, test whether the grammar is in the class SLR(1). *)
@@ -164,10 +160,10 @@ let () =
 (* 5. Decide which states can have a default reduction. *)
 
 module A5 =
-  DefaultReductionIntroduction.Run(A4)(ErrorC1)
+  DefaultReductionIntroduction.Run(A4)
 
 let () =
-  A5.diagnostics() (* info *)
+  A5.diagnostics (getC 1) (* info *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -189,9 +185,6 @@ let () =
 
 let () =
   Report.exit_if main
-
-let () =
-  Error.(exit_if warnings)
 
 (* -------------------------------------------------------------------------- *)
 

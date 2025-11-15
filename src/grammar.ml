@@ -43,37 +43,33 @@ let () =
 open Nonterminal
 open Analysis
 
-let errors =
-  Error.new_category()
-
 (* If a start symbol generates the empty language or generates the language
    {epsilon}, report an error. In principle, this could be just a warning.
    However, in [Engine], in the function [start], it is convenient to assume
    that neither of these situations can arise. This means that at least one
    token must be read. *)
 
-let () =
+let check_empty_start_symbol c =
   Nonterminal.user_start_symbols |> List.iter @@ fun nt ->
   if not (nonempty nt) then
-    Error.signal errors
-      (positions nt)
+    Report.signal c (positions nt)
       "%s generates the empty language." (print false nt);
   if TerminalSet.is_empty (first nt) then
-    Error.signal errors
-      (positions nt)
+    Report.signal c (positions nt)
       "%s generates the language {epsilon}." (print false nt)
 
 (* If a nonterminal symbol generates the empty language, issue a warning. *)
 
-let () =
+let check_empty_symbol c =
   iterx @@ fun nt ->
   if not (nonempty nt) then
-    Error.warning
-      (positions nt)
+    Report.warning c (positions nt)
       "%s generates the empty language." (print false nt)
 
 let () =
-  Error.(exit_if errors)
+  monitor @@ fun c ->
+  check_empty_start_symbol c;
+  check_empty_symbol c
 
 (* -------------------------------------------------------------------------- *)
 

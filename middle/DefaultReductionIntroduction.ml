@@ -10,18 +10,9 @@
 
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-= struct
+module Run (A : LR1_AUTOMATON) = struct
 include A
 open Lr0.G
-open E
 
 let start_time =
   Time.start()
@@ -110,8 +101,9 @@ let test_default_reduction node =
 let test_default_reduction =
   tabulate test_default_reduction
 
-let diagnostics () =
-  log "%d out of %d states have a default reduction."
+let diagnostics c =
+  Report.log c
+    "%d out of %d states have a default reduction."
     !count A.n
 
 (* -------------------------------------------------------------------------- *)
