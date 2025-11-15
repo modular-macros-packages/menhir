@@ -1892,4 +1892,103 @@ end (* Sentence *)
 
 (* -------------------------------------------------------------------------- *)
 
+(* Information messages. *)
+
+let info c =
+  Report.log c
+    "Grammar has %d nonterminal symbols, among which %d start symbols."
+    (Nonterminal.n - Production.start) Production.start;
+  Report.log c
+    "Grammar has %d terminal symbols."
+    (Terminal.n - 2);
+  Report.log c
+    "Grammar has %d productions."
+    (Production.n - Production.start)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Errors and warnings. *)
+
+(* If a start symbol generates the empty language or generates the language
+   {epsilon}, report an error. In principle, this could be just a warning.
+   However, in [Engine], in the function [start], it is convenient to assume
+   that neither of these situations can arise. This means that at least one
+   token must be read. *)
+
+let check_start_symbol c =
+  Nonterminal.user_start_symbols |> List.iter @@ fun nt ->
+  if not (Analysis.nonempty nt) then
+    Report.signal c (Nonterminal.positions nt)
+      "%s generates the empty language."
+      (Nonterminal.print false nt);
+  if TerminalSet.is_empty (Analysis.first nt) then
+    Report.signal c (Nonterminal.positions nt)
+      "%s generates the language {epsilon}."
+      (Nonterminal.print false nt)
+
+(* If a nonterminal symbol generates the empty language, issue a warning. *)
+
+let warn_empty_symbol c =
+  Nonterminal.iterx @@ fun nt ->
+  if not (Analysis.nonempty nt) then
+    Report.warning c (Nonterminal.positions nt)
+      "%s generates the empty language."
+      (Nonterminal.print false nt)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Dumping the results of the analyses. *)
+
+let dump_nullable c =
+  if Report.live c then
+    Nonterminal.iterx @@ fun nt ->
+    Report.log c "nullable(%s) = %b"
+      (Nonterminal.print false nt)
+      (Analysis.nullable nt)
+
+let dump_first c =
+  if Report.live c then
+    Nonterminal.iterx @@ fun nt ->
+    Report.log c "first(%s) = %s"
+      (Nonterminal.print false nt)
+      (TerminalSet.print (Analysis.first nt))
+
+let dump_minimal c =
+  if Report.live c then
+    Nonterminal.iterx @@ fun nt ->
+    Report.log c "minimal(%s) = %s"
+      (Nonterminal.print false nt)
+      (CompletedNatWitness.print Terminal.print (Analysis.minimal' nt))
+
+let dump_maximal c =
+  if Report.live c then
+    Nonterminal.iterx @@ fun nt ->
+    let p = Analysis.maximal nt in
+    Report.log c "maximal(%s) = %s"
+      (Nonterminal.print false nt)
+      (if p = max_int then "infinity" else string_of_int p)
+
+let dump_follow c =
+  if Report.live c then
+    Nonterminal.iterx @@ fun nt ->
+    Report.log c "follow(%s) = %s"
+      (Nonterminal.print false nt)
+      (TerminalSet.print (Analysis.follow nt))
+
+let dump_tfollow c =
+  if Report.live c then
+    Terminal.iter @@ fun t ->
+    Report.log c "follow(%s) = %s"
+      (Terminal.print t)
+      (TerminalSet.print (Analysis.tfollow t))
+
+let dump_sfollow c =
+  if Report.live c then
+    Nonterminal.iterx @@ fun nt ->
+    Report.log c "sfollow(%s) = %s"
+      (Nonterminal.print false nt)
+      (SymbolSet.print false (Analysis.sfollow nt))
+
+(* -------------------------------------------------------------------------- *)
+
 end (* Make *)
