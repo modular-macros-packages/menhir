@@ -100,12 +100,15 @@ module Run () = struct
       begin
         Nonterminal.iterx (fun nonterminal ->
           match Nonterminal.ocamltype nonterminal with
-            | None -> Error.error [] "I don't know the type of the nonterminal symbol %s."
-                                     (Nonterminal.print false nonterminal)
+            | None ->
+                Report.Just.error []
+                  "I don't know the type of the nonterminal symbol %s."
+                  (Nonterminal.print false nonterminal)
             | Some _ -> ());
         Production.iterx (fun prod ->
           if not (Keyword.KeywordSet.is_empty (Action.keywords (Production.action prod))) then
-            Error.error [] "the Coq back-end supports none of the $ keywords."
+            Report.Just.error []
+              "the Coq back-end supports none of the $ keywords."
         )
       end;
 
@@ -114,12 +117,14 @@ module Run () = struct
         match symb with
           | Symbol.T t ->
               if t = Terminal.error then
-                Error.error [] "the Coq back-end does not support the error token."
+                Report.Just.error []
+                  "the Coq back-end does not support the error token."
           | _ -> ())
         (Production.rhs prod));
 
     if Front.grammar.PlainSyntax.parameters <> [] then
-      Error.error [] "the Coq back-end does not support %%parameter."
+      Report.Just.error []
+        "the Coq back-end does not support %%parameter."
 
   let write_tokens f =
     fprintf f "Inductive token : Type :=";

@@ -30,8 +30,9 @@ module Run () = struct
 
   let () =
     if grammar_uses_error_token() then
-      Error.warning [] "The reachability analysis ignores all productions \
-                        that involve the error token."
+      Report.Just.warning []
+        "The reachability analysis ignores all productions \
+         that involve the error token."
 
   (* ---------------------------------------------------------------------- *)
 

@@ -23,7 +23,7 @@ open Located
 (* [blame range format ...] reports an error at [range]. *)
 
 let blame range =
-  Error.error [range]
+  Report.Just.error [range]
 
 (* [error lexbuf format ...] reports an error at the current token. *)
 

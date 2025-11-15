@@ -33,10 +33,11 @@ let fail buffer lexbuf (s : int) =
   in
   (* Show the two tokens between which the error took place. *)
   let where = MenhirLib.ErrorReports.show InputFile.chunk buffer in
-  (* Hack: remove the final newline, because [Error.error] adds one. *)
+  (* Hack: remove the final newline, because [Report.Just.error] adds one. *)
   let message = String.sub message 0 (String.length message - 1) in
   (* Display our message and die. *)
-  Error.error [Range.current lexbuf] "syntax error %s.\n%s" where message
+  Report.Just.error [Range.current lexbuf] "syntax error %s.\n%s"
+    where message
 
 (* The entry point. *)
 

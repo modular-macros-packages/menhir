@@ -21,4 +21,4 @@ let grammar lexer lexbuf =
   try
     Parser.grammar lexer lexbuf
   with Parsing.Parse_error ->
-    Error.error [Range.current lexbuf] "syntax error."
+    Report.Just.error [Range.current lexbuf] "syntax error."

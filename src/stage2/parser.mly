@@ -13,7 +13,7 @@
 
 /* As of 2014/12/02, the $previouserror keyword and the --error-recovery
    mode no longer exist. Thus, we replace all calls to [Error.signal]
-   with calls to [Error.error], and report just one error. */
+   with calls to [Report.Just.error], and report just one error. */
 
 /* ------------------------------------------------------------------------- */
 /* Imports. */
@@ -215,7 +215,7 @@ declaration:
 
 | rule_specific_token
     {
-      Error.error [Range.make $loc]
+      Report.Just.error [Range.make $loc]
         "syntax error inside a declaration.\n\
          Did you perhaps forget the %%%% that separates declarations and rules?"
     }
@@ -655,7 +655,7 @@ action:
       | os ->
           XAPointFree os
       | exception Lexpointfree.InvalidPointFreeAction ->
-          Error.error [Range.make $loc]
+          Report.Just.error [Range.make $loc]
             "A point-free semantic action must consist \
              of a single OCaml identifier." (* or whitespace *)
     }
