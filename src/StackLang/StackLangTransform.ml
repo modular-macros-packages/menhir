@@ -454,7 +454,7 @@ let program =
 
 let () =
   Report.log (getC 1)
-    "%d specialized copies of %d functions have been created.\n"
+    "%d specialized copies of %d functions have been created."
     (LTSet.cardinal !inserted)
     (Label.Set.cardinal !labels)
 
