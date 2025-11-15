@@ -158,7 +158,7 @@ module Nonterminal = struct
       ) nts;
       Report.Just.error [] "%s" (Buffer.contents b)
 
-end
+end (* Nonterminal *)
 
 (* Sets and maps of nonterminal symbols. *)
 
@@ -292,7 +292,7 @@ module Terminal = struct
   let every_token_has_an_alias =
     tokens_without_an_alias = 0
 
-end
+end (* Terminal *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -375,7 +375,7 @@ module TerminalSet = struct
   let leq_join =
     union
 
-end
+end (* TerminalSet *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -451,7 +451,7 @@ module Symbol = struct
   let print_list normalize symbols =
     print_array normalize (Array.of_list symbols)
 
-end
+end (* Symbol *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -479,7 +479,7 @@ module SymbolSet = struct
   let join =
     union
 
-end
+end (* SymbolSet *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -496,7 +496,7 @@ module SymbolMap = struct
       | Symbol.N _ -> ts
     ) m TerminalSet.empty
 
-end
+end (* SymbolMap *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -726,7 +726,7 @@ module Production = struct
     let k, k' = ntprods.(nt) in
     MInt.foldij_lazy k k' f accu
 
-end
+end (* Production *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -743,7 +743,7 @@ module ProductionMap = struct
       add prod (f prod) m
     ) empty
 
-end
+end (* ProductionMap *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -836,7 +836,7 @@ module Reductions = struct
         SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol)
           transitions
 
-end
+end (* Reductions *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -986,7 +986,7 @@ module AbstractState = struct
           accu
     ) state ProductionMap.empty
 
-end
+end (* AbstractState *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1043,7 +1043,7 @@ module CST = struct
   let show f cst =
     ToChannel.pretty 0.8 80 f (build cst)
 
-end
+end (* CST *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1198,7 +1198,7 @@ end = struct
   let production prod i =
     production prod i nonterminal
 
-end
+end (* GenericAnalysis *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1506,7 +1506,7 @@ end) = struct
   let follow (nt : Nonterminal.t) : P.property =
     Option.value (S.solution nt) ~default:P.bottom
 
-end
+end (* FOLLOW *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1720,7 +1720,7 @@ module Analysis = struct
     assert (0 <= i && i <= Production.length prod);
     NatInfinityMax.to_int (MAXIMAL.production prod i)
 
-end
+end (* Analysis *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1786,7 +1786,7 @@ module OnErrorReduce = struct
         (* We could issue a warning or an information message in these cases. *)
         false
 
-end
+end (* OnErrorReduce *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1888,7 +1888,7 @@ module Sentence = struct
     | `Concrete ->
         print_concrete sentence
 
-end
+end (* Sentence *)
 
 (* -------------------------------------------------------------------------- *)
 
