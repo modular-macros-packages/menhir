@@ -8,20 +8,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let error, warning = Report.(error, warning)
 open PlainSyntax
 
-module Make (E : sig
-
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
+module Run (G : sig
+  open Report
+  val main: channel
+  val grammar : grammar
 end) = struct
-open E
-
-module Run (G : sig val grammar : grammar end) = struct
 open G
 
 (* Check that at least one start symbol has been declared: otherwise, the
@@ -31,7 +25,7 @@ open G
 
 let () =
   if StringSet.is_empty grammar.start_symbols then
-    error [] "no start symbol has been declared."
+    error main [] "no start symbol has been declared."
 
 let rec visit_symbol visited symbol =
   match StringMap.find symbol grammar.rules with
@@ -69,7 +63,7 @@ let roots =
 let () =
   grammar.rules |> StringMap.iter @@ fun symbol rule ->
   if not (StringSet.mem symbol reachable) then
-    warning rule.positions
+    warning main rule.positions
       "symbol %s is unreachable from %s."
       symbol roots
 
@@ -83,8 +77,9 @@ let grammar =
 
 end (* Run *)
 
-let trim grammar =
-  let module R = Run(struct let grammar = grammar end) in
+let trim main grammar =
+  let module R = Run(struct
+    let main = main
+    let grammar = grammar
+  end) in
   R.grammar
-
-end (* Make *)

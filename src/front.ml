@@ -190,9 +190,9 @@ let () =
 (* Perform reachability analysis. *)
 
 let grammar =
+  monitor @@ fun c ->
   Time.time "Detecting unreachable symbols" @@ fun () ->
-  let module T = Trim.Make(Error) in
-  T.trim grammar
+  Trim.trim c grammar
 
 (* ------------------------------------------------------------------------- *)
 
@@ -283,19 +283,16 @@ let grammar_before_inlining =
    correct. *)
 
 let grammar =
-  if Settings.inline then begin
-    if Settings.backend = `CoqBackend then begin
-      let module C = CheckInlineUsage.Make(Error) in
-      C.check grammar
-    end;
+  if Settings.inline then
+    monitor @@ fun c ->
+    if Settings.backend = `CoqBackend then
+      CheckInlineUsage.check c grammar;
     Time.time "Expanding away %inline nonterminal symbols" @@ fun () ->
-    let module I = Inlining.Make(Error) in
-    let grammar = I.inline grammar in
+    let grammar = Inlining.inline c grammar in
     (* 2018/05/23 Removed the warning that was issued when %inline was used
        but --infer was turned off. Most people should use ocamlbuild or dune
        anyway. *)
     grammar
-  end
   else
     grammar
 

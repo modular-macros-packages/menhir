@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let error, warning = Report.(error, warning)
 open Located
 open Keyword
 type sw = subject * where
@@ -15,13 +16,14 @@ open Attribute
 open PlainSyntax
 open PlainSyntaxAccessors
 
-module Make (E : sig
+module Run (E : sig
+  open Report
 
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+  (**A channel for reporting errors and emitting warnings. *)
+  val main: channel
 
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+  (**The grammar. *)
+  val grammar: grammar
 
 end) = struct
 open E
@@ -100,7 +102,7 @@ let check_no_prod_attributes producer =
   | [] ->
       ()
   | attr :: _ ->
-      error
+      error main
         [attr.origin]
         "the nonterminal symbol %s is declared %%inline.\n\
          A use of it cannot carry an attribute."
@@ -170,7 +172,7 @@ let check_prec_inline caller producer nsuffix callee =
   (* Check condition 1. *)
   if nsuffix > 0 then begin
     let symbol = producer.prod_symbol in
-    error [ position callee_prec; caller.branch_position ]
+    error main [ position callee_prec; caller.branch_position ]
       "this production carries a %%prec annotation,\n\
        and the nonterminal symbol %s is marked %%inline.\n\
        For this reason, %s can be used only in tail position."
@@ -179,7 +181,7 @@ let check_prec_inline caller producer nsuffix callee =
   (* Check condition 2. *)
   caller.prec_annotation |> Option.iter @@ fun caller_prec ->
   let symbol = producer.prod_symbol in
-  error [ position callee_prec; position caller_prec ]
+  error main [ position callee_prec; position caller_prec ]
     "this production carries a %%prec annotation,\n\
      and the nonterminal symbol %s is marked %%inline.\n\
      For this reason, %s cannot be used in a production\n\
@@ -468,8 +470,7 @@ let inline_branches caller site (callees : branches) : branches =
 
 (* -------------------------------------------------------------------------- *)
 
-(* For greater syntactic convenience, the main function is written as a
-   functor, and re-packaged as a function at the very end. *)
+(* The transformation of the grammar [grammar] begins here. *)
 
 (* Roughly speaking, the transformation is implemented by two mutually
    recursive functions. [expand_branches] transforms a list of branches into a
@@ -483,134 +484,131 @@ let inline_branches caller site (callees : branches) : branches =
    point combinator dynamically detects cycles of %inline nonterminal symbols,
    allowing us to avoid divergence and display a nice error message. *)
 
-module Inline (G : sig val grammar: grammar end) = struct
+let is_inline_symbol =
+  is_inline_symbol grammar
 
-  open G
+let is_inline_producer =
+  is_inline_producer grammar
 
-  let is_inline_symbol =
-    is_inline_symbol grammar
+let find =
+  find grammar
 
-  let is_inline_producer =
-    is_inline_producer grammar
+(* This is [expand_branches], parameterized by its companion function,
+   [expand_symbol]. The parameter [i], an integer, is used to perform
+   a left-to-right sweep: the precondition of [expand_branches] is that
+   there are no inlining sites at indices less than [i] in [branches].
+   Thus, we can begin searching at index [i]. (Beginning to search at
+   index 0 would work, too, but would cause redundant searches.) *)
 
-  let find =
-    find grammar
+let rec expand_branches expand_symbol i branches : branches =
+  (* For each branch [caller] in the list [branches], *)
+  MList.bind branches @@ fun (caller : branch) ->
+    (* Search for an inlining site in the branch [caller]. We begin the
+       search at position [i], as we know that every inlining site left
+       of this position has been dealt with already. *)
+    match search is_inline_producer i caller.producers with
+    | None ->
+        (* There is none; we are done. *)
+        MList.return caller
+    | Some ((i, producer) as site) ->
+        (* There is one. This is an occurrence of a nonterminal symbol
+           [symbol] that is marked %inline. We look up its (expanded)
+           definition (via a recursive call to [expand_symbol]), yielding
+           a set of branches, which we inline into the branch [caller].
+           Then, we continue looking for inlining sites. *)
+        check_no_prod_attributes producer;
+        let symbol = producer.prod_symbol in
+        let rule = expand_symbol symbol in
+        rule.branches
+        |> inline_branches caller site
+        |> expand_branches expand_symbol i
 
-  (* This is [expand_branches], parameterized by its companion function,
-     [expand_symbol]. The parameter [i], an integer, is used to perform
-     a left-to-right sweep: the precondition of [expand_branches] is that
-     there are no inlining sites at indices less than [i] in [branches].
-     Thus, we can begin searching at index [i]. (Beginning to search at
-     index 0 would work, too, but would cause redundant searches.) *)
+(* This is [expand_symbol], parameterized by itself. *)
 
-  let rec expand_branches expand_symbol i branches : branches =
-    (* For each branch [caller] in the list [branches], *)
-    MList.bind branches @@ fun (caller : branch) ->
-      (* Search for an inlining site in the branch [caller]. We begin the
-         search at position [i], as we know that every inlining site left
-         of this position has been dealt with already. *)
-      match search is_inline_producer i caller.producers with
-      | None ->
-          (* There is none; we are done. *)
-          MList.return caller
-      | Some ((i, producer) as site) ->
-          (* There is one. This is an occurrence of a nonterminal symbol
-             [symbol] that is marked %inline. We look up its (expanded)
-             definition (via a recursive call to [expand_symbol]), yielding
-             a set of branches, which we inline into the branch [caller].
-             Then, we continue looking for inlining sites. *)
-          check_no_prod_attributes producer;
-          let symbol = producer.prod_symbol in
-          let rule = expand_symbol symbol in
-          rule.branches
-          |> inline_branches caller site
-          |> expand_branches expand_symbol i
+let expand_symbol expand_symbol symbol : rule =
+  (* Find the rule that defines this symbol. Then, transform this rule
+     by applying [expand_branches] to its branches. The left-to-right
+     sweep begins at index 0. *)
+  let rule = find symbol in
+  { rule with branches = expand_branches expand_symbol 0 rule.branches }
 
-  (* This is [expand_symbol], parameterized by itself. *)
+(* Apply [defensive_fix] to obtain a closed function [expand_symbol]. *)
 
-  let expand_symbol expand_symbol symbol : rule =
-    (* Find the rule that defines this symbol. Then, transform this rule
-       by applying [expand_branches] to its branches. The left-to-right
-       sweep begins at index 0. *)
+let expand_symbol : symbol -> rule =
+  Fix.Memoize.String.defensive_fix expand_symbol
+
+(* Wrap [expand_symbol] in an exception handler, so that, when a cycle
+   of %inline nonterminal symbols is detected, a good error message is
+   displayed. *)
+
+let expand_symbol symbol =
+  try
+    expand_symbol symbol
+  with Fix.Memoize.String.Cycle (symbols, symbol) ->
     let rule = find symbol in
-    { rule with branches = expand_branches expand_symbol 0 rule.branches }
+    let b = Buffer.create 128 in
+    Printf.bprintf b "there is a cycle of %%inline nonterminal symbols:\n";
+    begin match symbols with
+    | [] ->
+        assert false
+    | head :: [] ->
+        assert (head = symbol);
+        Printf.bprintf b "  %s refers to itself." symbol
+    | head :: next :: symbols ->
+        assert (head = symbol);
+        Printf.bprintf b "  %s refers to %s,\n" head next;
+        List.iter (fun symbol ->
+          Printf.bprintf b "  which refers to %s,\n" symbol
+        ) symbols;
+        Printf.bprintf b "  which refers back to %s." symbol
+    end;
+    error main rule.positions "%s" (Buffer.contents b)
 
-  (* Apply [defensive_fix] to obtain a closed function [expand_symbol]. *)
+(* The rules of the transformed grammar are obtained by keeping only
+   non-%inline symbols and expanding their rules. *)
 
-  let expand_symbol : symbol -> rule =
-    Fix.Memoize.String.defensive_fix expand_symbol
+let rules =
+  grammar.rules
+  |> StringMap.filter (fun _ rule -> not rule.inline_flag)
+  |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol)
 
-  (* Wrap [expand_symbol] in an exception handler, so that, when a cycle
-     of %inline nonterminal symbols is detected, a good error message is
-     displayed. *)
+(* Drop %type declarations that concern %inline symbols. *)
 
-  let expand_symbol symbol =
-    try
-      expand_symbol symbol
-    with Fix.Memoize.String.Cycle (symbols, symbol) ->
-      let rule = find symbol in
-      let b = Buffer.create 128 in
-      Printf.bprintf b "there is a cycle of %%inline nonterminal symbols:\n";
-      begin match symbols with
-      | [] ->
-          assert false
-      | head :: [] ->
-          assert (head = symbol);
-          Printf.bprintf b "  %s refers to itself." symbol
-      | head :: next :: symbols ->
-          assert (head = symbol);
-          Printf.bprintf b "  %s refers to %s,\n" head next;
-          List.iter (fun symbol ->
-            Printf.bprintf b "  which refers to %s,\n" symbol
-          ) symbols;
-          Printf.bprintf b "  which refers back to %s." symbol
-      end;
-      error rule.positions "%s" (Buffer.contents b)
+let keep symbol _rule : bool =
+  not (is_inline_symbol symbol)
 
-  (* The rules of the transformed grammar are obtained by keeping only
-     non-%inline symbols and expanding their rules. *)
+let types =
+  StringMap.filter keep grammar.types
 
-  let rules =
-    grammar.rules
-    |> StringMap.filter (fun _ rule -> not rule.inline_flag)
-    |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol)
+(* Drop %on_error_reduce declarations that concern %inline symbols. At the
+   same time, display a warning, as this seems strange: these declarations
+   are useless. *)
 
-  (* Drop %type declarations that concern %inline symbols. *)
+let keep_or_warn (symbol : string) _rule : bool =
+  let keep = keep symbol _rule in
+  if not keep then
+    warning main []
+      "the declaration %%on_error_reduce %s\n\
+       has no effect: this symbol is marked %%inline and is expanded away." symbol;
+  keep
 
-  let keep symbol _rule : bool =
-    not (is_inline_symbol symbol)
+let on_error_reduce =
+  StringMap.filter keep_or_warn grammar.on_error_reduce
 
-  let types =
-    StringMap.filter keep grammar.types
+(* We are done. *)
 
-  (* Drop %on_error_reduce declarations that concern %inline symbols. At the
-     same time, display a warning, as this seems strange: these declarations
-     are useless. *)
+let grammar =
+  { grammar with rules; types; on_error_reduce }
 
-  let keep_or_warn (symbol : string) _rule : bool =
-    let keep = keep symbol _rule in
-    if not keep then
-      warning []
-        "the declaration %%on_error_reduce %s\n\
-         has no effect: this symbol is marked %%inline and is expanded away." symbol;
-    keep
-
-  let on_error_reduce =
-    StringMap.filter keep_or_warn grammar.on_error_reduce
-
-  (* We are done. *)
-
-  let grammar =
-    { grammar with rules; types; on_error_reduce }
-
-end
+end (* Run *)
 
 (* -------------------------------------------------------------------------- *)
 
-(* Re-package the above functor as a function. *)
+(* Re-package [Run] as a function. *)
 
-let inline grammar =
-  let module I = Inline(struct let grammar = grammar end) in
+let inline main grammar =
+  let module I = Run(struct
+    let main = main
+    let grammar = grammar
+  end) in
   I.grammar
-
-end (* Make *)
