@@ -21,9 +21,6 @@ let selective_log kind verbosity msg =
 let logG level =
   selective_log !Channels.logG level
 
-let logA level =
-  selective_log !Channels.logA level
-
 let logC level =
   selective_log !Channels.logC level
 

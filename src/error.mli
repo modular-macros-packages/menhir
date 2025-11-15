@@ -17,7 +17,6 @@ open Range
 (* Logging and log levels. *)
 
 val logG: int -> (out_channel -> unit) -> unit
-val logA: int -> (out_channel -> unit) -> unit
 val logC: int -> (out_channel -> unit) -> unit
 
 val slogG: int -> ('a, out_channel, unit) format -> 'a
