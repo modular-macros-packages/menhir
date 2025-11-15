@@ -15,11 +15,7 @@ open Channels
 
 module F = Freeze
 
-module ErrorC1 = struct
-  let log format = Error.slogC 1 format
-end
-
-include StackShape.Make(Lr1)(Settings)(ErrorC1)
+include StackShape.Make(Lr1)(Settings)(struct let info = getC 1 end)
 
 let () =
   Short.print_stack_states (getC 3);

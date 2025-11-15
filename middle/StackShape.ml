@@ -15,9 +15,10 @@ module Make
 (Lr1 : LR1)
 (X : REPRESENT_SETTINGS)
 (E : sig
+  open Report
 
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
+  (**This channel is used to log information messages. *)
+  val info: channel
 
 end)
 = struct
@@ -234,7 +235,7 @@ end = struct
     ) 0
 
   let () =
-    log "%d out of %d states are represented." count Lr1.n
+    Report.log info "%d out of %d states are represented." count Lr1.n
 
 end (* RepresentedStates *)
 
@@ -456,7 +457,7 @@ end = struct
     !c
 
   let () =
-    log
+    Report.log info
       "%d out of %d symbols keep track of their start position.\n\
        %d out of %d symbols keep track of their end position."
       (sum_over_every_symbol track_startp) (Terminal.n + Nonterminal.n)

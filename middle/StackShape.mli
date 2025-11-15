@@ -32,8 +32,8 @@ module Make
 (X : REPRESENT_SETTINGS)
 (E : sig
 
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
+  (**This channel is used to log information messages. *)
+  val info: channel
 
 end)
 : sig
