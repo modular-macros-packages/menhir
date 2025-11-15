@@ -49,6 +49,12 @@ let info =
 
 (* Accessors. *)
 
+let create () =
+  if !enabled then
+    Report.create (mode()) stderr
+  else
+    Report.null
+
 let monitor action =
   if !enabled then
     Report.monitor (mode()) action

@@ -39,19 +39,23 @@ val logC : int ref
 
 (** {2 Channels} *)
 
+(**[create()] creates an error report channel. It is up to the caller to use
+   [Report.exit_if] at a suitable time. Using [monitor] should be preferred. *)
+val create: unit -> channel
+
 (**[monitor action] passes an error report channel to the action [action()].
    Once this action is complete, if any error has been signaled, the process
    is aborted with exit status 1. *)
 val monitor: (channel -> 'a) -> 'a
 
-(**[getG i] determines which information channel should be used
-   for a grammar-related message whose verbosity level is [i]. *)
+(**[getG i] returns a suitable information channel for a grammar-related
+   message whose verbosity level is [i]. *)
 val getG : int -> channel
 
-(**[getA i] determines which information channel should be used
-   for an automaton-related message whose verbosity level is [i]. *)
+(**[getA i] returns a suitable information channel for an automaton-related
+   message whose verbosity level is [i]. *)
 val getA : int -> channel
 
-(**[getC i] determines which information channel should be used
-   for a code-generation-related message whose verbosity level is [i]. *)
+(**[getC i] returns a suitable information channel for a
+   code-generation-related message whose verbosity level is [i]. *)
 val getC : int -> channel
