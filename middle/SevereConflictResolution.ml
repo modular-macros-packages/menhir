@@ -22,9 +22,11 @@ module Run
 
 end)
 (E : sig
+  open Report
 
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+  (**This channel is used to emit warnings, both during conflict
+     resolution and when [diagnostics()] is invoked. *)
+  val main: channel
 
 end)
 = struct
@@ -91,7 +93,7 @@ let rec best candidate = function
       | None ->
           let open Production in
           let () =
-            warning (positions candidate @ positions prod)
+            Report.warning main (positions candidate @ positions prod)
               "do not know how to resolve a reduce/reduce conflict\n\
                between the following two productions:\n%s\n%s"
               (print candidate) (print prod)
@@ -165,9 +167,9 @@ let () =
 
 let signal_conflicts kind n =
   if n = 1 then
-    warning []  "one %s conflict was arbitrarily resolved."   kind
+    Report.warning main []  "one %s conflict was arbitrarily resolved." kind
   else if n >= 1 then
-    warning [] "%d %s conflicts were arbitrarily resolved." n kind
+    Report.warning main [] "%d %s conflicts were arbitrarily resolved." n kind
 
 let diagnostics () =
   signal_conflicts "shift/reduce" !shift_reduce;

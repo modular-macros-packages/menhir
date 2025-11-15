@@ -130,7 +130,7 @@ let () =
 (* 3. Perform severe conflict resolution. *)
 
 module A3 =
-  SevereConflictResolution.Run(A2)(Precedence)(Error)
+  SevereConflictResolution.Run(A2)(Precedence)(struct let main = main end)
 
 let () =
   A3.diagnostics() (* warnings *)

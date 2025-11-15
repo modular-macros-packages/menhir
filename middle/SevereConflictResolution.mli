@@ -17,6 +17,7 @@
    favoring inspecting the next input symbol. In summary, no transitions are
    removed; some reductions are removed. *)
 
+open Report
 open MiddleAPI
 
 module Run
@@ -32,8 +33,9 @@ module Run
 end)
 (E : sig
 
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
+  (**This channel is used to emit warnings, both during conflict
+     resolution and when [diagnostics()] is invoked. *)
+  val main: channel
 
 end)
 : sig
