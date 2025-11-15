@@ -153,7 +153,7 @@ let warnings =
   new_category()
 
 let warning pos =
-  if Settings.strict then
+  if !Channels.strict then
     signal warnings pos
   else
     warning pos

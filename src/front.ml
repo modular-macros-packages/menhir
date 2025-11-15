@@ -73,8 +73,9 @@ let grammars : Syntax.partial_grammar list =
 (* Remove all uses of token aliases. *)
 
 let grammars =
+  monitor @@ fun c ->
   Time.time "Eliminating token aliases" @@ fun () ->
-  ExpandTokenAliases.transform (main()) grammars
+  ExpandTokenAliases.transform c grammars
 
 (* ------------------------------------------------------------------------- *)
 
@@ -82,12 +83,17 @@ let grammars =
 
 (* Then, check that the resulting grammar is well-formed. *)
 
-let grammar : Syntax.grammar =
+(* Even if [JoinGrammars] signals some errors, we allow [CheckGrammar]
+   to run. This lets us signal more errors and blur the distinction
+   between [JoinGrammars] and [CheckGrammars] as far as the user is
+   concerned. *)
 
-  let c = Error.new_category() in
+let grammar : Syntax.grammar =
+  monitor @@ fun c ->
+
   let module E = struct
-    include Error
-    let signal format = Error.signal c format
+    let main = c
+    let info = c
     (* For each symbol [s], we report at most one error about this symbol. *)
     let can_complain_about : string -> bool =
       let reported = ref StringSet.empty in
@@ -102,18 +108,12 @@ let grammar : Syntax.grammar =
     Time.time "Joining" @@ fun () ->
     J.join grammars
   in
-  (* We do NOT exit here if an error has been signaled. Thus we allow
-     CheckGrammar to run: this allows us to signal even more errors
-     and to blur the distinction between JoinGrammars and CheckGrammars
-     as far as the user is concerned. *)
-  (* Error.exit_if c; *)
 
   let module C = CheckGrammar.Make(E)(Settings) in
   let () =
     Time.time "Checking the grammar" @@ fun () ->
     C.check grammar
   in
-  Error.exit_if c;
 
   grammar
 
@@ -124,8 +124,9 @@ let grammar : Syntax.grammar =
 (* At verbosity level 3, print the sort of every symbol. *)
 
 let sorts =
+  monitor @@ fun c ->
   Time.time "Inferring sorts" @@ fun () ->
-  SortInference.infer (main()) (getG 3) grammar
+  SortInference.infer c (getG 3) grammar
 
 (* ------------------------------------------------------------------------- *)
 

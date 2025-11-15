@@ -223,9 +223,6 @@ let coq_no_complete =
 let coq_no_actions =
   ref false
 
-let strict =
-  ref false
-
 let fixedexc =
   ref false
 
@@ -437,7 +434,7 @@ let options = Arg.align [
   "--stacklang-test", Arg.Set stacklang_test, " (undocumented)";
   "--stdlib", Arg.String ignore, "<directory> Ignored (deprecated)";
   "--strategy", Arg.String set_strategy, "<strategy> Choose an error-handling strategy";
-  "--strict", Arg.Set strict, " Warnings about the grammar are errors";
+  "--strict", Arg.Set Channels.strict, " Change warnings into errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
                           " Suggest compilation flags for ocaml{c,opt}";
   "--suggest-link-flags-byte", Arg.Unit (fun () -> suggestion := SuggestLinkFlags "cma"),
@@ -719,9 +716,6 @@ let coq_no_complete =
 
 let coq_no_actions =
   !coq_no_actions
-
-let strict =
-  !strict
 
 let fixedexc =
   !fixedexc

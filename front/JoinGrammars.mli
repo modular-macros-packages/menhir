@@ -8,9 +8,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Report
 open Syntax
 
 module Make (E : sig
+
+  (**A channel for reporting errors. *)
+  val main: channel
+
+  (**A channel for information messages. *)
+  val info: channel
 
   (**[can_complain_about symbol] determines whether it is permitted to report
      an error, using [signal], about the symbol [symbol]. This function must
@@ -18,16 +25,6 @@ module Make (E : sig
      can return [false] if queried again about the same symbol. This lets us
      avoid flooding the user with multiple reports about a single symbol. *)
   val can_complain_about : symbol -> bool
-
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-  (**[signal ranges format ...] reports an error, but does not abort.
-     Therefore, it is possible to report several errors. *)
-  val signal: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-  (**[note ranges format ...] emits an information message. It does not abort.*)
-  val note: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
 end) : sig
 

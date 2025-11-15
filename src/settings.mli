@@ -119,10 +119,6 @@ val coq_no_complete : bool
 (** Whether the coq backend should ignore types and semantic actions. *)
 val coq_no_actions : bool
 
-(** Whether unresolved LR(1) conflicts, useless precedence declarations,
-   productions that are never reduced, etc. should be treated as errors. *)
-val strict: bool
-
 (** This flag suppresses all warnings about unused precedence levels. *)
 val ignore_all_unused_precedence_levels: bool
 

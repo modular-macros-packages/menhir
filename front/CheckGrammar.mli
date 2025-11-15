@@ -8,10 +8,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Report
 open Syntax
 open FrontAPI
 
 module Make (E : sig
+
+  (**A channel for reporting warnings and errors. *)
+  val main: channel
 
   (**[can_complain_about symbol] determines whether it is permitted to report
      an error, using [signal], about the symbol [symbol]. This function must
@@ -19,13 +23,6 @@ module Make (E : sig
      can return [false] if queried again about the same symbol. This lets us
      avoid flooding the user with multiple reports about a single symbol. *)
   val can_complain_about : symbol -> bool
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-  (**[signal ranges format ...] reports an error, but does not abort.
-     Therefore, it is possible to report several errors. *)
-  val signal: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
 
 end)
 (X : CHECK_GRAMMAR_SETTINGS)

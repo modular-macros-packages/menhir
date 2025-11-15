@@ -8,10 +8,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
+(**This module exposes several strictness and verbosity settings. It exposes
+   a number of functions that offer access to error reporting channels. Which
+   channels are chosen depends on the settings. *)
+
 open Report
 
-(**[main()] is our main channel for reporting errors. *)
-val main: unit -> channel
+(** {2 Settings} *)
+
+(**[strict] determines whether warnings should be changed into errors. *)
+val strict: bool ref
 
 (**[logG] is the maximum enabled level of verbosity
    for messages that concern the grammar. *)
@@ -25,14 +31,21 @@ val logA : int ref
    for messages that concern the generated code. *)
 val logC : int ref
 
-(**[getG i] determines which report channel should be used
+(** {2 Channels} *)
+
+(**[monitor action] passes an error report channel to the action [action()].
+   Once this action is complete, if any error has been signaled, the process
+   is aborted with exit status 1. *)
+val monitor: (channel -> 'a) -> 'a
+
+(**[getG i] determines which information channel should be used
    for a grammar-related message whose verbosity level is [i]. *)
 val getG : int -> channel
 
-(**[getA i] determines which report channel should be used
+(**[getA i] determines which information channel should be used
    for an automaton-related message whose verbosity level is [i]. *)
 val getA : int -> channel
 
-(**[getC i] determines which report channel should be used
+(**[getC i] determines which information channel should be used
    for a code-generation-related message whose verbosity level is [i]. *)
 val getC : int -> channel

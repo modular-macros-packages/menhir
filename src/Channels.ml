@@ -8,16 +8,22 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let main =
-  Report.create `Normal stderr
+let strict =
+  ref false
 
-let[@inline] main() =
-  main
+let mode () =
+  if !strict then `WarningIsSignal else `Normal
+
+let monitor action =
+  Report.monitor (mode()) action
+
+let info =
+  Report.create `Normal stderr
 
 let get max_enabled_level level =
   if level <= max_enabled_level then
     (* This verbosity level is enabled. *)
-    main()
+    info
   else
     (* This verbosity level is disabled. *)
     Report.null
