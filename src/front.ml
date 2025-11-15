@@ -165,11 +165,11 @@ let grammar : PlainSyntax.grammar =
    token is used only at the end of productions (2021/10/31). *)
 
 let grammar =
-  let module C = CheckErrorTokenUsage.Make(Error) in
   match Settings.strategy with
   | `Simplified ->
+      monitor @@ fun c ->
       Time.time "Checking where the error token is used" @@ fun () ->
-      C.filter_grammar grammar
+      CheckErrorTokenUsage.filter_grammar c grammar
   | `Legacy ->
       grammar
 
