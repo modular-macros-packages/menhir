@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Printf
+open Channels
 let map, concat = List.(map, concat)
 let if1 = MList.if1
 let provided = MList.provided
@@ -934,10 +935,9 @@ let blocks : structure_item list =
   ))
 
 let () =
-  Error.logC 1 (fun f ->
-    fprintf f "The StackLang code comprises %d mutually recursive groups.\n"
-      (List.length blocks)
-  )
+  Report.log (getC 1)
+    "The StackLang code comprises %d mutually recursive groups."
+    (List.length blocks)
 
 (* -------------------------------------------------------------------------- *)
 

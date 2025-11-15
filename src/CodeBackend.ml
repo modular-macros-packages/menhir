@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Printf
+open Channels
 open StackLangMeasure
 
 (* -------------------------------------------------------------------------- *)
@@ -171,11 +171,11 @@ module Run () = struct
   (* If requested, be verbose. *)
 
   let () =
-    Error.logC 1 begin fun f ->
+    if Report.live (getC 1) then
       let m = Lazy.force m in
-      fprintf f "The StackLang code contains %d instructions in %d blocks.\n"
+      Report.log (getC 1)
+        "The StackLang code contains %d instructions in %d blocks."
         m.total (StackLang.cardinal program)
-    end
 
   (* Compile the StackLang program down to IL. *)
 

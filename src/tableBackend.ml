@@ -12,6 +12,7 @@ let provided = MList.provided
 open ILConstruction
 open Grammar
 open IL
+open Channels
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -158,14 +159,11 @@ let define (name, expr) = {
 }
 
 let define_and_measure (x, e) =
-  Error.logC 1 (fun f ->
-    fprintf f
-      "The %s table occupies roughly %d bytes.\n"
-      x
-      (size e * (Sys.word_size / 8))
-  );
+  Report.log (getC 1)
+    "The %s table occupies roughly %d bytes."
+    x (size e * (Sys.word_size / 8))
+  ;
   define (x, e)
-
 
 (* ------------------------------------------------------------------------ *)
 
@@ -483,14 +481,13 @@ let marshal2 name m n (matrix : int array array) =
     else
       RowDisplacementEncode.compress insignificant hole matrix
   in
-  Error.logC 1 (fun f ->
-    fprintf f
-      "The %s table is %d entries; %d non-zero; %d compressed.\n"
-      name
-      (m * n)
-      (population matrix)
-      (Array.length displacement + Array.length data)
-  );
+  Report.log (getC 1)
+    "The %s table is %d entries; %d non-zero; %d compressed."
+    name
+    (m * n)
+    (population matrix)
+    (Array.length displacement + Array.length data)
+  ;
   ETuple [
     marshal1 displacement;
     marshal1 data;

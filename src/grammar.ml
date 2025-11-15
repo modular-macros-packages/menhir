@@ -18,26 +18,22 @@ include G
 
 (* Print information messages. *)
 
-open Printf
+open Channels
 
 let () =
-  Error.logG 1 @@ fun f ->
-  let n = Nonterminal.n
-  and start = Production.start in
-  fprintf f
-    "Grammar has %d nonterminal symbols, among which %d start symbols.\n"
-    (n - start) start
+  Report.log (getG 1)
+    "Grammar has %d nonterminal symbols, among which %d start symbols."
+    (Nonterminal.n - Production.start) Production.start
 
 let () =
-  Error.logG 1 @@ fun f ->
-  let n = Terminal.n in
-  fprintf f "Grammar has %d terminal symbols.\n" (n - 2)
+  Report.log (getG 1)
+    "Grammar has %d terminal symbols."
+    (Terminal.n - 2)
 
 let () =
-  Error.logG 1 @@ fun f ->
-  let n = Production.n
-  and start = Production.start in
-  fprintf f "Grammar has %d productions.\n" (n - start)
+  Report.log (getG 1)
+    "Grammar has %d productions."
+    (Production.n - Production.start)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -84,50 +80,52 @@ let () =
 (* If requested, dump the results of the analyses. *)
 
 let () =
-  Error.logG 2 @@ fun f ->
-
-  iterx (fun nt ->
-    fprintf f "nullable(%s) = %b\n"
-      (print false nt)
-      (nullable nt)
-  );
-  iterx (fun nt ->
-    fprintf f "first(%s) = %s\n"
-      (print false nt)
-      (TerminalSet.print (first nt))
-  );
-  iterx (fun nt ->
-    fprintf f "minimal(%s) = %s\n"
-      (print false nt)
-      (CompletedNatWitness.print Terminal.print (minimal' nt))
-  );
-  iterx (fun nt ->
-    let p = maximal nt in
-    fprintf f "maximal(%s) = %s\n"
-      (print false nt)
-      (if p = max_int then "infinity" else string_of_int p)
-  );
-  iterx (fun nt ->
-    Printf.fprintf f "follow(%s) = %s\n"
-      (print false nt)
-      (TerminalSet.print (follow nt))
-  );
-  ()
+  let c = getG 2 in
+  if Report.live c then begin
+    iterx (fun nt ->
+      Report.log c "nullable(%s) = %b"
+        (print false nt)
+        (nullable nt)
+    );
+    iterx (fun nt ->
+      Report.log c "first(%s) = %s"
+        (print false nt)
+        (TerminalSet.print (first nt))
+    );
+    iterx (fun nt ->
+      Report.log c "minimal(%s) = %s"
+        (print false nt)
+        (CompletedNatWitness.print Terminal.print (minimal' nt))
+    );
+    iterx (fun nt ->
+      let p = maximal nt in
+      Report.log c "maximal(%s) = %s"
+        (print false nt)
+        (if p = max_int then "infinity" else string_of_int p)
+    );
+    iterx (fun nt ->
+      Report.log c "follow(%s) = %s"
+        (print false nt)
+        (TerminalSet.print (follow nt))
+    )
+  end
 
 (* At log level 3, display the FOLLOW sets for terminal symbols. *)
 
 let () =
-  Error.logG 3 @@ fun f ->
-  Terminal.iter @@ fun t ->
-  fprintf f "follow(%s) = %s\n"
-    (Terminal.print t)
-    (TerminalSet.print (tfollow t))
+  let c = getG 3 in
+  if Report.live c then
+    Terminal.iter @@ fun t ->
+    Report.log c "follow(%s) = %s"
+      (Terminal.print t)
+      (TerminalSet.print (tfollow t))
 
 (* At log level 3, display the symbolic FOLLOW sets. *)
 
 let () =
-  Error.logG 3 @@ fun f ->
-  iterx @@ fun nt ->
-  fprintf f "sfollow(%s) = %s\n"
-    (Nonterminal.print false nt)
-    (SymbolSet.print false (sfollow nt))
+  let c = getG 3 in
+  if Report.live c then
+    iterx @@ fun nt ->
+    Report.log c "sfollow(%s) = %s"
+      (Nonterminal.print false nt)
+      (SymbolSet.print false (sfollow nt))

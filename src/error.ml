@@ -14,16 +14,6 @@ open Printf
 
 (* Logging and log levels. *)
 
-let selective_log kind verbosity msg =
-  if kind >= verbosity then
-    Printf.fprintf stderr "%t%!" msg
-
-let logG level =
-  selective_log !Channels.logG level
-
-let logC level =
-  selective_log !Channels.logC level
-
 let slog kind level format =
   let format = format ^^ "\n%!" in
   if kind >= level then

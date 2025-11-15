@@ -8,6 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Channels
+
 (* This artificial dependency ensures that Freeze runs before we execute
    the costly analyses that follow. *)
 
@@ -20,13 +22,6 @@ end
 include StackShape.Make(Lr1)(Settings)(ErrorC1)
 
 let () =
-  Error.logC 3 @@ fun f ->
-  Short.print_stack_states f
-
-let () =
-  Error.logC 3 @@ fun f ->
-  print_represented f
-
-let () =
-  Error.logC 3 @@ fun f ->
-  Long.print_stack_states f
+  Short.print_stack_states (getC 3);
+  print_represented (getC 3);
+  Long.print_stack_states (getC 3)

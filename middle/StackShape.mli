@@ -24,6 +24,7 @@
    This information computed is used in the code back-end and in the Rocq
    back-end. It is not used in the table back-end. *)
 
+open Report
 open MiddleAPI
 
 module Make
@@ -43,9 +44,9 @@ end)
      and type node := Lr1.node
      and type nodes := Lr1.NodeSet.t
 
-  (**[print_represented c] prints which states are represented on the
-     output channel [c]. *)
-  val print_represented: out_channel -> unit
+  (**[print_represented c] prints which states are represented
+     via the channel [c]. *)
+  val print_represented: channel -> unit
 
   (**In the "short invariant", the length of the known shape of the stack
      at a node [node] is the maximum position of the bullet in the items
@@ -58,8 +59,8 @@ end)
        and type shape := shape
 
     (**[print_stack_states c] prints the results of the stack states
-       analysis on the output channel [c]. *)
-    val print_stack_states: out_channel -> unit
+       analysis via the channel [c]. *)
+    val print_stack_states: channel -> unit
 
   end
 
@@ -75,7 +76,7 @@ end)
 
     (**[print_stack_states c] prints the results of the stack states
        analysis on the output channel [c]. *)
-    val print_stack_states: out_channel -> unit
+    val print_stack_states: channel -> unit
 
   end
 

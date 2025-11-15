@@ -47,32 +47,33 @@ end
 
 module Print (S : SHAPE with type node := Lr1.node) = struct
 
-  open Printf
   open S
   open G
 
-  let print_node_shape f =
+  let print_node_shape c =
     Lr1.iter @@ fun node ->
-    fprintf f "%s_node_shape(%s) = %s\n"
+    Report.log c "%s_node_shape(%s) = %s"
       (match variant with `Short -> "short" | `Long -> "long")
       (Lr1.print node)
       (show_shape (node_shape node))
 
-  let print_production_shape f =
+  let print_production_shape c =
     Production.iterx @@ fun prod ->
-    fprintf f "%s_production_shape(%s) = %s\n"
+    Report.log c "%s_production_shape(%s) = %s"
       (match variant with `Short -> "short" | `Long -> "long")
       (Production.print prod)
       (show_shape (production_shape prod))
 
-  let print_goto_shape _f =
+  let print_goto_shape _c =
     (* At the moment, this information is not printed. *)
     ()
 
-  let print f =
-    print_node_shape f;
-    print_production_shape f;
-    print_goto_shape f
+  let print c =
+    if Report.live c then begin
+      print_node_shape c;
+      print_production_shape c;
+      print_goto_shape c
+    end
 
 end
 
@@ -270,9 +271,10 @@ let representeds (states : Lr1.NodeSet.t Lazy.t) =
 (* Printing. *)
 
 let print_represented c =
-  Lr1.iter @@ fun node ->
-  Printf.fprintf c "represented(%s) = %b\n"
-    (Lr1.print node) (represented node)
+  if Report.live c then
+    Lr1.iter @@ fun node ->
+    Report.log c "represented(%s) = %b"
+      (Lr1.print node) (represented node)
 
 (* -------------------------------------------------------------------------- *)
 

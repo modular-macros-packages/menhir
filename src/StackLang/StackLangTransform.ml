@@ -11,6 +11,7 @@
 let map, length = List.(map, length)
 let take, drop = MList.(take, drop)
 open Printf
+open Channels
 open StackLang
 let state = EmitStackLang.state
 let print = Tag.print
@@ -452,11 +453,10 @@ let program =
   { program with cfg = !cfg }
 
 let () =
-  Error.logC 1 (fun f ->
-    fprintf f "%d specialized copies of %d functions have been created.\n"
-      (LTSet.cardinal !inserted)
-      (Label.Set.cardinal !labels)
-  )
+  Report.log (getC 1)
+    "%d specialized copies of %d functions have been created.\n"
+    (LTSet.cardinal !inserted)
+    (Label.Set.cardinal !labels)
 
 end (* SpecializeState *)
 
