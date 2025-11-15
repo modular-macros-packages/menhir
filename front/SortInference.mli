@@ -8,27 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Report
 open Syntax
 open Sort
 
-module Make (E : sig
-
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end) (V : sig
-
-  (**If [verbose] is [true] then the sort of every symbol is displayed
-     through [Error.log]. *)
-  val verbose : bool
-
-end) : sig
-
-  (**[infer g] performs sort inference for the grammar [g]. If the grammar is
-     well-sorted, it returns a sort assignment. Otherwise, it fails. *)
-  val infer: grammar -> sorts
-
-end
+(**[infer main info g] performs sort inference for the grammar [g]. If the
+   grammar is well-sorted, it returns a sort assignment. Otherwise, it fails.
+   Errors are reported by the channel [main]. The sort of every symbol is
+   printed on the channel [info]. If verbosity is not desired, [null] channels
+   can be used. *)
+val infer: channel -> channel -> grammar -> sorts

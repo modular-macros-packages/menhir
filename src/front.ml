@@ -10,6 +10,8 @@
 
 (* The front-end. This module performs a series of toplevel side effects. *)
 
+open Channels
+
 (* ------------------------------------------------------------------------- *)
 
 (* Reading a grammar from a file. *)
@@ -120,13 +122,11 @@ let grammar : Syntax.grammar =
 
 (* Check that the grammar is well-sorted; infer the sort of every symbol. *)
 
+(* At verbosity level 3, print the sort of every symbol. *)
+
 let sorts =
   Time.time "Inferring sorts" @@ fun () ->
-  let module V = struct
-    let verbose = !Channels.logG >= 3
-  end in
-  let module S = SortInference.Make(Error)(V) in
-  S.infer grammar
+  SortInference.infer main (getG 3) grammar
 
 (* ------------------------------------------------------------------------- *)
 

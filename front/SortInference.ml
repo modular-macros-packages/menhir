@@ -40,18 +40,13 @@ let extend env (xvs : (symbol * variable) list) =
 (* -------------------------------------------------------------------------- *)
 
 module Make (E : sig
+  open Report
 
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+  (**A channel for reporting errors. *)
+  val main: channel
 
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end) (V : sig
-
-  (**If [verbose] is [true] then the sort of every symbol is displayed
-     through [Error.log]. *)
-  val verbose : bool
+  (**A channel for information messages. *)
+  val info: channel
 
 end) = struct
 open E
@@ -70,7 +65,7 @@ open E
 let check_arity sym arity1 arity2 =
   let plural = max arity1 arity2 > 1 in
   if arity1 <> arity2 then
-    error [position sym]
+    Report.error main [position sym]
       "does the symbol \"%s\" expect %d or %d argument%s?"
       (value sym)
       (min arity1 arity2)
@@ -97,14 +92,14 @@ let unify sym sort1 sort2 =
   with
   | Unify (v1, v2) ->
       let print v = print (decode v) in
-      error [position sym]
+      Report.error main [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s is not compatible with the sort %s."
         (value sym) (print sort1) (print sort2) (print v1) (print v2)
   | Occurs (v1, v2) ->
       let print v = print (decode v) in
-      error [position sym]
+      Report.error main [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s cannot be unified with the sort %s."
@@ -275,11 +270,22 @@ let infer (g : grammar) : sorts =
   (* If requested, display the inferred sort of every symbol. *)
 
   let () =
-    if V.verbose then
+    if Report.live info then
       env |> Env.iter @@ fun x gsort ->
-      log "%s :: %s" x (print (unground gsort))
+      Report.log info "%s :: %s" x (print (unground gsort))
   in
 
   env
 
 end (* Make *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Re-package [Make] as a function. *)
+
+let infer main info g =
+  let module I = Make(struct
+    let main = main
+    let info = info
+  end) in
+  I.infer g
