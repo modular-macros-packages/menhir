@@ -19,10 +19,6 @@ module ErrorA1 = struct
   let log format = Error.slogA 1 format
 end
 
-module ErrorA2 = struct
-  let log format = Error.slogA 2 format
-end
-
 module ErrorC1 = struct
   let log format = Error.slogC 1 format
 end
@@ -100,7 +96,7 @@ module A2 =
   Renumber.Run(A1)
 
 let () =
-  A2.diagnostics (getA 1) (* logs *)
+  A2.diagnostics (getA 1)
 
 (* Warn about unused precedence declarations. *)
 
@@ -118,8 +114,8 @@ let () =
 let () =
   if Settings.explain then
     Time.time "Explaining conflicts" @@ fun () ->
-    let module C = ConflictExplanation.Run(A2)(Settings)(ErrorA2) in
-    C.write (Settings.base ^ ".conflicts")
+    let module C = ConflictExplanation.Run(A2)(Settings) in
+    C.write (getA 2) (Settings.base ^ ".conflicts")
 
 (* -------------------------------------------------------------------------- *)
 

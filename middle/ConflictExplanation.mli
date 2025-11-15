@@ -15,21 +15,17 @@
    disk. If not all conflicts can be explained (which can happen in some
    rare situations) then a message is logged via [log]. *)
 
+open Report
 open MiddleAPI
 
 module Run
 (A : LR1_AUTOMATON)
 (X : CONSTRUCTION_MODE_SETTINGS)
-(E : sig
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
 : sig
 
-  (**[write filename] writes conflict explanations to the file named
-     [filename]. *)
-  val write: string -> unit
+  (**[write c filename] writes conflict explanations to the file named
+     [filename]. If some conflicts cannot be explained then an information
+     message is emitted on the channel [c]. *)
+  val write: channel -> string -> unit
 
 end

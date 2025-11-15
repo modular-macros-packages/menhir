@@ -14,17 +14,10 @@ open MiddleAPI
 module Run
 (A : LR1_AUTOMATON)
 (X : CONSTRUCTION_MODE_SETTINGS)
-(E : sig
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
 = struct
 module Lr0 = A.Lr0
 module G = Lr0.G
 open G
-open E
 module Derivation = Derivation.Make(G)
 include Fix.Numbering.Operations(A)
 
@@ -383,9 +376,9 @@ let explain_reduce_item z start input stop =
 let unexplainable =
   ref 0
 
-let log_unexplainable () =
+let log_unexplainable c =
   if !unexplainable > 0 then
-    log
+    Report.log c
       "%d conflict%s could not be explained."
       !unexplainable
       (if !unexplainable > 1 then "s" else "")
@@ -603,9 +596,9 @@ let write filename =
   foreach_conflict_node @@ fun node ts ->
   explain out node ts
 
-let write filename =
+let write c filename =
   unexplainable := 0;
   write filename;
-  log_unexplainable()
+  log_unexplainable c
 
 end (* Run *)
