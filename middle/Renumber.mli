@@ -17,22 +17,15 @@
    the case that in reality some productions can never be reduced and as a
    consequence some goto edges can never be taken. This is not detected. *)
 
+open Report
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-: sig
+module Run (A : LR1_AUTOMATON) : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
 
-  (**[diagnostics()] emits an information message about the unreachable nodes
-     that have disappeared. *)
-  val diagnostics: unit -> unit
+  (**[diagnostics c] emits an information message about the unreachable nodes
+     that have disappeared. The message is emitted via the channel [c]. *)
+  val diagnostics: channel -> unit
 
 end

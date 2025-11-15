@@ -10,17 +10,8 @@
 
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-= struct
+module Run (A : LR1_AUTOMATON) = struct
 open A.Lr0.G
-open E
 
 let start_time =
   Time.start()
@@ -60,9 +51,11 @@ include GraphNumberingRec.ForNumberedType(A)(G)
 
 (* Diagnostics. *)
 
-let diagnostics () =
+let diagnostics c =
   if n < A.n then
-    log "Only %d states remain after resolving shift/reduce conflicts." n
+    Report.log c
+      "Only %d states remain after resolving shift/reduce conflicts."
+      n
 
 (* -------------------------------------------------------------------------- *)
 

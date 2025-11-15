@@ -8,9 +8,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Channels
 open Grammar
 
-let slogA, slogG = Error.(slogA, slogG)
+let main =
+  create()
 
 module ErrorA1 = struct
   let warning    = Error.warning
@@ -32,13 +34,14 @@ end
 (* This feature is not very useful; it is here mainly for fun. *)
 
 let () =
-  if !Channels.logG >= 1 then
+  if Report.live (getG 1) then
     let module SLR = SLR.Make(Lr0) in
     let count = SLR.count_violations() in
     if count = 0 then
-      slogG 1 "The grammar is SLR(1)."
+      Report.log (getG 1) "The grammar is SLR(1)."
     else
-      slogG 1 "The grammar is not SLR(1) -- %d states have a conflict."
+      Report.log (getG 1)
+        "The grammar is not SLR(1) -- %d states have a conflict."
         count
 
 (* -------------------------------------------------------------------------- *)
@@ -57,14 +60,16 @@ let print_mode mode =
       "lalr"
 
 let () =
-  slogA 1 "The construction mode is %s."
+  Report.log (getA 1)
+    "The construction mode is %s."
     (print_mode Settings.construction_mode)
 
 module A0 =
   LR1Construction.Make(Lr0)(Settings)()
 
 let () =
-  slogA 1 "Built an LR(1) automaton with %d states."
+  Report.log (getA 1)
+    "Built an LR(1) automaton with %d states."
     A0.n
 
 (* -------------------------------------------------------------------------- *)
@@ -79,20 +84,23 @@ module Precedence =
   Precedence.Make(Error)(Front)(Grammar)
 
 module A1 =
-  SilentConflictResolution.Run(A0)(Precedence)(ErrorA1)
+  SilentConflictResolution.Run(A0)(Precedence)
 
 let () =
-  A1.log() (* logs *)
+  Report.exit_if main
+
+let () =
+  A1.log (getA 1)
 
 (* -------------------------------------------------------------------------- *)
 
 (* 2. Eliminate the unreachable states and renumber the reachable states. *)
 
 module A2 =
-  Renumber.Run(A1)(ErrorA1)
+  Renumber.Run(A1)
 
 let () =
-  A2.diagnostics() (* logs *)
+  A2.diagnostics (getA 1) (* logs *)
 
 (* Warn about unused precedence declarations. *)
 
@@ -101,7 +109,7 @@ let () =
     Precedence.diagnostics() (* warnings *)
 
 let () =
-  A1.warnings() (* warnings *)
+  A1.warnings main
 
 (* -------------------------------------------------------------------------- *)
 

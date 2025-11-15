@@ -14,6 +14,7 @@
    states are not renumbered; all states are retained. Some reductions can be
    removed. Some default reductions can become forbidden. *)
 
+open Report
 open MiddleAPI
 
 module Run
@@ -33,25 +34,17 @@ module Run
   val shift_reduce: Terminal.t -> Production.t -> choice
 
 end)
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
 : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
                          and type node = A.node
 
-  (**[log()] emits an information message about the conflicts that have been
-     silently solved. *)
-  val log: unit -> unit
+  (**[log c] emits an information message about the conflicts that have been
+     silently solved. The message is emitted on the channel [c]. *)
+  val log: channel -> unit
 
-  (**[warnings()] emits warnings about the severe conflicts that remain. *)
-  val warnings: unit -> unit
+  (**[warnings c] emits warnings about the severe conflicts that remain. The
+     warnings are emitted on the channel [c]. *)
+  val warnings: channel -> unit
 
 end

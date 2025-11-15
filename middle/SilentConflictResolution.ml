@@ -27,19 +27,9 @@ module Run
   val shift_reduce: Terminal.t -> Production.t -> choice
 
 end)
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
 = struct
 include A
 open Lr0.G
-open E
 
 let start_time =
   Time.start()
@@ -278,26 +268,26 @@ let () =
 
 (* Diagnostics. *)
 
-let log () =
+let log c =
   match !silently_solved with
   | 0 ->
       ()
   | 1 ->
-      log "One shift/reduce conflict was silently solved."
+      Report.log c "One shift/reduce conflict was silently solved."
   | _ ->
-      log "%d shift/reduce conflicts were silently solved."
+      Report.log c "%d shift/reduce conflicts were silently solved."
         !silently_solved
 
-let warnings () =
+let warnings c =
   if !severe_shift_reduce = 1 then
-    warning [] "one state has shift/reduce conflicts."
+    Report.warning c [] "one state has shift/reduce conflicts."
   else if !severe_shift_reduce > 1 then
-    warning [] "%d states have shift/reduce conflicts."
+    Report.warning c [] "%d states have shift/reduce conflicts."
       !severe_shift_reduce;
   if !severe_reduce_reduce = 1 then
-    warning [] "one state has reduce/reduce conflicts."
+    Report.warning c [] "one state has reduce/reduce conflicts."
   else if !severe_reduce_reduce > 1 then
-    warning [] "%d states have reduce/reduce conflicts."
+    Report.warning c [] "%d states have reduce/reduce conflicts."
       !severe_reduce_reduce
 
 (* -------------------------------------------------------------------------- *)
