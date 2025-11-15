@@ -8,28 +8,23 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(***)
+(**This module introduces extra reductions in an LR(1) automaton in order to
+   obey user-provided %on_error_reduce directives. *)
 
+open Report
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-: sig
+module Run (A : LR1_AUTOMATON) : sig
 
   include LR1_AUTOMATON with module Lr0 = A.Lr0
                          and type node = A.node
 
-  (**[diagnostics()] emits a warning if at least one severe conflict
-     has been resolved. *)
-  val diagnostics: unit -> unit
+  (**[warn c] emits information messages on channel [c] about the extra
+     reductions that have been introduced. *)
+  val info: channel -> unit
+
+  (**[warn c] emits warnings on channel [c] about useless %on_error_reduce
+     declarations. *)
+  val warn: channel -> unit
 
 end

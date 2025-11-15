@@ -11,17 +11,10 @@
 (**This module computes which states are able to reduce each production
    and warns about productions that can never be reduced. *)
 
+open Report
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-: sig
+module Run (A : LR1_AUTOMATON) : sig
   open A.Lr0.G
   open A
 
@@ -29,8 +22,8 @@ end)
      the production [prod]. *)
   val reduction_sites: Production.t -> node list
 
-  (**[diagnostics()] emits warnings about productions
+  (**[diagnostics c] emits warnings on the channel [c] about productions
      that can never be reduced. *)
-  val diagnostics: unit -> unit
+  val diagnostics: channel -> unit
 
 end

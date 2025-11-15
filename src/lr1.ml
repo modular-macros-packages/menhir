@@ -14,11 +14,6 @@ open Grammar
 let main =
   create()
 
-module ErrorA1 = struct
-  let warning    = Error.warning
-  let log format = Error.slogA 1 format
-end
-
 module ErrorC1 = struct
   let log format = Error.slogC 1 format
 end
@@ -141,10 +136,10 @@ let () =
    and warn about productions that are definitely never reduced. *)
 
 module S =
-  ReductionSites.Run(A3)(Error)
+  ReductionSites.Run(A3)
 
 let () =
-  S.diagnostics() (* warnings *)
+  S.diagnostics main (* warnings *)
 
 (* The function [S.reduction_sites] returns a list of nodes. We wrap it,
    later on, so as to produce a set of nodes. Note that it is important
@@ -156,10 +151,13 @@ let () =
       so as to obey [%on_error_reduce] declarations. *)
 
 module A4 =
-  ExtraReductions.Run(A3)(ErrorA1)
+  ExtraReductions.Run(A3)
 
 let () =
-  A4.diagnostics() (* logs and warnings *)
+  A4.warn main (* warnings *)
+
+let () =
+  A4.info (getA 1) (* info *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -169,7 +167,7 @@ module A5 =
   DefaultReductionIntroduction.Run(A4)(ErrorC1)
 
 let () =
-  A5.diagnostics() (* logs *)
+  A5.diagnostics() (* info *)
 
 (* -------------------------------------------------------------------------- *)
 

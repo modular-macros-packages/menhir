@@ -10,18 +10,9 @@
 
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-= struct
+module Run (A : LR1_AUTOMATON) = struct
 include A
 open Lr0.G
-open E
 
 let start_time =
   Time.start()
@@ -75,7 +66,7 @@ let () =
    in fact, through the use of the inspection API, it might be possible to
    bring the automaton into a state where one of them can be reduced. *)
 
-let diagnostics () =
+let diagnostics c =
   let count = ref 0 in
   let () =
     Production.iter @@ fun prod ->
@@ -83,17 +74,17 @@ let diagnostics () =
       let () = incr count in
       match Production.test_start prod with
       | Some nt ->
-          warning (Nonterminal.positions nt)
+          Report.warning c (Nonterminal.positions nt)
             "symbol %s is never accepted."
             (Nonterminal.print false nt)
       | None ->
-          warning (Production.positions prod)
+          Report.warning c (Production.positions prod)
             "production %s is never reduced."
             (Production.print prod)
   in
   if !count > 0 then
     let plural_mark, be = if !count > 1 then ("s", "are") else ("", "is") in
-    warning []
+    Report.warning c []
       "in total, %d production%s %s never reduced." !count plural_mark be
 
 (* -------------------------------------------------------------------------- *)

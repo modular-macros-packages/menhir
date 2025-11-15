@@ -32,21 +32,9 @@
 
 open MiddleAPI
 
-module Run
-(A : LR1_AUTOMATON)
-(E : sig
-
-  (**[warning ranges format ...] reports a warning. It does not abort. *)
-  val warning: ranges -> ('a, out_channel, unit, unit) format4 -> 'a
-
-  (**[log format ...] emits an information message. *)
-  val log: ('a, out_channel, unit, unit) format4 -> 'a
-
-end)
-= struct
+module Run (A : LR1_AUTOMATON) = struct
 include A
 open Lr0.G
-open E
 
 let start_time =
   Time.start()
@@ -169,23 +157,19 @@ let () =
 
 (* Diagnostics. *)
 
-let info () =
+let info c =
   if !extra > 0 then (
-    log "Extra reductions on error were added in %d states." !extra;
-    log "Priority played a role in %d of these states." !prioritized
+    Report.log c "Extra reductions on error were added in %d states." !extra;
+    Report.log c "Priority played a role in %d of these states." !prioritized
   )
 
-let warn () =
+let warn c =
   (* Warn about useless %on_error_reduce declarations. *)
   OnErrorReduce.iter @@ fun nt ->
   if not (NonterminalSet.mem nt !extra_nts) then
-    warning []
+    Report.warning c []
       "the declaration %%on_error_reduce %s is never useful."
       (Nonterminal.print false nt)
-
-let diagnostics () =
-  info();
-  warn()
 
 (* -------------------------------------------------------------------------- *)
 
