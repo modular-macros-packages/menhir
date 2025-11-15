@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Channels
 open Grammar
 
 (* -------------------------------------------------------------------------- *)
@@ -27,7 +28,7 @@ let () =
   Settings.random_sentence |> Option.iter begin fun (nt, goal, style) ->
     match Nonterminal.lookup nt with
     | exception Not_found ->
-        Error.error [] "the nonterminal symbol %s does not exist." nt
+        Report.Just.error [] "the nonterminal symbol %s does not exist." nt
     | nt ->
         let module R = RandomSentenceGenerator.Make(Grammar) in
         let sentence = R.nonterminal nt goal in
@@ -40,6 +41,8 @@ let () =
 (* Perform loop detection before attempting to build the LR(0) automaton. *)
 
 let () =
+  monitor @@ fun c ->
   Time.time "Detecting loops" @@ fun () ->
-  let module L = LoopDetection.Run(Error)(Grammar) in
-  ()
+  let module L = LoopDetection.Make(Grammar) in
+  L.detect_cycle c;
+  L.detect_hidden_left_recursion c

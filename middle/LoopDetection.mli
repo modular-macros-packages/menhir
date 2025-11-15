@@ -12,13 +12,18 @@
    which cause the grammar to be outside of the class LR(1). These
    anomalies include cycles and hidden left recursion. *)
 
+open Report
 open MiddleAPI
 
-module Run (E : sig
+module Make (G : GRAMMAR) : sig
 
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
+  (**[detect_cycle main] checks that the grammar does not have a cycle.
+     If this check fails, an error is reported via the channel [main]. *)
+  val detect_cycle: channel -> unit
 
-end)
-(G : GRAMMAR)
-: sig end
+  (**[detect_hidden_left_recursion] checks that the grammar does not have
+     hidden left recursion. If this check fails, an error is reported via
+     the channel [main]. *)
+  val detect_hidden_left_recursion: channel -> unit
+
+end

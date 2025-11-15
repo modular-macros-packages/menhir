@@ -10,15 +10,9 @@
 
 open MiddleAPI
 
-module Run (E : sig
-
-  (**[error ranges format ...] reports an error and aborts. *)
-  val error : ranges -> ('a, out_channel, unit, 'b) format4 -> 'a
-
-end)
+module Make
 (G : GRAMMAR)
 = struct
-open E
 open G
 
 (* -------------------------------------------------------------------------- *)
@@ -101,9 +95,9 @@ let show_cycle nts nt =
     done
   end
 
-let fail nts nt =
+let fail main nts nt =
   let positions = List.flatten (List.map Nonterminal.positions nts) in
-  error positions
+  Report.error main positions
     "the grammar is cyclic:\n\
      the nonterminal symbol %s expands to itself.\n%s\
      A cyclic grammar is ambiguous."
@@ -119,7 +113,7 @@ let fail nts nt =
 (* The claim that "a cyclic grammar is ambiguous" implicitly assumes that
    every nonterminal symbol is reachable and inhabited. *)
 
-let () =
+let detect_cycle main =
   let module M = Fix.Memoize.ForNumberedType(Nonterminal) in
   let successors_R =
     successors ~require_nullable_suffix:true ~require_nonempty_prefix:false
@@ -129,7 +123,7 @@ let () =
   try
     Nonterminal.iter check
   with M.Cycle (nts, nt) ->
-    fail nts nt
+    fail main nts nt
 
 (* -------------------------------------------------------------------------- *)
 
@@ -164,10 +158,10 @@ let () =
 
 (* An error message. *)
 
-let fail prod =
+let fail main prod =
   let nt, rhs = Production.def prod in
   let positions = Production.positions prod in
-  error positions
+  Report.error main positions
     "the grammar exhibits hidden left recursion: in the production\n\
      %s,\n\
      the nonterminal symbol %s is nullable,\n\
@@ -185,7 +179,7 @@ let fail prod =
    in the relation H. If the source and destination vertices of this edge lie
    in the same component, then we have detected hidden left recursion. *)
 
-let () =
+let detect_hidden_left_recursion main =
   let module T = Fix.SCC.Run (struct
     type node = Nonterminal.t
     let n = Nonterminal.n
@@ -205,8 +199,8 @@ let () =
   (* If the source vertex [nt] and the destination vertex [nt'] lie in
      the same component, then we have detected hidden left recursion. *)
   if T.representative nt = T.representative nt' then
-    fail prod
+    fail main prod
 
 (* -------------------------------------------------------------------------- *)
 
-end (* Run *)
+end (* Make *)
