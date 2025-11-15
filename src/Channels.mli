@@ -10,6 +10,9 @@
 
 open Report
 
+(**[main] is our main channel for reporting errors. *)
+val main: channel
+
 (**[logG] is the maximum enabled level of verbosity
    for messages that concern the grammar. *)
 val logG : int ref

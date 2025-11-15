@@ -8,13 +8,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let output =
+let main =
   Report.create `Normal stderr
 
 let get max_enabled_level level =
   if level <= max_enabled_level then
     (* This verbosity level is enabled. *)
-    output
+    main
   else
     (* This verbosity level is disabled. *)
     Report.null
