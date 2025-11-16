@@ -10,6 +10,11 @@
 
 (* Driver for the back-end. *)
 
+(* Force the side effects in [Freeze] to take place first. *)
+
+let () =
+  Freeze.force()
+
 module Interface =
   Interface.Make(Settings)
 
@@ -61,3 +66,6 @@ let () =
   | `NoBackend ->
       (* If no back-end was selected then we must have exited earlier. *)
       assert false
+
+let finished =
+  true
