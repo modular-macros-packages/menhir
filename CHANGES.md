@@ -1,6 +1,8 @@
 # Changes
 
-## 2025/10/XX
+## 2025/11/XX
+
+* Major internal reorganization of the code.
 
 * In `--strict` mode, all warnings are now errors.
 
