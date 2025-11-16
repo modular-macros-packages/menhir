@@ -51,6 +51,7 @@ let parse_filename ?(from_sexp = false) filename =
 
 let executable_format = false
 
+[@@@ocaml.warning "-48"]
 let parse_string = parse Lexing.from_string
 
 let print_ast ?(to_sexp = false) ast =
