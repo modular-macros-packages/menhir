@@ -8,8 +8,15 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The module [Driver] serves to offer a unified API to the parser,
-   which could be produced by either ocamlyacc or Menhir. *)
+(**The module [Driver] offers a unified API to the parser,
+   which is constructed by ocamlyacc in stage 1
+   and by Menhir in stage 2. *)
 
-val grammar :
-  (Lexing.lexbuf  -> Parser.token) -> Lexing.lexbuf -> Syntax.partial_grammar
+open Lexing
+open Syntax
+
+(**[parse priority lexbuf] reads an [.mly] file from the lexing buffer
+   [lexbuf], and returns a partial grammar. The integer parameter [priority]
+   is the priority that is assigned to the semantic actions. Priority is used
+   to type-check the semantic actions that originate in [standard.mly] first. *)
+val parse: int -> lexbuf -> partial_grammar

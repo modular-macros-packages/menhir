@@ -8,9 +8,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The module [Driver] serves to offer a unified API to the parser,
-   which could be produced by either ocamlyacc or Menhir. *)
-
 (* This is the Menhir-specific driver. We wish to handle syntax errors
    in a more ambitious manner, so as to help our end users understand
    their mistakes. *)
@@ -41,7 +38,9 @@ let fail buffer lexbuf (s : int) =
 
 (* The entry point. *)
 
-let grammar lexer lexbuf =
+let parse priority lexbuf =
+  Lexer.priority := priority;
+  let lexer = Lexer.main in
 
   (* Keep track of the last two tokens in a buffer. *)
   let buffer, lexer = MenhirLib.ErrorReports.wrap lexer in

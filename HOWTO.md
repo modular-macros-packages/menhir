@@ -26,14 +26,14 @@ The code is organized in several libraries and directories:
   is the runtime support library for the unparsing API,
   which is described in [this paper](https://cambium.inria.fr/~fpottier/publis/pottier-unparsing-2024.pdf).
 
-* The internal library `Base`, which resides in [`base`](base/),
+* The internal library [`base`](base/)
   provides general-purpose modules,
   which are essentially independent of Menhir.
   The modules [`BaseTypes`](base/BaseTypes.ml) and
   [`BaseAPI`](base/BaseAPI.ml)
   define several types and signatures of interest.
 
-* The internal library `Front`, which resides in [`front`](front/),
+* The internal library [`front`](front/)
   contains many modules that form Menhir's front-end.
   The modules [`FrontTypes`](front/FrontTypes.ml) and
   [`FrontAPI`](front/FrontAPI.ml)
@@ -44,7 +44,7 @@ The code is organized in several libraries and directories:
   or
   [`PlainSyntax.grammar`](front/PlainSyntax.ml).
 
-* The internal library `Middle`, which resides in [`middle`](middle/),
+* The internal library [`middle`](middle/)
   contains many modules that form Menhir's middle-end.
   The module [`MiddleAPI`](middle/MiddleAPI.ml)
   defines several signatures of interest.
@@ -52,15 +52,27 @@ The code is organized in several libraries and directories:
   An LR(0) automaton is described by the signature `LR0`.
   An LR(1) automaton is described by the signature `LR1`.
 
-* The back-ends and the modules that form the executable file `menhir`
-  reside in [`src`](src/). The three back-ends are in the three modules
+* The internal library [`driver`](driver/)
+  bundles Menhir's lexer and parser.
+  In Dune speak, it is a virtual library.
+  There are three implementations of this library
+  in `driver/stage1`, `driver/stage2`, and `driver/stage3`.
+  The stage 1 parser is constructed using `ocamlyacc`.
+  The stage 2 parser is constructed using Menhir (built in stage 1).
+  The stage 3 parser is constructed using Menhir (built in stage 2);
+  we check that the stage 2 and stage 3 parsers are identical.
+
+* The internal library [`body`](body/)
+  contains the back-ends
+  and the modules that drive Menhir.
+  The three back-ends are in the three modules
   [`CodeBackend`](src/CodeBackend.ml),
   [`TableBackend`](src/TableBackend.ml), and
   [`CoqBackend`](src/CoqBackend.ml).
   The code back-end relies on the intermediate language StackLang,
   whose implementation resides in [`src/StackLang`](src/StackLang/).
 
-* The modules that form the executable file `menhir` have side effects
+* The modules that drive Menhir have side effects
   and are executed in a specific order.
 
     | Module                | Task |
@@ -77,6 +89,11 @@ The code is organized in several libraries and directories:
     | Invariant             | performs several analyses of the LR(1) automaton |
     | Back                  | invokes the desired back-end; |
     |                       | produces the output and exits |
+
+* The executable programs are built in `executable/stage1` and `executable/stage2`.
+  There is no code there; the complete program is obtained by linking the libraries
+  together. The executable file that is installed under the name `menhir` is
+  `executable/stage2/main.exe`.
 
 ## How Menhir is Built
 

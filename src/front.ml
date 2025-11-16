@@ -33,16 +33,16 @@ let () =
 
 (* Reading a grammar from a file. *)
 
-let load_grammar_from_contents filename content =
+let load_grammar_from_contents priority filename content =
   InputFile.with_file_content filename content @@ fun lexbuf ->
-  { (Driver.grammar Lexer.main lexbuf)
-    with Syntax.pg_filename = filename }
+  let grammar = Driver.parse priority lexbuf in
+  { grammar with pg_filename = filename }
 
 let load_grammar_from_file filename : Syntax.partial_grammar =
-  Lexer.priority := 1;
   try
-    let contents = IO.read_whole_file filename in
-    load_grammar_from_contents filename contents
+    let priority = 1
+    and contents = IO.read_whole_file filename in
+    load_grammar_from_contents priority filename contents
   with Sys_error msg ->
     Report.Just.error [] "%s" msg
 
@@ -68,8 +68,9 @@ let grammars () : Syntax.partial_grammar list =
     (* Note that the [let] construct below is required in order to ensure
        that the standard library is read first. *)
     let standard_library =
-      Lexer.priority := 0;
+      let priority = 0 in
       load_grammar_from_contents
+        priority
         "<standard.mly>"
         Standard_mly.contents
     in

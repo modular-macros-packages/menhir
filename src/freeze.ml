@@ -87,3 +87,6 @@ let () =
 let () =
   if Settings.backend = `NoBackend then
     exit 0
+
+let force () =
+  ()

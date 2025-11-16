@@ -8,9 +8,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The main program. *)
+module B = Body.Back
 
-(* Everything is in [Back]. *)
-
-module B = Back (* artificial dependency *)
-
+let () =
+  if B.finished then
+    ()

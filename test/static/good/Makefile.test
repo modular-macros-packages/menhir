@@ -3,7 +3,7 @@
 # ------------------------------------------------------------------------------
 # Testing LRijkstra, that is, menhir --list-errors.
 
-MENHIR := ../../_build/default/src/stage2/main.exe --dump --explain
+MENHIR := ../../_build/default/executable/stage2/main.exe --dump --explain
 
 ifeq ($(shell hostname),teraram)
   TIMEOUT  := 7200

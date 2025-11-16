@@ -268,11 +268,11 @@ MENHIRLIB_FILES   := \
 # it easier to understand the line numbers that we sometimes receive as
 # part of bug reports.
 
-# The source files in lib/ and cst/ carry the "library" header & license.
+# The source files in lib/, sdk/ and cst/ carry the "library" header & license.
 # Those in coq-menhirlib/ carry the "Coq library" header & license.
 # Every other file carries the "regular" header & license.
 
-SRCDIRS         := base front middle src
+SRCDIRS         := base front middle driver src executable
 LIBDIRS         := lib sdk cst
 HEADACHE        := headache
 SRCHEAD         := $(CURRENT)/headers/regular-header

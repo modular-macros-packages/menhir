@@ -12,3 +12,5 @@
    been constructed and after conflict resolution has taken place. Thus, the
    LR(1) is now frozen and will no longer be modified. This module runs before
    the costly analyses in Invariant are performed. *)
+
+val force: unit -> unit
