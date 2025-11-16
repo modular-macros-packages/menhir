@@ -293,29 +293,17 @@
 
 ## Code Cleanup
 
-* Perhaps many modules in `front` and `middle` could take a report channel
-  as an argument instead of the functions `error`, `signal`, `warning`, etc.
-
 * Currently not timed:
   analyses of the grammar in `GrammarConstruction`,
   `StackStates.Run`,
   all of `Invariant`,
   `Origin`.
 
-* Grep for `artificial dependency` and remove these artificial dependencies.
-  Ideally, there should be no implicit (global) state ("the" grammar, "the"
-  automaton). The grammar, the automaton, the settings, etc., should be
-  explicit parameters everywhere, so that most of Menhir's modules can be
-  used as library modules. Only a few modules (those that really implement
-  the Menhir command line tool) should be allowed to have global state.
-
 * Remove support for the `legacy` strategy.
   Once the OCaml parser abandons the `error` token, remove support for the
   `error` token.
 
-* Split the code that deals with type inference and the code that deals with
-  `--depend` and `--raw-depend`. In the long run, drop support for `--depend`
-  and `--raw-depend`. Maybe also drop support for `--infer`.
+* In the long run, remove support for `--depend`, `--raw-depend`, and `--infer`.
 
 ## Standard library
 
