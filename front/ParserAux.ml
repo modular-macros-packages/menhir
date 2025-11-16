@@ -132,3 +132,6 @@ let validate_pointfree_action (fragment : string located) =
 
 let valid_ocaml_identifier (x : identifier located) : bool =
   Lex.valid_ocaml_identifier (Lexing.from_string (value x))
+
+let dollars =
+  ref `DollarsAllowed

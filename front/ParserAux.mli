@@ -86,3 +86,11 @@ val validate_pointfree_action: string located -> string located option
 (**[valid_ocaml_identifier x] determines whether the string [x] is a valid
    OCaml lowercase identifier. *)
 val valid_ocaml_identifier: identifier located -> bool
+
+(**The flag [dollars] determines whether the notation [$i] in semantic actions
+   is allowed or disallowed. It is mutable and can be set from the outside.
+   This is dirty but convenient. A more principled approach would be to delay
+   the well-formedness check for semantic actions (which is the place where
+   this setting is needed) so that it takes place after parsing instead of
+   during parsing. *)
+val dollars : [`DollarsDisallowed | `DollarsAllowed] ref

@@ -296,9 +296,6 @@ let cmly =
 let coq_lib_path =
   ref (Some "MenhirLib")
 
-let dollars =
-  ref `DollarsAllowed
-
 let require_aliases =
   ref false
 
@@ -398,7 +395,7 @@ let options = Arg.align [
   "--merge-errors", Arg.String add_merge_errors, "<filename> (used twice) Merge two .messages files";
   "--no-code-generation", Arg.Unit (set_backend `NoBackend), " Do not produce any code";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
-  "--no-dollars", Arg.Unit (fun () -> dollars := `DollarsDisallowed), " Disallow $i in semantic actions";
+  "--no-dollars", Arg.Unit (fun () -> ParserAux.dollars := `DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = `Pager then construction_mode := `InclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
@@ -779,9 +776,6 @@ let cmly =
 
 let coq_lib_path =
   !coq_lib_path
-
-let dollars =
-  !dollars
 
 let require_aliases =
   !require_aliases

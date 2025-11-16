@@ -343,7 +343,7 @@ production_group:
         (* Distribute the semantic action and attributes onto every production.
            Also, check that every [$i] is within bounds. *)
         let names = ParserAux.producer_names producers in
-        let pb_action = action Settings.dollars names in
+        let pb_action = action !ParserAux.dollars names in
         {
           pb_producers;
           pb_action;
