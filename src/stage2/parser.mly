@@ -8,12 +8,12 @@
 /*                                                                            */
 /******************************************************************************/
 
-/* This is the fancy version of the parser, to be processed by menhir.
-   It is kept in sync with [Parser], but exercises menhir's features. */
+/* This is the "fancy" (stage 2) version of the parser, to be processed by
+   menhir. It is kept in sync with the "crude" (stage 1) parser, but exercises
+   menhir's features. */
 
 /* As of 2014/12/02, the $previouserror keyword and the --error-recovery
-   mode no longer exist. Thus, we replace all calls to [Error.signal]
-   with calls to [Report.Just.error], and report just one error. */
+   mode no longer exist. */
 
 /* ------------------------------------------------------------------------- */
 /* Imports. */
