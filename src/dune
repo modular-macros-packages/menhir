@@ -18,20 +18,6 @@
 
 (copy_files# StackLang/*.{ml,mli})
 
-;; The Menhir standard library "standard.mly" is embedded in the source code of
-;; Menhir using the following rule. It generates a file "standard_mly.ml" with
-;; contents "let contents = {|<contents of standard.mly>|}".
-
-(rule
-  (with-stdout-to standard_mly.ml
-    (progn
-      (echo "let contents = {|")
-      (cat standard.mly)
-      (echo "|}")
-    )
-  )
-)
-
 ;; The sources of the runtime library ("menhirLib.ml" and "menhirLib.mli")
 ;; are embedded in the source code of Menhir using the following rule. It
 ;; generates a single file "menhirLibSource.ml" with contents "let impl =
