@@ -60,6 +60,16 @@ let typed_tokens grammar =
 let nonterminals grammar =
   StringMap.fold (fun nt _ rules -> nt :: rules) grammar.rules []
 
+let[@inline] foreach_nonterminal grammar yield =
+  StringMap.iter (fun nt _rule ->
+    yield nt
+  ) grammar.rules
+
+let[@inline] foreach_branch grammar yield =
+  StringMap.iter (fun _nt rule ->
+    List.iter yield rule.branches
+  ) grammar.rules
+
 let is_nonterminal grammar symbol =
   let result = StringMap.mem symbol grammar.rules in
   assert (result || StringMap.mem symbol grammar.tokens || symbol = "error");

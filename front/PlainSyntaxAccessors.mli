@@ -58,6 +58,15 @@ val typed_tokens : grammar -> (terminal * ocamltype option) list
    Beware: this list is not sorted in alphabetical order. *)
 val nonterminals : grammar -> nonterminal list
 
+(**[foreach_nonterminal grammar] enumerates the nonterminal symbols
+   in the grammar [grammar], that is, the elements of the list
+   [nonterminals grammar].  *)
+val foreach_nonterminal : grammar -> (nonterminal -> unit) -> unit
+
+(**[foreach_branch grammar] enumerates the branches of the grammar
+   [grammar], that is, the productions. *)
+val foreach_branch : grammar -> (branch -> unit) -> unit
+
 (**[is_nonterminal grammar symbol] tests whether the symbol [symbol] is a
    nonterminal symbol. This symbol must exist; that is, it must be a terminal
    symbol or a nonterminal symbol. *)
