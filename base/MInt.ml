@@ -31,6 +31,11 @@ let sum n (f : int -> int) : int =
   done;
   !sum
 
+let[@inline] with_counter f =
+  let c = ref 0 in
+  f c;
+  !c
+
 let[@tail_mod_cons] rec interval i j =
   if i < j then i :: interval (i+1) j else []
 

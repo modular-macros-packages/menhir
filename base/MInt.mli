@@ -20,7 +20,11 @@ val preincrement: int ref -> int
 val postincrement: int ref -> int
 
 (**[mkgensym()] returns a fresh generator of unique integers. *)
-val mkgensym : unit -> (unit -> int)
+val mkgensym: unit -> (unit -> int)
+
+(**[with_counter action] creates a fresh reference [c] whose
+   initial value is zero, invokes [action c], and returns [!c]. *)
+val with_counter: (int ref -> unit) -> int
 
 (**[sum n f] computes the sum [f 0 + f 1 + ... + f (n-1)]. *)
 val sum: int -> (int -> int) -> int
