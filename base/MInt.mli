@@ -25,6 +25,9 @@ val mkgensym : unit -> (unit -> int)
 (**[sum n f] computes the sum [f 0 + f 1 + ... + f (n-1)]. *)
 val sum: int -> (int -> int) -> int
 
+(**[interval i j] returns the semi-open interval \[[i, j)]. *)
+val interval: int -> int -> int list
+
 (**[iteri j] enumerates the semi-open interval \[[0, j)]. Thus
    [iteri j f]    is equivalent to [for x = 0 to j-1 do f x done]. *)
 val iteri:         int -> (int -> unit) -> unit
