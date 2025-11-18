@@ -710,6 +710,10 @@ module Production = struct
   let[@inline] mapx f =
     MInt.mapij start n f
 
+  let[@inline] productions nt =
+    let k, k' = ntprods.(nt) in
+    MInt.interval k k'
+
   let[@inline] iternt nt f =
     let k, k' = ntprods.(nt) in
     MInt.iterij k k' f
@@ -721,10 +725,6 @@ module Production = struct
   let[@inline] mapnt nt f =
     let k, k' = ntprods.(nt) in
     MInt.mapij k k' f
-
-  let foldnt_lazy nt f accu =
-    let k, k' = ntprods.(nt) in
-    MInt.foldij_lazy k k' f accu
 
 end (* Production *)
 
@@ -1064,141 +1064,8 @@ let grammar_uses_error_token () =
 (* -------------------------------------------------------------------------- *)
 
 (* Many analyses of the grammar are expressed as fixed point computations.
-   We exploit the generic fixed point algorithm in [Fix]. *)
-
-(* We perform memoization only at nonterminal symbols. We assume that the
-   analysis of a symbol is the analysis of its definition (as opposed to,
-   say, a computation that depends on the occurrences of this symbol in
-   the grammar). *)
-
-module GenericAnalysis (P : Fix.PROPERTY) (S : sig
-  open P
-
-  (* An analysis is specified by the following functions. *)
-
-  (**If [shortcut nt] is [Some p], then the definition of the nonterminal
-     symbol [nt] is ignored by the analysis, and this symbol is mapped by
-     the analysis to the property [p]. *)
-  val shortcut: Nonterminal.t -> property option
-
-  (**[terminal] maps a terminal symbol to a property. *)
-  val terminal: Terminal.t -> property
-
-  (**[disjunction] abstracts a binary alternative. That is, when we analyze
-     an alternative between several productions, we compute a property for
-     each of them independently, then we combine these properties using
-     [disjunction]. *)
-  val disjunction: property -> (unit -> property) -> property
-
-  (**[conjunction] abstracts a binary sequence. That is, when we analyze a
-     sequence, we compute a property for each member independently, then we
-     combine these properties using [conjunction]. In general, conjunction
-     needs access to the first member of the sequence (a symbol), not just
-     to its analysis (a property).
-
-     The property [P.bottom] must be a neutral element for [disjunction]. We
-     use [P.bottom] in the analysis of an alternative with zero branches. *)
-  val conjunction: Symbol.t -> property -> (unit -> property) -> property
-
-  (**[epsilon] abstracts the empty sequence. It must be a neutral element
-     for [conjunction]. *)
-  val epsilon: property
-
-  (**The Boolean flag [ignore_error_productions] indicates whether the
-     productions that mention the [error] token should be ignored. *)
-  val ignore_error_productions: bool
-
-end) : sig
-  open P
-
-  (* The results of the analysis take the following form. *)
-
-  (**To every nonterminal symbol, we associate a property. *)
-  val nonterminal: Nonterminal.t -> property
-
-  (**To every symbol, we associate a property. *)
-  val symbol: Symbol.t -> property
-
-  (**To every suffix of every production, we associate a property.
-     The offset [i], which determines the beginning of the suffix,
-     must be contained between [0] and [n], inclusive, where [n]
-     is the length of the production. *)
-  val production: Production.t -> int -> property
-
-end = struct
-  open P
-
-  (* The following analysis functions are parameterized by [get], which
-     allows making a recursive call to the analysis at a nonterminal symbol.
-     [get] maps a nonterminal symbol to a property. *)
-
-  (* Analysis of a symbol. *)
-
-  let symbol sym get : property =
-    match sym with
-    | Symbol.T t ->
-        S.terminal t
-    | Symbol.N nt ->
-        (* Recursive call to the analysis, via [get]. *)
-        get nt
-
-  (* Analysis of (a suffix of) a production [prod], starting at index [i]. *)
-
-  let production prod i get : property =
-    assert (not S.ignore_error_productions || Production.error_free prod);
-    let rhs = Production.rhs prod in
-    let n = Array.length rhs in
-    (* Conjunction over all symbols in the right-hand side. This can be viewed
-       as a version of [Array.fold_right], which does not necessarily begin at
-       index [0]. Note that, because [conjunction] is lazy, it is possible to
-       stop early. *)
-    let rec loop i =
-      if i = n then
-        S.epsilon
-      else
-        let sym = rhs.(i) in
-        S.conjunction sym
-          (symbol sym get)
-          (fun () -> loop (i+1))
-    in
-    loop i
-
-  (* The analysis is the least fixed point of the following function, which
-     analyzes a nonterminal symbol by looking up and analyzing its definition
-     as a disjunction of conjunctions of symbols. *)
-
-  let nonterminal nt get : property =
-    match S.shortcut nt with
-    | Some p ->
-        p
-    | None ->
-        (* Disjunction over all productions for this nonterminal symbol. *)
-        P.bottom |> Production.foldnt_lazy nt @@ fun prod rest ->
-        if S.ignore_error_productions && not (Production.error_free prod) then
-          rest()
-        else
-          S.disjunction
-            (production prod 0 get)
-            rest
-
-  (* The least fixed point is taken as follows. It is computed on demand,
-     when and where [lfp] is called by the user. *)
-
-  module F =
-    Fix.Fix.ForIntSegment(Nonterminal)(P)
-
-  let nonterminal =
-    F.lfp nonterminal
-
-  (* The auxiliary functions can be published too. *)
-
-  let symbol sym =
-    symbol sym nonterminal
-
-  let production prod i =
-    production prod i nonterminal
-
-end (* GenericAnalysis *)
+   We exploit the generic analysis in [GenericAnalysis], which itself relies
+   on the fixed point algorithm in [Fix]. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1208,9 +1075,29 @@ end (* GenericAnalysis *)
    in the base case: a single terminal symbol is not nullable, but is
    nonempty. *)
 
+module G = struct
+  type nonterminal = Nonterminal.t
+  type terminal = Terminal.t
+  type symbol = Symbol.t
+  type production = Production.t
+  let classify symbol =
+    match symbol with Symbol.N nt -> `N nt | Symbol.T t -> `T t
+  let rhs = Production.rhs
+  let productions = Production.productions
+  let ignore _prod = false
+end
+
+module G_WithoutErrorProductions = struct
+  include G
+  (* The productions that contain [error] are ignored. *)
+  let ignore prod = not (Production.error_free prod)
+end
+
 module NONEMPTY =
-  GenericAnalysis
+  GenericAnalysis.Make
+    (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (Fix.Prop.Boolean)
+    (G)
     (struct
       let shortcut _nt = None
       (* A terminal symbol is nonempty. *)
@@ -1222,12 +1109,13 @@ module NONEMPTY =
       (* The sequence epsilon is nonempty. It generates the singleton
          language {epsilon}. *)
       let epsilon = true
-      let ignore_error_productions = false
     end)
 
 module NULLABLE =
-  GenericAnalysis
+  GenericAnalysis.Make
+    (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (Fix.Prop.Boolean)
+    (G)
     (struct
       let shortcut _nt = None
       (* A terminal symbol is not nullable. *)
@@ -1238,7 +1126,6 @@ module NULLABLE =
       let conjunction _ p q = p && q()
       (* The sequence epsilon is nullable. *)
       let epsilon = true
-      let ignore_error_productions = false
     end)
 
 (* -------------------------------------------------------------------------- *)
@@ -1246,8 +1133,10 @@ module NULLABLE =
 (* Compute FIRST sets. *)
 
 module FIRST =
-  GenericAnalysis
+  GenericAnalysis.Make
+    (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (TerminalSet)
+    (G)
     (struct
       let shortcut _nt = None
       (* A terminal symbol has a singleton FIRST set. *)
@@ -1264,7 +1153,6 @@ module FIRST =
           p
       (* The FIRST set of the empty sequence is empty. *)
       let epsilon = TerminalSet.empty
-      let ignore_error_productions = false
     end)
 
 (* -------------------------------------------------------------------------- *)
@@ -1286,11 +1174,13 @@ module FIRST =
    itself is printed at verbosity level 2 but is otherwise unused. *)
 
 module MINIMAL =
-  GenericAnalysis
+  GenericAnalysis.Make
+    (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (struct
       include CompletedNatWitness
       type property = Terminal.t t
     end)
+    (G_WithoutErrorProductions)
     (struct
       let shortcut _nt = None
       open CompletedNatWitness
@@ -1302,8 +1192,6 @@ module MINIMAL =
       let conjunction _ = add_lazy
       (* The epsilon sequence has length 0. *)
       let epsilon = epsilon
-      (* The productions that contain [error] are ignored. *)
-      let ignore_error_productions = true
     end)
 
 (* -------------------------------------------------------------------------- *)
@@ -1317,8 +1205,10 @@ module MINIMAL =
 (* This information is needed later on by the analysis MAXIMAL. *)
 
 module GENERATES_NONEMPTY_WORD =
-  GenericAnalysis
+  GenericAnalysis.Make
+    (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (Fix.Prop.Boolean)
+    (G_WithoutErrorProductions)
     (struct
       let shortcut _nt = None
       (* A terminal symbol generates a nonempty word. *)
@@ -1331,8 +1221,6 @@ module GENERATES_NONEMPTY_WORD =
       let conjunction _ p q = p || q()
       (* [epsilon] fails to generate a nonempty word. *)
       let epsilon = false
-      (* The productions that contain [error] are ignored. *)
-      let ignore_error_productions = true
     end)
 
 let generates_nonempty_word symbol : bool =
@@ -1350,7 +1238,7 @@ let generates_nonempty_word symbol : bool =
    edge, we associate a Boolean label, which is [true] if [alpha . gamma]
    generates a nonempty word. *)
 
-module G = struct
+module Graph = struct
   type node = Nonterminal.t
   let n = Nonterminal.n
   let index nt = nt
@@ -1383,11 +1271,11 @@ end
 let unbounded : bool array Lazy.t =
   lazy (
     let unbounded = Array.make Nonterminal.n false in
-    let module T = Fix.SCC.Run(G) in
+    let module T = Fix.SCC.Run(Graph) in
     let () =
       (* For each edge of [nt] to [nt'] labeled [gnw], *)
-      G.iter @@ fun nt ->
-      nt |> G.labeled_successors @@ fun gnw nt' ->
+      Graph.iter @@ fun nt ->
+      nt |> Graph.labeled_successors @@ fun gnw nt' ->
       (* If [gnw] is set and if [nt] and [nt'] lie in the same component, *)
       if gnw && T.representative nt = T.representative nt' then
         (* Then mark every symbol in this component as unbounded. *)
@@ -1425,8 +1313,10 @@ let unbounded nt : bool =
    information. *)
 
 module MAXIMAL =
-  GenericAnalysis
+  GenericAnalysis.Make
+    (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (NatInfinityMax)
+    (G_WithoutErrorProductions)
     (struct
       open NatInfinityMax
       let shortcut nt = if unbounded nt then Some infinity else None
@@ -1438,8 +1328,6 @@ module MAXIMAL =
       let conjunction _ = add_lazy
       (* The epsilon sequence has length 0. *)
       let epsilon = bottom
-      (* The productions that contain [error] are ignored. *)
-      let ignore_error_productions = true
     end)
 
 (* -------------------------------------------------------------------------- *)
@@ -1488,7 +1376,7 @@ end) = struct
     | Symbol.T _ ->
         ()
     | Symbol.N nt2 ->
-        let nullable = NULLABLE.production prod (i+1)
+        let nullable = NULLABLE.production_suffix prod (i+1)
         and first = P.first prod (i+1) in
         (* The FIRST set of the remainder of the right-hand side
            contributes to the FOLLOW set of [nt2]. *)
@@ -1517,7 +1405,7 @@ let follow : (Nonterminal.t -> TerminalSet.t) Lazy.t =
     let module F = FOLLOW(struct
       include TerminalSet
       let terminal = singleton
-      let first = FIRST.production
+      let first = FIRST.production_suffix
     end) in
     F.follow
   )
@@ -1547,8 +1435,8 @@ let tfollow : TerminalSet.t array Lazy.t =
       | Symbol.N _ ->
           ()
       | Symbol.T t2 ->
-          let nullable = NULLABLE.production prod (i+1)
-          and first = FIRST.production prod (i+1) in
+          let nullable = NULLABLE.production_suffix prod (i+1)
+          and first = FIRST.production_suffix prod (i+1) in
           (* The FIRST set of the remainder of the right-hand side
              contributes to the FOLLOW set of [t2]. *)
           tfollow.(t2) <- TerminalSet.union first tfollow.(t2);
@@ -1685,8 +1573,8 @@ module Analysis = struct
   (* An initial definition of [nullable_first]. *)
 
   let nullable_first prod i =
-    NULLABLE.production prod i,
-    FIRST.production prod i
+    NULLABLE.production_suffix prod i,
+    FIRST.production_suffix prod i
 
   (* A memoised version of [nullable_first]. We want to avoid recomputing
      along a production's right-hand side. *)
@@ -1711,14 +1599,14 @@ module Analysis = struct
 
   let minimal_prod prod i =
     assert (0 <= i && i <= Production.length prod);
-    CompletedNatWitness.to_int (MINIMAL.production prod i)
+    CompletedNatWitness.to_int (MINIMAL.production_suffix prod i)
 
   let maximal nt =
     NatInfinityMax.to_int (MAXIMAL.nonterminal nt)
 
   let maximal_prod prod i =
     assert (0 <= i && i <= Production.length prod);
-    NatInfinityMax.to_int (MAXIMAL.production prod i)
+    NatInfinityMax.to_int (MAXIMAL.production_suffix prod i)
 
 end (* Analysis *)
 
