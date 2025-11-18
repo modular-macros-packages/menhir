@@ -44,6 +44,10 @@ val drop : int -> 'a list -> 'a list
 (**[take k xs] is the list of the first [k] elements of the list [xs]. *)
 val take : int -> 'a list -> 'a list
 
+(**[update k f xs] is the list obtained by applying the transformation
+   function [f] to the [k]-th element of the list [xs]. *)
+val update : int -> ('a -> 'a) -> 'a list -> 'a list
+
 (**[index] transforms a list of elements into a list of pairs of
    an integer index and an element. *)
 val index : 'a list -> (int * 'a) list

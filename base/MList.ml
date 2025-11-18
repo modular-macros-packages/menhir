@@ -60,6 +60,15 @@ let[@tail_mod_cons] rec take k xs =
   | _, x :: xs ->
       x :: take (k - 1) xs
 
+let[@tail_mod_cons] rec update k f xs =
+  match k, xs with
+  | _, [] ->
+      invalid_arg "MList.update"
+  | 0, x :: xs ->
+      f x :: xs
+  | _, x :: xs ->
+      x :: update (k-1) f xs
+
 let[@tail_mod_cons] rec index i xs =
   match xs with
   | [] ->
