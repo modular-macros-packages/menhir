@@ -119,3 +119,6 @@ let production_order p1 p2 : order =
         Lt
       else
         Eq
+
+let transform_branch_producers f branch =
+  { branch with producers = f branch.producers }

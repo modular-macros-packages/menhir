@@ -87,3 +87,7 @@ val precedence_order : precedence_level -> precedence_level -> order
 
 (**[production_order] compares two production levels. *)
 val production_order : production_level -> production_level -> order
+
+(**[transform_branch_producers f] applies the transformation function [f]
+   to the producers (the right-hand side) of the branch [branch]. *)
+val transform_branch_producers : (producers -> producers) -> branch -> branch
