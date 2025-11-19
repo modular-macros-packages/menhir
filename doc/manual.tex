@@ -4964,7 +4964,10 @@ that contains the module names \verb+A B+.
 \hypertarget{dune}{%
 \question{How do I use \menhir with \dune?}} Please use \dune version 1.4.0
 or newer, as it has appropriate built-in rules for Menhir parsers. In the
-simplest scenario, where the parser resides in a single source
+\texttt{dune-project} file, write \texttt{(using menhir 2.0)} so as to enable
+support for \menhir.
+
+In the simplest scenario, where the parser resides in a single source
 file \texttt{parser.mly}, the \texttt{dune} file should contain a
 ``stanza'' along the following lines:
 \begin{verbatim}
