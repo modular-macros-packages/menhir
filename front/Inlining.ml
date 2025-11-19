@@ -59,7 +59,7 @@ let is_inline_symbol grammar symbol : bool =
       (* This is a terminal symbol. *)
       false
 
-(* [is_inline_symbol grammar producer] tells whether [producer] represents
+(* [is_inline_producer grammar producer] tells whether [producer] represents
    a nonterminal symbol (as opposed to a terminal symbol) and is marked
    %inline. *)
 
