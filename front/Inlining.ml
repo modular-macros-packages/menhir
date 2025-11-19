@@ -46,24 +46,23 @@ let names producers =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [is_inline_symbol symbol] determines whether [symbol] is a nonterminal
-   symbol (as opposed to a terminal symbol) and is marked %inline. *)
+(* [is_inline_symbol nt] determines whether the nonterminal symbol [nt] is
+   marked %inline. *)
 
-let is_inline_symbol symbol : bool =
-  match StringMap.find symbol grammar.rules with
-  | rule ->
-      (* This is a nonterminal symbol. Test its %inline flag. *)
-      rule.inline_flag
-  | exception Not_found ->
-      (* This is a terminal symbol. *)
-      false
+let is_inline_symbol nt : bool =
+  assert (is_nonterminal grammar nt);
+  let rule = StringMap.find nt grammar.rules in
+  rule.inline_flag
 
-(* [is_inline_producer producer] tells whether [producer] represents a
-   nonterminal symbol (as opposed to a terminal symbol) and is marked
-   %inline. *)
+(* [is_inline_producer producer] tests whether [producer] is a nonterminal
+   symbol (as opposed to a terminal symbol) and:
+   - either the definition of this symbol is marked %inline
+   - or this producer is marked %inlined. *)
 
 let is_inline_producer producer =
-  is_inline_symbol producer.prod_symbol
+  let symbol = producer.prod_symbol in
+  is_nonterminal grammar symbol &&
+  (producer.prod_inlined || is_inline_symbol symbol)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -551,41 +550,38 @@ let expand_symbol symbol =
     end;
     error main rule.positions "%s" (Buffer.contents b)
 
-(* The rules of the transformed grammar are obtained by keeping only
-   non-%inline symbols and expanding their rules. *)
+(* Display a warning about %on_error_reduce declarations that concern %inline
+   symbols. They are useless. *)
+
+let () =
+  grammar.on_error_reduce |> StringMap.iter @@ fun nt _level ->
+  if is_inline_symbol nt then
+    warning main []
+      "the declaration %%on_error_reduce %s\n\
+       has no effect: this symbol is marked %%inline and is expanded away." nt
+
+(* The rules of the transformed grammar are obtained by expanding all rules. *)
+
+(* To save some time, we filter out the rules that concern %inline symbols.
+   This is not necessary, because they would be removed by [trim] anyway. *)
 
 let rules =
   grammar.rules
   |> StringMap.filter (fun _ rule -> not rule.inline_flag)
   |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol)
 
-(* Drop %type declarations that concern %inline symbols. *)
+(* In this transformed grammar, remove any unreachable symbols, and remove the
+   %type declarations and %on_error_reduce declarations that mention them. *)
 
-let keep symbol _rule : bool =
-  not (is_inline_symbol symbol)
-
-let types =
-  StringMap.filter keep grammar.types
-
-(* Drop %on_error_reduce declarations that concern %inline symbols. At the
-   same time, display a warning, as this seems strange: these declarations
-   are useless. *)
-
-let keep_or_warn (symbol : string) _rule : bool =
-  let keep = keep symbol _rule in
-  if not keep then
-    warning main []
-      "the declaration %%on_error_reduce %s\n\
-       has no effect: this symbol is marked %%inline and is expanded away." symbol;
-  keep
-
-let on_error_reduce =
-  StringMap.filter keep_or_warn grammar.on_error_reduce
-
-(* We are done. *)
+(* An explicit removal of the unreachable symbols is necessary (or at least
+   convenient) in order to support selective inlining, where some use sites of
+   a symbol N are marked %inlined but the symbol N itself is not marked
+   %inline. In the case where all use sites are marked %inlined, we want the
+   symbol N to disappear; otherwise, we want to keep N. *)
 
 let grammar =
-  { grammar with rules; types; on_error_reduce }
+  { grammar with rules }
+  |> Trim.trim Report.null (* no warnings *)
 
 end (* Run *)
 

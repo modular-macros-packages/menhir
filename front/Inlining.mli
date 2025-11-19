@@ -14,7 +14,8 @@ open Report
 open PlainSyntax
 
 (**[inline c g] traverses the grammar [g] and inlines away the nonterminal
-   symbols whose definitions are marked [%inline]. The result is a grammar
-   where no symbols are marked [%inline]. The channel [c] is used to report
-   errors and emit warnings. *)
+   symbols whose definitions are marked [%inline] or whose use sites are
+   marked [%inlined]. The result is a grammar where no symbols are marked
+   [%inline] and no use sites are marked [%inlined]. The channel [c] is used
+   to report errors and emit warnings. *)
 val inline: channel -> grammar -> grammar
