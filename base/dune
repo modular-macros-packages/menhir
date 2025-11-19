@@ -14,20 +14,6 @@
   )
 )
 
-;; Explicitly enable warnings during development
-;; and disable assertions in releases.
-
-(env
-  (dev (flags
-    :standard
-    -g
-    -w @1..74-4-44-67-70
-  ))
-  (release (flags
-    :standard -noassert
-  ))
-)
-
 ;; The following lexers are built by ocamllex.
 
 (ocamllex
