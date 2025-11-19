@@ -25,26 +25,26 @@ let drop_parameter (param : S.parameter) : S.symbol =
   value (Parameter.head param)
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
-  { T.prod_id = id;
-    T.prod_symbol     = drop_parameter param;
-    T.prod_attributes = attrs }
+  { prod_id            = id;
+    prod_symbol        = drop_parameter param;
+    prod_attributes    = attrs }
 
 let drop_branch (branch : S.parameterized_branch) : T.branch =
-  { T.branch_position  = branch.S.pb_position;
-    T.producers        = List.map drop_producer branch.S.pb_producers;
-    T.action           = branch.S.pb_action;
-    T.prec_annotation  = branch.S.pb_prec_annotation;
-    T.production_level = branch.S.pb_production_level;
-    T.br_attributes    = branch.S.pb_attributes }
+  { branch_position  = branch.pb_position;
+    producers        = List.map drop_producer branch.pb_producers;
+    action           = branch.pb_action;
+    prec_annotation  = branch.pb_prec_annotation;
+    production_level = branch.pb_production_level;
+    br_attributes    = branch.pb_attributes }
 
 let drop_rule (rule : S.parameterized_rule) : T.rule =
   (* The grammar should not have any parameterized symbols. *)
-  assert (rule.S.pr_parameters = []);
+  assert (rule.pr_parameters = []);
   (* The [%public] flag is dropped. *)
-  { T.branches = List.map drop_branch rule.S.pr_branches;
-    T.positions = rule.S.pr_positions;
-    T.inline_flag = rule.S.pr_inline;
-    T.attributes = rule.S.pr_attributes }
+  { branches = List.map drop_branch rule.pr_branches;
+    positions = rule.pr_positions;
+    inline_flag = rule.pr_inline;
+    attributes = rule.pr_attributes }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -72,17 +72,17 @@ let drop_on_error_reduce_declarations decls =
 
 let add_attribute (g : T.grammar) param attr : T.grammar =
   let symbol = drop_parameter param in
-  match StringMap.find symbol g.T.tokens with
+  match StringMap.find symbol g.tokens with
   | props ->
       (* This is a terminal symbol. *)
-      let props = { props with S.tk_attributes = attr :: props.S.tk_attributes } in
-      { g with T.tokens = StringMap.add symbol props g.T.tokens }
+      let props = { props with tk_attributes = attr :: props.tk_attributes } in
+      { g with tokens = StringMap.add symbol props g.tokens }
   | exception Not_found ->
-      match StringMap.find symbol g.T.rules with
+      match StringMap.find symbol g.rules with
       | rule ->
           (* This is a nonterminal symbol. *)
-          let rule = { rule with T.attributes = attr :: rule.T.attributes } in
-          { g with T.rules = StringMap.add symbol rule g.T.rules }
+          let rule = { rule with attributes = attr :: rule.attributes } in
+          { g with rules = StringMap.add symbol rule g.rules }
       | exception Not_found ->
           (* This is an unknown symbol. This should not happen. *)
           assert false
@@ -101,13 +101,13 @@ let add_attributes (decls : (S.parameter list * attributes) list) g =
 
 let drop (g : S.grammar) : T.grammar =
   {
-    T.preludes        = g.S.p_preludes;
-    T.postludes       = g.S.p_postludes;
-    T.parameters      = g.S.p_parameters;
-    T.start_symbols   = StringMap.domain g.S.p_start_symbols;
-    T.types           = drop_type_declarations g.S.p_types;
-    T.tokens          = g.S.p_tokens;
-    T.on_error_reduce = drop_on_error_reduce_declarations g.S.p_on_error_reduce;
-    T.gr_attributes   = g.S.p_grammar_attributes;
-    T.rules           = StringMap.map drop_rule g.S.p_rules
-  } |> add_attributes g.S.p_symbol_attributes
+    preludes        = g.p_preludes;
+    postludes       = g.p_postludes;
+    parameters      = g.p_parameters;
+    start_symbols   = StringMap.domain g.p_start_symbols;
+    types           = drop_type_declarations g.p_types;
+    tokens          = g.p_tokens;
+    on_error_reduce = drop_on_error_reduce_declarations g.p_on_error_reduce;
+    gr_attributes   = g.p_grammar_attributes;
+    rules           = StringMap.map drop_rule g.p_rules
+  } |> add_attributes g.p_symbol_attributes
