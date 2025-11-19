@@ -161,6 +161,14 @@ let inline_attributes (caller : branch) (callee : branch) : attributes =
    is inlined at the last position of the host production and (2) the
    host production does not already have a %prec annotation. *)
 
+(* 2025/11/19. We currently do not perform any checks related to the
+   interaction of %prec and %inlined. The syntax %inlined is not
+   currently accessible to the end user. %inlined annotations can be
+   produced by other transformations inside Menhir. One should check
+   that if the definition of N contains a %prec annotation then a use
+   of N can be marked %inlined only if it is at the last position of
+   a production and this production does not have a %prec annotation. *)
+
 let check_prec_inline caller producer nsuffix callee =
   callee.prec_annotation |> Option.iter @@ fun callee_prec ->
   (* The callee has a %prec annotation. *)

@@ -19,3 +19,8 @@ open PlainSyntax
    [%inline] and no use sites are marked [%inlined]. The channel [c] is used
    to report errors and emit warnings. *)
 val inline: channel -> grammar -> grammar
+
+(* Note: the syntax %inlined is not currently accessible to the end user. If
+   it was then (at least) we should check against bad interactions of %inlined
+   and %prec. Currently it is up to the caller of [inline] to check that such
+   interactions cannot arise. *)
