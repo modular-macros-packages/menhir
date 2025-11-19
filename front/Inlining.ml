@@ -46,11 +46,10 @@ let names producers =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [is_inline_symbol grammar symbol] determines whether [symbol] is a
-   nonterminal symbol (as opposed to a terminal symbol) and is marked
-   %inline. *)
+(* [is_inline_symbol symbol] determines whether [symbol] is a nonterminal
+   symbol (as opposed to a terminal symbol) and is marked %inline. *)
 
-let is_inline_symbol grammar symbol : bool =
+let is_inline_symbol symbol : bool =
   match StringMap.find symbol grammar.rules with
   | rule ->
       (* This is a nonterminal symbol. Test its %inline flag. *)
@@ -59,12 +58,12 @@ let is_inline_symbol grammar symbol : bool =
       (* This is a terminal symbol. *)
       false
 
-(* [is_inline_producer grammar producer] tells whether [producer] represents
-   a nonterminal symbol (as opposed to a terminal symbol) and is marked
+(* [is_inline_producer producer] tells whether [producer] represents a
+   nonterminal symbol (as opposed to a terminal symbol) and is marked
    %inline. *)
 
-let is_inline_producer grammar producer =
-  is_inline_symbol grammar producer.prod_symbol
+let is_inline_producer producer =
+  is_inline_symbol producer.prod_symbol
 
 (* -------------------------------------------------------------------------- *)
 
@@ -81,15 +80,12 @@ let search p i xs : (int * 'a) option =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [find grammar symbol] looks up the definition of [symbol], which must be
-   a valid nonterminal symbol, in the grammar [grammar]. *)
+(* [find symbol] looks up the definition of [symbol], which must be a valid
+   nonterminal symbol, in the grammar [grammar]. *)
 
-let find grammar symbol : rule =
-  try
-    StringMap.find symbol grammar.rules
-  with Not_found ->
-    (* This cannot happen. *)
-    assert false
+let find symbol : rule =
+  assert (is_nonterminal grammar symbol);
+  StringMap.find symbol grammar.rules
 
 (* -------------------------------------------------------------------------- *)
 
@@ -483,15 +479,6 @@ let inline_branches caller site (callees : branches) : branches =
    fixed point combinator, [Memoize.defensive_fix]. Furthermore, this fixed
    point combinator dynamically detects cycles of %inline nonterminal symbols,
    allowing us to avoid divergence and display a nice error message. *)
-
-let is_inline_symbol =
-  is_inline_symbol grammar
-
-let is_inline_producer =
-  is_inline_producer grammar
-
-let find =
-  find grammar
 
 (* This is [expand_branches], parameterized by its companion function,
    [expand_symbol]. The parameter [i], an integer, is used to perform
