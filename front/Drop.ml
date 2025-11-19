@@ -27,7 +27,8 @@ let drop_parameter (param : S.parameter) : S.symbol =
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
   { prod_id            = id;
     prod_symbol        = drop_parameter param;
-    prod_attributes    = attrs }
+    prod_attributes    = attrs;
+    prod_inlined       = false }
 
 let drop_branch (branch : S.parameterized_branch) : T.branch =
   { branch_position  = branch.pb_position;

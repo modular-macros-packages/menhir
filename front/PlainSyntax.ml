@@ -35,12 +35,16 @@ include FrontTypes
 
 (**A producer is a pair of a (located) identifier and a symbol. In concrete
    syntax, it could be [e = expr], for instance. It carries a number of
-   attributes. *)
+   attributes. 2025/11/19: we allow a producer to be marked %inlined, which
+   means that the definition of the symbol [prod_symbol] should be inlined
+   into this particular use site. There is currently no surface syntax for
+   this feature; it is used internally. *)
 type producer =
   {
     prod_id         : identifier located;
     prod_symbol     : symbol;
     prod_attributes : attributes;
+    prod_inlined    : bool;
   }
 
 type producers =
