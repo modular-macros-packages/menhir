@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 405 distinct tests.
+;; 406 distinct tests.
 
 (rule (target JSParse.opp.out) (deps JSParse.mly)
   (action
@@ -8918,6 +8918,84 @@
 
 (rule (alias test)
   (action (diff execparser_stripped.ml.log.exp execparser_stripped.ml.log)))
+
+(rule (target expand_nullable.opp.out) (deps expand_nullable.mly)
+  (action
+    (with-outputs-to expand_nullable.opp.out
+      (with-accepted-exit-codes 0
+        (run menhir --only-preprocess %{read-lines:expand_nullable.flags}
+          %{deps})))))
+
+(rule (alias quick)
+  (action (diff expand_nullable.opp.exp expand_nullable.opp.out)))
+
+(rule
+  (targets expand_nullable.out expand_nullable.automaton
+    expand_nullable.automaton.resolved expand_nullable.conflicts
+    expand_nullable.timings)
+  (deps expand_nullable.mly)
+  (action
+    (with-outputs-to expand_nullable.out
+      (with-accepted-exit-codes 0
+        (run menhir --table --dump --dump-resolved --explain -lg 2 -la 2 -lc
+          2 --timings-to expand_nullable.timings
+          %{read-lines:expand_nullable.flags} %{deps})))))
+
+(rule (alias quick) (action (diff expand_nullable.exp expand_nullable.out)))
+
+(rule (alias quick)
+  (action (diff expand_nullable.automaton.exp expand_nullable.automaton)))
+
+(rule (alias quick)
+  (action
+    (diff expand_nullable.automaton.resolved.exp
+      expand_nullable.automaton.resolved)))
+
+(rule (alias quick)
+  (action (diff expand_nullable.conflicts.exp expand_nullable.conflicts)))
+
+(rule (target expand_nullable_stripped.mly) (deps expand_nullable.mly)
+  (action
+    (with-stderr-to expand_nullable_stripped.ignored
+      (with-stdout-to expand_nullable_stripped.mly
+        (with-accepted-exit-codes 0
+          (run menhir --only-preprocess-uu
+            %{read-lines:expand_nullable.flags} %{deps}))))))
+
+(rule
+  (targets expand_nullable_stripped.log expand_nullable_stripped.mli
+    expand_nullable_stripped.ml expand_nullable_stripped.stacklang
+    expand_nullable_stripped.timings expand_nullable_stripped.scount
+    expand_nullable_stripped.dcount)
+  (deps expand_nullable_stripped.mly)
+  (action
+    (with-outputs-to expand_nullable_stripped.log
+      (with-accepted-exit-codes 0
+        (run menhir --infer --stacklang-test --stacklang-dump -lg 2 -la 2 -lc
+          2 --timings-to expand_nullable_stripped.timings
+          %{read-lines:expand_nullable.flags} %{deps})))))
+
+(alias (name quick) (deps
+                      expand_nullable_stripped.stacklang))
+
+(rule (targets expand_nullable_stripped.cmi expand_nullable_stripped.mli.log)
+  (deps expand_nullable_stripped.mli)
+  (action
+    (with-stdout-to expand_nullable_stripped.mli.dtimings
+      (with-stderr-to expand_nullable_stripped.mli.log
+        (run ocamlc -w A-24 -warn-error A -c expand_nullable_stripped.mli)))))
+
+(rule (targets expand_nullable_stripped.cmo expand_nullable_stripped.ml.log)
+  (deps expand_nullable_stripped.ml expand_nullable_stripped.cmi)
+  (action
+    (with-stdout-to expand_nullable_stripped.ml.dtimings
+      (with-stderr-to expand_nullable_stripped.ml.log
+        (run ocamlc -w A-24 -warn-error A -c expand_nullable_stripped.ml)))))
+
+(rule (alias test)
+  (action
+    (diff expand_nullable_stripped.ml.log.exp
+      expand_nullable_stripped.ml.log)))
 
 (rule (target expansion_ok.opp.out) (deps expansion_ok.mly)
   (action

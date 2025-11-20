@@ -1,0 +1,60 @@
+4 out of 6 nonterminal symbols are nullable.
+There are 9 productions, whose total length is 10.
+3 out of 9 productions are right nullable.
+3 out of 4 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 7 nonterminal symbols are nullable.
+There are 12 productions, whose total length is 17.
+0 out of 12 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Grammar has 7 nonterminal symbols, among which 1 start symbols.
+Grammar has 4 terminal symbols.
+Grammar has 12 productions.
+nullable(nonempty_option(B)) = false
+nullable(nonempty_option(A)) = false
+nullable(nonempty_list(declaration)) = false
+nullable(nonempty_declarations) = false
+nullable(main) = false
+nullable(declarations) = true
+nullable(declaration) = false
+first(nonempty_option(B)) = B
+first(nonempty_option(A)) = A
+first(nonempty_list(declaration)) = DECLARE
+first(nonempty_declarations) = DECLARE
+first(main) = EOF DECLARE
+first(declarations) = DECLARE
+first(declaration) = DECLARE
+minimal(nonempty_option(B)) = (* 1 *) B
+minimal(nonempty_option(A)) = (* 1 *) A
+minimal(nonempty_list(declaration)) = (* 1 *) DECLARE
+minimal(nonempty_declarations) = (* 1 *) DECLARE
+minimal(main) = (* 1 *) EOF
+minimal(declarations) = (* 0 *)
+minimal(declaration) = (* 1 *) DECLARE
+maximal(nonempty_option(B)) = 1
+maximal(nonempty_option(A)) = 1
+maximal(nonempty_list(declaration)) = infinity
+maximal(nonempty_declarations) = infinity
+maximal(main) = infinity
+maximal(declarations) = infinity
+maximal(declaration) = 3
+follow(nonempty_option(B)) = EOF DECLARE
+follow(nonempty_option(A)) = EOF DECLARE B
+follow(nonempty_list(declaration)) = EOF
+follow(nonempty_declarations) = EOF
+follow(main) = #
+follow(declarations) = EOF
+follow(declaration) = EOF DECLARE
+Built an LR(0) automaton with 14 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 14 states.
+9 out of 14 states have a default reduction.
+The action table is 70 entries; 12 non-zero; 26 compressed.
+The action table occupies roughly 120 bytes.
+The goto table is 112 entries; 10 non-zero; 26 compressed.
+The goto table occupies roughly 104 bytes.
+The error table occupies roughly 48 bytes.
+The default_reduction table occupies roughly 40 bytes.
+The lhs table occupies roughly 40 bytes.
+The trace table occupies roughly 8 bytes.
