@@ -88,19 +88,19 @@ let find symbol : rule =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [check_no_prod_attributes] checks that a producer, which represents a use
-   site of an %inline symbol, does not carry any attributes. This ensures that
-   we need not worry about propagating producer attributes through inlining.  *)
+(* [check_no_prod_attributes] checks that a producer, which is about to be
+   inlined away, does not carry any attributes. This ensures that we need not
+   worry about propagating producer attributes through inlining. *)
 
 let check_no_prod_attributes producer =
   match producer.prod_attributes with
   | [] ->
       ()
   | attr :: _ ->
-      error main
+      warning main
         [attr.origin]
-        "the nonterminal symbol %s is declared %%inline.\n\
-         A use of it cannot carry an attribute."
+        "this use of the nonterminal symbol %s is inlined away.\n\
+         It should not carry an attribute, as this attribute will be lost."
         producer.prod_symbol
 
 (* [combine_name_attributes] combines the [@name] attributes of the caller and

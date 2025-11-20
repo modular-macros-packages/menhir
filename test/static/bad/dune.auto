@@ -416,7 +416,8 @@
 (rule (target inline-attribute-use.out) (deps inline-attribute-use.mly)
   (action
     (with-outputs-to inline-attribute-use.out
-      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:inline-attribute-use.flags} %{deps})))))
 
 (rule (alias test)
   (action (diff inline-attribute-use.exp inline-attribute-use.out)))
