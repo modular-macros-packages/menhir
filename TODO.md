@@ -62,6 +62,10 @@
 
 ## Enhancements
 
+* During the expansion of nullable symbols (`--expand-nullable-symbols`), we
+  lose the property that every production has a (unique, predictable) `@name`
+  attribute. Yet this property is needed by the unparsing API. Restore it.
+
 * It might be interesting to sort the conflict explanations by order of
   increasing complexity, so that the conflicts that are simpler in some
   sense are shown first.
