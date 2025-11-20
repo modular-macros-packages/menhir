@@ -343,6 +343,9 @@ let specialize_token =
 let pack_classic =
   ref false
 
+let expand_nullable =
+  ref None
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -376,6 +379,9 @@ let options = Arg.align [
   "--echo-errors-concrete", Arg.String set_echo_errors_concrete, "<filename> Echo the sentences in a .messages file";
   unsupported "--error-recovery";
   "--exn-carries-state", Arg.Set exn_carries_state, " Declares exception Error of int";
+  "--expand-nullable-symbols", Arg.Unit (fun () -> expand_nullable := Some `ExpandNullableSymbols), " (undocumented)";
+  "--expand-nullable-suffix-participants", Arg.Unit (fun () -> expand_nullable := Some `ExpandNullableSuffixParticipants), " (undocumented)";
+  "--expand-nullable-suffixes", Arg.Unit (fun () -> expand_nullable := Some `ExpandNullableSuffixes), " (undocumented)";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
@@ -855,3 +861,6 @@ let pack_classic =
 
 let incremental =
   backend = `TableBackend
+
+let expand_nullable =
+  !expand_nullable

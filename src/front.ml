@@ -314,6 +314,20 @@ let grammar =
 
 (* ------------------------------------------------------------------------- *)
 
+(* If requested by the user, expand away some or all occurrences of nullable
+   symbols. *)
+
+let grammar =
+  match Settings.expand_nullable with
+  | Some policy ->
+      monitor @@ fun c ->
+      Time.time "Expanding away some or all nullable symbols" @@ fun () ->
+      ExpandNullable.transform c (getG 1) policy grammar
+  | None ->
+      grammar
+
+(* ------------------------------------------------------------------------- *)
+
 (* If [--only-preprocess] or [--only-preprocess-drop] was specified on the
    command line, print the grammar and stop. Otherwise, continue. *)
 
