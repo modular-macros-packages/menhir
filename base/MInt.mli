@@ -19,6 +19,14 @@ val preincrement: int ref -> int
    original value. *)
 val postincrement: int ref -> int
 
+(**[predecrement r] decrements the integer reference [r] and returns its
+   updated value. *)
+val predecrement: int ref -> int
+
+(**[postdecrement r] decrements the integer reference [r] and returns its
+   original value. *)
+val postdecrement: int ref -> int
+
 (**[mkgensym()] returns a fresh generator of unique integers. *)
 val mkgensym: unit -> (unit -> int)
 

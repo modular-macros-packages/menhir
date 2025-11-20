@@ -19,6 +19,17 @@ let[@inline] postincrement r =
   r := x + 1;
   x
 
+let[@inline] predecrement r =
+  let x = !r in
+  let x' = x - 1 in
+  r := x';
+  x'
+
+let[@inline] postdecrement r =
+  let x = !r in
+  r := x - 1;
+  x
+
 let mkgensym () =
   let r = ref 0 in
   fun () ->
