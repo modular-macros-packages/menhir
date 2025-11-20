@@ -70,6 +70,24 @@ let[@inline] foreach_branch grammar yield =
     List.iter yield rule.branches
   ) grammar.rules
 
+let error_free_symbol symbol =
+  symbol <> "error"
+
+let error_free_producer producer =
+  error_free_symbol producer.prod_symbol
+
+let error_free_branch branch =
+  List.for_all error_free_producer branch.producers
+
+let error_free_rule rule =
+  List.for_all error_free_branch rule.branches
+
+let error_free_grammar grammar =
+  StringMap.for_all (fun _nt rule -> error_free_rule rule) grammar.rules
+
+let grammar_uses_error_token grammar =
+  not (error_free_grammar grammar)
+
 let is_nonterminal grammar symbol =
   let result = StringMap.mem symbol grammar.rules in
   assert (result || StringMap.mem symbol grammar.tokens || symbol = "error");

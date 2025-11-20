@@ -67,6 +67,10 @@ val foreach_nonterminal : grammar -> (nonterminal -> unit) -> unit
    [grammar], that is, the productions. *)
 val foreach_branch : grammar -> (branch -> unit) -> unit
 
+(**[grammar_uses_error_token grammar] determines whether the grammar
+   [grammar] mentions the special token [error]. *)
+val grammar_uses_error_token : grammar -> bool
+
 (**[is_nonterminal grammar symbol] tests whether the symbol [symbol] is a
    nonterminal symbol. This symbol must exist; that is, it must be a terminal
    symbol or a nonterminal symbol. *)
