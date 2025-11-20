@@ -90,7 +90,10 @@ let grammar_uses_error_token grammar =
 
 let is_nonterminal grammar symbol =
   let result = StringMap.mem symbol grammar.rules in
-  assert (result || StringMap.mem symbol grammar.tokens || symbol = "error");
+  assert (
+    result || StringMap.mem symbol grammar.tokens || symbol = "error" ||
+    (Printf.eprintf "DEBUG: unknown symbol: %s\n%!" symbol; false)
+  );
   result
 
 let alias grammar symbol =
