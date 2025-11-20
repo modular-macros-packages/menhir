@@ -1,0 +1,8 @@
+1 out of 2 nonterminal symbols are nullable.
+There are 3 productions, whose total length is 3.
+1 out of 3 productions are right nullable.
+1 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating all nullable symbols.
+File "nullable_symbol_carries_prec.mly", line 10, characters 8-11:
+Error: because the nullable symbol optional_B will be expanded away,
+its productions must not carry %prec annotations.

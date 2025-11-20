@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 177 distinct tests.
+;; 181 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -885,6 +885,36 @@
 (rule (alias test)
   (action (diff not-well-founded-rec.exp not-well-founded-rec.out)))
 
+(rule (target nullable_on_error_reduce.out)
+  (deps nullable_on_error_reduce.mly)
+  (action
+    (with-outputs-to nullable_on_error_reduce.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:nullable_on_error_reduce.flags} %{deps})))))
+
+(rule (alias test)
+  (action (diff nullable_on_error_reduce.exp nullable_on_error_reduce.out)))
+
+(rule (target nullable_start_symbol.out) (deps nullable_start_symbol.mly)
+  (action
+    (with-outputs-to nullable_start_symbol.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:nullable_start_symbol.flags} %{deps})))))
+
+(rule (alias test)
+  (action (diff nullable_start_symbol.exp nullable_start_symbol.out)))
+
+(rule (target nullable_symbol_carries_prec.out)
+  (deps nullable_symbol_carries_prec.mly)
+  (action
+    (with-outputs-to nullable_symbol_carries_prec.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:nullable_symbol_carries_prec.flags} %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff nullable_symbol_carries_prec.exp nullable_symbol_carries_prec.out)))
+
 (rule (target obscene-dollar.out) (deps obscene-dollar.mly)
   (action
     (with-outputs-to obscene-dollar.out
@@ -1067,6 +1097,19 @@
 
 (rule (alias test)
   (action (diff resync-on-action-prec.exp resync-on-action-prec.out)))
+
+(rule (target right_nullable_production_carries_prec.out)
+  (deps right_nullable_production_carries_prec.mly)
+  (action
+    (with-outputs-to right_nullable_production_carries_prec.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir
+          %{read-lines:right_nullable_production_carries_prec.flags} %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff right_nullable_production_carries_prec.exp
+      right_nullable_production_carries_prec.out)))
 
 (rule (target rule-error.out) (deps rule-error.mly)
   (action

@@ -1,0 +1,6 @@
+2 out of 2 nonterminal symbols are nullable.
+There are 3 productions, whose total length is 2.
+1 out of 3 productions are right nullable.
+1 out of 2 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating all nullable symbols.
+Error: the start symbol main is nullable, therefore cannot be eliminated.
