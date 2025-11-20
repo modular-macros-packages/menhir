@@ -156,9 +156,39 @@ let detect_cycle main =
    A cycle that involves at least one H edge and any number of L and H edges,
    however, denotes hidden left recursion. *)
 
+(* To detect hidden left recursion in linear time, we first compute the
+   strongly connected components of the relation S. Then, we check every edge
+   in the relation H. If the source and destination vertices of this edge lie
+   in the same component, then we have detected hidden left recursion. *)
+
+module N = struct
+  type node = Nonterminal.t
+  let n = Nonterminal.n
+  let index = Nonterminal.encode
+  let iter = Nonterminal.iter
+end
+
+let rec detect_hidden_left_recursion main =
+  (* Compute the components of S, that is, L U H. *)
+  let module T = Fix.SCC.Run (struct
+    include N
+    let successors =
+      successors ~require_nullable_suffix:false ~require_nonempty_prefix:false
+      |> adapt
+  end) in
+  (* Enumerate every edge in H. *)
+  let successors_H =
+    successors ~require_nullable_suffix:false ~require_nonempty_prefix:true in
+  Nonterminal.iter @@ fun nt ->
+  nt |> successors_H @@ fun prod nt' ->
+  (* If the source vertex [nt] and the destination vertex [nt'] lie in
+     the same component, then we have detected hidden left recursion. *)
+  if T.representative nt = T.representative nt' then
+    fail main prod
+
 (* An error message. *)
 
-let fail main prod =
+and fail main prod =
   let nt, rhs = Production.def prod in
   let positions = Production.positions prod in
   Report.error main positions
@@ -174,32 +204,88 @@ let fail main prod =
       (* Furthermore, this creates a shift/reduce conflict, which (if resolved
          in favor of reduction) can cause the parser to diverge. *)
 
-(* To detect hidden left recursion in linear time, we first compute the
-   strongly connected components of the relation S. Then, we check every edge
-   in the relation H. If the source and destination vertices of this edge lie
-   in the same component, then we have detected hidden left recursion. *)
+(* -------------------------------------------------------------------------- *)
 
-let detect_hidden_left_recursion main =
+(* Hidden right recursion can also be problematic, for the following reasons:
+
+   - It is a symptom of a serious ambiguity,
+     which may be the result of a design mistake.
+     This said, it can also be intentional: a typical example is
+
+       instr ::= IF expr THEN instr (ELSE instr)?
+
+     which is ambiguous, but where the programmer intends to resolve
+     the shift/reduce conflict in the favor of shifting.
+
+   - It breaks certain variants of the GLR algorithm, such as Tomita's
+     Algorithm 1. See Scott and Johnstone, "Right Nulled GLR Parsers" (2006),
+     section 3.4, "Right Nullable Rules and Hidden Right Recursion".
+
+   In McPeak's GLR algorithm (Elkhound), right nullable rules create the need
+   for the auxiliary function [enqueueLimitedReductions], which is a source of
+   inefficiency. Our workaround is to expand away all right nullable suffixes;
+   see [ExpandNullable]. In this case there is no need to forbid hidden right
+   recursion; once right nullable suffixes are expanded away, it is transformed
+   into ordinary right recursion. *)
+
+(* The detection algorithm is the same as for hidden left recursion.
+   We define two relations R and H as follows:
+
+   - A R B holds if and only if there is a production A -> alpha B     ;
+   - A H B holds if and only if there is a production A -> alpha B beta
+                             where beta is nullable but is not epsilon.
+
+   A cycle in the relation R is fine: it represents ordinary right recursion.
+   A cycle that involves at least one H edge and any number of R and H edges
+   denotes hidden right recursion. *)
+
+let successors
+  ~require_nonempty_suffix
+  (yield : Production.t -> Nonterminal.t -> unit)
+  (nt : Nonterminal.t) : unit
+=
+  Production.iternt nt @@ fun prod ->
+  let rhs = Production.rhs prod in
+  let n = Array.length rhs in
+  let i = ref (n-1) in
+  while 0 <= !i && nullable_suffix prod (!i+1) do
+    let nonempty_suffix = !i < n-1 in
+    match rhs.(MInt.postdecrement i) with
+    | Symbol.T _   ->
+        ()
+    | Symbol.N nt' ->
+        if (not require_nonempty_suffix || nonempty_suffix) then
+          yield prod nt'
+  done
+
+let rec detect_hidden_right_recursion main =
+  (* Compute the components of R U H. *)
   let module T = Fix.SCC.Run (struct
-    type node = Nonterminal.t
-    let n = Nonterminal.n
-    let index = Nonterminal.encode
-    let iter = Nonterminal.iter
-    (* The relation S is computed as follows. *)
-    let successors =
-      successors ~require_nullable_suffix:false ~require_nonempty_prefix:false
-      |> adapt
+    include N
+    let successors = successors ~require_nonempty_suffix:false |> adapt
   end) in
-  (* The relation H is computed as follows. *)
-  let successors_H =
-    successors ~require_nullable_suffix:false ~require_nonempty_prefix:true in
-  (* Iterate on every edge in the relation H. *)
+  (* Enumerate every edge in H. *)
+  let successors_H = successors ~require_nonempty_suffix:true in
   Nonterminal.iter @@ fun nt ->
   nt |> successors_H @@ fun prod nt' ->
-  (* If the source vertex [nt] and the destination vertex [nt'] lie in
-     the same component, then we have detected hidden left recursion. *)
+  (* If the source and destination vertices of this edge lie in the
+     same component of R U H then there is hidden right recursion. *)
   if T.representative nt = T.representative nt' then
     fail main prod
+
+and fail main prod =
+  let nt, rhs = Production.def prod in
+  let n = Array.length rhs in
+  let positions = Production.positions prod in
+  Report.error main positions
+    "the grammar exhibits hidden right recursion: in the production\n\
+     %s,\n\
+     the last symbol (%s) is nullable,\n\
+     and the rest of the right-hand side expands to a sentential form\n\
+     that ends with the symbol %s."
+    (Production.print prod)
+    (Symbol.print false rhs.(n-1))
+    (Symbol.print false (Symbol.N nt))
 
 (* -------------------------------------------------------------------------- *)
 

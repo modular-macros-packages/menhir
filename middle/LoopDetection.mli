@@ -26,4 +26,9 @@ module Make (G : GRAMMAR) : sig
      the channel [main]. *)
   val detect_hidden_left_recursion: channel -> unit
 
+  (**[detect_hidden_right_recursion] checks that the grammar does not have
+     hidden right recursion. If this check fails, an error is reported via
+     the channel [main]. *)
+  val detect_hidden_right_recursion: channel -> unit
+
 end
