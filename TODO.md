@@ -342,11 +342,6 @@
   by Andrej Bauer on 2016/01/21. Once this is issue is fixed, improve the test
   suite to verify that we never have unexplainable conflicts.
 
-* The function `rewind` contains an incorrect comment ("every stack
-  description either is definite or contains at least one represented state").
-  Find out why it is incorrect. Find out what the implications for `rewind`
-  are; does this imply that `rewind` can return `Die` too early?
-
 ## Things Not To Do
 
 A series of ideas and remarks that could be in the "to do" list, but on which
