@@ -305,11 +305,10 @@ let grammar =
     if Settings.backend = `CoqBackend then
       CheckInlineUsage.check c grammar;
     Time.time "Expanding away %inline nonterminal symbols" @@ fun () ->
-    let grammar = Inlining.inline c grammar in
+    Inlining.inline c grammar
     (* 2018/05/23 Removed the warning that was issued when %inline was used
        but --infer was turned off. Most people should use ocamlbuild or dune
        anyway. *)
-    grammar
   else
     grammar
 
