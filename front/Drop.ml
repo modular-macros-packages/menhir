@@ -100,15 +100,17 @@ let add_attributes (decls : (S.parameter list * attributes) list) g =
 
 (* Putting it all together. *)
 
+(* The prefix [T.] is needed in OCaml 4.12. *)
+
 let drop (g : S.grammar) : T.grammar =
   {
-    preludes        = g.p_preludes;
-    postludes       = g.p_postludes;
-    parameters      = g.p_parameters;
-    start_symbols   = StringMap.domain g.p_start_symbols;
-    types           = drop_type_declarations g.p_types;
-    tokens          = g.p_tokens;
-    on_error_reduce = drop_on_error_reduce_declarations g.p_on_error_reduce;
-    gr_attributes   = g.p_grammar_attributes;
-    rules           = StringMap.map drop_rule g.p_rules
+    T.preludes        = g.p_preludes;
+    T.postludes       = g.p_postludes;
+    T.parameters      = g.p_parameters;
+    T.start_symbols   = StringMap.domain g.p_start_symbols;
+    T.types           = drop_type_declarations g.p_types;
+    T.tokens          = g.p_tokens;
+    T.on_error_reduce = drop_on_error_reduce_declarations g.p_on_error_reduce;
+    T.gr_attributes   = g.p_grammar_attributes;
+    T.rules           = StringMap.map drop_rule g.p_rules
   } |> add_attributes g.p_symbol_attributes
