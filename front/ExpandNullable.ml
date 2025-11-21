@@ -48,6 +48,11 @@ module G = struct
   let ignore _prod = false
 end
 
+module String = struct
+  include String
+  let hash = Hashtbl.hash (* [String.hash] appears in OCaml 5.0 *)
+end
+
 module NULLABLE =
   GenericAnalysis.Make
     (Fix.Glue.HashTablesAsImperativeMaps(String))
