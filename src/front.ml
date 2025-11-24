@@ -274,8 +274,6 @@ let grammar, ocaml_types_have_been_checked =
 let grammar =
   Time.time "Expanding away certain position keywords" @@ fun () ->
   KeywordExpansion.expand grammar
-    (* TODO KeywordExpansion is currently in middle/
-            because it depends on GrammarConstruction *)
 
 (* ------------------------------------------------------------------------- *)
 
