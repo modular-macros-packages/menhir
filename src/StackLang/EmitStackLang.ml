@@ -420,10 +420,10 @@ let rec run mode s =
      production that needs [$endpos($0)]. [initp] may be read in the future if
      this state can reduce a non-epsilon production that needs [$endpos($0)].
 
-     If [initp] register is never needed anywhere, then it will be considered
-     dead and this initialization instruction will be removed. If it is needed
-     somewhere, then it will be carried all along, so many routines may end up
-     needing [initp]. *)
+     If the register [initp] is never needed anywhere, then it will be
+     considered dead and this initialization instruction will be removed. If
+     it is needed somewhere, then it will be carried all along, so many
+     routines may end up needing [initp]. *)
 
   if Lr1.is_start s then begin
     prim endp (PrimOCamlFieldAccess (VReg lexbuf, "Lexing.lex_curr_p"));
