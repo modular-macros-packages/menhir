@@ -11,6 +11,19 @@
 open PlainSyntax
 open PlainSyntaxAccessors
 
+module A = struct
+  type property = bool
+  let shortcut _nt = None
+  (* A terminal symbol is not nullable. *)
+  let terminal _ = false
+  (* An alternative is nullable if at least one branch is nullable. *)
+  let disjunction p q = p || q()
+  (* A sequence is nullable if both members are nullable. *)
+  let conjunction _ p q = p && q()
+  (* The sequence epsilon is nullable. *)
+  let epsilon = true
+end
+
 module Make (X : sig val grammar: grammar end) = struct
   open X
 
@@ -40,16 +53,6 @@ module Make (X : sig val grammar: grammar end) = struct
       (Fix.Glue.HashTablesAsImperativeMaps(String))
       (Fix.Prop.Boolean)
       (G)
-      (struct
-        let shortcut _nt = None
-        (* A terminal symbol is not nullable. *)
-        let terminal _ = false
-        (* An alternative is nullable if at least one branch is nullable. *)
-        let disjunction p q = p || q()
-        (* A sequence is nullable if both members are nullable. *)
-        let conjunction _ p q = p && q()
-        (* The sequence epsilon is nullable. *)
-        let epsilon = true
-      end)
+      (A)
 
 end (* Make *)
