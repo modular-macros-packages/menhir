@@ -14,6 +14,22 @@ open Keyword
 open IL
 open ILConstruction
 
+module Make (G : sig val grammar : grammar end) = struct
+open G
+
+(* Determine which symbols are nullable and which symbols generate a subset of
+   {epsilon}. This is used to optimize the expansion of $symbolstartpos. *)
+
+module Nullable =
+  Nullable.Make(G)
+let nullable : symbol -> bool =
+  Nullable.symbol
+
+module NonEpsilon =
+  NonEpsilon.Make(G)
+let epsilon : symbol -> bool =
+  fun nt -> not (NonEpsilon.symbol nt)
+
 (* [symbolstartpos producers i n] constructs an expression which, beginning at
    index [i], looks for the first non-empty producer and returns its start
    position. If none is found, this expression returns the end position of the
@@ -43,7 +59,7 @@ open ILConstruction
    symbol, once inlined, can be seen to be a sequence of empty and nonempty
    symbols. *)
 
-let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
+let rec symbolstartpos producers i n
 : IL.expr * KeywordSet.t =
   if i = n then
     (* Return [$endpos]. *)
@@ -66,7 +82,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
       EVar (kposvar startp),
       KeywordSet.singleton startp
     else
-      let continue, keywords = symbolstartpos analysis producers (i + 1) n in
+      let continue, keywords = symbolstartpos producers (i + 1) n in
       if epsilon symbol then
         (* The start and end positions must be the same. *)
         continue,
@@ -136,10 +152,10 @@ let expand_ofs keyword action =
 (* [$symbolstartpos] is expanded into a cascade of [if] constructs, modeled
    after [Parsing.symbol_start_pos]. *)
 
-let expand_symbolstartpos analysis producers n keyword action =
+let expand_symbolstartpos producers n keyword action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorPosition) ->
-      let expansion, keywords = symbolstartpos analysis producers 0 n in
+      let expansion, keywords = symbolstartpos producers 0 n in
       Action.define keyword keywords
         (mlet [ PVar (kposvar keyword) ] [ expansion ])
         action
@@ -192,7 +208,7 @@ let expand_round f action =
    do this in this order because each round can cause new keywords to appear,
    which must eliminated by the following rounds. *)
 
-let expand_action analysis producers action =
+let expand_action producers action =
   let n = List.length producers in
 
   (* Expand [loc] keywords away first. *)
@@ -206,7 +222,7 @@ let expand_action analysis producers action =
 
   (* Expand [$symbolstartpos] away. *)
 
-  let action = expand_round (expand_symbolstartpos analysis producers n) action in
+  let action = expand_round (expand_symbolstartpos producers n) action in
 
   (* Then, expand away the non-[ofs] keywords. *)
 
@@ -214,28 +230,20 @@ let expand_action analysis producers action =
 
   action
 
-(* Silently analyze the grammar so as to find out which symbols are
-   nullable and which symbols generate a subset of {epsilon}. This
-   is used to optimize the expansion of $symbolstartpos. *)
-
-let analysis grammar =
-  let module G = struct let grammar = grammar end in
-  let module Nullable = Nullable.Make(G) in
-  let module NonEpsilon = NonEpsilon.Make(G) in
-  let epsilon nt = not (NonEpsilon.symbol nt) in
-  Nullable.symbol, epsilon
-
 (* Put everything together. *)
 
-let expand_branch analysis branch =
-  { branch with action = expand_action analysis branch.producers branch.action }
+let expand_branch branch =
+  { branch with action = expand_action branch.producers branch.action }
 
-let expand_rule analysis rule =
-  { rule with branches = List.map (expand_branch analysis) rule.branches }
+let expand_rule rule =
+  { rule with branches = List.map expand_branch rule.branches }
 
-let expand_grammar grammar =
-  let analysis = analysis grammar in
-  { grammar with rules = StringMap.map (expand_rule analysis) grammar.rules }
+let grammar =
+  { grammar with rules = StringMap.map expand_rule grammar.rules }
 
-let expand =
-  expand_grammar
+end (* Make *)
+
+let expand grammar =
+  let module G = struct let grammar = grammar end in
+  let module M = Make(G) in
+  M.grammar
