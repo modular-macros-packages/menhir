@@ -11,9 +11,14 @@
 open PlainSyntax
 open PlainSyntaxAccessors
 
-module Make (G : sig
+module Make
+(G : sig
   val grammar: grammar
-end) () = struct
+end)
+(X : sig
+  val topological_numbering: bool
+end)
+() = struct
 
 open G
 
@@ -596,12 +601,41 @@ module Production = struct
     with Not_found ->
       assert false (* [nt] is not a start symbol *)
 
+  (* We are now about to enumerate and number the non-start productions. There
+     is a twist. If [X.topological_numbering] is [false] then we do so in an
+     arbitrary order. If [X.topological_numbering] is [true] and if the
+     grammar is acyclic then we number the productions in such a way that if
+     [A → α] receives a smaller number than [B → β] then A => B is permitted
+     but B => A is impossible. We expect to exploit this property in our GLR
+     parsing algorithm. *)
+
+  let foreach_rule : (nonterminal -> rule -> 's -> 's) -> 's -> 's =
+    (* An arbitrary ordering. *)
+    fun yield s -> StringMap.fold yield grammar.rules s
+
+  let foreach_rule : (nonterminal -> rule -> 's -> 's) -> 's -> 's =
+    if X.topological_numbering then
+      let module O = TopologicalOrdering.Make(G) in
+      match O.nonterminals with
+      | None ->
+          (* The grammar is cyclic. Abandon silently. *)
+          foreach_rule
+      | Some nts ->
+          (* A topological ordering. *)
+          fun yield s ->
+            List.fold_left (fun s nt ->
+              let rule = StringMap.find nt grammar.rules in
+              yield nt rule s
+            ) s nts
+    else
+      foreach_rule
+
   (* Create the non-start productions, populating the above arrays. *)
 
   let prod_symbol producer =
     Symbol.lookup producer.prod_symbol
 
-  let (_ : int) = StringMap.fold (fun nonterminal rule k ->
+  let (_ : int) = foreach_rule (fun nonterminal rule k ->
     let nt = Nonterminal.lookup nonterminal in
     let k' = MList.accumulate k rule.branches @@ fun k branch ->
       let producers = Array.of_list branch.producers in
@@ -618,7 +652,7 @@ module Production = struct
     in
     ntprods.(nt) <- (k, k');
     k'
-  ) grammar.rules start
+  ) start
 
   (* Accessors. *)
 

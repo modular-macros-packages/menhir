@@ -12,7 +12,12 @@ open Channels
 
 (* Construct a rich view of the grammar. *)
 
-module  G = GrammarConstruction.Make(Front)()
+module G =
+  GrammarConstruction.Make
+    (Front)
+    (struct let topological_numbering = false end)
+    ()
+
 include G
 
 (* At log level 1, print short information messages. *)

@@ -18,4 +18,8 @@ open MiddleAPI
    into a rich internal view. *)
 module Make (G : sig
   val grammar: grammar
-end) () : GRAMMAR
+end)
+(X : sig
+  val topological_numbering: bool
+end)
+() : GRAMMAR
