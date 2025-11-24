@@ -24,7 +24,7 @@ module A : sig
 end
 
 module Make
-(X : sig val grammar: grammar end)
+(G : sig val grammar: grammar end)
 : RESULT
   with type property = bool
    and type nonterminal = nonterminal
