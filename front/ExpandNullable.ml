@@ -30,54 +30,13 @@ open X
 
 (* -------------------------------------------------------------------------- *)
 
-(* We need to know which symbols are nullable. *)
+(* We need to know which symbols (and productions) are nullable. *)
 
-module G = struct
-  type nonterminal = string
-  type terminal = string
-  type symbol = string
-  type production = branch
-  let classify symbol =
-    if is_nonterminal grammar symbol then `N symbol else `T symbol
-  let rhs branch =
-    List.map (fun producer -> producer.prod_symbol) branch.producers
-    |> Array.of_list
-  let productions nt =
-    let rule = M.find nt grammar.rules in
-    rule.branches
-  let ignore _prod = false
-end
-
-module String = struct
-  include String
-  let hash = Hashtbl.hash (* [String.hash] appears in OCaml 5.0 *)
-end
-
-module NULLABLE =
-  GenericAnalysis.Make
-    (Fix.Glue.HashTablesAsImperativeMaps(String))
-    (Fix.Prop.Boolean)
-    (G)
-    (struct
-      let shortcut _nt = None
-      (* A terminal symbol is not nullable. *)
-      let terminal _ = false
-      (* An alternative is nullable if at least one branch is nullable. *)
-      let disjunction p q = p || q()
-      (* A sequence is nullable if both members are nullable. *)
-      let conjunction _ p q = p && q()
-      (* The sequence epsilon is nullable. *)
-      let epsilon = true
-    end)
-
-let nullable_symbol : symbol -> bool =
-  NULLABLE.symbol
+module Nullable =
+  Nullable.Make(X)
 
 let nullable_producer (producer : producer) : bool =
-  nullable_symbol producer.prod_symbol
-
-let nullable_branch : branch -> bool =
-  NULLABLE.production
+  Nullable.symbol producer.prod_symbol
 
 (* We have to be careful: the above functions offer an analysis of the
    original grammar. They cannot be applied to symbols that exist only
@@ -122,15 +81,15 @@ let is_participant (nt : nonterminal) : bool =
 (* Statistics. *)
 
 let is_right_nullable (branch : branch) : bool =
-  let rhs = G.rhs branch in
-  let n = Array.length rhs in
-  0 < n && NULLABLE.symbol rhs.(n-1)
+  let rhs = branch.producers in
+  rhs <> [] &&
+  Nullable.symbol (MList.last rhs).prod_symbol
 
 let count_nullable_symbols () : int =
   MInt.with_counter @@ fun c ->
   foreach_nonterminal grammar @@ fun nt ->
   assert (is_nonterminal grammar nt);
-  if NULLABLE.symbol nt then incr c
+  if Nullable.symbol nt then incr c
 
 let total_production_length () : int =
   MInt.with_counter @@ fun c ->
@@ -226,7 +185,7 @@ let empty, nonempty =
 let rename_producer (f : nonterminal -> nonterminal) producer : producer =
   let prod_symbol = producer.prod_symbol in
   assert (is_nonterminal grammar prod_symbol);
-  assert (nullable_symbol prod_symbol);
+  assert (Nullable.symbol prod_symbol);
   let prod_symbol = f prod_symbol in
   { producer with prod_symbol }
 
@@ -317,7 +276,7 @@ let prime (producer : producer) : producer =
    should be marked %inline, that is, eliminated. *)
 
 let should_mark_inline nt =
-  NULLABLE.symbol nt &&
+  Nullable.symbol nt &&
   match X.policy with
   | `ExpandNullableSymbols ->
       true
@@ -327,7 +286,7 @@ let should_mark_inline nt =
       false
 
 let will_be_expanded_at_least_once nt =
-  NULLABLE.symbol nt &&
+  Nullable.symbol nt &&
   match X.policy with
   | `ExpandNullableSymbols ->
       true
@@ -431,7 +390,7 @@ let split_rule (nt : nonterminal) (rule : rule) : rule =
   { branches; positions; inline_flag; attributes }
 
 let empty_branch (branch : branch) : branch option =
-  if nullable_branch branch then
+  if Nullable.production branch then
     (* Every symbol in the right-hand side is nonterminal and nullable. *)
     (* Keep this branch, replacing every symbol A with Ae. *)
     Some (transform_branch_producers empty_producers branch)
@@ -462,7 +421,7 @@ let rightmost_non_nullable_producer_index (producers : producers) : int =
   !i
 
 let prime_right_nullable_suffix (branch : branch) : branch =
-  assert (not (nullable_branch branch));
+  assert (not (Nullable.production branch));
   branch |> transform_branch_producers @@ fun producers ->
   let i = rightmost_non_nullable_producer_index producers in
   prime_suffix (i+1) producers
@@ -472,7 +431,7 @@ let prime_right_nullable_suffixes (rule : rule) : rule =
   { rule with branches }
 
 let nonempty_branch (branch : branch) : branches =
-  if nullable_branch branch then
+  if Nullable.production branch then
     (* This branch is nullable. *)
     let n = List.length branch.producers in
     if n = 0 then
@@ -504,7 +463,7 @@ let rules : rule M.t =
   M.fold (fun nt rule rules ->
     (* For each definition of a symbol N in the grammar, *)
     (* If N is nullable then *)
-    if NULLABLE.symbol nt then
+    if Nullable.symbol nt then
       rules
       (* redefine the symbol N as Ne | Nne, *)
       |> M.add nt (split_rule nt rule)
@@ -524,7 +483,7 @@ let rules : rule M.t =
 
 let types : ocamltype M.t =
   M.fold (fun nt ty types ->
-    if NULLABLE.symbol nt then
+    if Nullable.symbol nt then
       types
       |> M.add nt ty
       |> M.add (nonempty nt) ty
