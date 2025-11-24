@@ -219,18 +219,11 @@ let expand_action analysis producers action =
    is used to optimize the expansion of $symbolstartpos. *)
 
 let analysis grammar =
-  let module G = GrammarConstruction.Make(struct
-    let grammar = grammar
-  end)() in
-  let lookup (nt : Syntax.symbol) : G.Symbol.t =
-    try G.Symbol.lookup nt with Not_found -> assert false
-  in
-  let nullable nt : bool =
-    G.Analysis.nullable_symbol (lookup nt)
-  and epsilon nt : bool =
-    G.TerminalSet.is_empty (G.Analysis.first_symbol (lookup nt))
-  in
-  nullable, epsilon
+  let module G = struct let grammar = grammar end in
+  let module Nullable = Nullable.Make(G) in
+  let module NonEpsilon = NonEpsilon.Make(G) in
+  let epsilon nt = not (NonEpsilon.symbol nt) in
+  Nullable.symbol, epsilon
 
 (* Put everything together. *)
 
