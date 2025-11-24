@@ -88,10 +88,13 @@ let error_free_grammar grammar =
 let grammar_uses_error_token grammar =
   not (error_free_grammar grammar)
 
+let is_terminal grammar symbol =
+  StringMap.mem symbol grammar.tokens || symbol = "error"
+
 let is_nonterminal grammar symbol =
   let result = StringMap.mem symbol grammar.rules in
   assert (
-    result || StringMap.mem symbol grammar.tokens || symbol = "error" ||
+    result || is_terminal grammar symbol ||
     (Printf.eprintf "DEBUG: unknown symbol: %s\n%!" symbol; false)
   );
   result

@@ -71,6 +71,11 @@ val foreach_branch : grammar -> (branch -> unit) -> unit
    [grammar] mentions the special token [error]. *)
 val grammar_uses_error_token : grammar -> bool
 
+(**[is_terminal grammar symbol] tests whether the symbol [symbol] is a
+   terminal symbol. This symbol must exist; that is, it must be a terminal
+   symbol or a nonterminal symbol. *)
+val is_terminal : grammar -> symbol -> bool
+
 (**[is_nonterminal grammar symbol] tests whether the symbol [symbol] is a
    nonterminal symbol. This symbol must exist; that is, it must be a terminal
    symbol or a nonterminal symbol. *)
