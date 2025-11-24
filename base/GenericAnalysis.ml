@@ -8,22 +8,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* We perform memoization only at nonterminal symbols. We assume that the
-   analysis of a symbol is the analysis of its definition (as opposed to,
-   say, a computation that depends on the occurrences of this symbol in
-   the grammar). Therefore, for example, the computation of FOLLOW sets
-   is not an instance of this analysis.  *)
+(**A abstract description of a grammar. *)
+module type GRAMMAR = sig
 
-open Fix
-
-module Make
-(M : IMPERATIVE_MAPS)
-(P : PROPERTY)
-(G : sig
-
-  (* A grammar is described by the following functions. *)
-
-  type nonterminal = M.key
+  type nonterminal
   type terminal
   type symbol
   type production
@@ -43,10 +31,15 @@ module Make
      ignored during the analysis. *)
   val ignore: production -> bool
 
-end)
-(S : sig
-  open P
-  open G
+end
+
+(**A description of an analysis. *)
+module type ANALYSIS = sig
+
+  type terminal
+  type nonterminal
+  type symbol
+  type property
 
   (* An analysis is specified by the following functions. *)
 
@@ -78,9 +71,62 @@ end)
      for [conjunction]. *)
   val epsilon: property
 
-end)
+end
+
+(**The result of applying an analysis to a grammar. *)
+module type RESULT = sig
+
+  type terminal
+  type nonterminal
+  type symbol
+  type production
+  type property
+
+  (* The results of the analysis take the following form. *)
+
+  (* The results are computed on demand, that is, when the functions
+     listed below are invoked. *)
+
+  (**To every nonterminal symbol, we associate a property. *)
+  val nonterminal: nonterminal -> property
+
+  (**To every symbol, we associate a property. *)
+  val symbol: symbol -> property
+
+  (**To every production, we associate a property. *)
+  val production: production -> property
+
+  (**To every suffix of every production, we associate a property.
+     The offset [i], which determines the beginning of the suffix,
+     must be contained between [0] and [n], inclusive, where [n]
+     is the length of the production. *)
+  val production_suffix: production -> int -> property
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(* We perform memoization only at nonterminal symbols. We assume that the
+   analysis of a symbol is the analysis of its definition (as opposed to,
+   say, a computation that depends on the occurrences of this symbol in
+   the grammar). Therefore, for example, the computation of FOLLOW sets
+   is not an instance of this analysis.  *)
+
+open Fix
+
+module Make
+(M : IMPERATIVE_MAPS)
+(P : PROPERTY)
+(G : GRAMMAR with type nonterminal = M.key)
+(A : ANALYSIS
+ with type property := P.property
+  and type terminal := G.terminal
+  and type nonterminal := M.key
+  and type symbol := G.symbol)
 = struct
-  open P
+
+  include P
+  include G
 
   (* The following analysis functions are parameterized by [get], which
      makes a recursive call to the analysis at a nonterminal symbol. *)
@@ -90,22 +136,22 @@ end)
   let symbol (get : G.nonterminal -> property)  sym : property =
     match G.classify sym with
     | `T t ->
-        S.terminal t
+        A.terminal t
     | `N nt ->
         (* Recursive call to the analysis, via [get]. *)
         get nt
 
   (* Analysis of (a suffix of) a production [prod], starting at index [i]. *)
 
-  (* Because [S.conjunction] is lazy in its second argument, it is possible
+  (* Because [A.conjunction] is lazy in its second argument, it is possible
      to stop early. *)
 
   let rec production_suffix get rhs n i : property =
     if i = n then
-      S.epsilon
+      A.epsilon
     else
       let sym = rhs.(i) in
-      S.conjunction sym
+      A.conjunction sym
         (symbol get sym)
         (fun () -> production_suffix get rhs n (i+1))
 
@@ -119,7 +165,7 @@ end)
 
   (* Analysis of a disjunction of productions. *)
 
-  (* Because [S.disjunction] is lazy in its second argument, it is possible
+  (* Because [A.disjunction] is lazy in its second argument, it is possible
      to stop early. *)
 
   let rec disjunction get prods : property =
@@ -130,14 +176,14 @@ end)
         if G.ignore prod then
           disjunction get prods
         else
-          S.disjunction
+          A.disjunction
             (production get prod)
             (fun () -> disjunction get prods)
 
   (* Analysis of a nonterminal symbol. *)
 
   let nonterminal nt get : property =
-    match S.shortcut nt with
+    match A.shortcut nt with
     | Some p ->
         p
     | None ->

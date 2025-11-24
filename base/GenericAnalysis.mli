@@ -15,14 +15,10 @@
 
 open Fix
 
-module Make
-(M : IMPERATIVE_MAPS)
-(P : PROPERTY)
-(G : sig
+(**A abstract description of a grammar. *)
+module type GRAMMAR = sig
 
-  (* A grammar is described by the following functions. *)
-
-  type nonterminal = M.key
+  type nonterminal
   type terminal
   type symbol
   type production
@@ -42,10 +38,15 @@ module Make
      ignored during the analysis. *)
   val ignore: production -> bool
 
-end)
-(S : sig
-  open P
-  open G
+end
+
+(**A description of an analysis. *)
+module type ANALYSIS = sig
+
+  type terminal
+  type nonterminal
+  type symbol
+  type property
 
   (* An analysis is specified by the following functions. *)
 
@@ -77,10 +78,16 @@ end)
      for [conjunction]. *)
   val epsilon: property
 
-end)
-: sig
-  open G
-  open P
+end
+
+(**The result of applying an analysis to a grammar. *)
+module type RESULT = sig
+
+  type property
+  type terminal
+  type nonterminal
+  type symbol
+  type production
 
   (* The results of the analysis take the following form. *)
 
@@ -103,3 +110,22 @@ end)
   val production_suffix: production -> int -> property
 
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(**[Make(M)(P)(G)(A)] applies the analysis [A] to the grammar [G]. *)
+module Make
+(M : IMPERATIVE_MAPS)
+(P : PROPERTY)
+(G : GRAMMAR with type nonterminal = M.key)
+(A : ANALYSIS
+ with type property := P.property
+  and type terminal := G.terminal
+  and type nonterminal := M.key
+  and type symbol := G.symbol)
+: RESULT
+  with type property = P.property
+   and type terminal = G.terminal
+   and type nonterminal = G.nonterminal
+   and type symbol = G.symbol
+   and type production = G.production
