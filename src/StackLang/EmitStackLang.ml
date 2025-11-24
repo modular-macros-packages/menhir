@@ -150,8 +150,8 @@ let must_read_positions_upon_entering s =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [must_query_lexer_upon_entering s] determines whether the lexer must be
-   queried for the next token upon entering the state [s]. *)
+(* [must_query_lexer_upon_entering mode s] determines whether the lexer must
+   be queried for the next token upon entering the state [s]. *)
 
 let must_query_lexer_upon_entering mode s =
   (* The lexer is queried only in normal mode. In error-handling mode,
