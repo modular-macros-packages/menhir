@@ -69,6 +69,20 @@ let[@tail_mod_cons] rec update k f xs =
   | _, x :: xs ->
       x :: update (k-1) f xs
 
+let rec last1 x xs =
+  match xs with
+  | [] ->
+      x
+  | x :: xs ->
+      last1 x xs
+
+let last xs =
+  match xs with
+  | [] ->
+      assert false
+  | x :: xs ->
+      last1 x xs
+
 let[@tail_mod_cons] rec index i xs =
   match xs with
   | [] ->

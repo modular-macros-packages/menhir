@@ -48,6 +48,10 @@ val take : int -> 'a list -> 'a list
    function [f] to the [k]-th element of the list [xs]. *)
 val update : int -> ('a -> 'a) -> 'a list -> 'a list
 
+(**[last xs] returns the last element of the list [xs].
+   The list must be nonempty. *)
+val last : 'a list -> 'a
+
 (**[index] transforms a list of elements into a list of pairs of
    an integer index and an element. *)
 val index : 'a list -> (int * 'a) list
