@@ -1116,17 +1116,7 @@ module NULLABLE =
     (Fix.Glue.ArraysAsImperativeMaps(Nonterminal))
     (Fix.Prop.Boolean)
     (G)
-    (struct
-      let shortcut _nt = None
-      (* A terminal symbol is not nullable. *)
-      let terminal _ = false
-      (* An alternative is nullable if at least one branch is nullable. *)
-      let disjunction p q = p || q()
-      (* A sequence is nullable if both members are nullable. *)
-      let conjunction _ p q = p && q()
-      (* The sequence epsilon is nullable. *)
-      let epsilon = true
-    end)
+    (Nullable.A)
 
 (* -------------------------------------------------------------------------- *)
 
