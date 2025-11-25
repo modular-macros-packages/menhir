@@ -48,8 +48,9 @@ let load_grammar_from_file filename : Syntax.partial_grammar =
 
 (* ------------------------------------------------------------------------- *)
 
-(* Read all of the grammar files that are named on the command line, plus the
-   standard library, unless suppressed by [--no-stdlib] or [--coq]. *)
+(* Read all of the grammar files that are named on the command line,
+   plus the standard library, unless suppressed by [--no-stdlib] or
+   [--coq]. *)
 
 let grammars () : Syntax.partial_grammar list =
   List.map load_grammar_from_file Settings.filenames
@@ -65,8 +66,6 @@ let grammars () : Syntax.partial_grammar list =
        "<standard.mly>". This file name can appear in generated
        parsers, because Menhir produces # directives that point back to
        source (.mly) files. *)
-    (* Note that the [let] construct below is required in order to ensure
-       that the standard library is read first. *)
     let standard_library =
       let priority = 0 in
       load_grammar_from_contents
