@@ -154,8 +154,8 @@ let grammar_before_expansion =
 
 (* ------------------------------------------------------------------------- *)
 
-(* Expand away all applications of parameterized nonterminal symbols, so as
-   to obtain a grammar without parameterized nonterminal symbols. *)
+(* Expand away all applications of parameterized nonterminal symbols,
+   so as to obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar : PlainSyntax.grammar =
   monitor @@ fun c ->
@@ -178,7 +178,7 @@ let grammar : PlainSyntax.grammar =
 
 (* ------------------------------------------------------------------------- *)
 
-(* If [--strategy simplified] has been selected, then check that the [error]
+(* If [--strategy simplified] has been selected, check that the [error]
    token is used only at the end of productions (2021/10/31). *)
 
 let grammar =
@@ -192,8 +192,8 @@ let grammar =
 
 (* ------------------------------------------------------------------------- *)
 
-(* If [--only-tokens] was specified on the command line, produce
-   the definition of the [token] type and stop. *)
+(* If [--only-tokens] was specified on the command line,
+   produce the definition of the [token] type and stop. *)
 
 let () =
   let open Settings in
@@ -314,11 +314,19 @@ let grammar =
 (* If requested by the user, expand away some or all occurrences of nullable
    symbols. *)
 
+let message policy =
+  match policy with
+  | `ExpandNullableSymbols ->
+      "Expanding away all nullable symbols"
+  | `ExpandNullableSuffixParticipants
+  | `ExpandNullableSuffixes ->
+      "Expanding away some nullable symbols"
+
 let grammar =
   match Settings.expand_nullable with
   | Some policy ->
       monitor @@ fun c ->
-      Time.time "Expanding away some or all nullable symbols" @@ fun () ->
+      Time.time (message policy) @@ fun () ->
       ExpandNullable.transform c (getG 1) policy grammar
   | None ->
       grammar
