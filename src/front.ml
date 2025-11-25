@@ -236,18 +236,18 @@ let grammar =
    inferred [.mli] file. The OCaml type of every nonterminal symbol is
    then known, just as with [--infer]. *)
 
-let grammar, ocaml_types_have_been_checked =
+let grammar =
   let module G = struct let grammar = grammar end in
   let module Infer = Infer.Make(G)(Settings) in
   Settings.(match infer with
   | IMNone ->
-      grammar, false
+      grammar
   | IMInfer ->
       let grammar =
         Time.time "Inferring types for nonterminal symbols" @@ fun () ->
         Infer.infer()
       in
-      grammar, true
+      grammar
   | IMDependRaw ->
       Infer.depend `RawDepend;
       exit 0
@@ -263,7 +263,7 @@ let grammar, ocaml_types_have_been_checked =
         Time.time "Reading inferred types for nonterminals" @@ fun () ->
         Infer.read_reply filename
       in
-      grammar, true
+      grammar
   )
 
 (* ------------------------------------------------------------------------- *)
