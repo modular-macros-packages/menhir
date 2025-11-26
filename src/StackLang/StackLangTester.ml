@@ -145,8 +145,8 @@ let test m program nt sentence =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [test program nt sentence] tests the program [program] with the start
-   symbol [nt] and with a number of sentences. *)
+(* [test program nt] tests the program [program] with the start symbol [nt]
+   and with a number of sentences. *)
 
 (* We sample sentences of increasing sizes, picking at most [k] sentences of
    each size, until a certain size threshold is reached. The current settings
@@ -194,7 +194,7 @@ let test program nt =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [test program nt sentence] tests the program [program]. *)
+(* [test program] tests the program [program]. *)
 
 let test program =
   Time.time "Testing the StackLang program" @@ fun () ->
