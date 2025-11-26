@@ -9,7 +9,11 @@
 (******************************************************************************)
 
 open Lexing
+open Printf
 open MiddleAPI
+
+let debug =
+  false
 
 (* A traditional lexer returns a token and updates the fields of the lexing
    buffer with new positions. Here, we have no position information, so we
@@ -34,21 +38,34 @@ open G
 
 exception EndOfStream
 
+let queried () =
+  eprintf "TerminalStream: lexer is queried "
+
+let return tok =
+  eprintf "and returns %s\n%!" (Terminal.print tok)
+
+let fail () =
+  eprintf "and raises EndOfStream\n%!"
+
 let stream ts =
   let ts = ref ts in
   let lexbuf = from_string "" in
   lexbuf.lex_start_p <- dummy_pos;
   lexbuf.lex_curr_p <- dummy_pos;
   let lexer _lexbuf : Terminal.t =
+    if debug then queried();
     match !ts with
     | tok :: more ->
         ts := more;
+        if debug then return tok;
         tok
     | [] ->
         match Terminal.eof with
         | Some eof ->
+            if debug then return eof;
             eof
         | None ->
+            if debug then fail();
             raise EndOfStream
   in
   lexer, lexbuf
