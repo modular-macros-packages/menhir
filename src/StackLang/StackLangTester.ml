@@ -42,7 +42,7 @@ let print_outcome = function
 
 (* -------------------------------------------------------------------------- *)
 
-(* [run_reference sentence] uses the reference interpreter to parse the
+(* [run_reference nt sentence] uses the reference interpreter to parse the
    sentence [sentence]. It returns a pair of an outcome and the length
    of the trace (regardless of whether the trace is actually visible). *)
 
