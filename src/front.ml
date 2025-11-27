@@ -186,7 +186,8 @@ let grammar =
   | `Simplified ->
       monitor @@ fun c ->
       Time.time "Checking where the error token is used" @@ fun () ->
-      CheckErrorTokenUsage.filter_grammar c grammar
+      let reason = "when --strategy simplified is selected,\n" in
+      CheckErrorTokenUsage.final_only c reason grammar
   | `Legacy ->
       grammar
 

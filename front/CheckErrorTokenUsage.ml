@@ -9,26 +9,45 @@
 (******************************************************************************)
 
 open PlainSyntax
+open PlainSyntaxAccessors
 
-let keep_branch c branch : bool =
-  let n = List.length branch.producers in
-  let warned = ref false in
-  let () =
-    branch.producers |> List.iteri @@ fun i producer ->
-    if i < n - 1
-    && producer.prod_symbol = "error"
-    && not !warned then
-      let () = warned := true in
+let has_final_error_only branch : bool =
+  let producers = Array.of_list branch.producers in
+  let n = Array.length producers in
+  let ok = ref true in
+  Array.iteri (fun i producer ->
+    if i < n - 1 && producer.prod_symbol = "error" then
+      ok := false
+  ) producers;
+  !ok
+
+let final_only c reason grammar =
+  let keep branch : bool =
+    if has_final_error_only branch then
+      true
+    else begin
       Report.warning c [branch.branch_position]
-        "when --strategy simplified is selected,\n\
-         the error token may appear only at the end of a production\n\
+        "%sthe error token may appear only at the end of a production\n\
          (and the semantic action must abort the parser).\n\
          This production will be ignored."
+        reason;
+      false
+    end
   in
-  not !warned
+  let filter rule = { rule with branches = List.filter keep rule.branches } in
+  { grammar with rules = StringMap.map filter grammar.rules }
 
-let filter_rule c rule =
-  { rule with branches = List.filter (keep_branch c) rule.branches }
-
-let filter_grammar c grammar =
-  { grammar with rules = StringMap.map (filter_rule c) grammar.rules }
+let nowhere c reason grammar =
+  let keep branch : bool =
+    if error_free_branch branch then
+      true
+    else begin
+      Report.warning c [branch.branch_position]
+        "%sthe error token must not be used.\n\
+         This production will be ignored."
+        reason;
+      false
+    end
+  in
+  let filter rule = { rule with branches = List.filter keep rule.branches } in
+  { grammar with rules = StringMap.map filter grammar.rules }
