@@ -159,7 +159,7 @@ let test program nt =
     eprintf
       "StackLangTester: about to test start symbol %s...\n%!"
       (Nonterminal.print false nt);
-  (* Sample sentences of increasing sizes, picking at most [m] sentences
+  (* Sample sentences of increasing sizes, picking at most [k] sentences
      of each size, until a total of [n] sentences is reached or the size
      threshold is reached. *)
   let m = StackLangMeasure.zero() in
