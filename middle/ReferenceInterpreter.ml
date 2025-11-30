@@ -184,11 +184,7 @@ module T = struct
             fail env
 
   let maybe_shift_t (s : state) (tok : terminal) : state option =
-    try
-      let s' : state = SymbolMap.find (Symbol.T tok) (Lr1.transitions s) in
-      Some s'
-    with Not_found ->
-      None
+    SymbolMap.find_opt (Symbol.T tok) (Lr1.transitions s)
 
   let may_reduce_prod (s : state) (tok : terminal) (prod : production) =
     match Lr1.test_default_reduction s with
@@ -211,10 +207,7 @@ module T = struct
     goto_nt s (Production.nt prod)
 
   let maybe_goto_nt (s : state) (nt : nonterminal) : state option =
-    try
-      Some (SymbolMap.find (Symbol.N nt) (Lr1.transitions s))
-    with Not_found ->
-      None
+    SymbolMap.find_opt (Symbol.N nt) (Lr1.transitions s)
 
   open MenhirLib.EngineTypes
 
