@@ -153,17 +153,17 @@ let size =
 
 (* Optionally, print a measure of each of the tables that we are defining. *)
 
-let define (name, expr) = {
+let define name expr = {
   valpat = PVar name;
   valval = expr
 }
 
-let define_and_measure (x, e) =
+let define_and_measure x e =
   Report.log (getC 1)
     "The %s table occupies roughly %d bytes."
     x (size e * (Sys.word_size / 8))
   ;
-  define (x, e)
+  define x e
 
 (* -------------------------------------------------------------------------- *)
 
@@ -326,10 +326,8 @@ let semantic_action prod =
 (* Export the number of start productions. *)
 
 let start_def =
-  define (
-    "start",
-    EIntConst Production.start
-  )
+  define "start" @@
+  EIntConst Production.start
 
 (* -------------------------------------------------------------------------- *)
 
@@ -564,67 +562,42 @@ let default_reduction node =
 (* Generate the table definitions. *)
 
 let action =
-  define_and_measure (
-    "action",
-    marshal2 "action" Lr1.n (Terminal.n - 1) (
-      Lr1.init (fun node ->
-        Terminal.initx (fun t ->
-          action node t
-        )
-      )
-    )
-  )
+  define_and_measure "action" @@
+  marshal2 "action" Lr1.n (Terminal.n - 1) @@
+  Lr1.init @@ fun node ->
+  Terminal.initx @@ fun t ->
+  action node t
 
 let goto =
-  define_and_measure (
-    "goto",
-    marshal2 "goto" Lr1.n Nonterminal.n (
-      Lr1.init (fun node ->
-        Nonterminal.init (fun nt ->
-          goto node nt
-        )
-      )
-    )
-  )
+  define_and_measure "goto" @@
+  marshal2 "goto" Lr1.n Nonterminal.n @@
+  Lr1.init @@ fun node ->
+  Nonterminal.init @@ fun nt ->
+  goto node nt
 
 let error =
-  define_and_measure (
-    "error",
-    flatten_and_marshal11 (
-      Lr1.map (fun node ->
-        Terminal.initx (fun t ->
-          error node t
-        )
-      )
-    )
-  )
+  define_and_measure "error" @@
+  flatten_and_marshal11 @@
+  Lr1.map @@ fun node ->
+  Terminal.initx @@ fun t ->
+  error node t
 
 let default_reduction =
-  define_and_measure (
-    "default_reduction",
-    marshal1 (
-      Lr1.init (fun node ->
-        default_reduction node
-      )
-    )
-  )
+  define_and_measure "default_reduction" @@
+  marshal1 @@
+  Lr1.init @@ fun node ->
+  default_reduction node
 
 let lhs =
-  define_and_measure (
-    "lhs",
-    marshal1 (
-      Production.init (fun prod ->
-        Nonterminal.encode (Production.nt prod)
-      )
-    )
-  )
+  define_and_measure "lhs" @@
+  marshal1 @@
+  Production.init @@ fun prod ->
+  Nonterminal.encode (Production.nt prod)
 
 let semantic_action =
-  define (
-    "semantic_action",
-    (* Non-start productions only. *)
-    EArray (Production.mapx semantic_action)
-  )
+  define "semantic_action" @@
+  (* Non-start productions only. *)
+  EArray (Production.mapx semantic_action)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -642,18 +615,16 @@ let reduce_or_accept prod =
       "Reducing production " ^ (Production.print prod)
 
 let trace =
-  define_and_measure (
-    "trace",
-    if Settings.trace then
-      EData ("Some", [
-        ETuple [
-          EArray (Terminal.map (stringwrap Terminal.print));
-          EArray (Production.map (stringwrap reduce_or_accept));
-        ]
-      ])
-    else
-      EData ("None", [])
-  )
+  define_and_measure "trace" @@
+  if Settings.trace then
+    EData ("Some", [
+      ETuple [
+        EArray (Terminal.map (stringwrap Terminal.print));
+        EArray (Production.map (stringwrap reduce_or_accept));
+      ]
+    ])
+  else
+    EData ("None", [])
 
 (* -------------------------------------------------------------------------- *)
 
@@ -711,26 +682,24 @@ let strategy =
 (* An entry point to the monolithic API. *)
 
 let monolithic_entry_point state nt t =
-  define (
-    Nonterminal.print true nt,
-    let lexer = "lexer"
-    and lexbuf = "lexbuf" in
-    EFun (
-      [ PVar lexer; PVar lexbuf ],
-      annotate (
-        EMagic (
-          EApp (
-            EVar entry, [
-              strategy;
-              EIntConst (Lr1.encode state);
-              EVar lexer;
-              EVar lexbuf
-            ]
-          )
+  define (Nonterminal.print true nt) @@
+  let lexer = "lexer"
+  and lexbuf = "lexbuf" in
+  EFun (
+    [ PVar lexer; PVar lexbuf ],
+    annotate (
+      EMagic (
+        EApp (
+          EVar entry, [
+            strategy;
+            EIntConst (Lr1.encode state);
+            EVar lexer;
+            EVar lexbuf
+          ]
         )
       )
-      (TypTextual t)
     )
+    (TypTextual t)
   )
 
 (* The whole monolithic API. *)
@@ -745,26 +714,23 @@ let monolithic_api : IL.valdef list =
 
 let incremental_entry_point state nt t =
   let initial = "initial_position" in
-  define (
-    Nonterminal.print true nt,
-    (* In principle the eta-expansion [fun initial_position -> start s
-       initial_position] should not be necessary, since [start] is a pure
-       function. However, when [--trace] is enabled, [start] will log messages
-       to the standard error channel. *)
-    EFun (
-      [ PVar initial ],
-      annotate (
-        EMagic (
-          EApp (
-            EVar start, [
-              EIntConst (Lr1.encode state);
-              EVar initial;
-            ]
-          )
+  define (Nonterminal.print true nt) @@
+  (* In principle the eta-expansion [fun initpos -> start s initpos] should
+     not be necessary, since [start] is a pure function. However, if [--trace]
+     is enabled, [start] logs messages to [stderr]. *)
+  EFun (
+    [ PVar initial ],
+    annotate (
+      EMagic (
+        EApp (
+          EVar start, [
+            EIntConst (Lr1.encode state);
+            EVar initial;
+          ]
         )
       )
-      (tcheckpoint (TypTextual t))
     )
+    (tcheckpoint (TypTextual t))
   )
 
 (* The whole incremental API. *)
@@ -834,21 +800,19 @@ let xsymbol (symbol : Symbol.t) : expr =
 let terminal () =
   assert Settings.inspection;
   let t = "t" in
-  define (
-    "terminal",
-    EFun ([ PVar t ],
-      EMatch (EVar t,
-        Terminal.mapx (fun tok ->
-          branch
-            (pint (Terminal.encode tok))
-            (xsymbol (Symbol.T tok))
-        ) @ [
-          branch
-            PWildcard
-            (EComment ("This terminal symbol does not exist.",
-                       eassertfalse))
-        ]
-      )
+  define "terminal" @@
+  EFun ([ PVar t ],
+    EMatch (EVar t,
+      Terminal.mapx (fun tok ->
+        branch
+          (pint (Terminal.encode tok))
+          (xsymbol (Symbol.T tok))
+      ) @ [
+        branch
+          PWildcard
+          (EComment ("This terminal symbol does not exist.",
+                     eassertfalse))
+      ]
     )
   )
 
@@ -860,22 +824,20 @@ let terminal () =
 let nonterminal () =
   assert Settings.inspection;
   let nt = "nt" in
-  define (
-    "nonterminal",
-    EFun ([ PVar nt ],
-      EMatch (EVar nt,
-        Nonterminal.foldx (fun nt branches ->
-          branch
-            (pint (Nonterminal.encode nt))
-            (xsymbol (Symbol.N nt))
-          :: branches
-        ) [
-          branch
-            PWildcard
-            (EComment ("This nonterminal symbol does not exist.",
-                       eassertfalse))
-        ]
-      )
+  define "nonterminal" @@
+  EFun ([ PVar nt ],
+    EMatch (EVar nt,
+      Nonterminal.foldx (fun nt branches ->
+        branch
+          (pint (Nonterminal.encode nt))
+          (xsymbol (Symbol.N nt))
+        :: branches
+      ) [
+        branch
+          PWildcard
+          (EComment ("This nonterminal symbol does not exist.",
+                     eassertfalse))
+      ]
     )
   )
 
@@ -886,12 +848,10 @@ let nonterminal () =
 
 let lr0_incoming () =
   assert Settings.inspection;
-  define_and_measure (
-    "lr0_incoming",
-    marshal1 (Lr0.init (fun node ->
-      encode_symbol_option (Lr0.incoming_symbol node)
-    ))
-  )
+  define_and_measure "lr0_incoming" @@
+  marshal1 @@
+  Lr0.init @@ fun node ->
+  encode_symbol_option (Lr0.incoming_symbol node)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -903,15 +863,10 @@ let lr0_incoming () =
 
 let rhs () =
   assert Settings.inspection;
-  let productions : int array array =
-    Production.init (fun prod ->
-      Array.map encode_symbol (Production.rhs prod)
-    )
-  in
-  define_and_measure (
-    "rhs",
-    linearize_and_marshal1 productions
-  )
+  define_and_measure "rhs" @@
+  linearize_and_marshal1 @@
+  Production.init @@ fun prod ->
+  Array.map encode_symbol (Production.rhs prod)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -919,26 +874,19 @@ let rhs () =
 
 let lr0_core () =
   assert Settings.inspection;
-  define_and_measure (
-    "lr0_core",
-    marshal1 (Lr1.init (fun (node : Lr1.node) ->
-      Lr0.encode (Lr0.ALR1.core (Lr1.state node))
-    ))
-  )
+  define_and_measure "lr0_core" @@
+  marshal1 @@
+  Lr1.init @@ fun node ->
+  Lr0.encode (Lr0.ALR1.core (Lr1.state node))
 
 (* A table that maps an LR(0) state to a set of LR(0) items. *)
 
 let lr0_items () =
   assert Settings.inspection;
-  let items : int array array =
-    Lr0.init (fun node ->
-      Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
-    )
-  in
-  define_and_measure (
-    "lr0_items",
-    linearize_and_marshal1 items
-  )
+  define_and_measure "lr0_items" @@
+  linearize_and_marshal1 @@
+  Lr0.init @@ fun node ->
+  Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -947,14 +895,10 @@ let lr0_items () =
 
 let nullable () =
   assert Settings.inspection;
-  define_and_measure (
-    "nullable",
-    marshal11 (
-      Nonterminal.init (fun nt ->
-        encode_bool (Analysis.nullable nt)
-      )
-    )
-  )
+  define_and_measure "nullable" @@
+  marshal11 @@
+  Nonterminal.init @@ fun nt ->
+  encode_bool (Analysis.nullable nt)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -963,16 +907,11 @@ let nullable () =
 
 let first () =
   assert Settings.inspection;
-  define_and_measure (
-    "first",
-    flatten_and_marshal11 (
-      Nonterminal.map (fun nt ->
-        Terminal.initx (fun t ->
-          encode_bool (TerminalSet.mem t (Analysis.first nt))
-        )
-      )
-    )
-  )
+  define_and_measure "first" @@
+  flatten_and_marshal11 @@
+  Nonterminal.map @@ fun nt ->
+  Terminal.initx @@ fun t ->
+  encode_bool (TerminalSet.mem t (Analysis.first nt))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -1116,7 +1055,7 @@ let program =
            defined here are visible in the semantic actions. *)
         SIValDefs (false, [
           token2terminal;
-          define ("error_terminal", EIntConst (Terminal.encode Terminal.error));
+          define "error_terminal" (EIntConst (Terminal.encode Terminal.error));
           token2value;
           default_reduction;
           error;
