@@ -354,6 +354,14 @@ let encode_ShiftDiscard s =         (*    s | 10 *)
 let encode_ShiftNoDiscard s =       (*    s | 11 *)
   ((Lr1.encode s) lsl 2) lor 0b11
 
+(* In the encoding of a shift transition, if the target state has a default
+   reduction on [#], we use [ShiftNoDiscard], otherwise [ShiftDiscard]. *)
+let encode_Shift s =
+  if Lr1.has_default_reduction_on_sharp s then
+    encode_ShiftNoDiscard s
+  else
+    encode_ShiftDiscard s
+
 let encode_Fail =                   (*        00 *)
   0
 
@@ -495,41 +503,26 @@ let marshal2 name m n (matrix : int array array) =
 (* The action table. *)
 
 let action node t =
-  match Lr1.test_default_reduction node with
-  | Some _ ->
 
-      (* [node] has a default reduction; in that case, the action
-         table is never looked up. *)
+  (* If this state has a default reduction, then the action table is
+     never looked up; this table entry is irrelevant. *)
+  if Lr1.has_default_reduction node then hole else
 
-      hole
+  match SymbolMap.find (Symbol.T t) (Lr1.transitions node) with
+  | target ->
+      (* [node] has a transition to [target]. *)
+      encode_Shift target
 
-  | None ->
+  | exception Not_found ->
 
-      try
-        let target = SymbolMap.find (Symbol.T t) (Lr1.transitions node) in
-
-        (* [node] has a transition to [target]. If [target] has a default
-           reduction on [#], use [ShiftNoDiscard], otherwise [ShiftDiscard]. *)
-
-        match Lr1.test_default_reduction target with
-        | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
-            assert (TerminalSet.cardinal toks = 1);
-            encode_ShiftNoDiscard target
-        | _ ->
-            encode_ShiftDiscard target
-
-      with Not_found ->
-        try
-
+      match TerminalMap.find t (Lr1.reductions node) with
+      | prods ->
           (* [node] has a reduction. *)
-
-          let prod = MList.single (TerminalMap.find t (Lr1.reductions node)) in
+          let prod = MList.single prods in
           encode_Reduce prod
 
-        with Not_found ->
-
+      | exception Not_found ->
           (* [node] has no action. *)
-
           encode_Fail
 
 (* In the error bitmap and in the action table, the row that corresponds to
