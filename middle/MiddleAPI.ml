@@ -1230,6 +1230,16 @@ module type LR1 = sig
      might be reduced. *)
   val reduction_sites: Production.t -> NodeSet.t
 
+  (**[has_default_reduction node] determines whether the node [node]
+     has a default reduction. This function is a simplified variant of
+     {!test_default_reduction}. *)
+  val has_default_reduction: t -> bool
+
+  (**[has_default_reduction_on_sharp node] determines whether the node
+     [node] has a default reduction on the terminal symbol [#]. This
+     function is a simplified variant of {!test_default_reduction}. *)
+  val has_default_reduction_on_sharp: t -> bool
+
 end (* LR1 *)
 
 (* -------------------------------------------------------------------------- *)

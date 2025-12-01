@@ -267,6 +267,21 @@ let get_start node =
   assert (is_start node);
   Lr0.get_start (core node)
 
+let has_default_reduction node =
+  match test_default_reduction node with
+  | Some _ ->
+      true
+  | None ->
+      false
+
+let has_default_reduction_on_sharp node =
+  match test_default_reduction node with
+  | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
+      assert (TerminalSet.cardinal toks = 1);
+      true
+  | _ ->
+      false
+
 (* -------------------------------------------------------------------------- *)
 
 (* The map [targets] maps a symbol [symbol] to the set of all nodes
