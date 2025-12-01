@@ -365,6 +365,7 @@ File "leap_ExprParser.mly", line 543, characters 0-5:
 Warning: the precedence level assigned to UNIONTH is never useful.
 File "leap_ExprParser.mly", line 555, characters 0-9:
 Warning: the precedence level assigned to VERTICAL_BAR is never useful.
+Warning: 160 states have end-of-stream conflicts.
 Warning: 160 end-of-stream conflicts were arbitrarily resolved.
 File "leap_ExprParser.mly", line 911, characters 0-7:
 Warning: symbol formula is never accepted.

@@ -72,6 +72,7 @@ File "leap_SpecParser.mly", line 55, characters 0-9:
 Warning: the precedence level assigned to MATH_LESS_EQ is never useful.
 File "leap_SpecParser.mly", line 55, characters 0-9:
 Warning: the precedence level assigned to NOT_EQUALS is never useful.
+Warning: 33 states have end-of-stream conflicts.
 Warning: 33 end-of-stream conflicts were arbitrarily resolved.
 File "leap_SpecParser.mly", line 99, characters 3-16:
 Warning: production invariant_list -> one_invariant is never reduced.

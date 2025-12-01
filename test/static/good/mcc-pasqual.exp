@@ -770,6 +770,7 @@ File "mcc-pasqual.mly", line 482, characters 0-6:
 Warning: the precedence level assigned to prec_unary is never useful.
 File "mcc-pasqual.mly", line 1213, characters 83-98:
 Warning: this %prec declaration is never useful.
+Warning: 106 states have end-of-stream conflicts.
 Warning: 106 end-of-stream conflicts were arbitrarily resolved.
 331 out of 624 states have a default reduction.
 The action table is 69888 entries; 3240 non-zero; 2352 compressed.

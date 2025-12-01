@@ -186,6 +186,7 @@ Warning: the precedence level assigned to VBAR is never useful.
 File "sage.mly", line 395, characters 22-26:
 Warning: this %prec declaration is never useful.
 Warning: 22 states have shift/reduce conflicts.
+Warning: 40 states have end-of-stream conflicts.
 Warning: 46 shift/reduce conflicts were arbitrarily resolved.
 Warning: 40 end-of-stream conflicts were arbitrarily resolved.
 File "sage.mly", line 417, characters 0-4:

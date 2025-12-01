@@ -28,6 +28,7 @@ Built an LR(1) automaton with 12 states.
 One shift/reduce conflict was silently solved.
 Only 10 states remain after resolving shift/reduce conflicts.
 Warning: one state has shift/reduce conflicts.
+Warning: 6 states have end-of-stream conflicts.
 Warning: one shift/reduce conflict was arbitrarily resolved.
 Warning: 6 end-of-stream conflicts were arbitrarily resolved.
 File "wiktor.mly", line 28, characters 4-27:

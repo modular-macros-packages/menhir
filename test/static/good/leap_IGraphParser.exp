@@ -212,6 +212,7 @@ Built an LR(0) automaton with 160 states.
 The grammar is SLR(1).
 The construction mode is pager.
 Built an LR(1) automaton with 160 states.
+Warning: 23 states have end-of-stream conflicts.
 Warning: 23 end-of-stream conflicts were arbitrarily resolved.
 File "leap_IGraphParser.mly", line 117, characters 4-14:
 Warning: production axiom_rule_list -> axiom_rule is never reduced.

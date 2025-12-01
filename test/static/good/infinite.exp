@@ -17,6 +17,7 @@ Built an LR(0) automaton with 6 states.
 The grammar is SLR(1).
 The construction mode is pager.
 Built an LR(1) automaton with 6 states.
+Warning: one state has end-of-stream conflicts.
 Warning: one end-of-stream conflict was arbitrarily resolved.
 File "infinite.mly", line 11, characters 2-3:
 Warning: production dummy -> A is never reduced.

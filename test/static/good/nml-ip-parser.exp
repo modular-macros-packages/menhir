@@ -400,6 +400,7 @@ Warning: this %prec declaration is never useful.
 File "nml-ip-parser.mly", line 586, characters 27-36:
 Warning: this %prec declaration is never useful.
 Warning: 100 states have shift/reduce conflicts.
+Warning: one state has end-of-stream conflicts.
 Warning: 411 shift/reduce conflicts were arbitrarily resolved.
 Warning: one end-of-stream conflict was arbitrarily resolved.
 File "nml-ip-parser.mly", line 322, characters 3-3:

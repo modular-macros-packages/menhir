@@ -566,6 +566,7 @@ File "htparser.mly", line 147, characters 0-6:
 Warning: the precedence level assigned to VLINE is never useful.
 Warning: 5 states have shift/reduce conflicts.
 Warning: 5 states have reduce/reduce conflicts.
+Warning: 14 states have end-of-stream conflicts.
 Warning: 16 shift/reduce conflicts were arbitrarily resolved.
 Warning: 25 reduce/reduce conflicts were arbitrarily resolved.
 Warning: 14 end-of-stream conflicts were arbitrarily resolved.

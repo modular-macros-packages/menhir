@@ -413,6 +413,7 @@ File "leap_StmParser.mly", line 942, characters 0-5:
 Warning: the precedence level assigned to UNIONTH is never useful.
 File "leap_StmParser.mly", line 954, characters 0-9:
 Warning: the precedence level assigned to VERTICAL_BAR is never useful.
+Warning: 2 states have end-of-stream conflicts.
 Warning: 2 end-of-stream conflicts were arbitrarily resolved.
 File "leap_StmParser.mly", line 1331, characters 2-11:
 Warning: production procedure_list -> procedure is never reduced.

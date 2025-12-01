@@ -321,6 +321,7 @@ Warning: the precedence level assigned to SUBSET is never useful.
 File "ics.mly", line 89, characters 0-9:
 Warning: the precedence level assigned to TO is never useful.
 Warning: one state has shift/reduce conflicts.
+Warning: one state has end-of-stream conflicts.
 Warning: one shift/reduce conflict was arbitrarily resolved.
 Warning: one end-of-stream conflict was arbitrarily resolved.
 File "ics.mly", line 125, characters 2-13:

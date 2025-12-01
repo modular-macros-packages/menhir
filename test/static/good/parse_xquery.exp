@@ -616,6 +616,7 @@ File "parse_xquery.mly", line 289, characters 0-5:
 Warning: the precedence level assigned to WHERE is never useful.
 File "parse_xquery.mly", line 289, characters 0-5:
 Warning: the precedence level assigned to WHILE is never useful.
+Warning: 268 states have end-of-stream conflicts.
 Warning: 268 end-of-stream conflicts were arbitrarily resolved.
 298 out of 1017 states have a default reduction.
 The action table is 273573 entries; 19589 non-zero; 16637 compressed.

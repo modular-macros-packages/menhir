@@ -1,5 +1,6 @@
 Error: 4 states have shift/reduce conflicts.
 Error: 3 states have reduce/reduce conflicts.
+Error: one state has end-of-stream conflicts.
 Error: 5 shift/reduce conflicts were arbitrarily resolved.
 Error: 3 reduce/reduce conflicts were arbitrarily resolved.
 Error: one end-of-stream conflict was arbitrarily resolved.

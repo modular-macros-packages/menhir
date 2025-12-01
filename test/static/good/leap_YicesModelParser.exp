@@ -72,6 +72,7 @@ Built an LR(0) automaton with 74 states.
 The grammar is SLR(1).
 The construction mode is pager.
 Built an LR(1) automaton with 74 states.
+Warning: 10 states have end-of-stream conflicts.
 Warning: 10 end-of-stream conflicts were arbitrarily resolved.
 File "leap_YicesModelParser.mly", line 145, characters 4-13:
 Warning: production assertion_list -> assertion is never reduced.

@@ -491,6 +491,7 @@ The construction mode is pager.
 Built an LR(1) automaton with 1183 states.
 One shift/reduce conflict was silently solved.
 Warning: one state has shift/reduce conflicts.
+Warning: 80 states have end-of-stream conflicts.
 Warning: one shift/reduce conflict was arbitrarily resolved.
 Warning: 80 end-of-stream conflicts were arbitrarily resolved.
 385 out of 1183 states have a default reduction.

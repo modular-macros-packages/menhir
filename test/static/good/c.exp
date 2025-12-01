@@ -321,6 +321,7 @@ The grammar is not SLR(1) -- 3 states have a conflict.
 The construction mode is pager.
 Built an LR(1) automaton with 349 states.
 Warning: one state has shift/reduce conflicts.
+Warning: 15 states have end-of-stream conflicts.
 Warning: one shift/reduce conflict was arbitrarily resolved.
 Warning: 15 end-of-stream conflicts were arbitrarily resolved.
 File "c.mly", line 404, characters 0-16:

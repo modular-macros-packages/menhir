@@ -351,6 +351,7 @@ Built an LR(1) automaton with 572 states.
 130 shift/reduce conflicts were silently solved.
 Only 562 states remain after resolving shift/reduce conflicts.
 Warning: 48 states have shift/reduce conflicts.
+Warning: 174 states have end-of-stream conflicts.
 Warning: 358 shift/reduce conflicts were arbitrarily resolved.
 Warning: 174 end-of-stream conflicts were arbitrarily resolved.
 File "ibal.mly", line 163, characters 0-4:

@@ -46,6 +46,7 @@ File "dune.1.4.0-opamBaseParser.mly", line 47, characters 0-5:
 Warning: the precedence level assigned to RBRACE is never useful.
 File "dune.1.4.0-opamBaseParser.mly", line 49, characters 0-9:
 Warning: the precedence level assigned to URELOP is never useful.
+Warning: 15 states have end-of-stream conflicts.
 Warning: 15 end-of-stream conflicts were arbitrarily resolved.
 File "dune.1.4.0-opamBaseParser.mly", line 79, characters 0-5:
 Warning: symbol value is never accepted.

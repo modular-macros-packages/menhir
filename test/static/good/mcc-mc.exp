@@ -46,6 +46,7 @@ Built an LR(0) automaton with 34 states.
 The grammar is SLR(1).
 The construction mode is pager.
 Built an LR(1) automaton with 34 states.
+Warning: 11 states have end-of-stream conflicts.
 Warning: 11 end-of-stream conflicts were arbitrarily resolved.
 File "mcc-mc.mly", line 71, characters 6-23:
 Warning: production program -> source_block_list is never reduced.

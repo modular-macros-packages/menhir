@@ -532,6 +532,7 @@ Built an LR(0) automaton with 385 states.
 The grammar is SLR(1).
 The construction mode is pager.
 Built an LR(1) automaton with 385 states.
+Warning: 50 states have end-of-stream conflicts.
 Warning: 50 end-of-stream conflicts were arbitrarily resolved.
 File "jasmc.mly", line 722, characters 4-15:
 Warning: production methods -> method_list is never reduced.

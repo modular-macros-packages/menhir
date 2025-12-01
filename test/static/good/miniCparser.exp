@@ -129,6 +129,7 @@ Built an LR(1) automaton with 218 states.
 File "miniCparser.mly", line 64, characters 0-5:
 Warning: the precedence level assigned to RBRACKET is never useful.
 Warning: 5 states have shift/reduce conflicts.
+Warning: 6 states have end-of-stream conflicts.
 Warning: 5 shift/reduce conflicts were arbitrarily resolved.
 Warning: 6 end-of-stream conflicts were arbitrarily resolved.
 66 out of 218 states have a default reduction.

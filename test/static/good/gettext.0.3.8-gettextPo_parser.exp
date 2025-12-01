@@ -56,6 +56,7 @@ The grammar is not SLR(1) -- 4 states have a conflict.
 The construction mode is pager.
 Built an LR(1) automaton with 40 states.
 Warning: 4 states have shift/reduce conflicts.
+Warning: 19 states have end-of-stream conflicts.
 Warning: 12 shift/reduce conflicts were arbitrarily resolved.
 Warning: 19 end-of-stream conflicts were arbitrarily resolved.
 File "gettext.0.3.8-gettextPo_parser.mly", line 114, characters 0-6:

@@ -470,6 +470,7 @@ Built an LR(0) automaton with 941 states.
 The grammar is not SLR(1) -- 6 states have a conflict.
 The construction mode is pager.
 Built an LR(1) automaton with 956 states.
+Warning: 5 states have end-of-stream conflicts.
 Warning: 5 end-of-stream conflicts were arbitrarily resolved.
 405 out of 956 states have a default reduction.
 The action table is 166344 entries; 2665 non-zero; 1839 compressed.

@@ -60,6 +60,7 @@ Built an LR(1) automaton with 61 states.
 20 shift/reduce conflicts were silently solved.
 File "leap_TrsParser.mly", line 61, characters 0-6:
 Warning: the precedence level assigned to LOGICAL_AND is never useful.
+Warning: 24 states have end-of-stream conflicts.
 Warning: 24 end-of-stream conflicts were arbitrarily resolved.
 File "leap_TrsParser.mly", line 110, characters 3-3:
 Warning: production invariant_list -> is never reduced.

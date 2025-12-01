@@ -53,6 +53,7 @@ File "filiot.mly", line 94, characters 0-9:
 Warning: the precedence level assigned to RPAR is never useful.
 File "filiot.mly", line 95, characters 0-5:
 Warning: the precedence level assigned to TILDA is never useful.
+Warning: one state has end-of-stream conflicts.
 Warning: one end-of-stream conflict was arbitrarily resolved.
 File "filiot.mly", line 107, characters 1-1:
 Warning: production main -> is never reduced.

@@ -748,6 +748,7 @@ Warning: this %prec declaration is never useful.
 File "flowcaml.mly", line 1007, characters 49-62:
 Warning: this %prec declaration is never useful.
 Warning: 25 states have shift/reduce conflicts.
+Warning: 4 states have end-of-stream conflicts.
 Warning: 55 shift/reduce conflicts were arbitrarily resolved.
 Warning: 4 end-of-stream conflicts were arbitrarily resolved.
 509 out of 1552 states have a default reduction.
