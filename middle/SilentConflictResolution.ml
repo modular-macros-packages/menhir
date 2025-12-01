@@ -278,17 +278,17 @@ let log c =
       Report.log c "%d shift/reduce conflicts were silently solved."
         !silently_solved
 
+let subject n =
+  assert (n > 0);
+  if n = 1 then "one state has" else Printf.sprintf "%d states have" n
+
 let warnings c =
-  if !severe_shift_reduce = 1 then
-    Report.warning c [] "one state has shift/reduce conflicts."
-  else if !severe_shift_reduce > 1 then
-    Report.warning c [] "%d states have shift/reduce conflicts."
-      !severe_shift_reduce;
-  if !severe_reduce_reduce = 1 then
-    Report.warning c [] "one state has reduce/reduce conflicts."
-  else if !severe_reduce_reduce > 1 then
-    Report.warning c [] "%d states have reduce/reduce conflicts."
-      !severe_reduce_reduce
+  if !severe_shift_reduce > 0 then
+    Report.warning c [] "%s shift/reduce conflicts."
+      (subject !severe_shift_reduce);
+  if !severe_reduce_reduce > 0 then
+    Report.warning c [] "%s reduce/reduce conflicts."
+      (subject !severe_reduce_reduce)
 
 (* -------------------------------------------------------------------------- *)
 
