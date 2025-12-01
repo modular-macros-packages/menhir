@@ -25,16 +25,13 @@ type displacement =
 type 'a table =
   displacement array * 'a array
 
-(**[compress equal insignificant dummy m n t] turns the two-dimensional table
-   [t] into a compressed table. The parameter [equal] is equality of data
-   values. The parameter [insignificant] determines which data values are
-   insignificant, and can thus be overwritten with other values. The parameter
-   [dummy] is used to fill holes in the data array. [m] and [n] are the
-   integer dimensions of the table [t]. *)
+(**[compress insignificant dummy t] turns the two-dimensional table [t] into a
+   compressed table. The parameter [insignificant] determines which data
+   values are insignificant, and can thus be overwritten with other values.
+   The parameter [dummy] is used to fill holes in the data array. The type
+   ['a] must support OCaml's polymorphic equality test. *)
 val compress:
-  ('a -> 'a -> bool) ->
   ('a -> bool) ->
   'a ->
-  int -> int ->
   'a array array ->
   'a table

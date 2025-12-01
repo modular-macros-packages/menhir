@@ -371,13 +371,6 @@ let encode_Goto node =              (* 1 + node *)
 let encode_NoGoto =                 (* 0 *)
   0
 
-(* Encodings of the hole in the action and goto tables. *)
-
-let hole =
-  assert (encode_Fail = 0);
-  assert (encode_NoGoto = 0);
-  0
-
 (* Encodings of entries in the error bitmap. *)
 
 let encode_Error =                  (* 0 *)
@@ -416,6 +409,30 @@ let encode_bool b =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Operations on 2D matrices. *)
+
+let matrix_fold_left f accu matrix =
+  Array.fold_left (fun accu row ->
+    Array.fold_left f accu row
+  ) accu matrix
+
+let matrix_height matrix =
+  Array.length matrix
+
+let matrix_width matrix =
+  assert (matrix_height matrix > 0);
+  Array.length matrix.(0)
+
+let matrix_size matrix =
+  let m = matrix_height matrix in
+  if m = 0 then
+    0
+  else
+    let n = matrix_width matrix in
+    m * n
+
+(* -------------------------------------------------------------------------- *)
+
 (* Table compression. *)
 
 (* Our sparse, two-dimensional tables are turned into one-dimensional tables
@@ -431,11 +448,9 @@ let encode_bool b =
 (* [population] counts the number of significant entries in a
    two-dimensional matrix. *)
 
-let population (matrix : int array array) =
-  Array.fold_left (fun population row ->
-    Array.fold_left (fun population entry ->
-      if entry = hole then population else population + 1
-    ) population row
+let population insignificant (matrix : int array array) =
+  matrix_fold_left (fun population entry ->
+    if insignificant entry then population else population + 1
   ) 0 matrix
 
 (* [marshal1] marshals a one-dimensional array. *)
@@ -470,23 +485,31 @@ let flatten_and_marshal11 (table : int array list) =
     marshal11 (Array.concat table)
   ]
 
+(* [compress] is our preferred table compression algorithm. These algorithms
+   produce compressed tables in a common format, so they can be used
+   interchangeably. *)
+
+let compress =
+  if Settings.pack_classic then
+    RowDisplacementEncodeClassic.compress
+  else
+    RowDisplacementEncode.compress
+
 (* [marshal2] marshals a two-dimensional table, with row displacement. *)
 
-let marshal2 name m n (matrix : int array array) =
-  let (displacement : int array), (data : int array) =
-    let insignificant x = (x = hole) in
-    if Settings.pack_classic then
-      RowDisplacementEncodeClassic.compress
-        (=) insignificant hole
-        m n matrix
-    else
-      RowDisplacementEncode.compress insignificant hole matrix
-  in
+(* The parameter [insignificant] determines which entries are insignificant.
+   (An entry is insignificant if it is never accessed.) Row displacement is
+   allowed to overlap one or more insignificant entries with a significant
+   entry. *)
+
+let marshal2 name insignificant (matrix : int array array) : expr =
+  let dummy = 0 in
+  let displacement, data = compress insignificant dummy matrix in
   Report.log (getC 1)
     "The %s table is %d entries; %d non-zero; %d compressed."
     name
-    (m * n)
-    (population matrix)
+    (matrix_size matrix)
+    (population insignificant matrix)
     (Array.length displacement + Array.length data)
   ;
   ETuple [
@@ -504,7 +527,7 @@ let action node t =
 
   (* If this state has a default reduction, then the action table is
      never looked up; this table entry is irrelevant. *)
-  if Lr1.has_default_reduction node then hole else
+  if Lr1.has_default_reduction node then encode_Fail else
 
   match SymbolMap.find (Symbol.T t) (Lr1.transitions node) with
   | target ->
@@ -563,14 +586,16 @@ let default_reduction node =
 
 let action =
   define_and_measure "action" @@
-  marshal2 "action" Lr1.n (Terminal.n - 1) @@
+  let insignificant entry = (entry = encode_Fail) in
+  marshal2 "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
 
 let goto =
   define_and_measure "goto" @@
-  marshal2 "goto" Lr1.n Nonterminal.n @@
+  let insignificant entry = (entry = encode_NoGoto) in
+  marshal2 "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt

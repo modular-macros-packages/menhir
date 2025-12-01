@@ -43,20 +43,22 @@ let[@inline] encode (displacement : int) : displacement =
 type 'a row =
     (int * 'a) list
 
-(* [compress equal insignificant dummy m n t] turns the two-dimensional table
-   [t] into a compressed table. The parameter [equal] is equality of data
-   values. The parameter [insignificant] determines which data values are
-   insignificant, and can thus be overwritten with other values. The parameter
-   [dummy] is used to fill holes in the data array. [m] and [n] are the
-   integer dimensions of the table [t]. *)
+(* [compress insignificant dummy m n t] turns the two-dimensional
+   table [t] into a compressed table. The parameter [insignificant]
+   determines which data values are insignificant, and can thus be
+   overwritten with other values. The parameter [dummy] is used to
+   fill holes in the data array. [m] and [n] are the integer
+   dimensions of the table [t]. The type ['a] must support OCaml's
+   polymorphic equality test. *)
 
 let compress
-    (equal : 'a -> 'a -> bool)
     (insignificant : 'a -> bool)
     (dummy : 'a)
     (m : int) (n : int)
     (t : 'a array array)
     : 'a table =
+
+  let equal : 'a -> 'a -> bool = (=) in
 
   (* Be defensive. *)
 
@@ -212,3 +214,18 @@ let compress
   (* Return the compressed tables. *)
 
   displacement, InfiniteArray.domain data
+
+(* A simpler version of [compress], which does not require [m] and [n]
+   as arguments. *)
+
+let compress
+  (insignificant : 'a -> bool)
+  (dummy : 'a)
+  (t : 'a array array)
+  : 'a table =
+  let m = Array.length t in
+  if m = 0 then
+    [||], [||]
+  else
+    let n = Array.length t.(0) in
+    compress insignificant dummy m n t
