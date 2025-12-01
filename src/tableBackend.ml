@@ -276,12 +276,7 @@ let reducebody prod =
 
   (* This is a regular production. Perform a reduction. *)
 
-  let action =
-    Production.action prod
-  in
-  let act =
-    annotate (Action.expr action) (semvtype nt)
-  in
+  let act = annotate (Action.expr (Production.action prod)) (semvtype nt) in
 
   EComment (
     Production.print prod,
