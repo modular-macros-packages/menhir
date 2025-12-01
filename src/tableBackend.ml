@@ -38,7 +38,7 @@ module Run () = struct
 let start_time =
   Time.start()
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* [fold_entry] enumerates the start states of the LR(1) automaton.
    The user function [f] is applied to the start production [prod],
@@ -52,7 +52,7 @@ let fold_entry f accu =
     f prod state nt ty accu
   ) Lr1.entry accu
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Conventional names for modules, exceptions, record fields, functions. *)
 
@@ -121,7 +121,7 @@ let et =
 let ti =
   "TI"
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Statistics. *)
 
@@ -165,7 +165,7 @@ let define_and_measure (x, e) =
   ;
   define (x, e)
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Code generation for semantic actions. *)
 
@@ -336,7 +336,7 @@ let start_def =
     EIntConst Production.start
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Table encodings. *)
 
@@ -413,7 +413,7 @@ let encode_symbol_option = function
 let encode_bool b =
   if b then 1 else 0
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Table compression. *)
 
@@ -493,7 +493,7 @@ let marshal2 name m n (matrix : int array array) =
     marshal1 data;
   ]
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Table generation. *)
 
@@ -638,7 +638,7 @@ let semantic_action =
     EArray (Production.mapx semantic_action)
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* When [--trace] is enabled, we need tables that map terminals and
    productions to strings. *)
@@ -667,7 +667,7 @@ let trace =
       EData ("None", [])
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Generate the two functions that map a token to its integer code and to
    its semantic value, respectively. *)
@@ -699,7 +699,7 @@ let token2value =
       )
     )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* The client APIs invoke the interpreter with an appropriate start state. The
    monolithic API uses the function [entry], which performs the entire parsing
@@ -787,7 +787,7 @@ let incremental_api : IL.valdef list =
     api
   ) []
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Constructing representations of symbols. *)
 
@@ -832,7 +832,7 @@ let dataX =
 let xsymbol (symbol : Symbol.t) : expr =
   EData (dataX, [ esymbol symbol ])
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Produce a function that maps a terminal symbol (represented as an integer
    code) to its representation as an [xsymbol]. Include [error] but not [#],
@@ -864,7 +864,7 @@ let terminal () =
     )
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Produce a function that maps a (non-start) nonterminal symbol (represented
    as an integer code) to its representation as an [xsymbol]. *)
@@ -891,7 +891,7 @@ let nonterminal () =
     )
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Produce a mapping of every LR(0) state to its incoming symbol (encoded as
    an integer value). (Note that the initial states do not have one.) *)
@@ -905,7 +905,7 @@ let lr0_incoming () =
     ))
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A table that maps a production (i.e., an integer index) to the production's
    right-hand side. In principle, we use this table for ordinary productions
@@ -925,7 +925,7 @@ let rhs () =
     linearize_and_marshal1 productions
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A table that maps an LR(1) state to its LR(0) core. *)
 
@@ -952,7 +952,7 @@ let lr0_items () =
     linearize_and_marshal1 items
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A table that tells which nonterminal symbols are nullable.
    (For simplicity, this table includes the start symbols.) *)
@@ -968,7 +968,7 @@ let nullable () =
     )
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A two-dimensional bitmap, indexed first by nonterminal symbols, then by
    terminal symbols, encodes the FIRST sets. *)
@@ -986,7 +986,7 @@ let first () =
     )
   )
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* A reference to [MenhirLib.StaticVersion.require_XXXXXXXX], where [XXXXXXXX]
    is our 8-digit version number. This ensures that the generated code can be
@@ -998,14 +998,14 @@ let versiondef = {
   valval = EVar (staticVersion ^ ".require_" ^ Version.version);
 }
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Let's put everything together. *)
 
 let grammar =
   Front.grammar
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* Generated code for the inspection API. *)
 
@@ -1065,7 +1065,7 @@ let inspection_API () =
 
   []
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* The (optional) unparsing API. *)
 
@@ -1084,7 +1084,7 @@ let unparsing_API () : structure =
   let module C = UnparsingAPI.Code(Grammar)(A)(N)(Settings) in
   C.unparsing_API()
 
-(* ------------------------------------------------------------------------ *)
+(* -------------------------------------------------------------------------- *)
 
 (* All of the generated code (the parser, plus the optional APIs). *)
 
