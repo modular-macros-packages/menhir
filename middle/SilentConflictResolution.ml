@@ -83,6 +83,8 @@ let _forbid_default_reduction : bool array =
 (* [severe_shift_reduce] and [severe_reduce_reduce] count the nodes that have
    severe shift/reduce and severe reduce/reduce conflicts. *)
 
+(* [eos] counts the nodes that have an end-of-stream conflict. *)
+
 (* [silently_solved] counts the shift/reduce conflicts that could be
    silently resolved. *)
 
@@ -90,6 +92,9 @@ let severe_shift_reduce =
   ref 0
 
 let severe_reduce_reduce =
+  ref 0
+
+let eos =
   ref 0
 
 let silently_solved =
@@ -247,6 +252,11 @@ let discover node =
       (* There is no transition and there is one reduction. No conflict. *)
       true (* keep this reduction *)
   in
+  (* Detect an end-of-stream conflict. *)
+  let transitions = transitions node
+  and reductions = reductions node in
+  if Reductions.has_eos_conflict transitions reductions then
+    incr eos;
   (* Record statistics about conflicts. *)
   if !hasSR then incr severe_shift_reduce;
   if !hasRR then incr severe_reduce_reduce
@@ -268,6 +278,10 @@ let () =
 
 (* Diagnostics. *)
 
+(* Even though we does not resolve end-of-stream conflicts (in this module),
+   we warn about them, so as to make the user aware of them. We resolve them
+   in [SevereConflictResolution]. *)
+
 let log c =
   match !silently_solved with
   | 0 ->
@@ -282,13 +296,15 @@ let subject n =
   assert (n > 0);
   if n = 1 then "one state has" else Printf.sprintf "%d states have" n
 
+
+let warn c counter kind =
+  if !counter > 0 then
+    Report.warning c [] "%s %s." (subject !counter) kind
+
 let warnings c =
-  if !severe_shift_reduce > 0 then
-    Report.warning c [] "%s shift/reduce conflicts."
-      (subject !severe_shift_reduce);
-  if !severe_reduce_reduce > 0 then
-    Report.warning c [] "%s reduce/reduce conflicts."
-      (subject !severe_reduce_reduce)
+  warn c severe_shift_reduce "shift/reduce conflicts";
+  warn c severe_reduce_reduce "reduce/reduce conflicts";
+  warn c eos "end-of-stream conflicts"
 
 (* -------------------------------------------------------------------------- *)
 
