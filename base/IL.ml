@@ -14,6 +14,10 @@
 
 include BaseTypes
 
+(**A variable. *)
+type var =
+  string
+
 (**An interface. *)
 type interface =
   interface_item list
@@ -194,7 +198,7 @@ and valdef = {
 and expr =
 
   (* Variable. *)
-  | EVar of string
+  | EVar of var
 
   (* Function. *)
   | EFun of pattern list * expr
@@ -274,8 +278,8 @@ and pattern =
   | PWildcard
 
   (* Variable. *)
-  | PVar of string
-  | PVarLocated of string located
+  | PVar of var
+  | PVarLocated of var located
       (* The positions must not be dummies. Use [pvarlocated]. *)
 
   (* Data deconstruction. Tuples of length 1 are considered nonexistent,

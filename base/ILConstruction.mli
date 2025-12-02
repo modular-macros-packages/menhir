@@ -71,10 +71,10 @@ val type2scheme: typ -> typescheme
 (* Expressions. *)
 
 (**A variable as an expression. *)
-val evar: string -> expr
+val evar: var -> expr
 
 (**A list of variables as expressions. *)
-val evars: string list -> expr list
+val evars: var list -> expr list
 
 (**A function of several parameters.
    If [ps] is empty then [efun ps e] is just [e]. *)
@@ -124,17 +124,17 @@ val ecomment: string -> expr -> expr
 (* Patterns and branches. *)
 
 (** A variable as a pattern. *)
-val pvar: string -> pattern
+val pvar: var -> pattern
 
 (** A list of variables as patterns. *)
-val pvars: string list -> pattern list
+val pvars: var list -> pattern list
 
 (**An integer literal pattern. *)
 val pint: int -> pattern
 
 (**This smart constructor for [PVarLocated] deals with the situation where
    we have a dummy range. *)
-val pvarlocated: string located -> pattern
+val pvarlocated: var located -> pattern
 
 (** Branches. *)
 val branch: pattern -> expr -> branch
@@ -156,7 +156,7 @@ val with_types:
 val mapp: modexpr -> modexpr list -> modexpr
 
 (**[def] constructs a value definition. *)
-val def: string -> expr -> valdef
+val def: var -> expr -> valdef
 
 (**[valdef] turns a value definition into a structure item.
    This yields a single non-recursive value definition. *)
