@@ -170,6 +170,9 @@ let eprintf format args =
     args
   )
 
+let ecomment c e =
+  EComment (c, e)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns and branches. *)

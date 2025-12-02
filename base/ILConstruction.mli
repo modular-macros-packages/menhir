@@ -116,6 +116,9 @@ val eassertfalse: expr
    log a tracing message onto [stderr]. *)
 val eprintf: string -> expr list -> expr
 
+(**[ecomment c e] annotates the expression [e] with the comment [c]. *)
+val ecomment: string -> expr -> expr
+
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns and branches. *)
