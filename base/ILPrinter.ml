@@ -555,6 +555,9 @@ and pat0 f = function
 and pat1 f = function
   | PData (d, [ arg ]) ->
       fprintf f "%s %a" d pat0 arg
+  | PData ("::", [ arg1; arg2 ]) ->
+      (* Special case for infix cons. *)
+      fprintf f "%a :: %a" pat0 arg1 pat0 arg2
   | PData (d, (_ :: _ :: _ as args)) ->
       fprintf f "%s (%a)" d (seplist pat1 comma) args
   | PTuple [ p ] ->
