@@ -322,7 +322,7 @@ let define_positions (name : string array) nprefix ncallee : sw * sw * sw =
          to its start position. *)
       startp
 
-  (* We must also transform [$endpos($0)] if it used by the inner
+  (* We must also transform [$endpos($0)] if it is used by the inner
      production. It refers to the end position of the stack cell
      that comes before the inner production. So, if the prefix is
      non-empty, then it translates to the end position of the last
