@@ -15,6 +15,7 @@ open IL
 open TableUtils
 open Channels
 let define_and_measure = define_and_measure (getC 1)
+let marshal2 = marshal2 (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -414,7 +415,7 @@ let default_reduction node =
 let action =
   define_and_measure "action" @@
   let insignificant entry = (entry = encode_Fail) in
-  marshal2 (getC 1) "action" insignificant @@
+  marshal2 "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
@@ -422,7 +423,7 @@ let action =
 let goto =
   define_and_measure "goto" @@
   let insignificant entry = (entry = encode_NoGoto) in
-  marshal2 (getC 1) "goto" insignificant @@
+  marshal2 "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt
