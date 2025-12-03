@@ -247,11 +247,12 @@ let reducebody prod =
     ) (0, PVar stack, []) rhs
   in
 
-  (* Determine beforeend/start/end positions for the left-hand side of the
-     production, and bind them to the conventional variables [beforeendp],
-     [startp], and [endp]. These variables may be unused by the semantic
-     action, in which case these bindings are dead code and can be ignored
-     by the OCaml compiler. *)
+  (* Bind the conventional variable [beforeendp], for use by the semantic
+     action. If the semantic action does not use this variable, then this
+     binding is dead code and can be ignored by the OCaml compiler. Bind the
+     variables [startp] and [endp] for our own use below; they are used in the
+     construction of a new stack cell. The semantic action cannot use them,
+     because the keywords [$startpos] and [$endpos] are expanded away. *)
 
   let posbindings =
     ( PVar beforeendp,
