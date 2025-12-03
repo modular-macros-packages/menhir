@@ -173,6 +173,9 @@ let eprintf format args =
 let ecomment c e =
   EComment (c, e)
 
+let bcast x ty =
+  (PVar x, annotate (EMagic (EVar x)) ty)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns and branches. *)

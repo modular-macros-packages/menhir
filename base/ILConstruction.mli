@@ -119,6 +119,10 @@ val eprintf: string -> expr list -> expr
 (**[ecomment c e] annotates the expression [e] with the comment [c]. *)
 val ecomment: string -> expr -> expr
 
+(**[bcast x ty] is a binding [x = (Obj.magic x : ty)].
+   It imposes the type [ty] on the variable [x]. *)
+val bcast: var -> typ -> pattern * expr
+
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns and branches. *)
