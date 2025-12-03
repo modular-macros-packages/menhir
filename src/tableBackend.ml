@@ -12,7 +12,9 @@ let provided = MList.provided
 open ILConstruction
 open Grammar
 open IL
+open TableUtils
 open Channels
+let define_and_measure = define_and_measure (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -123,50 +125,6 @@ let ti =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Statistics. *)
-
-(* Integer division, rounded up. *)
-
-let div a b =
-  if a mod b = 0 then a / b else a / b + 1
-
-(* [size] provides a rough measure of the size of its argument, in words.
-   The [unboxed] parameter is true if we have already counted 1 for the
-   pointer to the object. *)
-
-let rec size unboxed = function
-  | EIntConst _
-  | ETuple []
-  | EData (_, []) ->
-      if unboxed then 0 else 1
-  | EStringConst s ->
-      1 + div (String.length s * 8) Sys.word_size
-  | ETuple es
-  | EData (_, es)
-  | EArray es ->
-      1 + List.length es + List.fold_left (fun s e -> s + size true e) 0 es
-  | _ ->
-      assert false (* not implemented *)
-
-let size =
-  size false
-
-(* Optionally, print a measure of each of the tables that we are defining. *)
-
-let define name expr = {
-  valpat = PVar name;
-  valval = expr
-}
-
-let define_and_measure x e =
-  Report.log (getC 1)
-    "The %s table occupies roughly %d bytes."
-    x (size e * (Sys.word_size / 8))
-  ;
-  define x e
-
-(* -------------------------------------------------------------------------- *)
-
 (* Code generation for semantic actions. *)
 
 (* Things are slightly more regular here than in the code back-end, since
@@ -191,30 +149,6 @@ let reducecellparams prod i _symbol (next : pattern) : pattern =
     fnext, next;
   ]
 
-(* The semantic values bound in [reducecellparams] have type [Obj.t].
-   They should now be cast to their real type. If we had [PMagic] in
-   the syntax of patterns, we could do that in one swoop; since we don't,
-   we have to issue a series of casts a posteriori. *)
-
-let reducecellcasts prod i symbol casts =
-
-  let ids = Production.identifiers prod in
-  let id = ids.(i) in
-  let t : typ =
-    match semvtypes symbol with
-    | [] ->
-        tunit
-    | [ t ] ->
-        t
-    | _ ->
-        assert false
-  in
-  (* Cast: [let id = ((Obj.magic id) : t) in ...]. *)
-  (
-    PVar id,
-    annotate (EMagic (EVar id)) t
-  ) :: casts
-
 (* 2015/11/04. The start and end positions of an epsilon production are obtained
    by taking the end position stored in the top stack cell (whatever it is). *)
 
@@ -234,7 +168,9 @@ let reducebody prod =
      the stack, we extract a state (except when the production is an
      epsilon production) and a number of semantic values. *)
 
-  (* At the same time, build a series of casts. *)
+  (* At the same time, build a series of casts. The semantic value
+     variables bound by the pattern [pat] have type [Obj.t]. They
+     must be cast to the correct type. *)
 
   (* We want a [fold] that begins with the deepest cells in the stack.
      Folding from left to right on [rhs] is appropriate. *)
@@ -243,7 +179,7 @@ let reducebody prod =
     Array.fold_left (fun (i, pat, casts) symbol ->
       i + 1,
       reducecellparams prod i symbol pat,
-      reducecellcasts prod i symbol casts
+      bcast ids.(i) (semvtype1 symbol) :: casts
     ) (0, PVar stack, []) rhs
   in
 
@@ -327,7 +263,7 @@ let semantic_action prod =
 (* Export the number of start productions. *)
 
 let start_def =
-  define "start" @@
+  def "start" @@
   EIntConst Production.start
 
 (* -------------------------------------------------------------------------- *)
@@ -621,7 +557,7 @@ let lhs =
   Nonterminal.encode (Production.nt prod)
 
 let semantic_action =
-  define "semantic_action" @@
+  def "semantic_action" @@
   (* Non-start productions only. *)
   EArray (Production.mapx semantic_action)
 
@@ -708,7 +644,7 @@ let strategy =
 (* An entry point to the monolithic API. *)
 
 let monolithic_entry_point state nt t =
-  define (Nonterminal.print true nt) @@
+  def (Nonterminal.print true nt) @@
   let lexer = "lexer"
   and lexbuf = "lexbuf" in
   EFun (
@@ -740,7 +676,7 @@ let monolithic_api : IL.valdef list =
 
 let incremental_entry_point state nt t =
   let initial = "initial_position" in
-  define (Nonterminal.print true nt) @@
+  def (Nonterminal.print true nt) @@
   (* In principle the eta-expansion [fun initpos -> start s initpos] should
      not be necessary, since [start] is a pure function. However, if [--trace]
      is enabled, [start] logs messages to [stderr]. *)
@@ -826,7 +762,7 @@ let xsymbol (symbol : Symbol.t) : expr =
 let terminal () =
   assert Settings.inspection;
   let t = "t" in
-  define "terminal" @@
+  def "terminal" @@
   EFun ([ PVar t ],
     EMatch (EVar t,
       Terminal.mapx (fun tok ->
@@ -850,7 +786,7 @@ let terminal () =
 let nonterminal () =
   assert Settings.inspection;
   let nt = "nt" in
-  define "nonterminal" @@
+  def "nonterminal" @@
   EFun ([ PVar nt ],
     EMatch (EVar nt,
       Nonterminal.foldx (fun nt branches ->
@@ -1081,7 +1017,7 @@ let program =
            defined here are visible in the semantic actions. *)
         SIValDefs (false, [
           token2terminal;
-          define "error_terminal" (EIntConst (Terminal.encode Terminal.error));
+          def "error_terminal" (EIntConst (Terminal.encode Terminal.error));
           token2value;
           default_reduction;
           error;
