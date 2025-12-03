@@ -385,7 +385,8 @@ let log_unexplainable c =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Detecting and enumerating the nodes that have a conflict. *)
+(* [foreach_conflict_node] enumerates every node [node] that has a conflict,
+   together with the set [ts] of conflict symbols at this node. *)
 
 let foreach_conflict_node yield =
   iter @@ fun node ->
