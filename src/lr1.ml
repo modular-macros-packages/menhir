@@ -282,6 +282,18 @@ let has_default_reduction_on_sharp node =
   | _ ->
       false
 
+let has_conflict_or_eos_conflict node =
+  let transitions = transitions node
+  and reductions = reductions node in
+  Reductions.has_conflict transitions reductions ||
+  Reductions.has_eos_conflict transitions reductions
+
+let deterministic () =
+  MRef.with_state true @@ fun deterministic ->
+  iter @@ fun node ->
+  if has_conflict_or_eos_conflict node then
+    deterministic := false
+
 (* -------------------------------------------------------------------------- *)
 
 (* The map [targets] maps a symbol [symbol] to the set of all nodes

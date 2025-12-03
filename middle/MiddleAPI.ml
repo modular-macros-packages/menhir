@@ -1240,6 +1240,11 @@ module type LR1 = sig
      function is a simplified variant of {!test_default_reduction}. *)
   val has_default_reduction_on_sharp: t -> bool
 
+  (**[deterministic()] determines whether the LR(1) automaton is
+     deterministic. This is the case if no node has a shift/reduce,
+     reduce/reduce, or end-of-stream conflict. *)
+  val deterministic: unit -> bool
+
 end (* LR1 *)
 
 (* -------------------------------------------------------------------------- *)
