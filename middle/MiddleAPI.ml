@@ -550,12 +550,13 @@ module Reductions : sig
 
   (**[has_conflict transitions reductions] determines whether the tables
      [transitions] and [reductions] have a shift/reduce or reduce/reduce
-     conflict. *)
+     conflict. End-of-stream conflicts are not taken into account. *)
   val has_conflict: _ SymbolMap.t -> t -> bool
 
   (**[conflict_symbols transitions reductions] is the set of all terminal
      symbols [t] such that the tables [transitions] and [reductions] have a
-     shift/reduce or reduce/reduce conflict on the symbol [t]. *)
+     shift/reduce or reduce/reduce conflict on the symbol [t]. End-of-stream
+     conflicts are not taken into account. *)
   val conflict_symbols: _ SymbolMap.t -> t -> TerminalSet.t
 
   (**[has_eos_conflict transitions reductions] tells whether the tables
