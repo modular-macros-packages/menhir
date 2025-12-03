@@ -128,6 +128,19 @@ let semvtypes = function
   | Symbol.N nt ->
       [ semvtype nt ]
 
+let semvtypetok1 tok =
+  match Terminal.ocamltype tok with
+  | None ->
+      tunit
+  | Some ocamltype ->
+      TypTextual ocamltype
+
+let semvtype1 = function
+  | Symbol.T tok ->
+      semvtypetok1 tok
+  | Symbol.N nt ->
+      semvtype nt
+
 (* -------------------------------------------------------------------------- *)
 
 (* [destruct_token_def] constructs the definition of a function that

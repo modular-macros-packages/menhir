@@ -74,6 +74,11 @@ val endpos:     string array -> int -> string
    nonterminal symbol [nt]. *)
 val semvtype: Nonterminal.t -> typ
 
+(**[semvtype1 symbol] is the type of the semantic value associated
+   with the symbol [symbol]. If [symbol] is a terminal symbol whose
+   semantic value has type [unit] then this type is [unit]. *)
+val semvtype1: Symbol.t -> typ
+
 (**[semvtypes symbol] is the type of the semantic value associated with
    [symbol]. Because a terminal symbol whose semantic value has type [unit]
    actually carries no semantic value at runtime, this type can be absent.
