@@ -1,0 +1,35 @@
+open IL
+open Report
+
+(**This module offers support for marshaling data (typically, tables of
+   various kinds) as IL code. *)
+
+(**[define_and_measure c x e] prints a measure of the table encoded by the
+   expression [e] on the report channel [c], then returns [def x e]. *)
+val define_and_measure: channel -> var -> expr -> valdef
+
+(**[marshal1] marshals a one-dimensional array. The data is encoded as a pair
+   of an integer bit width and a string. *)
+val marshal1: int array -> expr
+
+(**[marshal11] marshals a one-dimensional bitmap. By bitmap, we mean an array
+   such that every value stored in the array is 0 or 1. The data is encoded as
+   just a string. *)
+val marshal11: int array -> expr
+
+(**[linearize_and_marshal1] marshals an array of integer arrays (of possibly
+   different lengths). The data is first flattened via [LinearizedArray],
+   yielding a pair of one-dimensional arrays. Then each of these arrays is
+   marshaled via [marshal1]. *)
+val linearize_and_marshal1: int array array -> expr
+
+(**[flatten_and_marshal11 table] marshals the two-dimensional bitmap [table]. *)
+val flatten_and_marshal11: int array list -> expr
+
+(**[marshal2 c name insignificant] marshals a two-dimensional table. One line
+   of statistics is logged on the report channel [c]; the name [name] is used
+   as part of this report. The parameter [insignificant] determines which
+   table entries are insignificant. Row displacement is allowed to overlap one
+   or more insignificant entries with a significant entry. The data is encoded
+   as a pair of arrays, each of which is marshaled via [marshal1]. *)
+val marshal2: channel -> string -> (int -> bool) -> int array array -> expr

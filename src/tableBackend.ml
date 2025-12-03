@@ -346,116 +346,6 @@ let encode_bool b =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Operations on 2D matrices. *)
-
-let matrix_fold_left f accu matrix =
-  Array.fold_left (fun accu row ->
-    Array.fold_left f accu row
-  ) accu matrix
-
-let matrix_height matrix =
-  Array.length matrix
-
-let matrix_width matrix =
-  assert (matrix_height matrix > 0);
-  Array.length matrix.(0)
-
-let matrix_size matrix =
-  let m = matrix_height matrix in
-  if m = 0 then
-    0
-  else
-    let n = matrix_width matrix in
-    m * n
-
-(* -------------------------------------------------------------------------- *)
-
-(* Table compression. *)
-
-(* Our sparse, two-dimensional tables are turned into one-dimensional tables
-   via [RowDisplacementEncode]. *)
-
-(* The error bitmap, which is two-dimensional but not sparse, is made
-   one-dimensional by simple flattening. *)
-
-(* Every one-dimensional table is then packed via [PackedIntArray]. *)
-
-(* Optionally, we print some information about the compression ratio. *)
-
-(* [population] counts the number of significant entries in a
-   two-dimensional matrix. *)
-
-let population insignificant (matrix : int array array) =
-  matrix_fold_left (fun population entry ->
-    if insignificant entry then population else population + 1
-  ) 0 matrix
-
-(* [marshal1] marshals a one-dimensional array. *)
-
-let marshal1 (table : int array) =
-  let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
-  ETuple [ EIntConst bits; EStringConst text ]
-
-(* [marshal11] marshals a one-dimensional array whose bit width is
-   statically known to be [1]. *)
-
-let marshal11 (table : int array) =
-  let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
-  assert (bits = 1);
-  EStringConst text
-
-(* [linearize_and_marshal1] marshals an array of integer arrays (of possibly
-   different lengths). *)
-
-let linearize_and_marshal1 (table : int array array) =
-  let data, entry = MenhirLib.LinearizedArray.make table in
-  ETuple [ marshal1 data; marshal1 entry ]
-
-(* [flatten_and_marshal11] marshals a two-dimensional bitmap,
-   whose width (for now) is assumed to be [Terminal.n - 1]. *)
-
-let flatten_and_marshal11 (table : int array list) =
-  ETuple [
-    (* Store the table width. *)
-    EIntConst (Terminal.n - 1);
-    (* View the table as a one-dimensional array, and marshal it. *)
-    marshal11 (Array.concat table)
-  ]
-
-(* [compress] is our preferred table compression algorithm. These algorithms
-   produce compressed tables in a common format, so they can be used
-   interchangeably. *)
-
-let compress =
-  if Settings.pack_classic then
-    RowDisplacementEncodeClassic.compress
-  else
-    RowDisplacementEncode.compress
-
-(* [marshal2] marshals a two-dimensional table, with row displacement. *)
-
-(* The parameter [insignificant] determines which entries are insignificant.
-   (An entry is insignificant if it is never accessed.) Row displacement is
-   allowed to overlap one or more insignificant entries with a significant
-   entry. *)
-
-let marshal2 name insignificant (matrix : int array array) : expr =
-  let dummy = 0 in
-  let displacement, data = compress insignificant dummy matrix in
-  Report.log (getC 1)
-    "The %s table is %d entries; %d non-zero; %d compressed."
-    name
-    (matrix_size matrix)
-    (population insignificant matrix)
-    (Array.length displacement + Array.length data)
-  ;
-  ETuple [
-    marshal1 displacement;
-    marshal1 data;
-  ]
-
-(* -------------------------------------------------------------------------- *)
-
 (* Table generation. *)
 
 (* The action table. *)
@@ -524,7 +414,7 @@ let default_reduction node =
 let action =
   define_and_measure "action" @@
   let insignificant entry = (entry = encode_Fail) in
-  marshal2 "action" insignificant @@
+  marshal2 (getC 1) "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
@@ -532,7 +422,7 @@ let action =
 let goto =
   define_and_measure "goto" @@
   let insignificant entry = (entry = encode_NoGoto) in
-  marshal2 "goto" insignificant @@
+  marshal2 (getC 1) "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt
