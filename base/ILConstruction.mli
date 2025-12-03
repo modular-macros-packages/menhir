@@ -152,7 +152,7 @@ val interface_to_structure: interface -> structure
 val with_types:
   with_kind -> string -> (string list * string * typ) list -> module_type
 
-(**[mapp] constructs a multiple functor applications. *)
+(**[mapp] constructs a multiple functor application. *)
 val mapp: modexpr -> modexpr list -> modexpr
 
 (**[def] constructs a value definition. *)
