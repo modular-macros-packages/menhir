@@ -286,13 +286,10 @@ module Terminal = struct
     MInt.mapij 1 sharp f
 
   let tokens_without_an_alias =
-    let accu = ref 0 in
-    let () =
-      iter_real @@ fun t ->
-      if alias t = None then
-        incr accu
-    in
-    !accu
+    MRef.with_state 0 @@ fun accu ->
+    iter_real @@ fun t ->
+    if alias t = None then
+      incr accu
 
   let every_token_has_an_alias =
     tokens_without_an_alias = 0
@@ -1095,13 +1092,10 @@ let attributes =
   grammar.gr_attributes
 
 let grammar_uses_error_token () =
-  let used = ref false in
-  let () =
-    Production.iterx @@ fun prod ->
-    if not (Production.error_free prod) then
-      used := true
-  in
-  !used
+  MRef.with_state false @@ fun used ->
+  Production.iterx @@ fun prod ->
+  if not (Production.error_free prod) then
+    used := true
 
 (* -------------------------------------------------------------------------- *)
 

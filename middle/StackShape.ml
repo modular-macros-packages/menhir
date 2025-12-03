@@ -452,9 +452,9 @@ end = struct
     track (symbol, WhereEnd)
 
   let sum_over_every_symbol (f : Symbol.t -> bool) : int =
-    let c = ref 0 in
-    Symbol.iter (fun sym -> if f sym then c := !c + 1);
-    !c
+    MRef.with_state 0 @@ fun c ->
+    Symbol.iter @@ fun sym ->
+    if f sym then incr c
 
   let () =
     Report.log info

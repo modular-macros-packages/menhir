@@ -412,11 +412,9 @@ end = struct
     assert (used symbol);
     replace table symbol kind
   let gather (p : kind -> bool) table =
-    let accu = ref StringSet.empty in
-    iter (fun symbol kind ->
-      if p kind then accu := StringSet.add symbol !accu
-    ) table;
-    !accu
+    MRef.with_state StringSet.empty @@ fun accu ->
+    table |> iter @@ fun symbol kind ->
+    if p kind then accu := StringSet.add symbol !accu
   let public_symbols table =
     let is_public = function NTPublic _ -> true | _ -> false in
     StringSet.add "error" (gather is_public table)
@@ -586,17 +584,14 @@ let every_unknown_symbol_is_public public table =
    they are used as a private symbol). *)
 
 let clashes public tables =
-  let defined = ref public
-  and clashes = ref empty in
-  let examine table =
+  let defined = ref public in
+  MRef.with_state empty @@ fun clashes ->
+  tables |> List.iter @@ fun table ->
     let local = T.private_symbols table in
     (* Any local symbol that is either public or previously defined
        in another partial grammar is a clash. *)
     clashes := union !clashes (inter local !defined);
     defined := union !defined local
-  in
-  List.iter examine tables;
-  !clashes
 
 (* [rename_private_symbols clashes grammars tables] renames the clashing
    private symbols in each partial grammar in the list [grammars], producing a

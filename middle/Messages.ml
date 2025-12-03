@@ -264,20 +264,17 @@ let foreach_targeted_sentence (oruns : oruns) yield =
 
 let message_table (detect_redundancy : bool) (oruns : oruns) : table =
   Report.monitor `Normal @@ fun c ->
-  let table = ref Lr1.NodeMap.empty in
-  let () =
-    foreach_targeted_sentence oruns @@ fun (sentence2, target) message ->
-    let s = state target in
-    match Lr1.NodeMap.find s !table with
-    | sentence1, _ ->
-        if detect_redundancy then
-          Report.signal c (ranges sentence1 @ ranges sentence2)
-            "these sentences both cause an error in state %s."
-            (Lr1.print s)
-    | exception Not_found ->
-        table := Lr1.NodeMap.add s (sentence2, message) !table
-  in
-  !table
+  MRef.with_state Lr1.NodeMap.empty @@ fun table ->
+  foreach_targeted_sentence oruns @@ fun (sentence2, target) message ->
+  let s = state target in
+  match Lr1.NodeMap.find s !table with
+  | sentence1, _ ->
+      if detect_redundancy then
+        Report.signal c (ranges sentence1 @ ranges sentence2)
+          "these sentences both cause an error in state %s."
+          (Lr1.print s)
+  | exception Not_found ->
+      table := Lr1.NodeMap.add s (sentence2, message) !table
 
 (* --------------------------------------------------------------------------- *)
 

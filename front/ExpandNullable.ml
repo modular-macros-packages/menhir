@@ -55,23 +55,17 @@ let nullable_producer (producer : producer) : bool =
    away. Their other (non-problematic) occurrences are retained. *)
 
 let participants : StringSet.t =
-  let participants = ref StringSet.empty in
-  let scan_producers (producers : producers) =
-    let producers = Array.of_list producers in
-    let n = Array.length producers in
-    let i = ref (n-1) in
-    while 0 <= !i && nullable_producer producers.(!i) do
-      let nt = producers.(!i).prod_symbol in
-      assert (is_nonterminal grammar nt);
-      participants := StringSet.add nt !participants;
-      decr i
-    done
-  in
-  let () =
-    foreach_branch grammar @@ fun branch ->
-    scan_producers branch.producers
-  in
-  !participants
+  MRef.with_state StringSet.empty @@ fun participants ->
+  foreach_branch grammar @@ fun branch ->
+  let producers = Array.of_list branch.producers in
+  let n = Array.length producers in
+  let i = ref (n-1) in
+  while 0 <= !i && nullable_producer producers.(!i) do
+    let nt = producers.(!i).prod_symbol in
+    assert (is_nonterminal grammar nt);
+    participants := StringSet.add nt !participants;
+    decr i
+  done
 
 let is_participant (nt : nonterminal) : bool =
   StringSet.mem nt participants
@@ -415,10 +409,9 @@ let prime_suffix i (producers : producers) : producers =
 let rightmost_non_nullable_producer_index (producers : producers) : int =
   let producers = Array.of_list producers in
   let n = Array.length producers in
-  let i = ref (n-1) in
+  MRef.with_state (n-1) @@ fun i ->
   while nullable_producer producers.(!i) do decr i done;
-  assert (0 <= !i && !i < n && not (nullable_producer producers.(!i)));
-  !i
+  assert (0 <= !i && !i < n && not (nullable_producer producers.(!i)))
 
 let prime_right_nullable_suffix (branch : branch) : branch =
   assert (not (Nullable.production branch));

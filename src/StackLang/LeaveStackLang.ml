@@ -921,10 +921,9 @@ let recursive labels =
   | [label] ->
       (* There is one only one function in this component. A [rec] flag
          is required if and only if this function is recursive. *)
-      let recursive = ref false in
+      MRef.with_state false @@ fun recursive ->
       let yield label' = if Label.equal label label' then recursive := true in
-      G.successors yield label;
-      !recursive
+      G.successors yield label
 
 (* Build the toplevel definitions. *)
 

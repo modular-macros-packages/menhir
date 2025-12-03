@@ -14,12 +14,10 @@ open PlainSyntaxAccessors
 let has_final_error_only branch : bool =
   let producers = Array.of_list branch.producers in
   let n = Array.length producers in
-  let ok = ref true in
-  Array.iteri (fun i producer ->
-    if i < n - 1 && producer.prod_symbol = "error" then
-      ok := false
-  ) producers;
-  !ok
+  MRef.with_state true @@ fun ok ->
+  producers |> Array.iteri @@ fun i producer ->
+  if i < n - 1 && producer.prod_symbol = "error" then
+    ok := false
 
 let final_only c reason grammar =
   let keep branch : bool =

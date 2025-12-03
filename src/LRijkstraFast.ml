@@ -417,22 +417,20 @@ module Run () = struct
        [classes] vector is used to approximate recursive occurrences.
     *)
     let classes_of acc node =
-      let acc = ref acc in
-      begin match Node.prj node with
-        | L lr1 ->
-          Gr.visit_lr1 (fun n -> acc := Vector.get classes n @ !acc) lr1
-        | R edge ->
-          List.iter (fun {Unreduce. lookahead; state; _} ->
-              let base = Vector.get classes (Node.inj_l state) in
-              let base =
-                if lookahead != all_terminals
-                then List.map (TerminalSet.inter lookahead) base
-                else base
-              in
-              acc := (lookahead :: base) @ !acc
-            ) (Unreduce.goto_transition edge)
-      end;
-      !acc
+      MRef.with_state acc @@ fun acc ->
+      match Node.prj node with
+      | L lr1 ->
+        Gr.visit_lr1 (fun n -> acc := Vector.get classes n @ !acc) lr1
+      | R edge ->
+        List.iter (fun {Unreduce. lookahead; state; _} ->
+            let base = Vector.get classes (Node.inj_l state) in
+            let base =
+              if lookahead != all_terminals
+              then List.map (TerminalSet.inter lookahead) base
+              else base
+            in
+            acc := (lookahead :: base) @ !acc
+          ) (Unreduce.goto_transition edge)
 
     let visit_scc _ nodes =
       (* Compute approximation for an SCC, as described in section 6.2 *)
