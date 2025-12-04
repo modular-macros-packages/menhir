@@ -972,7 +972,7 @@ let program =
 
       SIFragment grammar.preludes ::
 
-      SITypeDefs (statetypedef :: celltypedefs @ finaldatadefs) ::
+      SITypeDefs (`Rec, statetypedef :: celltypedefs @ finaldatadefs) ::
 
       valdefs (Production.mapx actiondef) @
 

@@ -72,10 +72,10 @@ let nonterminalgadtdef grammar : interface =
   in
   [
     IIComment comment;
-    IITypeDecls [{
+    IITypeDecls (`Rec, [{
       typename = tcnonterminalgadt;
       typeparams = [ "_" ];
       typerhs = TDefSum datadefs;
       typeconstraint = None
-    }]
+    }])
   ]

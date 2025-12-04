@@ -30,8 +30,8 @@ and interface_item =
   | IIFunctor of string located list * interface
     (* Exception declarations. *)
   | IIExcDecls of excdef list
-    (* Algebraic data type declarations (mutually recursive). *)
-  | IITypeDecls of typedef list
+    (* Algebraic data type declarations. *)
+  | IITypeDecls of [`Rec | `NonRec] * typedef list
     (* Value declarations. *)
   | IIValDecls of (string * typescheme) list
     (* Include directive. *)
@@ -319,7 +319,7 @@ and structure_item =
     (* Exception definitions. *)
   | SIExcDefs of excdef list
     (* Algebraic data type definitions (mutually recursive). *)
-  | SITypeDefs of typedef list
+  | SITypeDefs of [`Rec | `NonRec] * typedef list
     (* Value definitions (mutually recursive or not, as per the flag). *)
   | SIValDefs of bool * valdef list
     (* Raw OCaml code. *)

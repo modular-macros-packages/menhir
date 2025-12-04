@@ -212,8 +212,8 @@ let branch branchpat branchbody =
 let rec interface_item_to_structure_item = function
   | IIExcDecls defs ->
       [ SIExcDefs defs ]
-  | IITypeDecls defs ->
-      [ SITypeDefs defs ]
+  | IITypeDecls (flag, defs) ->
+      [ SITypeDefs (flag, defs) ]
   | IIModule (name, MTSigEnd intf) ->
       [ SIModuleDef (name, MStruct (interface_to_structure intf)) ]
   | IIFunctor (_, _)

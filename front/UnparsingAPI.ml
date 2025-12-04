@@ -338,7 +338,7 @@ and all_dcst_defs () : structure =
 
 and dcst_defs nt : structure =
   (* The public type of DCSTs for the nonterminal symbol [nt]. *)
-  SITypeDefs [dcst_def nt] ::
+  SITypeDefs (`Rec, [dcst_def nt]) ::
   (* The public [choice] constructor for this type. *)
   valdef (def (dcst_choice_name nt) (evar ichoice)) ::
   (* One constructor per production for this type,
@@ -436,7 +436,7 @@ and all_cst_defs () : structure =
 
 and cst_defs nt : structure =
   (* The public type of CSTs for the nonterminal symbol [nt]. *)
-  SITypeDefs [cst_def nt] ::
+  SITypeDefs (`Rec, [cst_def nt]) ::
   []
 
 and cst_def nt : typedef = {
@@ -726,7 +726,7 @@ and dcst_type_decl nt : interface =
   (* The public type of DCSTs for the nonterminal symbol [nt]. *)
   IIComment (sprintf "The type of DCSTs for the nonterminal symbol [%s]."
                (Nonterminal.print false nt)) ::
-  IITypeDecls [dcst_decl nt] ::
+  IITypeDecls (`Rec, [dcst_decl nt]) ::
   []
 
 and dcst_constructor_decls nt : interface =
@@ -823,7 +823,7 @@ and cst_type_decl nt : interface =
   (* The public type of CSTs for the nonterminal symbol [nt]. *)
   IIComment (sprintf "The type of CSTs for the nonterminal symbol [%s]."
                (Nonterminal.print false nt)) ::
-  IITypeDecls [cst_decl nt] ::
+  IITypeDecls (`Rec, [cst_decl nt]) ::
   []
 
 and cst_decl nt : typedef = {

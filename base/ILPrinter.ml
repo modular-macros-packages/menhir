@@ -130,8 +130,12 @@ let letrec f =
 let letnonrec f =
   output_string f "let "
 
-let keytyp f =
-  output_string f "type "
+let keytyp flag f =
+  match flag with
+  | `Rec ->
+      output_string f "type "
+  | `NonRec ->
+      output_string f "type nonrec "
 
 let exc f =
   output_string f "exception "
@@ -734,8 +738,8 @@ let typedef f def =
     (typerhs def.typename) def.typerhs
     typeconstraint def.typeconstraint
 
-let typedefs =
-  pdefs typedef keytyp et
+let typedefs f flag typedefs =
+  pdefs typedef (keytyp flag) et f typedefs
 
 (* A value definition. *)
 
@@ -789,8 +793,8 @@ let rec structure_item f item =
           structend s
     | SIExcDefs defs ->
         excdefs false f defs
-    | SITypeDefs defs ->
-        typedefs f defs
+    | SITypeDefs (flag, defs) ->
+        typedefs f flag defs
     | SIValDefs (recursive, defs) ->
         valdefs recursive f defs
     | SIFragment _ ->
@@ -937,8 +941,8 @@ and interface_item f item =
           sigend i
     | IIExcDecls defs ->
         excdefs true f defs
-    | IITypeDecls defs ->
-        typedefs f defs
+    | IITypeDecls (flag, defs) ->
+        typedefs f flag defs
     | IIValDecls decls ->
         pdefs valdecl nothing nothing f decls
     | IIInclude mt ->

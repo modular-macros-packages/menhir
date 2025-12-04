@@ -88,12 +88,12 @@ let tokentyperhs grammar =
 let tokentypedef grammar =
   [
     IIComment "The type of tokens.";
-    IITypeDecls [{
+    IITypeDecls (`Rec, [{
       typename = tctoken;
       typeparams = [];
       typerhs = tokentyperhs grammar;
       typeconstraint = None
-    }]
+    }])
   ]
 
 (* Although the [token] type does not include the [error] token (because
@@ -133,12 +133,12 @@ let tokengadtdef grammar =
   let param, rhs = tokengadt_param_rhs grammar in
   [
     IIComment "The indexed type of terminal symbols.";
-    IITypeDecls [{
+    IITypeDecls (`Rec, [{
       typename = tctokengadt;
       typeparams = [ param ];
       typerhs = rhs;
       typeconstraint = None
-    }]
+    }])
   ]
 
 (* -------------------------------------------------------------------------- *)
