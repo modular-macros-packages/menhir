@@ -103,6 +103,11 @@ val mlet: pattern list -> expr list -> expr -> expr
    so it is simulated using tuples. *)
 val eletand: (pattern * expr) list * expr -> expr
 
+(**[non_exhaustive_let pat e1 e2] constructs a [let] definition where the
+   pattern [pat] is not exhaustive. In order to avoid a warning, a [match]
+   construct is used, whose second branch contains [assert false]. *)
+val non_exhaustive_let: pattern -> expr -> expr -> expr
+
 (**[eraisenotfound] is an expression that raises [Not_found]. *)
 val eraisenotfound: expr
 

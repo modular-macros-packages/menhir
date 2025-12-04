@@ -176,6 +176,11 @@ let ecomment c e =
 let bcast x ty =
   (PVar x, annotate (EMagic (EVar x)) ty)
 
+let non_exhaustive_let pat e1 e2 =
+  let branch1 = { branchpat = pat; branchbody = e2 }
+  and branch2 = { branchpat = PWildcard; branchbody = eassertfalse } in
+  EMatch (e1, [ branch1; branch2 ])
+
 (* -------------------------------------------------------------------------- *)
 
 (* Patterns and branches. *)
