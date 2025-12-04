@@ -244,10 +244,10 @@ let program () =
     ) grammar.rules ([], [])
   in
 
-  let main_def = {
-    valpat = PTuple pats;
-    valval = ELet (bindings(), annotate EBottom (TypTuple tys))
-  } in
+  let main_def =
+    pdef (PTuple pats) @@
+    ELet (bindings(), annotate EBottom (TypTuple tys))
+  in
 
   (* Insert markers to delimit the part of the file that we are interested in.
      These markers are recognized by [Lexmli]. This lets us skip the values,

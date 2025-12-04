@@ -233,8 +233,11 @@ let mapp1 me1 me2 =
 let mapp me1 mes2 =
   List.fold_left mapp1 me1 mes2
 
-let def f body =
-  { valpat = PVar f; valval = body }
+let pdef pat body =
+  { valpat = pat; valval = body; attribute = "" }
+
+let[@inline] def f body =
+  pdef (PVar f) body
 
 let valdef def =
   SIValDefs (false, [ def ])

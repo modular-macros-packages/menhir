@@ -773,10 +773,9 @@ let first () =
    linked only with an appropriate version of MenhirLib. This is important
    because we use unsafe casts, and a version mismatch could cause a crash. *)
 
-let versiondef = {
-  valpat = PUnit;
-  valval = EVar (staticVersion ^ ".require_" ^ Version.version);
-}
+let versiondef =
+  pdef PUnit @@
+  EVar (staticVersion ^ ".require_" ^ Version.version)
 
 (* -------------------------------------------------------------------------- *)
 

@@ -159,6 +159,9 @@ val with_types:
 (**[mapp] constructs a multiple functor application. *)
 val mapp: modexpr -> modexpr list -> modexpr
 
+(**[pdef] constructs a value definition. The left-hand side is a pattern. *)
+val pdef: pattern -> expr -> valdef
+
 (**[def] constructs a value definition. *)
 val def: var -> expr -> valdef
 

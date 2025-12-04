@@ -739,11 +739,14 @@ let typedefs =
 
 (* A value definition. *)
 
-let valdef f = function
-  | { valpat = PVar id; valval = EAnnot (e, ts) } ->
-      fprintf f "%s : %a =%a" id scheme ts (indent 2 expr) e
-  | { valpat = p; valval = e } ->
-      fprintf f "%a =%a" pat p (indent 2 expr) e
+let valdef f vd =
+  match vd with
+  | { valpat = PVar id; valval = EAnnot (e, ts); attribute } ->
+      (* A special case where the left-hand side is a variable
+         and the right-hand side carries a type annotation. *)
+      fprintf f "%s%s : %a =%a" attribute id scheme ts (indent 2 expr) e
+  | { valpat = p; valval = e; attribute } ->
+      fprintf f "%s%a =%a" attribute pat p (indent 2 expr) e
 
 let valdefs recursive =
   pdefs valdef (if recursive then letrec else letnonrec) et

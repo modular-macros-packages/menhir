@@ -310,10 +310,10 @@ let compile_runs filename (oruns : oruns) : unit =
         branchbody = EStringConst run.message } :: branches
     )) [ default ] oruns
   in
-  let messagedef = {
-    valpat = PVar name;
-    valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
-  } in
+  let messagedef =
+    def name @@
+    EFun ([ PVar "s" ], EMatch (EVar "s", branches))
+  in
   let program = [
     SIComment (sprintf
       "This file was auto-generated based on \"%s\"." filename);

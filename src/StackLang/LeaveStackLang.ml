@@ -122,19 +122,17 @@ let assertfalse =
 let internal_failure =
   "Internal failure -- please contact the parser generator's developers."
 
-let assertfalsedef = {
-  valpat = PVar assertfalse;
-  valval =
-    EAnnot (
-      EFun ([ PUnit ],
-        blet (
-          [ PUnit, eprintf internal_failure []],
-          eassertfalse
-        )
-      ),
-      scheme [ "a" ] (arrow tunit (tvar "a"))
-    )
-}
+let assertfalsedef =
+  def assertfalse @@
+  EAnnot (
+    EFun ([ PUnit ],
+      blet (
+        [ PUnit, eprintf internal_failure []],
+        eassertfalse
+      )
+    ),
+    scheme [ "a" ] (arrow tunit (tvar "a"))
+  )
 
 (* A call to the function [assertfalse]. *)
 
