@@ -199,5 +199,5 @@ let get ((k, s) : t) (i : int) : int =
    component of the packed array obtained by encoding the table as
    a one-dimensional array. *)
 
-let unflatten1 (n, data) i j =
+let[@inline] unflatten1 (n, data) i j =
    get1 data (n * i + j)
