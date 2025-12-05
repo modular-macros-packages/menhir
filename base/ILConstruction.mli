@@ -170,6 +170,9 @@ val pdef: pattern -> expr -> valdef
 (**[def] constructs a value definition. *)
 val def: var -> expr -> valdef
 
+(**[def_inline] constructs a value definition, annotated with [@inline]. *)
+val def_inline: var -> expr -> valdef
+
 (**[valdef] turns a value definition into a structure item.
    This yields a single non-recursive value definition. *)
 val valdef: valdef -> structure_item

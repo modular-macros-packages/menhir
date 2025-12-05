@@ -238,11 +238,17 @@ let mapp1 me1 me2 =
 let mapp me1 mes2 =
   List.fold_left mapp1 me1 mes2
 
-let pdef pat body =
-  { valpat = pat; valval = body; attribute = "" }
+let idef valpat valval attribute =
+  { valpat; valval; attribute }
 
-let[@inline] def f body =
-  pdef (PVar f) body
+let pdef p e =
+  idef p e ""
+
+let def x e =
+  idef (PVar x) e ""
+
+let def_inline x e =
+  idef (PVar x) e "[@inline] "
 
 let valdef def =
   SIValDefs (false, [ def ])
