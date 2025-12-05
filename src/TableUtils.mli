@@ -42,6 +42,16 @@ val marshal11: int array -> expr
    marshaled via [marshal1]. *)
 val linearize_and_marshal1: int array array -> expr
 
+(**[linearize_and_marshal1_specialized] marshals an array of integer arrays
+   (of possibly different lengths). The result is a list of value
+   definitions, culminating in an accessor function [x : int -> int -> int].
+   A measure of the table, with the name [name], is printed on the report
+   channel [c]. *)
+val linearize_and_marshal1_specialized:
+  channel -> string ->
+  var -> int array array ->
+  valdef list
+
 (**[flatten_and_marshal11 table] marshals the two-dimensional bitmap [table]. *)
 val flatten_and_marshal11: int array list -> expr
 

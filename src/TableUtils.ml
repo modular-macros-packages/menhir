@@ -165,10 +165,6 @@ let marshal11 (table : int array) =
   assert (bits = 1);
   EStringConst text
 
-let linearize_and_marshal1 (table : int array array) =
-  let data, entry = LinearizedArray.make table in
-  ETuple [ marshal1 data; marshal1 entry ]
-
 let flatten_and_marshal11 (table : int array list) =
   assert (List.length table > 0);
   let n = Array.length (List.hd table) in
@@ -243,4 +239,37 @@ let marshal2_specialized c name x insignificant matrix : valdef list =
     row_displacement_decode
       (x ^ "_displacement")
       (x ^ "_data")
+  ]
+
+let linearize_and_marshal1 (table : int array array) =
+  let data, entry = LinearizedArray.make table in
+  ETuple [ marshal1 data; marshal1 entry ]
+
+(* [read_row_via get_data get_entry] generates the IL expression:
+     fun i ->
+       LinearizedArray.read_row_via get_data get_entry i *)
+
+let read_row_via get_data get_entry : expr =
+  let read_row_via = "MenhirLib.LinearizedArray.read_row_via" in
+  let i = "i" in
+  efun [ PVar i ] @@
+  EApp (EVar read_row_via, [
+    EVar get_data;
+    EVar get_entry;
+    EVar i
+  ])
+
+let linearize_and_marshal1_specialized c name x table : valdef list =
+  let data, entry = LinearizedArray.make table in
+  (* Define an accessor function for the data table. *)
+  marshal1_specialized c (name ^ " data") (x ^ "_data") data @
+  (* Define an accessor function for the entry table. *)
+  marshal1_specialized c (name ^ " entry") (x ^ "_entry") entry @
+  (* Combine the two to obtain an accessor function [x]
+     for the irregular 2D table. *)
+  [
+    def x @@
+    read_row_via
+      (x ^ "_data")
+      (x ^ "_entry")
   ]
