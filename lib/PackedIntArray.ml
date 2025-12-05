@@ -183,6 +183,10 @@ let[@inline] get32 (s : string) (i : int) : int =
   let j = 4 * i in
   (((read s j lsl 8) + read s (j + 1)) lsl 8 + read s (j + 2)) lsl 8 + read s (j + 3)
 
+(* [get] is now commented out, as it is no longer used. Only its specialized
+   variants are used. This is in principle faster (though we have not found
+   a significant difference in practice).
+
 (* [get t i] returns the integer stored in the packed array [t] at index [i]. *)
 
 (* Together, [pack] and [get] satisfy the following property: if the index [i]
@@ -203,3 +207,5 @@ let get ((k, s) : t) (i : int) : int =
   | _ ->
       assert (k = 32); (* 64 bits unlikely, not supported *)
       get32 s i
+
+ *)

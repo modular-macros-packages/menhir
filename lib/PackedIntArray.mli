@@ -32,11 +32,12 @@ type t =
    savings. *)
 val pack: int array -> t
 
+(* [get] is now commented out, as it is no longer used.
 (**[get t i] returns the integer stored in the packed array [t] at index [i].
-
    Together, [pack] and [get] satisfy the following property: if the index [i]
    is within bounds, then [get (pack a) i] equals [a.(i)]. *)
 val get: t -> int -> int
+ *)
 
 (**[get1 s i] returns the integer stored in the packed array [s] at index [i].
    It assumes (and does not check) that the array's bit width is [1]. The
