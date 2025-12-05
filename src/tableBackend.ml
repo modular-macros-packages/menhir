@@ -15,10 +15,10 @@ open IL
 open TableUtils
 open Channels
 let define_and_measure = define_and_measure (getC 1)
-let marshal1_specialized = marshal1_specialized (getC 1)
-let linearize_and_marshal1_specialized = linearize_and_marshal1_specialized (getC 1)
-let flatten_and_marshal11_specialized = flatten_and_marshal11_specialized (getC 1)
-let marshal2_specialized = marshal2_specialized (getC 1)
+let marshal1 = marshal1 (getC 1)
+let linearize_and_marshal1 = linearize_and_marshal1 (getC 1)
+let flatten_and_marshal11 = flatten_and_marshal11 (getC 1)
+let marshal2 = marshal2 (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -417,31 +417,31 @@ let default_reduction node =
 
 let action =
   let insignificant entry = (entry = encode_Fail) in
-  marshal2_specialized "action" "action" insignificant @@
+  marshal2 "action" "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
 
 let goto =
   let insignificant entry = (entry = encode_NoGoto) in
-  marshal2_specialized "goto" "goto" insignificant @@
+  marshal2 "goto" "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt
 
 let error =
-  flatten_and_marshal11_specialized "error" "error" @@
+  flatten_and_marshal11 "error" "error" @@
   Lr1.map @@ fun node ->
   Terminal.initx @@ fun t ->
   error node t
 
 let default_reduction =
-  marshal1_specialized "default reduction" "default_reduction" @@
+  marshal1 "default reduction" "default_reduction" @@
   Lr1.init @@ fun node ->
   default_reduction node
 
 let lhs =
-  marshal1_specialized "left-hand side" "lhs" @@
+  marshal1 "left-hand side" "lhs" @@
   Production.init @@ fun prod ->
   Nonterminal.encode (Production.nt prod)
 
@@ -699,7 +699,7 @@ let nonterminal () =
 
 let lr0_incoming () =
   assert Settings.inspection;
-  marshal1_specialized "incoming symbol" "lr0_incoming" @@
+  marshal1 "incoming symbol" "lr0_incoming" @@
   Lr0.init @@ fun node ->
   encode_symbol_option (Lr0.incoming_symbol node)
 
@@ -713,7 +713,7 @@ let lr0_incoming () =
 
 let rhs () =
   assert Settings.inspection;
-  linearize_and_marshal1_specialized "right-hand side" "rhs" @@
+  linearize_and_marshal1 "right-hand side" "rhs" @@
   Production.init @@ fun prod ->
   Array.map encode_symbol (Production.rhs prod)
 
@@ -723,7 +723,7 @@ let rhs () =
 
 let lr0_core () =
   assert Settings.inspection;
-  marshal1_specialized "LR(0) core" "lr0_core" @@
+  marshal1 "LR(0) core" "lr0_core" @@
   Lr1.init @@ fun node ->
   Lr0.encode (Lr0.ALR1.core (Lr1.state node))
 
@@ -731,7 +731,7 @@ let lr0_core () =
 
 let lr0_items () =
   assert Settings.inspection;
-  linearize_and_marshal1_specialized "LR(0) items" "lr0_items" @@
+  linearize_and_marshal1 "LR(0) items" "lr0_items" @@
   Lr0.init @@ fun node ->
   Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
 
@@ -742,7 +742,7 @@ let lr0_items () =
 
 let nullable () =
   assert Settings.inspection;
-  marshal1_specialized "nullable" "nullable" @@
+  marshal1 "nullable" "nullable" @@
   Nonterminal.init @@ fun nt ->
   encode_bool (Analysis.nullable nt)
 
@@ -753,7 +753,7 @@ let nullable () =
 
 let first () =
   assert Settings.inspection;
-  flatten_and_marshal11_specialized "first" "first" @@
+  flatten_and_marshal11 "first" "first" @@
   Nonterminal.map @@ fun nt ->
   Terminal.initx @@ fun t ->
   encode_bool (TerminalSet.mem t (Analysis.first nt))

@@ -137,11 +137,7 @@ let compress =
   else
     RowDisplacementEncode.compress
 
-let marshal1 (table : int array) : expr =
-  let (bits : int), (text : string) = PackedIntArray.pack table in
-  ETuple [ EIntConst bits; EStringConst text ]
-
-let marshal1_specialized c name x table : valdef list =
+let marshal1 c name x table : valdef list =
   let (bits : int), (text : string) = PackedIntArray.pack table in
   let x_data = sprintf "%s_data" x in
   [
@@ -165,18 +161,7 @@ let marshal11 (table : int array) =
   assert (bits = 1);
   EStringConst text
 
-let flatten_and_marshal11 (table : int array list) =
-  assert (List.length table > 0);
-  let n = Array.length (List.hd table) in
-  assert (List.for_all (fun row -> Array.length row = n) table);
-  ETuple [
-    (* Store the table width. *)
-    EIntConst n;
-    (* View the table as a one-dimensional array, and marshal it. *)
-    marshal11 (Array.concat table)
-  ]
-
-let flatten_and_marshal11_specialized c name x table : valdef list =
+let flatten_and_marshal11 c name x table : valdef list =
   assert (List.length table > 0);
   let n = Array.length (List.hd table) in
   assert (List.for_all (fun row -> Array.length row = n) table);
@@ -190,18 +175,6 @@ let flatten_and_marshal11_specialized c name x table : valdef list =
        for the [data] array. The bit width is 1. *)
     def x @@
     unflatten n "MenhirLib.PackedIntArray.get1" data
-  ]
-
-let marshal2 c name insignificant (matrix : int array array) : expr =
-  let dummy = 0 in
-  let displacement, data = compress insignificant dummy matrix in
-  Report.log c
-    "The %s table is %d entries; %d non-zero; %d compressed."
-    name (matrix_size matrix) (population insignificant matrix)
-    (Array.length displacement + Array.length data);
-  ETuple [
-    marshal1 displacement;
-    marshal1 data;
   ]
 
 (* [row_displacement_decode get_displacement get_data] generates
@@ -221,7 +194,7 @@ let row_displacement_decode get_displacement get_data : expr =
     EApp (EVar get_data, [ add (EVar k) (EVar j) ])
   )
 
-let marshal2_specialized c name x insignificant matrix : valdef list =
+let marshal2 c name x insignificant matrix : valdef list =
   let dummy = 0 in
   let displacement, data = compress insignificant dummy matrix in
   Report.log c
@@ -230,9 +203,9 @@ let marshal2_specialized c name x insignificant matrix : valdef list =
     (Array.length displacement + Array.length data)
   ;
   (* Define an accessor function for the displacement table. *)
-  marshal1_specialized c (name ^ " displacement") (x ^ "_displacement") displacement @
+  marshal1 c (name ^ " displacement") (x ^ "_displacement") displacement @
   (* Define an accessor function for the data table. *)
-  marshal1_specialized c (name ^ " data") (x ^ "_data") data @
+  marshal1 c (name ^ " data") (x ^ "_data") data @
   (* Combine the two to obtain an accessor function [x] for the matrix. *)
   [
     def x @@
@@ -240,10 +213,6 @@ let marshal2_specialized c name x insignificant matrix : valdef list =
       (x ^ "_displacement")
       (x ^ "_data")
   ]
-
-let linearize_and_marshal1 (table : int array array) =
-  let data, entry = LinearizedArray.make table in
-  ETuple [ marshal1 data; marshal1 entry ]
 
 (* [read_row_via get_data get_entry] generates the IL expression:
      fun i ->
@@ -259,12 +228,12 @@ let read_row_via get_data get_entry : expr =
     EVar i
   ])
 
-let linearize_and_marshal1_specialized c name x table : valdef list =
+let linearize_and_marshal1 c name x table : valdef list =
   let data, entry = LinearizedArray.make table in
   (* Define an accessor function for the data table. *)
-  marshal1_specialized c (name ^ " data") (x ^ "_data") data @
+  marshal1 c (name ^ " data") (x ^ "_data") data @
   (* Define an accessor function for the entry table. *)
-  marshal1_specialized c (name ^ " entry") (x ^ "_entry") entry @
+  marshal1 c (name ^ " entry") (x ^ "_entry") entry @
   (* Combine the two to obtain an accessor function [x]
      for the irregular 2D table. *)
   [
