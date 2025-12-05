@@ -60,8 +60,7 @@ module type TABLES = sig
   val nullable: string
 
   (**A two-table dimensional table, indexed by a nonterminal symbol and
-     by a terminal symbol (other than [#]), encodes the FIRST sets.
-     This table is a suitable argument to [PackedIntArray.unflatten1]. *)
-  val first: int * string
+     by a terminal symbol (other than [#]), encodes the FIRST sets. *)
+  val first_get: int -> int -> int (* 0 or 1 *)
 
 end

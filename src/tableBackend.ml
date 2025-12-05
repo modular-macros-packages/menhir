@@ -759,8 +759,7 @@ let nullable () =
 
 let first () =
   assert Settings.inspection;
-  define_and_measure "first" @@
-  flatten_and_marshal11 @@
+  flatten_and_marshal11_specialized "first table" "first" @@
   Nonterminal.map @@ fun nt ->
   Terminal.initx @@ fun t ->
   encode_bool (TerminalSet.mem t (Analysis.first nt))
@@ -822,7 +821,7 @@ let inspection_API () =
          in terms of the types [terminal] and [nonterminal]. This saves
          us the trouble of generating these definitions. *)
       SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
-      SIValDefs (false,
+      List.map valdef (
         terminal() ::
         nonterminal() ::
         lr0_incoming() ::
@@ -830,10 +829,9 @@ let inspection_API () =
         lr0_core() ::
         lr0_items() ::
         nullable() ::
-        first() ::
+        first() @
         []
-      ) ::
-      []
+      )
     );
     (* Argument 3, of type [EngineTypes.TABLE]. *)
     MVar et;
@@ -861,13 +859,6 @@ let unparsing_API () : structure =
   end in
   let module C = UnparsingAPI.Code(Grammar)(A)(N)(Settings) in
   C.unparsing_API()
-
-(* -------------------------------------------------------------------------- *)
-
-(* A non-recursive toplevel value definition. *)
-
-let defs d =
-  SIValDefs (false, [d])
 
 (* -------------------------------------------------------------------------- *)
 
@@ -912,7 +903,7 @@ let program =
         (* This is a cascade of non-recursive definitions. An accessor
            function may need to access the table that is defined above it. The
            semantic actions come first so as to avoid a name collision. *)
-        List.map defs (
+        List.map valdef (
           semantic_action ::
           def "terminal_count" (EIntConst (Terminal.n - 1)) ::
           token2terminal ::

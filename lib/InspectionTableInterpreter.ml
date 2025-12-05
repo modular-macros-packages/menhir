@@ -195,7 +195,7 @@ module Make
      codes, which it uses to look up the matrix [IT.first]. *)
 
   let first nt t =
-    decode_bool (PackedIntArray.unflatten1 IT.first (n2i nt) (t2i t))
+    decode_bool (IT.first_get (n2i nt) (t2i t))
 
   let xfirst symbol t =
     match symbol with
