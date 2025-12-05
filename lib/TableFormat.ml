@@ -85,11 +85,8 @@ module type TABLES = sig
 
   (**The goto table, a two-dimensional table, maps a state and a non-terminal
      symbol to either undefined (encoded as: 0) or a new state s (encoded as:
-     1 + s).
-
-     The goto table is first compressed via [RowDisplacementEncode], then
-     packed via [PackedIntArray]. *)
-  val goto: PackedIntArray.t * PackedIntArray.t
+     1 + s).. *)
+  val goto: int -> int -> int
 
   (**[start] is the number of start productions. A production [prod] is a
      start production if and only if [prod < start] holds. This is also the

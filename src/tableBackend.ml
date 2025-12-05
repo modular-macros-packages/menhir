@@ -16,7 +16,6 @@ open TableUtils
 open Channels
 let define_and_measure = define_and_measure (getC 1)
 let marshal1_specialized = marshal1_specialized (getC 1)
-let marshal2 = marshal2 (getC 1)
 let flatten_and_marshal11_specialized = flatten_and_marshal11_specialized (getC 1)
 let marshal2_specialized = marshal2_specialized (getC 1)
 open Printf
@@ -423,9 +422,8 @@ let action =
   action node t
 
 let goto =
-  define_and_measure "goto" @@
   let insignificant entry = (entry = encode_NoGoto) in
-  marshal2 "goto" insignificant @@
+  marshal2_specialized "goto" "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt
@@ -914,7 +912,7 @@ let program =
           start_def ::
           action @
           lhs @
-          goto ::
+          goto @
           trace ::
           []
         )

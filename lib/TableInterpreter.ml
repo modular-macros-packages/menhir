@@ -84,16 +84,6 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   let is_start prod =
     prod < T.start
 
-  (* This auxiliary function helps access a compressed, two-dimensional
-     matrix, like the action and goto tables. *)
-
-  let unmarshal2 table i j =
-    RowDisplacementDecode.get
-      PackedIntArray.get
-      PackedIntArray.get
-      table
-      i j
-
   let action state terminal value shift reduce fail env =
     match T.error_get state terminal with
     | 1 ->
@@ -157,7 +147,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
       prod = prod'
 
   let goto_nt state nt =
-    let code = unmarshal2 T.goto state nt in
+    let code = T.goto state nt in
     (* code = 1 + state *)
     code - 1
 
@@ -168,7 +158,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
     goto_nt state (lhs prod)
 
   let maybe_goto_nt state nt =
-    let code = unmarshal2 T.goto state nt in
+    let code = T.goto state nt in
     (* If [code] is 0, there is no outgoing transition.
        If [code] is [1 + state], there is a transition towards [state]. *)
     assert (0 <= code);
