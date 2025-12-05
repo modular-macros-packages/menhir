@@ -429,18 +429,18 @@ let goto =
   goto node nt
 
 let error =
-  flatten_and_marshal11_specialized "error bitmap" "error" @@
+  flatten_and_marshal11_specialized "error" "error" @@
   Lr1.map @@ fun node ->
   Terminal.initx @@ fun t ->
   error node t
 
 let default_reduction =
-  marshal1_specialized "default reduction table" "default_reduction" @@
+  marshal1_specialized "default reduction" "default_reduction" @@
   Lr1.init @@ fun node ->
   default_reduction node
 
 let lhs =
-  marshal1_specialized "lhs table" "lhs" @@
+  marshal1_specialized "left-hand side" "lhs" @@
   Production.init @@ fun prod ->
   Nonterminal.encode (Production.nt prod)
 
@@ -698,7 +698,7 @@ let nonterminal () =
 
 let lr0_incoming () =
   assert Settings.inspection;
-  marshal1_specialized "lr0_incoming" "lr0_incoming" @@
+  marshal1_specialized "incoming symbol" "lr0_incoming" @@
   Lr0.init @@ fun node ->
   encode_symbol_option (Lr0.incoming_symbol node)
 
@@ -756,7 +756,7 @@ let nullable () =
 
 let first () =
   assert Settings.inspection;
-  flatten_and_marshal11_specialized "first table" "first" @@
+  flatten_and_marshal11_specialized "first" "first" @@
   Nonterminal.map @@ fun nt ->
   Terminal.initx @@ fun t ->
   encode_bool (TerminalSet.mem t (Analysis.first nt))

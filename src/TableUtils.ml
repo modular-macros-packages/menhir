@@ -47,12 +47,12 @@ let size e =
 
 let measure c name def =
   Report.log c
-    "The %s occupies roughly %d bytes."
+    "The %s table occupies roughly %d bytes."
     name (size def.valval * (Sys.word_size / 8));
   def
 
 let define_and_measure c x e =
-  measure c (x ^ " table") (def x e)
+  measure c x (def x e)
 
 (* -------------------------------------------------------------------------- *)
 
