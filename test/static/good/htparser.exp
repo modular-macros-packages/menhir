@@ -583,6 +583,6 @@ The action table occupies roughly 2064 bytes.
 The goto table is 38500 entries; 926 non-zero; 1772 compressed.
 The goto table occupies roughly 3640 bytes.
 The error table occupies roughly 3016 bytes.
-The default_reduction table occupies roughly 424 bytes.
+The default reduction table occupies roughly 400 bytes.
 The lhs table occupies roughly 264 bytes.
 The trace table occupies roughly 8 bytes.
