@@ -149,9 +149,9 @@ let marshal1_specialized c name x table : valdef list =
     measure c name @@
     def x_data @@
     (EStringConst text);
-    (* Define the accessor function [x_get = fun i -> get x_data i], where
-       [get] is a variant of [PackedIntArray.get] with a suitable bit width. *)
-    def_inline (sprintf "%s_get" x) @@
+    (* Define the accessor function [x = fun i -> get x_data i], where [get]
+       is a variant of [PackedIntArray.get] with a suitable bit width. *)
+    def_inline x @@
     let i = "i" in
     efun [PVar i] @@
     EApp (
@@ -187,14 +187,13 @@ let flatten_and_marshal11_specialized c name x table : valdef list =
   let data = sprintf "%s_data" x in
   [
     (* View the table as a one-dimensional array, and marshal it. *)
-    measure c name @@ def
-      data
-      (marshal11 (Array.concat table));
+    measure c name @@
+    def data @@
+    marshal11 (Array.concat table);
     (* Use the table width [n] in the definition of a specialized accessor
        for the [data] array. The bit width is 1. *)
-    def
-      (sprintf "%s_get" x)
-      (unflatten n "MenhirLib.PackedIntArray.get1" data)
+    def x @@
+    unflatten n "MenhirLib.PackedIntArray.get1" data
   ]
 
 let marshal2 c name insignificant (matrix : int array array) : expr =
@@ -242,6 +241,6 @@ let marshal2_specialized c name x insignificant matrix : valdef list =
   [
     def x @@
     row_displacement_decode
-      (name ^ "_displacement_get")
-      (name ^ "_data_get")
+      (x ^ "_displacement")
+      (x ^ "_data")
   ]

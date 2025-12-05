@@ -140,7 +140,7 @@ module Make
 
   let incoming_symbol (s : 'a IT.lr1state) : 'a IT.symbol =
     let core = PackedIntArray.get IT.lr0_core s in
-    let symbol = decode_symbol (IT.lr0_incoming_get core) in
+    let symbol = decode_symbol (IT.lr0_incoming core) in
     match symbol with
     | IT.X symbol ->
         Obj.magic symbol
@@ -149,7 +149,7 @@ module Make
      to decode the symbol. *)
 
   let lhs prod =
-    IT.nonterminal (TT.lhs_get prod)
+    IT.nonterminal (TT.lhs prod)
 
   (* The function [rhs] reads the table [IT.rhs] and uses [decode_symbol]
      to decode the symbol. *)
@@ -195,7 +195,7 @@ module Make
      codes, which it uses to look up the matrix [IT.first]. *)
 
   let first nt t =
-    decode_bool (IT.first_get (n2i nt) (t2i t))
+    decode_bool (IT.first (n2i nt) (t2i t))
 
   let xfirst symbol t =
     match symbol with

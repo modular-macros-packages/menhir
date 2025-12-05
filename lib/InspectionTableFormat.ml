@@ -52,7 +52,7 @@ module type TABLES = sig
   val lr0_items: PackedIntArray.t * PackedIntArray.t
 
   (**A mapping of every LR(0) state to its incoming symbol, if it has one. *)
-  val lr0_incoming_get: int -> int
+  val lr0_incoming: int -> int
 
   (**A table that tells which non-terminal symbols are nullable. This is a
      packed int array of bit width 1. It can be read using
@@ -61,6 +61,6 @@ module type TABLES = sig
 
   (**A two-table dimensional table, indexed by a nonterminal symbol and
      by a terminal symbol (other than [#]), encodes the FIRST sets. *)
-  val first_get: int -> int -> int (* 0 or 1 *)
+  val first: int -> int -> int (* 0 or 1 *)
 
 end

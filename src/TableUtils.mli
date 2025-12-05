@@ -24,8 +24,8 @@ val marshal1: int array -> expr
 
 (**[marshal1_specialized c name x a] marshals the one-dimensional array [a].
    The result is a list of value definitions, culminating in an accessor
-   function [x_get : int -> int]. A measure of the table, with the name
-   [name], is printed on the report channel [c]. *)
+   function [x : int -> int]. A measure of the table, with the name [name],
+   is printed on the report channel [c]. *)
 val marshal1_specialized:
   channel -> string ->
   var -> int array ->
@@ -47,7 +47,7 @@ val flatten_and_marshal11: int array list -> expr
 
 (**[flatten_and_marshal11_specialized table] marshals the two-dimensional
    bitmap [table]. The result is a list of value definitions, culminating in
-   an accessor function [x_get : int -> int -> int]. A measure of the table,
+   an accessor function [x : int -> int -> int]. A measure of the table,
    with the name [name], is printed on the report channel [c]. *)
 val flatten_and_marshal11_specialized:
   channel -> string ->
@@ -64,8 +64,8 @@ val marshal2: channel -> string -> (int -> bool) -> int array array -> expr
 
 (**[marshal2_specialized c name x insignificant] marshals a two-dimensional
    table. The parameter [insignificant] determines which table entries are
-   insignificant. The result is a list of value definitions, culminating in an
-   accessor function [x_get : int -> int -> int]. Statistic about the table,
+   insignificant. The result is a list of value definitions, culminating in
+   an accessor function [x : int -> int -> int]. Statistic about the table,
    with the name [name], are printed on the report channel [c]. *)
 val marshal2_specialized:
   channel -> string ->
