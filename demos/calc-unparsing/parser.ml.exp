@@ -38,78 +38,7 @@ module Tables = struct
   
   include MenhirBasics
   
-  let token2terminal : token -> int =
-    fun _tok ->
-      match _tok with
-      | DIV ->
-          8
-      | EOL ->
-          7
-      | INT _ ->
-          6
-      | LPAREN ->
-          5
-      | MINUS ->
-          4
-      | PLUS ->
-          3
-      | RPAREN ->
-          2
-      | TIMES ->
-          1
-  
-  and error_terminal =
-    0
-  
-  and token2value : token -> Obj.t =
-    fun _tok ->
-      match _tok with
-      | DIV ->
-          Obj.repr ()
-      | EOL ->
-          Obj.repr ()
-      | INT _v ->
-          Obj.repr (_v : 
-# 3 "demos/calc-unparsing/parser.mly"
-       (int)
-# 76 "demos/calc-unparsing/parser.ml"
-          )
-      | LPAREN ->
-          Obj.repr ()
-      | MINUS ->
-          Obj.repr ()
-      | PLUS ->
-          Obj.repr ()
-      | RPAREN ->
-          Obj.repr ()
-      | TIMES ->
-          Obj.repr ()
-  
-  and default_reduction_get =
-    MenhirLib.PackedIntArray.get4
-  
-  and default_reduction_data =
-    "\000\002\000s\000\b\000A\t"
-  
-  and error =
-    (9, "\014\007\003\128\007\136p\000\000\014<\195\128\000\227\204\000\000Y\128\000")
-  
-  and start =
-    1
-  
-  and action =
-    ((8, "(((\000\003(\000\000(\030(\000(\014\000\000\003\000"), (8, "\022\030\"2\000\000G*\022\021\021\021\000\000\021*\022\017\017\017\000\000\017*\006\n\014"))
-  
-  and lhs_get =
-    MenhirLib.PackedIntArray.get2
-  
-  and lhs_data =
-    "*\170@"
-  
-  and goto =
-    ((4, "0\128\006\000\160@ \000\000"), (8, "\016\017\015\014\012\007\005\n"))
-  
-  and semantic_action =
+  let semantic_action =
     [|
       (fun _menhir_env ->
         let _menhir_stack = _menhir_env.MenhirLib.EngineTypes.stack in
@@ -123,7 +52,7 @@ module Tables = struct
         let i : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
-# 127 "demos/calc-unparsing/parser.ml"
+# 56 "demos/calc-unparsing/parser.ml"
          = Obj.magic i in
         let _endpos__0_ = _menhir_stack.MenhirLib.EngineTypes.endp in
         let _startpos = _startpos_i_ in
@@ -131,7 +60,7 @@ module Tables = struct
         let _v : (AST.main) = 
 # 46 "demos/calc-unparsing/parser.mly"
     ( EConst i )
-# 135 "demos/calc-unparsing/parser.ml"
+# 64 "demos/calc-unparsing/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -170,7 +99,7 @@ module Tables = struct
         let _v : (AST.main) = 
 # 52 "demos/calc-unparsing/parser.mly"
     ( e )
-# 174 "demos/calc-unparsing/parser.ml"
+# 103 "demos/calc-unparsing/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -203,12 +132,12 @@ module Tables = struct
           let op = 
 # 66 "demos/calc-unparsing/parser.mly"
         ( UNeg )
-# 207 "demos/calc-unparsing/parser.ml"
+# 136 "demos/calc-unparsing/parser.ml"
            in
           (
 # 58 "demos/calc-unparsing/parser.mly"
     ( EUnOp (op, e) )
-# 212 "demos/calc-unparsing/parser.ml"
+# 141 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -249,12 +178,12 @@ module Tables = struct
           let op = 
 # 69 "demos/calc-unparsing/parser.mly"
         ( BAdd )
-# 253 "demos/calc-unparsing/parser.ml"
+# 182 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 258 "demos/calc-unparsing/parser.ml"
+# 187 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -295,12 +224,12 @@ module Tables = struct
           let op = 
 # 70 "demos/calc-unparsing/parser.mly"
         ( BSub )
-# 299 "demos/calc-unparsing/parser.ml"
+# 228 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 304 "demos/calc-unparsing/parser.ml"
+# 233 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -341,12 +270,12 @@ module Tables = struct
           let op = 
 # 71 "demos/calc-unparsing/parser.mly"
         ( BMul )
-# 345 "demos/calc-unparsing/parser.ml"
+# 274 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 350 "demos/calc-unparsing/parser.ml"
+# 279 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -387,12 +316,12 @@ module Tables = struct
           let op = 
 # 72 "demos/calc-unparsing/parser.mly"
         ( BDiv )
-# 391 "demos/calc-unparsing/parser.ml"
+# 320 "demos/calc-unparsing/parser.ml"
            in
           (
 # 63 "demos/calc-unparsing/parser.mly"
     ( EBinOp (e1, op, e2) )
-# 396 "demos/calc-unparsing/parser.ml"
+# 325 "demos/calc-unparsing/parser.ml"
            : (AST.main))
         in
         {
@@ -425,7 +354,7 @@ module Tables = struct
         let _v : (AST.main) = 
 # 41 "demos/calc-unparsing/parser.mly"
     ( e )
-# 429 "demos/calc-unparsing/parser.ml"
+# 358 "demos/calc-unparsing/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -436,7 +365,85 @@ module Tables = struct
         });
     |]
   
-  and trace =
+  let terminal_count =
+    9
+  
+  let token2terminal : token -> int =
+    fun _tok ->
+      match _tok with
+      | DIV ->
+          8
+      | EOL ->
+          7
+      | INT _ ->
+          6
+      | LPAREN ->
+          5
+      | MINUS ->
+          4
+      | PLUS ->
+          3
+      | RPAREN ->
+          2
+      | TIMES ->
+          1
+  
+  let error_terminal =
+    0
+  
+  let token2value : token -> Obj.t =
+    fun _tok ->
+      match _tok with
+      | DIV ->
+          Obj.repr ()
+      | EOL ->
+          Obj.repr ()
+      | INT _v ->
+          Obj.repr (_v : 
+# 3 "demos/calc-unparsing/parser.mly"
+       (int)
+# 406 "demos/calc-unparsing/parser.ml"
+          )
+      | LPAREN ->
+          Obj.repr ()
+      | MINUS ->
+          Obj.repr ()
+      | PLUS ->
+          Obj.repr ()
+      | RPAREN ->
+          Obj.repr ()
+      | TIMES ->
+          Obj.repr ()
+  
+  let default_reduction_get =
+    MenhirLib.PackedIntArray.get4
+  
+  let default_reduction_data =
+    "\000\002\000s\000\b\000A\t"
+  
+  let error_data =
+    "\014\007\003\128\007\136p\000\000\014<\195\128\000\227\204\000\000Y\128\000"
+  
+  let error_get =
+    fun i j ->
+      MenhirLib.PackedIntArray.get1 error_data (9 * i + j)
+  
+  let start =
+    1
+  
+  let action =
+    ((8, "(((\000\003(\000\000(\030(\000(\014\000\000\003\000"), (8, "\022\030\"2\000\000G*\022\021\021\021\000\000\021*\022\017\017\017\000\000\017*\006\n\014"))
+  
+  let lhs_get =
+    MenhirLib.PackedIntArray.get2
+  
+  let lhs_data =
+    "*\170@"
+  
+  let goto =
+    ((4, "0\128\006\000\160@ \000\000"), (8, "\016\017\015\014\012\007\005\n"))
+  
+  let trace =
     None
   
 end
@@ -582,7 +589,7 @@ module CST = struct
     method virtual visit_INT : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
-# 586 "demos/calc-unparsing/parser.ml"
+# 593 "demos/calc-unparsing/parser.ml"
      -> 'r
     
     method virtual visit_EOL : 'r
