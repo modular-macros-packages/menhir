@@ -483,7 +483,7 @@ module MenhirInterpreter = struct
             (* This terminal symbol does not exist. *)
             assert false
     
-    and nonterminal =
+    let nonterminal =
       fun nt ->
         match nt with
         | 2 ->
@@ -494,23 +494,27 @@ module MenhirInterpreter = struct
             (* This nonterminal symbol does not exist. *)
             assert false
     
-    and lr0_incoming =
+    let lr0_incoming =
       (8, "\000\n\012\014\005\004\005\b\005\n\005\018\005\006\005\003\005\016")
     
-    and rhs =
+    let rhs =
       ((8, "\003\014\012\005\006\005\b\005\005\n\005\005\004\005\005\018\005\n\005\005\016"), (8, "\000\001\002\005\b\011\014\017\019\021"))
     
-    and lr0_core =
+    let lr0_core =
       (8, "\000\001\002\003\004\005\006\r\007\b\011\012\t\n\014\015\016\017")
     
-    and lr0_items =
+    let lr0_items =
       ((16, "\000\000\028\001\b\001\004\001\024\001\020\001\016\001\012\001\b\002\020\002\024\001\020\003\020\001\016\001\012\001\012\002\024\001\020\001\016\001\012\003\012\001\016\002\024\001\020\001\016\003\016\001\012\001\024\002\024\003\024\001\020\001\016\001\012\001\b\003\028\002\024\001\020\001\016\001\012\001\000\001 \001\024\001\020\001\016\001\012\001 \002"), (8, "\000\001\002\003\004\t\n\015\016\021\022\027\028!\"'(-."))
     
-    and nullable =
+    let nullable =
       "\000"
     
-    and first =
-      (9, "\014\007\003\128")
+    let first_data =
+      "\014\007\003\128"
+    
+    let first_get =
+      fun i j ->
+        MenhirLib.PackedIntArray.get1 first_data (9 * i + j)
     
   end) (ET) (TI)
   
