@@ -56,10 +56,6 @@
 * Conflict explanation can be very slow when there are many conflicts.
   Can we do something about it?
 
-* In the table back-end, writing a specialized version of `PackedIntArray.get`
-  to the generated `.ml` file could allow a performance gain. (Suggested by
-  Frédéric Bour.)
-
 ## Enhancements
 
 * During the expansion of nullable symbols (`--expand-nullable-symbols`), we
