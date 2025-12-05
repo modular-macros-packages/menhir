@@ -149,7 +149,7 @@ module Make
      to decode the symbol. *)
 
   let lhs prod =
-    IT.nonterminal (TT.lhs_get TT.lhs_data prod)
+    IT.nonterminal (TT.lhs_get prod)
 
   (* The function [rhs] reads the table [IT.rhs] and uses [decode_symbol]
      to decode the symbol. *)

@@ -37,3 +37,8 @@ val get:
   'displacement * 'data ->
   int -> int ->
   'a
+
+(**The auxiliary function [decode] is part of the implementation of [get].
+   It is exposed because it is used by the specialized versions of [get]
+   that the table back-end generates. See [TableUtils]. *)
+val decode: displacement -> int

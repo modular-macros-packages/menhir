@@ -52,8 +52,7 @@ module type TABLES = sig
      either ``no default reduction'' (encoded as: 0) or ``by default, reduce
      prod'' (encoded as: 1 + prod). The action table is looked up only when
      there is no default reduction. *)
-  val default_reduction_get: string -> int -> int
-  val default_reduction_data: string
+  val default_reduction_get: int -> int
 
   (**Menhir follows Dencker, Dürre and Heuft, who point out that, although the
      action table is not sparse by nature (i.e., the error entries are
@@ -76,17 +75,13 @@ module type TABLES = sig
      as: [s | 10]), ``shift to state s without discarding the current token''
      (encoded as: [es | 11]), or ``reduce prod'' (encoded as: [prod | 01]).
 
-     The action table is first compressed via [RowDisplacementEncode],
-     then packed via [PackedIntArray].
-
      Like the error bitmap, the action table does not contain a column for the
      [#] pseudo-terminal. *)
-  val action: PackedIntArray.t * PackedIntArray.t
+  val action: int -> int -> int
 
   (**A one-dimensional table, [lhs], maps a production to its left-hand side
      (a non-terminal symbol). *)
-  val lhs_get: string -> int -> int
-  val lhs_data: string
+  val lhs_get: int -> int
 
   (**The goto table, a two-dimensional table, maps a state and a non-terminal
      symbol to either undefined (encoded as: 0) or a new state s (encoded as:

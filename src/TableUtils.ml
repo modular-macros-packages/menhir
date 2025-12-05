@@ -143,13 +143,21 @@ let marshal1 (table : int array) : expr =
 
 let marshal1_specialized c name x table : valdef list =
   let (bits : int), (text : string) = PackedIntArray.pack table in
+  let x_data = sprintf "%s_data" x in
   [
-    def
-      (sprintf "%s_get" x)
-      (EVar (sprintf "MenhirLib.PackedIntArray.get%d" bits));
-    measure c name @@ def
-      (sprintf "%s_data" x)
-      (EStringConst text)
+    (* Define the table [x_data]. *)
+    measure c name @@
+    def x_data @@
+    (EStringConst text);
+    (* Define the accessor function [x_get = fun i -> get x_data i], where
+       [get] is a variant of [PackedIntArray.get] with a suitable bit width. *)
+    def_inline (sprintf "%s_get" x) @@
+    let i = "i" in
+    efun [PVar i] @@
+    EApp (
+      EVar (sprintf "MenhirLib.PackedIntArray.get%d" bits),
+      [ EVar x_data; EVar i ]
+    )
   ]
 
 let marshal11 (table : int array) =
@@ -199,4 +207,41 @@ let marshal2 c name insignificant (matrix : int array array) : expr =
   ETuple [
     marshal1 displacement;
     marshal1 data;
+  ]
+
+(* [row_displacement_decode get_displacement get_data] generates
+   the IL expression:
+     fun i j ->
+       let k = RowDisplacementDecode.decode (get_displacement i) in
+       get_data (k + j)
+   This is a copy of [RowDisplacementDecode.get],
+   specialized with [get_displacement] and [get_data]. *)
+
+let row_displacement_decode get_displacement get_data : expr =
+  let decode = "MenhirLib.RowDisplacementDecode.decode" in
+  let i = "i" and j = "j" and k = "k" in
+  efun [ PVar i; PVar j] @@
+  blet (
+    [ PVar k, EApp (EVar decode, [ EApp (EVar get_displacement, [ EVar i ])]) ],
+    EApp (EVar get_data, [ add (EVar k) (EVar j) ])
+  )
+
+let marshal2_specialized c name x insignificant matrix : valdef list =
+  let dummy = 0 in
+  let displacement, data = compress insignificant dummy matrix in
+  Report.log c
+    "The %s table is %d entries; %d non-zero; %d compressed."
+    name (matrix_size matrix) (population insignificant matrix)
+    (Array.length displacement + Array.length data)
+  ;
+  (* Define an accessor function for the displacement table. *)
+  marshal1_specialized c (name ^ " displacement") (x ^ "_displacement") displacement @
+  (* Define an accessor function for the data table. *)
+  marshal1_specialized c (name ^ " data") (x ^ "_data") data @
+  (* Combine the two to obtain an accessor function [x] for the matrix. *)
+  [
+    def x @@
+    row_displacement_decode
+      (name ^ "_displacement_get")
+      (name ^ "_data_get")
   ]

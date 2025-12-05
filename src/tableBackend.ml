@@ -18,6 +18,7 @@ let define_and_measure = define_and_measure (getC 1)
 let marshal1_specialized = marshal1_specialized (getC 1)
 let marshal2 = marshal2 (getC 1)
 let flatten_and_marshal11_specialized = flatten_and_marshal11_specialized (getC 1)
+let marshal2_specialized = marshal2_specialized (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -415,9 +416,8 @@ let default_reduction node =
 (* Generate the table definitions. *)
 
 let action =
-  define_and_measure "action" @@
   let insignificant entry = (entry = encode_Fail) in
-  marshal2 "action" insignificant @@
+  marshal2_specialized "action" "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
@@ -912,7 +912,7 @@ let program =
           default_reduction @
           error @
           start_def ::
-          action ::
+          action @
           lhs @
           goto ::
           trace ::

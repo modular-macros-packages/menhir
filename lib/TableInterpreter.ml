@@ -72,7 +72,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
     i
 
   let default_reduction state defred nodefred env =
-    let code = T.default_reduction_get T.default_reduction_data state in
+    let code = T.default_reduction_get state in
     if code = 0 then
       (* no default reduction *)
       nodefred env
@@ -97,7 +97,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   let action state terminal value shift reduce fail env =
     match T.error_get state terminal with
     | 1 ->
-        let action = unmarshal2 T.action state terminal in
+        let action = T.action state terminal in
         let opcode = action land 0b11
         and param = action lsr 2 in
         if opcode >= 0b10 then
@@ -116,7 +116,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   let maybe_shift_t state terminal =
     match T.error_get state terminal with
     | 1 ->
-        let action = unmarshal2 T.action state terminal in
+        let action = T.action state terminal in
         let opcode = action land 0b11 in
         if opcode >= 0b10 then
           (* 0b10 : shift/discard *)
@@ -132,12 +132,12 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
         None
 
   let may_reduce_prod state terminal prod =
-    let code = T.default_reduction_get T.default_reduction_data state in
+    let code = T.default_reduction_get state in
     if code = 0 then
       (* no default reduction *)
       match T.error_get state terminal with
       | 1 ->
-          let action = unmarshal2 T.action state terminal in
+          let action = T.action state terminal in
           let opcode = action land 0b11 in
           if opcode >= 0b10 then
             (* 0b10 : shift/discard *)
@@ -162,7 +162,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
     code - 1
 
   let[@inline] lhs prod =
-    T.lhs_get T.lhs_data prod
+    T.lhs_get prod
 
   let goto_prod state prod =
     goto_nt state (lhs prod)
