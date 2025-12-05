@@ -154,15 +154,34 @@ let pack (a : int array) : t =
 let[@inline] read (s : string) (i : int) : int =
   Char.code (String.unsafe_get s i)
 
-(* [get1 s i] returns the integer stored in the packed array [s] at index [i].
-   It assumes (and does not check) that the array's bit width is [1]. The
-   packed array [s] is just a string; there is no bit width component. *)
-
 let[@inline] get1 (s : string) (i : int) : int =
   let c = read s (i lsr 3) in
   let c = c lsr ((lnot i) land 0b111) in
   let c = c land 0b1 in
   c
+
+let[@inline] get2 (s : string) (i : int) : int =
+  let c = read s (i lsr 2) in
+  let c = c lsr (2 * ((lnot i) land 0b11)) in
+  let c = c land 0b11 in
+  c
+
+let[@inline] get4 (s : string) (i : int) : int =
+  let c = read s (i lsr 1) in
+  let c = c lsr (4 * ((lnot i) land 0b1)) in
+  let c = c land 0b1111 in
+  c
+
+let get8 =
+  read
+
+let[@inline] get16 (s : string) (i : int) : int =
+  let j = 2 * i in
+  (read s j) lsl 8 + read s (j + 1)
+
+let[@inline] get32 (s : string) (i : int) : int =
+  let j = 4 * i in
+  (((read s j lsl 8) + read s (j + 1)) lsl 8 + read s (j + 2)) lsl 8 + read s (j + 3)
 
 (* [get t i] returns the integer stored in the packed array [t] at index [i]. *)
 
@@ -174,24 +193,16 @@ let get ((k, s) : t) (i : int) : int =
   | 1 ->
       get1 s i
   | 2 ->
-      let c = read s (i lsr 2) in
-      let c = c lsr (2 * ((lnot i) land 0b11)) in
-      let c = c land 0b11 in
-      c
+      get2 s i
   | 4 ->
-      let c = read s (i lsr 1) in
-      let c = c lsr (4 * ((lnot i) land 0b1)) in
-      let c = c land 0b1111 in
-      c
+      get4 s i
   | 8 ->
-      read s i
+      get8 s i
   | 16 ->
-      let j = 2 * i in
-      (read s j) lsl 8 + read s (j + 1)
+      get16 s i
   | _ ->
       assert (k = 32); (* 64 bits unlikely, not supported *)
-      let j = 4 * i in
-      (((read s j lsl 8) + read s (j + 1)) lsl 8 + read s (j + 2)) lsl 8 + read s (j + 3)
+      get32 s i
 
 (* [unflatten1 (n, data) i j] accesses the two-dimensional bitmap
    represented by [(n, data)] at indices [i] and [j]. The integer

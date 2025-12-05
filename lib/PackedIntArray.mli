@@ -38,10 +38,26 @@ val pack: int array -> t
    is within bounds, then [get (pack a) i] equals [a.(i)]. *)
 val get: t -> int -> int
 
-(**[get1 t i] returns the integer stored in the packed array [t] at index [i].
+(**[get1 s i] returns the integer stored in the packed array [s] at index [i].
    It assumes (and does not check) that the array's bit width is [1]. The
-   parameter [t] is just a string. *)
+   packed array [s] is just a string; there is no bit width component.
+   In other words, it is [get], specialized to the bit width 1. *)
 val get1: string -> int -> int
+
+(**[get2] is [get], specialized to the bit width 2. *)
+val get2: string -> int -> int
+
+(**[get4] is [get], specialized to the bit width 4. *)
+val get4: string -> int -> int
+
+(**[get8] is [get], specialized to the bit width 8. *)
+val get8: string -> int -> int
+
+(**[get16] is [get], specialized to the bit width 16. *)
+val get16: string -> int -> int
+
+(**[get32] is [get], specialized to the bit width 32. *)
+val get32: string -> int -> int
 
 (**[unflatten1 (n, data) i j] accesses the two-dimensional bitmap represented
    by [(n, data)] at indices [i] and [j]. The integer [n] is the width of the
