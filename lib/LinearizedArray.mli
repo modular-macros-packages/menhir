@@ -40,27 +40,8 @@ val row_length: 'a t -> int -> int
    [read_row (make a) i] is equivalent to [Array.to_list a.(i)]. *)
 val read_row: 'a t -> int -> 'a list
 
-(* The following variants read the linearized array via accessors
+(* The following variant reads the linearized array via accessors
    [get_data : int -> 'a] and [get_entry : int -> int]. *)
-
-(**Provided the accessor function [get_entry] offers read access to the entry
-   array of the linearized array [la], [row_length_via get_entry i] is the
-   length of the row at index [i] in the linearized array [la]. *)
-val row_length_via:
-  (* get_entry: *) (int -> int) ->
-  (* i: *)         int ->
-                   int
-
-(**Provided the accessor functions [get_data] and [get_entry] offers read
-   access to the data and entry arrays of the linearized array [la],
-   [read_via get_data get_entry i j] reads the linearized array [la] at
-   indices [i] and [j]. *)
-val read_via:
-  (* get_data: *)  (int -> 'a) ->
-  (* get_entry: *) (int -> int) ->
-  (* i: *)         int ->
-  (* j: *)         int ->
-                   'a
 
 (**Provided the accessor functions [get_data] and [get_entry] offers read
    access to the data and entry arrays of the linearized array [la],
