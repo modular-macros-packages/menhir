@@ -203,12 +203,3 @@ let get ((k, s) : t) (i : int) : int =
   | _ ->
       assert (k = 32); (* 64 bits unlikely, not supported *)
       get32 s i
-
-(* [unflatten1 (n, data) i j] accesses the two-dimensional bitmap
-   represented by [(n, data)] at indices [i] and [j]. The integer
-   [n] is the width of the bitmap; the string [data] is the second
-   component of the packed array obtained by encoding the table as
-   a one-dimensional array. *)
-
-let[@inline] unflatten1 (n, data) i j =
-   get1 data (n * i + j)
