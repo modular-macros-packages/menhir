@@ -55,17 +55,6 @@ module Make
 
   include IT
 
-  (* This auxiliary function decodes a packed linearized array, as created by
-     [TableBackend.linearize_and_marshal1]. Here, we read a row all at once. *)
-
-  let read_packed_linearized
-    (data, entry : PackedIntArray.t * PackedIntArray.t) (i : int) : int list
-  =
-    LinearizedArray.read_row_via
-      (PackedIntArray.get data)
-      (PackedIntArray.get entry)
-      i
-
   (* This auxiliary function decodes a symbol. The encoding was done by
      [encode_symbol] or [encode_symbol_option] in the table back-end. *)
 
@@ -178,7 +167,7 @@ module Make
     (* Map [s] to its LR(0) core. *)
     let core = IT.lr0_core s in
     (* Now use [core] to look up the table [IT.lr0_items]. *)
-    List.map export (read_packed_linearized IT.lr0_items core)
+    List.map export (IT.lr0_items core)
 
   (* The function [nullable] maps the nonterminal symbol [nt] to its
      integer code, which it uses to look up the array [IT.nullable].

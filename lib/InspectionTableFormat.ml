@@ -45,10 +45,8 @@ module type TABLES = sig
   val lr0_core: int -> int
 
   (**A mapping of every LR(0) state to its set of LR(0) items. Each item is
-     represented in its packed form (see [Item]) as an integer. Thus the
-     mapping is an array of arrays of integers, which is linearized and
-     packed, like [rhs]. *)
-  val lr0_items: PackedIntArray.t * PackedIntArray.t
+     represented in its packed form (see [Item]) as an integer. *)
+  val lr0_items: int -> int list
 
   (**A mapping of every LR(0) state to its incoming symbol, if it has one. *)
   val lr0_incoming: int -> int

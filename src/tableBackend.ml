@@ -731,8 +731,7 @@ let lr0_core () =
 
 let lr0_items () =
   assert Settings.inspection;
-  define_and_measure "lr0_items" @@
-  linearize_and_marshal1 @@
+  linearize_and_marshal1_specialized "LR(0) items" "lr0_items" @@
   Lr0.init @@ fun node ->
   Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
 
@@ -822,7 +821,7 @@ let inspection_API () =
         lr0_incoming() @
         rhs() @
         lr0_core() @
-        lr0_items() ::
+        lr0_items() @
         nullable() @
         first() @
         []
