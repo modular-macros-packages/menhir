@@ -1,8 +1,10 @@
 # Changes
 
-## 2025/11/XX
+## 2025/12/XX
 
 * Major internal reorganization of the code.
+
+* Table back-end: generate specialized table access code.
 
 * In `--strict` mode, all warnings are now errors.
 
