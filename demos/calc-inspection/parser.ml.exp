@@ -96,8 +96,11 @@ module Tables = struct
   and action =
     ((8, "(((\000\003(\000\000(\030(\000(\014\000\000\003\000"), (8, "\022\030\"2\000\000G*\022\017\017\017\000\000\017*\022\r\r\r\000\000\r*\006\n\014"))
   
-  and lhs =
-    (2, "*\170@")
+  and lhs_get =
+    MenhirLib.PackedIntArray.get2
+  
+  and lhs_data =
+    "*\170@"
   
   and goto =
     ((4, "0\128\006\000\160@ \000\000"), (8, "\016\017\015\014\012\007\005\n"))
@@ -117,7 +120,7 @@ module Tables = struct
         let i : 
 # 1 "demos/calc-inspection/parser.mly"
        (int)
-# 121 "demos/calc-inspection/parser.ml"
+# 124 "demos/calc-inspection/parser.ml"
          = Obj.magic i in
         let _endpos__0_ = _menhir_stack.MenhirLib.EngineTypes.endp in
         let _startpos = _startpos_i_ in
@@ -125,7 +128,7 @@ module Tables = struct
         let _v : (int) = 
 # 20 "demos/calc-inspection/parser.mly"
     ( i )
-# 129 "demos/calc-inspection/parser.ml"
+# 132 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -165,7 +168,7 @@ module Tables = struct
         let _v : (int) = 
 # 22 "demos/calc-inspection/parser.mly"
     ( e )
-# 169 "demos/calc-inspection/parser.ml"
+# 172 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -205,7 +208,7 @@ module Tables = struct
         let _v : (int) = 
 # 24 "demos/calc-inspection/parser.mly"
     ( e1 + e2 )
-# 209 "demos/calc-inspection/parser.ml"
+# 212 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -245,7 +248,7 @@ module Tables = struct
         let _v : (int) = 
 # 26 "demos/calc-inspection/parser.mly"
     ( e1 - e2 )
-# 249 "demos/calc-inspection/parser.ml"
+# 252 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -285,7 +288,7 @@ module Tables = struct
         let _v : (int) = 
 # 28 "demos/calc-inspection/parser.mly"
     ( e1 * e2 )
-# 289 "demos/calc-inspection/parser.ml"
+# 292 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -325,7 +328,7 @@ module Tables = struct
         let _v : (int) = 
 # 30 "demos/calc-inspection/parser.mly"
     ( e1 / e2 )
-# 329 "demos/calc-inspection/parser.ml"
+# 332 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -358,7 +361,7 @@ module Tables = struct
         let _v : (int) = 
 # 32 "demos/calc-inspection/parser.mly"
     ( - e )
-# 362 "demos/calc-inspection/parser.ml"
+# 365 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -391,7 +394,7 @@ module Tables = struct
         let _v : (int) = 
 # 16 "demos/calc-inspection/parser.mly"
     ( e )
-# 395 "demos/calc-inspection/parser.ml"
+# 398 "demos/calc-inspection/parser.ml"
          in
         {
           MenhirLib.EngineTypes.state = _menhir_s;
@@ -427,7 +430,7 @@ module MenhirInterpreter = struct
       | T_INT : 
 # 1 "demos/calc-inspection/parser.mly"
        (int)
-# 431 "demos/calc-inspection/parser.ml"
+# 434 "demos/calc-inspection/parser.ml"
      terminal
       | T_EOL : unit terminal
       | T_DIV : unit terminal
