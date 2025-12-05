@@ -52,7 +52,7 @@ module type TABLES = sig
   val lr0_items: PackedIntArray.t * PackedIntArray.t
 
   (**A mapping of every LR(0) state to its incoming symbol, if it has one. *)
-  val lr0_incoming: PackedIntArray.t
+  val lr0_incoming_get: int -> int
 
   (**A table that tells which non-terminal symbols are nullable. This is a
      packed int array of bit width 1. It can be read using

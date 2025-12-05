@@ -140,7 +140,7 @@ module Make
 
   let incoming_symbol (s : 'a IT.lr1state) : 'a IT.symbol =
     let core = PackedIntArray.get IT.lr0_core s in
-    let symbol = decode_symbol (PackedIntArray.get IT.lr0_incoming core) in
+    let symbol = decode_symbol (IT.lr0_incoming_get core) in
     match symbol with
     | IT.X symbol ->
         Obj.magic symbol

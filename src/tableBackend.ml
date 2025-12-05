@@ -698,8 +698,7 @@ let nonterminal () =
 
 let lr0_incoming () =
   assert Settings.inspection;
-  define_and_measure "lr0_incoming" @@
-  marshal1 @@
+  marshal1_specialized "lr0_incoming" "lr0_incoming" @@
   Lr0.init @@ fun node ->
   encode_symbol_option (Lr0.incoming_symbol node)
 
@@ -822,7 +821,7 @@ let inspection_API () =
       List.map valdef (
         terminal() ::
         nonterminal() ::
-        lr0_incoming() ::
+        lr0_incoming() @
         rhs() ::
         lr0_core() ::
         lr0_items() ::
