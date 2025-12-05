@@ -155,7 +155,7 @@ module Make
      to decode the symbol. *)
 
   let rhs prod =
-    List.map decode_symbol (read_packed_linearized IT.rhs prod)
+    List.map decode_symbol (IT.rhs prod)
 
   (* The function [items] maps the LR(1) state [s] to its LR(0) core,
      then uses [core] as an index into the table [IT.lr0_items]. The

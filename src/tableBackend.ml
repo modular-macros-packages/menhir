@@ -16,6 +16,7 @@ open TableUtils
 open Channels
 let define_and_measure = define_and_measure (getC 1)
 let marshal1_specialized = marshal1_specialized (getC 1)
+let linearize_and_marshal1_specialized = linearize_and_marshal1_specialized (getC 1)
 let flatten_and_marshal11_specialized = flatten_and_marshal11_specialized (getC 1)
 let marshal2_specialized = marshal2_specialized (getC 1)
 open Printf
@@ -712,8 +713,7 @@ let lr0_incoming () =
 
 let rhs () =
   assert Settings.inspection;
-  define_and_measure "rhs" @@
-  linearize_and_marshal1 @@
+  linearize_and_marshal1_specialized "right-hand side" "rhs" @@
   Production.init @@ fun prod ->
   Array.map encode_symbol (Production.rhs prod)
 
@@ -820,7 +820,7 @@ let inspection_API () =
         terminal() ::
         nonterminal() ::
         lr0_incoming() @
-        rhs() ::
+        rhs() @
         lr0_core() @
         lr0_items() ::
         nullable() @

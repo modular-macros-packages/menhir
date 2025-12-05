@@ -37,10 +37,9 @@ module type TABLES = sig
      signature [TableFormat.TABLES], so we need not repeat it here. *)
 
   (**The table [rhs] provides access to the right-hand side of every
-     production. This a linearized array of arrays of integers, whose [data]
-     and [entry] components have been packed. The encoding of symbols as
-     integers in described in [TableBackend]. *)
-  val rhs: PackedIntArray.t * PackedIntArray.t
+     production. The encoding of symbols as integers in described in
+     [TableBackend]. *)
+  val rhs: int -> int list
 
   (**A mapping of every (non-initial) state to its LR(0) core. *)
   val lr0_core: int -> int
