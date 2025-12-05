@@ -137,7 +137,7 @@ let compress =
   else
     RowDisplacementEncode.compress
 
-let marshal1 c name x table : valdef list =
+let marshal_1D_array c name x table : valdef list =
   let (bits : int), (text : string) = PackedIntArray.pack table in
   let x_data = sprintf "%s_data" x in
   [
@@ -156,12 +156,12 @@ let marshal1 c name x table : valdef list =
     )
   ]
 
-let marshal11 (table : int array) =
+let marshal_1D_bitmap (table : int array) : expr =
   let (bits : int), (text : string) = PackedIntArray.pack table in
   assert (bits = 1);
   EStringConst text
 
-let flatten_and_marshal11 c name x table : valdef list =
+let marshal_2D_bitmap c name x table : valdef list =
   assert (List.length table > 0);
   let n = Array.length (List.hd table) in
   assert (List.for_all (fun row -> Array.length row = n) table);
@@ -170,7 +170,7 @@ let flatten_and_marshal11 c name x table : valdef list =
     (* View the table as a one-dimensional array, and marshal it. *)
     measure c name @@
     def data @@
-    marshal11 (Array.concat table);
+    marshal_1D_bitmap (Array.concat table);
     (* Use the table width [n] in the definition of a specialized accessor
        for the [data] array. The bit width is 1. *)
     def x @@
@@ -194,7 +194,7 @@ let row_displacement_decode get_displacement get_data : expr =
     EApp (EVar get_data, [ add (EVar k) (EVar j) ])
   )
 
-let marshal2 c name x insignificant matrix : valdef list =
+let marshal_2D_matrix c name x insignificant matrix : valdef list =
   let dummy = 0 in
   let displacement, data = compress insignificant dummy matrix in
   Report.log c
@@ -203,9 +203,9 @@ let marshal2 c name x insignificant matrix : valdef list =
     (Array.length displacement + Array.length data)
   ;
   (* Define an accessor function for the displacement table. *)
-  marshal1 c (name ^ " displacement") (x ^ "_displacement") displacement @
+  marshal_1D_array c (name ^ " displacement") (x ^ "_displacement") displacement @
   (* Define an accessor function for the data table. *)
-  marshal1 c (name ^ " data") (x ^ "_data") data @
+  marshal_1D_array c (name ^ " data") (x ^ "_data") data @
   (* Combine the two to obtain an accessor function [x] for the matrix. *)
   [
     def x @@
@@ -228,12 +228,12 @@ let read_row_via get_data get_entry : expr =
     EVar i
   ])
 
-let linearize_and_marshal1 c name x table : valdef list =
+let marshal_irregular_2D_array c name x table : valdef list =
   let data, entry = LinearizedArray.make table in
   (* Define an accessor function for the data table. *)
-  marshal1 c (name ^ " data") (x ^ "_data") data @
+  marshal_1D_array c (name ^ " data") (x ^ "_data") data @
   (* Define an accessor function for the entry table. *)
-  marshal1 c (name ^ " entry") (x ^ "_entry") entry @
+  marshal_1D_array c (name ^ " entry") (x ^ "_entry") entry @
   (* Combine the two to obtain an accessor function [x]
      for the irregular 2D table. *)
   [

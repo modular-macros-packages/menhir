@@ -15,10 +15,10 @@ open IL
 open TableUtils
 open Channels
 let define_and_measure = define_and_measure (getC 1)
-let marshal1 = marshal1 (getC 1)
-let linearize_and_marshal1 = linearize_and_marshal1 (getC 1)
-let flatten_and_marshal11 = flatten_and_marshal11 (getC 1)
-let marshal2 = marshal2 (getC 1)
+let marshal_1D_array = marshal_1D_array (getC 1)
+let marshal_irregular_2D_array = marshal_irregular_2D_array (getC 1)
+let marshal_2D_bitmap = marshal_2D_bitmap (getC 1)
+let marshal_2D_matrix = marshal_2D_matrix (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -62,23 +62,23 @@ let fold_entry f accu =
 
 (* Conventional names for modules, exceptions, record fields, functions. *)
 
-let menhirlib =
+let runtimelib =
   "MenhirLib"
 
 let make_engine_table =
-  menhirlib ^ ".TableInterpreter.MakeEngineTable"
+  runtimelib ^ ".TableInterpreter.MakeEngineTable"
 
 let make_engine =
-  menhirlib ^ ".Engine.Make"
+  runtimelib ^ ".Engine.Make"
 
 let make_symbol =
-  menhirlib ^ ".InspectionTableInterpreter.Symbols"
+  runtimelib ^ ".InspectionTableInterpreter.Symbols"
 
 let make_inspection =
-  menhirlib ^ ".InspectionTableInterpreter.Make"
+  runtimelib ^ ".InspectionTableInterpreter.Make"
 
 let engineTypes =
-  menhirlib ^ ".EngineTypes"
+  runtimelib ^ ".EngineTypes"
 
 let field x =
   engineTypes ^ "." ^ x
@@ -111,7 +111,7 @@ let start =
   interpreter_submodule_name ^ ".start"
 
 let staticVersion =
-  menhirlib ^ ".StaticVersion"
+  runtimelib ^ ".StaticVersion"
 
 (* The following are names of internal sub-modules. *)
 
@@ -417,31 +417,31 @@ let default_reduction node =
 
 let action =
   let insignificant entry = (entry = encode_Fail) in
-  marshal2 "action" "action" insignificant @@
+  marshal_2D_matrix "action" "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
 
 let goto =
   let insignificant entry = (entry = encode_NoGoto) in
-  marshal2 "goto" "goto" insignificant @@
+  marshal_2D_matrix "goto" "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt
 
 let error =
-  flatten_and_marshal11 "error" "error" @@
+  marshal_2D_bitmap "error" "error" @@
   Lr1.map @@ fun node ->
   Terminal.initx @@ fun t ->
   error node t
 
 let default_reduction =
-  marshal1 "default reduction" "default_reduction" @@
+  marshal_1D_array "default reduction" "default_reduction" @@
   Lr1.init @@ fun node ->
   default_reduction node
 
 let lhs =
-  marshal1 "left-hand side" "lhs" @@
+  marshal_1D_array "left-hand side" "lhs" @@
   Production.init @@ fun prod ->
   Nonterminal.encode (Production.nt prod)
 
@@ -699,7 +699,7 @@ let nonterminal () =
 
 let lr0_incoming () =
   assert Settings.inspection;
-  marshal1 "incoming symbol" "lr0_incoming" @@
+  marshal_1D_array "incoming symbol" "lr0_incoming" @@
   Lr0.init @@ fun node ->
   encode_symbol_option (Lr0.incoming_symbol node)
 
@@ -713,7 +713,7 @@ let lr0_incoming () =
 
 let rhs () =
   assert Settings.inspection;
-  linearize_and_marshal1 "right-hand side" "rhs" @@
+  marshal_irregular_2D_array "right-hand side" "rhs" @@
   Production.init @@ fun prod ->
   Array.map encode_symbol (Production.rhs prod)
 
@@ -723,7 +723,7 @@ let rhs () =
 
 let lr0_core () =
   assert Settings.inspection;
-  marshal1 "LR(0) core" "lr0_core" @@
+  marshal_1D_array "LR(0) core" "lr0_core" @@
   Lr1.init @@ fun node ->
   Lr0.encode (Lr0.ALR1.core (Lr1.state node))
 
@@ -731,7 +731,7 @@ let lr0_core () =
 
 let lr0_items () =
   assert Settings.inspection;
-  linearize_and_marshal1 "LR(0) items" "lr0_items" @@
+  marshal_irregular_2D_array "LR(0) items" "lr0_items" @@
   Lr0.init @@ fun node ->
   Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
 
@@ -742,7 +742,7 @@ let lr0_items () =
 
 let nullable () =
   assert Settings.inspection;
-  marshal1 "nullable" "nullable" @@
+  marshal_1D_array "nullable" "nullable" @@
   Nonterminal.init @@ fun nt ->
   encode_bool (Analysis.nullable nt)
 
@@ -753,7 +753,7 @@ let nullable () =
 
 let first () =
   assert Settings.inspection;
-  flatten_and_marshal11 "first" "first" @@
+  marshal_2D_bitmap "first" "first" @@
   Nonterminal.map @@ fun nt ->
   Terminal.initx @@ fun t ->
   encode_bool (TerminalSet.mem t (Analysis.first nt))
