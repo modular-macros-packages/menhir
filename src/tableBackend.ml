@@ -12,13 +12,7 @@ let provided = MList.provided
 open ILConstruction
 open Grammar
 open IL
-open TableUtils
 open Channels
-let define_and_measure = define_and_measure (getC 1)
-let marshal_1D_array = marshal_1D_array (getC 1)
-let marshal_irregular_2D_array = marshal_irregular_2D_array (getC 1)
-let marshal_2D_bitmap = marshal_2D_bitmap (getC 1)
-let marshal_2D_matrix = marshal_2D_matrix (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -38,6 +32,15 @@ open Interface
 module Conventions =
   Conventions.Make(Grammar)(Settings)
 open Conventions
+
+let runtimelib =
+  "MenhirLib"
+
+module TableUtils = TableUtils.Make(struct
+  let runtimelib = runtimelib
+  let info = getC 1
+end)
+open TableUtils
 
 module Run () = struct
 
@@ -61,9 +64,6 @@ let fold_entry f accu =
 (* -------------------------------------------------------------------------- *)
 
 (* Conventional names for modules, exceptions, record fields, functions. *)
-
-let runtimelib =
-  "MenhirLib"
 
 let make_engine_table =
   runtimelib ^ ".TableInterpreter.MakeEngineTable"

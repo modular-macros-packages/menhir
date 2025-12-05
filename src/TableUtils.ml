@@ -14,6 +14,20 @@ open ILConstruction
 module LinearizedArray = MenhirLib.LinearizedArray
 module PackedIntArray = MenhirLib.PackedIntArray
 
+module Make (X : sig
+  open Report
+
+  (**[runtimelib] is the name of the runtime library that contains the modules
+     [LinearizedArray] and [PackedIntArray]. It can be for example [MenhirLib]
+     or [MenhirGLR]. *)
+  val runtimelib: string
+
+  (**The channel [info] is used to emit information messages about the
+     tables that we construct. *)
+  val info: channel
+
+end) = struct
+
 (* -------------------------------------------------------------------------- *)
 
 (* Statistics. *)
@@ -45,14 +59,14 @@ let rec size unboxed (e : expr) =
 let size e =
   size false e
 
-let measure c name def =
-  Report.log c
+let measure name def =
+  Report.log X.info
     "The %s table occupies roughly %d bytes."
     name (size def.valval * (Sys.word_size / 8));
   def
 
-let define_and_measure c x e =
-  measure c x (def x e)
+let define_and_measure x e =
+  measure x (def x e)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -137,12 +151,12 @@ let compress =
   else
     RowDisplacementEncode.compress
 
-let marshal_1D_array c name x table : valdef list =
+let marshal_1D_array name x table : valdef list =
   let (bits : int), (text : string) = PackedIntArray.pack table in
   let x_data = sprintf "%s_data" x in
   [
     (* Define the table [x_data]. *)
-    measure c name @@
+    measure name @@
     def x_data @@
     (EStringConst text);
     (* Define the accessor function [x = fun i -> get x_data i], where [get]
@@ -151,7 +165,7 @@ let marshal_1D_array c name x table : valdef list =
     let i = "i" in
     efun [PVar i] @@
     EApp (
-      EVar (sprintf "MenhirLib.PackedIntArray.get%d" bits),
+      EVar (sprintf "%s.PackedIntArray.get%d" X.runtimelib bits),
       [ EVar x_data; EVar i ]
     )
   ]
@@ -161,20 +175,20 @@ let marshal_1D_bitmap (table : int array) : expr =
   assert (bits = 1);
   EStringConst text
 
-let marshal_2D_bitmap c name x table : valdef list =
+let marshal_2D_bitmap name x table : valdef list =
   assert (List.length table > 0);
   let n = Array.length (List.hd table) in
   assert (List.for_all (fun row -> Array.length row = n) table);
   let data = sprintf "%s_data" x in
   [
     (* View the table as a one-dimensional array, and marshal it. *)
-    measure c name @@
+    measure name @@
     def data @@
     marshal_1D_bitmap (Array.concat table);
     (* Use the table width [n] in the definition of a specialized accessor
        for the [data] array. The bit width is 1. *)
     def x @@
-    unflatten n "MenhirLib.PackedIntArray.get1" data
+    unflatten n (sprintf "%s.PackedIntArray.get1" X.runtimelib) data
   ]
 
 (* [row_displacement_decode get_displacement get_data] generates
@@ -186,7 +200,7 @@ let marshal_2D_bitmap c name x table : valdef list =
    specialized with [get_displacement] and [get_data]. *)
 
 let row_displacement_decode get_displacement get_data : expr =
-  let decode = "MenhirLib.RowDisplacementDecode.decode" in
+  let decode = sprintf "%s.RowDisplacementDecode.decode" X.runtimelib in
   let i = "i" and j = "j" and k = "k" in
   efun [ PVar i; PVar j] @@
   blet (
@@ -194,18 +208,18 @@ let row_displacement_decode get_displacement get_data : expr =
     EApp (EVar get_data, [ add (EVar k) (EVar j) ])
   )
 
-let marshal_2D_matrix c name x insignificant matrix : valdef list =
+let marshal_2D_matrix name x insignificant matrix : valdef list =
   let dummy = 0 in
   let displacement, data = compress insignificant dummy matrix in
-  Report.log c
+  Report.log X.info
     "The %s table is %d entries; %d non-zero; %d compressed."
     name (matrix_size matrix) (population insignificant matrix)
     (Array.length displacement + Array.length data)
   ;
   (* Define an accessor function for the displacement table. *)
-  marshal_1D_array c (name ^ " displacement") (x ^ "_displacement") displacement @
+  marshal_1D_array (name ^ " displacement") (x ^ "_displacement") displacement @
   (* Define an accessor function for the data table. *)
-  marshal_1D_array c (name ^ " data") (x ^ "_data") data @
+  marshal_1D_array (name ^ " data") (x ^ "_data") data @
   (* Combine the two to obtain an accessor function [x] for the matrix. *)
   [
     def x @@
@@ -219,7 +233,7 @@ let marshal_2D_matrix c name x insignificant matrix : valdef list =
        LinearizedArray.read_row_via get_data get_entry i *)
 
 let read_row_via get_data get_entry : expr =
-  let read_row_via = "MenhirLib.LinearizedArray.read_row_via" in
+  let read_row_via = sprintf "%s.LinearizedArray.read_row_via" X.runtimelib in
   let i = "i" in
   efun [ PVar i ] @@
   EApp (EVar read_row_via, [
@@ -228,12 +242,12 @@ let read_row_via get_data get_entry : expr =
     EVar i
   ])
 
-let marshal_irregular_2D_array c name x table : valdef list =
+let marshal_irregular_2D_array name x table : valdef list =
   let data, entry = LinearizedArray.make table in
   (* Define an accessor function for the data table. *)
-  marshal_1D_array c (name ^ " data") (x ^ "_data") data @
+  marshal_1D_array (name ^ " data") (x ^ "_data") data @
   (* Define an accessor function for the entry table. *)
-  marshal_1D_array c (name ^ " entry") (x ^ "_entry") entry @
+  marshal_1D_array (name ^ " entry") (x ^ "_entry") entry @
   (* Combine the two to obtain an accessor function [x]
      for the irregular 2D table. *)
   [
@@ -242,3 +256,5 @@ let marshal_irregular_2D_array c name x table : valdef list =
       (x ^ "_data")
       (x ^ "_entry")
   ]
+
+end (* Make *)
