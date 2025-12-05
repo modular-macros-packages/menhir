@@ -154,9 +154,9 @@ let pack (a : int array) : t =
 let[@inline] read (s : string) (i : int) : int =
   Char.code (String.unsafe_get s i)
 
-(* [get1 t i] returns the integer stored in the packed array [t] at index [i].
+(* [get1 s i] returns the integer stored in the packed array [s] at index [i].
    It assumes (and does not check) that the array's bit width is [1]. The
-   parameter [t] is just a string. *)
+   packed array [s] is just a string; there is no bit width component. *)
 
 let[@inline] get1 (s : string) (i : int) : int =
   let c = read s (i lsr 3) in
