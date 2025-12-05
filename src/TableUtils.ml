@@ -8,6 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Printf
 open IL
 open ILConstruction
 
@@ -42,11 +43,14 @@ let rec size unboxed (e : expr) =
 let size e =
   size false e
 
-let define_and_measure c x e =
+let measure c name def =
   Report.log c
-    "The %s table occupies roughly %d bytes."
-    x (size e * (Sys.word_size / 8));
-  def x e
+    "The %s occupies roughly %d bytes."
+    name (size def.valval * (Sys.word_size / 8));
+  def
+
+let define_and_measure c x e =
+  measure c (x ^ " table") (def x e)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -109,6 +113,17 @@ let compress =
 let marshal1 (table : int array) : expr =
   let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
   ETuple [ EIntConst bits; EStringConst text ]
+
+let marshal1_specialized c name x table : valdef list =
+  let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
+  [
+    def
+      (sprintf "%s_get" x)
+      (EVar (sprintf "MenhirLib.PackedIntArray.get%d" bits));
+    measure c name @@ def
+      (sprintf "%s_data" x)
+      (EStringConst text)
+  ]
 
 let marshal11 (table : int array) =
   let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in

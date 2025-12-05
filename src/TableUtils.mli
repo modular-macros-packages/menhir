@@ -22,6 +22,13 @@ val define_and_measure: channel -> var -> expr -> valdef
    of an integer bit width and a string. *)
 val marshal1: int array -> expr
 
+(**[marshal1_specialized c name x a] marshals the one-dimensional array [a].
+   The data is encoded as a string named [x_data]. A specialized [get]
+   function named [x_get] is also defined. The result is a pair of value
+   definitions. A measure of the table, with the name [name], is printed on
+   the report channel [c]. *)
+val marshal1_specialized: channel -> string -> var -> int array -> valdef list
+
 (**[marshal11] marshals a one-dimensional bitmap. By bitmap, we mean an array
    such that every value stored in the array is 0 or 1. The data is encoded as
    just a string. *)
