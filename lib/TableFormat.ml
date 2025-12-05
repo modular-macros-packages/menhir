@@ -58,20 +58,20 @@ module type TABLES = sig
      matrix, then replacing the error entries in the action table with
      undefined entries. Thus: *)
 
-   (**The error bitmap, a two-dimensional table, maps a state and a terminal
-      to either ``fail'' (encoded as: 0) or ``do not fail'' (encoded as: 1).
-      The action table, which is now sparse, is looked up only in the latter
-      case.
+  (**The error bitmap, a two-dimensional table, maps a state and a terminal
+     to either ``fail'' (encoded as: 0) or ``do not fail'' (encoded as: 1).
+     The action table, which is now sparse, is looked up only in the latter
+     case.
 
-     The error bitmap is flattened into a one-dimensional table; its width is
-     recorded so as to allow indexing. The table is then compressed via
-     [PackedIntArray]. The bit width of the resulting packed array must be
-     [1], so it is not explicitly recorded.
+    The error bitmap is flattened into a one-dimensional table; its width is
+    recorded so as to allow indexing. The table is then compressed via
+    [PackedIntArray]. The bit width of the resulting packed array must be
+    [1], so it is not explicitly recorded.
 
-     The error bitmap does not contain a column for the [#] pseudo-terminal.
-     Thus, its width is [Terminal.n - 1]. We exploit the fact that the integer
-     code assigned to [#] is greatest: the fact that the rightmost column in
-     the bitmap is missing does not affect the code for accessing it. *)
+    The error bitmap does not contain a column for the [#] pseudo-terminal.
+    Thus, its width is [Terminal.n - 1]. We exploit the fact that the integer
+    code assigned to [#] is greatest: the fact that the rightmost column in
+    the bitmap is missing does not affect the code for accessing it. *)
   val error:
     int  * (* width of the bitmap *)
     string (* second component of [PackedIntArray.t] *)
