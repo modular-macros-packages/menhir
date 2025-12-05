@@ -90,7 +90,8 @@ module type TABLES = sig
 
   (**A one-dimensional table, [lhs], maps a production to its left-hand side
      (a non-terminal symbol). *)
-  val lhs: PackedIntArray.t
+  val lhs_get: string -> int -> int
+  val lhs_data: string
 
   (**The goto table, a two-dimensional table, maps a state and a non-terminal
      symbol to either undefined (encoded as: 0) or a new state s (encoded as:

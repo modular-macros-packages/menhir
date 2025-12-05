@@ -442,8 +442,7 @@ let default_reduction =
   default_reduction node
 
 let lhs =
-  define_and_measure "lhs" @@
-  marshal1 @@
+  marshal1_specialized "lhs table" "lhs" @@
   Production.init @@ fun prod ->
   Nonterminal.encode (Production.nt prod)
 
@@ -913,7 +912,7 @@ let program =
           error ::
           start_def ::
           action ::
-          lhs ::
+          lhs @
           goto ::
           semantic_action ::
           trace ::

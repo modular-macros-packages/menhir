@@ -166,7 +166,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
     code - 1
 
   let[@inline] lhs prod =
-    PackedIntArray.get T.lhs prod
+    T.lhs_get T.lhs_data prod
 
   let goto_prod state prod =
     goto_nt state (lhs prod)
