@@ -43,7 +43,7 @@ module type TABLES = sig
   val rhs: PackedIntArray.t * PackedIntArray.t
 
   (**A mapping of every (non-initial) state to its LR(0) core. *)
-  val lr0_core: PackedIntArray.t
+  val lr0_core: int -> int
 
   (**A mapping of every LR(0) state to its set of LR(0) items. Each item is
      represented in its packed form (see [Item]) as an integer. Thus the
@@ -54,10 +54,8 @@ module type TABLES = sig
   (**A mapping of every LR(0) state to its incoming symbol, if it has one. *)
   val lr0_incoming: int -> int
 
-  (**A table that tells which non-terminal symbols are nullable. This is a
-     packed int array of bit width 1. It can be read using
-     [PackedIntArray.get1]. *)
-  val nullable: string
+  (**A table that tells which non-terminal symbols are nullable. *)
+  val nullable: int -> int (* 0 or 1 *)
 
   (**A two-table dimensional table, indexed by a nonterminal symbol and
      by a terminal symbol (other than [#]), encodes the FIRST sets. *)

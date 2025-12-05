@@ -723,8 +723,7 @@ let rhs () =
 
 let lr0_core () =
   assert Settings.inspection;
-  define_and_measure "lr0_core" @@
-  marshal1 @@
+  marshal1_specialized "LR(0) core" "lr0_core" @@
   Lr1.init @@ fun node ->
   Lr0.encode (Lr0.ALR1.core (Lr1.state node))
 
@@ -744,8 +743,7 @@ let lr0_items () =
 
 let nullable () =
   assert Settings.inspection;
-  define_and_measure "nullable" @@
-  marshal11 @@
+  marshal1_specialized "nullable" "nullable" @@
   Nonterminal.init @@ fun nt ->
   encode_bool (Analysis.nullable nt)
 
@@ -823,9 +821,9 @@ let inspection_API () =
         nonterminal() ::
         lr0_incoming() @
         rhs() ::
-        lr0_core() ::
+        lr0_core() @
         lr0_items() ::
-        nullable() ::
+        nullable() @
         first() @
         []
       )
