@@ -48,11 +48,10 @@ val marshal_1D_array:
 val marshal_1D_bitmap: int array -> expr
  *)
 
-(**[marshal_irregular_2D_array] marshals an irregular array of arrays, i.e.,
-   an array of arrays of possibly different lengths. It returns a list of
-   definitions, culminating in an accessor function [x : int -> int -> int].
-   A measure of the table, with the name [name], is printed on the channel
-   [info]. *)
+(**[marshal_irregular_2D_array] marshals an irregular matrix, i.e., an array
+   of arrays of possibly different lengths. It returns a list of definitions,
+   culminating in an accessor function [x : int -> int -> int list]. A measure
+   of the table, with the name [name], is printed on the channel [info]. *)
 val marshal_irregular_2D_array:
   string ->
   var -> int array array ->
