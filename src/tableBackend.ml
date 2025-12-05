@@ -15,6 +15,7 @@ open IL
 open TableUtils
 open Channels
 let define_and_measure = define_and_measure (getC 1)
+let marshal1_specialized = marshal1_specialized (getC 1)
 let marshal2 = marshal2 (getC 1)
 open Printf
 open NonterminalType
@@ -436,8 +437,7 @@ let error =
   error node t
 
 let default_reduction =
-  define_and_measure "default_reduction" @@
-  marshal1 @@
+  marshal1_specialized "default reduction table" "default_reduction" @@
   Lr1.init @@ fun node ->
   default_reduction node
 
@@ -905,19 +905,20 @@ let program =
 
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)
-        SIValDefs (false, [
-          token2terminal;
-          def "error_terminal" (EIntConst (Terminal.encode Terminal.error));
-          token2value;
-          default_reduction;
-          error;
-          start_def;
-          action;
-          lhs;
-          goto;
-          semantic_action;
-          trace;
-        ])
+        SIValDefs (false,
+          token2terminal ::
+          def "error_terminal" (EIntConst (Terminal.encode Terminal.error)) ::
+          token2value ::
+          default_reduction @
+          error ::
+          start_def ::
+          action ::
+          lhs ::
+          goto ::
+          semantic_action ::
+          trace ::
+          []
+        )
       ]
     ) ::
 

@@ -49,7 +49,8 @@ module type TABLES = sig
      either ``no default reduction'' (encoded as: 0) or ``by default, reduce
      prod'' (encoded as: 1 + prod). The action table is looked up only when
      there is no default reduction. *)
-  val default_reduction: PackedIntArray.t
+  val default_reduction_get: string -> int -> int
+  val default_reduction_data: string
 
   (**Menhir follows Dencker, Dürre and Heuft, who point out that, although the
      action table is not sparse by nature (i.e., the error entries are

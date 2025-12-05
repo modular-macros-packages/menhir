@@ -76,7 +76,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
     i
 
   let default_reduction state defred nodefred env =
-    let code = PackedIntArray.get T.default_reduction state in
+    let code = T.default_reduction_get T.default_reduction_data state in
     if code = 0 then
       (* no default reduction *)
       nodefred env
@@ -136,7 +136,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
         None
 
   let may_reduce_prod state terminal prod =
-    let code = PackedIntArray.get T.default_reduction state in
+    let code = T.default_reduction_get T.default_reduction_data state in
     if code = 0 then
       (* no default reduction *)
       match PackedIntArray.unflatten1 T.error state terminal with
