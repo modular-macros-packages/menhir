@@ -39,10 +39,6 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   let error_value =
     Obj.repr ()
 
-  (* The function [foreach_terminal] exploits the fact that the
-     first component of [T.error] is [Terminal.n - 1], i.e., the
-     number of terminal symbols, including [error] but not [#]. *)
-
   (* There is similar code in [InspectionTableInterpreter]. The
      code there contains an additional conversion of the type
      [terminal] to the type [xsymbol]. *)
@@ -54,7 +50,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
       foldij (i + 1) j f (f i accu)
 
   let foreach_terminal f accu =
-    let n, _ = T.error in
+    let n = T.terminal_count in
     foldij 0 n (fun i accu ->
       f i accu
     ) accu
@@ -99,7 +95,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
       i j
 
   let action state terminal value shift reduce fail env =
-    match PackedIntArray.unflatten1 T.error state terminal with
+    match T.error_get state terminal with
     | 1 ->
         let action = unmarshal2 T.action state terminal in
         let opcode = action land 0b11
@@ -118,7 +114,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
         fail env
 
   let maybe_shift_t state terminal =
-    match PackedIntArray.unflatten1 T.error state terminal with
+    match T.error_get state terminal with
     | 1 ->
         let action = unmarshal2 T.action state terminal in
         let opcode = action land 0b11 in
@@ -139,7 +135,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
     let code = T.default_reduction_get T.default_reduction_data state in
     if code = 0 then
       (* no default reduction *)
-      match PackedIntArray.unflatten1 T.error state terminal with
+      match T.error_get state terminal with
       | 1 ->
           let action = unmarshal2 T.action state terminal in
           let opcode = action land 0b11 in

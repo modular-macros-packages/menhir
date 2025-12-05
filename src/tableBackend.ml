@@ -17,6 +17,7 @@ open Channels
 let define_and_measure = define_and_measure (getC 1)
 let marshal1_specialized = marshal1_specialized (getC 1)
 let marshal2 = marshal2 (getC 1)
+let flatten_and_marshal11_specialized = flatten_and_marshal11_specialized (getC 1)
 open Printf
 open NonterminalType
 open PlainSyntax
@@ -430,8 +431,7 @@ let goto =
   goto node nt
 
 let error =
-  define_and_measure "error" @@
-  flatten_and_marshal11 @@
+  flatten_and_marshal11_specialized "error bitmap" "error" @@
   Lr1.map @@ fun node ->
   Terminal.initx @@ fun t ->
   error node t
@@ -864,6 +864,13 @@ let unparsing_API () : structure =
 
 (* -------------------------------------------------------------------------- *)
 
+(* A non-recursive toplevel value definition. *)
+
+let defs d =
+  SIValDefs (false, [d])
+
+(* -------------------------------------------------------------------------- *)
+
 (* All of the generated code (the parser, plus the optional APIs). *)
 
 let program =
@@ -897,28 +904,30 @@ let program =
     (* Define the tables. *)
 
     SIModuleDef (tables,
-      MStruct [
+      MStruct (
         (* The internal sub-module [Basics] contains the definitions of the
            exception [Error] and of the type [token]. *)
-        SIInclude (MVar basics_submodule_name);
+        SIInclude (MVar basics_submodule_name) ::
 
-        (* This is a non-recursive definition, so none of the names
-           defined here are visible in the semantic actions. *)
-        SIValDefs (false,
+        (* This is a cascade of non-recursive definitions. An accessor
+           function may need to access the table that is defined above it. The
+           semantic actions come first so as to avoid a name collision. *)
+        List.map defs (
+          semantic_action ::
+          def "terminal_count" (EIntConst (Terminal.n - 1)) ::
           token2terminal ::
           def "error_terminal" (EIntConst (Terminal.encode Terminal.error)) ::
           token2value ::
           default_reduction @
-          error ::
+          error @
           start_def ::
           action ::
           lhs @
           goto ::
-          semantic_action ::
           trace ::
           []
         )
-      ]
+      )
     ) ::
 
     SIModuleDef (interpreter_submodule_name, MStruct (

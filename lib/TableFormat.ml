@@ -15,6 +15,9 @@ module type TABLES = sig
   (**The type of tokens. *)
   type token
 
+  (**[terminal_count] is the number of terminal symbols, without [#]. *)
+  val terminal_count: int
+
   (**[token2terminal] maps a token to a terminal symbol, represented
      by its internal integer code. *)
   val token2terminal: token -> int
@@ -72,9 +75,7 @@ module type TABLES = sig
     Thus, its width is [Terminal.n - 1]. We exploit the fact that the integer
     code assigned to [#] is greatest: the fact that the rightmost column in
     the bitmap is missing does not affect the code for accessing it. *)
-  val error:
-    int  * (* width of the bitmap *)
-    string (* second component of [PackedIntArray.t] *)
+  val error_get: int -> int -> int
 
   (**The action table, a two-dimensional table, maps a state and a terminal
      to one of ``shift to state s and discard the current token'' (encoded

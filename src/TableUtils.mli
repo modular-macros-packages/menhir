@@ -43,6 +43,16 @@ val linearize_and_marshal1: int array array -> expr
 (**[flatten_and_marshal11 table] marshals the two-dimensional bitmap [table]. *)
 val flatten_and_marshal11: int array list -> expr
 
+(**[flatten_and_marshal11_specialized table] marshals the two-dimensional bitmap
+   [table]. The data is encoded as a string named [x_data]. A specialized [get]
+   function named [x_get] is also defined. The result is a pair of value
+   definitions. A measure of the table, with the name [name], is printed on the
+   report channel [c]. *)
+val flatten_and_marshal11_specialized:
+  channel -> string ->
+  var -> int array list ->
+  valdef list
+
 (**[marshal2 c name insignificant] marshals a two-dimensional table. One line
    of statistics is logged on the report channel [c]; the name [name] is used
    as part of this report. The parameter [insignificant] determines which

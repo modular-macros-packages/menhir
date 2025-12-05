@@ -204,10 +204,6 @@ module Make
     | X (N nt) ->
         first nt t
 
-  (* The function [foreach_terminal] exploits the fact that the
-     first component of [TT.error] is [Terminal.n - 1], i.e., the
-     number of terminal symbols, including [error] but not [#]. *)
-
   let rec foldij i j f accu =
     if i = j then
       accu
@@ -215,13 +211,13 @@ module Make
       foldij (i + 1) j f (f i accu)
 
   let foreach_terminal f accu =
-    let n, _ = TT.error in
+    let n = TT.terminal_count in
     foldij 0 n (fun i accu ->
       f (IT.terminal i) accu
     ) accu
 
   let foreach_terminal_but_error f accu =
-    let n, _ = TT.error in
+    let n = TT.terminal_count in
     foldij 0 n (fun i accu ->
       if i = TT.error_terminal then
         accu

@@ -11,6 +11,8 @@
 open Printf
 open IL
 open ILConstruction
+module LinearizedArray = MenhirLib.LinearizedArray
+module PackedIntArray = MenhirLib.PackedIntArray
 
 (* -------------------------------------------------------------------------- *)
 
@@ -86,6 +88,31 @@ let population insignificant (matrix : int array array) =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Code generation for table accessors. *)
+
+let binop op e1 e2 =
+  EApp (EVar op, [ e1; e2])
+
+let add =
+  binop "(+)"
+
+let mul =
+  binop "(*)"
+
+(* [unflatten n get data] generates code for the expression
+   [fun i j -> get data (n * i + j)].
+   This transforms an access into a 2D matrix into an access into a 1D array. *)
+
+let unflatten (n : int) (get : var) (data : var) : expr =
+  let i = "i" and j = "j" in
+  efun [ PVar i; PVar j] @@
+  EApp (EVar get, [
+    EVar data;
+    add (mul (EIntConst n) (EVar i)) (EVar j)
+  ])
+
+(* -------------------------------------------------------------------------- *)
+
 (* Table compression. *)
 
 (* We say that a matrix is sparse when some of its entries are insignificant.
@@ -111,11 +138,11 @@ let compress =
     RowDisplacementEncode.compress
 
 let marshal1 (table : int array) : expr =
-  let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
+  let (bits : int), (text : string) = PackedIntArray.pack table in
   ETuple [ EIntConst bits; EStringConst text ]
 
 let marshal1_specialized c name x table : valdef list =
-  let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
+  let (bits : int), (text : string) = PackedIntArray.pack table in
   [
     def
       (sprintf "%s_get" x)
@@ -126,12 +153,12 @@ let marshal1_specialized c name x table : valdef list =
   ]
 
 let marshal11 (table : int array) =
-  let (bits : int), (text : string) = MenhirLib.PackedIntArray.pack table in
+  let (bits : int), (text : string) = PackedIntArray.pack table in
   assert (bits = 1);
   EStringConst text
 
 let linearize_and_marshal1 (table : int array array) =
-  let data, entry = MenhirLib.LinearizedArray.make table in
+  let data, entry = LinearizedArray.make table in
   ETuple [ marshal1 data; marshal1 entry ]
 
 let flatten_and_marshal11 (table : int array list) =
@@ -143,6 +170,23 @@ let flatten_and_marshal11 (table : int array list) =
     EIntConst n;
     (* View the table as a one-dimensional array, and marshal it. *)
     marshal11 (Array.concat table)
+  ]
+
+let flatten_and_marshal11_specialized c name x table : valdef list =
+  assert (List.length table > 0);
+  let n = Array.length (List.hd table) in
+  assert (List.for_all (fun row -> Array.length row = n) table);
+  let data = sprintf "%s_data" x in
+  [
+    (* View the table as a one-dimensional array, and marshal it. *)
+    measure c name @@ def
+      data
+      (marshal11 (Array.concat table));
+    (* Use the table width [n] in the definition of a specialized accessor
+       for the [data] array. The bit width is 1. *)
+    def
+      (sprintf "%s_get" x)
+      (unflatten n "MenhirLib.PackedIntArray.get1" data)
   ]
 
 let marshal2 c name insignificant (matrix : int array array) : expr =
