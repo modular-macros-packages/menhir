@@ -397,10 +397,12 @@ The construction mode is pager.
 Built an LR(1) automaton with 357 states.
 149 out of 357 states have a default reduction.
 The action table is 19635 entries; 1144 non-zero; 995 compressed.
-The action table occupies roughly 2088 bytes.
+The action data table occupies roughly 1288 bytes.
+The action displacement table occupies roughly 728 bytes.
 The goto table is 28560 entries; 710 non-zero; 1160 compressed.
-The goto table occupies roughly 2416 bytes.
-The error bitmap occupies roughly 2464 bytes.
+The goto data table occupies roughly 1616 bytes.
+The goto displacement table occupies roughly 728 bytes.
+The error table occupies roughly 2464 bytes.
 The default reduction table occupies roughly 368 bytes.
-The lhs table occupies roughly 200 bytes.
+The left-hand side table occupies roughly 200 bytes.
 The trace table occupies roughly 8 bytes.

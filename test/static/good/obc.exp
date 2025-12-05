@@ -311,10 +311,12 @@ File "obc.mly", line 402, characters 22-27:
 Warning: this %prec declaration is never useful.
 171 out of 403 states have a default reduction.
 The action table is 25389 entries; 2213 non-zero; 2663 compressed.
-The action table occupies roughly 5416 bytes.
+The action data table occupies roughly 4528 bytes.
+The action displacement table occupies roughly 816 bytes.
 The goto table is 22568 entries; 509 non-zero; 928 compressed.
-The goto table occupies roughly 1952 bytes.
-The error bitmap occupies roughly 3184 bytes.
+The goto data table occupies roughly 1064 bytes.
+The goto displacement table occupies roughly 816 bytes.
+The error table occupies roughly 3184 bytes.
 The default reduction table occupies roughly 416 bytes.
-The lhs table occupies roughly 168 bytes.
+The left-hand side table occupies roughly 168 bytes.
 The trace table occupies roughly 8 bytes.

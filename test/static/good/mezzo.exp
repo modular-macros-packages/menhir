@@ -428,10 +428,12 @@ Built an LR(1) automaton with 504 states.
 197 shift/reduce conflicts were silently solved.
 186 out of 504 states have a default reduction.
 The action table is 43344 entries; 3631 non-zero; 4123 compressed.
-The action table occupies roughly 8336 bytes.
+The action data table occupies roughly 7248 bytes.
+The action displacement table occupies roughly 1016 bytes.
 The goto table is 43848 entries; 1363 non-zero; 2546 compressed.
-The goto table occupies roughly 5184 bytes.
-The error bitmap occupies roughly 5432 bytes.
+The goto data table occupies roughly 4096 bytes.
+The goto displacement table occupies roughly 1016 bytes.
+The error table occupies roughly 5432 bytes.
 The default reduction table occupies roughly 1016 bytes.
-The lhs table occupies roughly 272 bytes.
+The left-hand side table occupies roughly 272 bytes.
 The trace table occupies roughly 8 bytes.

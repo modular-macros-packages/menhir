@@ -415,33 +415,67 @@ module Tables = struct
       | TIMES ->
           Obj.repr ()
   
-  let default_reduction_get =
-    MenhirLib.PackedIntArray.get4
-  
   let default_reduction_data =
     "\000\002\000s\000\b\000A\t"
+  
+  let [@inline] default_reduction =
+    fun i ->
+      MenhirLib.PackedIntArray.get4 default_reduction_data i
   
   let error_data =
     "\014\007\003\128\007\136p\000\000\014<\195\128\000\227\204\000\000Y\128\000"
   
-  let error_get =
+  let error =
     fun i j ->
       MenhirLib.PackedIntArray.get1 error_data (9 * i + j)
   
   let start =
     1
   
-  let action =
-    ((8, "(((\000\003(\000\000(\030(\000(\014\000\000\003\000"), (8, "\022\030\"2\000\000G*\022\021\021\021\000\000\021*\022\017\017\017\000\000\017*\006\n\014"))
+  let action_displacement_data =
+    "(((\000\003(\000\000(\030(\000(\014\000\000\003\000"
   
-  let lhs_get =
-    MenhirLib.PackedIntArray.get2
+  let [@inline] action_displacement =
+    fun i ->
+      MenhirLib.PackedIntArray.get8 action_displacement_data i
+  
+  let action_data_data =
+    "\022\030\"2\000\000G*\022\021\021\021\000\000\021*\022\017\017\017\000\000\017*\006\n\014"
+  
+  let [@inline] action_data =
+    fun i ->
+      MenhirLib.PackedIntArray.get8 action_data_data i
+  
+  let action =
+    fun i j ->
+      let k = MenhirLib.RowDisplacementDecode.decode (action_displacement i) in
+      action_data (k + j)
   
   let lhs_data =
     "*\170@"
   
+  let [@inline] lhs =
+    fun i ->
+      MenhirLib.PackedIntArray.get2 lhs_data i
+  
+  let goto_displacement_data =
+    "0\128\006\000\160@ \000\000"
+  
+  let [@inline] goto_displacement =
+    fun i ->
+      MenhirLib.PackedIntArray.get4 goto_displacement_data i
+  
+  let goto_data_data =
+    "\016\017\015\014\012\007\005\n"
+  
+  let [@inline] goto_data =
+    fun i ->
+      MenhirLib.PackedIntArray.get8 goto_data_data i
+  
   let goto =
-    ((4, "0\128\006\000\160@ \000\000"), (8, "\016\017\015\014\012\007\005\n"))
+    fun i j ->
+      let k = MenhirLib.RowDisplacementDecode.decode (goto_displacement i) in
+      goto_data (k + j)
   
   let trace =
     None
@@ -589,7 +623,7 @@ module CST = struct
     method virtual visit_INT : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
-# 593 "demos/calc-unparsing/parser.ml"
+# 627 "demos/calc-unparsing/parser.ml"
      -> 'r
     
     method virtual visit_EOL : 'r

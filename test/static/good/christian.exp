@@ -1493,10 +1493,12 @@ Warning: production unrestrictedCharacterStringValue -> sequenceValue is never r
 Warning: in total, 28 productions are never reduced.
 444 out of 857 states have a default reduction.
 The action table is 97698 entries; 4272 non-zero; 3494 compressed.
-The action table occupies roughly 7088 bytes.
+The action data table occupies roughly 5288 bytes.
+The action displacement table occupies roughly 1728 bytes.
 The goto table is 245102 entries; 5249 non-zero; 14435 compressed.
-The goto table occupies roughly 28968 bytes.
-The error bitmap occupies roughly 12224 bytes.
+The goto data table occupies roughly 27168 bytes.
+The goto displacement table occupies roughly 1728 bytes.
+The error table occupies roughly 12224 bytes.
 The default reduction table occupies roughly 1728 bytes.
-The lhs table occupies roughly 1184 bytes.
+The left-hand side table occupies roughly 1184 bytes.
 The trace table occupies roughly 8 bytes.

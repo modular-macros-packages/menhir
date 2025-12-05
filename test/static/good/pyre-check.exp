@@ -457,10 +457,12 @@ Warning: 77 shift/reduce conflicts were arbitrarily resolved.
 Warning: 75 reduce/reduce conflicts were arbitrarily resolved.
 193 out of 532 states have a default reduction.
 The action table is 49476 entries; 7167 non-zero; 6556 compressed.
-The action table occupies roughly 13200 bytes.
+The action data table occupies roughly 12056 bytes.
+The action displacement table occupies roughly 1072 bytes.
 The goto table is 47880 entries; 1748 non-zero; 3095 compressed.
-The goto table occupies roughly 6280 bytes.
-The error bitmap occupies roughly 6200 bytes.
+The goto data table occupies roughly 5136 bytes.
+The goto displacement table occupies roughly 1072 bytes.
+The error table occupies roughly 6200 bytes.
 The default reduction table occupies roughly 1072 bytes.
-The lhs table occupies roughly 312 bytes.
+The left-hand side table occupies roughly 312 bytes.
 The trace table occupies roughly 8 bytes.

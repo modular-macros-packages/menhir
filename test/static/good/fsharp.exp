@@ -1701,10 +1701,12 @@ Warning: production conjPatternElements -> conjPatternElements AMP headBindingPa
 Warning: in total, 1 production is never reduced.
 1077 out of 2760 states have a default reduction.
 The action table is 477480 entries; 45320 non-zero; 48043 compressed.
-The action table occupies roughly 101696 bytes.
+The action data table occupies roughly 90576 bytes.
+The action displacement table occupies roughly 11048 bytes.
 The goto table is 770040 entries; 11547 non-zero; 21259 compressed.
-The goto table occupies roughly 42608 bytes.
-The error bitmap occupies roughly 59696 bytes.
+The goto data table occupies roughly 37008 bytes.
+The goto displacement table occupies roughly 5528 bytes.
+The error table occupies roughly 59696 bytes.
 The default reduction table occupies roughly 5528 bytes.
-The lhs table occupies roughly 1704 bytes.
+The left-hand side table occupies roughly 1704 bytes.
 The trace table occupies roughly 8 bytes.

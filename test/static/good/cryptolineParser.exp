@@ -312,10 +312,12 @@ File "cryptolineParser.mly", line 1339, characters 0-9:
 Warning: the precedence level assigned to VAR is never useful.
 512 out of 1615 states have a default reduction.
 The action table is 276165 entries; 14596 non-zero; 8510 compressed.
-The action table occupies roughly 17112 bytes.
+The action data table occupies roughly 13800 bytes.
+The action displacement table occupies roughly 3240 bytes.
 The goto table is 90440 entries; 3879 non-zero; 6201 compressed.
-The goto table occupies roughly 12496 bytes.
-The error bitmap occupies roughly 34536 bytes.
+The goto data table occupies roughly 9184 bytes.
+The goto displacement table occupies roughly 3240 bytes.
+The error table occupies roughly 34536 bytes.
 The default reduction table occupies roughly 3240 bytes.
-The lhs table occupies roughly 496 bytes.
+The left-hand side table occupies roughly 496 bytes.
 The trace table occupies roughly 8 bytes.

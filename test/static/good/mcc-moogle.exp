@@ -335,10 +335,12 @@ File "mcc-moogle.mly", line 111, characters 0-6:
 Warning: the precedence level assigned to TokTilde is never useful.
 130 out of 283 states have a default reduction.
 The action table is 17546 entries; 720 non-zero; 767 compressed.
-The action table occupies roughly 1624 bytes.
+The action data table occupies roughly 976 bytes.
+The action displacement table occupies roughly 576 bytes.
 The goto table is 18112 entries; 250 non-zero; 516 compressed.
-The goto table occupies roughly 1128 bytes.
-The error bitmap occupies roughly 2208 bytes.
+The goto data table occupies roughly 480 bytes.
+The goto displacement table occupies roughly 576 bytes.
+The error table occupies roughly 2208 bytes.
 The default reduction table occupies roughly 296 bytes.
-The lhs table occupies roughly 176 bytes.
+The left-hand side table occupies roughly 176 bytes.
 The trace table occupies roughly 8 bytes.

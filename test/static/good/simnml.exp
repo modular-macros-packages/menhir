@@ -417,10 +417,12 @@ File "simnml.mly", line 133, characters 0-6:
 Warning: the precedence level assigned to EQ is never useful.
 144 out of 508 states have a default reduction.
 The action table is 46736 entries; 5076 non-zero; 5485 compressed.
-The action table occupies roughly 11064 bytes.
+The action data table occupies roughly 9968 bytes.
+The action displacement table occupies roughly 1024 bytes.
 The goto table is 39624 entries; 417 non-zero; 919 compressed.
-The goto table occupies roughly 1928 bytes.
-The error bitmap occupies roughly 5856 bytes.
+The goto data table occupies roughly 832 bytes.
+The goto displacement table occupies roughly 1024 bytes.
+The error table occupies roughly 5856 bytes.
 The default reduction table occupies roughly 520 bytes.
-The lhs table occupies roughly 248 bytes.
+The left-hand side table occupies roughly 248 bytes.
 The trace table occupies roughly 8 bytes.

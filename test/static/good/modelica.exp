@@ -630,10 +630,12 @@ File "modelica.mly", line 326, characters 122-130:
 Warning: this %prec declaration is never useful.
 229 out of 612 states have a default reduction.
 The action table is 61200 entries; 5235 non-zero; 4404 compressed.
-The action table occupies roughly 8896 bytes.
+The action data table occupies roughly 7592 bytes.
+The action displacement table occupies roughly 1232 bytes.
 The goto table is 75276 entries; 956 non-zero; 1562 compressed.
-The goto table occupies roughly 3216 bytes.
-The error bitmap occupies roughly 7664 bytes.
+The goto data table occupies roughly 1912 bytes.
+The goto displacement table occupies roughly 1232 bytes.
+The error table occupies roughly 7664 bytes.
 The default reduction table occupies roughly 1232 bytes.
-The lhs table occupies roughly 320 bytes.
+The left-hand side table occupies roughly 320 bytes.
 The trace table occupies roughly 8 bytes.
