@@ -125,23 +125,23 @@ let times f =
   output_string f " * "
 
 let letrec f =
-  output_string f "let rec "
+  output_string f "let rec"
 
 let letnonrec f =
-  output_string f "let "
+  output_string f "let"
 
 let keytyp flag f =
   match flag with
   | `Rec ->
-      output_string f "type "
+      output_string f "type"
   | `NonRec ->
-      output_string f "type nonrec "
+      output_string f "type nonrec"
 
 let exc f =
-  output_string f "exception "
+  output_string f "exception"
 
 let et f =
-  output_string f "and "
+  output_string f "and"
 
 let var f x =
   output_string f x
@@ -732,7 +732,7 @@ let typeconstraint f = function
       fprintf f "%tconstraint %a = %a" nl typ t1 typ t2
 
 let typedef f def =
-  fprintf f "%a%s%a%a"
+  fprintf f " %a%s%a%a"
     (typeparams typevar typevar) def.typeparams
     def.typename
     (typerhs def.typename) def.typerhs
@@ -748,9 +748,9 @@ let valdef f vd =
   | { valpat = PVar id; valval = EAnnot (e, ts); attribute } ->
       (* A special case where the left-hand side is a variable
          and the right-hand side carries a type annotation. *)
-      fprintf f "%s%s : %a =%a" attribute id scheme ts (indent 2 expr) e
+      fprintf f "%s %s : %a =%a" attribute id scheme ts (indent 2 expr) e
   | { valpat = p; valval = e; attribute } ->
-      fprintf f "%s%a =%a" attribute pat p (indent 2 expr) e
+      fprintf f "%s %a =%a" attribute pat p (indent 2 expr) e
 
 let valdefs recursive =
   pdefs valdef (if recursive then letrec else letnonrec) et
@@ -763,13 +763,13 @@ let excdef in_intf f def =
   match def.exceq, def.excparams with
   | Some s, _ ->
       (* If there is an equality, then the parameters are not printed. *)
-      fprintf f "%s = %s" def.excname s
+      fprintf f " %s = %s" def.excname s
   | None, [] ->
       (* No equality and no parameters. *)
-      fprintf f "%s" def.excname
+      fprintf f " %s" def.excname
   | None, typs ->
       (* No equality and some parameters. *)
-      fprintf f "%s of %a" def.excname datavalparams typs
+      fprintf f " %s of %a" def.excname datavalparams typs
 
 let excdefs in_intf =
   pdefs (excdef in_intf) exc exc

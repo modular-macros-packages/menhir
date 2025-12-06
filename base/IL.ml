@@ -187,7 +187,7 @@ and typescheme = {
 and valdef = {
 
   attribute: string;
-  (**An optional attribute, like "[@inline] ". Note the trailing space. *)
+  (**An optional attribute, like "[@inline]". *)
 
   valpat: pattern;
   (**The left-hand side of the definition (a pattern). *)

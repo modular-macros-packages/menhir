@@ -248,7 +248,7 @@ let def x e =
   idef (PVar x) e ""
 
 let def_inline x e =
-  idef (PVar x) e "[@inline] "
+  idef (PVar x) e "[@inline]"
 
 let valdef def =
   SIValDefs (false, [ def ])
