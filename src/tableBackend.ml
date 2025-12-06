@@ -417,21 +417,21 @@ let default_reduction node =
 
 let action =
   let insignificant entry = (entry = encode_Fail) in
-  marshal_2D_matrix "action" "action" insignificant @@
+  marshal_2D_sparse_matrix "action" "action" insignificant @@
   Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   action node t
 
 let goto =
   let insignificant entry = (entry = encode_NoGoto) in
-  marshal_2D_matrix "goto" "goto" insignificant @@
+  marshal_2D_sparse_matrix "goto" "goto" insignificant @@
   Lr1.init @@ fun node ->
   Nonterminal.init @@ fun nt ->
   goto node nt
 
 let error =
-  marshal_2D_bitmap "error" "error" @@
-  Lr1.map @@ fun node ->
+  marshal_2D_matrix "error" "error" @@
+  Lr1.init @@ fun node ->
   Terminal.initx @@ fun t ->
   error node t
 
@@ -753,8 +753,8 @@ let nullable () =
 
 let first () =
   assert Settings.inspection;
-  marshal_2D_bitmap "first" "first" @@
-  Nonterminal.map @@ fun nt ->
+  marshal_2D_matrix "first" "first" @@
+  Nonterminal.init @@ fun nt ->
   Terminal.initx @@ fun t ->
   encode_bool (TerminalSet.mem t (Analysis.first nt))
 

@@ -14,6 +14,9 @@ open ILConstruction
 module LinearizedArray = MenhirLib.LinearizedArray
 module PackedIntArray = MenhirLib.PackedIntArray
 
+type 'a matrix =
+  'a array array
+
 module Make (X : sig
   open Report
 
@@ -27,6 +30,11 @@ module Make (X : sig
   val info: channel
 
 end) = struct
+
+(* We rely on the modules [PackedIntArray] and [LinearizedArray], which exist
+   both in MenhirLib and MenhirGLR. They are identical, so we can use either of
+   them at table generation time, regardless of which one is used at runtime.
+   The parameter [runtimelib] indicates which library we should refer to. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -59,7 +67,7 @@ let rec size unboxed (e : expr) =
 let size e =
   size false e
 
-let measure name def =
+let measure name (def : valdef) =
   Report.log X.info
     "The %s table occupies roughly %d bytes."
     name (size def.valval * (Sys.word_size / 8));
@@ -82,15 +90,15 @@ let matrix_height matrix =
 
 let matrix_width matrix =
   assert (matrix_height matrix > 0);
-  Array.length matrix.(0)
+  let n = Array.length matrix.(0) in
+  assert (Array.for_all (fun row -> Array.length row = n) matrix);
+  n
 
 let matrix_size matrix =
   let m = matrix_height matrix in
-  if m = 0 then
-    0
-  else
-    let n = matrix_width matrix in
-    m * n
+  if m = 0 then 0 else
+  let n = matrix_width matrix in
+  m * n
 
 (* [population] counts the number of significant entries
    in a two-dimensional matrix. *)
@@ -100,9 +108,14 @@ let population insignificant (matrix : int array array) =
     if insignificant entry then population else population + 1
   ) 0 matrix
 
+let flatten (matrix : 'a array array) : 'a array =
+  matrix |> Array.to_list |> Array.concat
+
 (* -------------------------------------------------------------------------- *)
 
-(* Code generation for table accessors. *)
+(* Auxiliary functions for code generation. *)
+
+let i, j, k = "i", "j", "k"
 
 let binop op e1 e2 =
   EApp (EVar op, [ e1; e2])
@@ -113,17 +126,36 @@ let add =
 let mul =
   binop "(*)"
 
-(* [unflatten n get data] generates code for the expression
-   [fun i j -> get data (n * i + j)].
-   This transforms an access into a 2D matrix into an access into a 1D array. *)
+(* [unflatten n get] generates the IL expression [fun i j -> get (n * i + j)].
+   It transforms an access into a 2D matrix into an access into a 1D array. *)
 
-let unflatten (n : int) (get : var) (data : var) : expr =
-  let i = "i" and j = "j" in
-  efun [ PVar i; PVar j] @@
-  EApp (EVar get, [
-    EVar data;
-    add (mul (EIntConst n) (EVar i)) (EVar j)
-  ])
+let unflatten (n : int) (get : var) : expr =
+  efun [ PVar i; PVar j ] @@
+  EApp (EVar get, [ add (mul (EIntConst n) (EVar i)) (EVar j) ])
+
+(* [row_displacement_decode get_displacement get_data] generates
+   the IL expression:
+     fun i j ->
+       let k = RowDisplacementDecode.decode (get_displacement i) in
+       get_data (k + j)
+   This is a copy of [RowDisplacementDecode.get],
+   specialized with [get_displacement] and [get_data]. *)
+
+let row_displacement_decode get_displacement get_data : expr =
+  let decode = sprintf "%s.RowDisplacementDecode.decode" X.runtimelib in
+  efun [ PVar i; PVar j ] @@
+  blet (
+    [ PVar k, EApp (EVar decode, [ EApp (EVar get_displacement, [ EVar i ])]) ],
+    EApp (EVar get_data, [ add (EVar k) (EVar j) ])
+  )
+
+(* [read_row_via get_data get_entry] generates the IL expression
+   [fun i -> LinearizedArray.read_row_via get_data get_entry i]. *)
+
+let read_row_via get_data get_entry : expr =
+  let read_row_via = sprintf "%s.LinearizedArray.read_row_via" X.runtimelib in
+  efun [ PVar i ] @@
+  EApp (EVar read_row_via, [ EVar get_data; EVar get_entry; EVar i ])
 
 (* -------------------------------------------------------------------------- *)
 
@@ -140,10 +172,10 @@ let unflatten (n : int) (get : var) (data : var) : expr =
    algorithms produce compressed tables in a common format, so they can be
    used interchangeably. *)
 
-(* A non-sparse two-dimensional table can be made one-dimensional by simple
-   flattening; see [LinearizedArray]. *)
+(* An irregular two-dimensional table can be made one-dimensional by
+   flattening: see [LinearizedArray]. *)
 
-(* Every one-dimensional table is then packed via [PackedIntArray]. *)
+(* A one-dimensional table is packed via [PackedIntArray]. *)
 
 let compress =
   if Settings.pack_classic then
@@ -151,110 +183,70 @@ let compress =
   else
     RowDisplacementEncode.compress
 
-let marshal_1D_array name x table : valdef list =
-  let (bits : int), (text : string) = PackedIntArray.pack table in
-  let x_data = sprintf "%s_data" x in
+(* -------------------------------------------------------------------------- *)
+
+(* 1D array: accessor function [x : int -> int]. *)
+
+let marshal_1D_array name x (a : int array) =
+  let (bits : int), (text : string) = PackedIntArray.pack a in
   [
-    (* Define the table [x_data]. *)
-    measure name @@
-    def x_data @@
-    (EStringConst text);
-    (* Define the accessor function [x = fun i -> get x_data i], where [get]
-       is a variant of [PackedIntArray.get] with a suitable bit width. *)
-    def_inline x @@
-    let i = "i" in
-    efun [PVar i] @@
+    (* Define a table [x]. *)
+    measure name @@ def x @@ (EStringConst text);
+    (* Define an accessor function, also named [x], as [fun i -> get x i]
+       where [get] is [PackedIntArray.get?] with a suitable bit width. *)
+    def_inline x @@ efun [PVar i] @@
     EApp (
       EVar (sprintf "%s.PackedIntArray.get%d" X.runtimelib bits),
-      [ EVar x_data; EVar i ]
+      [ EVar x; EVar i ]
     )
   ]
 
-let marshal_1D_bitmap (table : int array) : expr =
-  let (bits : int), (text : string) = PackedIntArray.pack table in
-  assert (bits = 1);
-  EStringConst text
+(* 2D matrix: accessor function [x : int -> int -> int]. *)
 
-let marshal_2D_bitmap name x table : valdef list =
-  assert (List.length table > 0);
-  let n = Array.length (List.hd table) in
-  assert (List.for_all (fun row -> Array.length row = n) table);
-  let data = sprintf "%s_data" x in
-  [
-    (* View the table as a one-dimensional array, and marshal it. *)
-    measure name @@
-    def data @@
-    marshal_1D_bitmap (Array.concat table);
-    (* Use the table width [n] in the definition of a specialized accessor
-       for the [data] array. The bit width is 1. *)
-    def x @@
-    unflatten n (sprintf "%s.PackedIntArray.get1" X.runtimelib) data
-  ]
+let marshal_2D_matrix name x (m : int matrix) =
+  (* View the table as a one-dimensional array, and marshal it. *)
+  let n = matrix_width m in
+  marshal_1D_array name x (flatten m) @
+  (* Use the table width [n] in the definition of an accessor function. *)
+  [ def_inline x @@ unflatten n x ]
 
-(* [row_displacement_decode get_displacement get_data] generates
-   the IL expression:
-     fun i j ->
-       let k = RowDisplacementDecode.decode (get_displacement i) in
-       get_data (k + j)
-   This is a copy of [RowDisplacementDecode.get],
-   specialized with [get_displacement] and [get_data]. *)
+(* 2D sparse matrix: accessor function [x : int -> int -> int]. *)
 
-let row_displacement_decode get_displacement get_data : expr =
-  let decode = sprintf "%s.RowDisplacementDecode.decode" X.runtimelib in
-  let i = "i" and j = "j" and k = "k" in
-  efun [ PVar i; PVar j] @@
-  blet (
-    [ PVar k, EApp (EVar decode, [ EApp (EVar get_displacement, [ EVar i ])]) ],
-    EApp (EVar get_data, [ add (EVar k) (EVar j) ])
-  )
-
-let marshal_2D_matrix name x insignificant matrix : valdef list =
-  let dummy = 0 in
-  let displacement, data = compress insignificant dummy matrix in
+let marshal_2D_sparse_matrix name x insignificant (m : int matrix) =
+  let displacement, data = compress insignificant 0 m in
   Report.log X.info
-    "The %s table is %d entries; %d non-zero; %d compressed."
-    name (matrix_size matrix) (population insignificant matrix)
-    (Array.length displacement + Array.length data)
-  ;
+    "The %s table has %d entries; %d non-zero; %d compressed."
+    name (matrix_size m) (population insignificant m)
+    (Array.length displacement + Array.length data);
   (* Define an accessor function for the displacement table. *)
-  marshal_1D_array (name ^ " displacement") (x ^ "_displacement") displacement @
+  let x_disp = x ^ "_displacement" in
+  marshal_1D_array (name ^ " displacement") x_disp displacement @
   (* Define an accessor function for the data table. *)
-  marshal_1D_array (name ^ " data") (x ^ "_data") data @
+  let x_data = x ^ "_data" in
+  marshal_1D_array (name ^ " data") x_data data @
   (* Combine the two to obtain an accessor function [x] for the matrix. *)
-  [
-    def x @@
-    row_displacement_decode
-      (x ^ "_displacement")
-      (x ^ "_data")
-  ]
+  [ def_inline x @@ row_displacement_decode x_disp x_data ]
 
-(* [read_row_via get_data get_entry] generates the IL expression:
-     fun i ->
-       LinearizedArray.read_row_via get_data get_entry i *)
+(* Array of arrays: accessor function [x : int -> int list]. *)
 
-let read_row_via get_data get_entry : expr =
-  let read_row_via = sprintf "%s.LinearizedArray.read_row_via" X.runtimelib in
-  let i = "i" in
-  efun [ PVar i ] @@
-  EApp (EVar read_row_via, [
-    EVar get_data;
-    EVar get_entry;
-    EVar i
-  ])
-
-let marshal_irregular_2D_array name x table : valdef list =
-  let data, entry = LinearizedArray.make table in
+let marshal_irregular_2D_array name x (a : int array array) =
+  let data, entry = LinearizedArray.make a in
   (* Define an accessor function for the data table. *)
-  marshal_1D_array (name ^ " data") (x ^ "_data") data @
+  let x_data = x ^ "_data" in
+  marshal_1D_array (name ^ " data") x_data data @
   (* Define an accessor function for the entry table. *)
-  marshal_1D_array (name ^ " entry") (x ^ "_entry") entry @
-  (* Combine the two to obtain an accessor function [x]
-     for the irregular 2D table. *)
-  [
-    def x @@
-    read_row_via
-      (x ^ "_data")
-      (x ^ "_entry")
-  ]
+  let x_entry = x ^ "_entry" in
+  marshal_1D_array (name ^ " entry") x_entry entry @
+  (* Combine them to obtain an accessor function [x] for the 2D table. *)
+  [ def_inline x @@ read_row_via x_data x_entry ]
+
+(* Matrix of arrays: accessor function [x : int -> int -> int list]. *)
+
+let marshal_irregular_3D_array name x (m : int array matrix) =
+  (* View the 2D matrix as a 1D array, and marshal it. *)
+  let n = matrix_width m in
+  marshal_irregular_2D_array name x (flatten m) @
+  (* Use the table width [n] in the definition of an accessor function. *)
+  [ def_inline x @@ unflatten n x ]
 
 end (* Make *)
