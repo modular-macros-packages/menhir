@@ -45,6 +45,9 @@ let tobj =
 let toption ty =
   TypApp ("option", [ty])
 
+let tlist ty =
+  TypApp ("list", [ty])
+
 let tvar x : typ =
   TypVar x
 

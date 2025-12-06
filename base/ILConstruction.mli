@@ -46,6 +46,9 @@ val tobj: typ
 (***The type [option]. *)
 val toption: typ -> typ
 
+(***The type [list]. *)
+val tlist: typ -> typ
+
 (**A type variable. [tvar] is synonymous with [TypVar]. *)
 val tvar: string -> typ
 
