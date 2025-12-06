@@ -197,6 +197,9 @@ and valdef = {
 
 }
 
+and valdefs =
+  valdef list
+
 (**An expression. *)
 and expr =
 
@@ -321,7 +324,7 @@ and structure_item =
     (* Algebraic data type definitions (mutually recursive). *)
   | SITypeDefs of [`Rec | `NonRec] * typedef list
     (* Value definitions (mutually recursive or not, as per the flag). *)
-  | SIValDefs of bool * valdef list
+  | SIValDefs of bool * valdefs
     (* Raw OCaml code. *)
   | SIFragment of string located list
     (* Sub-module definition. *)
