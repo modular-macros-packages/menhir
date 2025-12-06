@@ -52,10 +52,10 @@ File "mcc-mc.mly", line 71, characters 6-23:
 Warning: production program -> source_block_list is never reduced.
 Warning: in total, 1 production is never reduced.
 13 out of 34 states have a default reduction.
-The action table is 510 entries; 26 non-zero; 60 compressed.
+The action table has 510 entries; 26 non-zero; 60 compressed.
 The action data table occupies roughly 40 bytes.
 The action displacement table occupies roughly 48 bytes.
-The goto table is 272 entries; 12 non-zero; 47 compressed.
+The goto table has 272 entries; 12 non-zero; 47 compressed.
 The goto data table occupies roughly 24 bytes.
 The goto displacement table occupies roughly 32 bytes.
 The error table occupies roughly 72 bytes.

@@ -93,10 +93,10 @@ Warning: the precedence level assigned to TERMLIST is never useful.
 File "tptp2cime.mly", line 83, characters 13-21:
 Warning: this %prec declaration is never useful.
 20 out of 54 states have a default reduction.
-The action table is 972 entries; 57 non-zero; 89 compressed.
+The action table has 972 entries; 57 non-zero; 89 compressed.
 The action data table occupies roughly 48 bytes.
 The action displacement table occupies roughly 64 bytes.
-The goto table is 810 entries; 27 non-zero; 81 compressed.
+The goto table has 810 entries; 27 non-zero; 81 compressed.
 The goto data table occupies roughly 40 bytes.
 The goto displacement table occupies roughly 64 bytes.
 The error table occupies roughly 136 bytes.

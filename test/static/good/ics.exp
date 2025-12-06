@@ -328,10 +328,10 @@ File "ics.mly", line 125, characters 2-13:
 Warning: production commandsequence -> command DOT is never reduced.
 Warning: in total, 1 production is never reduced.
 152 out of 395 states have a default reduction.
-The action table is 59250 entries; 4088 non-zero; 2744 compressed.
+The action table has 59250 entries; 4088 non-zero; 2744 compressed.
 The action data table occupies roughly 4712 bytes.
 The action displacement table occupies roughly 800 bytes.
-The goto table is 17775 entries; 1336 non-zero; 3042 compressed.
+The goto table has 17775 entries; 1336 non-zero; 3042 compressed.
 The goto data table occupies roughly 5304 bytes.
 The goto displacement table occupies roughly 800 bytes.
 The error table occupies roughly 7416 bytes.

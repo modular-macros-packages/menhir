@@ -43,10 +43,10 @@ File "yann.mly", line 28, characters 2-25:
 Warning: production term -> term PLUS tensorproduct is never reduced.
 Warning: in total, 1 production is never reduced.
 9 out of 25 states have a default reduction.
-The action table is 200 entries; 34 non-zero; 50 compressed.
+The action table has 200 entries; 34 non-zero; 50 compressed.
 The action data table occupies roughly 40 bytes.
 The action displacement table occupies roughly 40 bytes.
-The goto table is 175 entries; 22 non-zero; 53 compressed.
+The goto table has 175 entries; 22 non-zero; 53 compressed.
 The goto data table occupies roughly 40 bytes.
 The goto displacement table occupies roughly 40 bytes.
 The error table occupies roughly 40 bytes.

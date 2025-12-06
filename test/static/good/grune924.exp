@@ -26,10 +26,10 @@ File "grune924.mly", line 8, characters 2-3:
 Warning: production s -> e is never reduced.
 Warning: in total, 1 production is never reduced.
 5 out of 10 states have a default reduction.
-The action table is 50 entries; 9 non-zero; 14 compressed.
+The action table has 50 entries; 9 non-zero; 14 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 40 entries; 6 non-zero; 16 compressed.
+The goto table has 40 entries; 6 non-zero; 16 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 16 bytes.

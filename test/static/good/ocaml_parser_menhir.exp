@@ -1141,10 +1141,10 @@ File "ocaml_parser_menhir.mly", line 788, characters 14-14:
 Warning: production use_file_tail -> is never reduced.
 Warning: in total, 1 production is never reduced.
 621 out of 1672 states have a default reduction.
-The action table is 200640 entries; 18163 non-zero; 18659 compressed.
+The action table has 200640 entries; 18163 non-zero; 18659 compressed.
 The action data table occupies roughly 33984 bytes.
 The action displacement table occupies roughly 3352 bytes.
-The goto table is 384560 entries; 4861 non-zero; 8763 compressed.
+The goto table has 384560 entries; 4861 non-zero; 8763 compressed.
 The goto data table occupies roughly 14192 bytes.
 The goto displacement table occupies roughly 3352 bytes.
 The error table occupies roughly 25088 bytes.

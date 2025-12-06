@@ -2378,10 +2378,10 @@ long_production_shape(var -> NAT) = { 54, 59, 62, 108, 127, 134, 136, 160, 162, 
 long_production_shape(var -> VAR) = { 54, 59, 62, 108, 127, 134, 136, 160, 162, 173, 175, 177, 178, 180, 182, 298, 301, 304, 307, 312, 318, 322, 325 }
 long_production_shape(var_list ->) = epsilon
 long_production_shape(var_list -> var var_list) = { 54, 59, 178, 318, 322 }; { 59 }
-The action table is 41041 entries; 1951 non-zero; 1481 compressed.
+The action table has 41041 entries; 1951 non-zero; 1481 compressed.
 The action data table occupies roughly 1904 bytes.
 The action displacement table occupies roughly 1080 bytes.
-The goto table is 41574 entries; 616 non-zero; 1121 compressed.
+The goto table has 41574 entries; 616 non-zero; 1121 compressed.
 The goto data table occupies roughly 1184 bytes.
 The goto displacement table occupies roughly 1080 bytes.
 The error table occupies roughly 5144 bytes.

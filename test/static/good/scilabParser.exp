@@ -414,10 +414,10 @@ File "scilabParser.mly", line 84, characters 1-1:
 Warning: production program -> is never reduced.
 Warning: in total, 2 productions are never reduced.
 206 out of 652 states have a default reduction.
-The action table is 50204 entries; 13790 non-zero; 15490 compressed.
+The action table has 50204 entries; 13790 non-zero; 15490 compressed.
 The action data table occupies roughly 29688 bytes.
 The action displacement table occupies roughly 1312 bytes.
-The goto table is 44988 entries; 2060 non-zero; 3545 compressed.
+The goto table has 44988 entries; 2060 non-zero; 3545 compressed.
 The goto data table occupies roughly 5800 bytes.
 The goto displacement table occupies roughly 1312 bytes.
 The error table occupies roughly 6288 bytes.

@@ -407,10 +407,10 @@ File "nml-ip-parser.mly", line 322, characters 3-3:
 Warning: production toplevel_phrase -> is never reduced.
 Warning: in total, 1 production is never reduced.
 321 out of 999 states have a default reduction.
-The action table is 115884 entries; 16273 non-zero; 17532 compressed.
+The action table has 115884 entries; 16273 non-zero; 17532 compressed.
 The action data table occupies roughly 33080 bytes.
 The action displacement table occupies roughly 2008 bytes.
-The goto table is 66933 entries; 2186 non-zero; 3906 compressed.
+The goto table has 66933 entries; 2186 non-zero; 3906 compressed.
 The goto data table occupies roughly 5824 bytes.
 The goto displacement table occupies roughly 2008 bytes.
 The error table occupies roughly 14496 bytes.

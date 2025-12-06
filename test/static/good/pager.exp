@@ -36,10 +36,10 @@ The grammar is not SLR(1) -- 1 states have a conflict.
 The construction mode is pager.
 Built an LR(1) automaton with 38 states.
 17 out of 38 states have a default reduction.
-The action table is 304 entries; 34 non-zero; 70 compressed.
+The action table has 304 entries; 34 non-zero; 70 compressed.
 The action data table occupies roughly 40 bytes.
 The action displacement table occupies roughly 48 bytes.
-The goto table is 266 entries; 19 non-zero; 55 compressed.
+The goto table has 266 entries; 19 non-zero; 55 compressed.
 The goto data table occupies roughly 32 bytes.
 The goto displacement table occupies roughly 48 bytes.
 The error table occupies roughly 48 bytes.

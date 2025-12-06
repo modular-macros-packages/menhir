@@ -342,10 +342,10 @@ Warning: the precedence level assigned to SHIFTHERE is never useful.
 Warning: one state has reduce/reduce conflicts.
 Warning: one reduce/reduce conflict was arbitrarily resolved.
 109 out of 275 states have a default reduction.
-The action table is 15950 entries; 1185 non-zero; 1297 compressed.
+The action table has 15950 entries; 1185 non-zero; 1297 compressed.
 The action data table occupies roughly 2056 bytes.
 The action displacement table occupies roughly 560 bytes.
-The goto table is 18150 entries; 395 non-zero; 759 compressed.
+The goto table has 18150 entries; 395 non-zero; 759 compressed.
 The goto data table occupies roughly 976 bytes.
 The goto displacement table occupies roughly 560 bytes.
 The error table occupies roughly 2008 bytes.

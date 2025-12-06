@@ -799,10 +799,10 @@ File "coccinelle.1.0.2-parser_c.mly", line 735, characters 0-4:
 Warning: symbol expr is never accepted.
 Warning: in total, 1 production is never reduced.
 426 out of 873 states have a default reduction.
-The action table is 125712 entries; 8406 non-zero; 9607 compressed.
+The action table has 125712 entries; 8406 non-zero; 9607 compressed.
 The action data table occupies roughly 17480 bytes.
 The action displacement table occupies roughly 1760 bytes.
-The goto table is 137934 entries; 3182 non-zero; 6520 compressed.
+The goto table has 137934 entries; 3182 non-zero; 6520 compressed.
 The goto data table occupies roughly 11304 bytes.
 The goto displacement table occupies roughly 1760 bytes.
 The error table occupies roughly 15728 bytes.

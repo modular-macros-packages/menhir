@@ -40,10 +40,10 @@ File "cime-poly.mly", line 86, characters 0-4:
 Warning: symbol expr is never accepted.
 Warning: in total, 1 production is never reduced.
 12 out of 58 states have a default reduction.
-The action table is 1392 entries; 309 non-zero; 320 compressed.
+The action table has 1392 entries; 309 non-zero; 320 compressed.
 The action data table occupies roughly 272 bytes.
 The action displacement table occupies roughly 128 bytes.
-The goto table is 348 entries; 33 non-zero; 91 compressed.
+The goto table has 348 entries; 33 non-zero; 91 compressed.
 The goto data table occupies roughly 48 bytes.
 The goto displacement table occupies roughly 72 bytes.
 The error table occupies roughly 184 bytes.

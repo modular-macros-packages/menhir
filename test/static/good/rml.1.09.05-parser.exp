@@ -698,10 +698,10 @@ Built an LR(1) automaton with 1750 states.
 File "rml.1.09.05-parser.mly", line 325, characters 0-9:
 Warning: the precedence level assigned to IN is never useful.
 585 out of 1750 states have a default reduction.
-The action table is 189000 entries; 16924 non-zero; 19177 compressed.
+The action table has 189000 entries; 16924 non-zero; 19177 compressed.
 The action data table occupies roughly 34864 bytes.
 The action displacement table occupies roughly 3512 bytes.
-The goto table is 246750 entries; 3657 non-zero; 6585 compressed.
+The goto table has 246750 entries; 3657 non-zero; 6585 compressed.
 The goto data table occupies roughly 9680 bytes.
 The goto displacement table occupies roughly 3512 bytes.
 The error table occupies roughly 23640 bytes.

@@ -146,10 +146,10 @@ File "opam-doc.0.9.3-info_parser.mly", line 175, characters 0-4:
 Warning: symbol info is never accepted.
 Warning: in total, 1 production is never reduced.
 208 out of 342 states have a default reduction.
-The action table is 16416 entries; 2351 non-zero; 1358 compressed.
+The action table has 16416 entries; 2351 non-zero; 1358 compressed.
 The action data table occupies roughly 2040 bytes.
 The action displacement table occupies roughly 696 bytes.
-The goto table is 8892 entries; 641 non-zero; 1198 compressed.
+The goto table has 8892 entries; 641 non-zero; 1198 compressed.
 The goto data table occupies roughly 1720 bytes.
 The goto displacement table occupies roughly 696 bytes.
 The error table occupies roughly 2064 bytes.

@@ -239,10 +239,10 @@ Warning: the precedence level assigned to prec_app is never useful.
 File "herdtools7.7.51-modelParser.mly", line 329, characters 18-26:
 Warning: this %prec declaration is never useful.
 103 out of 293 states have a default reduction.
-The action table is 20510 entries; 1857 non-zero; 1444 compressed.
+The action table has 20510 entries; 1857 non-zero; 1444 compressed.
 The action data table occupies roughly 2312 bytes.
 The action displacement table occupies roughly 600 bytes.
-The goto table is 13185 entries; 300 non-zero; 615 compressed.
+The goto table has 13185 entries; 300 non-zero; 615 compressed.
 The goto data table occupies roughly 656 bytes.
 The goto displacement table occupies roughly 600 bytes.
 The error table occupies roughly 2576 bytes.

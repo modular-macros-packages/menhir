@@ -290,10 +290,10 @@ File "cil-formatparse.mly", line 585, characters 0-4:
 Warning: symbol lval is never accepted.
 Warning: in total, 2 productions are never reduced.
 104 out of 302 states have a default reduction.
-The action table is 39260 entries; 3466 non-zero; 4909 compressed.
+The action table has 39260 entries; 3466 non-zero; 4909 compressed.
 The action data table occupies roughly 9224 bytes.
 The action displacement table occupies roughly 616 bytes.
-The goto table is 10570 entries; 536 non-zero; 989 compressed.
+The goto table has 10570 entries; 536 non-zero; 989 compressed.
 The goto data table occupies roughly 1384 bytes.
 The goto displacement table occupies roughly 616 bytes.
 The error table occupies roughly 4920 bytes.

@@ -29,10 +29,10 @@ File "judicael.mly", line 35, characters 0-4:
 Warning: production instruction -> expr is never reduced.
 Warning: in total, 1 production is never reduced.
 5 out of 10 states have a default reduction.
-The action table is 70 entries; 6 non-zero; 15 compressed.
+The action table has 70 entries; 6 non-zero; 15 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 40 entries; 4 non-zero; 14 compressed.
+The goto table has 40 entries; 4 non-zero; 14 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 24 bytes.

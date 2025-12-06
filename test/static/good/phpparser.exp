@@ -492,10 +492,10 @@ Warning: this %prec declaration is never useful.
 File "phpparser.mly", line 202, characters 37-45:
 Warning: this %prec declaration is never useful.
 130 out of 321 states have a default reduction.
-The action table is 30816 entries; 2736 non-zero; 3292 compressed.
+The action table has 30816 entries; 2736 non-zero; 3292 compressed.
 The action data table occupies roughly 5952 bytes.
 The action displacement table occupies roughly 656 bytes.
-The goto table is 24717 entries; 1820 non-zero; 4000 compressed.
+The goto table has 24717 entries; 1820 non-zero; 4000 compressed.
 The goto data table occupies roughly 7368 bytes.
 The goto displacement table occupies roughly 656 bytes.
 The error table occupies roughly 3864 bytes.

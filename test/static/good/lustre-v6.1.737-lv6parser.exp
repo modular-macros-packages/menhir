@@ -451,10 +451,10 @@ Warning: the precedence level assigned to TK_SEMICOL is never useful.
 File "lustre-v6.1.737-lv6parser.mly", line 112, characters 0-9:
 Warning: the precedence level assigned to TK_STEP is never useful.
 180 out of 625 states have a default reduction.
-The action table is 51875 entries; 4278 non-zero; 4822 compressed.
+The action table has 51875 entries; 4278 non-zero; 4822 compressed.
 The action data table occupies roughly 8408 bytes.
 The action displacement table occupies roughly 1264 bytes.
-The goto table is 53125 entries; 999 non-zero; 1802 compressed.
+The goto table has 53125 entries; 999 non-zero; 1802 compressed.
 The goto data table occupies roughly 2368 bytes.
 The goto displacement table occupies roughly 1264 bytes.
 The error table occupies roughly 6496 bytes.

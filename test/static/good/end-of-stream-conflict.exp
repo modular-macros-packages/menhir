@@ -17,10 +17,10 @@ File "end-of-stream-conflict.mly", line 10, characters 0-4:
 Warning: symbol expr is never accepted.
 Warning: in total, 1 production is never reduced.
 2 out of 7 states have a default reduction.
-The action table is 28 entries; 7 non-zero; 12 compressed.
+The action table has 28 entries; 7 non-zero; 12 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 14 entries; 3 non-zero; 10 compressed.
+The goto table has 14 entries; 3 non-zero; 10 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 16 bytes.

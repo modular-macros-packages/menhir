@@ -540,10 +540,10 @@ File "jasmc.mly", line 723, characters 3-3:
 Warning: production methods -> is never reduced.
 Warning: in total, 2 productions are never reduced.
 177 out of 385 states have a default reduction.
-The action table is 27720 entries; 554 non-zero; 759 compressed.
+The action table has 27720 entries; 554 non-zero; 759 compressed.
 The action data table occupies roughly 760 bytes.
 The action displacement table occupies roughly 784 bytes.
-The goto table is 40810 entries; 215 non-zero; 600 compressed.
+The goto table has 40810 entries; 215 non-zero; 600 compressed.
 The goto data table occupies roughly 440 bytes.
 The goto displacement table occupies roughly 784 bytes.
 The error table occupies roughly 3480 bytes.

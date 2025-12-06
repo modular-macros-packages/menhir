@@ -37,10 +37,10 @@ File "<standard.mly>", line 249, characters 2-7:
 Warning: production separated_nonempty_list(BAR,ATOM) -> ATOM is never reduced.
 Warning: in total, 2 productions are never reduced.
 5 out of 10 states have a default reduction.
-The action table is 40 entries; 6 non-zero; 14 compressed.
+The action table has 40 entries; 6 non-zero; 14 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 50 entries; 6 non-zero; 16 compressed.
+The goto table has 50 entries; 6 non-zero; 16 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 16 bytes.

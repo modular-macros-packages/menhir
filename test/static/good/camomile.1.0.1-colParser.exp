@@ -57,10 +57,10 @@ Warning: the precedence level assigned to SECONDARY is never useful.
 File "camomile.1.0.1-colParser.mly", line 53, characters 2-7:
 Warning: the precedence level assigned to TERTIARY is never useful.
 17 out of 37 states have a default reduction.
-The action table is 407 entries; 84 non-zero; 123 compressed.
+The action table has 407 entries; 84 non-zero; 123 compressed.
 The action data table occupies roughly 96 bytes.
 The action displacement table occupies roughly 48 bytes.
-The goto table is 333 entries; 27 non-zero; 64 compressed.
+The goto table has 333 entries; 27 non-zero; 64 compressed.
 The goto data table occupies roughly 40 bytes.
 The goto displacement table occupies roughly 48 bytes.
 The error table occupies roughly 64 bytes.

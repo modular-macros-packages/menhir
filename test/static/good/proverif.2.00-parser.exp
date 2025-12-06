@@ -140,10 +140,10 @@ Warning: the precedence level assigned to DIFF is never useful.
 File "proverif.2.00-parser.mly", line 80, characters 0-5:
 Warning: the precedence level assigned to WEDGE is never useful.
 67 out of 260 states have a default reduction.
-The action table is 9360 entries; 654 non-zero; 493 compressed.
+The action table has 9360 entries; 654 non-zero; 493 compressed.
 The action data table occupies roughly 480 bytes.
 The action displacement table occupies roughly 528 bytes.
-The goto table is 7280 entries; 155 non-zero; 415 compressed.
+The goto table has 7280 entries; 155 non-zero; 415 compressed.
 The goto data table occupies roughly 320 bytes.
 The goto displacement table occupies roughly 528 bytes.
 The error table occupies roughly 1184 bytes.

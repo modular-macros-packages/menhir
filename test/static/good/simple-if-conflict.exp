@@ -15,10 +15,10 @@ Warning: 4 states have end-of-stream conflicts.
 Warning: one shift/reduce conflict was arbitrarily resolved.
 Warning: 4 end-of-stream conflicts were arbitrarily resolved.
 4 out of 10 states have a default reduction.
-The action table is 60 entries; 15 non-zero; 16 compressed.
+The action table has 60 entries; 15 non-zero; 16 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 20 entries; 4 non-zero; 14 compressed.
+The goto table has 20 entries; 4 non-zero; 14 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 16 bytes.

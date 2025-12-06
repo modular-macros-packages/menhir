@@ -51,10 +51,10 @@ File "debian-formats.0.1.1-DF822_parser.mly", line 74, characters 3-3:
 Warning: production stanzas -> is never reduced.
 Warning: in total, 1 production is never reduced.
 17 out of 30 states have a default reduction.
-The action table is 150 entries; 28 non-zero; 53 compressed.
+The action table has 150 entries; 28 non-zero; 53 compressed.
 The action data table occupies roughly 32 bytes.
 The action displacement table occupies roughly 40 bytes.
-The goto table is 300 entries; 30 non-zero; 64 compressed.
+The goto table has 300 entries; 30 non-zero; 64 compressed.
 The goto data table occupies roughly 48 bytes.
 The goto displacement table occupies roughly 40 bytes.
 The error table occupies roughly 32 bytes.

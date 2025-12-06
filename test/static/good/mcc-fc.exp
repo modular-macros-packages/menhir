@@ -536,10 +536,10 @@ Warning: this %prec declaration is never useful.
 File "mcc-fc.mly", line 1401, characters 75-85:
 Warning: this %prec declaration is never useful.
 219 out of 519 states have a default reduction.
-The action table is 39444 entries; 3807 non-zero; 3736 compressed.
+The action table has 39444 entries; 3807 non-zero; 3736 compressed.
 The action data table occupies roughly 6448 bytes.
 The action displacement table occupies roughly 1048 bytes.
-The goto table is 50862 entries; 1205 non-zero; 2400 compressed.
+The goto table has 50862 entries; 1205 non-zero; 2400 compressed.
 The goto data table occupies roughly 3776 bytes.
 The goto displacement table occupies roughly 1048 bytes.
 The error table occupies roughly 4944 bytes.

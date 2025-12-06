@@ -119,10 +119,10 @@ Warning: the precedence level assigned to LT is never useful.
 File "cime-terms.mly", line 31, characters 0-9:
 Warning: the precedence level assigned to NE is never useful.
 42 out of 100 states have a default reduction.
-The action table is 2300 entries; 228 non-zero; 246 compressed.
+The action table has 2300 entries; 228 non-zero; 246 compressed.
 The action data table occupies roughly 304 bytes.
 The action displacement table occupies roughly 112 bytes.
-The goto table is 2700 entries; 65 non-zero; 168 compressed.
+The goto table has 2700 entries; 65 non-zero; 168 compressed.
 The goto data table occupies roughly 80 bytes.
 The goto displacement table occupies roughly 112 bytes.
 The error table occupies roughly 296 bytes.

@@ -752,10 +752,10 @@ Warning: 4 states have end-of-stream conflicts.
 Warning: 55 shift/reduce conflicts were arbitrarily resolved.
 Warning: 4 end-of-stream conflicts were arbitrarily resolved.
 509 out of 1552 states have a default reduction.
-The action table is 192448 entries; 14327 non-zero; 19003 compressed.
+The action table has 192448 entries; 14327 non-zero; 19003 compressed.
 The action data table occupies roughly 34912 bytes.
 The action displacement table occupies roughly 3112 bytes.
-The goto table is 212624 entries; 3366 non-zero; 6010 compressed.
+The goto table has 212624 entries; 3366 non-zero; 6010 compressed.
 The goto data table occupies roughly 8928 bytes.
 The goto displacement table occupies roughly 3112 bytes.
 The error table occupies roughly 24064 bytes.

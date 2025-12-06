@@ -46,10 +46,10 @@ File "cime-theory.mly", line 32, characters 4-8:
 Warning: production theory -> decl is never reduced.
 Warning: in total, 1 production is never reduced.
 13 out of 47 states have a default reduction.
-The action table is 611 entries; 44 non-zero; 85 compressed.
+The action table has 611 entries; 44 non-zero; 85 compressed.
 The action data table occupies roughly 48 bytes.
 The action displacement table occupies roughly 56 bytes.
-The goto table is 376 entries; 14 non-zero; 61 compressed.
+The goto table has 376 entries; 14 non-zero; 61 compressed.
 The goto data table occupies roughly 24 bytes.
 The goto displacement table occupies roughly 32 bytes.
 The error table occupies roughly 88 bytes.

@@ -207,10 +207,10 @@ Warning: this %prec declaration is never useful.
 File "zenon.0.8.4-parsecoq.mly", line 293, characters 24-29:
 Warning: this %prec declaration is never useful.
 59 out of 262 states have a default reduction.
-The action table is 21484 entries; 1729 non-zero; 1685 compressed.
+The action table has 21484 entries; 1729 non-zero; 1685 compressed.
 The action data table occupies roughly 2856 bytes.
 The action displacement table occupies roughly 536 bytes.
-The goto table is 6550 entries; 181 non-zero; 440 compressed.
+The goto table has 6550 entries; 181 non-zero; 440 compressed.
 The goto data table occupies roughly 368 bytes.
 The goto displacement table occupies roughly 536 bytes.
 The error table occupies roughly 2696 bytes.

@@ -70,10 +70,10 @@ Built an LR(1) automaton with 110 states.
 File "herdtools7.7.51-X86Parser.mly", line 43, characters 0-9:
 Warning: the precedence level assigned to SEMI is never useful.
 45 out of 110 states have a default reduction.
-The action table is 4510 entries; 327 non-zero; 218 compressed.
+The action table has 4510 entries; 327 non-zero; 218 compressed.
 The action data table occupies roughly 224 bytes.
 The action displacement table occupies roughly 120 bytes.
-The goto table is 1430 entries; 124 non-zero; 252 compressed.
+The goto table has 1430 entries; 124 non-zero; 252 compressed.
 The goto data table occupies roughly 152 bytes.
 The goto displacement table occupies roughly 232 bytes.
 The error table occupies roughly 576 bytes.

@@ -78,10 +78,10 @@ File "herdtools7.7.51-PPCParser.mly", line 85, characters 4-16:
 Warning: production instr_option_seq -> instr_option is never reduced.
 Warning: in total, 1 production is never reduced.
 107 out of 435 states have a default reduction.
-The action table is 39150 entries; 982 non-zero; 756 compressed.
+The action table has 39150 entries; 982 non-zero; 756 compressed.
 The action data table occupies roughly 656 bytes.
 The action displacement table occupies roughly 880 bytes.
-The goto table is 6525 entries; 206 non-zero; 641 compressed.
+The goto table has 6525 entries; 206 non-zero; 641 compressed.
 The goto data table occupies roughly 424 bytes.
 The goto displacement table occupies roughly 880 bytes.
 The error table occupies roughly 4904 bytes.

@@ -66,10 +66,10 @@ File "leap_TrsParser.mly", line 110, characters 3-3:
 Warning: production invariant_list -> is never reduced.
 Warning: in total, 1 production is never reduced.
 21 out of 61 states have a default reduction.
-The action table is 1403 entries; 155 non-zero; 166 compressed.
+The action table has 1403 entries; 155 non-zero; 166 compressed.
 The action data table occupies roughly 120 bytes.
 The action displacement table occupies roughly 72 bytes.
-The goto table is 793 entries; 35 non-zero; 96 compressed.
+The goto table has 793 entries; 35 non-zero; 96 compressed.
 The goto data table occupies roughly 48 bytes.
 The goto displacement table occupies roughly 72 bytes.
 The error table occupies roughly 184 bytes.

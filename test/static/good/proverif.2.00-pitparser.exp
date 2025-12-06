@@ -390,10 +390,10 @@ File "proverif.2.00-pitparser.mly", line 957, characters 4-13:
 Warning: production permut -> onepermut is never reduced.
 Warning: in total, 4 productions are never reduced.
 222 out of 1004 states have a default reduction.
-The action table is 86344 entries; 6062 non-zero; 3970 compressed.
+The action table has 86344 entries; 6062 non-zero; 3970 compressed.
 The action data table occupies roughly 5944 bytes.
 The action displacement table occupies roughly 2016 bytes.
-The goto table is 79316 entries; 625 non-zero; 1627 compressed.
+The goto table has 79316 entries; 625 non-zero; 1627 compressed.
 The goto data table occupies roughly 1256 bytes.
 The goto displacement table occupies roughly 2016 bytes.
 The error table occupies roughly 10808 bytes.

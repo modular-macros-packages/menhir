@@ -63,10 +63,10 @@ File "gettext.0.3.8-gettextPo_parser.mly", line 114, characters 0-6:
 Warning: symbol msgfmt is never accepted.
 Warning: in total, 1 production is never reduced.
 13 out of 40 states have a default reduction.
-The action table is 480 entries; 74 non-zero; 119 compressed.
+The action table has 480 entries; 74 non-zero; 119 compressed.
 The action data table occupies roughly 88 bytes.
 The action displacement table occupies roughly 48 bytes.
-The goto table is 440 entries; 39 non-zero; 72 compressed.
+The goto table has 440 entries; 39 non-zero; 72 compressed.
 The goto data table occupies roughly 40 bytes.
 The goto displacement table occupies roughly 48 bytes.
 The error table occupies roughly 72 bytes.

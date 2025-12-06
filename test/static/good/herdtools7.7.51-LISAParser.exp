@@ -180,10 +180,10 @@ File "herdtools7.7.51-LISAParser.mly", line 72, characters 4-16:
 Warning: production instr_option_seq -> instr_option is never reduced.
 Warning: in total, 1 production is never reduced.
 59 out of 137 states have a default reduction.
-The action table is 5480 entries; 337 non-zero; 242 compressed.
+The action table has 5480 entries; 337 non-zero; 242 compressed.
 The action data table occupies roughly 224 bytes.
 The action displacement table occupies roughly 152 bytes.
-The goto table is 4521 entries; 145 non-zero; 284 compressed.
+The goto table has 4521 entries; 145 non-zero; 284 compressed.
 The goto data table occupies roughly 160 bytes.
 The goto displacement table occupies roughly 288 bytes.
 The error table occupies roughly 696 bytes.

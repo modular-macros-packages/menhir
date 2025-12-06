@@ -3089,10 +3089,10 @@ File "sysver.mly", line 10119, characters 3-10:
 Warning: production tf_data_type -> CHANDLE is never reduced.
 Warning: in total, 29 productions are never reduced.
 4989 out of 16538 states have a default reduction.
-The action table is 8897444 entries; 192462 non-zero; 340717 compressed.
+The action table has 8897444 entries; 192462 non-zero; 340717 compressed.
 The action data table occupies roughly 1296728 bytes.
 The action displacement table occupies roughly 66160 bytes.
-The goto table is 7822474 entries; 45448 non-zero; 107033 compressed.
+The goto table has 7822474 entries; 45448 non-zero; 107033 compressed.
 The goto data table occupies roughly 181000 bytes.
 The goto displacement table occupies roughly 66160 bytes.
 The error table occupies roughly 1112192 bytes.

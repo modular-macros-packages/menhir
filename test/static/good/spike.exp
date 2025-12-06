@@ -634,10 +634,10 @@ File "spike.mly", line 1833, characters 0-15:
 Warning: symbol list_of_systems is never accepted.
 Warning: in total, 1 production is never reduced.
 270 out of 687 states have a default reduction.
-The action table is 63891 entries; 2869 non-zero; 5287 compressed.
+The action table has 63891 entries; 2869 non-zero; 5287 compressed.
 The action data table occupies roughly 9208 bytes.
 The action displacement table occupies roughly 1384 bytes.
-The goto table is 92745 entries; 477 non-zero; 1134 compressed.
+The goto table has 92745 entries; 477 non-zero; 1134 compressed.
 The goto data table occupies roughly 904 bytes.
 The goto displacement table occupies roughly 1384 bytes.
 The error table occupies roughly 8000 bytes.

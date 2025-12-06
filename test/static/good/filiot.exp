@@ -59,10 +59,10 @@ File "filiot.mly", line 107, characters 1-1:
 Warning: production main -> is never reduced.
 Warning: in total, 1 production is never reduced.
 46 out of 88 states have a default reduction.
-The action table is 3872 entries; 242 non-zero; 268 compressed.
+The action table has 3872 entries; 242 non-zero; 268 compressed.
 The action data table occupies roughly 368 bytes.
 The action displacement table occupies roughly 184 bytes.
-The goto table is 704 entries; 32 non-zero; 120 compressed.
+The goto table has 704 entries; 32 non-zero; 120 compressed.
 The goto data table occupies roughly 40 bytes.
 The goto displacement table occupies roughly 96 bytes.
 The error table occupies roughly 496 bytes.

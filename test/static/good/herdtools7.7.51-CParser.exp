@@ -189,10 +189,10 @@ File "herdtools7.7.51-CParser.mly", line 306, characters 1-1:
 Warning: production macros -> is never reduced.
 Warning: in total, 1 production is never reduced.
 95 out of 382 states have a default reduction.
-The action table is 29032 entries; 3040 non-zero; 2059 compressed.
+The action table has 29032 entries; 3040 non-zero; 2059 compressed.
 The action data table occupies roughly 3368 bytes.
 The action displacement table occupies roughly 776 bytes.
-The goto table is 13370 entries; 274 non-zero; 655 compressed.
+The goto table has 13370 entries; 274 non-zero; 655 compressed.
 The goto data table occupies roughly 560 bytes.
 The goto displacement table occupies roughly 776 bytes.
 The error table occupies roughly 3640 bytes.

@@ -20,10 +20,10 @@ File "no_future.mly", line 27, characters 6-33:
 Warning: production listA -> is never reduced.
 Warning: in total, 1 production is never reduced.
 3 out of 7 states have a default reduction.
-The action table is 21 entries; 4 non-zero; 10 compressed.
+The action table has 21 entries; 4 non-zero; 10 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 21 entries; 3 non-zero; 10 compressed.
+The goto table has 21 entries; 3 non-zero; 10 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 16 bytes.

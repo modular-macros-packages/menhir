@@ -247,10 +247,10 @@ File "execparser.mly", line 167, characters 4-19:
 Warning: production instructions -> instruction DOT is never reduced.
 Warning: in total, 2 productions are never reduced.
 131 out of 293 states have a default reduction.
-The action table is 26077 entries; 442 non-zero; 657 compressed.
+The action table has 26077 entries; 442 non-zero; 657 compressed.
 The action data table occupies roughly 736 bytes.
 The action displacement table occupies roughly 600 bytes.
-The goto table is 13185 entries; 181 non-zero; 468 compressed.
+The goto table has 13185 entries; 181 non-zero; 468 compressed.
 The goto data table occupies roughly 360 bytes.
 The goto displacement table occupies roughly 600 bytes.
 The error table occupies roughly 3272 bytes.

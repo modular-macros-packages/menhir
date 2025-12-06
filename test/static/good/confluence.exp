@@ -183,10 +183,10 @@ Built an LR(1) automaton with 294 states.
 File "confluence.mly", line 90, characters 0-5:
 Warning: the precedence level assigned to OP_PROP_U is never useful.
 92 out of 294 states have a default reduction.
-The action table is 31164 entries; 9040 non-zero; 7944 compressed.
+The action table has 31164 entries; 9040 non-zero; 7944 compressed.
 The action data table occupies roughly 15312 bytes.
 The action displacement table occupies roughly 600 bytes.
-The goto table is 10290 entries; 1814 non-zero; 2798 compressed.
+The goto table has 10290 entries; 1814 non-zero; 2798 compressed.
 The goto data table occupies roughly 5016 bytes.
 The goto displacement table occupies roughly 600 bytes.
 The error table occupies roughly 3904 bytes.

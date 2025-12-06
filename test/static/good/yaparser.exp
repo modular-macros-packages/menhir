@@ -184,10 +184,10 @@ File "yaparser.mly", line 104, characters 4-18:
 Warning: production main -> options states is never reduced.
 Warning: in total, 3 productions are never reduced.
 60 out of 154 states have a default reduction.
-The action table is 6468 entries; 554 non-zero; 596 compressed.
+The action table has 6468 entries; 554 non-zero; 596 compressed.
 The action data table occupies roughly 896 bytes.
 The action displacement table occupies roughly 320 bytes.
-The goto table is 3850 entries; 209 non-zero; 375 compressed.
+The goto table has 3850 entries; 209 non-zero; 375 compressed.
 The goto data table occupies roughly 232 bytes.
 The goto displacement table occupies roughly 320 bytes.
 The error table occupies roughly 824 bytes.

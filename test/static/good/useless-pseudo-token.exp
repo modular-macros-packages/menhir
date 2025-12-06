@@ -15,10 +15,10 @@ Warning: the precedence level assigned to zorro is never useful.
 File "useless-pseudo-token.mly", line 10, characters 19-24:
 Warning: this %prec declaration is never useful.
 2 out of 4 states have a default reduction.
-The action table is 12 entries; 2 non-zero; 6 compressed.
+The action table has 12 entries; 2 non-zero; 6 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 8 entries; 1 non-zero; 5 compressed.
+The goto table has 8 entries; 1 non-zero; 5 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 16 bytes.

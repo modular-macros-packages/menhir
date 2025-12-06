@@ -58,10 +58,10 @@ Built an LR(1) automaton with 176 states.
 File "diy.5.01-ARMParser.mly", line 36, characters 0-9:
 Warning: the precedence level assigned to SEMI is never useful.
 63 out of 176 states have a default reduction.
-The action table is 7920 entries; 312 non-zero; 305 compressed.
+The action table has 7920 entries; 312 non-zero; 305 compressed.
 The action data table occupies roughly 272 bytes.
 The action displacement table occupies roughly 184 bytes.
-The goto table is 1936 entries; 81 non-zero; 257 compressed.
+The goto table has 1936 entries; 81 non-zero; 257 compressed.
 The goto data table occupies roughly 96 bytes.
 The goto displacement table occupies roughly 184 bytes.
 The error table occupies roughly 1000 bytes.

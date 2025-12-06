@@ -138,10 +138,10 @@ File "joe_parser2.mly", line 27, characters 4-14:
 Warning: production look_for_trouble -> COOL_TOKEN is never reduced.
 Warning: in total, 1 production is never reduced.
 2 out of 3 states have a default reduction.
-The action table is 189 entries; 1 non-zero; 4 compressed.
+The action table has 189 entries; 1 non-zero; 4 compressed.
 The action data table occupies roughly 16 bytes.
 The action displacement table occupies roughly 16 bytes.
-The goto table is 6 entries; 1 non-zero; 4 compressed.
+The goto table has 6 entries; 1 non-zero; 4 compressed.
 The goto data table occupies roughly 16 bytes.
 The goto displacement table occupies roughly 16 bytes.
 The error table occupies roughly 32 bytes.

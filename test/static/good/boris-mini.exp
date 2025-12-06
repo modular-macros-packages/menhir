@@ -30,10 +30,10 @@ File "boris-mini.mly", line 38, characters 2-10:
 Warning: production debut -> expr DOT is never reduced.
 Warning: in total, 1 production is never reduced.
 3 out of 16 states have a default reduction.
-The action table is 64 entries; 30 non-zero; 39 compressed.
+The action table has 64 entries; 30 non-zero; 39 compressed.
 The action data table occupies roughly 32 bytes.
 The action displacement table occupies roughly 24 bytes.
-The goto table is 64 entries; 13 non-zero; 27 compressed.
+The goto table has 64 entries; 13 non-zero; 27 compressed.
 The goto data table occupies roughly 24 bytes.
 The goto displacement table occupies roughly 24 bytes.
 The error table occupies roughly 16 bytes.

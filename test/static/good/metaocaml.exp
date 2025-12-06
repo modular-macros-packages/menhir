@@ -750,10 +750,10 @@ File "metaocaml.mly", line 1155, characters 4-26:
 Warning: production record_expr_icc -> lbl_expr_list opt_semi is never reduced.
 Warning: in total, 3 productions are never reduced.
 633 out of 1875 states have a default reduction.
-The action table is 230625 entries; 23497 non-zero; 22770 compressed.
+The action table has 230625 entries; 23497 non-zero; 22770 compressed.
 The action data table occupies roughly 41800 bytes.
 The action displacement table occupies roughly 3760 bytes.
-The goto table is 277500 entries; 4647 non-zero; 8528 compressed.
+The goto table has 277500 entries; 4647 non-zero; 8528 compressed.
 The goto data table occupies roughly 13320 bytes.
 The goto displacement table occupies roughly 3760 bytes.
 The error table occupies roughly 28840 bytes.

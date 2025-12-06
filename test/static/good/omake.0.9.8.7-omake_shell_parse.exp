@@ -38,10 +38,10 @@ Warning: this %prec declaration is never useful.
 File "omake.0.9.8.7-omake_shell_parse.mly", line 286, characters 55-76:
 Warning: this %prec declaration is never useful.
 14 out of 34 states have a default reduction.
-The action table is 476 entries; 102 non-zero; 129 compressed.
+The action table has 476 entries; 102 non-zero; 129 compressed.
 The action data table occupies roughly 104 bytes.
 The action displacement table occupies roughly 48 bytes.
-The goto table is 204 entries; 35 non-zero; 69 compressed.
+The goto table has 204 entries; 35 non-zero; 69 compressed.
 The goto data table occupies roughly 48 bytes.
 The goto displacement table occupies roughly 48 bytes.
 The error table occupies roughly 72 bytes.

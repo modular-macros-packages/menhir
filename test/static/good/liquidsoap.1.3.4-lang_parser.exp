@@ -160,10 +160,10 @@ The construction mode is pager.
 Built an LR(1) automaton with 383 states.
 179 shift/reduce conflicts were silently solved.
 130 out of 383 states have a default reduction.
-The action table is 29108 entries; 6449 non-zero; 2748 compressed.
+The action table has 29108 entries; 6449 non-zero; 2748 compressed.
 The action data table occupies roughly 4744 bytes.
 The action displacement table occupies roughly 776 bytes.
-The goto table is 10724 entries; 402 non-zero; 811 compressed.
+The goto table has 10724 entries; 402 non-zero; 811 compressed.
 The goto data table occupies roughly 864 bytes.
 The goto displacement table occupies roughly 776 bytes.
 The error table occupies roughly 3648 bytes.

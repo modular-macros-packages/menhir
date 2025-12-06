@@ -328,10 +328,10 @@ File "c.mly", line 404, characters 0-16:
 Warning: symbol translation_unit is never accepted.
 Warning: in total, 1 production is never reduced.
 164 out of 349 states have a default reduction.
-The action table is 28967 entries; 2362 non-zero; 2826 compressed.
+The action table has 28967 entries; 2362 non-zero; 2826 compressed.
 The action data table occupies roughly 4968 bytes.
 The action displacement table occupies roughly 712 bytes.
-The goto table is 22336 entries; 1285 non-zero; 2289 compressed.
+The goto table has 22336 entries; 1285 non-zero; 2289 compressed.
 The goto data table occupies roughly 3888 bytes.
 The goto displacement table occupies roughly 712 bytes.
 The error table occupies roughly 3632 bytes.

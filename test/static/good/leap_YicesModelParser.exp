@@ -80,10 +80,10 @@ File "leap_YicesModelParser.mly", line 130, characters 3-3:
 Warning: production generic_model -> is never reduced.
 Warning: in total, 2 productions are never reduced.
 34 out of 74 states have a default reduction.
-The action table is 1332 entries; 153 non-zero; 145 compressed.
+The action table has 1332 entries; 153 non-zero; 145 compressed.
 The action data table occupies roughly 152 bytes.
 The action displacement table occupies roughly 88 bytes.
-The goto table is 1036 entries; 57 non-zero; 138 compressed.
+The goto table has 1036 entries; 57 non-zero; 138 compressed.
 The goto data table occupies roughly 72 bytes.
 The goto displacement table occupies roughly 88 bytes.
 The error table occupies roughly 176 bytes.

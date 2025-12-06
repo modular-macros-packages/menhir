@@ -56,10 +56,10 @@ Warning: the precedence level assigned to PROMELA_FALSE is never useful.
 File "promelaparser.mly", line 51, characters 0-9:
 Warning: the precedence level assigned to PROMELA_TRUE is never useful.
 23 out of 48 states have a default reduction.
-The action table is 1152 entries; 88 non-zero; 111 compressed.
+The action table has 1152 entries; 88 non-zero; 111 compressed.
 The action data table occupies roughly 72 bytes.
 The action displacement table occupies roughly 56 bytes.
-The goto table is 480 entries; 20 non-zero; 67 compressed.
+The goto table has 480 entries; 20 non-zero; 67 compressed.
 The goto data table occupies roughly 32 bytes.
 The goto displacement table occupies roughly 56 bytes.
 The error table occupies roughly 152 bytes.

@@ -227,10 +227,10 @@ Warning: the precedence level assigned to VAR is never useful.
 File "macrodown.mly", line 211, characters 0-9:
 Warning: the precedence level assigned to WHILE is never useful.
 171 out of 363 states have a default reduction.
-The action table is 25410 entries; 2529 non-zero; 3772 compressed.
+The action table has 25410 entries; 2529 non-zero; 3772 compressed.
 The action data table occupies roughly 6832 bytes.
 The action displacement table occupies roughly 736 bytes.
-The goto table is 12705 entries; 838 non-zero; 1439 compressed.
+The goto table has 12705 entries; 838 non-zero; 1439 compressed.
 The goto data table occupies roughly 2160 bytes.
 The goto displacement table occupies roughly 736 bytes.
 The error table occupies roughly 3192 bytes.

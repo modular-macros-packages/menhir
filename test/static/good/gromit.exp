@@ -80,10 +80,10 @@ File "gromit.mly", line 210, characters 17-17:
 Warning: production constructor_list -> is never reduced.
 Warning: in total, 1 production is never reduced.
 55 out of 96 states have a default reduction.
-The action table is 2304 entries; 98 non-zero; 181 compressed.
+The action table has 2304 entries; 98 non-zero; 181 compressed.
 The action data table occupies roughly 184 bytes.
 The action displacement table occupies roughly 104 bytes.
-The goto table is 1344 entries; 22 non-zero; 118 compressed.
+The goto table has 1344 entries; 22 non-zero; 118 compressed.
 The goto data table occupies roughly 32 bytes.
 The goto displacement table occupies roughly 104 bytes.
 The error table occupies roughly 296 bytes.

@@ -1700,10 +1700,10 @@ File "fsharp.mly", line 1744, characters 4-46:
 Warning: production conjPatternElements -> conjPatternElements AMP headBindingPattern is never reduced.
 Warning: in total, 1 production is never reduced.
 1077 out of 2760 states have a default reduction.
-The action table is 477480 entries; 45320 non-zero; 48043 compressed.
+The action table has 477480 entries; 45320 non-zero; 48043 compressed.
 The action data table occupies roughly 90576 bytes.
 The action displacement table occupies roughly 11048 bytes.
-The goto table is 770040 entries; 11547 non-zero; 21259 compressed.
+The goto table has 770040 entries; 11547 non-zero; 21259 compressed.
 The goto data table occupies roughly 37008 bytes.
 The goto displacement table occupies roughly 5528 bytes.
 The error table occupies roughly 59696 bytes.

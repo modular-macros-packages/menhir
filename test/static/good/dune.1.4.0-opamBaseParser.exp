@@ -52,10 +52,10 @@ File "dune.1.4.0-opamBaseParser.mly", line 79, characters 0-5:
 Warning: symbol value is never accepted.
 Warning: in total, 1 production is never reduced.
 16 out of 46 states have a default reduction.
-The action table is 828 entries; 182 non-zero; 142 compressed.
+The action table has 828 entries; 182 non-zero; 142 compressed.
 The action data table occupies roughly 104 bytes.
 The action displacement table occupies roughly 56 bytes.
-The goto table is 368 entries; 34 non-zero; 81 compressed.
+The goto table has 368 entries; 34 non-zero; 81 compressed.
 The goto data table occupies roughly 48 bytes.
 The goto displacement table occupies roughly 56 bytes.
 The error table occupies roughly 112 bytes.

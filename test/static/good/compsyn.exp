@@ -836,10 +836,10 @@ File "compsyn.mly", line 729, characters 1-11:
 Warning: production conditional_port_expression -> expression is never reduced.
 Warning: in total, 3 productions are never reduced.
 269 out of 806 states have a default reduction.
-The action table is 94302 entries; 5716 non-zero; 5136 compressed.
+The action table has 94302 entries; 5716 non-zero; 5136 compressed.
 The action data table occupies roughly 8672 bytes.
 The action displacement table occupies roughly 1624 bytes.
-The goto table is 126542 entries; 1529 non-zero; 2752 compressed.
+The goto table has 126542 entries; 1529 non-zero; 2752 compressed.
 The goto data table occupies roughly 3904 bytes.
 The goto displacement table occupies roughly 1624 bytes.
 The error table occupies roughly 11800 bytes.

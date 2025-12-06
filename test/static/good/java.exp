@@ -406,10 +406,10 @@ Warning: this %prec declaration is never useful.
 File "java.mly", line 562, characters 61-66:
 Warning: this %prec declaration is never useful.
 155 out of 433 states have a default reduction.
-The action table is 45032 entries; 3887 non-zero; 4134 compressed.
+The action table has 45032 entries; 3887 non-zero; 4134 compressed.
 The action data table occupies roughly 7416 bytes.
 The action displacement table occupies roughly 880 bytes.
-The goto table is 32042 entries; 1073 non-zero; 2054 compressed.
+The goto table has 32042 entries; 1073 non-zero; 2054 compressed.
 The goto data table occupies roughly 3256 bytes.
 The goto displacement table occupies roughly 880 bytes.
 The error table occupies roughly 5640 bytes.

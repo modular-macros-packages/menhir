@@ -1108,10 +1108,10 @@ Warning: this %prec declaration is never useful.
 File "parser_raw.mly", line 2232, characters 45-56:
 Warning: this %prec declaration is never useful.
 525 out of 1500 states have a default reduction.
-The action table is 195000 entries; 15727 non-zero; 16513 compressed.
+The action table has 195000 entries; 15727 non-zero; 16513 compressed.
 The action data table occupies roughly 30040 bytes.
 The action displacement table occupies roughly 3008 bytes.
-The goto table is 312000 entries; 4236 non-zero; 7295 compressed.
+The goto table has 312000 entries; 4236 non-zero; 7295 compressed.
 The goto data table occupies roughly 11600 bytes.
 The goto displacement table occupies roughly 3008 bytes.
 The error table occupies roughly 24384 bytes.

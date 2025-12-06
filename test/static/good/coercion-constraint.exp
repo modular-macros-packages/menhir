@@ -154,10 +154,10 @@ Warning: the precedence level assigned to ID is never useful.
 File "coercion-constraint.mly", line 130, characters 0-6:
 Warning: the precedence level assigned to LEFT is never useful.
 42 out of 95 states have a default reduction.
-The action table is 2565 entries; 223 non-zero; 232 compressed.
+The action table has 2565 entries; 223 non-zero; 232 compressed.
 The action data table occupies roughly 288 bytes.
 The action displacement table occupies roughly 104 bytes.
-The goto table is 2565 entries; 189 non-zero; 317 compressed.
+The goto table has 2565 entries; 189 non-zero; 317 compressed.
 The goto data table occupies roughly 232 bytes.
 The goto displacement table occupies roughly 200 bytes.
 The error table occupies roughly 336 bytes.

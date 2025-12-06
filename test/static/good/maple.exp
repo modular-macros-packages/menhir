@@ -146,10 +146,10 @@ Warning: the precedence level assigned to DOT is never useful.
 File "maple.mly", line 84, characters 0-9:
 Warning: the precedence level assigned to PERCENT is never useful.
 64 out of 215 states have a default reduction.
-The action table is 16555 entries; 3025 non-zero; 3594 compressed.
+The action table has 16555 entries; 3025 non-zero; 3594 compressed.
 The action data table occupies roughly 6768 bytes.
 The action displacement table occupies roughly 440 bytes.
-The goto table is 5160 entries; 256 non-zero; 487 compressed.
+The goto table has 5160 entries; 256 non-zero; 487 compressed.
 The goto data table occupies roughly 280 bytes.
 The goto displacement table occupies roughly 440 bytes.
 The error table occupies roughly 2080 bytes.

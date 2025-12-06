@@ -310,10 +310,10 @@ Warning: the precedence level assigned to WITH is never useful.
 File "obc.mly", line 402, characters 22-27:
 Warning: this %prec declaration is never useful.
 171 out of 403 states have a default reduction.
-The action table is 25389 entries; 2213 non-zero; 2663 compressed.
+The action table has 25389 entries; 2213 non-zero; 2663 compressed.
 The action data table occupies roughly 4528 bytes.
 The action displacement table occupies roughly 816 bytes.
-The goto table is 22568 entries; 509 non-zero; 928 compressed.
+The goto table has 22568 entries; 509 non-zero; 928 compressed.
 The goto data table occupies roughly 1064 bytes.
 The goto displacement table occupies roughly 816 bytes.
 The error table occupies roughly 3184 bytes.
