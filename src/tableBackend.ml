@@ -36,11 +36,11 @@ open Conventions
 let runtimelib =
   "MenhirLib"
 
-module TableUtils = TableUtils.Make(struct
+module TableGeneration = TableGeneration.Make(struct
   let runtimelib = runtimelib
   let info = getC 1
 end)
-open TableUtils
+open TableGeneration
 
 module Run () = struct
 
