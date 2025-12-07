@@ -83,13 +83,22 @@ val evars: var list -> expr list
    If [ps] is empty then [efun ps e] is just [e]. *)
 val efun: pattern list -> expr -> expr
 
+(**A [match] construct.*)
+val ematch: expr -> branch list -> expr
+
+(**A use of [Obj.magic]. *)
+val emagic: expr -> expr
+
+(**A function application. *)
+val eapp: expr -> expr list -> expr
+
 (**This smart constructor constructs a tuple expression. A tuple of length
    zero is changed to [EUnit]. A tuple of length 1 is erased. *)
 val etuple: expr list -> expr
 
-(**[annotate e ty] annotates the expression [e] with the monomorphic
+(**[annotate ty e] annotates the expression [e] with the monomorphic
    type [ty]. Certain simplifications are performed on the fly. *)
-val annotate: expr -> typ -> expr
+val annotate: typ -> expr -> expr
 
 (**[blet pes e] constructs a nested sequence of [let] definitions.
    Certain simplifications are performed on the fly. *)

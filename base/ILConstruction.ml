@@ -85,6 +85,15 @@ let efun ps e =
   | _ ->
       EFun (ps, e)
 
+let ematch e bs =
+  EMatch (e, bs)
+
+let emagic e =
+  EMagic e
+
+let eapp e es =
+  EApp (e, es)
+
 let etuple = function
   | [] ->
       EUnit
