@@ -95,10 +95,10 @@ let decode s =
    type that the user has possibly provided via a %type declaration. *)
 
 let opt_annotate_expr (e : expr) (oty : ocamltype option) : expr =
-  Option.fold (fun ty e -> annotate e (TypTextual ty)) oty e
+  Option.fold (fun ty e -> annotate (TypTextual ty) e) oty e
 
 let annotate_expr (e : expr) (nt : nonterminal) : expr =
-  let e = annotate e (ntvar nt) in
+  let e = annotate (ntvar nt) e in
   let e = opt_annotate_expr e (ocamltype_of_symbol grammar nt) in
   e
 
@@ -246,7 +246,7 @@ let program () =
 
   let main_def =
     pdef (PTuple pats) @@
-    ELet (bindings(), annotate EBottom (TypTuple tys))
+    ELet (bindings(), annotate (TypTuple tys) EBottom)
   in
 
   (* Insert markers to delimit the part of the file that we are interested in.

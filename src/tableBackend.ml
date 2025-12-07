@@ -217,7 +217,10 @@ let reducebody prod =
 
   (* This is a regular production. Perform a reduction. *)
 
-  let act = annotate (Action.expr (Production.action prod)) (semvtype nt) in
+  let act =
+    annotate (semvtype nt) @@
+    Action.expr (Production.action prod)
+  in
 
   EComment (
     Production.print prod,
@@ -536,22 +539,15 @@ let monolithic_entry_point state nt t =
   def (Nonterminal.print true nt) @@
   let lexer = "lexer"
   and lexbuf = "lexbuf" in
-  EFun (
-    [ PVar lexer; PVar lexbuf ],
-    annotate (
-      EMagic (
-        EApp (
-          EVar entry, [
-            strategy;
-            EIntConst (Lr1.encode state);
-            EVar lexer;
-            EVar lexbuf
-          ]
-        )
-      )
-    )
-    (TypTextual t)
-  )
+  efun [ PVar lexer; PVar lexbuf ] @@
+  annotate (TypTextual t) @@
+  emagic @@
+  eapp (EVar entry) [
+    strategy;
+    EIntConst (Lr1.encode state);
+    EVar lexer;
+    EVar lexbuf
+  ]
 
 (* The whole monolithic API. *)
 
@@ -569,20 +565,13 @@ let incremental_entry_point state nt t =
   (* In principle the eta-expansion [fun initpos -> start s initpos] should
      not be necessary, since [start] is a pure function. However, if [--trace]
      is enabled, [start] logs messages to [stderr]. *)
-  EFun (
-    [ PVar initial ],
-    annotate (
-      EMagic (
-        EApp (
-          EVar start, [
-            EIntConst (Lr1.encode state);
-            EVar initial;
-          ]
-        )
-      )
-    )
-    (tcheckpoint (TypTextual t))
-  )
+  efun [ PVar initial ] @@
+  annotate (tcheckpoint (TypTextual t)) @@
+  emagic @@
+  eapp (EVar start) [
+    EIntConst (Lr1.encode state);
+    EVar initial;
+  ]
 
 (* The whole incremental API. *)
 

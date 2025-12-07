@@ -493,10 +493,10 @@ let eactionparams action =
   let xs = actionparams action in
   match xs with [] -> [EUnit] | _ -> evars xs
 
-let annotate e nt =
+let annotate nt e =
   match Nonterminal.ocamltype nt with
   | Some ty ->
-      ILConstruction.annotate e (TypTextual ty)
+      ILConstruction.annotate (TypTextual ty) e
   | None ->
       e
       (* In principle, this won't happen. We check at the beginning of [Run]
@@ -505,10 +505,11 @@ let annotate e nt =
 let actionbody prod =
   let action = Production.action prod
   and nt = Production.nt prod in
-  annotate (EComment (
+  annotate nt @@
+  EComment (
     Production.print prod,
     Action.expr action
-  )) nt
+  )
 
 (* [must_not_return e msg] has the same semantics as [e] if [e] raises
    an exception or aborts the program. If [e] returns a value, then

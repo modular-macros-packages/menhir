@@ -105,12 +105,12 @@ let etuple = function
 (* In [annotate], the transformations that we perform on the fly are
    intended to improve readability. *)
 
-let rec annotate e ty =
+let rec annotate ty e =
   match e with
   | EComment (c, e) ->
-      EComment (c, annotate e ty)
+      EComment (c, annotate ty e)
   | ELet (bs, e) ->
-      ELet (bs, annotate e ty)
+      ELet (bs, annotate ty e)
   | _ ->
       EAnnot (e, type2scheme ty)
 
@@ -186,7 +186,7 @@ let ecomment c e =
   EComment (c, e)
 
 let bcast x ty =
-  (PVar x, annotate (EMagic (EVar x)) ty)
+  (PVar x, annotate ty (EMagic (EVar x)))
 
 let non_exhaustive_let pat e1 e2 =
   let branch1 = { branchpat = pat; branchbody = e2 }
