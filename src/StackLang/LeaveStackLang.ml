@@ -126,10 +126,9 @@ let assertfalsedef =
   def assertfalse @@
   EAnnot (
     EFun ([ PUnit ],
-      blet (
-        [ PUnit, eprintf internal_failure []],
+      blet
+        [ PUnit, eprintf internal_failure []]
         eassertfalse
-      )
     ),
     scheme [ "a" ] (arrow tunit (tvar "a"))
   )
@@ -184,22 +183,20 @@ let discard =
   prefix "discard"
 
 let discarddef =
-  def discard (
-    let lexer, lexbuf, token = "lexer", "lexbuf", "token" in
-    EFun (
-      [ PVar lexer; PVar lexbuf ],
-      let lexer, lexbuf = EVar lexer, EVar lexbuf in
-      blet (
-        [ (PVar token, EApp (lexer, [ lexbuf ])) ],
-        let token = EVar token in
-        blet (
-          trace
-            "Lookahead token is now %s (%d-%d)"
-            [ EApp (EVar print_token, [ token ]);
-              lexbuf |> lex_start_p |> pos_cnum;
-              lexbuf |> lex_curr_p  |> pos_cnum ],
-          token
-  ))))
+  def discard @@
+  let lexer, lexbuf, token = "lexer", "lexbuf", "token" in
+  efun [ PVar lexer; PVar lexbuf ] @@
+  let lexer, lexbuf = EVar lexer, EVar lexbuf in
+  blet [ (PVar token, EApp (lexer, [ lexbuf ])) ] @@
+  let token = EVar token in
+  blet (
+    trace
+      "Lookahead token is now %s (%d-%d)"
+      [ EApp (EVar print_token, [ token ]);
+        lexbuf |> lex_start_p |> pos_cnum;
+        lexbuf |> lex_curr_p  |> pos_cnum ]
+  )
+  token
 
 (* -------------------------------------------------------------------------- *)
 
@@ -452,12 +449,14 @@ let entrydef (nt : string) label defs =
   let lexer, lexbuf = EmitStackLang.(lexer, lexbuf) in
   let data = finaldataname (Nonterminal.lookup nt) in
   let semv = "v" in
-  def nt (EFun (
-    [ pxvar lexer; pxvar lexbuf ],
-    blet ([ pxvar stack, EUnit ],
-    blet ([ PData (data, [pvar semv]), jump label ],
+  let def =
+    def nt @@
+    efun [ pxvar lexer; pxvar lexbuf ] @@
+    blet [ pxvar stack, EUnit ] @@
+    blet [ PData (data, [pvar semv]), jump label ] @@
     evar semv
-  )))) :: defs
+  in
+  def :: defs
 
 (* -------------------------------------------------------------------------- *)
 
@@ -688,7 +687,7 @@ let rec compile_block block =
           exvar stack :: compile_values vs
         )
       in
-      blet ([ pxvar stack, data ], compile_block block)
+      blet [ pxvar stack, data ] (compile_block block)
 
   | IPop (ps, cell, block) ->
       assert (ps <> []);
@@ -698,7 +697,7 @@ let rec compile_block block =
           pxvar stack :: compile_patterns ps
         )
       in
-      blet ([ data, exvar stack ], compile_block block)
+      blet [ data, exvar stack ] (compile_block block)
 
   | IPeek (ps, cell, block) ->
       assert (ps <> []);
@@ -708,7 +707,7 @@ let rec compile_block block =
           PWildcard :: compile_patterns ps
         )
       in
-      blet ([ data, exvar stack ], compile_block block)
+      blet [ data, exvar stack ] (compile_block block)
 
   | IDef (bs, IJump label) ->
       (* We identify the pattern [IDef (_, IJump _)], that is, a set of
@@ -722,19 +721,17 @@ let rec compile_block block =
       compile_bindings bs (compile_block block)
 
   | IPrim (p, prim, block) ->
-      blet (
-        [ compile_pattern p, compile_prim prim ],
-        compile_block block
-      )
+      blet
+        [ compile_pattern p, compile_prim prim ]
+        (compile_block block)
 
   | ITrace (message, block) ->
       (* An [ITrace] instruction is compiled to either an [eprintf]
          instruction or a comment. *)
       if Settings.trace then
-        blet (
-          trace message [],
-          compile_block block
-        )
+        blet
+          (trace message [])
+          (compile_block block)
       else
         EComment (message, compile_block block)
 

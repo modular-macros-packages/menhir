@@ -222,26 +222,22 @@ let reducebody prod =
     Action.expr (Production.action prod)
   in
 
-  EComment (
-    Production.print prod,
-    blet (
-      (pat, EVar stack) ::                  (* destructure the stack *)
-      casts @                               (* perform type casts *)
-      posbindings @                         (* bind [startp] and [endp] *)
-      [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
+  ecomment (Production.print prod) @@
+  blet (
+    (pat, EVar stack) ::                (* destructure the stack *)
+    casts @                             (* perform type casts *)
+    posbindings @                       (* bind [startp] and [endp] *)
+    [ PVar semv, act ]                  (* run the user's code and bind [semv] *)
+  ) @@
 
-      (* Return a new stack, onto which we have pushed a new stack cell. *)
-
-      ERecord [                             (* the new stack cell *)
-        fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
-        fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
-        fstartp, EVar startp;               (* the newly computed start and end positions *)
-        fendp, EVar endp;
-        fnext, EVar stack;                  (* this is the stack after popping *)
-      ]
-
-    )
-  )
+  (* Return a new stack, onto which we have pushed a new stack cell. *)
+  ERecord [                             (* the new stack cell *)
+    fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
+    fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
+    fstartp, EVar startp;               (* the newly computed start and end positions *)
+    fendp, EVar endp;
+    fnext, EVar stack;                  (* this is the stack after popping *)
+  ]
 
 (* This is the body of the semantic action associated with production
    [prod]. It takes just one parameter, namely the environment [env]. *)

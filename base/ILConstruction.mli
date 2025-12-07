@@ -102,7 +102,7 @@ val annotate: typ -> expr -> expr
 
 (**[blet pes e] constructs a nested sequence of [let] definitions.
    Certain simplifications are performed on the fly. *)
-val blet: (pattern * expr) list * expr -> expr
+val blet: (pattern * expr) list -> expr -> expr
 
 (**[mlet ps es e] constructs a nested sequence of [let] definitions.
    Certain simplifications are performed on the fly.

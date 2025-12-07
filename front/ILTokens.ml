@@ -41,7 +41,7 @@ end)
 
   let tok_bind_unit tok pat e =
     if Terminal.ocamltype tok = None then
-      blet ([ (pat, EUnit) ], e)
+      blet [ (pat, EUnit) ] e
     else
       e
 

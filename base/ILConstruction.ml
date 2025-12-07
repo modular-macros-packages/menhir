@@ -129,7 +129,7 @@ let rec simplify = function
   | binding :: bindings ->
       binding :: simplify bindings
 
-let rec blet (bindings, body) =
+let rec blet bindings body =
   let bindings = simplify bindings in
   match bindings, body with
   | [], _ ->
@@ -139,12 +139,12 @@ let rec blet (bindings, body) =
       e
   | (PUnit, EUnit) :: bindings, _ ->
       (* Reduce [let () = () in e] to just [e]. *)
-      blet (bindings, body)
+      blet bindings body
   | _, _ ->
       ELet (bindings, body)
 
 let mlet formals actuals body =
-  blet (List.combine formals actuals, body)
+  blet (List.combine formals actuals) body
 
 let eletand (bindings, body) =
   let bindings = simplify bindings in

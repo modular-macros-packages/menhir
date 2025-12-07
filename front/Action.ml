@@ -48,7 +48,7 @@ let make priority semvars keywords expr =
 (* Building [let x = a1 in a2]. *)
 
 let compose x a1 a2 =
-  let expr      = blet ([ PVar x, a1.expr ], a2.expr)
+  let expr      = blet [ PVar x, a1.expr ] a2.expr
   and semvars   = StringSet.(union a1.semvars (remove x a2.semvars))
   and keywords  = KeywordSet.union a1.keywords a2.keywords
   and priority  = max a1.priority a2.priority in
@@ -57,7 +57,7 @@ let compose x a1 a2 =
 (* Building [let p = x in a]. *)
 
 let bind bvp p x a =
-  let expr      = blet ([ p, EVar x ], a.expr)
+  let expr      = blet [ p, EVar x ] a.expr
   and semvars   = StringSet.(add x (diff a.semvars (of_list bvp)))
   and keywords  = a.keywords
   and priority  = a.priority in

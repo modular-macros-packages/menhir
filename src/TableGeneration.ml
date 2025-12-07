@@ -142,12 +142,15 @@ let unflatten (n : int) (get : var) : expr =
    specialized with [get_displacement] and [get_data]. *)
 
 let row_displacement_decode get_displacement get_data : expr =
+  let get_displacement e = eapp (EVar get_displacement) [e]
+  and get_data e = eapp (EVar get_data) [e] in
   let decode = sprintf "%s.RowDisplacementDecode.decode" X.runtimelib in
+  let decode e = eapp (EVar decode) [e] in
   efun [ PVar i; PVar j ] @@
-  blet (
-    [ PVar k, EApp (EVar decode, [ EApp (EVar get_displacement, [ EVar i ])]) ],
-    EApp (EVar get_data, [ add (EVar k) (EVar j) ])
-  )
+  let i, j = EVar i, EVar j in
+  blet [ PVar k, decode (get_displacement i) ] @@
+  let k = EVar k in
+  get_data (add k j)
 
 (* [read_row_via get_data get_entry] generates the IL expression
    [fun i -> LinearizedArray.read_row_via get_data get_entry i]. *)
