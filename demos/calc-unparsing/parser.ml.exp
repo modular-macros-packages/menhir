@@ -371,22 +371,22 @@ module Tables = struct
   let token2terminal : token -> int =
     fun _tok ->
       match _tok with
-      | DIV ->
-          8
-      | EOL ->
-          7
-      | INT _ ->
-          6
-      | LPAREN ->
-          5
-      | MINUS ->
-          4
-      | PLUS ->
-          3
-      | RPAREN ->
-          2
       | TIMES ->
           1
+      | RPAREN ->
+          2
+      | PLUS ->
+          3
+      | MINUS ->
+          4
+      | LPAREN ->
+          5
+      | INT _ ->
+          6
+      | EOL ->
+          7
+      | DIV ->
+          8
   
   let error_terminal =
     0
@@ -394,25 +394,25 @@ module Tables = struct
   let token2value : token -> Obj.t =
     fun _tok ->
       match _tok with
-      | DIV ->
+      | TIMES ->
           Obj.repr ()
-      | EOL ->
+      | RPAREN ->
+          Obj.repr ()
+      | PLUS ->
+          Obj.repr ()
+      | MINUS ->
+          Obj.repr ()
+      | LPAREN ->
           Obj.repr ()
       | INT _v ->
           Obj.repr (_v : 
 # 3 "demos/calc-unparsing/parser.mly"
        (int)
-# 406 "demos/calc-unparsing/parser.ml"
+# 412 "demos/calc-unparsing/parser.ml"
           )
-      | LPAREN ->
+      | EOL ->
           Obj.repr ()
-      | MINUS ->
-          Obj.repr ()
-      | PLUS ->
-          Obj.repr ()
-      | RPAREN ->
-          Obj.repr ()
-      | TIMES ->
+      | DIV ->
           Obj.repr ()
   
   let default_reduction =

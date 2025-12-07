@@ -102,18 +102,18 @@ let _menhir_action_5 =
 let _menhir_print_token : token -> string =
   fun _tok ->
     match _tok with
-    | EOL ->
-        "EOL"
-    | INT _ ->
-        "INT"
-    | LPAREN ->
-        "LPAREN"
-    | PLUS ->
-        "PLUS"
-    | RPAREN ->
-        "RPAREN"
     | TIMES ->
         "TIMES"
+    | RPAREN ->
+        "RPAREN"
+    | PLUS ->
+        "PLUS"
+    | LPAREN ->
+        "LPAREN"
+    | INT _ ->
+        "INT"
+    | EOL ->
+        "EOL"
 
 let _menhir_fail : unit -> 'a =
   fun () ->

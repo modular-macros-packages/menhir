@@ -149,22 +149,22 @@ let _menhir_action_8 =
 let _menhir_print_token : token -> string =
   fun _tok ->
     match _tok with
-    | DIV ->
-        "DIV"
-    | EOL ->
-        "EOL"
-    | INT _ ->
-        "INT"
-    | LPAREN ->
-        "LPAREN"
-    | MINUS ->
-        "MINUS"
-    | PLUS ->
-        "PLUS"
-    | RPAREN ->
-        "RPAREN"
     | TIMES ->
         "TIMES"
+    | RPAREN ->
+        "RPAREN"
+    | PLUS ->
+        "PLUS"
+    | MINUS ->
+        "MINUS"
+    | LPAREN ->
+        "LPAREN"
+    | INT _ ->
+        "INT"
+    | EOL ->
+        "EOL"
+    | DIV ->
+        "DIV"
 
 let _menhir_fail : unit -> 'a =
   fun () ->
