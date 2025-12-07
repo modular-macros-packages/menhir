@@ -532,6 +532,11 @@ and array_field f e =
 and pat0 f = function
   | PUnit ->
       fprintf f "()"
+  | PIntConst k ->
+      if k >= 0 then
+        fprintf f "%d" k
+      else
+        fprintf f "(%d)" k
   | PWildcard ->
       fprintf f "_"
   | PVar x ->

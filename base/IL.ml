@@ -291,6 +291,7 @@ and pattern =
   (* Data deconstruction. Tuples of length 1 are considered nonexistent,
      that is, [PTuple [p]] is considered the same pattern as [p]. *)
   | PUnit
+  | PIntConst of int
   | PData of string * pattern list
   | PTuple of pattern list
   | PRecord of (string * pattern) list
