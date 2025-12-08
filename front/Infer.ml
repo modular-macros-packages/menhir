@@ -89,17 +89,17 @@ let decode s =
    type provided by the user. E.g., the user may declare the type [> `A ],
    while OCaml may infer the type [> `A | `B ]. *)
 
-(* [annotate_expr e nt] annotates the expression [e] with the type information
+(* [annotate_expr nt e] annotates the expression [e] with the type information
    associated with the nonterminal symbol [nt]. The expression is annotated
    possibly twice: once with the type variable [ntvar nt] and once with the
    type that the user has possibly provided via a %type declaration. *)
 
-let opt_annotate_expr (e : expr) (oty : ocamltype option) : expr =
+let opt_annotate_expr (oty : ocamltype option) (e : expr) : expr =
   Option.fold (fun ty e -> annotate (TypTextual ty) e) oty e
 
-let annotate_expr (e : expr) (nt : nonterminal) : expr =
+let annotate_expr (nt : nonterminal) (e : expr) : expr =
   let e = annotate (ntvar nt) e in
-  let e = opt_annotate_expr e (ocamltype_of_symbol grammar nt) in
+  let e = opt_annotate_expr (ocamltype_of_symbol grammar nt) e in
   e
 
 (* [annotate_pat p nt] annotates the pattern [p] with the type information
@@ -203,7 +203,7 @@ let action_formals branch : pattern list =
 
 let action_def nt branch : expr =
   let formals = action_formals branch
-  and body = annotate_expr (Action.expr branch.action) nt in
+  and body = annotate_expr nt (Action.expr branch.action) in
   efun formals body
 
 (* -------------------------------------------------------------------------- *)
