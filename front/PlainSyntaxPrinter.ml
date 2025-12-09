@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Printf
+let sprintf = Printf.sprintf
 open Located
 open Attribute
 open PlainSyntax
@@ -27,8 +27,15 @@ type mode =
   | PrintForOCamlyacc
   | PrintUnitActions of bool
 
-module Print (X : sig val mode : mode end) = struct
+module Print (X : sig
+  val mode : mode
+  val channel : out_channel
+  val grammar : grammar
+end) = struct
 open X
+
+let emit format =
+  Printf.fprintf channel format
 
 (* -------------------------------------------------------------------------- *)
 
@@ -99,11 +106,11 @@ let print_binding id =
 (* Testing whether it is permitted to print OCaml code
    (semantic actions, prelude, postlude). *)
 
-let if_ocaml_code_permitted f x =
+let if_ocaml_code_permitted f =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc ->
-      f x
+      f()
   | PrintUnitActions _ ->
       (* In these modes, all OCaml code is omitted: semantic actions,
          preludes, postludes, etc. *)
@@ -125,14 +132,14 @@ let attributes_printed : bool =
 
 (* Printing a semantic action. *)
 
-let print_semantic_action f g branch =
+let print_semantic_action branch =
   let e = Action.expr branch.action in
   match mode with
   | PrintUnitActions _ ->
       (* In the unit-action modes, we print a pair of empty braces. *)
       ()
   | PrintNormal ->
-      ILPrinter.print_expr f e
+      ILPrinter.print_expr channel e
   | PrintForOCamlyacc ->
        (* In ocamlyacc-compatibility mode, the code must be wrapped in
           [let]-bindings whose right-hand side uses the [$i] keywords. *)
@@ -142,11 +149,8 @@ let print_semantic_action f g branch =
           and symbol = producer.prod_symbol in
           (* Test if [symbol] is a terminal symbol whose type is [unit]. *)
           let is_unit_token =
-            try
-              let prop = StringMap.find symbol g.tokens in
-              prop.tk_ocamltype = None
-            with Not_found ->
-              symbol = "error"
+            is_terminal grammar symbol &&
+            ocamltype_of_token grammar symbol = None
           in
           (* Define the variable [id] as a synonym for [$(i+1)]. *)
           (* As an exception to this rule, if [symbol] is a terminal symbol
@@ -167,39 +171,39 @@ let print_semantic_action f g branch =
           unless we restrict the use of [$i] to the outermost scope. (Reported
           by Kenji Maillard.) *)
       let e = ILConstruction.eletand (bindings, e) in
-      ILPrinter.print_expr f e
+      ILPrinter.print_expr channel e
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing preludes and postludes. *)
 
-let print_preludes f g =
-  g.preludes |> List.iter @@ fun prelude ->
-  fprintf f "%%{%s%%}\n" (value prelude)
+let print_preludes () =
+  grammar.preludes |> List.iter @@ fun prelude ->
+  emit "%%{%s%%}\n" (value prelude)
 
-let print_postludes f g =
-  g.postludes |> List.iter @@ fun postlude ->
-  fprintf f "%s\n" (value postlude)
+let print_postludes () =
+  grammar.postludes |> List.iter @@ fun postlude ->
+  emit "%s\n" (value postlude)
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing %start declarations. *)
 
-let print_start_symbols f g =
-  g.start_symbols |> StringSet.iter @@ fun symbol ->
-  fprintf f "%%start %s\n" (MString.normalize symbol)
+let print_start_symbols () =
+  grammar.start_symbols |> StringSet.iter @@ fun symbol ->
+  emit "%%start %s\n" (MString.normalize symbol)
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing %parameter declarations. *)
 
-let print_parameter f parameter =
-  fprintf f "%%parameter<%s>\n" (value parameter)
+let print_parameter parameter =
+  emit "%%parameter<%s>\n" (value parameter)
 
-let print_parameters f g =
+let print_parameters () =
   match mode with
   | PrintNormal ->
-      List.iter (print_parameter f) g.parameters
+      List.iter print_parameter grammar.parameters
   | PrintForOCamlyacc
   | PrintUnitActions _ ->
        (* %parameter declarations are not supported by ocamlyacc,
@@ -211,13 +215,13 @@ let print_parameters f g =
 
 (* Printing attributes. *)
 
-let print_attribute f { key; payload; origin } =
+let print_attribute { key; payload; origin } =
   ignore origin;
   if attributes_printed then
-    fprintf f " [@%s %s]" key payload
+    emit " [@%s %s]" key payload
 
-let print_attributes f attrs =
-  List.iter (print_attribute f) attrs
+let print_attributes attrs =
+  List.iter print_attribute attrs
 
 (* -------------------------------------------------------------------------- *)
 
@@ -249,40 +253,40 @@ let compare_tokens (_token, prop) (_token', prop') =
   | PrecedenceLevel mv, PrecedenceLevel mv' ->
       compare_pairs InputFile.compare Int.compare (value mv) (value mv')
 
-let print_token_declarations f g =
-  g.tokens |> StringMap.iter @@ fun token prop ->
-  if prop.tk_is_declared then
-    fprintf f "%%token%s %s%a\n"
-      (print_token_type prop)
-      token
-      print_attributes prop.tk_attributes
+let print_token_declarations () =
+  grammar.tokens |> StringMap.iter @@ fun token prop ->
+  if prop.tk_is_declared then begin
+    emit "%%token%s %s" (print_token_type prop) token;
+    print_attributes prop.tk_attributes;
+    emit "\n"
+  end
 
-let print_precedence_declarations f g =
+let print_precedence_declarations () =
   (* Sort the tokens wrt. precedence, and group them into levels. *)
-  let levels = MList.group compare_tokens (StringMap.bindings g.tokens) in
+  let levels = MList.group compare_tokens (StringMap.bindings grammar.tokens) in
   (* Print the precedence declarations: %left, %right, %nonassoc. *)
   levels |> List.iter @@ fun (level : (string * properties) list) ->
   let (_token, prop) = List.hd level in
   (* Do nothing about the tokens that have no precedence. *)
   if prop.tk_precedence <> UndefinedPrecedence then begin
-    fprintf f "%s" (print_assoc prop.tk_associativity);
+    emit "%s" (print_assoc prop.tk_associativity);
     List.iter (fun (token, _prop) ->
-      fprintf f " %s" token
+      emit " %s" token
     ) level;
-    fprintf f "\n"
+    emit "\n"
   end
 
-let print_tokens f g =
-  print_token_declarations f g;
-  print_precedence_declarations f g
+let print_tokens f =
+  print_token_declarations f;
+  print_precedence_declarations f
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing %type declarations. *)
 
-let print_types f g =
-  g.types |> StringMap.iter @@ fun symbol ty ->
-  fprintf f "%%type%s %s\n"
+let print_types () =
+  grammar.types |> StringMap.iter @@ fun symbol ty ->
+  emit "%%type%s %s\n"
     (print_nonterminal_type ty)
     (MString.normalize symbol)
 
@@ -290,28 +294,28 @@ let print_types f g =
 
 (* Printing branches and rules. *)
 
-let print_producer sep f producer =
-  fprintf f "%s%s%s%a"
+let print_producer sep producer =
+  emit "%s%s%s"
     (sep())
     (print_binding (prod_id producer))
-    (MString.normalize producer.prod_symbol)
-    print_attributes producer.prod_attributes
+    (MString.normalize producer.prod_symbol);
+  print_attributes producer.prod_attributes
 
-let print_branch f g branch =
+let print_branch branch =
   (* Print the producers. *)
   let sep = MString.this_then_that "" " " in
-  List.iter (print_producer sep f) branch.producers;
+  List.iter (print_producer sep) branch.producers;
   (* Print the %prec annotation, if there is one. *)
   Option.iter (fun x ->
-    fprintf f " %%prec %s" (value x)
+    emit " %%prec %s" (value x)
   ) branch.prec_annotation;
   (* Newline, indentation, semantic action. *)
-  fprintf f "\n    {";
-  print_semantic_action f g branch;
-  fprintf f "}";
+  emit "\n    {";
+  print_semantic_action branch;
+  emit "}";
   (* The branch attributes follow the semantic action. *)
-  print_attributes f branch.br_attributes;
-  fprintf f "\n"
+  print_attributes branch.br_attributes;
+  emit "\n"
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
@@ -344,38 +348,43 @@ let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
       (* To compare two rules, it suffices to compare their first productions. *)
       compare_branches b b'
 
-let print_rule f g (nt, r) =
-  fprintf f "\n%s%a:\n" (MString.normalize nt) print_attributes r.attributes;
+let print_branches branches =
   (* Menhir accepts a leading "|", but bison does not. Let's not print it.
      So, we print a bar-separated list. *)
   let sep = MString.this_then_that ("  ") ("| ") in
-  r.branches |> List.iter @@ fun br ->
-  fprintf f "%s" (sep());
-  print_branch f g br
+  branches |> List.iter @@ fun branch ->
+  emit "%s" (sep());
+  print_branch branch
 
-let print_rules f g =
-  let rules = List.sort compare_rules (StringMap.bindings g.rules) in
-  List.iter (print_rule f g) rules
+let print_rule (nt, r) =
+  emit "\n%s" (MString.normalize nt);
+  print_attributes r.attributes;
+  emit ":\n";
+  print_branches r.branches
+
+let print_rules () =
+  let rules = List.sort compare_rules (StringMap.bindings grammar.rules) in
+  List.iter print_rule rules
 
 (* -------------------------------------------------------------------------- *)
 
 (* Printing %on_error_reduce declarations. *)
 
-let print_on_error_reduce_declarations f g =
+let print_on_error_reduce_declarations () =
   let cmp (_nt, oel) (_nt', oel') = compare_production_levels oel oel' in
-  MList.group cmp (StringMap.bindings g.on_error_reduce)
+  MList.group cmp (StringMap.bindings grammar.on_error_reduce)
   |> List.iter @@ fun level ->
-  fprintf f "%%on_error_reduce";
+  emit "%%on_error_reduce";
   List.iter (fun (nt, _level) ->
-    fprintf f " %s" (MString.normalize nt)
+    emit " %s" (MString.normalize nt)
   ) level;
-  fprintf f "\n"
+  emit "\n"
 
-let print_on_error_reduce_declarations f g =
+let print_on_error_reduce_declarations f =
   match mode with
   | PrintNormal
   | PrintUnitActions _ ->
-      print_on_error_reduce_declarations f g
+      print_on_error_reduce_declarations f
   | PrintForOCamlyacc ->
       (* %on_error_reduce declarations are not supported by ocamlyacc *)
       ()
@@ -384,33 +393,37 @@ let print_on_error_reduce_declarations f g =
 
 (* Printing %attribute declarations. *)
 
-let print_grammar_attribute f { key; payload; origin } =
+let print_grammar_attribute { key; payload; origin } =
   ignore origin;
   if attributes_printed then
-    fprintf f "%%[@%s %s]\n" key payload
+    emit "%%[@%s %s]\n" key payload
 
-let print_grammar_attributes f g =
-  List.iter (print_grammar_attribute f) g.gr_attributes
+let print_grammar_attributes () =
+  List.iter print_grammar_attribute grammar.gr_attributes
 
 (* -------------------------------------------------------------------------- *)
 
 (* The main entry point. *)
 
-let print f g =
-  print_parameters f g;
-  if_ocaml_code_permitted (print_preludes f) g;
-  print_start_symbols f g;
-  print_tokens f g;
-  print_types f g;
-  print_on_error_reduce_declarations f g;
-  print_grammar_attributes f g;
-  fprintf f "%%%%\n";
-  print_rules f g;
-  fprintf f "\n%%%%\n";
-  if_ocaml_code_permitted (print_postludes f) g
+let print f =
+  print_parameters f;
+  if_ocaml_code_permitted (fun () -> print_preludes f);
+  print_start_symbols f;
+  print_tokens f;
+  print_types f;
+  print_on_error_reduce_declarations f;
+  print_grammar_attributes f;
+  emit "%%%%\n";
+  print_rules f;
+  emit "\n%%%%\n";
+  if_ocaml_code_permitted (fun () -> print_postludes f)
 
-end
+end (* Print *)
 
-let print mode =
-  let module P = Print(struct let mode = mode end) in
-  P.print
+let print mode channel grammar =
+  let module P = Print(struct
+    let mode = mode
+    let channel = channel
+    let grammar = grammar
+  end) in
+  P.print()
