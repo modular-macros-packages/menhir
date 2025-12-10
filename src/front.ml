@@ -328,7 +328,8 @@ let grammar =
   | Some policy ->
       monitor @@ fun c ->
       Time.time (message policy) @@ fun () ->
-      ExpandNullable.transform c (getG 1) policy grammar
+      let forceful = false in
+      ExpandNullable.transform c (getG 1) forceful policy grammar
   | None ->
       grammar
 

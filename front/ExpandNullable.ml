@@ -24,6 +24,13 @@ module Make
   val main: channel
   val policy: policy
   val grammar: grammar
+
+  (***When [forceful] is [true], any %prec annotations and %on_error_reduce
+      declarations that seem problematic are silently erased. This is used
+      by TestGLR. When [forceful] is [false], which is the normal setting,
+      these problematic annotations give rise to errors. *)
+  val forceful: bool
+
 end) ()
 = struct
 open X
@@ -297,6 +304,24 @@ let () =
       "the start symbol %s is nullable, therefore cannot be eliminated."
       nt
 
+(* If [forceful] is true, we forcefully transform the grammar to remove
+   problematic %prec annotations. Otherwise, (below,) we detect these
+   annotations and fail. *)
+
+let grammar =
+  if forceful then
+    let rules =
+      grammar.rules |> M.mapi @@ fun nt rule ->
+      let branches =
+        rule.branches |> List.map @@ fun branch ->
+        if will_be_expanded_at_least_once nt || is_right_nullable branch then
+          { branch with prec_annotation = None }
+        else branch
+      in { rule with branches }
+    in { grammar with rules }
+  else
+    grammar
+
 (* The productions of a nullable symbol (which, according to the desired
    policy, will be expanded away) must not carry %prec annotations. *)
 
@@ -321,6 +346,19 @@ let () =
     Report.error main [ position prec ]
       "because this production has a nullable suffix,\n\
        which will be expanded away, it must not carry a %%prec annotation."
+
+(* If [forceful] is true, we forcefully transform the grammar to remove
+   problematic %on_error_reduce declarations. Otherwise, (below,) we detect
+   these declarations and fail. *)
+
+let grammar =
+  if forceful then
+    let on_error_reduce =
+      grammar.on_error_reduce |> M.filter @@ fun nt _level ->
+      not (will_be_expanded_at_least_once nt)
+    in { grammar with on_error_reduce }
+  else
+    grammar
 
 (* A symbol that will be expanded away should not be mentioned in an
    %on_error_reduce declaration. (We are perhaps too conservative and signal
@@ -508,11 +546,12 @@ let transformation policy =
   | `ExpandNullableSuffixes ->
       "eliminating right nullable suffixes"
 
-let transform main aux policy grammar =
+let transform main aux forceful policy grammar =
   let module M = Make(struct
     let main = main
     let policy = policy
     let grammar = grammar
+    let forceful = forceful
   end)() in
   (* Display information messages about the original grammar. *)
   M.info aux;
@@ -525,6 +564,7 @@ let transform main aux policy grammar =
     let main = main
     let policy = policy
     let grammar = grammar
+    let forceful = false
   end)() in
   M.info aux;
   grammar

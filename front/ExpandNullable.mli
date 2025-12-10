@@ -26,8 +26,11 @@ type policy =
   | `ExpandNullableSuffixParticipants
   | `ExpandNullableSuffixes ]
 
-(**[transform main aux policy grammar] transforms the grammar by expanding
-   away some or all nullable symbols, following the policy [policy]. Errors
-   and warnings are reported via the channel [main]. Information messages
-   about the grammar are emitted on the channel [aux]. *)
-val transform: channel -> channel -> policy -> grammar -> grammar
+(**[transform main aux forceful policy grammar] transforms the grammar by
+   expanding away some or all nullable symbols, following the policy [policy].
+   The flag [forceful] determines whether problematic %prec annotations and
+   problematic %on_error_reduce declarations should be forcefully removed;
+   this flag should normally be [false]. Errors and warnings are reported via
+   the channel [main]. Information messages about the grammar are emitted on
+   the channel [aux]. *)
+val transform: channel -> channel -> bool -> policy -> grammar -> grammar
