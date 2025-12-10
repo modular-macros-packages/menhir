@@ -489,9 +489,6 @@ let grammar =
   { grammar with rules; types }
   |> RemoveVoid.transform
   |> Inlining.inline main
-     (* TODO what about cycles? *)
-     (* TODO do we want to silence warnings? *)
-     (* TODO try to check ahead of time that no errors/warnings will arise *)
   |> Trim.trim Report.null (* do not warn about unreachable symbols *)
 
 end (* Run *)
