@@ -447,8 +447,10 @@ and exprk k f e =
     | EFun (ps, EAnnot (e, ts)) ->
         (* A special case for functions whose body carries a type annotation.
            In this case, the result type can be indicated before the function
-           arrow [->]. This syntax was introduced in OCaml 4.03. *)
-        fprintf f "fun%a : %a ->%a"
+           arrow [->]. This syntax was introduced in OCaml 4.03. The type
+           must not be a function type, though; we introduce parentheses to
+           avoid any problem. *)
+        fprintf f "fun%a : (%a) ->%a"
           (list pat0 space) ps
           scheme ts
           (indent 2 (exprk k)) e
