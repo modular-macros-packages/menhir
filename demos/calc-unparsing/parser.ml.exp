@@ -497,13 +497,13 @@ module MenhirInterpreter = struct
 end
 
 let main =
-  fun lexer lexbuf : (AST.main) ->
+  fun lexer lexbuf : ((AST.main)) ->
     Obj.magic (MenhirInterpreter.entry `Legacy 0 lexer lexbuf)
 
 module Incremental = struct
   
   let main =
-    fun initial_position : (AST.main) MenhirInterpreter.checkpoint ->
+    fun initial_position : ((AST.main) MenhirInterpreter.checkpoint) ->
       Obj.magic (MenhirInterpreter.start 0 initial_position)
   
 end
@@ -634,14 +634,14 @@ module CST = struct
     
     method visit_DIV = self#text "/"
     
-    method visit_main = fun t : 'r ->
+    method visit_main = fun t : ('r) ->
       match t with
       | MenhirSettle.CST.NonTerminal (8, csts) ->
           self#case_eol csts.(0)
       | _ ->
           assert false
     
-    method visit_expr = fun t : 'r ->
+    method visit_expr = fun t : ('r) ->
       match t with
       | MenhirSettle.CST.NonTerminal (1, csts) ->
           self#case_int (match csts.(0) with
@@ -664,28 +664,28 @@ module CST = struct
       | _ ->
           assert false
     
-    method case_int = fun x0 : 'r ->
+    method case_int = fun x0 : ('r) ->
       self#visit_INT x0
     
-    method case_paren = fun x1 : 'r ->
+    method case_paren = fun x1 : ('r) ->
       self#cat self#visit_LPAREN (self#cat (self#visit_expr x1) self#visit_RPAREN)
     
-    method case_neg = fun x1 : 'r ->
+    method case_neg = fun x1 : ('r) ->
       self#cat self#visit_MINUS (self#visit_expr x1)
     
-    method case_add = fun x0 x2 : 'r ->
+    method case_add = fun x0 x2 : ('r) ->
       self#cat (self#visit_expr x0) (self#cat self#visit_PLUS (self#visit_expr x2))
     
-    method case_sub = fun x0 x2 : 'r ->
+    method case_sub = fun x0 x2 : ('r) ->
       self#cat (self#visit_expr x0) (self#cat self#visit_MINUS (self#visit_expr x2))
     
-    method case_mul = fun x0 x2 : 'r ->
+    method case_mul = fun x0 x2 : ('r) ->
       self#cat (self#visit_expr x0) (self#cat self#visit_TIMES (self#visit_expr x2))
     
-    method case_div = fun x0 x2 : 'r ->
+    method case_div = fun x0 x2 : ('r) ->
       self#cat (self#visit_expr x0) (self#cat self#visit_DIV (self#visit_expr x2))
     
-    method case_eol = fun x0 : 'r ->
+    method case_eol = fun x0 : ('r) ->
       self#cat (self#visit_expr x0) self#visit_EOL
     
   end
