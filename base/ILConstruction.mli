@@ -100,6 +100,11 @@ val etuple: expr list -> expr
    type [ty]. Certain simplifications are performed on the fly. *)
 val annotate: typ -> expr -> expr
 
+(**[poly sigma e] annotates the expression [e] with the type scheme [sigma].
+   Currently, due to a bug in OCaml 4.07-4.10, our printer supports this only
+   in the case where [sigma] has locally abstract quantifiers. *)
+val poly: typescheme -> expr -> expr
+
 (**[blet pes e] constructs a nested sequence of [let] definitions.
    Certain simplifications are performed on the fly. *)
 val blet: (pattern * expr) list -> expr -> expr

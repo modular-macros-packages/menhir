@@ -246,6 +246,12 @@ and expr =
 
   (* Type annotation. *)
   | EAnnot of expr * typescheme
+      (* We allow a type scheme, with quantifiers, but our printer supports
+         this only at the top level of a definition: [let p = (e : σ)]. Such
+         a definition is printed under the form [let p : σ = e]. To work
+         around this limitation, use the smart constructor [poly]. *)
+      (* Furthermore, due to a bug in OCaml 4.07-4.10, our printer supports
+         this only in the case where [σ] has locally abstract quantifiers. *)
 
   (* Cheating on the typechecker. *)
   | EMagic of expr (* Obj.magic *)

@@ -114,6 +114,18 @@ let rec annotate ty e =
   | _ ->
       EAnnot (e, type2scheme ty)
 
+let poly sigma e =
+  match sigma.quantifiers with
+  | [] ->
+      (* If the type scheme [σ] has no quantifiers,
+         produce an ordinary type annotation. *)
+      annotate sigma.body e
+  | _ ->
+      (* If the type scheme [σ] has no quantifiers,
+         encode [e : σ] as [let x : σ = e in x]. *)
+      let x = "__menhir_poly" in
+      ELet ([PVar x, EAnnot (e, sigma)], EVar x)
+
 (* [simplify] removes bindings of the form [let v = v in ...] and
    [let _ = v in ...]. *)
 
