@@ -452,7 +452,7 @@ and exprk k f e =
            avoid any problem. *)
         fprintf f "fun%a : (%a) ->%a"
           (list pat0 space) ps
-          scheme ts
+          monomorphic_scheme ts
           (indent 2 (exprk k)) e
     | EFun (ps, e) ->
         fprintf f "fun%a ->%a" (list pat0 space) ps (indent 2 (exprk k)) e
@@ -499,7 +499,7 @@ and exprk k f e =
     | ETuple (_ :: _ :: _ as es) ->
         fprintf f "(%a)" (seplist app comma) es
     | EAnnot (e, s) ->
-        fprintf f "(%a : %a)" app e scheme_without_quantifiers s
+        fprintf f "(%a : %a)" app e monomorphic_scheme s
     | ERecordAccess (e, field) ->
         fprintf f "%a.%s" atom e field
     | ERecord fs ->
@@ -656,12 +656,12 @@ and scheme f scheme =
 (* [scheme_without_quantifiers] is used in places where the IL AST allows
    a type scheme, but the OCaml syntax requires a monotype. *)
 
-and scheme_without_quantifiers f scheme =
-  match scheme.quantifiers with
-  | [] ->
-      typ f scheme.body
-  | _ ->
-      assert false (* AST cannot be printed *)
+and is_monomorphic scheme =
+  scheme.quantifiers = []
+
+and monomorphic_scheme f scheme =
+  assert (is_monomorphic scheme);
+  typ f scheme.body
 
 (* -------------------------------------------------------------------------- *)
 
