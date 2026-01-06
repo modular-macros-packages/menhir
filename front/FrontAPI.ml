@@ -63,8 +63,8 @@ end
 module type EXN_SETTINGS = sig
 
   (**[exn_carries_state] determines whether the exception [Error] should carry
-     an argument, which is a state number. This is the state where a syntax
-     error is detected. This feature is supported only by the code back-end. *)
+     a state number. This is the state where a syntax error is detected. This
+     feature is supported only by the code back-end. *)
   val exn_carries_state: bool
 
   (**[fixedexc] determines whether the exception [Error] should be declared
