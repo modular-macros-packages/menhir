@@ -690,12 +690,29 @@ module CST : sig
   (**A concrete syntax tree is a terminal node (which carries a terminal
      symbol and has no children) or a non-terminal node -- which carries
      a production, and whose children correspond to the right-hand side
-     of this production; or an error node (which corresponds to a point
-     where the [error] token was shifted). *)
+     of this production.
+
+     If the grammar involves the token [error] then a concrete syntax tree
+     can also be an error node (which corresponds to a point where the
+     [error] token was shifted).
+
+     When a GLR parser is used, a concrete syntax tree can also be a
+     disjunction node, which proposes several ways of understanding an input
+     segment. All children of a disjunction node [CstDisj (nt, _)] must be
+     non-terminal nodes for the non-terminal symbol [nt]. They must not be
+     disjunction nodes.
+
+     When a GLR parser is used, a concrete syntax tree can form a DAG in
+     memory; that is, some subtrees can be shared. *)
   type cst =
     | CstTerminal of Terminal.t
     | CstNonTerminal of Production.t * cst array
     | CstError
+    | CstDisj of Nonterminal.t * cst list
+
+  (**[disj] is a smart constructor for disjunctions. In [disj nt cst1 cst2],
+     the tree [cst1] can be a disjunction; [cst2] must not be a disjunction. *)
+  val disj: Nonterminal.t -> cst -> cst -> cst
 
   (**[show c cst] pretty-prints the concrete syntax tree [cst] on the
      output channel [c]. *)

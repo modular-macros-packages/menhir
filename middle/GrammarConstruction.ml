@@ -1036,6 +1036,37 @@ module CST = struct
     | CstTerminal of Terminal.t
     | CstNonTerminal of Production.t * cst array
     | CstError
+    | CstDisj of Nonterminal.t * cst list
+
+  let unNT (cst : cst) : Nonterminal.t =
+    match cst with
+    | CstNonTerminal (prod, _) ->
+        Production.nt prod
+    | CstDisj (nt, _) ->
+        nt
+    | CstTerminal _
+    | CstError ->
+        assert false
+
+  let asDisj (cst : cst) : cst list =
+    match cst with
+    | CstNonTerminal _ ->
+        [cst]
+    | CstDisj (_, disjuncts) ->
+        disjuncts
+    | CstTerminal _
+    | CstError ->
+        assert false
+
+  let notDisj (cst : cst) : bool =
+    match cst with CstDisj _ -> false | _ -> true
+
+  let disj nt cst1 cst2 =
+    assert (unNT cst1 = nt);
+    assert (unNT cst2 = nt);
+    let disjuncts1 = asDisj cst1 in
+    assert (notDisj cst2);
+    CstDisj (nt, cst2 :: disjuncts1)
 
   (* This is a pretty-printer for concrete syntax trees. *)
 
@@ -1077,6 +1108,10 @@ module CST = struct
         )
     | CstError ->
         string "error"
+    | CstDisj (_nt, csts) ->
+        braces (group (nest 2 (
+          concat_map (fun cst -> build cst ^^ break 0) csts
+        )))
 
   let show f cst =
     ToChannel.pretty 0.8 80 f (build cst)
