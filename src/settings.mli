@@ -211,3 +211,12 @@ val expand_nullable:
   | `ExpandNullableSuffixParticipants
   | `ExpandNullableSuffixes ]
   option
+
+(**The undocumented flag [--kill-priorities] causes all priority
+   declarations to be ignored. *)
+val kill_priorities: bool
+
+(**The undocumented flag [--avoid-eos] artificially extends the grammar with a
+   new [EOF] terminal symbol so as to guarantee the absence of end-of-stream
+   conflicts. *)
+val avoid_eos: bool

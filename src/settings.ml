@@ -346,6 +346,12 @@ let pack_classic =
 let expand_nullable =
   ref None
 
+let kill_priorities =
+  ref false
+
+let avoid_eos =
+  ref false
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -386,6 +392,7 @@ let rocq_options (rocq : string) =
 
 let options = [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
+  "--avoid-eos", Arg.Set avoid_eos, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := `Canonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
@@ -416,6 +423,7 @@ let options = [
   "--interpret", Arg.Unit (fun () -> interpret := `Normal `DoNotShowCST), " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Unit (fun () -> interpret := `Normal `ShowCST), " Show a concrete syntax tree upon acceptance";
   "--interpret-error", Arg.Unit (fun () -> interpret := `Error), " Interpret an error sentence";
+  "--kill-priorities", Arg.Set kill_priorities, " (undocumented)";
   "--lalr", Arg.Unit (fun () -> construction_mode := `LALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
   "--log-automaton", Arg.Set_int Channels.logA, "<level> Log information about the automaton";
@@ -896,3 +904,8 @@ let incremental =
 
 let expand_nullable =
   !expand_nullable
+let kill_priorities =
+  !kill_priorities
+
+let avoid_eos =
+  !avoid_eos

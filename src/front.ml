@@ -193,6 +193,28 @@ let grammar =
 
 (* ------------------------------------------------------------------------- *)
 
+(* If [--kill-priorities] has been passed, kill all priority declarations. *)
+
+(* If [--avoid-eos] has been passed, artificially introduce a new [EOF]
+   terminal symbol so as to guarantee the absence of end-of-stream
+   conflicts. *)
+
+(* These two features can be useful when testing the GLR parsing algorithm. *)
+
+let grammar =
+  if Settings.kill_priorities then
+    KillPriorityDeclarations.kill grammar
+  else
+    grammar
+
+let grammar =
+  if Settings.avoid_eos then
+    AvoidEOS.transform grammar
+  else
+    grammar
+
+(* ------------------------------------------------------------------------- *)
+
 (* If [--only-tokens] was specified on the command line,
    produce the definition of the [token] type and stop. *)
 
