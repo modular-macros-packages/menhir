@@ -610,7 +610,9 @@ let rename_private_symbols clashes grammars tables : partial_grammar list =
             let x' = rename x grammar.pg_filename in
             note info [pos] "the nonterminal symbol %s is renamed %s.\n" x x';
             R.add x x' phi
-        | _ | exception Not_found ->
+        | _ ->
+            phi
+        | exception Not_found ->
             phi
       ) clashes R.empty
     in
