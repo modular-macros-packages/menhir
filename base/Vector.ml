@@ -610,7 +610,7 @@ let[@inline] equal equal a1 i1 j1 a2 i2 j2 =
   with Break ->
     false
 
-let[@inline] compare compare a1 i1 j1 a2 i2 j2 =
+let[@inline] compare cmp a1 i1 j1 a2 i2 j2 =
   assert (0 <= i1 && i1 <= j1 && i1 <= A.length a1);
   assert (0 <= i2 && i2 <= j2 && i2 <= A.length a2);
   let length1 = j1 - i1
@@ -619,11 +619,11 @@ let[@inline] compare compare a1 i1 j1 a2 i2 j2 =
   try
     let delta = i2 - i1 in
     for i = i1 to i1 + min length1 length2 - 1 do
-      let c = compare (A.unsafe_get a1 i) (A.unsafe_get a2 (i + delta)) in
+      let c = cmp (A.unsafe_get a1 i) (A.unsafe_get a2 (i + delta)) in
       if c <> 0 then
         raise (Break c)
     done;
-    Stdlib.Int.compare length1 length2
+    compare length1 length2 (* this is [Int.compare] *)
   with Break c ->
     c
 
