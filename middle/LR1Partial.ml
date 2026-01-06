@@ -71,7 +71,8 @@ let relevant : A.node -> bool =
     let discover _node = ()
     let traverse _source _label _target = ()
   end in
-  let module _ = DFS.Run(G)(M)(D) in
+  (* [let module _] is not allowed in OCaml 4.08. *)
+  let module U = DFS.Run(G)(M)(D) in
   M.is_marked
 
 (* -------------------------------------------------------------------------- *)

@@ -271,7 +271,8 @@ let () =
     let traverse _source _symbol _target = ()
     let discover = discover
   end in
-  let module _ = DFS.Run(ForwardEdges)(M)(D) in
+  (* [let module _] is not allowed in OCaml 4.08. *)
+  let module U = DFS.Run(ForwardEdges)(M)(D) in
   ()
 
 (* -------------------------------------------------------------------------- *)
