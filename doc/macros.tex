@@ -46,6 +46,7 @@
 \newcommand{\dinline}{\kw{\%inline}\xspace}
 \newcommand{\donerrorreduce}{\kw{\%on\_error\_reduce}\xspace}
 \newcommand{\dattribute}{\kw{\%attribute}\xspace}
+\newcommand{\dmerge}{\kw{\%merge}\xspace}
 \newcommand{\dpaction}[1]{\kw{\{} #1 \kw{\}}\xspace}
 \newcommand{\daction}{\dpaction{\textit{\ocaml code}}\xspace}
 \newcommand{\dpfaction}[1]{\kw{<} #1 \kw{>}\xspace}
@@ -93,7 +94,9 @@
 
 % Abbreviations.
 
+\newcommand{\ar}{\rightarrow}
 \newcommand{\menhir}{Menhir\xspace}
+\newcommand{\menhirGLR}{\texttt{MenhirGLR}\xspace}
 \newcommand{\menhirlib}{\texttt{MenhirLib}\xspace}
 \newcommand{\menhirsdk}{\texttt{MenhirSdk}\xspace}
 \newcommand{\rocqmenhirlib}{\texttt{MenhirLib}\xspace} % for now
@@ -125,6 +128,7 @@
 \newcommand{\legacy}{\texttt{legacy}\xspace}
 \newcommand{\simplified}{\texttt{simplified}\xspace}
 \newcommand{\atname}{\texttt{@name}\xspace}
+\newcommand{\mergefun}{\nt{merge\_function}\xspace}
 
 % Environments.
 
@@ -161,6 +165,7 @@
 \newcommand{\oexplain}{\oo{explain}}
 \newcommand{\oexternaltokens}{\oo{external-tokens}}
 \newcommand{\ofixedexc}{\oo{fixed-exception}}
+\newcommand{\oGLR}{\oo{GLR}}
 \newcommand{\oignoreone}{\oo{unused-token}}
 \newcommand{\oignoreall}{\oo{unused-tokens}}
 \newcommand{\oignoreprec}{\oo{unused-precedence-levels}}
@@ -231,3 +236,26 @@
 
 % Position keywords.
 \newcommand{\ksymbolstartpos}{\texttt{\$symbolstartpos}\xspace}
+\newcommand{\kstartpos}{\texttt{\$startpos}\xspace}
+\newcommand{\kendpos}{\texttt{\$endpos}\xspace}
+
+% GLR features.
+\newcommand{\reject}{\texttt{MenhirGLR.GLR.reject}\xspace} % TODO check
+\newcommand{\callreject}{\texttt{MenhirGLR.GLR.reject()}\xspace}
+
+% The type of the semantic values associated with a nonterminal symbol.
+\newcommand{\semvtype}[1]{\llbracket#1\rrbracket}
+\newcommand{\semvtyvar}{v}
+
+% A metavariable for a terminal or nonterminal symbol.
+\newcommand{\sym}{x}
+
+% Generated language.
+\newcommand{\lang}{\mathcal{L}}
+% Examples.
+\newcommand{\ntlist}{\nt{list}}
+\newcommand{\ntdecl}{\nt{decl}}
+\newcommand{\nelist}{\nt{nonempty\_list}}
+\newcommand{\llist}{\nt{llist}}
+\newcommand{\rlist}{\nt{rlist}}
+\newcommand{\twhere}{\textsf{where}}

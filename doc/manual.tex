@@ -5,6 +5,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{moreverb}
+\usepackage{stmaryrd}
 \usepackage{tikz}
 \usepackage{xspace}
 \usepackage{mymacros}
@@ -73,7 +74,7 @@ Menhir currently offers a choice between several ``back-ends'':
 \item When the ``code'' back-end is used,
       the semantic actions are fragments of OCaml code,
       and the parser produced by \menhir is a stand-alone piece of OCaml code.
-      The grammar must be placed in a file whose name ends with \mly,
+      The grammar is typically placed in a file whose name ends with \mly,
       such as \texttt{parser.mly}, and \menhir produces
       a parser whose implementation and interface are stored in the files
       \texttt{parser.ml} and \texttt{parser.mli}.
@@ -82,18 +83,27 @@ Menhir currently offers a choice between several ``back-ends'':
       the semantic actions are fragments of OCaml code,
       and the parser produced by \menhir is a piece of OCaml code
       that needs to be linked with the library \menhirlib.
-      The grammar must be placed in a file whose name ends with \mly,
+      The grammar is typically placed in a file whose name ends with \mly,
       such as \texttt{parser.mly}, and \menhir produces
       a parser whose implementation and interface are stored in the files
       \texttt{parser.ml} and \texttt{parser.mli}.
       The table back-end is selected by passing \otable on the command line.
+\item When the ``GLR'' back-end is used,
+      the semantic actions are fragments of OCaml code,
+      and the parser produced by \menhir is a piece of OCaml code
+      that needs to be linked with the library \menhirGLR.
+      The grammar is typically placed in a file whose name ends with \mly,
+      such as \texttt{parser.mly}, and \menhir produces
+      a parser whose implementation and interface are stored in the files
+      \texttt{parser.ml} and \texttt{parser.mli}.
+      The GLR back-end is selected by passing \oGLR on the command line.
 \item When the ``Rocq'' back-end is used,
       the semantic actions are fragments of Rocq code,
       and the parser produced by \menhir is a piece of Rocq code
       that contains not only a parser,
       but also a proof that this parser is correct and complete
       with respect to the grammar.
-      The grammar must be placed in a file whose name ends with \vy,
+      The grammar is typically placed in a file whose name ends with \vy,
       such as \texttt{parser.vy}, and \menhir produces
       \texttt{parser.v}.
 \end{itemize}
@@ -248,6 +258,10 @@ internally defined as a synonym for \texttt{Parsing.Parse\_error}. This means
 that an exception handler that catches \texttt{Parsing.Parse\_error} will also
 catch the generated parser's \texttt{Error}. This helps increase \menhir's
 compatibility with \ocamlyacc. There is otherwise no reason to use this switch.
+
+\docswitch{\oGLR} This switch causes \menhir to use the GLR back-end.
+This back-end uses the GLR algorithm and supports non-deterministic
+parsing (\sref{sec:GLR}).
 
 \docswitch{\oinfer, \oinferwrite, \oinferread} See \sref{sec:build}.
 
@@ -491,6 +505,11 @@ must be fully qualified.
 
 \section{Syntax of grammar specifications}
 
+% Merge functions (which appear at the end of a rule, both in the old syntax
+% and in the new syntax) and default merge functions (which are declarations)
+% are shown in \fref{fig:syntax} but are not explained here.
+% They are explained in \sref{sec:GLR}.
+
 \newcommand{\modifier}{(\,\dquestion \metachoice \dplus \metachoice \dstar\hspace{-.3mm})}
 
 \begin{figure}
@@ -515,17 +534,23 @@ must be fully qualified.
 && \dattribute \sepspacelist{\nt{actual}} \sepspacelist{\nt{attribute}} \\
 && \kw{\%} \nt{attribute} \\ % a grammar-wide attribute
 && \donerrorreduce \sepspacelist{\nt{lid}} \\
+&& \mergefun \\
 \nt{attribute} \is
     \kw{[@} \nt{name} \nt{payload} \kw{]}
+\\
+\mergefun \is
+  \dmerge \daction
 \\[4mm]
 
 \emph{old syntax} ---
 \nt{rule} \is
-   \optional{\dpublic} \optional{\dinline}
-   \nt{lid}
-   \oparams{\nt{id}}
-   \deuxpoints
-   \precseplist\barre{\nt{group}} \\
+  \optional{\dpublic} \optional{\dinline}
+  \nt{lid}
+  \oparams{\nt{id}}
+  \deuxpoints
+  \precseplist\barre{\nt{group}}
+  \optional{\mergefun}
+\\
 
 \nt{group} \is
    \seplist{\ \barre}{\nt{production}}
@@ -552,6 +577,7 @@ must be fully qualified.
   \oparams{\nt{id}}
   (\,\dcolonequal \metachoice \dequalequal\hspace{-.2mm})
   \expression
+  \optional{\mergefun}
 \\
 \expression \is
   % a choice between sequence expressions:
@@ -947,7 +973,7 @@ keyword (\kw{\$1}, etc.).
 \label{sec:actual}
 
 In its simplest form, an actual is just a terminal or nonterminal symbol
-$\nt{id}$. If it is a parameterized non-terminal symbol (see
+$\nt{id}$. If it is a parameterized nonterminal symbol (see
 \sref{sec:templates}), then it should be applied:
 $\nt{id}\tuple{\nt{actual}}$.
 
@@ -959,7 +985,7 @@ An actual may also be an ``anonymous rule''. In that case, one writes
 just the rule's right-hand side, which takes the form $\seplist{\ \barre\
 }{\nt{group}}$.
 (This form is allowed only as an argument in an application.)
-This form is expanded on the fly to a definition of a fresh non-terminal
+This form is expanded on the fly to a definition of a fresh nonterminal
 symbol, which is declared \dinline.
 For instance, providing an anonymous rule as an argument to \nt{list}:
 \begin{quote}
@@ -973,7 +999,7 @@ is equivalent to writing this:
 \nt{list} \dlpar \nt{expression\_SEMICOLON} \drpar
 \end{tabular}
 \end{quote}
-where the non-terminal symbol \nt{expression\_SEMICOLON} is chosen fresh and is defined as follows:
+where the nonterminal symbol \nt{expression\_SEMICOLON} is chosen fresh and is defined as follows:
 \begin{quote}
 \begin{tabular}{l}
 \dinline \nt{expression\_SEMICOLON}:
@@ -2078,6 +2104,7 @@ actually begin to differ at the root. This should make visual comparisons
 significantly easier.
 
 \subsection{How are severe conflicts resolved in the end?}
+\label{sec:conflicts:severe:resolution}
 
 It is unspecified how severe conflicts are resolved. \menhir attempts to mimic
 \ocamlyacc's specification, that is, to resolve shift/reduce conflicts in favor
@@ -2465,8 +2492,8 @@ The syntax of sentences is as follows:
 
 Less formally, a sentence is a sequence of zero or more terminal symbols
 (\nt{uid}'s), separated with whitespace, terminated with a newline character,
-and optionally preceded with a non-terminal start symbol (\nt{lid}). This
-non-terminal symbol can be omitted if, and only if, the grammar only has one
+and optionally preceded with a nonterminal start symbol (\nt{lid}). This
+nonterminal symbol can be omitted if, and only if, the grammar only has one
 start symbol.
 
 For instance, here are four valid sentences for the grammar of arithmetic
@@ -2516,8 +2543,8 @@ An outcome is one of the following:
 When \ointerpretshowcst is set, each \texttt{ACCEPT} outcome is followed with
 a concrete syntax tree. A concrete syntax tree is either a leaf or a node.  A
 leaf is either a terminal symbol or \error. A node is annotated with a
-non-terminal symbol, and carries a sequence of immediate descendants that
-correspond to a valid expansion of this non-terminal symbol. \menhir's
+nonterminal symbol, and carries a sequence of immediate descendants that
+correspond to a valid expansion of this nonterminal symbol. \menhir's
 notation for concrete syntax trees is as follows:
 \begin{center}
 \begin{tabular}{r@{}c@{}l}
@@ -2988,7 +3015,7 @@ LR(1) automaton.
 %
 If \verb+s+ is such a state, then \verb+s+ should have at least one incoming
 transition, and all of its incoming transitions carry the same (terminal or
-non-terminal) symbol, say $A$. We say that $A$ is the \emph{incoming symbol}
+nonterminal) symbol, say $A$. We say that $A$ is the \emph{incoming symbol}
 of the state~\verb+s+.
 %
 The index \verb+'a+ is the type of the semantic values associated with $A$.
@@ -3343,7 +3370,7 @@ symbols.
 
 %% val nullable
 
-The function \verb+nullable+, applied to a non-terminal symbol,
+The function \verb+nullable+, applied to a nonterminal symbol,
 tells whether this symbol is nullable. A nonterminal symbol is nullable if and
 only if it produces the empty word $\epsilon$.
 %
@@ -3548,7 +3575,7 @@ Blank lines are significant: they are used as separators, both between
 entries, and (within an entry) between the sentences and the message. Thus,
 there cannot be a blank line between two sentences. (If there is one, \menhir
 becomes confused and may complain about some word not being ``a known
-non-terminal symbol''). There also cannot be a blank line inside a message.
+nonterminal symbol''). There also cannot be a blank line inside a message.
 
 \begin{figure}
 \begin{verbatim}
@@ -4156,7 +4183,7 @@ The generated file contains several modules:
 
 \begin{itemize}
 \item The module \verb+Gram+ defines the terminal and
-  non-terminal symbols, the grammar, and the semantic actions.
+  nonterminal symbols, the grammar, and the semantic actions.
 \item The module \verb+Aut+ contains the automaton
   generated by \menhir, together with a certificate that is checked by Rocq
   while establishing the soundness and completeness of the parser.
@@ -4176,8 +4203,8 @@ an infinite stream of tokens.
 % cf. la fonction compute_token_stream dans le Lexer.mll de Compcert:
 %   Cons (Rocq_existT (t, Obj.magic v), Lazy.from_fun compute_token_stream)
 
-The type~\verb+nonterminal+ of the non-terminal symbols is an inductive type,
-with one constructor for each non-terminal symbol. A non-terminal symbol named
+The type~\verb+nonterminal+ of the nonterminal symbols is an inductive type,
+with one constructor for each nonterminal symbol. A nonterminal symbol named
 \verb+Bar+ in the \verb+.vy+ file is named \verb+Bar'nt+ in Rocq.
 
 The proof of termination of an LR(1) parser in the case of invalid input seems
@@ -4313,6 +4340,10 @@ Users who wish to ignore this extra information can use the abbreviated
 notation \verb+Fail_pr+ and \verb+Fail_sr+. This notation is used in the
 statements of the theorems about the parser. It is available only in Rocq code,
 such as in \distrib{demos/rocq-minicalc}, not in extracted OCaml code.
+
+% ------------------------------------------------------------------------------
+
+\input{GLR}
 
 % ------------------------------------------------------------------------------
 
@@ -4914,8 +4945,8 @@ The list is roughly sorted by decreasing order of importance.
 % \item \ocamlyacc ignores multiple definitions of a token, even when two of them are at
 %       different types. \menhir rejects this.
 
-\item \ocamlyacc allows \dtype declarations to refer to terminal or non-terminal
-      symbols, whereas \menhir requires them to refer to non-terminal symbols.
+\item \ocamlyacc allows \dtype declarations to refer to terminal or nonterminal
+      symbols, whereas \menhir requires them to refer to nonterminal symbols.
       Types can be assigned to terminal symbols with a \dtoken declaration.
 
 \end{itemize}
@@ -5070,7 +5101,7 @@ syntax error messages. The module \menhirliblexerutil offers facilities for
 extracting the position of a syntax error out of the lexing buffer and
 displaying it in a readable way.
 
-\question{I need both \dinline and non-\dinline versions of a non-terminal
+\question{I need both \dinline and non-\dinline versions of a nonterminal
 symbol. Is this possible?} Define an \dinline version first, then use it to
 define a non-\dinline version, like this:
 \begin{verbatim}
