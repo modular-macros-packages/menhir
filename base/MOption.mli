@@ -20,14 +20,6 @@ val split: ('a * 'b) option -> 'a option * 'b option
    and [Some x1 <= Some x2] holds iff [x1 <= x2] holds. *)
 val sub: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
 
-(* The remaining functions are identical to those found in OCaml's standard
-   library. The module [Stdlib.Option] appeared in OCaml 4.08 so we cannot
-   yet rely on it. *)
-
-val map: ('a -> 'b) -> 'a option -> 'b option
-val iter: ('a -> unit) -> 'a option -> unit
+(** [fold none some o] is [none] if [o] is [None] and
+    is [some v] if [o] is [Some v]. *)
 val fold: ('a -> 'b -> 'b) -> 'a option -> 'b -> 'b
-val get: 'a option -> 'a
-val equal: ('a -> 'b -> bool) -> 'a option -> 'b option -> bool
-val compare: ('a -> 'b -> int) -> 'a option -> 'b option -> int
-val value: 'a option -> default:'a -> 'a

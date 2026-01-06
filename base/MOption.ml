@@ -30,56 +30,9 @@ let sub (<=) o1 o2 =
   | Some x1, Some x2 ->
       x1 <= x2
 
-let map f = function
-  | None ->
-      None
-  | Some x ->
-      Some (f x)
-
-let iter f o =
-  match o with
-  | None ->
-      ()
-  | Some x ->
-      f x
-
 let fold f o accu =
   match o with
   | None ->
       accu
   | Some x ->
       f x accu
-
-let get = function
-  | Some x ->
-      x
-  | None ->
-      assert false
-
-let equal equal o1 o2 =
-  match o1, o2 with
-  | None, None ->
-      true
-  | Some x1, Some x2 ->
-      equal x1 x2
-  | None, Some _
-  | Some _, None ->
-      false
-
-let compare cmp o1 o2 =
-  match o1, o2 with
-  | None, None ->
-      0
-  | Some x1, Some x2 ->
-      cmp x1 x2
-  | None, Some _ ->
-      -1
-  | Some _, None ->
-      +1
-
-let value o ~default =
-  match o with
-  | Some x ->
-      x
-  | None ->
-      default

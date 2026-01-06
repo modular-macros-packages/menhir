@@ -158,12 +158,12 @@ let prune block (query : label -> registers) : registers * block =
         query label,
         IJump label
     | ICaseToken (r, branches, odefault) ->
-        let used1, branches = List.(split (map prune_casetok_branch branches))
-        and used2, odefault = Option.(split (map prune odefault)) in
+        let used1, branches = List.split (List.map prune_casetok_branch branches)
+        and used2, odefault = MOption.split (Option.map prune odefault) in
         singleton r + union used1 + maybe used2,
         ICaseToken (r, branches, odefault)
     | ICaseTag (r, branches) ->
-        let used, branches = List.(split (map prune_casetag_branch branches)) in
+        let used, branches = List.split (List.map prune_casetag_branch branches) in
         singleton r + union used,
         ICaseTag (r, branches)
 

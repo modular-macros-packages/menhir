@@ -59,7 +59,7 @@ module IdSet = struct
 end
 
 let defined_identifiers (_, ido, _, _) accu =
-  Option.fold IdSet.add ido accu
+  MOption.fold IdSet.add ido accu
 
 let defined_identifiers (producers : early_producers) =
   List.fold_right defined_identifiers producers IdSet.empty

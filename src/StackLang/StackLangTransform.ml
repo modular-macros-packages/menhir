@@ -942,13 +942,13 @@ and transform_casetok env r branches odefault : int * int * block =
   (* Compute the total happiness. *)
   let add2 (_, happiness, _) accu = happiness + accu in
   let happiness = List.fold_right add2 branches 0 in
-  let happiness = Option.fold add2 odefault happiness in
+  let happiness = MOption.fold add2 odefault happiness in
   (* Compute the maximum number of PUSHes that are absorbed by a branch.
      This is the number of PUSHes that we must move into the [casetok]
      construct. It is therefore the number of PUSHes that we absorb. *)
   let max1 (j, _, _) accu = max j accu in
   let k = List.fold_right max1 branches 0 in
-  let k = Option.fold max1 odefault k in
+  let k = MOption.fold max1 odefault k in
   assert (k <= List.length env.pushes);
   (* Keep only the PUSHes that we wish to absorb. *)
   let pushes = take k env.pushes in

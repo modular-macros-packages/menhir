@@ -12,7 +12,7 @@ module N =
   Grammar.Nonterminal
 
 let sub final1 final2 =
-  Option.sub N.equal final1 final2
+  MOption.sub N.equal final1 final2
 
 let lub final1 final2 =
   match final1, final2 with

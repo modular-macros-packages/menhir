@@ -95,7 +95,7 @@ let decode s =
    type that the user has possibly provided via a %type declaration. *)
 
 let opt_annotate_expr (oty : ocamltype option) (e : expr) : expr =
-  Option.fold (fun ty e -> annotate (TypTextual ty) e) oty e
+  MOption.fold (fun ty e -> annotate (TypTextual ty) e) oty e
 
 let annotate_expr (nt : nonterminal) (e : expr) : expr =
   let e = annotate (ntvar nt) e in
@@ -106,7 +106,7 @@ let annotate_expr (nt : nonterminal) (e : expr) : expr =
    associated with the nonterminal symbol [nt]. *)
 
 let opt_annotate_pat (p : pattern) (oty : ocamltype option) : pattern =
-  Option.fold (fun ty p -> PAnnot (p, TypTextual ty)) oty p
+  MOption.fold (fun ty p -> PAnnot (p, TypTextual ty)) oty p
 
 let annotate_pat (p : pattern) (nt : nonterminal) : pattern =
   let p = PAnnot (p, ntvar nt) in
