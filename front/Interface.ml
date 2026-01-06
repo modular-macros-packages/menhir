@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-let provided = MList.provided
+let if1, provided = MList.(if1, provided)
 open PlainSyntax
 open PlainSyntaxAccessors
 open IL
@@ -42,15 +42,25 @@ end) = struct
     if X.fixedexc then Some "Parsing.Parse_error" else None
 
   (* If [exn_carries_state] is [true] then this exception carries an integer
-     parameter, which is a state number. Otherwise it carries no parameter. *)
+     parameter, which is a state number. If [exn_carries_top_nodes] then this
+     exception carries a list of top GSS nodes. Otherwise it carries no
+     parameter. *)
 
   let excparams =
-    if X.exn_carries_state then [ tint ] else []
+    if X.exn_carries_state then
+      [ tint ]
+    else if X.exn_carries_top_nodes then
+      let tnode = TypApp ("MenhirGLR.GSS.node", [ tint; tobj ]) in
+      [ tlist tnode ]
+    else
+      []
 
   let excdef =
     { excname; exceq; excparams }
 
   (* The toplevel function [stop] raises the exception [Error]. *)
+
+  (* Not available in the GLR back-end. *)
 
   let stop =
     "_eRR"
@@ -85,7 +95,7 @@ end) = struct
 
       (* The definition of [stop] must be placed at this particular point
          so as to avoid the risk of a name collision. *)
-      SIValDefs (false, [ stop_def ]) ::
+      if1 (not X.exn_carries_top_nodes) (SIValDefs (false, [ stop_def ])) @
 
       (* The type [token]. *)
       interface_to_structure (

@@ -32,6 +32,7 @@ val backend: [
   | `RocqBackend
   | `CodeBackend
   | `TableBackend
+  | `GLRBackend
   | `NoBackend
 ]
 

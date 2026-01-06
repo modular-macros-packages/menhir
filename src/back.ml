@@ -52,6 +52,11 @@ let () =
       Time.time "Printing" @@ fun () ->
       write B.program;
       Interface.write Front.grammar mli ()
+  | `GLRBackend ->
+      let module B = GLRBackend.Run () in
+      Time.time "Printing" @@ fun () ->
+      write B.program;
+      Interface.write Front.grammar mli ()
   | `RocqBackend ->
       let module B = RocqBackend.Run () in
       Time.time "Printing" @@ fun () ->

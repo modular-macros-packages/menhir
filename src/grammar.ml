@@ -12,10 +12,14 @@ open Channels
 
 (* Construct a rich view of the grammar. *)
 
+(* In GLR mode, request a topological numbering of the productions,
+   which is used to efficiently determine in what order reductions
+   should take place. *)
+
 module G =
   GrammarConstruction.Make
     (Front)
-    (struct let topological_numbering = false end)
+    (struct let topological_numbering = (Settings.backend = `GLRBackend) end)
     ()
 
 include G

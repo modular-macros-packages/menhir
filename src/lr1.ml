@@ -9,6 +9,7 @@
 (******************************************************************************)
 
 open Channels
+open MiddleAPI
 open Grammar
 
 (* -------------------------------------------------------------------------- *)
@@ -124,11 +125,28 @@ let () =
 
 (* 3. Perform severe conflict resolution. *)
 
-module A3 =
-  SevereConflictResolution.Run(A2)(Precedence)(struct let main = main end)
+(* When --GLR is selected, this step is skipped. *)
 
-let () =
-  A3.diagnostics() (* warnings *)
+(* This requires a module-level conditional construct,
+   which in OCaml today must be encoded in an ugly way. *)
+
+module type AUTOMATON =
+  LR1_AUTOMATON with module Lr0 = Lr0
+
+let a3 =
+  if Settings.backend = `GLRBackend then
+    (* Skip severe conflict resolution; define [A3] as [A2]. *)
+    (module A2 : AUTOMATON)
+  else
+    (* Perform severe conflict resolution. *)
+    let module A3 =
+      SevereConflictResolution.Run(A2)(Precedence)
+        (struct let main = main end)
+    in
+    A3.diagnostics(); (* warnings *)
+    (module A3 : AUTOMATON)
+
+module A3 = (val a3)
 
 (* -------------------------------------------------------------------------- *)
 

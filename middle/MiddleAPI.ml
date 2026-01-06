@@ -397,8 +397,10 @@ module Production : sig
   (**This type is numbered. *)
   include NUMBERED with type t := t
 
-  (**The integer index [start] is published so as to allow the table back-end
-     to produce code for [is_start]. It should not be used otherwise. *)
+  (**The productions whose index is less than [start] are the start
+     productions. The integer index [start] is published for use by
+     the table back-end and the GLR back-end. It should not be used
+     otherwise. *)
   val start: int
 
   (**[start_production nt] is the start production associated with the (user)

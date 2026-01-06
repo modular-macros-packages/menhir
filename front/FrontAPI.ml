@@ -67,6 +67,11 @@ module type EXN_SETTINGS = sig
      feature is supported only by the code back-end. *)
   val exn_carries_state: bool
 
+  (**[exn_carries_top_nodes] determines whether the exception [Error] should
+     carry a list of GSS top nodes. This feature is supported only by the GLR
+     back-end. *)
+  val exn_carries_top_nodes: bool
+
   (**[fixedexc] determines whether the exception [Error] should be declared
      equal to the exception [Parsing.Parse_error]. Setting this flag to [true]
      can be useful when full compatibility with ocamlyacc is desired. *)

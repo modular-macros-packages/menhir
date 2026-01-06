@@ -415,6 +415,7 @@ let options = [
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
+  "--GLR", Arg.Unit (set_backend `GLRBackend), " Use the GLR back-end";
   "--infer", Arg.Unit enable_infer, " Invoke ocamlc to do type inference";
   "--infer-protocol-supported", Arg.Unit (fun () -> exit 0), " Stop with exit code 0";
   "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
@@ -543,6 +544,7 @@ let backend =
       | `RocqBackend
       | `CodeBackend
       | `TableBackend
+      | `GLRBackend
       | `NoBackend
         as backend ->
           backend
@@ -557,6 +559,8 @@ let print_backend backend =
       "Rocq back-end"
   | `TableBackend ->
       "table back-end"
+  | `GLRBackend ->
+      "GLR back-end"
   | `NoBackend ->
       "no back-end"
 
@@ -582,8 +586,9 @@ let strategy =
          strategies; legacy is the default, for backward compatibility. *)
       `Legacy
   | _, `RocqBackend
+  | _, `GLRBackend
   | _, `NoBackend ->
-      (* The Rocq back-end does not care. *)
+      (* These back-ends do not care. *)
       `Simplified
   | (`Legacy as strategy), `CodeBackend ->
       error "Error: the %s does not allow --strategy %s.\n"
@@ -597,13 +602,6 @@ let strategy =
 
 let () =
   if !exn_carries_state
-  && backend = `TableBackend then
-    error
-      "Error: --exn-carries-state is supported only by the code back-end.\n\
-       It is not compatible with --table.\n"
-
-let () =
-  if !exn_carries_state
   && backend <> `CodeBackend then
     error
       "Error: --exn-carries-state is supported only by the code back-end.\n"
@@ -613,6 +611,20 @@ let () =
   && !fixedexc then
     error
       "Error: --fixed-exception and --exn-carries-state are incompatible.\n"
+
+(* [--fixed-exception] is not compatible with the GLR back-end. *)
+
+let () =
+  if !fixedexc
+  && backend = `GLRBackend then
+    error
+      "Error: --fixed-exception is not supported by the GLR back-end.\n"
+
+(* When the GLR back-end is active, the exception [Error] carries a list of
+   top nodes. *)
+
+let exn_carries_top_nodes =
+  backend = `GLRBackend
 
 (* ------------------------------------------------------------------------- *)
 
@@ -869,6 +881,7 @@ let () =
   match backend with
   | `ReferenceInterpreter
   | `TableBackend
+  | `GLRBackend
   | `RocqBackend
   | `NoBackend ->
       represent_everything()
@@ -904,6 +917,24 @@ let incremental =
 
 let expand_nullable =
   !expand_nullable
+
+(* [--GLR] implies [--expand-nullable-suffix-participants]
+   or [--expand-nullable-symbols]. Indeed, our GLR engine
+   does not support right nullable rules. *)
+
+let expand_nullable =
+  if backend = `GLRBackend then
+    match expand_nullable with
+    | None
+    | Some `ExpandNullableSuffixes ->
+        Some `ExpandNullableSuffixParticipants
+    | Some `ExpandNullableSuffixParticipants
+    | Some `ExpandNullableSymbols ->
+        expand_nullable
+  else
+    expand_nullable
+
+(* [--test-GLR] requires [--GLR]. *)
 let kill_priorities =
   !kill_priorities
 

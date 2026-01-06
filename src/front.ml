@@ -357,6 +357,14 @@ let grammar =
 
 (* ------------------------------------------------------------------------- *)
 
+(* Check that we have just the right amount of %merge functions. *)
+
+let () =
+  monitor @@ fun c ->
+  CheckMergeFunctions.check (Settings.backend = `GLRBackend) c grammar
+
+(* ------------------------------------------------------------------------- *)
+
 (* If [--only-preprocess] or [--only-preprocess-drop] was specified on the
    command line, print the grammar and stop. Otherwise, continue. *)
 
