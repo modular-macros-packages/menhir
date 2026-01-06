@@ -1,5 +1,91 @@
 # TODO
 
+## GLR
+
+### Before First Release
+
+* The combination --interpret --GLR should use the GLR reference interpreter.
+  Should it be documented?
+
+* The combination --cmly --GLR probably does not work. Test/document.
+
+* Should `--test-GLR` be kept? What should it do?
+  Should it require `--GLR`?
+  Set up `make test` so that the GLR algorithm is exercised on many grammars.
+  Remove `error` productions when --test-GLR is active.
+
+* ExpandNullable: improve the obscure message
+  "this transformation does not support the special token error"
+
+* Remove the fields `locked` and `initial`.
+
+### Later
+
+* `%merge` functions could be allowed to use `$loc`, `$startofs`, `$endofs`.
+
+* Imagine a pleasant language to let the user declare that a certain conflict
+  is tolerable and must therefore become silent.
+
+### Later, Maybe
+
+* Allow the user to declare certain nonterminal symbols unambiguous? This
+  would be equivalent to providing a merge function that raises `cannot
+  happen`. One might also wish to automatically prove that some symbols are
+  unambiguous.
+
+* Think about converting tree-sitter grammars to Menhir format, for testing.
+
+* In `doReductions`, McPeak's pseudo-code iterates: 1- over all top nodes, 2-
+  over all enabled reductions N → α, 3- over all paths of length |α|. If
+  several reduction actions are enabled in a single node, this seems
+  wasteful: we will iterate over all paths (down to a certain maximum depth)
+  several times. We should instead: A- build a map of depths to enabled
+  reductions; B- iterate over all paths down to the maximum depth, and
+  whenever we are at a depth where a reduction action is enabled, yield this
+  path.
+
+* Positions:
+  + If no terminal symbol keeps track of its locations then the vectors
+    `startpos` and `endpos` do not need to be populated.
+  + Add an optional warning when `$startpos` or `$endpos` is applied to
+    an empty production or to a nullable symbol.
+  + It might make sense to create new keywords that give direct access
+    to dates instead of source code positions. It would then be up to
+    the user to translate dates or date ranges into source code positions
+    or source code ranges.
+
+* The API based on `State.foreach_shift` and `State.foreach_reduction`
+  may be nice (it hides the input) but it forces us to consult the
+  input stream many times instead of just once. Inefficient?
+
+### Later, Definitely
+
+* Propose an incremental API, with persistent checkpoints.
+
+* Propose an inspection API. Allow cooperation with LRgrep in GLR mode.
+
+* It would be interesting to write code that dumps the GSS in .dot format.
+  (Ideally, it would be desirable to print/show also the semantic values.)
+
+### Questions for Myself
+
+* Try to explain why Elkhound's performance on Eeb is O(n^4).
+  (EEb = data/benchmark-GLR/arith0)
+  * Is iterating on all top nodes after each reduction
+    sufficient to kill performance?
+  * find a benchmark where slowing down MiniBabySet.find to Ω(n) kills performance
+  * find a benchmark where slowing down the priority queue to Ω(n) kills performance
+
+* Can one imagine a pathological case where the parser keeps switching in
+  and out of deterministic mode? Measure performance there.
+
+* Answer the question in NOTE C by testing.
+
+* If a state is reached via a goto edge labeled with `nt` where `nt` is
+  nullable then in this state there should exist no reduction opportunities,
+  only shift actions. (This follows from the absence of right nullable
+  productions.) Check this (at compile time).
+
 ## Unparsing API
 
 * Try to explain how the user can convince herself that backtracking is never
