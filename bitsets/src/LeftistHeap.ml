@@ -47,7 +47,7 @@ end) = struct
         check (Some k) r;
         (* The rank [rk] is the length of the right spine. *)
         assert (rk = rank r + 1);
-        parent_key |> Option.iter @@ fun pk ->
+        match parent_key with None -> () | Some pk ->
         (* The heap property holds: the key [k] of this node is less
            than the key [pk] of the parent node. *)
         assert (Key.compare pk k <= 0)
