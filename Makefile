@@ -272,7 +272,7 @@ MENHIRLIB_FILES   := \
 # Every other file carries the "regular" header & license.
 
 SRCDIRS         := base front middle driver src executable
-LIBDIRS         := lib sdk cst
+LIBDIRS         := lib sdk cst GLR
 HEADACHE        := headache
 SRCHEAD         := $(CURRENT)/headers/regular-header
 LIBHEAD         := $(CURRENT)/headers/library-header

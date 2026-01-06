@@ -18,6 +18,7 @@ depends: [
   "menhirLib" {= version}
   "menhirSdk" {= version}
   "menhirCST" {= version}
+  "menhirGLR" {= version}
 ]
 synopsis: "An LR(1) parser generator"
 x-maintenance-intent: ["(latest)"]

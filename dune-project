@@ -8,6 +8,10 @@
 )
 
 (package
+  (name menhirGLR)
+)
+
+(package
   (name menhirCST)
 )
 
