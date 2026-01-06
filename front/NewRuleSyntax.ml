@@ -469,11 +469,12 @@ and productions (e : expression) : parameterized_branch list =
 
 let rule (rule : rule) : parameterized_rule =
   {
-    pr_public = rule.rule_public;
-    pr_inline = rule.rule_inline;
+    pr_public      = rule.rule_public;
+    pr_inline      = rule.rule_inline;
     pr_nt          = value rule.rule_lhs;
     pr_positions   = [ position rule.rule_lhs ];
     pr_attributes  = rule.rule_attributes;
     pr_parameters  = List.map value rule.rule_formals;
-    pr_branches    = productions rule.rule_rhs
+    pr_branches    = productions rule.rule_rhs;
+    pr_merge       = rule.rule_merge;
   }

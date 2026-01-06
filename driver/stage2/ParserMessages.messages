@@ -91,8 +91,10 @@ A rule is expected at this point.
 # ----------------------------------------------------------------------------
 
 grammar: PERCENTPERCENT UID COLON ACTION SEMI UNDERSCORE
+grammar: PERCENTPERCENT LID COLON ACTION MERGE ACTION TYPE
 
-# We have seen a semicolon, so we know that the previous rule is complete.
+# We have seen a semicolon or a %merge function,
+# so we know that the previous rule is complete.
 
 # Do not mention that %% or EOF would be accepted at this point.
 
@@ -515,6 +517,15 @@ another rule.
 
 # ----------------------------------------------------------------------------
 
+grammar: PERCENTPERCENT LET LID COLONEQUAL ACTION MERGE ACTION TYPE
+
+# We have seen a %merge function
+# so we know that the previous rule is complete.
+
+At this point, another rule is expected.
+
+# ----------------------------------------------------------------------------
+
 grammar: PERCENTPERCENT LET LID COLONEQUAL UID TYPE
 
 # Ignore modifiers and attributes.
@@ -612,6 +623,25 @@ Examples of expressions:
   factor | ~ = term; ~ = op; ~ = factor; <EBinOp>
 
 # ----------------------------------------------------------------------------
+
+grammar: PERCENTPERCENT LID COLON ACTION MERGE UNDERSCORE
+
+# A merge function is expected.
+
+A merge function, delimited with curly braces, is expected at this point.
+Here is an example:
+  { fun e1 e2 -> Disjunction (e1, e2) }
+
+# ----------------------------------------------------------------------------
+
+grammar: MERGE UNDERSCORE
+
+# A default merge function is expected.
+
+A default merge function, delimited with curly braces, is now expected.
+Here are examples:
+  { fun symbol v1 v2 -> raise (Ambiguity (symbol, $loc)) }
+  { fun symbol v1 v2 -> log_ambiguity symbol $loc; v1 }
 
 # Local Variables:
 # mode: shell-script

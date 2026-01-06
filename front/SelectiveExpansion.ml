@@ -14,6 +14,13 @@ open Attribute
 open Syntax
 open Sort
 
+(* When a parameterized symbol is expanded (specialized), if it carries a
+   %merge function, then this function is copied. This can cause some code
+   duplication. If necessary, one could try to avoid this duplication, but the
+   current approach is simpler. (Currently, type inference is performed after
+   duplication. There is no requirement for the copies to share a common type
+   or even a common type scheme.) *)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Expansion modes. *)

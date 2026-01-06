@@ -14,8 +14,9 @@
    0. the crude parser produces dummy position information;
    1. the fancy parser exploits many features of Menhir;
    2. the fancy parser performs slightly more refined error handling;
-   3. the fancy parser supports anonymous rules.
-   4. the fancy parser supports the new rule syntax. */
+   3. the fancy parser supports anonymous rules;
+   4. the fancy parser supports the new rule syntax;
+   5. the fancy parser supports %merge. */
 
 %{
 
@@ -27,7 +28,7 @@ open Located
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
-%token PERCENTATTRIBUTE SEMI
+%token PERCENTATTRIBUTE SEMI MERGE
 %token <string Located.located> LID UID QID
 %token <string Located.located> HEADER
 %token <string Located.located> ANGLED
@@ -236,7 +237,8 @@ rule:
         pr_positions   = [ Located.position $2 ];
         pr_attributes  = $3;
         pr_parameters  = $4;
-        pr_branches    = List.flatten ($7 :: List.rev $8)
+        pr_branches    = List.flatten ($7 :: List.rev $8);
+        pr_merge       = None; (* %merge not supported *)
       }
     }
 

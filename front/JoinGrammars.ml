@@ -86,6 +86,16 @@ let implicit_properties pos =
 
 (* -------------------------------------------------------------------------- *)
 
+let join_default_merge_functions omfl1 mfl2 : merge_fun located =
+  match omfl1 with
+  | None ->
+      mfl2
+  | Some mfl1 ->
+      error main [ position mfl1; position mfl2 ]
+        "at most one default merge function can be provided."
+
+(* -------------------------------------------------------------------------- *)
+
 (* [join_declaration grammar decl] adds the declaration [decl] to the
    grammar [grammar]. *)
 
@@ -168,6 +178,12 @@ let join_declaration (grammar : grammar) decl : grammar =
   | DSymbolAttributes (actuals, attrs) ->
       { grammar with
         p_symbol_attributes = (actuals, attrs) :: grammar.p_symbol_attributes }
+
+  | DDefaultMergeFunction mfl ->
+      let p_default_merge =
+        Some (join_default_merge_functions grammar.p_default_merge mfl)
+      in
+      { grammar with p_default_merge }
 
 (* [join_declarations decls grammar] adds the declarations [decls] to the
    grammar [grammar]. *)
@@ -714,6 +730,7 @@ let empty : grammar =
     p_on_error_reduce         = [];
     p_grammar_attributes      = [];
     p_symbol_attributes       = [];
+    p_default_merge           = None;
   }
 
 (* We are at last ready to put everything together. *)

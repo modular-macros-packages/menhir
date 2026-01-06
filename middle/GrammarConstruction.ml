@@ -112,13 +112,20 @@ module Nonterminal = struct
   let attributes : attributes array =
     Array.make n []
 
+  let merge_function : merge_fun option array =
+    Array.make n None
+
   let () =
     grammar.rules |> StringMap.iter @@ fun symbol rule ->
     let nt = lookup symbol in
-    attributes.(nt) <- rule.attributes
+    attributes.(nt) <- rule.attributes;
+    merge_function.(nt) <- rule.merge
 
   let attributes nt =
     attributes.(nt)
+
+  let merge_function nt =
+    merge_function.(nt)
 
   let[@inline] iter_internal_start f =
     MInt.iteri start f

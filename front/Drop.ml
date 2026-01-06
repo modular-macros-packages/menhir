@@ -45,7 +45,8 @@ let drop_rule (rule : S.parameterized_rule) : T.rule =
   { branches = List.map drop_branch rule.pr_branches;
     positions = rule.pr_positions;
     inline_flag = rule.pr_inline;
-    attributes = rule.pr_attributes }
+    attributes = rule.pr_attributes;
+    merge = Option.map value rule.pr_merge }
 
 (* -------------------------------------------------------------------------- *)
 
@@ -112,5 +113,6 @@ let drop (g : S.grammar) : T.grammar =
     T.tokens          = g.p_tokens;
     T.on_error_reduce = drop_on_error_reduce_declarations g.p_on_error_reduce;
     T.gr_attributes   = g.p_grammar_attributes;
-    T.rules           = StringMap.map drop_rule g.p_rules
+    T.rules           = StringMap.map drop_rule g.p_rules;
+    T.default_merge   = g.p_default_merge;
   } |> add_attributes g.p_symbol_attributes

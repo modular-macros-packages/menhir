@@ -60,6 +60,10 @@ type filename =
 type action =
   Action.t
 
+(**A %merge function is a fragment of OCaml code. *)
+type merge_fun =
+  Action.t
+
 (**The associativity status of a terminal symbol. *)
 type associativity =
   | LeftAssoc

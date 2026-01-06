@@ -102,6 +102,18 @@ let annotate_expr (nt : nonterminal) (e : expr) : expr =
   let e = opt_annotate_expr (ocamltype_of_symbol grammar nt) e in
   e
 
+(* [annotate_merge_fun nt e] annotates the expression [e] with the type
+   of a merge function for the nonterminal symbol [nt]. As above, the
+   expression is annotated possibly twice. *)
+
+let annotate_merge_fun nt e =
+  let merge ty = marrow [ ty; ty ] ty in
+  let e = annotate (merge (ntvar nt)) e in
+  let oty = ocamltype_of_symbol grammar nt in
+  let return ty = marrow [ TypTextual ty; TypTextual ty ] (TypTextual ty) in
+  let e = MOption.fold (fun ty e -> annotate (return ty) e) oty e in
+  e
+
 (* [annotate_pat p nt] annotates the pattern [p] with the type information
    associated with the nonterminal symbol [nt]. *)
 
@@ -202,22 +214,53 @@ let action_formals branch : pattern list =
 (* [action_def nt branch] turns a branch into an OCaml function definition. *)
 
 let action_def nt branch : expr =
-  let formals = action_formals branch
-  and body = annotate_expr nt (Action.expr branch.action) in
-  efun formals body
+  efun (action_formals branch) @@
+  annotate_expr nt (Action.expr branch.action)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Code production for merge functions. *)
+
+(* [merge_def] turns a merge function into an OCaml function definition. *)
+
+let merge_formals : pattern list =
+  PAnnot (PVar "_startpos", tposition) ::
+  PAnnot (PVar "_endpos", tposition) ::
+  []
+
+let merge_def nt (mf : merge_fun) : expr =
+  efun merge_formals @@
+  annotate_merge_fun nt (Action.expr mf)
+
+(* [default_merge_def] turns a default merge function into an OCaml function
+   definition. *)
+
+(* A default merge function receives a string (the name of a nonterminal
+   symbol) and two values of unknown type and must return a value of the
+   same type. In other words, it must be polymorphic. *)
+
+let default_merge_def (mf : merge_fun) : expr =
+  efun merge_formals @@
+  let semv = "opaque_semantic_value" in
+  let sigma =
+    local_scheme [semv] @@
+    marrow [ tstring; tname semv; tname semv ] (tname semv)
+  in
+  poly sigma @@
+  Action.expr mf
 
 (* -------------------------------------------------------------------------- *)
 
 (* Code production for the entire grammar. *)
 
-(* [bindings()] turns the productions into a list of OCaml function definitions.
-   Each function is nameless. *)
+(* [basic_bindings()] turns the productions into a list of OCaml function
+   definitions. Each function is nameless. *)
 
 (* The productions that come from Menhir's standard library are placed first,
    so that type errors are not reported in them. A notion of priority is used
    for this purpose. *)
 
-let bindings () =
+let basic_bindings () =
   let cmp (prio1, _) (prio2, _) = Int.compare prio1 prio2 in
   StringMap.fold (fun nt rule accu ->
     List.fold_left (fun bindings branch ->
@@ -228,6 +271,29 @@ let bindings () =
   ) grammar.rules []
   |> List.sort cmp
   |> List.map snd
+
+(* [merge_bindings bindings] turns the merge functions into more bindings
+   and adds them to the accumulator [bindings]. *)
+
+let merge_bindings bindings =
+  StringMap.fold (fun nt rule bindings ->
+    match rule.merge with
+    | None ->
+        bindings
+    | Some mf ->
+        (PWildcard, merge_def nt mf) :: bindings
+  ) grammar.rules bindings
+
+(* [default_merge_binding bindings] turns the default merge function into zero
+   or one more bindings and adds them to the accumulator [bindings]. *)
+
+let default_merge_binding bindings =
+  match grammar.default_merge with
+  | None ->
+      bindings
+  | Some mfl ->
+      let mf = Located.value mfl in
+      (PWildcard, default_merge_def mf) :: bindings
 
 (* [program()] turns the grammar into an OCaml program. *)
 
@@ -246,7 +312,12 @@ let program () =
 
   let main_def =
     pdef (PTuple pats) @@
-    ELet (bindings(), annotate (TypTuple tys) EBottom)
+    let bindings =
+      default_merge_binding @@
+      merge_bindings @@
+      basic_bindings ()
+    in
+    ELet (bindings, annotate (TypTuple tys) EBottom)
   in
 
   (* Insert markers to delimit the part of the file that we are interested in.

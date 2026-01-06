@@ -119,6 +119,11 @@ module Nonterminal : sig
      symbol [nt]. *)
   val attributes: t -> attributes
 
+  (**[merge_function nt] is the (optional) %merge function associated with the
+     nonterminal symbol [nt]. This %merge function is exploited only when the
+     GLR back-end is selected. *)
+  val merge_function: t -> merge_fun option
+
   (**[iterx] enumerates the nonterminal symbols
      except the internal start symbols. *)
   val iterx: (t -> unit) -> unit

@@ -48,6 +48,9 @@ let rules =
    rules. As a side effect, we create a fresh definition, and return its
    name. *)
 
+(* The syntax of anonymous rules currently does not allow them to carry a
+   %merge function. This feature could be easily added if desired. *)
+
 let anonymous xs (branches : parameterized_branch list located) : parameter =
   let pos, branches = position branches, value branches in
   (* Compute the free symbols of [branches]. They should form a subset of
@@ -70,7 +73,8 @@ let anonymous xs (branches : parameterized_branch list located) : parameter =
     pr_positions   = [ pos ]; (* this list must not be empty *)
     pr_attributes  = [];
     pr_parameters  = xs;
-    pr_branches    = branches
+    pr_branches    = branches;
+    pr_merge       = None;
   } in
   (* Record this definition. *)
   rules := rule :: !rules;

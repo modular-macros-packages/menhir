@@ -117,7 +117,8 @@ let transform_decl env (decl : declaration located) =
     | DParameter _
     | DToken _
     | DStart _
-    | DGrammarAttribute _ ->
+    | DGrammarAttribute _
+    | DDefaultMergeFunction _ ->
         decl
     | DTokenProperties (t, assoc, prec) ->
         let t = transform_terminal pos env t in

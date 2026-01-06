@@ -356,11 +356,26 @@ let print_branches branches =
   emit "%s" (sep());
   print_branch branch
 
+let print_merge_fun omf =
+  omf |> Option.iter @@ fun mf ->
+  match mode with
+  | PrintNormal ->
+      emit "%%merge ";
+      ILPrinter.print_expr channel (Action.expr mf);
+      emit "\n"
+  | PrintForOCamlyacc ->
+      ()
+  | PrintUnitActions _ ->
+      emit "%%merge ";
+      emit "{ fun _ _ -> () }";
+      emit "\n"
+
 let print_rule (nt, r) =
   emit "\n%s" (MString.normalize nt);
   print_attributes r.attributes;
   emit ":\n";
-  print_branches r.branches
+  print_branches r.branches;
+  print_merge_fun r.merge
 
 let print_rules () =
   let rules = List.sort compare_rules (StringMap.bindings grammar.rules) in

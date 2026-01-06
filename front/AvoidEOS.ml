@@ -54,8 +54,9 @@ let new_start_rule symbol =
   let branches = [new_start_branch symbol]
   and positions = []
   and inline_flag = false
-  and attributes = [] in
-  { branches; positions; inline_flag; attributes }
+  and attributes = []
+  and merge = None in
+  { branches; positions; inline_flag; attributes; merge }
 
 let transform grammar =
   let start_symbols = StringSet.map rename grammar.start_symbols

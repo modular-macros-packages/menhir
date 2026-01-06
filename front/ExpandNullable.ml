@@ -268,10 +268,15 @@ let prime (producer : producer) : producer =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Before performing the transformation, check several preconditions are met.
-   In particular, we want to guarantee that calling [Inline.inline] cannot
-   fail, so we must check that the %inline and %inlined annotations that we
-   introduce are acceptable. *)
+(* Before performing the transformation, check that several preconditions are
+   met. In particular, we want to guarantee that calling [Inline.inline]
+   cannot fail, so we must check that the %inline and %inlined annotations
+   that we introduce are acceptable. *)
+
+(* We allow a symbol [N] that is expanded away to carry a %merge function.
+   This %merge function is then inherited by the symbols [Ne] and [Nne]. If
+   the symbol [N] itself survives (which is possible only when the policy is
+   [`ExpandNullableSuffixes]) then it keeps its %merge function, too. *)
 
 (* [should_mark_inline nt] determines whether the nonterminal symbol [nt]
    should be marked %inline, that is, eliminated. *)
@@ -419,7 +424,8 @@ let split_rule (nt : nonterminal) (rule : rule) : rule =
   and positions = rule.positions (* debatable *)
   and inline_flag = should_mark_inline nt
   and attributes = [] in
-  { branches; positions; inline_flag; attributes }
+  let merge = if inline_flag then None else rule.merge in
+  { branches; positions; inline_flag; attributes; merge }
 
 let empty_branch (branch : branch) : branch option =
   if Nullable.production branch then
@@ -437,8 +443,9 @@ let empty_rule (rule : rule) : rule =
   let branches = empty_branches rule.branches
   and positions = rule.positions (* debatable *)
   and inline_flag = true
-  and attributes = [] in
-  { branches; positions; inline_flag; attributes }
+  and attributes = []
+  and merge = rule.merge in
+  { branches; positions; inline_flag; attributes; merge }
 
 let prime_suffix i (producers : producers) : producers =
   assert (0 <= i && i <= List.length producers);
@@ -487,8 +494,9 @@ let nonempty_rule (rule : rule) : rule =
   let branches = nonempty_branches rule.branches
   and positions = rule.positions (* debatable *)
   and inline_flag = false
-  and attributes = [] in
-  { branches; positions; inline_flag; attributes }
+  and attributes = []
+  and merge = rule.merge in
+  { branches; positions; inline_flag; attributes; merge }
 
 let rules : rule M.t =
   M.fold (fun nt rule rules ->

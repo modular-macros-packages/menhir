@@ -80,6 +80,7 @@ type rule =
     positions   : range list;
     inline_flag : bool;
     attributes  : attributes;
+    merge       : merge_fun option;
   }
 
 (* ------------------------------------------------------------------------ *)
@@ -98,4 +99,5 @@ type grammar =
     on_error_reduce : on_error_reduce_level StringMap.t;
     gr_attributes   : attributes;
     rules           : rule StringMap.t;
+    default_merge   : merge_fun located option;
   }

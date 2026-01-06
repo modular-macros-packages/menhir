@@ -214,6 +214,29 @@ let check_inline_rule_has_no_attribute rule =
   | false, _ ->
       ()
 
+let check_inline_rule_has_no_merge_fun rule =
+  match rule.pr_inline, rule.pr_merge with
+  | true, Some _ ->
+      signal main rule.pr_positions
+        "the nonterminal symbol %s is declared %%inline.\n\
+         It cannot carry a merge function."
+        rule.pr_nt
+  | true, None
+  | false, _ ->
+      ()
+
+let check_merge_fun_keywords mflo =
+  let open Keyword in let open KeywordSet in
+  mflo |> Option.iter @@ fun mfl ->
+  let keywords = Action.keywords (value mfl) in
+  let permitted = of_list [ startpos; endpos ] in
+  let keywords = diff keywords permitted in
+  if not (is_empty keywords) then
+    let keyword = choose keywords in
+    signal main [position mfl]
+      "the keyword %s cannot be used in a merge function."
+      (Keyword.print keyword)
+
 let check_rule nt rule =
   (* The fact that the formal parameters of each rule have distinct names
      has already been checked in JoinGrammars. Nevertheless, it costs us
@@ -226,12 +249,19 @@ let check_rule nt rule =
      signal main rule.pr_positions
        "%s cannot be both a start symbol and inlined." nt;
   (* If a rule is marked %inline, then it must not carry an attribute. *)
-  check_inline_rule_has_no_attribute rule
+  check_inline_rule_has_no_attribute rule;
+  (* If a rule is marked %inline, then it must not carry a %merge function. *)
+  check_inline_rule_has_no_merge_fun rule;
+  (* If there is a %merge function then it should mention no keywords. *)
+  check_merge_fun_keywords rule.pr_merge
 
 (* Check every rule. *)
 
 let () =
   grammar.p_rules |> StringMap.iter check_rule
+
+let () =
+  check_merge_fun_keywords grammar.p_default_merge
 
 (* -------------------------------------------------------------------------- *)
 

@@ -130,6 +130,9 @@ type parameterized_rule =
     pr_branches   : parameterized_branch list;
     (**The productions. *)
 
+    pr_merge      : merge_fun located option;
+    (**An optional merge function. Exploited in GLR mode only. *)
+
   }
 
 (* -------------------------------------------------------------------------- *)
@@ -218,6 +221,9 @@ type rule =
     rule_rhs: expression;
     (**The productions. *)
 
+    rule_merge: merge_fun located option;
+    (**An optional merge function. Exploited in GLR mode only. *)
+
   }
 
 (* -------------------------------------------------------------------------- *)
@@ -253,6 +259,9 @@ type declaration =
 
   | DOnErrorReduce of parameter * on_error_reduce_level
     (**On-error-reduce declaration. *)
+
+  | DDefaultMergeFunction of merge_fun located
+    (**A default %merge function. *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -290,4 +299,5 @@ type grammar =
     p_grammar_attributes : attributes;
     p_symbol_attributes  : (parameter list * attributes) list;
     p_rules              : parameterized_rule StringMap.t;
+    p_default_merge      : merge_fun located option;
   }
