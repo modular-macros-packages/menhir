@@ -368,9 +368,6 @@ module SymbolMap : sig
 
   include Map.S with type key = Symbol.t
 
-  (**[find_opt] appears in OCaml 4.05. *)
-  val find_opt: key -> 'a t -> 'a option
-
   (**[terminals m] returns the terminal symbols in the domain of the map [m]. *)
   val terminals: 'a t -> TerminalSet.t
 

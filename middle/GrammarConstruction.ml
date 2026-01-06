@@ -491,14 +491,6 @@ module SymbolMap = struct
 
   include Map.Make(Symbol)
 
-  (* [find_opt] appears in OCaml 4.05. *)
-  let find_opt symbol m =
-    match find symbol m with
-    | v ->
-        Some v
-    | exception Not_found ->
-        None
-
   let terminals m =
     fold (fun symbol _ ts ->
       match symbol with
