@@ -12,6 +12,7 @@ DEMOS := \
   calc-syntax-errors \
   calc-two \
   generate-printers \
+  calc-GLR \
 
 ROCQDEMOS := \
   rocq-minicalc \
