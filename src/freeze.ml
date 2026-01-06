@@ -88,5 +88,12 @@ let () =
   if Settings.backend = `NoBackend then
     exit 0
 
+(* If a test of the GLR interpreter has been requested, run it now (and stop). *)
+
+(* Note: [TestGLR.benchmark] is currently unused. *)
+
+let () =
+  if Settings.test_GLR then (TestGLR.test(); exit 0)
+
 let force () =
   ()

@@ -346,6 +346,9 @@ let pack_classic =
 let expand_nullable =
   ref None
 
+let test_GLR =
+  ref false
+
 let kill_priorities =
   ref false
 
@@ -481,6 +484,7 @@ let options = [
   "--suggest-ocamlfind", Arg.Unit (fun () -> suggestion := SuggestUseOcamlfind),
                          " (deprecated)";
   "--table", Arg.Unit (set_backend `TableBackend), " Use the table back-end";
+  "--test-GLR", Arg.Set test_GLR, " (undocumented)";
   "--timings", Arg.Unit (fun () -> Time.set_output_channel (Some stderr)), " Output internal timings to stderr";
   "--timings-to", Arg.String (fun filename -> Time.set_output_channel (Some (open_out filename))), "<filename> Output internal timings to <filename>";
   "--trace", Arg.Set trace, " Generate tracing instructions";
@@ -935,6 +939,14 @@ let expand_nullable =
     expand_nullable
 
 (* [--test-GLR] requires [--GLR]. *)
+
+let test_GLR =
+  !test_GLR
+
+let () =
+  if test_GLR then
+    assert (backend = `GLRBackend)
+
 let kill_priorities =
   !kill_priorities
 

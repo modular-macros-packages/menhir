@@ -191,6 +191,23 @@ let grammar =
   | `Legacy ->
       grammar
 
+(* If [--test-GLR] has been selected, silently remove the productions that use
+   the [error] token. If [--GLR] has been selected, warn about uses of the
+   [error] token. *)
+
+let grammar =
+  if Settings.test_GLR then
+    Time.time "Checking that the error token is not used" @@ fun () ->
+    let reason = "because --test-GLR is selected,\n" in
+    CheckErrorTokenUsage.nowhere Report.null reason grammar
+  else if Settings.backend = `GLRBackend then
+    monitor @@ fun c ->
+    Time.time "Checking that the error token is not used" @@ fun () ->
+    let reason = "when --GLR is selected,\n" in
+    CheckErrorTokenUsage.nowhere c reason grammar
+  else
+    grammar
+
 (* ------------------------------------------------------------------------- *)
 
 (* If [--kill-priorities] has been passed, kill all priority declarations. *)
@@ -337,6 +354,11 @@ let grammar =
 (* If requested by the user, expand away some or all occurrences of nullable
    symbols. *)
 
+(* This process can fail in the presence of certain %prec annotations or
+   %on_error_reduce declarations. If [--test-GLR] has been passed on the
+   command line then we silently erase these problematic annotations, so
+   as to guarantee success. *)
+
 let message policy =
   match policy with
   | `ExpandNullableSymbols ->
@@ -350,7 +372,7 @@ let grammar =
   | Some policy ->
       monitor @@ fun c ->
       Time.time (message policy) @@ fun () ->
-      let forceful = false in
+      let forceful = Settings.test_GLR in
       ExpandNullable.transform c (getG 1) forceful policy grammar
   | None ->
       grammar

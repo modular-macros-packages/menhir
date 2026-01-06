@@ -213,6 +213,10 @@ val expand_nullable:
   | `ExpandNullableSuffixes ]
   option
 
+(**The undocumented flag [--test-GLR] requests a test of the GLR reference
+   interpreter. *)
+val test_GLR: bool
+
 (**The undocumented flag [--kill-priorities] causes all priority
    declarations to be ignored. *)
 val kill_priorities: bool
