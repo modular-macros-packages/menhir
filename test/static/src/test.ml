@@ -45,8 +45,8 @@ let normalize s =
   String.map normalize s
 
 (* We distinguish two targets, [test] and [quick]. The latter is a subset of
-   the former. [quicktest] runs Menhir only, whereas [test] runs Menhir and
-   the OCaml compiler. *)
+   the former. [quick] runs Menhir only, whereas [test] runs Menhir and the
+   OCaml compiler. *)
 
 let test =
   "test"
@@ -394,7 +394,7 @@ let process_positive_test basenames : unit =
     "--timings-to"; timings;
   ] @ flags);
 
-  (* Force the previous commands to be run as part of quicktest. *)
+  (* Force the previous commands to be run as part of [quick]. *)
   print (conjunction quick [stacklang]);
 
   (* Compile the file produced by --only-preprocess-uu. Since the semantic
