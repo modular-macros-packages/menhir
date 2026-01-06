@@ -47,6 +47,14 @@ type subject =
 type keyword =
   | Position of subject * where * flavor
 
+(* Constants. *)
+
+let startpos =
+  Position (Left, WhereStart, FlavorPosition) (* $startpos *)
+
+let endpos =
+  Position (Left, WhereEnd  , FlavorPosition) (* $endpos *)
+
 (* ------------------------------------------------------------------------- *)
 (* These auxiliary functions help map a [Position] keyword to the
    name of the variable that the keyword is replaced with. *)
@@ -90,6 +98,27 @@ let kposvar keyword =
   match keyword with
   | Position (s, w, f) ->
       posvar s w f
+
+let print_subject = function
+  | Before ->
+      "($0)"
+  | Left ->
+      ""
+  | RightNamed id ->
+      Printf.sprintf "(%s)" id
+
+let print keyword =
+  match keyword with
+  | Position (s, w, f) ->
+      match w, f with
+      | _, (FlavorOffset | FlavorPosition) ->
+          Printf.sprintf "$%s%s%s" (where w) (flavor f) (print_subject s)
+      | WhereSymbolStart, FlavorLocation ->
+          "$sloc"
+      | WhereStart, FlavorLocation ->
+          Printf.sprintf "$loc%s" (print_subject s)
+      | _ ->
+          assert false
 
 (* ------------------------------------------------------------------------- *)
 (* Sets of keywords. *)

@@ -57,13 +57,23 @@ type subject =
 type keyword =
   | Position of subject * where * flavor
 
-(**This maps a [Position] keyword to the name of the variable that the
-   keyword is replaced with. *)
+(**[startpos] is the keyword [$startpos]. *)
+val startpos: keyword
+
+(**[endpos] is the keyword [$endpos]. *)
+val endpos: keyword
+
+(**[posvar] maps a keyword to the name of the variable that this keyword
+   is replaced with. *)
 val posvar: subject -> where -> flavor -> string
 
-(**[kposvar] maps a [Position] keyword to the name of the variable
-   that the keyword is replaced with. *)
+(**[kposvar] maps a keyword to the name of the variable that this keyword
+   is replaced with. *)
 val kposvar: keyword -> string
+
+(**[print] prints a keyword. This function is currently untested and not
+   guaranteed to be correct. It should be used with caution. *)
+val print: keyword -> string
 
 (**Sets of keywords. *)
 module KeywordSet : sig
