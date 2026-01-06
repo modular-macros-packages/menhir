@@ -116,7 +116,7 @@ module S = struct
   exception Found of elt
 
   let select (p : elt -> bool) (s : t) : elt option =
-    (* OCaml 4.05: choose_opt (filter p s) *)
+    (* choose_opt (filter p s) *)
     try
       iter (fun x -> if p x then raise (Found x)) s;
       None
