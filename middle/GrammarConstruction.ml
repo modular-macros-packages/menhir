@@ -610,8 +610,8 @@ module Production = struct
      arbitrary order. If [X.topological_numbering] is [true] and if the
      grammar is acyclic then we number the productions in such a way that if
      [A → α] receives a smaller number than [B → β] then A => B is permitted
-     but B => A is impossible. We expect to exploit this property in our GLR
-     parsing algorithm. *)
+     but B => A is impossible. We exploit this property in the GLR parsing
+     algorithm. *)
 
   let foreach_rule : (nonterminal -> rule -> 's -> 's) -> 's -> 's =
     (* An arbitrary ordering. *)
