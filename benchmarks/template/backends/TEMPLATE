@@ -16,5 +16,5 @@
 
 (executable
   (name main)
-  (libraries menhirLib unix sek)
+  (libraries menhirLib menhirGLR unix sek)
 )
