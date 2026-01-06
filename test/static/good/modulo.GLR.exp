@@ -1,0 +1,32 @@
+File "modulo.mly", line 61, characters 7-13:
+Warning: the token ASSUME is unused.
+File "modulo.mly", line 65, characters 7-11:
+Warning: the token BANG is unused.
+File "modulo.mly", line 42, characters 7-15:
+Warning: the token LBRACKET is unused.
+File "modulo.mly", line 43, characters 7-15:
+Warning: the token RBRACKET is unused.
+File "modulo.mly", line 68, characters 7-12:
+Warning: the token SLASH is unused.
+File "modulo.mly", line 64, characters 7-12:
+Warning: the token SOLVE is unused.
+10 out of 48 nonterminal symbols are nullable.
+There are 133 productions, whose total length is 323.
+13 out of 133 productions are right nullable.
+8 out of 10 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+2 out of 50 nonterminal symbols are nullable.
+There are 151 productions, whose total length is 381.
+0 out of 151 productions are right nullable.
+0 out of 2 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 50 nonterminal symbols, among which 1 start symbols.
+Grammar has 57 terminal symbols.
+Grammar has 151 productions.
+Built an LR(0) automaton with 294 states.
+The grammar is not SLR(1) -- 8 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 294 states.
+Warning: 8 states have shift/reduce conflicts.
+108 out of 294 states have a default reduction.

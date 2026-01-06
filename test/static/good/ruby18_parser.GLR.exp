@@ -1,0 +1,33 @@
+File "ruby18_parser.mly", line 39, characters 16-19:
+Warning: the token EOF is unused.
+File "ruby18_parser.mly", line 88, characters 18-28:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "ruby18_parser.mly", line 1056, characters 18-28:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+50 out of 132 nonterminal symbols are nullable.
+There are 481 productions, whose total length is 1026.
+59 out of 481 productions are right nullable.
+16 out of 50 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+34 out of 141 nonterminal symbols are nullable.
+There are 595 productions, whose total length is 1380.
+0 out of 595 productions are right nullable.
+0 out of 34 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 141 nonterminal symbols, among which 1 start symbols.
+Grammar has 127 terminal symbols.
+Grammar has 595 productions.
+Built an LR(0) automaton with 936 states.
+The grammar is not SLR(1) -- 122 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 937 states.
+Warning: 53 states have shift/reduce conflicts.
+Warning: 12 states have reduce/reduce conflicts.
+405 out of 937 states have a default reduction.

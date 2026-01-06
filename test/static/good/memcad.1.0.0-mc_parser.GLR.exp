@@ -1,0 +1,23 @@
+File "memcad.1.0.0-mc_parser.mly", line 55, characters 7-12:
+Warning: the token T_eof is unused.
+File "memcad.1.0.0-mc_parser.mly", line 29, characters 19-31:
+Warning: the token V_size_arrow is unused.
+8 out of 17 nonterminal symbols are nullable.
+There are 64 productions, whose total length is 183.
+6 out of 64 productions are right nullable.
+6 out of 8 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+2 out of 19 nonterminal symbols are nullable.
+There are 80 productions, whose total length is 267.
+0 out of 80 productions are right nullable.
+0 out of 2 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 19 nonterminal symbols, among which 1 start symbols.
+Grammar has 48 terminal symbols.
+Grammar has 80 productions.
+Built an LR(0) automaton with 193 states.
+The grammar is not SLR(1) -- 1 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 193 states.
+66 out of 193 states have a default reduction.

@@ -1,0 +1,21 @@
+File "links.0.8-parser.mly", line 175, characters 41-52:
+Warning: the token MINUSLBRACE is unused.
+20 out of 190 nonterminal symbols are nullable.
+There are 578 productions, whose total length is 1374.
+6 out of 578 productions are right nullable.
+6 out of 20 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+14 out of 203 nonterminal symbols are nullable.
+There are 596 productions, whose total length is 1418.
+0 out of 596 productions are right nullable.
+0 out of 14 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 203 nonterminal symbols, among which 3 start symbols.
+Grammar has 183 terminal symbols.
+Grammar has 596 productions.
+Built an LR(0) automaton with 1145 states.
+The grammar is not SLR(1) -- 9 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1145 states.
+488 out of 1145 states have a default reduction.

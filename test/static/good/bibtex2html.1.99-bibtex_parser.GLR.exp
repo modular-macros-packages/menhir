@@ -1,0 +1,21 @@
+File "bibtex2html.1.99-bibtex_parser.mly", line 46, characters 25-32:
+Warning: the token Tlbrace is unused.
+1 out of 11 nonterminal symbols are nullable.
+There are 21 productions, whose total length is 41.
+0 out of 21 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 12 nonterminal symbols are nullable.
+There are 22 productions, whose total length is 42.
+0 out of 22 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 12 nonterminal symbols, among which 2 start symbols.
+Grammar has 13 terminal symbols.
+Grammar has 22 productions.
+Built an LR(0) automaton with 39 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 39 states.
+20 out of 39 states have a default reduction.

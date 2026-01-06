@@ -1,0 +1,28 @@
+File "cryptolineParser.mly", line 1304, characters 16-23:
+Warning: the token COMMENT is unused.
+File "cryptolineParser.mly", line 1318, characters 19-22:
+Warning: the token EXT is unused.
+File "cryptolineParser.mly", line 1322, characters 90-95:
+Warning: the token MODOP is unused.
+File "cryptolineParser.mly", line 1339, characters 10-13:
+Warning: the token VAR is unused.
+7 out of 56 nonterminal symbols are nullable.
+There are 410 productions, whose total length is 1538.
+4 out of 410 productions are right nullable.
+4 out of 7 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 59 nonterminal symbols are nullable.
+There are 414 productions, whose total length is 1557.
+0 out of 414 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 59 nonterminal symbols, among which 2 start symbols.
+Grammar has 171 terminal symbols.
+Grammar has 414 productions.
+Built an LR(0) automaton with 1235 states.
+The grammar is not SLR(1) -- 56 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1235 states.
+Warning: 54 states have shift/reduce conflicts.
+314 out of 1235 states have a default reduction.

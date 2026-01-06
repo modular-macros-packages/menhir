@@ -1,0 +1,21 @@
+File "herdtools7.7.51-X86Parser.mly", line 37, characters 8-14:
+Warning: the token I_READ is unused.
+3 out of 13 nonterminal symbols are nullable.
+There are 49 productions, whose total length is 116.
+3 out of 49 productions are right nullable.
+2 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 14 nonterminal symbols are nullable.
+There are 55 productions, whose total length is 127.
+0 out of 55 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 14 nonterminal symbols, among which 1 start symbols.
+Grammar has 41 terminal symbols.
+Grammar has 55 productions.
+Built an LR(0) automaton with 117 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 117 states.
+49 out of 117 states have a default reduction.

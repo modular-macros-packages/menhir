@@ -1,0 +1,66 @@
+File "dml.mly", line 33, characters 7-12:
+Warning: the token AMPER is unused.
+File "dml.mly", line 63, characters 27-31:
+Warning: the token BANG is unused.
+File "dml.mly", line 29, characters 10-16:
+Warning: the token BANGEQ is unused.
+File "dml.mly", line 35, characters 26-31:
+Warning: the token BREAK is unused.
+File "dml.mly", line 35, characters 32-37:
+Warning: the token CARET is unused.
+File "dml.mly", line 35, characters 43-47:
+Warning: the token CHAR is unused.
+File "dml.mly", line 35, characters 48-56:
+Warning: the token CONTINUE is unused.
+File "dml.mly", line 52, characters 6-10:
+Warning: the token EQEQ is unused.
+File "dml.mly", line 51, characters 12-17:
+Warning: the token GTDOT is unused.
+File "dml.mly", line 51, characters 26-33:
+Warning: the token GTEQDOT is unused.
+File "dml.mly", line 51, characters 6-11:
+Warning: the token LTDOT is unused.
+File "dml.mly", line 51, characters 18-25:
+Warning: the token LTEQDOT is unused.
+File "dml.mly", line 34, characters 7-14:
+Warning: the token LTMINUS is unused.
+File "dml.mly", line 63, characters 16-26:
+Warning: the token MINUSMINUS is unused.
+File "dml.mly", line 63, characters 7-15:
+Warning: the token PLUSPLUS is unused.
+File "dml.mly", line 37, characters 7-13:
+Warning: the token RETURN is unused.
+File "dml.mly", line 32, characters 29-38:
+Warning: the token SEMICOLON is unused.
+File "dml.mly", line 37, characters 19-25:
+Warning: the token STRING is unused.
+File "dml.mly", line 37, characters 36-40:
+Warning: the token TYPE is unused.
+File "dml.mly", line 37, characters 52-56:
+Warning: the token UNIT is unused.
+File "dml.mly", line 48, characters 6-19:
+Warning: the token prec_ind_bop1 is unused.
+File "dml.mly", line 205, characters 0-15:
+Warning: symbol open_tvar_decls is unreachable from the start symbol.
+File "dml.mly", line 210, characters 0-10:
+Warning: symbol tvar_decls is unreachable from the start symbol.
+10 out of 68 nonterminal symbols are nullable.
+There are 198 productions, whose total length is 402.
+11 out of 198 productions are right nullable.
+5 out of 10 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+5 out of 73 nonterminal symbols are nullable.
+There are 209 productions, whose total length is 428.
+0 out of 209 productions are right nullable.
+0 out of 5 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 73 nonterminal symbols, among which 1 start symbols.
+Grammar has 74 terminal symbols.
+Grammar has 209 productions.
+Built an LR(0) automaton with 343 states.
+The grammar is not SLR(1) -- 32 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 343 states.
+Warning: 17 states have shift/reduce conflicts.
+157 out of 343 states have a default reduction.

@@ -1,0 +1,104 @@
+File "cil-formatparse.mly", line 259, characters 14-21:
+Warning: the token AND_AND is unused.
+File "cil-formatparse.mly", line 274, characters 24-27:
+Warning: the token ASM is unused.
+File "cil-formatparse.mly", line 244, characters 45-49:
+Warning: the token AUTO is unused.
+File "cil-formatparse.mly", line 276, characters 7-21:
+Warning: the token BLOCKATTRIBUTE is unused.
+File "cil-formatparse.mly", line 275, characters 7-21:
+Warning: the token BUILTIN_VA_ARG is unused.
+File "cil-formatparse.mly", line 275, characters 22-37:
+Warning: the token BUILTIN_VA_LIST is unused.
+File "cil-formatparse.mly", line 267, characters 14-18:
+Warning: the token CASE is unused.
+File "cil-formatparse.mly", line 305, characters 48-52:
+Warning: the token CAST is unused.
+File "cil-formatparse.mly", line 264, characters 7-12:
+Warning: the token COLON is unused.
+File "cil-formatparse.mly", line 233, characters 16-24:
+Warning: the token CST_CHAR is unused.
+File "cil-formatparse.mly", line 235, characters 16-25:
+Warning: the token CST_FLOAT is unused.
+File "cil-formatparse.mly", line 236, characters 16-26:
+Warning: the token CST_STRING is unused.
+File "cil-formatparse.mly", line 237, characters 16-27:
+Warning: the token CST_WSTRING is unused.
+File "cil-formatparse.mly", line 277, characters 7-15:
+Warning: the token DECLSPEC is unused.
+File "cil-formatparse.mly", line 267, characters 19-26:
+Warning: the token DEFAULT is unused.
+File "cil-formatparse.mly", line 268, characters 13-15:
+Warning: the token DO is unused.
+File "cil-formatparse.mly", line 242, characters 7-11:
+Warning: the token ENUM is unused.
+File "cil-formatparse.mly", line 240, characters 7-10:
+Warning: the token EOF is unused.
+File "cil-formatparse.mly", line 244, characters 16-22:
+Warning: the token EXTERN is unused.
+File "cil-formatparse.mly", line 268, characters 16-19:
+Warning: the token FOR is unused.
+File "cil-formatparse.mly", line 274, characters 35-45:
+Warning: the token FUNCTION__ is unused.
+File "cil-formatparse.mly", line 266, characters 22-26:
+Warning: the token GOTO is unused.
+File "cil-formatparse.mly", line 274, characters 17-23:
+Warning: the token INLINE is unused.
+File "cil-formatparse.mly", line 241, characters 40-45:
+Warning: the token INT32 is unused.
+File "cil-formatparse.mly", line 241, characters 34-39:
+Warning: the token INT64 is unused.
+File "cil-formatparse.mly", line 274, characters 64-71:
+Warning: the token LABEL__ is unused.
+File "cil-formatparse.mly", line 261, characters 17-28:
+Warning: the token MINUS_MINUS is unused.
+File "cil-formatparse.mly", line 278, characters 16-21:
+Warning: the token MSASM is unused.
+File "cil-formatparse.mly", line 278, characters 22-28:
+Warning: the token MSATTR is unused.
+File "cil-formatparse.mly", line 238, characters 16-26:
+Warning: the token NAMED_TYPE is unused.
+File "cil-formatparse.mly", line 259, characters 22-31:
+Warning: the token PIPE_PIPE is unused.
+File "cil-formatparse.mly", line 261, characters 7-16:
+Warning: the token PLUS_PLUS is unused.
+File "cil-formatparse.mly", line 279, characters 7-13:
+Warning: the token PRAGMA is unused.
+File "cil-formatparse.mly", line 274, characters 46-63:
+Warning: the token PRETTY_FUNCTION__ is unused.
+File "cil-formatparse.mly", line 264, characters 38-43:
+Warning: the token QUEST is unused.
+File "cil-formatparse.mly", line 244, characters 50-58:
+Warning: the token REGISTER is unused.
+File "cil-formatparse.mly", line 243, characters 7-13:
+Warning: the token SIGNED is unused.
+File "cil-formatparse.mly", line 244, characters 23-29:
+Warning: the token STATIC is unused.
+File "cil-formatparse.mly", line 267, characters 7-13:
+Warning: the token SWITCH is unused.
+File "cil-formatparse.mly", line 269, characters 10-14:
+Warning: the token THEN is unused.
+File "cil-formatparse.mly", line 242, characters 19-26:
+Warning: the token TYPEDEF is unused.
+File "cil-formatparse.mly", line 338, characters 0-10:
+Warning: symbol initialize is unreachable from any of the start symbols.
+9 out of 35 nonterminal symbols are nullable.
+There are 148 productions, whose total length is 341.
+11 out of 148 productions are right nullable.
+5 out of 9 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+4 out of 39 nonterminal symbols are nullable.
+There are 178 productions, whose total length is 432.
+0 out of 178 productions are right nullable.
+0 out of 4 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 39 nonterminal symbols, among which 7 start symbols.
+Grammar has 130 terminal symbols.
+Grammar has 178 productions.
+Built an LR(0) automaton with 333 states.
+The grammar is not SLR(1) -- 37 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 333 states.
+Warning: 32 states have shift/reduce conflicts.
+121 out of 333 states have a default reduction.

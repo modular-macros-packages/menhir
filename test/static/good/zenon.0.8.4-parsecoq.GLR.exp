@@ -1,0 +1,76 @@
+File "zenon.0.8.4-parsecoq.mly", line 115, characters 7-13:
+Warning: the token AMPER_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 116, characters 7-19:
+Warning: the token AMPER_AMPER_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 113, characters 7-12:
+Warning: the token BANG_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 159, characters 7-15:
+Warning: the token BAR_BAR_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 158, characters 7-16:
+Warning: the token BAR_DASH_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 132, characters 7-19:
+Warning: the token COLON_COLON_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 135, characters 7-16:
+Warning: the token COLON_GT_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 133, characters 7-16:
+Warning: the token COLON_LT_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 124, characters 7-12:
+Warning: the token DASH_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 145, characters 7-18:
+Warning: the token EQ_UNDER_D_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 197, characters 16-19:
+Warning: the token FQN is unused.
+File "zenon.0.8.4-parsecoq.mly", line 146, characters 7-10:
+Warning: the token GT_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 147, characters 7-18:
+Warning: the token GT_DASH_GT_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 148, characters 7-13:
+Warning: the token GT_EQ_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 155, characters 7-11:
+Warning: the token HAT_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 152, characters 7-14:
+Warning: the token LBRACK_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 137, characters 7-10:
+Warning: the token LT_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 140, characters 7-16:
+Warning: the token LT_COLON_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 138, characters 7-15:
+Warning: the token LT_DASH_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 141, characters 7-13:
+Warning: the token LT_EQ_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 128, characters 7-21:
+Warning: the token PERIOD_PERIOD_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 121, characters 7-12:
+Warning: the token PLUS_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 122, characters 7-17:
+Warning: the token PLUS_PLUS_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 149, characters 7-13:
+Warning: the token QUEST_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 150, characters 7-16:
+Warning: the token QUEST_EQ_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 154, characters 7-14:
+Warning: the token RBRACK_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 136, characters 7-12:
+Warning: the token SEMI_ is unused.
+File "zenon.0.8.4-parsecoq.mly", line 129, characters 7-13:
+Warning: the token SLASH_ is unused.
+9 out of 25 nonterminal symbols are nullable.
+There are 89 productions, whose total length is 289.
+22 out of 89 productions are right nullable.
+8 out of 9 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 26 nonterminal symbols are nullable.
+There are 124 productions, whose total length is 434.
+0 out of 124 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 26 nonterminal symbols, among which 1 start symbols.
+Grammar has 82 terminal symbols.
+Grammar has 124 productions.
+Built an LR(0) automaton with 328 states.
+The grammar is not SLR(1) -- 19 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 328 states.
+Warning: 17 states have shift/reduce conflicts.
+75 out of 328 states have a default reduction.

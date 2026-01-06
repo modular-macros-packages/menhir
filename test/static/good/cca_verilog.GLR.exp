@@ -1,0 +1,66 @@
+File "cca_verilog.mly", line 2335, characters 5-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2362, characters 5-45:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2368, characters 5-45:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 1788, characters 5-29:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 1047, characters 5-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2496, characters 5-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2497, characters 5-20:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2498, characters 5-24:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cca_verilog.mly", line 2339, characters 0-17:
+Warning: symbol cellpin_item_tail is unreachable from any of the start symbols.
+File "cca_verilog.mly", line 1792, characters 0-16:
+Warning: symbol module_item_tail is unreachable from any of the start symbols.
+File "cca_verilog.mly", line 1051, characters 0-9:
+Warning: symbol port_tail is unreachable from any of the start symbols.
+65 out of 691 nonterminal symbols are nullable.
+There are 2830 productions, whose total length is 8109.
+18 out of 2830 productions are right nullable.
+15 out of 65 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+50 out of 737 nonterminal symbols are nullable.
+There are 2959 productions, whose total length is 8575.
+0 out of 2959 productions are right nullable.
+0 out of 50 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 737 nonterminal symbols, among which 14 start symbols.
+Grammar has 407 terminal symbols.
+Grammar has 2959 productions.
+Built an LR(0) automaton with 5741 states.
+The grammar is not SLR(1) -- 1698 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 5747 states.
+Warning: 409 states have shift/reduce conflicts.
+1965 out of 5747 states have a default reduction.

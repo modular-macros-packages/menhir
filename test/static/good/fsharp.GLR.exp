@@ -1,0 +1,201 @@
+File "fsharp.mly", line 153, characters 21-24:
+Warning: the token ASR is unused.
+File "fsharp.mly", line 216, characters 21-28:
+Warning: the token COMMENT is unused.
+File "fsharp.mly", line 152, characters 84-94:
+Warning: the token CONSTRAINT is unused.
+File "fsharp.mly", line 163, characters 61-72:
+Warning: the token CONSTRUCTOR is unused.
+File "fsharp.mly", line 157, characters 86-97:
+Warning: the token GREATER_DOT is unused.
+File "fsharp.mly", line 160, characters 30-44:
+Warning: the token GREATER_RBRACE is unused.
+File "fsharp.mly", line 156, characters 62-70:
+Warning: the token INSTANCE is unused.
+File "fsharp.mly", line 138, characters 21-34:
+Warning: the token INT32_DOT_DOT is unused.
+File "fsharp.mly", line 160, characters 7-18:
+Warning: the token LBRACE_LESS is unused.
+File "fsharp.mly", line 215, characters 16-27:
+Warning: the token LEX_FAILURE is unused.
+File "fsharp.mly", line 216, characters 40-52:
+Warning: the token LINE_COMMENT is unused.
+File "fsharp.mly", line 212, characters 15-21:
+Warning: the token ODUMMY is unused.
+File "fsharp.mly", line 182, characters 7-13:
+Warning: the token ORESET is unused.
+File "fsharp.mly", line 152, characters 49-57:
+Warning: the token RESERVED is unused.
+File "fsharp.mly", line 216, characters 53-64:
+Warning: the token STRING_TEXT is unused.
+File "fsharp.mly", line 216, characters 29-39:
+Warning: the token WHITESPACE is unused.
+File "fsharp.mly", line 351, characters 21-28:
+Warning: the token decl_do is unused.
+File "fsharp.mly", line 351, characters 10-20:
+Warning: the token decl_match is unused.
+File "fsharp.mly", line 350, characters 53-60:
+Warning: the token expr_do is unused.
+File "fsharp.mly", line 384, characters 10-18:
+Warning: the token expr_not is unused.
+File "fsharp.mly", line 396, characters 7-19:
+Warning: the token matching_bar is unused.
+File "fsharp.mly", line 278, characters 10-25:
+Warning: the token prec_args_error is unused.
+File "fsharp.mly", line 301, characters 7-20:
+Warning: the token prec_defn_sep is unused.
+File "fsharp.mly", line 405, characters 10-32:
+Warning: the token prec_interaction_empty is unused.
+File "fsharp.mly", line 300, characters 18-35:
+Warning: the token prec_semiexpr_sep is unused.
+File "fsharp.mly", line 2606, characters 4-41:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2614, characters 4-68:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2135, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2234, characters 4-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2743, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1794, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2213, characters 4-19:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2270, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1311, characters 4-24:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1035, characters 4-26:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1949, characters 4-44:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1951, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1956, characters 4-47:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1957, characters 4-51:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1972, characters 4-36:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 564, characters 4-32:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 566, characters 4-36:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 663, characters 4-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2588, characters 4-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2242, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 2225, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1721, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 543, characters 4-37:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 1011, characters 4-38:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 848, characters 4-38:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "fsharp.mly", line 674, characters 4-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+68 out of 279 nonterminal symbols are nullable.
+There are 803 productions, whose total length is 1832.
+80 out of 803 productions are right nullable.
+45 out of 68 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+23 out of 301 nonterminal symbols are nullable.
+There are 1004 productions, whose total length is 2584.
+0 out of 1004 productions are right nullable.
+0 out of 23 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 301 nonterminal symbols, among which 3 start symbols.
+Grammar has 173 terminal symbols.
+Grammar has 1004 productions.
+Built an LR(0) automaton with 1701 states.
+The grammar is not SLR(1) -- 166 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1701 states.
+Warning: 147 states have shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+701 out of 1701 states have a default reduction.

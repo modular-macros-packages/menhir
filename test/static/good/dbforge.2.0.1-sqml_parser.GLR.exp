@@ -1,0 +1,22 @@
+File "dbforge.2.0.1-sqml_parser.mly", line 43, characters 67-75:
+Warning: the token FLOATNUM is unused.
+14 out of 110 nonterminal symbols are nullable.
+There are 255 productions, whose total length is 567.
+14 out of 255 productions are right nullable.
+11 out of 14 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 113 nonterminal symbols are nullable.
+There are 273 productions, whose total length is 647.
+0 out of 273 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 113 nonterminal symbols, among which 5 start symbols.
+Grammar has 110 terminal symbols.
+Grammar has 273 productions.
+Built an LR(0) automaton with 495 states.
+The grammar is not SLR(1) -- 9 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 495 states.
+Warning: 9 states have shift/reduce conflicts.
+217 out of 495 states have a default reduction.

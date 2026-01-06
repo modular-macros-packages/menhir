@@ -1,0 +1,25 @@
+File "rml.1.09.05-parser.mly", line 230, characters 7-22:
+Warning: the token GREATERRBRACKET is unused.
+File "rml.1.09.05-parser.mly", line 275, characters 7-23:
+Warning: the token QUESTIONQUESTION is unused.
+25 out of 141 nonterminal symbols are nullable.
+There are 464 productions, whose total length is 1156.
+19 out of 464 productions are right nullable.
+11 out of 25 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+14 out of 155 nonterminal symbols are nullable.
+There are 515 productions, whose total length is 1273.
+0 out of 515 productions are right nullable.
+0 out of 14 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 155 nonterminal symbols, among which 4 start symbols.
+Grammar has 108 terminal symbols.
+Grammar has 515 productions.
+Built an LR(0) automaton with 1044 states.
+The grammar is not SLR(1) -- 83 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1044 states.
+Warning: 64 states have shift/reduce conflicts.
+Warning: 5 states have reduce/reduce conflicts.
+360 out of 1044 states have a default reduction.

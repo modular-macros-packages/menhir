@@ -1,0 +1,27 @@
+File "tptp2cime.mly", line 28, characters 6-9:
+Warning: the token EXP is unused.
+File "tptp2cime.mly", line 26, characters 11-16:
+Warning: the token MINUS is unused.
+File "tptp2cime.mly", line 27, characters 6-10:
+Warning: the token MULT is unused.
+File "tptp2cime.mly", line 12, characters 46-51:
+Warning: the token QUOTE is unused.
+0 out of 15 nonterminal symbols are nullable.
+There are 23 productions, whose total length is 57.
+0 out of 23 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 15 nonterminal symbols are nullable.
+There are 23 productions, whose total length is 57.
+0 out of 23 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 15 nonterminal symbols, among which 2 start symbols.
+Grammar has 18 terminal symbols.
+Grammar has 23 productions.
+Built an LR(0) automaton with 58 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 58 states.
+22 out of 58 states have a default reduction.

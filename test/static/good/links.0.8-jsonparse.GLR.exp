@@ -1,0 +1,25 @@
+File "links.0.8-jsonparse.mly", line 85, characters 39-45:
+Warning: the token LPAREN is unused.
+File "links.0.8-jsonparse.mly", line 85, characters 46-52:
+Warning: the token RPAREN is unused.
+File "links.0.8-jsonparse.mly", line 86, characters 19-29:
+Warning: the token UNDERSCORE is unused.
+0 out of 11 nonterminal symbols are nullable.
+There are 20 productions, whose total length is 34.
+0 out of 20 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 11 nonterminal symbols are nullable.
+There are 20 productions, whose total length is 34.
+0 out of 20 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 11 nonterminal symbols, among which 2 start symbols.
+Grammar has 16 terminal symbols.
+Grammar has 20 productions.
+Built an LR(0) automaton with 36 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 36 states.
+22 out of 36 states have a default reduction.

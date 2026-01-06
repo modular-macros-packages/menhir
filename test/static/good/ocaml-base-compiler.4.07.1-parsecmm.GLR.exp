@@ -1,0 +1,23 @@
+File "ocaml-base-compiler.4.07.1-parsecmm.mly", line 100, characters 7-11:
+Warning: the token MULI is unused.
+File "ocaml-base-compiler.4.07.1-parsecmm.mly", line 110, characters 7-11:
+Warning: the token PROJ is unused.
+7 out of 28 nonterminal symbols are nullable.
+There are 143 productions, whose total length is 294.
+4 out of 143 productions are right nullable.
+4 out of 7 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 31 nonterminal symbols are nullable.
+There are 150 productions, whose total length is 320.
+0 out of 150 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 31 nonterminal symbols, among which 1 start symbols.
+Grammar has 100 terminal symbols.
+Grammar has 150 productions.
+Built an LR(0) automaton with 268 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 268 states.
+145 out of 268 states have a default reduction.

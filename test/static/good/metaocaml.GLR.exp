@@ -1,0 +1,25 @@
+File "metaocaml.mly", line 303, characters 7-22:
+Warning: the token GREATERRBRACKET is unused.
+File "metaocaml.mly", line 349, characters 7-23:
+Warning: the token QUESTIONQUESTION is unused.
+25 out of 148 nonterminal symbols are nullable.
+There are 496 productions, whose total length is 1232.
+25 out of 496 productions are right nullable.
+11 out of 25 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+14 out of 162 nonterminal symbols are nullable.
+There are 553 productions, whose total length is 1361.
+0 out of 553 productions are right nullable.
+0 out of 14 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 162 nonterminal symbols, among which 4 start symbols.
+Grammar has 123 terminal symbols.
+Grammar has 553 productions.
+Built an LR(0) automaton with 1110 states.
+The grammar is not SLR(1) -- 102 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1111 states.
+Warning: 80 states have shift/reduce conflicts.
+Warning: 7 states have reduce/reduce conflicts.
+373 out of 1111 states have a default reduction.

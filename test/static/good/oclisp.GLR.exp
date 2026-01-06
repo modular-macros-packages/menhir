@@ -1,0 +1,24 @@
+File "oclisp.mly", line 18, characters 0-4:
+Note: the nonterminal symbol list is renamed oclisp_list.
+
+File "oclisp.mly", line 2, characters 25-28:
+Warning: the token EOF is unused.
+0 out of 6 nonterminal symbols are nullable.
+There are 11 productions, whose total length is 19.
+0 out of 11 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 6 nonterminal symbols are nullable.
+There are 11 productions, whose total length is 19.
+0 out of 11 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 6 nonterminal symbols, among which 1 start symbols.
+Grammar has 7 terminal symbols.
+Grammar has 11 productions.
+Built an LR(0) automaton with 18 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 18 states.
+11 out of 18 states have a default reduction.

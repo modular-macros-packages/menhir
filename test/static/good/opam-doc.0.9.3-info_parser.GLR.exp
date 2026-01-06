@@ -1,0 +1,26 @@
+File "opam-doc.0.9.3-info_parser.mly", line 413, characters 0-4:
+Note: the nonterminal symbol list is renamed opam_doc_0_9_3_info_parser_list.
+
+File "opam-doc.0.9.3-info_parser.mly", line 160, characters 7-10:
+Warning: the token EOF is unused.
+File "opam-doc.0.9.3-info_parser.mly", line 169, characters 10-21:
+Warning: the token Reduce_eror is unused.
+3 out of 26 nonterminal symbols are nullable.
+There are 104 productions, whose total length is 231.
+17 out of 104 productions are right nullable.
+2 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 27 nonterminal symbols are nullable.
+There are 145 productions, whose total length is 330.
+0 out of 145 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 27 nonterminal symbols, among which 1 start symbols.
+Grammar has 48 terminal symbols.
+Grammar has 145 productions.
+Built an LR(0) automaton with 206 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 206 states.
+123 out of 206 states have a default reduction.

@@ -1,0 +1,24 @@
+File "mcc-moogle.mly", line 45, characters 29-37:
+Warning: the token TokCaret is unused.
+File "mcc-moogle.mly", line 56, characters 29-37:
+Warning: the token TokQuery is unused.
+10 out of 64 nonterminal symbols are nullable.
+There are 167 productions, whose total length is 343.
+17 out of 167 productions are right nullable.
+8 out of 10 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+2 out of 66 nonterminal symbols are nullable.
+There are 183 productions, whose total length is 405.
+0 out of 183 productions are right nullable.
+0 out of 2 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 66 nonterminal symbols, among which 1 start symbols.
+Grammar has 62 terminal symbols.
+Grammar has 183 productions.
+Built an LR(0) automaton with 293 states.
+The grammar is not SLR(1) -- 7 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 293 states.
+Warning: 5 states have shift/reduce conflicts.
+133 out of 293 states have a default reduction.

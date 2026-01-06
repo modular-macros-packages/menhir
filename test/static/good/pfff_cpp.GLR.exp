@@ -1,0 +1,42 @@
+File "pfff_cpp.mly", line 62, characters 52-60:
+Warning: the token TComment is unused.
+File "pfff_cpp.mly", line 62, characters 36-51:
+Warning: the token TCommentNewline is unused.
+File "pfff_cpp.mly", line 62, characters 22-35:
+Warning: the token TCommentSpace is unused.
+File "pfff_cpp.mly", line 67, characters 57-69:
+Warning: the token TComment_Cpp is unused.
+File "pfff_cpp.mly", line 65, characters 51-62:
+Warning: the token TComment_Pp is unused.
+File "pfff_cpp.mly", line 134, characters 22-40:
+Warning: the token TCppEscapedNewline is unused.
+File "pfff_cpp.mly", line 195, characters 22-38:
+Warning: the token TInt_ZeroVirtual is unused.
+File "pfff_cpp.mly", line 53, characters 22-30:
+Warning: the token TUnknown is unused.
+File "pfff_cpp.mly", line 122, characters 22-32:
+Warning: the token Tattribute is unused.
+File "pfff_cpp.mly", line 214, characters 2-16:
+Warning: the token Tsigned_Constr is unused.
+File "pfff_cpp.mly", line 214, characters 17-33:
+Warning: the token Tunsigned_Constr is unused.
+29 out of 205 nonterminal symbols are nullable.
+There are 601 productions, whose total length is 1205.
+20 out of 601 productions are right nullable.
+13 out of 29 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+16 out of 221 nonterminal symbols are nullable.
+There are 644 productions, whose total length is 1355.
+0 out of 644 productions are right nullable.
+0 out of 16 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 221 nonterminal symbols, among which 3 start symbols.
+Grammar has 175 terminal symbols.
+Grammar has 644 productions.
+Built an LR(0) automaton with 1042 states.
+The grammar is not SLR(1) -- 136 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1042 states.
+Warning: 7 states have shift/reduce conflicts.
+507 out of 1042 states have a default reduction.

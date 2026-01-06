@@ -1,0 +1,93 @@
+File "framac-cparser.mly", line 389, characters 54-60:
+Warning: the token ADDROF is unused.
+File "framac-cparser.mly", line 357, characters 36-50:
+Warning: the token ATTRIBUTE_USED is unused.
+File "framac-cparser.mly", line 358, characters 7-22:
+Warning: the token BUILTIN_VA_LIST is unused.
+File "framac-cparser.mly", line 389, characters 42-46:
+Warning: the token CAST is unused.
+File "framac-cparser.mly", line 319, characters 59-64:
+Warning: the token INT32 is unused.
+File "framac-cparser.mly", line 1368, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1748, characters 5-50:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1707, characters 3-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 878, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 865, characters 2-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 850, characters 16-44:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 515, characters 2-26:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1719, characters 3-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1715, characters 3-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 860, characters 2-21:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1041, characters 4-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 1194, characters 3-60:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "framac-cparser.mly", line 463, characters 0-8:
+Warning: symbol location is unreachable from any of the start symbols.
+33 out of 141 nonterminal symbols are nullable.
+There are 438 productions, whose total length is 963.
+41 out of 438 productions are right nullable.
+21 out of 33 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+12 out of 153 nonterminal symbols are nullable.
+There are 517 productions, whose total length is 1175.
+0 out of 517 productions are right nullable.
+0 out of 12 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 153 nonterminal symbols, among which 2 start symbols.
+Grammar has 124 terminal symbols.
+Grammar has 517 productions.
+Built an LR(0) automaton with 882 states.
+The grammar is not SLR(1) -- 19 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 882 states.
+Warning: 13 states have shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+362 out of 882 states have a default reduction.

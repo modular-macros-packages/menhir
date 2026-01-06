@@ -1,0 +1,22 @@
+File "mcc-prof.mly", line 50, characters 23-32:
+Warning: the token TokOutput is unused.
+0 out of 8 nonterminal symbols are nullable.
+There are 21 productions, whose total length is 48.
+0 out of 21 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 8 nonterminal symbols are nullable.
+There are 21 productions, whose total length is 48.
+0 out of 21 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 8 nonterminal symbols, among which 1 start symbols.
+Grammar has 20 terminal symbols.
+Grammar has 21 productions.
+Built an LR(0) automaton with 44 states.
+The grammar is not SLR(1) -- 4 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 44 states.
+Warning: 4 states have shift/reduce conflicts.
+15 out of 44 states have a default reduction.

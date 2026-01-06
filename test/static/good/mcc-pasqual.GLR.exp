@@ -1,0 +1,50 @@
+File "mcc-pasqual.mly", line 351, characters 27-33:
+Warning: the token TokAmp is unused.
+File "mcc-pasqual.mly", line 408, characters 27-35:
+Warning: the token TokClass is unused.
+File "mcc-pasqual.mly", line 420, characters 27-39:
+Warning: the token TokInterface is unused.
+File "mcc-pasqual.mly", line 342, characters 27-36:
+Warning: the token TokLShift is unused.
+File "mcc-pasqual.mly", line 366, characters 27-39:
+Warning: the token TokLeftBrace is unused.
+File "mcc-pasqual.mly", line 483, characters 39-51:
+Warning: the token TokLeftPrent is unused.
+File "mcc-pasqual.mly", line 410, characters 27-33:
+Warning: the token TokLet is unused.
+File "mcc-pasqual.mly", line 433, characters 27-37:
+Warning: the token TokPrivate is unused.
+File "mcc-pasqual.mly", line 434, characters 27-36:
+Warning: the token TokPublic is unused.
+File "mcc-pasqual.mly", line 343, characters 27-36:
+Warning: the token TokRShift is unused.
+File "mcc-pasqual.mly", line 367, characters 27-40:
+Warning: the token TokRightBrace is unused.
+File "mcc-pasqual.mly", line 481, characters 6-14:
+Warning: the token TokStart is unused.
+File "mcc-pasqual.mly", line 483, characters 6-16:
+Warning: the token prec_apply is unused.
+File "mcc-pasqual.mly", line 483, characters 17-31:
+Warning: the token prec_subscript is unused.
+File "mcc-pasqual.mly", line 482, characters 7-17:
+Warning: the token prec_unary is unused.
+0 out of 140 nonterminal symbols are nullable.
+There are 367 productions, whose total length is 764.
+0 out of 367 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 138 nonterminal symbols are nullable.
+There are 363 productions, whose total length is 759.
+0 out of 363 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 138 nonterminal symbols, among which 4 start symbols.
+Grammar has 112 terminal symbols.
+Grammar has 363 productions.
+Built an LR(0) automaton with 628 states.
+The grammar is not SLR(1) -- 4 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 628 states.
+Warning: one state has shift/reduce conflicts.
+332 out of 628 states have a default reduction.

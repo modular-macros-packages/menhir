@@ -1,0 +1,46 @@
+File "jparser.mly", line 136, characters 7-10:
+Warning: the token CLS is unused.
+File "jparser.mly", line 111, characters 16-26:
+Warning: the token CORE_LABEL is unused.
+File "jparser.mly", line 157, characters 7-14:
+Warning: the token EMPRULE is unused.
+File "jparser.mly", line 174, characters 7-14:
+Warning: the token GARBAGE is unused.
+File "jparser.mly", line 186, characters 7-16:
+Warning: the token INVARIANT is unused.
+File "jparser.mly", line 214, characters 7-11:
+Warning: the token PRED is unused.
+File "jparser.mly", line 219, characters 7-15:
+Warning: the token PURERULE is unused.
+File "jparser.mly", line 221, characters 7-12:
+Warning: the token QUOTE is unused.
+File "jparser.mly", line 249, characters 7-17:
+Warning: the token UNDERSCORE is unused.
+File "jparser.mly", line 404, characters 0-13:
+Warning: symbol exp_posts_npv is unreachable from any of the start symbols.
+File "jparser.mly", line 841, characters 0-18:
+Warning: symbol lvariable_npv_list is unreachable from any of the start symbols.
+File "jparser.mly", line 388, characters 0-8:
+Warning: symbol spec_npv is unreachable from any of the start symbols.
+File "jparser.mly", line 390, characters 0-9:
+Warning: symbol specs_npv is unreachable from any of the start symbols.
+44 out of 152 nonterminal symbols are nullable.
+There are 415 productions, whose total length is 938.
+60 out of 415 productions are right nullable.
+24 out of 44 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+20 out of 172 nonterminal symbols are nullable.
+There are 616 productions, whose total length is 1936.
+0 out of 616 productions are right nullable.
+0 out of 20 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 172 nonterminal symbols, among which 8 start symbols.
+Grammar has 154 terminal symbols.
+Grammar has 616 productions.
+Built an LR(0) automaton with 1079 states.
+The grammar is not SLR(1) -- 36 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1079 states.
+Warning: 24 states have shift/reduce conflicts.
+422 out of 1079 states have a default reduction.

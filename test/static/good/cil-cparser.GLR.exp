@@ -1,0 +1,92 @@
+File "cil-cparser.mly", line 269, characters 54-60:
+Warning: the token ADDROF is unused.
+File "cil-cparser.mly", line 237, characters 36-50:
+Warning: the token ATTRIBUTE_USED is unused.
+File "cil-cparser.mly", line 238, characters 7-22:
+Warning: the token BUILTIN_VA_LIST is unused.
+File "cil-cparser.mly", line 269, characters 42-46:
+Warning: the token CAST is unused.
+File "cil-cparser.mly", line 199, characters 54-59:
+Warning: the token INT32 is unused.
+File "cil-cparser.mly", line 1087, characters 4-23:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 1382, characters 5-40:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 1350, characters 3-27:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 734, characters 4-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 721, characters 2-25:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 706, characters 16-44:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 980, characters 4-50:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 391, characters 2-26:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 1354, characters 3-22:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 716, characters 2-21:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 823, characters 4-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 937, characters 3-60:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "cil-cparser.mly", line 344, characters 0-8:
+Warning: symbol location is unreachable from any of the start symbols.
+27 out of 117 nonterminal symbols are nullable.
+There are 379 productions, whose total length is 857.
+36 out of 379 productions are right nullable.
+17 out of 27 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+10 out of 127 nonterminal symbols are nullable.
+There are 439 productions, whose total length is 1026.
+0 out of 439 productions are right nullable.
+0 out of 10 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 127 nonterminal symbols, among which 2 start symbols.
+Grammar has 118 terminal symbols.
+Grammar has 439 productions.
+Built an LR(0) automaton with 766 states.
+The grammar is not SLR(1) -- 17 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 766 states.
+Warning: 13 states have shift/reduce conflicts.
+303 out of 766 states have a default reduction.

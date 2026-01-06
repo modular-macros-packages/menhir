@@ -1,0 +1,25 @@
+File "netsem.mly", line 63, characters 27-31:
+Warning: the token HASH is unused.
+File "netsem.mly", line 111, characters 35-42:
+Warning: the token T_TIMED is unused.
+File "netsem.mly", line 848, characters 0-8:
+Warning: symbol ipportop is unreachable from any of the start symbols.
+2 out of 100 nonterminal symbols are nullable.
+There are 448 productions, whose total length is 1027.
+2 out of 448 productions are right nullable.
+1 out of 2 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 101 nonterminal symbols are nullable.
+There are 452 productions, whose total length is 1038.
+0 out of 452 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 101 nonterminal symbols, among which 2 start symbols.
+Grammar has 303 terminal symbols.
+Grammar has 452 productions.
+Built an LR(0) automaton with 1003 states.
+The grammar is not SLR(1) -- 1 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1003 states.
+444 out of 1003 states have a default reduction.

@@ -1,0 +1,42 @@
+File "herdtools7.7.51-CParser.mly", line 37, characters 29-33:
+Warning: the token AUTO is unused.
+File "herdtools7.7.51-CParser.mly", line 48, characters 12-17:
+Warning: the token COLON is unused.
+File "herdtools7.7.51-CParser.mly", line 38, characters 7-12:
+Warning: the token CONST is unused.
+File "herdtools7.7.51-CParser.mly", line 48, characters 46-49:
+Warning: the token DOT is unused.
+File "herdtools7.7.51-CParser.mly", line 37, characters 15-21:
+Warning: the token EXTERN is unused.
+File "herdtools7.7.51-CParser.mly", line 52, characters 7-10:
+Warning: the token MUL is unused.
+File "herdtools7.7.51-CParser.mly", line 47, characters 7-11:
+Warning: the token NULL is unused.
+File "herdtools7.7.51-CParser.mly", line 37, characters 34-42:
+Warning: the token REGISTER is unused.
+File "herdtools7.7.51-CParser.mly", line 37, characters 22-28:
+Warning: the token STATIC is unused.
+File "herdtools7.7.51-CParser.mly", line 37, characters 7-14:
+Warning: the token TYPEDEF is unused.
+File "herdtools7.7.51-CParser.mly", line 53, characters 7-12:
+Warning: the token WHILE is unused.
+6 out of 35 nonterminal symbols are nullable.
+There are 124 productions, whose total length is 418.
+2 out of 124 productions are right nullable.
+2 out of 6 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+4 out of 38 nonterminal symbols are nullable.
+There are 130 productions, whose total length is 438.
+0 out of 130 productions are right nullable.
+0 out of 4 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 38 nonterminal symbols, among which 4 start symbols.
+Grammar has 76 terminal symbols.
+Grammar has 130 productions.
+Built an LR(0) automaton with 397 states.
+The grammar is not SLR(1) -- 17 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 397 states.
+Warning: 16 states have shift/reduce conflicts.
+100 out of 397 states have a default reduction.

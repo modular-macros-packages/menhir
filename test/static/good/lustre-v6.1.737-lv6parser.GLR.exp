@@ -1,0 +1,26 @@
+File "lustre-v6.1.737-lv6parser.mly", line 22, characters 15-23:
+Warning: the token TK_ERROR is unused.
+File "lustre-v6.1.737-lv6parser.mly", line 72, characters 15-26:
+Warning: the token TK_OPERATOR is unused.
+File "lustre-v6.1.737-lv6parser.mly", line 76, characters 15-23:
+Warning: the token TK_POWER is unused.
+13 out of 85 nonterminal symbols are nullable.
+There are 280 productions, whose total length is 753.
+17 out of 280 productions are right nullable.
+5 out of 13 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+8 out of 93 nonterminal symbols are nullable.
+There are 312 productions, whose total length is 955.
+0 out of 312 productions are right nullable.
+0 out of 8 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 93 nonterminal symbols, among which 1 start symbols.
+Grammar has 83 terminal symbols.
+Grammar has 312 productions.
+Built an LR(0) automaton with 651 states.
+The grammar is not SLR(1) -- 51 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 651 states.
+Warning: 49 states have shift/reduce conflicts.
+192 out of 651 states have a default reduction.

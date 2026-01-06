@@ -1,0 +1,33 @@
+File "lem.mly", line 165, characters 22-28:
+Warning: the token Module is unused.
+File "lem.mly", line 157, characters 66-69:
+Warning: the token Oct is unused.
+File "lem.mly", line 161, characters 41-52:
+Warning: the token TargetConst is unused.
+File "lem.mly", line 161, characters 30-40:
+Warning: the token TargetType is unused.
+File "lem.mly", line 1149, characters 0-20:
+Warning: symbol semi_backtickstrings is unreachable from the start symbol.
+File "lem.mly", line 1141, characters 0-25:
+Warning: symbol semi_backtickstrings_help is unreachable from the start symbol.
+15 out of 124 nonterminal symbols are nullable.
+There are 367 productions, whose total length is 953.
+12 out of 367 productions are right nullable.
+8 out of 15 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+7 out of 131 nonterminal symbols are nullable.
+There are 395 productions, whose total length is 1104.
+0 out of 395 productions are right nullable.
+0 out of 7 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 131 nonterminal symbols, among which 1 start symbols.
+Grammar has 117 terminal symbols.
+Grammar has 395 productions.
+Built an LR(0) automaton with 787 states.
+The grammar is not SLR(1) -- 15 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 787 states.
+Warning: 3 states have shift/reduce conflicts.
+Warning: 2 states have reduce/reduce conflicts.
+309 out of 787 states have a default reduction.

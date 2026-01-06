@@ -1,0 +1,27 @@
+File "electrum02.mly", line 38, characters 7-10:
+Warning: the token ALL is unused.
+File "electrum02.mly", line 38, characters 32-37:
+Warning: the token ARROW is unused.
+File "electrum02.mly", line 38, characters 11-14:
+Warning: the token SET is unused.
+20 out of 56 nonterminal symbols are nullable.
+There are 201 productions, whose total length is 461.
+15 out of 201 productions are right nullable.
+12 out of 20 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+8 out of 64 nonterminal symbols are nullable.
+There are 230 productions, whose total length is 565.
+0 out of 230 productions are right nullable.
+0 out of 8 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 64 nonterminal symbols, among which 1 start symbols.
+Grammar has 107 terminal symbols.
+Grammar has 230 productions.
+Built an LR(0) automaton with 393 states.
+The grammar is not SLR(1) -- 70 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 393 states.
+Warning: 64 states have shift/reduce conflicts.
+Warning: 5 states have reduce/reduce conflicts.
+104 out of 393 states have a default reduction.

@@ -1,0 +1,28 @@
+File "wallace.mly", line 57, characters 7-11:
+Warning: the token GIVE is unused.
+File "wallace.mly", line 73, characters 7-9:
+Warning: the token OF is unused.
+File "wallace.mly", line 91, characters 7-9:
+Warning: the token TO is unused.
+File "wallace.mly", line 99, characters 7-12:
+Warning: the token WHERE is unused.
+3 out of 36 nonterminal symbols are nullable.
+There are 140 productions, whose total length is 367.
+3 out of 140 productions are right nullable.
+3 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 36 nonterminal symbols are nullable.
+There are 143 productions, whose total length is 379.
+0 out of 143 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 36 nonterminal symbols, among which 1 start symbols.
+Grammar has 73 terminal symbols.
+Grammar has 143 productions.
+Built an LR(0) automaton with 296 states.
+The grammar is not SLR(1) -- 19 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 296 states.
+Warning: 16 states have shift/reduce conflicts.
+104 out of 296 states have a default reduction.

@@ -1,0 +1,36 @@
+File "asl_parser.mly", line 748, characters 0-11:
+Warning: symbol dummy_binop is unreachable from any of the start symbols.
+File "asl_parser.mly", line 786, characters 0-10:
+Warning: symbol expr_spice is unreachable from any of the start symbols.
+File "asl_parser.mly", line 152, characters 0-1:
+Warning: symbol l is unreachable from any of the start symbols.
+File "asl_parser.mly", line 522, characters 0-11:
+Warning: symbol lexpr_spice is unreachable from any of the start symbols.
+File "asl_parser.mly", line 488, characters 0-14:
+Warning: symbol nonempty_block is unreachable from any of the start symbols.
+File "asl_parser.mly", line 366, characters 0-8:
+Warning: symbol operator is unreachable from any of the start symbols.
+File "asl_parser.mly", line 570, characters 0-10:
+Warning: symbol stmt_spice is unreachable from any of the start symbols.
+File "asl_parser.mly", line 682, characters 0-5:
+Warning: symbol zexpr is unreachable from any of the start symbols.
+30 out of 133 nonterminal symbols are nullable.
+There are 338 productions, whose total length is 842.
+18 out of 338 productions are right nullable.
+14 out of 30 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+16 out of 149 nonterminal symbols are nullable.
+There are 376 productions, whose total length is 1003.
+0 out of 376 productions are right nullable.
+0 out of 16 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 149 nonterminal symbols, among which 4 start symbols.
+Grammar has 121 terminal symbols.
+Grammar has 376 productions.
+Built an LR(0) automaton with 794 states.
+The grammar is not SLR(1) -- 1 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 798 states.
+Warning: one state has reduce/reduce conflicts.
+311 out of 798 states have a default reduction.

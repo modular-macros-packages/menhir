@@ -1,0 +1,41 @@
+File "fibonacci.mly", line 24, characters 4-9:
+Warning: symbol fib10 is unreachable from the start symbol.
+File "fibonacci.mly", line 25, characters 4-9:
+Warning: symbol fib11 is unreachable from the start symbol.
+File "fibonacci.mly", line 26, characters 4-9:
+Warning: symbol fib12 is unreachable from the start symbol.
+File "fibonacci.mly", line 27, characters 4-9:
+Warning: symbol fib13 is unreachable from the start symbol.
+File "fibonacci.mly", line 28, characters 4-9:
+Warning: symbol fib14 is unreachable from the start symbol.
+File "fibonacci.mly", line 29, characters 4-9:
+Warning: symbol fib15 is unreachable from the start symbol.
+File "fibonacci.mly", line 30, characters 4-9:
+Warning: symbol fib16 is unreachable from the start symbol.
+File "fibonacci.mly", line 31, characters 4-9:
+Warning: symbol fib17 is unreachable from the start symbol.
+File "fibonacci.mly", line 32, characters 4-9:
+Warning: symbol fib18 is unreachable from the start symbol.
+File "fibonacci.mly", line 33, characters 4-9:
+Warning: symbol fib19 is unreachable from the start symbol.
+File "fibonacci.mly", line 34, characters 4-9:
+Warning: symbol fib20 is unreachable from the start symbol.
+0 out of 2 nonterminal symbols are nullable.
+There are 2 productions, whose total length is 57.
+0 out of 2 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 2 nonterminal symbols are nullable.
+There are 2 productions, whose total length is 57.
+0 out of 2 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 2 nonterminal symbols, among which 1 start symbols.
+Grammar has 2 terminal symbols.
+Grammar has 2 productions.
+Built an LR(0) automaton with 59 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 59 states.
+3 out of 59 states have a default reduction.

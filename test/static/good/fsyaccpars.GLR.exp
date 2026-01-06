@@ -1,0 +1,25 @@
+File "fsyaccpars.mly", line 11, characters 83-86:
+Warning: the token EOF is unused.
+File "fsyaccpars.mly", line 11, characters 59-66:
+Warning: the token GREATER is unused.
+File "fsyaccpars.mly", line 11, characters 54-58:
+Warning: the token LESS is unused.
+7 out of 14 nonterminal symbols are nullable.
+There are 29 productions, whose total length is 46.
+11 out of 29 productions are right nullable.
+4 out of 7 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 17 nonterminal symbols are nullable.
+There are 41 productions, whose total length is 68.
+0 out of 41 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 17 nonterminal symbols, among which 1 start symbols.
+Grammar has 19 terminal symbols.
+Grammar has 41 productions.
+Built an LR(0) automaton with 53 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 53 states.
+26 out of 53 states have a default reduction.

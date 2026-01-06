@@ -1,0 +1,21 @@
+File "ldap.2.4.0-ldap_filterparser.mly", line 38, characters 7-11:
+Warning: the token WHSP is unused.
+0 out of 4 nonterminal symbols are nullable.
+There are 16 productions, whose total length is 30.
+0 out of 16 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 4 nonterminal symbols are nullable.
+There are 16 productions, whose total length is 30.
+0 out of 16 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 4 nonterminal symbols, among which 1 start symbols.
+Grammar has 16 terminal symbols.
+Grammar has 16 productions.
+Built an LR(0) automaton with 28 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 28 states.
+17 out of 28 states have a default reduction.

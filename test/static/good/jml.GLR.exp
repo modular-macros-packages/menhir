@@ -1,0 +1,37 @@
+File "jml.mly", line 69, characters 16-24:
+Warning: the token ASSIGNOP is unused.
+File "jml.mly", line 87, characters 10-14:
+Warning: the token ELSE is unused.
+File "jml.mly", line 70, characters 7-9:
+Warning: the token EQ is unused.
+File "jml.mly", line 61, characters 16-25:
+Warning: the token LEFTBRACE is unused.
+File "jml.mly", line 82, characters 29-39:
+Warning: the token MINUSMINUS is unused.
+File "jml.mly", line 82, characters 20-28:
+Warning: the token PLUSPLUS is unused.
+File "jml.mly", line 61, characters 26-36:
+Warning: the token RIGHTBRACE is unused.
+File "jml.mly", line 86, characters 10-14:
+Warning: the token THEN is unused.
+27 out of 84 nonterminal symbols are nullable.
+There are 220 productions, whose total length is 488.
+37 out of 220 productions are right nullable.
+24 out of 27 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 87 nonterminal symbols are nullable.
+There are 334 productions, whose total length is 739.
+0 out of 334 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 87 nonterminal symbols, among which 1 start symbols.
+Grammar has 100 terminal symbols.
+Grammar has 334 productions.
+Built an LR(0) automaton with 487 states.
+The grammar is not SLR(1) -- 49 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 487 states.
+Warning: 23 states have shift/reduce conflicts.
+Warning: 21 states have reduce/reduce conflicts.
+188 out of 487 states have a default reduction.

@@ -1,0 +1,33 @@
+File "jocaml.mly", line 257, characters 7-16:
+Warning: the token BARRBRACE is unused.
+File "jocaml.mly", line 256, characters 7-16:
+Warning: the token LBRACEBAR is unused.
+File "jocaml.mly", line 258, characters 7-29:
+Warning: the token LESSLESSGREATERGREATER is unused.
+File "jocaml.mly", line 291, characters 6-15:
+Warning: the token prec_expr is unused.
+File "jocaml.mly", line 292, characters 6-15:
+Warning: the token prec_proc is unused.
+File "jocaml.mly", line 718, characters 0-14:
+Warning: symbol def_parameters is unreachable from any of the start symbols.
+28 out of 138 nonterminal symbols are nullable.
+There are 461 productions, whose total length is 1201.
+33 out of 461 productions are right nullable.
+16 out of 28 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+12 out of 150 nonterminal symbols are nullable.
+There are 542 productions, whose total length is 1508.
+0 out of 542 productions are right nullable.
+0 out of 12 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 150 nonterminal symbols, among which 4 start symbols.
+Grammar has 112 terminal symbols.
+Grammar has 542 productions.
+Built an LR(0) automaton with 1116 states.
+The grammar is not SLR(1) -- 97 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1116 states.
+Warning: 88 states have shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+339 out of 1116 states have a default reduction.

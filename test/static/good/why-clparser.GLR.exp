@@ -1,0 +1,29 @@
+File "why-clparser.mly", line 65, characters 58-62:
+Warning: the token ENUM is unused.
+File "why-clparser.mly", line 54, characters 27-41:
+Warning: the token STRING_LITERAL is unused.
+File "why-clparser.mly", line 65, characters 51-57:
+Warning: the token STRUCT is unused.
+File "why-clparser.mly", line 65, characters 63-68:
+Warning: the token UNION is unused.
+10 out of 36 nonterminal symbols are nullable.
+There are 148 productions, whose total length is 361.
+3 out of 148 productions are right nullable.
+6 out of 10 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+4 out of 40 nonterminal symbols are nullable.
+There are 182 productions, whose total length is 445.
+0 out of 182 productions are right nullable.
+0 out of 4 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 40 nonterminal symbols, among which 1 start symbols.
+Grammar has 86 terminal symbols.
+Grammar has 182 productions.
+Built an LR(0) automaton with 300 states.
+The grammar is not SLR(1) -- 37 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 300 states.
+Warning: 23 states have shift/reduce conflicts.
+Warning: 11 states have reduce/reduce conflicts.
+94 out of 300 states have a default reduction.

@@ -1,0 +1,25 @@
+File "leap_Z3ModelParser.mly", line 159, characters 36-52:
+Warning: the token DOUBLE_SEMICOLON is unused.
+File "leap_Z3ModelParser.mly", line 164, characters 11-14:
+Warning: the token EOF is unused.
+File "leap_Z3ModelParser.mly", line 164, characters 7-10:
+Warning: the token EOL is unused.
+3 out of 25 nonterminal symbols are nullable.
+There are 52 productions, whose total length is 127.
+2 out of 52 productions are right nullable.
+2 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 26 nonterminal symbols are nullable.
+There are 56 productions, whose total length is 141.
+0 out of 56 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 26 nonterminal symbols, among which 1 start symbols.
+Grammar has 29 terminal symbols.
+Grammar has 56 productions.
+Built an LR(0) automaton with 120 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 120 states.
+52 out of 120 states have a default reduction.

@@ -1,0 +1,40 @@
+File "leap_ExprParser.mly", line 515, characters 7-13:
+Warning: the token ASSIGN is unused.
+File "leap_ExprParser.mly", line 506, characters 40-49:
+Warning: the token BARRAYUPD is unused.
+File "leap_ExprParser.mly", line 480, characters 7-12:
+Warning: the token BEGIN is unused.
+File "leap_ExprParser.mly", line 480, characters 13-16:
+Warning: the token END is unused.
+File "leap_ExprParser.mly", line 530, characters 7-10:
+Warning: the token EOF is unused.
+File "leap_ExprParser.mly", line 552, characters 10-25:
+Warning: the token GHOST_DELIMITER is unused.
+File "leap_ExprParser.mly", line 516, characters 55-66:
+Warning: the token LOGICAL_IFF is unused.
+File "leap_ExprParser.mly", line 504, characters 7-13:
+Warning: the token THREAD is unused.
+File "leap_ExprParser.mly", line 522, characters 10-20:
+Warning: the token UNDERSCORE is unused.
+File "leap_ExprParser.mly", line 513, characters 7-19:
+Warning: the token VERTICAL_BAR is unused.
+7 out of 65 nonterminal symbols are nullable.
+There are 220 productions, whose total length is 836.
+4 out of 220 productions are right nullable.
+4 out of 7 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 68 nonterminal symbols are nullable.
+There are 230 productions, whose total length is 969.
+0 out of 230 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 68 nonterminal symbols, among which 6 start symbols.
+Grammar has 157 terminal symbols.
+Grammar has 230 productions.
+Built an LR(0) automaton with 819 states.
+The grammar is not SLR(1) -- 21 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 819 states.
+Warning: 19 states have shift/reduce conflicts.
+196 out of 819 states have a default reduction.

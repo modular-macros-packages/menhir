@@ -1,0 +1,55 @@
+File "parser_raw.mly", line 610, characters 29-36:
+Warning: the token COMMENT is unused.
+File "parser_raw.mly", line 611, characters 30-39:
+Warning: the token DOCSTRING is unused.
+File "parser_raw.mly", line 622, characters 7-14:
+Warning: the token DOTLESS is unused.
+File "parser_raw.mly", line 623, characters 7-15:
+Warning: the token DOTTILDE is unused.
+File "parser_raw.mly", line 613, characters 7-10:
+Warning: the token EOL is unused.
+File "parser_raw.mly", line 618, characters 7-18:
+Warning: the token FINALLY_LWT is unused.
+File "parser_raw.mly", line 619, characters 7-14:
+Warning: the token FOR_LWT is unused.
+File "parser_raw.mly", line 624, characters 7-17:
+Warning: the token GREATERDOT is unused.
+File "parser_raw.mly", line 530, characters 7-22:
+Warning: the token GREATERRBRACKET is unused.
+File "parser_raw.mly", line 625, characters 16-21:
+Warning: the token LETOP is unused.
+File "parser_raw.mly", line 615, characters 7-14:
+Warning: the token LET_LWT is unused.
+File "parser_raw.mly", line 617, characters 7-16:
+Warning: the token MATCH_LWT is unused.
+File "parser_raw.mly", line 616, characters 7-14:
+Warning: the token TRY_LWT is unused.
+File "parser_raw.mly", line 620, characters 7-16:
+Warning: the token WHILE_LWT is unused.
+File "parser_raw.mly", line 658, characters 6-17:
+Warning: the token prec_escape is unused.
+File "parser_raw.mly", line 713, characters 0-15:
+Warning: symbol parse_core_type is unreachable from any of the start symbols.
+File "parser_raw.mly", line 719, characters 0-13:
+Warning: symbol parse_pattern is unreachable from any of the start symbols.
+35 out of 208 nonterminal symbols are nullable.
+There are 705 productions, whose total length is 1789.
+73 out of 705 productions are right nullable.
+17 out of 35 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+18 out of 226 nonterminal symbols are nullable.
+There are 899 productions, whose total length is 2523.
+0 out of 899 productions are right nullable.
+0 out of 18 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 226 nonterminal symbols, among which 3 start symbols.
+Grammar has 130 terminal symbols.
+Grammar has 899 productions.
+Built an LR(0) automaton with 1692 states.
+The grammar is not SLR(1) -- 104 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1692 states.
+Warning: 78 states have shift/reduce conflicts.
+Warning: 5 states have reduce/reduce conflicts.
+603 out of 1692 states have a default reduction.

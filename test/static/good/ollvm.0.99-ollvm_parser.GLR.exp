@@ -1,0 +1,22 @@
+File "ollvm.0.99-ollvm_parser.mly", line 169, characters 0-14:
+Warning: symbol instr_metadata is unreachable from the start symbol.
+33 out of 93 nonterminal symbols are nullable.
+There are 342 productions, whose total length is 577.
+25 out of 342 productions are right nullable.
+20 out of 33 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+13 out of 106 nonterminal symbols are nullable.
+There are 413 productions, whose total length is 1113.
+0 out of 413 productions are right nullable.
+0 out of 13 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 106 nonterminal symbols, among which 1 start symbols.
+Grammar has 212 terminal symbols.
+Grammar has 413 productions.
+Built an LR(0) automaton with 725 states.
+The grammar is not SLR(1) -- 3 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 725 states.
+Warning: one state has shift/reduce conflicts.
+352 out of 725 states have a default reduction.

@@ -1,0 +1,21 @@
+File "links.0.8-xmlParser.mly", line 15, characters 14-17:
+Warning: the token END is unused.
+1 out of 12 nonterminal symbols are nullable.
+There are 26 productions, whose total length is 55.
+1 out of 26 productions are right nullable.
+1 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 12 nonterminal symbols are nullable.
+There are 27 productions, whose total length is 58.
+0 out of 27 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 12 nonterminal symbols, among which 1 start symbols.
+Grammar has 16 terminal symbols.
+Grammar has 27 productions.
+Built an LR(0) automaton with 43 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 43 states.
+24 out of 43 states have a default reduction.

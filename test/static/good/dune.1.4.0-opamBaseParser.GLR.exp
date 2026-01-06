@@ -1,0 +1,22 @@
+File "dune.1.4.0-opamBaseParser.mly", line 49, characters 10-16:
+Warning: the token URELOP is unused.
+2 out of 8 nonterminal symbols are nullable.
+There are 24 productions, whose total length is 53.
+2 out of 24 productions are right nullable.
+2 out of 2 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 8 nonterminal symbols are nullable.
+There are 30 productions, whose total length is 70.
+0 out of 30 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 8 nonterminal symbols, among which 2 start symbols.
+Grammar has 18 terminal symbols.
+Grammar has 30 productions.
+Built an LR(0) automaton with 56 states.
+The grammar is not SLR(1) -- 4 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 56 states.
+Warning: 4 states have shift/reduce conflicts.
+25 out of 56 states have a default reduction.

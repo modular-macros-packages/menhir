@@ -1,0 +1,25 @@
+File "herdtools7.7.51-stateParser.mly", line 34, characters 62-67:
+Warning: the token CASES is unused.
+File "herdtools7.7.51-stateParser.mly", line 33, characters 33-42:
+Warning: the token PLUS_DISJ is unused.
+12 out of 36 nonterminal symbols are nullable.
+There are 98 productions, whose total length is 217.
+10 out of 98 productions are right nullable.
+7 out of 12 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+5 out of 41 nonterminal symbols are nullable.
+There are 120 productions, whose total length is 252.
+0 out of 120 productions are right nullable.
+0 out of 5 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 41 nonterminal symbols, among which 8 start symbols.
+Grammar has 38 terminal symbols.
+Grammar has 120 productions.
+Built an LR(0) automaton with 205 states.
+The grammar is not SLR(1) -- 9 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 205 states.
+Warning: 4 states have shift/reduce conflicts.
+Warning: 2 states have reduce/reduce conflicts.
+89 out of 205 states have a default reduction.

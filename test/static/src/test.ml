@@ -341,6 +341,25 @@ let process_positive_test basenames : unit =
   print (phony quick (diff (id ^ ".automaton.resolved.exp") automaton_resolved));
   print (phony quick (diff (id ^ ".conflicts.exp") conflicts));
 
+  (* Run menhir in --GLR mode, with --test-GLR. Also pass --kill-priorities
+     and --avoid-eos; these options are needed in order to ensure that a
+     randomly-generated sentence (which is correct with respect to the
+     grammar) will be accepted by the parser. *)
+  let output = id ^ ".GLR.out" in
+  let targets = [output] in
+  let out, err = File output, File output in
+  run `Positive out err basenames targets (atoms [
+    "--GLR";
+    "--test-GLR";
+    "--kill-priorities";
+    "--avoid-eos";
+    "-lg"; "1";
+    "-la"; "1";
+    "-lc"; "1";
+  ] @ flags);
+  (* Check that the output coincides with what was expected. *)
+  print (phony quick (diff (id ^ ".GLR.exp") output));
+
   if not (List.mem id exclude) then begin
   let ocamlbase = normalize (id ^ stripped) in
 

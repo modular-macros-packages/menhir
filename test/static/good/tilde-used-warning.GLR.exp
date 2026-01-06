@@ -1,0 +1,32 @@
+File "tilde-used-warning.mly", line 44, characters 2-3:
+Warning: one nameless variable has been introduced by a ~ pattern,
+yet this sequence does not end in a point-free semantic action <...>.
+Perhaps a wildcard pattern _ should be used instead.
+File "tilde-used-warning.mly", line 21, characters 6-7:
+File "tilde-used-warning.mly", line 21, characters 3-4:
+Warning: two nameless variables have been introduced by ~ patterns,
+yet this sequence does not end in a point-free semantic action <...>.
+Perhaps wildcard patterns _ should be used instead.
+File "tilde-used-warning.mly", line 17, characters 6-7:
+Warning: one nameless variable has been introduced by a ~ pattern,
+yet this sequence does not end in a point-free semantic action <...>.
+Perhaps a wildcard pattern _ should be used instead.
+0 out of 9 nonterminal symbols are nullable.
+There are 9 productions, whose total length is 24.
+0 out of 9 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 9 nonterminal symbols are nullable.
+There are 9 productions, whose total length is 24.
+0 out of 9 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 9 nonterminal symbols, among which 1 start symbols.
+Grammar has 6 terminal symbols.
+Grammar has 9 productions.
+Built an LR(0) automaton with 26 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 26 states.
+10 out of 26 states have a default reduction.

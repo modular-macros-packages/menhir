@@ -1,0 +1,21 @@
+File "wasm.1.0-parser.mly", line 158, characters 39-58:
+Warning: the token ASSERT_SOFT_INVALID is unused.
+25 out of 78 nonterminal symbols are nullable.
+There are 197 productions, whose total length is 516.
+51 out of 197 productions are right nullable.
+20 out of 25 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+5 out of 83 nonterminal symbols are nullable.
+There are 320 productions, whose total length is 971.
+0 out of 320 productions are right nullable.
+0 out of 5 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 83 nonterminal symbols, among which 3 start symbols.
+Grammar has 77 terminal symbols.
+Grammar has 320 productions.
+Built an LR(0) automaton with 571 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 571 states.
+242 out of 571 states have a default reduction.

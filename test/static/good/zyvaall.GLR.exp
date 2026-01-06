@@ -1,0 +1,26 @@
+File "zyvaall.mly", line 10, characters 61-71:
+Warning: the token EQUALEQUAL is unused.
+File "zyvaall.mly", line 7, characters 16-22:
+Warning: the token STRING is unused.
+File "zyvaall.mly", line 16, characters 32-36:
+Warning: the token TYPE is unused.
+9 out of 21 nonterminal symbols are nullable.
+There are 63 productions, whose total length is 165.
+9 out of 63 productions are right nullable.
+5 out of 9 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+4 out of 25 nonterminal symbols are nullable.
+There are 72 productions, whose total length is 187.
+0 out of 72 productions are right nullable.
+0 out of 4 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 25 nonterminal symbols, among which 1 start symbols.
+Grammar has 46 terminal symbols.
+Grammar has 72 productions.
+Built an LR(0) automaton with 155 states.
+The grammar is not SLR(1) -- 12 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 155 states.
+Warning: 11 states have shift/reduce conflicts.
+39 out of 155 states have a default reduction.

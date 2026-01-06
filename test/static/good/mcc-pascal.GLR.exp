@@ -1,0 +1,34 @@
+File "mcc-pascal.mly", line 92, characters 29-37:
+Warning: the token TokBreak is unused.
+File "mcc-pascal.mly", line 103, characters 29-37:
+Warning: the token TokConst is unused.
+File "mcc-pascal.mly", line 54, characters 29-38:
+Warning: the token TokLShift is unused.
+File "mcc-pascal.mly", line 75, characters 29-41:
+Warning: the token TokLeftBrace is unused.
+File "mcc-pascal.mly", line 55, characters 29-38:
+Warning: the token TokRShift is unused.
+File "mcc-pascal.mly", line 76, characters 29-42:
+Warning: the token TokRightBrace is unused.
+File "mcc-pascal.mly", line 152, characters 6-14:
+Warning: the token TokStart is unused.
+0 out of 89 nonterminal symbols are nullable.
+There are 197 productions, whose total length is 444.
+0 out of 197 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 87 nonterminal symbols are nullable.
+There are 193 productions, whose total length is 439.
+0 out of 193 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 87 nonterminal symbols, among which 3 start symbols.
+Grammar has 79 terminal symbols.
+Grammar has 193 productions.
+Built an LR(0) automaton with 359 states.
+The grammar is not SLR(1) -- 1 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 359 states.
+Warning: one state has shift/reduce conflicts.
+169 out of 359 states have a default reduction.

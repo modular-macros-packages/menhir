@@ -1,0 +1,44 @@
+File "java.mly", line 53, characters 29-36:
+Warning: the token BYVALUE is unused.
+File "java.mly", line 54, characters 18-23:
+Warning: the token CONST is unused.
+File "java.mly", line 55, characters 27-33:
+Warning: the token FUTURE is unused.
+File "java.mly", line 55, characters 34-41:
+Warning: the token GENERIC is unused.
+File "java.mly", line 55, characters 42-46:
+Warning: the token GOTO is unused.
+File "java.mly", line 56, characters 25-30:
+Warning: the token INNER is unused.
+File "java.mly", line 71, characters 43-70:
+Warning: the token JML_STATEMENT_SPECIFICATION is unused.
+File "java.mly", line 57, characters 14-22:
+Warning: the token OPERATOR is unused.
+File "java.mly", line 57, characters 23-28:
+Warning: the token OUTER is unused.
+File "java.mly", line 58, characters 14-18:
+Warning: the token REST is unused.
+File "java.mly", line 59, characters 24-27:
+Warning: the token VAR is unused.
+File "java.mly", line 59, characters 33-41:
+Warning: the token VOLATILE is unused.
+19 out of 74 nonterminal symbols are nullable.
+There are 225 productions, whose total length is 514.
+15 out of 225 productions are right nullable.
+10 out of 19 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+9 out of 83 nonterminal symbols are nullable.
+There are 270 productions, whose total length is 673.
+0 out of 270 productions are right nullable.
+0 out of 9 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 83 nonterminal symbols, among which 1 start symbols.
+Grammar has 104 terminal symbols.
+Grammar has 270 productions.
+Built an LR(0) automaton with 497 states.
+The grammar is not SLR(1) -- 35 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 497 states.
+Warning: 25 states have shift/reduce conflicts.
+191 out of 497 states have a default reduction.

@@ -1,0 +1,21 @@
+File "mcc-phobos.mly", line 228, characters 33-41:
+Warning: the token TokFloat is unused.
+15 out of 88 nonterminal symbols are nullable.
+There are 150 productions, whose total length is 252.
+0 out of 150 productions are right nullable.
+0 out of 15 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+15 out of 103 nonterminal symbols are nullable.
+There are 165 productions, whose total length is 267.
+0 out of 165 productions are right nullable.
+0 out of 15 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 103 nonterminal symbols, among which 1 start symbols.
+Grammar has 40 terminal symbols.
+Grammar has 165 productions.
+Built an LR(0) automaton with 234 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 234 states.
+117 out of 234 states have a default reduction.

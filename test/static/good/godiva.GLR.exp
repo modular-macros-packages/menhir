@@ -1,0 +1,59 @@
+File "godiva.mly", line 224, characters 6-32:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 197, characters 6-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 230, characters 6-33:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 159, characters 6-31:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 171, characters 6-28:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 185, characters 6-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 191, characters 6-32:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+File "godiva.mly", line 165, characters 6-30:
+Warning: when --strategy simplified is selected,
+the error token may appear only at the end of a production
+(and the semantic action must abort the parser).
+This production will be ignored.
+5 out of 24 nonterminal symbols are nullable.
+There are 54 productions, whose total length is 99.
+4 out of 54 productions are right nullable.
+4 out of 5 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 24 nonterminal symbols are nullable.
+There are 59 productions, whose total length is 115.
+0 out of 59 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 24 nonterminal symbols, among which 1 start symbols.
+Grammar has 27 terminal symbols.
+Grammar has 59 productions.
+Built an LR(0) automaton with 94 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 94 states.
+52 out of 94 states have a default reduction.

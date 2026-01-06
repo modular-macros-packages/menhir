@@ -1,0 +1,35 @@
+File "prooflang.mly", line 11, characters 90-95:
+Warning: the token EMPTY is unused.
+File "prooflang.mly", line 18, characters 15-18:
+Warning: the token EOL is unused.
+File "prooflang.mly", line 12, characters 38-43:
+Warning: the token EQUAL is unused.
+File "prooflang.mly", line 17, characters 15-21:
+Warning: the token LPAREN is unused.
+File "prooflang.mly", line 12, characters 76-80:
+Warning: the token NAME is unused.
+File "prooflang.mly", line 17, characters 22-28:
+Warning: the token RPAREN is unused.
+File "prooflang.mly", line 12, characters 8-14:
+Warning: the token STRING is unused.
+0 out of 23 nonterminal symbols are nullable.
+There are 48 productions, whose total length is 159.
+0 out of 48 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 23 nonterminal symbols are nullable.
+There are 48 productions, whose total length is 159.
+0 out of 48 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 23 nonterminal symbols, among which 1 start symbols.
+Grammar has 42 terminal symbols.
+Grammar has 48 productions.
+Built an LR(0) automaton with 149 states.
+The grammar is not SLR(1) -- 2 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 149 states.
+Warning: 2 states have shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+42 out of 149 states have a default reduction.

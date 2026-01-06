@@ -1,0 +1,28 @@
+File "spike.mly", line 583, characters 7-14:
+Warning: the token TOK_AND is unused.
+File "spike.mly", line 619, characters 7-17:
+Warning: the token TOK_CRITIC is unused.
+File "spike.mly", line 635, characters 7-20:
+Warning: the token TOK_REDUCTION is unused.
+File "spike.mly", line 678, characters 16-26:
+Warning: the token TOK_STRING is unused.
+24 out of 135 nonterminal symbols are nullable.
+There are 306 productions, whose total length is 693.
+4 out of 306 productions are right nullable.
+17 out of 24 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+7 out of 137 nonterminal symbols are nullable.
+There are 944 productions, whose total length is 3166.
+0 out of 944 productions are right nullable.
+0 out of 7 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 137 nonterminal symbols, among which 12 start symbols.
+Grammar has 93 terminal symbols.
+Grammar has 944 productions.
+Built an LR(0) automaton with 758 states.
+The grammar is not SLR(1) -- 183 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 758 states.
+Warning: 181 states have reduce/reduce conflicts.
+241 out of 758 states have a default reduction.

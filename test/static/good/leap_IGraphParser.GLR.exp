@@ -1,0 +1,21 @@
+File "leap_IGraphParser.mly", line 54, characters 7-10:
+Warning: the token EOF is unused.
+14 out of 44 nonterminal symbols are nullable.
+There are 87 productions, whose total length is 181.
+12 out of 87 productions are right nullable.
+11 out of 14 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+3 out of 47 nonterminal symbols are nullable.
+There are 120 productions, whose total length is 313.
+0 out of 120 productions are right nullable.
+0 out of 3 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 47 nonterminal symbols, among which 3 start symbols.
+Grammar has 29 terminal symbols.
+Grammar has 120 productions.
+Built an LR(0) automaton with 198 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 198 states.
+85 out of 198 states have a default reduction.

@@ -1,0 +1,22 @@
+File "private-and-public-2.mly", line 4, characters 0-1:
+Note: the nonterminal symbol a is renamed private_and_public_2_a.
+
+1 out of 5 nonterminal symbols are nullable.
+There are 5 productions, whose total length is 6.
+0 out of 5 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+1 out of 5 nonterminal symbols are nullable.
+There are 5 productions, whose total length is 6.
+0 out of 5 productions are right nullable.
+0 out of 1 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 5 nonterminal symbols, among which 1 start symbols.
+Grammar has 2 terminal symbols.
+Grammar has 5 productions.
+Built an LR(0) automaton with 8 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 8 states.
+6 out of 8 states have a default reduction.

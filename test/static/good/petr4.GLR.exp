@@ -1,0 +1,36 @@
+File "petr4.mly", line 181, characters 0-4:
+Note: the nonterminal symbol list is renamed petr4_list.
+
+File "petr4.mly", line 169, characters 0-13:
+Note: the nonterminal symbol nonempty_list is renamed petr4_nonempty_list.
+
+File "petr4.mly", line 186, characters 8-14:
+Note: the nonterminal symbol option is renamed petr4_option.
+
+File "petr4.mly", line 157, characters 0-14:
+Note: the nonterminal symbol separated_list is renamed petr4_separated_list.
+
+File "petr4.mly", line 133, characters 0-23:
+Note: the nonterminal symbol separated_nonempty_list is renamed petr4_separated_nonempty_list.
+
+52 out of 166 nonterminal symbols are nullable.
+There are 478 productions, whose total length is 1131.
+38 out of 478 productions are right nullable.
+27 out of 52 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+25 out of 187 nonterminal symbols are nullable.
+There are 517 productions, whose total length is 1157.
+0 out of 517 productions are right nullable.
+0 out of 25 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 187 nonterminal symbols, among which 3 start symbols.
+Grammar has 90 terminal symbols.
+Grammar has 517 productions.
+Built an LR(0) automaton with 1015 states.
+The grammar is not SLR(1) -- 34 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 1017 states.
+Warning: 28 states have shift/reduce conflicts.
+Warning: one state has reduce/reduce conflicts.
+424 out of 1017 states have a default reduction.

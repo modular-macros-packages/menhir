@@ -1,0 +1,33 @@
+File "modelica.mly", line 40, characters 83-89:
+Warning: the token IMPURE is unused.
+File "modelica.mly", line 38, characters 37-41:
+Warning: the token PURE is unused.
+File "modelica.mly", line 61, characters 6-14:
+Warning: the token app_prec is unused.
+File "modelica.mly", line 60, characters 10-19:
+Warning: the token below_app is unused.
+File "modelica.mly", line 46, characters 7-13:
+Warning: the token lowest is unused.
+File "modelica.mly", line 68, characters 6-15:
+Warning: the token type_proj is unused.
+52 out of 123 nonterminal symbols are nullable.
+There are 311 productions, whose total length is 695.
+90 out of 311 productions are right nullable.
+40 out of 52 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+12 out of 135 nonterminal symbols are nullable.
+There are 604 productions, whose total length is 2228.
+0 out of 604 productions are right nullable.
+0 out of 12 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 135 nonterminal symbols, among which 9 start symbols.
+Grammar has 100 terminal symbols.
+Grammar has 604 productions.
+Built an LR(0) automaton with 892 states.
+The grammar is not SLR(1) -- 49 states have a conflict.
+The construction mode is pager.
+Built an LR(1) automaton with 892 states.
+Warning: 27 states have shift/reduce conflicts.
+Warning: 19 states have reduce/reduce conflicts.
+356 out of 892 states have a default reduction.

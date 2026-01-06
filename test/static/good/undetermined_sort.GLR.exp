@@ -1,0 +1,61 @@
+A :: *
+B :: *
+anonymous :: (*) -> *
+append :: (*, *) -> *
+boption :: (*) -> *
+delimited :: (*, *, *) -> *
+embedded :: (*) -> *
+endrule :: (*) -> *
+error :: *
+flatten :: (*) -> *
+foo :: (*) -> *
+ioption :: (*) -> *
+list :: (*) -> *
+loption :: (*) -> *
+main :: *
+midrule :: (*) -> *
+nonempty_list :: (*) -> *
+option :: (*) -> *
+pair :: (*, *) -> *
+preceded :: (*, *) -> *
+rev :: (*) -> *
+separated_list :: (*, *) -> *
+separated_nonempty_list :: (*, *) -> *
+separated_pair :: (*, *, *) -> *
+terminated :: (*, *) -> *
+0 out of 2 nonterminal symbols are nullable.
+There are 2 productions, whose total length is 4.
+0 out of 2 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 2 nonterminal symbols are nullable.
+There are 2 productions, whose total length is 4.
+0 out of 2 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 2 nonterminal symbols, among which 1 start symbols.
+Grammar has 3 terminal symbols.
+Grammar has 2 productions.
+nullable(main) = false
+nullable(_menhir_main) = false
+first(main) = A
+first(_menhir_main) = A
+minimal(main) = (* 2 *) A B
+minimal(_menhir_main) = (* 3 *) A B MENHIR_EOF
+maximal(main) = 2
+maximal(_menhir_main) = 3
+follow(main) = MENHIR_EOF
+follow(_menhir_main) = #
+follow(error) = 
+follow(MENHIR_EOF) = #
+follow(B) = MENHIR_EOF
+follow(A) = B
+follow(#) = 
+sfollow(main) = MENHIR_EOF
+sfollow(_menhir_main) = #
+Built an LR(0) automaton with 6 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 6 states.
+3 out of 6 states have a default reduction.

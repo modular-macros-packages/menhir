@@ -1,0 +1,19 @@
+0 out of 474 nonterminal symbols are nullable.
+There are 474 productions, whose total length is 946.
+0 out of 474 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Now eliminating the symbols that participate in right nullable suffixes.
+0 out of 474 nonterminal symbols are nullable.
+There are 474 productions, whose total length is 946.
+0 out of 474 productions are right nullable.
+0 out of 0 nullable nonterminal symbols occur in a nullable suffix.
+Warning: because not every rule has a merge function,
+a default merge function should be provided.
+Grammar has 474 nonterminal symbols, among which 158 start symbols.
+Grammar has 150 terminal symbols.
+Grammar has 474 productions.
+Built an LR(0) automaton with 1262 states.
+The grammar is SLR(1).
+The construction mode is pager.
+Built an LR(1) automaton with 1262 states.
+632 out of 1262 states have a default reduction.
