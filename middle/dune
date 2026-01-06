@@ -9,6 +9,7 @@
     base
     front
     menhirLib
+    menhirGLR
     menhirSdk
   )
   (flags :standard -open Base -open Front -open MenhirSdk)
