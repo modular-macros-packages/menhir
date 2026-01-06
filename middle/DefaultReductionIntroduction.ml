@@ -67,14 +67,19 @@ include Fix.Numbering.Operations(A)
 let no_shift transitions =
   SymbolMap.for_all (fun sym _ -> Symbol.is_nonterminal sym) transitions
 
-(* Because end-of-stream conflicts have been resolved, when we introduce
-   a default reduction on [ts], it must be the case that either [ts] is
-   the singleton set that contains just the token [#] or [ts] is a set
-   of non-[#] terminal symbols. *)
+let has_shift transitions =
+  not (no_shift transitions)
+
+(* [no_eos_conflicts ts] tests whether the set [ts] either is the singleton
+   set that contains just the token [#] or is a set of non-[#] terminal
+   symbols. *)
 
 let no_eos_conflict ts =
   TerminalSet.equal ts (TerminalSet.singleton Terminal.sharp) ||
   not (TerminalSet.mem Terminal.sharp ts)
+
+let has_eos_conflict ts =
+  not (no_eos_conflict ts)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -84,19 +89,32 @@ let no_eos_conflict ts =
 let count =
   ref 0
 
+exception Abandon
+
 let test_default_reduction node =
+  (* If a default reduction at this node is forbidden, bail out. *)
   if A.forbid_default_reduction node then
-    None
-  else
-    let reductions = Reductions.reverse (A.reductions node) in
-    if ProductionMap.is_singleton reductions
-    && no_shift (A.transitions node) then
-      let prod, ts = ProductionMap.choose reductions in
-      incr count;
-      assert (no_eos_conflict ts);
-      Some (prod, ts)
-    else
-      None
+    raise Abandon;
+  (* Unless there is a single reduction and no shift transition, bail out. *)
+  let reductions = Reductions.reverse (A.reductions node) in
+  if not (ProductionMap.is_singleton reductions)
+  || has_shift (A.transitions node) then
+    raise Abandon;
+  (* Good: there is just a reduction, of [prod] on [ts]. *)
+  let prod, ts = ProductionMap.choose reductions in
+  (* In deterministic (LR) mode, we can assume that end-of-stream conflicts
+     have been resolved already, so [no_eos_conflict ts] must hold. In
+     non-deterministic (GLR) mode, this is not guaranteed. We test this
+     condition, and introduce a default reduction only if it holds. *)
+  if has_eos_conflict ts then
+    raise Abandon;
+  (* Good: there is no end-of-stream conflict. *)
+  (* Introduce a default reduction of [prod] on [ts]. *)
+  incr count;
+  prod, ts
+
+let test_default_reduction node =
+  try Some (test_default_reduction node) with Abandon -> None
 
 let test_default_reduction =
   tabulate test_default_reduction

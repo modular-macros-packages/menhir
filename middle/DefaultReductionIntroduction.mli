@@ -9,8 +9,13 @@
 (******************************************************************************)
 
 (**This module transforms an LR(1) automaton by introducing default
-   reductions. End-of-stream conflicts must have already been resolved
-   by running [SevereConflictResolution]. *)
+   reductions.
+
+   If a node has an end-of-stream conflict, then a default reduction cannot be
+   introduced at this node. In deterministic (LR) mode, end-of-stream
+   conflicts have normally already been resolved, prior to this
+   transformation, by running [SevereConflictResolution]. In non-deterministic
+   (GLR) mode, end-of-stream conflicts can still exist. *)
 
 open Report
 open MiddleAPI
