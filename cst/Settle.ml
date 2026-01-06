@@ -41,19 +41,6 @@ open A
 
 (* -------------------------------------------------------------------------- *)
 
-(* A tiny stub for the module Option, which appears in OCaml 4.08. *)
-
-module Option = struct
-  let get o =
-    match o with
-    | Some x ->
-        x
-    | None ->
-        assert false
-end
-
-(* -------------------------------------------------------------------------- *)
-
 (* States. *)
 
 module State = struct
@@ -292,8 +279,8 @@ let apparently_viable dcst s t' : bool =
 (* The function [apparently_viable] is in fact not used, because we manually
    inline it at its call site inside [settle]. *)
 
-let _ =
-  apparently_viable
+let () =
+  ignore apparently_viable
 
 (* -------------------------------------------------------------------------- *)
 
