@@ -200,13 +200,13 @@ val specialize_token: bool
    to produce results of roughly comparable quality. The size of the resulting
    tables can vary, up or down, by up to 5% or 10%. This flag will be removed
    in the future. *)
-val pack_classic : bool
+val pack_classic: bool
 
 (**The undocumented flags [--expand-nullable-symbols],
    [--expand-nullable-suffix-participants], and [--expand-nullable-suffixes]
    cause some or all occurrences of nullable symbols to be expanded away.
    See [ExpandNullable]. *)
-val expand_nullable :
+val expand_nullable:
   [ `ExpandNullableSymbols
   | `ExpandNullableSuffixParticipants
   | `ExpandNullableSuffixes ]
