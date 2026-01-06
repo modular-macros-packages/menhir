@@ -466,7 +466,7 @@ let match_tokbranch toks (tokpat, _) : bool =
    outcome is not definitely known is forbidden. *)
 
 let[@inline] find_tokbranch branches toks : tokbranch option =
-  MList.find_opt (match_tokbranch toks) branches
+  List.find_opt (match_tokbranch toks) branches
 
 (* -------------------------------------------------------------------------- *)
 

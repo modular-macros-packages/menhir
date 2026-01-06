@@ -75,7 +75,7 @@ let search p i xs : (int * 'a) option =
   xs
   |> MList.index
   |> MList.drop i
-  |> MList.find_opt (fun (_, x) -> p x)
+  |> List.find_opt (fun (_, x) -> p x)
 
 (* -------------------------------------------------------------------------- *)
 

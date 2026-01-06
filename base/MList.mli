@@ -72,10 +72,6 @@ val group: ('a -> 'a -> int) -> 'a list -> 'a list list
    to sort the list [xs]. *)
 val foreach_duplicate: ('a -> 'a -> int) -> 'a list -> ('a -> unit) -> unit
 
-(** [find_opt p xs] returns the first element of the list [xs] that satisfies
-    the predicate [p]. If no element satisfies [p] then [None] is returned. *)
-val find_opt : ('a -> bool) -> 'a list -> 'a option
-
 (**[find_map f xs] applies [f] to the elements of [xs] in order and returns
    the first result of the form [Some y], if there is one. If there is none,
    it returns [None]. *)

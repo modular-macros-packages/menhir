@@ -130,11 +130,6 @@ let foreach_duplicate cmp xs yield =
       (* then yield an element. *)
       yield x
 
-(* [find_opt] appears in OCaml 4.05. *)
-let rec find_opt p = function
-  | [] -> None
-  | x :: l -> if p x then Some x else find_opt p l
-
 let rec find_map f = function
   | [] ->
       None
