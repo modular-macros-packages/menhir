@@ -266,7 +266,7 @@ let[@inline] apparently_viable_production prod dcsts s t' : bool =
    depth 1, but perhaps, by inspecting it at a greater depth, a problem would
    be discovered. *)
 
-let[@warning "-32"] apparently_viable dcst s t' : bool =
+let apparently_viable dcst s t' : bool =
   if debug then assert (DCST.transition_head s dcst <> None);
   match dcst with
   | Choice _ ->
@@ -278,6 +278,9 @@ let[@warning "-32"] apparently_viable dcst s t' : bool =
 
 (* The function [apparently_viable] is in fact not used, because we manually
    inline it at its call site inside [settle]. *)
+
+let () =
+  ignore apparently_viable
 
 (* -------------------------------------------------------------------------- *)
 
