@@ -2,6 +2,8 @@
 
 ## 2025/12/XX
 
+* Menhir now requires OCaml 4.08 or later.
+
 * Major internal reorganization of the code.
 
 * Table back-end: generate specialized table access code.

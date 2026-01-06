@@ -146,10 +146,6 @@ houblix:
 # in two parts.
 
 OLD_VERSIONS := \
-  4.04.2 \
-  4.05.0 \
-  4.06.1 \
-  4.07.1 \
   4.08.1 \
   4.09.1 \
   4.09.0+bytecode-only \
