@@ -157,8 +157,8 @@ module OperationsForIntSegment (T : sig val n: int end) = struct
   (* One could call [Operations] and include its result, but I am not sure
      whether OCaml would optimize away the calls to [encode] and [decode]. *)
 
-  let equal =
-    Int.equal
+  let equal (x : int) (y : int) =
+    x = y
 
   let compare =
     (-)
