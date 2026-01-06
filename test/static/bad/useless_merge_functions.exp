@@ -1,0 +1,4 @@
+File "useless_merge_functions.mly", line 9, characters 0-4:
+Error: merge functions are useless unless the GLR back-end is selected.
+File "useless_merge_functions.mly", line 4, characters 0-36:
+Error: merge functions are useless unless the GLR back-end is selected.

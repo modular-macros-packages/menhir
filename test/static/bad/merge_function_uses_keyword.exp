@@ -1,0 +1,4 @@
+File "merge_function_uses_keyword.mly", line 12, characters 0-35:
+Error: the keyword $loc cannot be used in a merge function.
+File "merge_function_uses_keyword.mly", line 3, characters 0-37:
+Error: the keyword $loc cannot be used in a merge function.

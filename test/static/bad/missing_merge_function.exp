@@ -1,0 +1,5 @@
+File "missing_merge_function.mly", line 28, characters 0-4:
+Error: syntax error after '%merge' and before 'main'.
+A merge function, delimited with curly braces, is expected at this point.
+Here is an example:
+  { fun e1 e2 -> Disjunction (e1, e2) }

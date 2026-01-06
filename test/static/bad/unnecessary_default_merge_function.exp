@@ -1,0 +1,3 @@
+File "unnecessary_default_merge_function.mly", line 6, characters 0-26:
+Error: because every rule has a merge function,
+this default merge function is unnecessary.

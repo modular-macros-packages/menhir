@@ -1,0 +1,6 @@
+File "missing_default_merge_function.mly", line 7, characters 0-2:
+Error: syntax error after '%merge' and before '%%'.
+A default merge function, delimited with curly braces, is now expected.
+Here are examples:
+  { fun symbol v1 v2 -> raise (Ambiguity (symbol, $loc)) }
+  { fun symbol v1 v2 -> log_ambiguity symbol $loc; v1 }

@@ -1,7 +1,7 @@
 ;; This file has been auto-generated. Please do not edit it.
 ;; Instead, edit [test.ml] and run [make depend].
 
-;; 181 distinct tests.
+;; 190 distinct tests.
 
 (rule (target a-rule-is-expected.out) (deps a-rule-is-expected.mly)
   (action
@@ -453,6 +453,19 @@
 (rule (alias test)
   (action (diff inline-minimal-cycle.exp inline-minimal-cycle.out)))
 
+(rule (target inline_rule_carries_merge_function.out)
+  (deps inline_rule_carries_merge_function.mly)
+  (action
+    (with-outputs-to inline_rule_carries_merge_function.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:inline_rule_carries_merge_function.flags}
+          %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff inline_rule_carries_merge_function.exp
+      inline_rule_carries_merge_function.out)))
+
 (rule (target int-of-string.out) (deps int-of-string.mly)
   (action
     (with-outputs-to int-of-string.out
@@ -632,6 +645,26 @@
 
 (rule (alias test) (action (diff lowercase-token.exp lowercase-token.out)))
 
+(rule (target merge_function_uses_keyword.out)
+  (deps merge_function_uses_keyword.mly)
+  (action
+    (with-outputs-to merge_function_uses_keyword.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:merge_function_uses_keyword.flags} %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff merge_function_uses_keyword.exp merge_function_uses_keyword.out)))
+
+(rule (target misplaced_merge_function.out)
+  (deps misplaced_merge_function.mly)
+  (action
+    (with-outputs-to misplaced_merge_function.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias test)
+  (action (diff misplaced_merge_function.exp misplaced_merge_function.out)))
+
 (rule (target missing-percentpercent.out) (deps missing-percentpercent.mly)
   (action
     (with-outputs-to missing-percentpercent.out
@@ -639,6 +672,25 @@
 
 (rule (alias test)
   (action (diff missing-percentpercent.exp missing-percentpercent.out)))
+
+(rule (target missing_default_merge_function.out)
+  (deps missing_default_merge_function.mly)
+  (action
+    (with-outputs-to missing_default_merge_function.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff missing_default_merge_function.exp
+      missing_default_merge_function.out)))
+
+(rule (target missing_merge_function.out) (deps missing_merge_function.mly)
+  (action
+    (with-outputs-to missing_merge_function.out
+      (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
+
+(rule (alias test)
+  (action (diff missing_merge_function.exp missing_merge_function.out)))
 
 (rule (target missing_token_alias.out) (deps missing_token_alias.mly)
   (action
@@ -720,6 +772,19 @@
   (action
     (diff multiple-type-definition-modules-1.exp
       multiple-type-definition-modules-1.out)))
+
+(rule (target multiple_default_merge_function.out)
+  (deps multiple_default_merge_function.mly)
+  (action
+    (with-outputs-to multiple_default_merge_function.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:multiple_default_merge_function.flags}
+          %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff multiple_default_merge_function.exp
+      multiple_default_merge_function.out)))
 
 (rule (target multiple_problems.out) (deps multiple_problems.mly)
   (action
@@ -1146,6 +1211,16 @@
 
 (rule (alias test) (action (diff semicolon.exp semicolon.out)))
 
+(rule (target several_merge_functions1.out)
+  (deps several_merge_functions1.mly several_merge_functions2.mly)
+  (action
+    (with-outputs-to several_merge_functions1.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir --base several_merge_functions1 %{deps})))))
+
+(rule (alias test)
+  (action (diff several_merge_functions1.exp several_merge_functions1.out)))
+
 (rule (target sloc-with-param.out) (deps sloc-with-param.mly)
   (action
     (with-outputs-to sloc-with-param.out
@@ -1451,6 +1526,19 @@
 (rule (alias test)
   (action (diff unknown_symbol_in_type.exp unknown_symbol_in_type.out)))
 
+(rule (target unnecessary_default_merge_function.out)
+  (deps unnecessary_default_merge_function.mly)
+  (action
+    (with-outputs-to unnecessary_default_merge_function.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:unnecessary_default_merge_function.flags}
+          %{deps})))))
+
+(rule (alias test)
+  (action
+    (diff unnecessary_default_merge_function.exp
+      unnecessary_default_merge_function.out)))
+
 (rule (target unspecified-start.out) (deps unspecified-start.mly)
   (action
     (with-outputs-to unspecified-start.out
@@ -1497,6 +1585,15 @@
       (with-accepted-exit-codes (not 0) (run menhir %{deps})))))
 
 (rule (alias test) (action (diff use_pseudo_token.exp use_pseudo_token.out)))
+
+(rule (target useless_merge_functions.out) (deps useless_merge_functions.mly)
+  (action
+    (with-outputs-to useless_merge_functions.out
+      (with-accepted-exit-codes (not 0)
+        (run menhir %{read-lines:useless_merge_functions.flags} %{deps})))))
+
+(rule (alias test)
+  (action (diff useless_merge_functions.exp useless_merge_functions.out)))
 
 (rule (target wktxt_parser.out) (deps wktxt_parser.mly)
   (action
