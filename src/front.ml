@@ -178,7 +178,7 @@ let grammar : PlainSyntax.grammar =
 
 (* ------------------------------------------------------------------------- *)
 
-(* If [--strategy simplified] has been selected, check that the [error]
+(* If [--strategy simplified] has been selected, ensure that the [error]
    token is used only at the end of productions (2021/10/31). *)
 
 let grammar =
