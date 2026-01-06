@@ -58,7 +58,7 @@ type 'a vector = {
   mutable capacity : int;
 
   (* The data array. *)
-  mutable data     : 'a array;
+  mutable data     : 'a A.t;
 
 }
 
