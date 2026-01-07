@@ -104,19 +104,19 @@ type lr1_state_def = {
   (**The outgoing transitions of this state. Each outgoing transition
      is represented as a pair of a label (a symbol) and a target state.
 
-     The fields [lr1_transitions] and [lr1_reductions] describe the
-     deterministic automaton that is obtained after conflict resolution.
-     Therefore, for each terminal symbol [t], there is at most one
-     transition or reduction action. *)
+     For each terminal symbol [t], there is at most one transition.
+
+     In deterministic mode (without --GLR), all shift/reduce conflicts are
+     eliminated, so, for each terminal symbol [t], there cannot be both a
+     transition and a reduction, and there is at most one reduction. *)
 
   lr1_reductions: (terminal * production) list;
   (**The reduction actions at this state. Each reduction action is
      represented as a pair of a terminal symbol and a production.
 
-     The fields [lr1_transitions] and [lr1_reductions] describe the
-     deterministic automaton that is obtained after conflict resolution.
-     Therefore, for each terminal symbol [t], there is at most one
-     transition or reduction action. *)
+     In deterministic mode (without --GLR), all shift/reduce conflicts are
+     eliminated, so, for each terminal symbol [t], there cannot be both a
+     transition and a reduction, and there is at most one reduction. *)
 
   lr1_default_reduction: production option;
   (**This field is set to [Some prod] if this state reduces production [prod]
