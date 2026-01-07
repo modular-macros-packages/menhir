@@ -44,8 +44,10 @@ let write program =
 let () =
   let mli = Settings.base ^ ".mli" in
   match Settings.backend with
-  | `ReferenceInterpreter ->
-      (* This case is handled in Freeze. *)
+  | `Interpret _
+  | `InterpretGLR _
+  | `InterpretError ->
+      (* These cases are handled in Freeze. *)
       assert false
   | `TableBackend ->
       let module B = TableBackend.Run () in

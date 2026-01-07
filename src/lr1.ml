@@ -134,7 +134,7 @@ module type AUTOMATON =
   LR1_AUTOMATON with module Lr0 = Lr0
 
 let a3 =
-  if Settings.backend = `GLRBackend then
+  if Settings.enabled_GLR then
     (* Skip severe conflict resolution; define [A3] as [A2]. *)
     (module A2 : AUTOMATON)
   else

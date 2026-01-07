@@ -421,9 +421,9 @@ let options = [
   "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
   "--infer-read-reply", Arg.String enable_read_reply, "<filename> Read inferred .mli file";
   "--inspection", Arg.Set inspection, " Generate the inspection API";
-  "--interpret", Arg.Unit (fun () -> interpret := `Normal `DoNotShowCST), " Interpret the sentences provided on stdin";
-  "--interpret-show-cst", Arg.Unit (fun () -> interpret := `Normal `ShowCST), " Show a concrete syntax tree upon acceptance";
-  "--interpret-error", Arg.Unit (fun () -> interpret := `Error), " Interpret an error sentence";
+  "--interpret", Arg.Unit (fun () -> interpret := `Interpret `DoNotShowCST), " Interpret the sentences provided on stdin";
+  "--interpret-show-cst", Arg.Unit (fun () -> interpret := `Interpret `ShowCST), " Show a concrete syntax tree upon acceptance";
+  "--interpret-error", Arg.Unit (fun () -> interpret := `InterpretError), " Interpret an error sentence";
   "--kill-priorities", Arg.Set kill_priorities, " (undocumented)";
   "--lalr", Arg.Unit (fun () -> construction_mode := `LALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
@@ -530,30 +530,43 @@ let () =
 
 (* Decide which back-end is used. *)
 
+let enabled_GLR =
+  !backend = `GLRBackend
+
 let backend =
-  (* If any of the [--interpret] flags is used, then we consider that
-     the back-end is [`ReferenceInterpreter]. Indeed, in that case,
-     we are not using any of the other back-ends. *)
-  match !interpret with
-  | `Normal _ | `Error ->
-      `ReferenceInterpreter
-  | `No ->
-      match !backend with
-      | `Unspecified ->
-          (* The code back-end is the default. *)
-          `CodeBackend
-      | `RocqBackend
-      | `CodeBackend
-      | `TableBackend
-      | `GLRBackend
-      | `NoBackend
-        as backend ->
-          backend
+  match !interpret, !backend with
+  | `Interpret show, `GLRBackend ->
+      (* This is --interpret --GLR. *)
+      `InterpretGLR show
+  | `Interpret show, _ ->
+      (* This is --interpret without --GLR. *)
+      `Interpret show
+  | `InterpretError, `GLRBackend ->
+      (* This is --interpret-error --GLR. *)
+      error "Error: the combination --interpret-error --GLR is not supported.\n"
+  | `InterpretError, _ ->
+      (* This is --interpret-error without --GLR. *)
+      `InterpretError
+  | `No, `Unspecified ->
+      (* The code back-end is the default. *)
+      `CodeBackend
+  | `No, (`RocqBackend | `CodeBackend | `TableBackend | `GLRBackend | `NoBackend as backend) ->
+      backend
+
+let () =
+  match backend with
+  | `GLRBackend | `InterpretGLR _ ->
+      assert enabled_GLR
+  | _ ->
+      assert (not enabled_GLR)
 
 let print_backend backend =
   match backend with
-  | `ReferenceInterpreter ->
+  | `Interpret _
+  | `InterpretError ->
       "reference interpreter"
+  | `InterpretGLR _ ->
+      "GLR reference interpreter"
   | `CodeBackend ->
       "code back-end"
   | `RocqBackend ->
@@ -578,16 +591,17 @@ let strategy =
   | (`Unspecified | `Simplified), `CodeBackend ->
       (* The code back-end supports only the simplified strategy. *)
       `Simplified
-  | `Simplified, (`ReferenceInterpreter | `TableBackend) ->
+  | `Simplified, (`Interpret _ | `InterpretError | `TableBackend) ->
       (* The reference interpreter and the table back-end support both
          strategies. *)
       `Simplified
-  | (`Unspecified | `Legacy), (`ReferenceInterpreter | `TableBackend) ->
+  | (`Unspecified | `Legacy), (`Interpret _ | `InterpretError | `TableBackend) ->
       (* The reference interpreter and the table back-end support both
          strategies; legacy is the default, for backward compatibility. *)
       `Legacy
   | _, `RocqBackend
   | _, `GLRBackend
+  | _, `InterpretGLR _
   | _, `NoBackend ->
       (* These back-ends do not care. *)
       `Simplified
@@ -735,9 +749,6 @@ let ocamlc =
 let ocamldep =
   !ocamldep
 
-let interpret =
-  !interpret
-
 let optimization_level =
   !optimization_level
 
@@ -745,19 +756,15 @@ let inspection =
   !inspection
 
 let () =
-  if inspection && backend <> `TableBackend then begin
-    fprintf stderr "Error: --inspection requires --table.\n";
-    exit 1
-  end
+  if inspection && backend <> `TableBackend then
+    error "Error: --inspection requires --table.\n"
 
 let unparsing =
   !unparsing
 
 let () =
-  if unparsing && backend <> `TableBackend then begin
-    fprintf stderr "Error: --unparsing requires --table.\n";
-    exit 1
-  end
+  if unparsing && backend <> `TableBackend then
+    error "Error: --unparsing requires --table.\n"
 
 let no_stdlib =
   !no_stdlib
@@ -872,20 +879,16 @@ let infer =
   | _ ->
       infer
 
-(* [--table] or [--rocq] implies [--represent-everything]. Indeed, only the
-   code back-end needs clever computations of which states, values, and
-   positions are represented as part of stack cells. *)
+(* Only the code back-end needs clever computations of which states, values,
+   and positions are represented as part of stack cells. Thus, if any other
+   back-end is requested, [represent_everything()] is called. *)
 
 let () =
   match backend with
-  | `ReferenceInterpreter
-  | `TableBackend
-  | `GLRBackend
-  | `RocqBackend
-  | `NoBackend ->
-      represent_everything()
   | `CodeBackend ->
       ()
+  | _ ->
+      represent_everything()
 
 let represent_positions =
   !represent_positions
@@ -922,7 +925,7 @@ let expand_nullable =
    does not support right nullable rules. *)
 
 let expand_nullable =
-  if backend = `GLRBackend then
+  if enabled_GLR then
     match expand_nullable with
     | None
     | Some `ExpandNullableSuffixes ->

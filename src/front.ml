@@ -197,15 +197,16 @@ let grammar =
    [--test-GLR] have been selected, do not emit warnings. *)
 
 let grammar =
-  if Settings.test_GLR then
-    Time.time "Checking that the error token is not used" @@ fun () ->
-    let reason = "because --test-GLR is selected,\n" in
-    CheckErrorTokenUsage.nowhere Report.null reason grammar
-  else if Settings.backend = `GLRBackend then
-    monitor @@ fun c ->
-    Time.time "Checking that the error token is not used" @@ fun () ->
-    let reason = "when --GLR is selected,\n" in
-    CheckErrorTokenUsage.nowhere c reason grammar
+  if Settings.enabled_GLR then
+    if Settings.test_GLR then
+      Time.time "Checking that the error token is not used" @@ fun () ->
+      let reason = "because --test-GLR is selected,\n" in
+      CheckErrorTokenUsage.nowhere Report.null reason grammar
+    else
+      monitor @@ fun c ->
+      Time.time "Checking that the error token is not used" @@ fun () ->
+      let reason = "when --GLR is selected,\n" in
+      CheckErrorTokenUsage.nowhere c reason grammar
   else
     grammar
 
@@ -384,7 +385,7 @@ let grammar =
 
 let () =
   monitor @@ fun c ->
-  CheckMergeFunctions.check (Settings.backend = `GLRBackend) c grammar
+  CheckMergeFunctions.check Settings.enabled_GLR c grammar
 
 (* ------------------------------------------------------------------------- *)
 

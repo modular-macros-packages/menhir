@@ -19,7 +19,7 @@ open Channels
 module G =
   GrammarConstruction.Make
     (Front)
-    (struct let topological_numbering = (Settings.backend = `GLRBackend) end)
+    (struct let topological_numbering = Settings.enabled_GLR end)
     ()
 
 include G

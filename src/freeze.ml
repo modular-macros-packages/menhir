@@ -17,14 +17,18 @@ let () =
    [--compile-errors], [--compare-errors], etc. *)
 
 let () =
-  let module I = Interpret.Make(Lr1)(Settings) in
-  match Settings.interpret with
-  | `No ->
-      ()
-  | `Normal show_cst ->
-      I.interpret show_cst
-  | `Error ->
+  match Settings.backend with
+  | `Interpret show ->
+      let module I = Interpret.Make(Lr1)(Settings) in
+      I.interpret show
+  | `InterpretError ->
+      let module I = Interpret.Make(Lr1)(Settings) in
       I.interpret_error()
+  | `InterpretGLR _show ->
+      (* TODO implement this *)
+      assert false
+  | _ ->
+      ()
 
 module Messages =
   Messages.Make(Lr1)(Settings)

@@ -26,15 +26,36 @@ include STRATEGY_SETTINGS
 include TOKEN_TYPE_SETTINGS
 include TRACE_SETTINGS
 
-(** The back-end that must be used. *)
+(**The back-end that must be used.
+
+   When the back-end is [Interpret show], Menhir behaves as an interactive
+   interpreter of sentences provided by the user on the standard input
+   channel. After each sentence is read, Menhir indicates whether this
+   sentence is rejected or accepted. (The flag --trace is taken into account,
+   so trace messages can be emitted if desired by the user.) The parameter
+   [show] indicates whether a concrete syntax tree should be displayed after
+   an input is accepted.
+
+   When the back-end is [InterpretGLR show], the GLR reference interpreter is
+   used.
+
+   When the back-end is [InterpretError], Menhir expects just one input
+   sentence, expects it to trigger an error at the very last token, and
+   displays which state was reached. *)
 val backend: [
-  | `ReferenceInterpreter
-  | `RocqBackend
+  | `NoBackend
   | `CodeBackend
   | `TableBackend
   | `GLRBackend
-  | `NoBackend
+  | `RocqBackend
+  | `Interpret    of [`ShowCST | `DoNotShowCST]
+  | `InterpretGLR of [`ShowCST | `DoNotShowCST]
+  | `InterpretError
 ]
+
+(**[enabled_GLR] is true if the backend if [`GLRBackend] or [`InterpretGLR _],
+   that is, if and only if --GLR was selected by the user. *)
+val enabled_GLR: bool
 
 (** The list of file names that appear on the command line. *)
 val filenames: string list
@@ -93,20 +114,6 @@ val inline: bool
 val code_inlining: bool
 
 (** How verbose we should be. *)
-
-(**This setting determines Menhir should behave as an interpreter of sentences
-   provided by the user on the standard input channel. Two interpretation
-   modes exist. In the mode [`Normal], Menhir interprets the sentence and
-   indicates whether it is rejected or accepted. (The flag --trace is taken
-   into account, so trace messages can be emitted if desired by the user.) In
-   this mode, an additional flag indicates whether a concrete syntax tree
-   should be displayed after an input is accepted. In the mode [`Error],
-   Menhir expects just one input sentence, expects it to trigger an error at
-   the very last token, and displays which state was reached. *)
-val interpret :
-  [ `No
-  | `Normal of [`ShowCST | `DoNotShowCST]
-  | `Error ]
 
 (** Whether the standard menhir library should be used. *)
 val no_stdlib : bool
