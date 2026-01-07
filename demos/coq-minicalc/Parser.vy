@@ -2,7 +2,7 @@
 
 %{
 
-Require Import String.
+From Stdlib Require Import String.
 
 Module Ast.
 Inductive expr :=
@@ -32,7 +32,7 @@ parse_expr : p_expr EOF       { $1 }
 p_atom :
   ID                          { Ast.Var $1 }
 | NUM                         { Ast.Num $1 }
-| LPAREN p_expr RPAREN        { $2 } 
+| LPAREN p_expr RPAREN        { $2 }
 
 p_expr :
 | p_factor                    { $1 }

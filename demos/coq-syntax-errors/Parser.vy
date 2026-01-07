@@ -2,7 +2,7 @@
 
 %{
 
-Require Import String.
+From Stdlib Require Import String.
 
 Module Ast.
 
