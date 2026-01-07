@@ -92,7 +92,9 @@ and ('s, 'v) edge = {
   (**This field is [true] once the second phase has been entered. Then [semv]
      can be read by a semantic action, but can no longer be updated.
      Conversely, when this field is [false], [semv] can be updated but cannot
-     be read by a semantic action. This field is used for sanity checking
-     only and can be removed once debugging is complete. *)
+     be read by a semantic action. *)
+  (* This field is used for sanity checking only and can be removed once
+     debugging is complete. Removing it allows saving at best 3% in time and
+     2 words per token, in deterministic benchmarks. For now, we keep it. *)
 
 }
