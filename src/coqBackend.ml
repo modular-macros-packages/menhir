@@ -52,7 +52,7 @@ module Run () = struct
       match ty with
       | None -> "unit"
       | Some (Declared s) -> value s
-      | Some (Inferred _) -> assert false (* We cannot infer Coq types *)
+      | Some (Inferred _) -> assert false (* We cannot infer Rocq types *)
 
   let is_final_state node =
     match Lr1.test_default_reduction node with
@@ -108,7 +108,7 @@ module Run () = struct
         Production.iterx (fun prod ->
           if not (Keyword.KeywordSet.is_empty (Action.keywords (Production.action prod))) then
             Report.Just.error []
-              "the Coq back-end supports none of the $ keywords."
+              "the Rocq back-end supports none of the $ keywords."
         )
       end;
 
@@ -118,13 +118,13 @@ module Run () = struct
           | Symbol.T t ->
               if t = Terminal.error then
                 Report.Just.error []
-                  "the Coq back-end does not support the error token."
+                  "the Rocq back-end does not support the error token."
           | _ -> ())
         (Production.rhs prod));
 
     if Front.grammar.PlainSyntax.parameters <> [] then
       Report.Just.error []
-        "the Coq back-end does not support %%parameter."
+        "the Rocq back-end does not support %%parameter."
 
   let write_tokens f =
     fprintf f "Inductive token : Type :=";

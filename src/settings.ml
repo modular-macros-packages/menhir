@@ -365,7 +365,7 @@ let options = Arg.align [
   "--comment", Arg.Set comment, " Include comments in the generated code";
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
   "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code";
-  "--coq", Arg.Unit (set_backend `CoqBackend), " Generate a formally verified parser, in Coq";
+  "--coq", Arg.Unit (set_backend `CoqBackend), " Generate a formally verified parser, in Rocq";
   "--coq-lib-path", Arg.String (fun path -> coq_lib_path := Some path), "<path> How to qualify references to MenhirLib";
   "--coq-lib-no-path", Arg.Unit (fun () -> coq_lib_path := None), " Do *not* qualify references to MenhirLib";
   "--coq-no-version-check", Arg.Set coq_no_version_check, " Do not generate a version check.";

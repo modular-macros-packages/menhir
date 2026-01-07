@@ -9,7 +9,7 @@
 (******************************************************************************)
 
 (**This module checks that the grammar does not use %inline rules. This check
-   is performed only when the Coq back-end has been selected by the user. *)
+   is performed only when the Rocq back-end has been selected by the user. *)
 
 open Report
 open PlainSyntax

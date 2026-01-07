@@ -14,4 +14,4 @@ let check c g =
   g.rules |> StringMap.iter @@ fun _ rule ->
   if rule.inline_flag then
     Report.error c rule.positions
-      "%%inline is not supported by the Coq back-end."
+      "%%inline is not supported by the Rocq back-end."

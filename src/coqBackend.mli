@@ -8,7 +8,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* The coq code generator. *)
+(* The Rocq code generator. *)
 
 module Run () : sig
 
