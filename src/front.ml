@@ -50,13 +50,13 @@ let load_grammar_from_file filename : Syntax.partial_grammar =
 
 (* Read all of the grammar files that are named on the command line,
    plus the standard library, unless suppressed by [--no-stdlib] or
-   [--coq]. *)
+   [--rocq]. *)
 
 let grammars () : Syntax.partial_grammar list =
   List.map load_grammar_from_file Settings.filenames
 
 let grammars () : Syntax.partial_grammar list =
-  if Settings.no_stdlib || Settings.backend = `CoqBackend then
+  if Settings.no_stdlib || Settings.backend = `RocqBackend then
     grammars()
   else
     (* As 20190924, the standard library is no longer actually read from a
@@ -287,7 +287,7 @@ let grammar_before_inlining =
 (* If [--no-inline] is specified on the command line, then all %inline
    annotations are ignored; this step is skipped. *)
 
-(* In [--coq] mode, %inline is forbidden. There are two reasons for this.
+(* In [--rocq] mode, %inline is forbidden. There are two reasons for this.
    One technical reason is that inlining requires constructing composite
    semantic actions (using [Action.compose], etc.) and this construction is
    currently OCaml-specific. (This could be rather easily changed, though.)
@@ -300,7 +300,7 @@ let grammar_before_inlining =
 let grammar =
   if Settings.inline then
     monitor @@ fun c ->
-    if Settings.backend = `CoqBackend then
+    if Settings.backend = `RocqBackend then
       CheckInlineUsage.check c grammar;
     Time.time "Expanding away %inline nonterminal symbols" @@ fun () ->
     Inlining.inline c grammar

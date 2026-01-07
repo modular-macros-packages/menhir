@@ -15,14 +15,14 @@ open Grammar
 
 module Run () = struct
   let from_menhirlib f =
-    match Settings.coq_lib_path with
+    match Settings.rocq_lib_path with
     | None ->
         ()
     | Some path ->
         fprintf f "From %s " path
 
   let menhirlib_path =
-    match Settings.coq_lib_path with
+    match Settings.rocq_lib_path with
     | None -> ""
     | Some path -> path ^ "."
 
@@ -47,7 +47,7 @@ module Run () = struct
     |> sprintf "[%s]%%list"
 
   let print_type ty =
-    if Settings.coq_no_actions then "unit"
+    if Settings.rocq_no_actions then "unit"
     else
       match ty with
       | None -> "unit"
@@ -96,7 +96,7 @@ module Run () = struct
     sprintf "Prod'%s'%d" (Nonterminal.print true (Production.nt p)) (ProductionMap.find p prod_ids)
 
   let () =
-    if not Settings.coq_no_actions then
+    if not Settings.rocq_no_actions then
       begin
         Nonterminal.iterx (fun nonterminal ->
           match Nonterminal.ocamltype nonterminal with
@@ -236,7 +236,7 @@ module Run () = struct
       else
         fprintf f "    (fun %s =>\n"
           (String.concat " " (List.rev (Array.to_list (Production.identifiers prod))));
-      if Settings.coq_no_actions then
+      if Settings.rocq_no_actions then
         fprintf f "tt"
       else
         ILPrinter.print_expr f (Action.expr (Production.action prod));
@@ -408,7 +408,7 @@ module Run () = struct
 
   module TerminalSetMap = Map.Make(TerminalSet)
   let write_items f =
-    if not Settings.coq_no_complete then
+    if not Settings.rocq_no_complete then
       begin
         let get_lookaheadset_id =
           let memo = ref TerminalSetMap.empty in
@@ -496,7 +496,7 @@ module Run () = struct
     fprintf f "  MenhirLibParser.safe_validator tt = true.\n";
     fprintf f "Proof eq_refl true<:MenhirLibParser.safe_validator tt = true.\n\n";
 
-    if not Settings.coq_no_complete then
+    if not Settings.rocq_no_complete then
       begin
         fprintf f "Theorem complete:\n";
         fprintf f "  MenhirLibParser.complete_validator tt = true.\n";
@@ -520,7 +520,7 @@ module Run () = struct
           fprintf f "  end.\n";
           fprintf f "Proof. apply MenhirLibParser.parse_correct with (init:=Aut.%s). Qed.\n\n" (print_init node);
 
-          if not Settings.coq_no_complete then
+          if not Settings.rocq_no_complete then
             begin
               fprintf f "Theorem %s_complete (log_fuel : nat) (word : list token) (buffer_end : MenhirLibParser.Inter.buffer) :\n" funName;
               fprintf f "  forall tree : Gram.parse_tree (%s) word,\n" (print_symbol (Symbol.N startnt));
@@ -536,7 +536,7 @@ module Run () = struct
     ) Lr1.entry
 
   let write_all f =
-    if not Settings.coq_no_actions then
+    if not Settings.rocq_no_actions then
       List.iter (fun s -> fprintf f "%s\n\n" (value s))
         Front.grammar.PlainSyntax.preludes;
 
@@ -545,11 +545,11 @@ module Run () = struct
     fprintf f "From Stdlib.PArith Require Import BinPos.\n";
     fprintf f "From Stdlib.NArith Require Import BinNat.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
-    if not Settings.coq_no_version_check then
+    if not Settings.rocq_no_version_check then
       begin from_menhirlib f; fprintf f "Require Version.\n" end;
     fprintf f "Import List.ListNotations.\n\n";
 
-    if not Settings.coq_no_version_check then
+    if not Settings.rocq_no_version_check then
       fprintf f "Definition version_check : unit := %sVersion.require_%s.\n\n" menhirlib_path Version.version;
 
     fprintf f "Unset Elimination Schemes.\n\n";
@@ -559,7 +559,7 @@ module Run () = struct
     write_automaton f;
     write_theorems f;
 
-    if not Settings.coq_no_actions then
+    if not Settings.rocq_no_actions then
       List.iter (fun postlude -> fprintf f "\n\n%s" (value postlude))
         Front.grammar.PlainSyntax.postludes
 end

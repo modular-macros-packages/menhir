@@ -17,7 +17,7 @@ open Keyword
    free variables and keywords that appear in this code.
 
    The code in a semantic action is normally OCaml code; however, when
-   [--coq] is used, it is Rocq code. This code is represented internally
+   [--rocq] is used, it is Rocq code. This code is represented internally
    as an IL expression.
 
    An action carries a set of semantic variables [semvars]. These variables

@@ -52,8 +52,8 @@ let () =
       Time.time "Printing" @@ fun () ->
       write B.program;
       Interface.write Front.grammar mli ()
-  | `CoqBackend ->
-      let module B = CoqBackend.Run () in
+  | `RocqBackend ->
+      let module B = RocqBackend.Run () in
       Time.time "Printing" @@ fun () ->
       let filename = Settings.base ^ ".v" in
       let f = open_out filename in

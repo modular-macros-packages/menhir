@@ -68,7 +68,7 @@ The code is organized in several libraries and directories:
   The three back-ends are in the three modules
   [`CodeBackend`](src/CodeBackend.ml),
   [`TableBackend`](src/TableBackend.ml), and
-  [`CoqBackend`](src/CoqBackend.ml).
+  [`RocqBackend`](src/RocqBackend.ml).
   The code back-end relies on the intermediate language StackLang,
   whose implementation resides in [`src/StackLang`](src/StackLang/).
 

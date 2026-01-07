@@ -214,13 +214,13 @@ let inspection =
 let unparsing =
   ref false
 
-let coq_no_version_check =
+let rocq_no_version_check =
   ref false
 
-let coq_no_complete =
+let rocq_no_complete =
   ref false
 
-let coq_no_actions =
+let rocq_no_actions =
   ref false
 
 let fixedexc =
@@ -293,7 +293,7 @@ let set_echo_errors_concrete filename =
 let cmly =
   ref false
 
-let coq_lib_path =
+let rocq_lib_path =
   ref (Some "MenhirLib")
 
 let require_aliases =
@@ -355,7 +355,36 @@ let expand_nullable =
 let unsupported switch =
   switch, Arg.Unit (unsupported switch), " (no longer supported)"
 
-let options = Arg.align [
+let rocq_options (rocq : string) =
+  let prefix = sprintf "--%s" rocq in
+  [
+    prefix ^ "",
+    Arg.Unit (set_backend `RocqBackend),
+    " Generate a verified Rocq parser"
+    ;
+    prefix ^ "-lib-path",
+    Arg.String (fun path -> rocq_lib_path := Some path),
+    "<path> Set the path to the Rocq library MenhirLib"
+    ;
+    prefix ^ "-lib-no-path",
+    Arg.Unit (fun () -> rocq_lib_path := None),
+    " Use unqualified references to the Rocq library MenhirLib"
+    ;
+    prefix ^ "-no-version-check",
+    Arg.Set rocq_no_version_check,
+    " Do not generate a version check in the Rocq parser"
+    ;
+    prefix ^ "-no-actions",
+    Arg.Set rocq_no_actions,
+    " Ignore the semantic actions in the Rocq parser"
+    ;
+    prefix ^ "-no-complete",
+    Arg.Set rocq_no_complete,
+    " Do not generate a proof of completeness of the Rocq parser"
+    ;
+  ]
+
+let options = [
   "--automaton-graph", Arg.Set automaton_graph, " (undocumented)";
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := `Canonical), " Construct a canonical Knuth LR(1) automaton";
@@ -365,12 +394,6 @@ let options = Arg.align [
   "--comment", Arg.Set comment, " Include comments in the generated code";
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
   "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code";
-  "--coq", Arg.Unit (set_backend `CoqBackend), " Generate a formally verified parser, in Rocq";
-  "--coq-lib-path", Arg.String (fun path -> coq_lib_path := Some path), "<path> How to qualify references to MenhirLib";
-  "--coq-lib-no-path", Arg.Unit (fun () -> coq_lib_path := None), " Do *not* qualify references to MenhirLib";
-  "--coq-no-version-check", Arg.Set coq_no_version_check, " Do not generate a version check.";
-  "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
-  "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--depend", Arg.Unit enable_depend, " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Write an .automaton file";
   "--dump-menhirLib", Arg.String (fun path -> dump_menhirLib := Some path), "<path> Dump menhirLib.{ml,mli} at <path>";
@@ -466,6 +489,14 @@ let options = Arg.align [
   "-v", Arg.Unit v, " Synonymous with --dump --explain";
 ]
 
+let compare (key1, _, _) (key2, _, _) =
+  String.compare key1 key2
+
+let options =
+  options @ rocq_options "coq" @ rocq_options "rocq"
+  |> List.sort compare
+  |> Arg.align
+
 let usage =
   sprintf "Usage: %s <options> <filenames>" Sys.argv.(0)
 
@@ -500,7 +531,7 @@ let backend =
       | `Unspecified ->
           (* The code back-end is the default. *)
           `CodeBackend
-      | `CoqBackend
+      | `RocqBackend
       | `CodeBackend
       | `TableBackend
       | `NoBackend
@@ -513,8 +544,8 @@ let print_backend backend =
       "reference interpreter"
   | `CodeBackend ->
       "code back-end"
-  | `CoqBackend ->
-      "Coq back-end"
+  | `RocqBackend ->
+      "Rocq back-end"
   | `TableBackend ->
       "table back-end"
   | `NoBackend ->
@@ -541,9 +572,9 @@ let strategy =
       (* The reference interpreter and the table back-end support both
          strategies; legacy is the default, for backward compatibility. *)
       `Legacy
-  | _, `CoqBackend
+  | _, `RocqBackend
   | _, `NoBackend ->
-      (* The Coq back-end does not care. *)
+      (* The Rocq back-end does not care. *)
       `Simplified
   | (`Legacy as strategy), `CodeBackend ->
       error "Error: the %s does not allow --strategy %s.\n"
@@ -711,14 +742,14 @@ let () =
 let no_stdlib =
   !no_stdlib
 
-let coq_no_version_check =
-  !coq_no_version_check
+let rocq_no_version_check =
+  !rocq_no_version_check
 
-let coq_no_complete =
-  !coq_no_complete
+let rocq_no_complete =
+  !rocq_no_complete
 
-let coq_no_actions =
-  !coq_no_actions
+let rocq_no_actions =
+  !rocq_no_actions
 
 let fixedexc =
   !fixedexc
@@ -780,8 +811,8 @@ let echo_errors_concrete =
 let cmly =
   !cmly
 
-let coq_lib_path =
-  !coq_lib_path
+let rocq_lib_path =
+  !rocq_lib_path
 
 let require_aliases =
   !require_aliases
@@ -804,7 +835,7 @@ let infer =
 
 let skipping_parser_generation =
   backend = `ReferenceInterpreter ||
-  backend = `CoqBackend ||
+  backend = `RocqBackend ||
   compile_errors <> None ||
   list_errors ||
   compare_errors <> None ||
@@ -821,7 +852,7 @@ let infer =
   | _ ->
       infer
 
-(* [--table] or [--coq] implies [--represent-everything]. Indeed, only the
+(* [--table] or [--rocq] implies [--represent-everything]. Indeed, only the
    code back-end needs clever computations of which states, values, and
    positions are represented as part of stack cells. *)
 
@@ -829,7 +860,7 @@ let () =
   match backend with
   | `ReferenceInterpreter
   | `TableBackend
-  | `CoqBackend
+  | `RocqBackend
   | `NoBackend ->
       represent_everything()
   | `CodeBackend ->
