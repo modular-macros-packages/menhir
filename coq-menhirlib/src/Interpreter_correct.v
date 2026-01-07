@@ -54,7 +54,7 @@ Proof.
   intros Hspec. revert word_stk.
   induction Hspec as [stk sem|symbols_to_pop st stk action sem stk' res Hspec IH];
     intros word_stk Hword_stk.
-  - exists word_stk, [], Nil_ptl. rewrite -app_nil_end. eauto.
+  - exists word_stk, [], Nil_ptl. rewrite app_nil_r. eauto.
   - inversion Hword_stk. subst_existT.
     edestruct IH as (word_stk' & word_res & ptl & ? & Hword_stk'' & ?); [eassumption|].
     subst. eexists word_stk', (word_res ++ _)%list, (Cons_ptl ptl _).
