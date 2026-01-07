@@ -1,3 +1,6 @@
+# An abbreviation.
+ROCQLIB  := coq-menhirlib
+
 # -------------------------------------------------------------------------
 
 # Compilation and installation rules.
@@ -55,7 +58,7 @@ quick:
 
 # [make demos] compiles the demos.
 
-# Some demos require coq-menhirlib to be installed.
+# Some demos require $(ROCQLIB) to be installed.
 
 .PHONY: demos
 demos:
@@ -265,7 +268,7 @@ MENHIRLIB_FILES   := \
 # part of bug reports.
 
 # The source files in lib/, sdk/ and cst/ carry the "library" header & license.
-# Those in coq-menhirlib/ carry the "Coq library" header & license.
+# Those in $(ROCQLIB)/ carry the "Rocq library" header & license.
 # Every other file carries the "regular" header & license.
 
 SRCDIRS         := base front middle driver src executable
@@ -273,8 +276,8 @@ LIBDIRS         := lib sdk cst
 HEADACHE        := headache
 SRCHEAD         := $(CURRENT)/headers/regular-header
 LIBHEAD         := $(CURRENT)/headers/library-header
-COQLIBHEAD      := $(CURRENT)/headers/coq-library-header
-HEADACHECOQCONF := $(CURRENT)/headers/headache-coq.conf
+ROCQLIBHEAD      := $(CURRENT)/headers/rocq-library-header
+HEADACHEROCQCONF := $(CURRENT)/headers/headache-rocq.conf
 FIND            := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
 
 .PHONY: headache
@@ -287,8 +290,8 @@ headache:
 	    (cd $$d && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
 	      -exec $(HEADACHE) -h $(LIBHEAD) "{}" ";") ; \
 	  done
-	@ for file in coq-menhirlib/src/*.v ; do \
-	    $(HEADACHE) -h $(COQLIBHEAD) -c $(HEADACHECOQCONF) $$file ; \
+	@ for file in $(ROCQLIB)/src/*.v ; do \
+	    $(HEADACHE) -h $(ROCQLIBHEAD) -c $(HEADACHEROCQCONF) $$file ; \
 	  done
 
 # -------------------------------------------------------------------------
@@ -310,7 +313,7 @@ WWW     := www
 # Prior to making a release, please follow this check-list:
 
 # 1. Make sure that [CHANGES.md] has been properly updated.
-# 2. Make sure that [coq-menhirlib/CHANGES.md] has been properly updated.
+# 2. Make sure that [$(ROCQLIB)/CHANGES.md] has been properly updated.
 # 3. Run [make test] to make sure that Menhir can be compiled and works.
 # 4. Run [make demos] to make sure that the demos can be compiled.
 # 5. Run [make versions] to make sure that Menhir can be compiled
@@ -351,7 +354,7 @@ release:
 	@ echo "Preparing a release commit on a fresh release branch..."
 	@ git checkout -b $(BRANCH)
 # Remove subdirectories that do not need to (or must not) be distributed.
-	@ make --quiet -C coq-menhirlib clean
+	@ make --quiet -C $(ROCQLIB) clean
 	@ git rm -rf analysis attic headers releases test www --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
@@ -359,15 +362,15 @@ release:
 	    Makefile \
 	    promote.sh \
 	    *.md TODO* \
-	    *.opam coq-menhirlib/descr
+	    *.opam $(ROCQLIB)/descr
 # Hardcode Menhir's version number in the files that need it.
 	@ sed -i.bak 's/unreleased/$(DATE)/' dune-project
 	@ rm -f dune-project.bak
 	@ git add dune-project
 	@ echo '\gdef\menhirversion{$(DATE)}' > doc/version.tex
 	@ git add doc/version.tex
-	@ echo 'Definition require_$(DATE) := tt.' > coq-menhirlib/src/Version.v
-	@ git add coq-menhirlib/src/Version.v
+	@ echo 'Definition require_$(DATE) := tt.' > $(ROCQLIB)/src/Version.v
+	@ git add $(ROCQLIB)/src/Version.v
 # Compile the documentation.
 	@ echo "Building the documentation..."
 	@ make --quiet -C doc clean >/dev/null
@@ -454,13 +457,10 @@ export:
 # This entry assumes that [make release] has been run on the same day.
 
 # There are two opam packages: one for menhir (part of the OCaml opam
-# repository) and one for coq-menhirlib (part of the Coq opam repository).
+# repository) and one for $(ROCQLIB) (part of the Rocq opam repository).
 
 # The following command should have been run once:
 #   opam publish repo add opam-coq-archive coq/opam-coq-archive
-
-# An abbreviation.
-COQLIB   := coq-menhirlib
 
 # Menhir's repository URL (https).
 REPO     := https://gitlab.inria.fr/fpottier/menhir
@@ -473,8 +473,8 @@ ARCHIVE  := $(REPO)/-/archive/$(DATE)/archive.tar.gz
 # The documentation can be found here:
 # https://gitlab.inria.fr/help/api/repositories.html#get-file-archive
 
-# Additional options for coq-menhirlib.
-COQ_MENHIRLIB_PUBLISH_OPTIONS := \
+# Additional options for $(ROCQLIB).
+ROCQ_MENHIRLIB_PUBLISH_OPTIONS := \
   --repo coq/opam-coq-archive \
   --packages-directory released/packages \
 
@@ -482,17 +482,17 @@ COQ_MENHIRLIB_PUBLISH_OPTIONS := \
 opam:
 # Publish opam descriptions for menhirCST, menhirLib, menhirSdk, menhir.
 	@ opam publish -v $(DATE) menhirCST.opam menhirLib.opam menhirSdk.opam menhir.opam $(ARCHIVE)
-# Patch coq-menhirlib.opam.
+# Patch $(ROCQLIB).opam.
 # We replace the string DATEDASH with $(DATEDASH).
 # We replace the string DATE with $(DATE).
-	@ cat $(COQLIB).opam \
+	@ cat $(ROCQLIB).opam \
 	  | sed -e 's/DATEDASH/$(DATEDASH)/g' \
 	  | sed -e 's/DATE/$(DATE)/g' \
-	  > $(COQLIB).patched.opam
-# Publish an opam description for coq-menhirlib.
-	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) \
-	    $(COQLIB).patched.opam $(ARCHIVE)
-	@ rm $(COQLIB).patched.opam
+	  > $(ROCQLIB).patched.opam
+# Publish an opam description for $(ROCQLIB).
+	@ opam publish -v $(DATE) $(ROCQ_MENHIRLIB_PUBLISH_OPTIONS) \
+	    $(ROCQLIB).patched.opam $(ARCHIVE)
+	@ rm $(ROCQLIB).patched.opam
 
 # -------------------------------------------------------------------------
 

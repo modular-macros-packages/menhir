@@ -1,5 +1,5 @@
 MENHIR            := dune exec menhir --
-MENHIRFLAGS       := --coq --coq-no-version-check
+MENHIRFLAGS       := --rocq --rocq-no-version-check
 
 Makefile.coq:
 	@ coq_makefile -f _CoqProject -o Makefile.coq

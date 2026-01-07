@@ -1,11 +1,11 @@
 MENHIR            := dune exec menhir --
-MENHIRFLAGS       := --coq --coq-no-version-check
+MENHIRFLAGS       := --rocq --rocq-no-version-check
 
 # [make all] compiles this demo.
 
 # We first generate Parser.v and ParserMessages.ml (via two separate
 # invocations of menhir), then generate extraction/*.ml (by invoking
-# Coq), then compile the OCaml code (by using dune).
+# Rocq), then compile the OCaml code (by using dune).
 
 .PHONY: all
 all: Parser.v ParserMessages.ml extraction/Parser.ml

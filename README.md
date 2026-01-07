@@ -36,7 +36,7 @@ Raja Boujbel and Guillaume Bau was completed and polished by François Pottier.
 This project was generously funded by Jane Street Capital, LLC through the
 "OCaml Summer Project" initiative.
 
-A third back-end (producing Coq tables, and relying on a verified validator
+A third back-end (producing Rocq tables, and relying on a verified validator
 and a verified interpreter in the `coq-menhirlib` library) was implemented in
 2011 by Jacques-Henri Jourdan.
 
@@ -57,8 +57,11 @@ The new code back-end, which produces efficient and well-typed OCaml code, was
 implemented throughout the year 2021 by Émile Trotignon and François Pottier.
 It relies on a new intermediate language, StackLang.
 
+The GLR back-end was implemented in the fall of 2025 by François Pottier.
+
 Today, the principal maintainer of Menhir is François Pottier.
 
-The intellectual property of Menhir (including the OCaml libraries `menhirLib`
-and `menhirSdk`) lies with Inria. The intellectual property of the Coq library
-`coq-menhirlib` lies with Inria and CNRS.
+The intellectual property of Menhir (including the OCaml libraries
+`menhirLib`, `menhirSdk`, `menhirCST`, `menhirGLR`) lies with Inria. The
+intellectual property of the Rocq library `coq-menhirlib` lies with Inria and
+CNRS.

@@ -87,9 +87,9 @@ Menhir currently offers a choice between several ``back-ends'':
       a parser whose implementation and interface are stored in the files
       \texttt{parser.ml} and \texttt{parser.mli}.
       The table back-end is selected by passing \otable on the command line.
-\item When the ``Coq'' back-end is used,
-      the semantic actions are fragments of Coq code,
-      and the parser produced by \menhir is a piece of Coq code
+\item When the ``Rocq'' back-end is used,
+      the semantic actions are fragments of Rocq code,
+      and the parser produced by \menhir is a piece of Rocq code
       that contains not only a parser,
       but also a proof that this parser is correct and complete
       with respect to the grammar.
@@ -117,7 +117,7 @@ future.
 \begin{quote}
 \cmenhir \nt{option} \ldots \nt{option} \nt{filename} \ldots \nt{filename}
 \end{quote}
-Each of the file names must end with \mly (unless \ocoq is used,
+Each of the file names must end with \mly (unless \orocq is used,
 in which case it must end with \vy) and denotes a partial
 grammar specification. These partial grammar specifications are joined
 (\sref{sec:split}) to form a single, self-contained grammar specification,
@@ -157,37 +157,37 @@ is sent to the standard output channel. At the same time, \menhir checks that
 the collection of input sentences in the file \nt{filename} is correct and
 irredundant. For more information, see \sref{sec:errors:new}.
 
-\docswitch{\ocoq} This switch causes \menhir to produce Coq code. See \sref{sec:coq}.
+\docswitch{\orocq} This switch causes \menhir to produce Rocq code. See \sref{sec:rocq}.
 
-\docswitch{\ocoqlibnopath} This switch indicates that references to the Coq
-library \coqmenhirlib should \emph{not} be qualified. This was the default
+\docswitch{\orocqlibnopath} This switch indicates that references to the Rocq
+library \rocqmenhirlib should \emph{not} be qualified. This was the default
 behavior of \menhir prior to 2018/05/30. This switch is provided for
 compatibility, but normally should not be used.
 
-\docswitch{\ocoqlibpath \nt{path}} This switch allows specifying under what
-name (or path) the Coq support library is known to Coq. When \menhir runs in
-\ocoq mode, the generated parser contains references to several modules in
+\docswitch{\orocqlibpath \nt{path}} This switch allows specifying under what
+name (or path) the Rocq support library is known to Rocq. When \menhir runs in
+\orocq mode, the generated parser contains references to several modules in
 this library. This path is used to qualify these references. Its default value
-is \coqmenhirlib.
+is \rocqmenhirlib.
 
-\docswitch{\ocoqnoactions} (Used in conjunction with \ocoq.) This switch
+\docswitch{\orocqnoactions} (Used in conjunction with \orocq.) This switch
 causes the semantic actions present in the \vy file to be ignored and
-replaced with \verb+tt+, the unique inhabitant of Coq's \verb+unit+ type. This
-feature can be used to test the Coq back-end with a standard grammar, that is, a
+replaced with \verb+tt+, the unique inhabitant of Rocq's \verb+unit+ type. This
+feature can be used to test the Rocq back-end with a standard grammar, that is, a
 grammar that contains \ocaml semantic actions. Just rename the file from
 \mly to \vy and set this switch.
 
-\docswitch{\ocoqnocomplete} (Used in conjunction with \ocoq.) This switch
+\docswitch{\orocqnocomplete} (Used in conjunction with \orocq.) This switch
 disables the generation of the proof of completeness of the parser
-(\sref{sec:coq}). This can be necessary because the proof of completeness is
+(\sref{sec:rocq}). This can be necessary because the proof of completeness is
 possible only if the grammar has no conflict (not even a benign one, in the
 sense of \sref{sec:conflicts:benign}). This can be desirable also because, for
 a complex grammar, completeness may require a heavy certificate and its
-validation by Coq may take time.
+validation by Rocq may take time.
 
-\docswitch{\ocoqnoversioncheck} (Used in conjunction with \ocoq.) This switch
+\docswitch{\orocqnoversioncheck} (Used in conjunction with \orocq.) This switch
 prevents the generation of the check that verifies that the versions of
-\menhir and \coqmenhirlib match.
+\menhir and \rocqmenhirlib match.
 
 \docswitch{\odepend} See \sref{sec:build}.
 
@@ -773,7 +773,7 @@ to the \ml file only. For this reason, the types provided as part of \dtype
 declarations must make sense both in the presence and in the absence of these
 headers. They should typically be fully qualified types.
 
-% TEMPORARY type information can be mandatory in --coq mode; document?
+% TEMPORARY type information can be mandatory in --rocq mode; document?
 
 \subsubsection{Start symbols}
 \label{sec:start}
@@ -4106,28 +4106,28 @@ number, which can be used to select a syntax error message.
 
 % ------------------------------------------------------------------------------
 
-\section{Coq back-end}
-\label{sec:coq}
+\section{Rocq back-end}
+\label{sec:rocq}
 
 \menhir is able to generate a parser that whose correctness can be formally
-verified using the Coq proof assistant~\cite{jourdan-leroy-pottier-12}. This
+verified using the Rocq proof assistant~\cite{jourdan-leroy-pottier-12}. This
 feature is used to construct the parser of the CompCert verified
 compiler~\cite{compcert}.
 
-Setting the \ocoq switch on the command line enables the Coq back-end.  When
+Setting the \orocq switch on the command line enables the Rocq back-end.  When
 this switch is set, \menhir expects an input file whose name ends
-in \vy and generates a Coq file whose name ends
+in \vy and generates a Rocq file whose name ends
 in \texttt{.v}.
 
 Like a \mly file, a \vy file is a grammar specification,
 with embedded semantic actions. The only difference is that the semantic
-actions in a \vy file are expressed in Coq instead
+actions in a \vy file are expressed in Rocq instead
 of \ocaml. A \vy file otherwise uses the same syntax as
 a \mly file. CompCert's
 \compcertgithubfile{cparser/Parser.vy}
 serves as an example.
 
-Several restrictions are imposed when \menhir is used in \ocoq mode:
+Several restrictions are imposed when \menhir is used in \orocq mode:
 %
 \begin{itemize}
 \item The error-handling mechanism (\sref{sec:errors}) is absent.
@@ -4138,12 +4138,12 @@ Several restrictions are imposed when \menhir is used in \ocoq mode:
 \item \dinline (\sref{sec:inline}) is not supported.
 \item The standard library (\sref{sec:library}) is not supported, of course,
       because its semantic actions are expressed in \ocaml. If desired, the user can define
-      an analogous library, whose semantic actions are expressed in Coq.
-\item Because Coq's type inference algorithm is rather unpredictable,
-      the Coq type of every nonterminal symbol must be provided via a
+      an analogous library, whose semantic actions are expressed in Rocq.
+\item Because Rocq's type inference algorithm is rather unpredictable,
+      the Rocq type of every nonterminal symbol must be provided via a
       \dtype or \dstart declaration (\sref{sec:type}, \sref{sec:start}).
 \item Unless the proof of completeness has been deactivated using
-  \ocoqnocomplete, the grammar must not have a conflict
+  \orocqnocomplete, the grammar must not have a conflict
   (not even a benign one, in the sense of \sref{sec:conflicts:benign}).
   That is, the grammar must be LR(1). Conflict resolution via
   priority and associativity declarations (\sref{sec:assoc})
@@ -4158,13 +4158,13 @@ The generated file contains several modules:
 \item The module \verb+Gram+ defines the terminal and
   non-terminal symbols, the grammar, and the semantic actions.
 \item The module \verb+Aut+ contains the automaton
-  generated by \menhir, together with a certificate that is checked by Coq
+  generated by \menhir, together with a certificate that is checked by Rocq
   while establishing the soundness and completeness of the parser.
 \end{itemize}
 
 The type~\verb+terminal+ of the terminal symbols is an inductive type, with
 one constructor for each terminal symbol. A terminal symbol named \verb+Foo+
-in the \verb+.vy+ file is named \verb+Foo't+ in Coq. A~terminal symbol per se
+in the \verb+.vy+ file is named \verb+Foo't+ in Rocq. A~terminal symbol per se
 does not carry a the semantic value.
 
 We also define the type \verb+token+ of tokens, that is, dependent pairs of a
@@ -4174,17 +4174,17 @@ an infinite stream of tokens.
 % TEMPORARY documenter que du coup, après extraction, la seule façon pour un
 % lexer OCaml de produire des tokens, c'est d'utiliser Obj.magic
 % cf. la fonction compute_token_stream dans le Lexer.mll de Compcert:
-%   Cons (Coq_existT (t, Obj.magic v), Lazy.from_fun compute_token_stream)
+%   Cons (Rocq_existT (t, Obj.magic v), Lazy.from_fun compute_token_stream)
 
 The type~\verb+nonterminal+ of the non-terminal symbols is an inductive type,
 with one constructor for each non-terminal symbol. A non-terminal symbol named
-\verb+Bar+ in the \verb+.vy+ file is named \verb+Bar'nt+ in Coq.
+\verb+Bar+ in the \verb+.vy+ file is named \verb+Bar'nt+ in Rocq.
 
 The proof of termination of an LR(1) parser in the case of invalid input seems
 far from obvious. We did not find such a proof in the literature. In an
 application such as CompCert~\cite{compcert}, this question is not considered
 crucial. For this reason, we did not formally establish the termination of the
-parser. Instead, in order to satisfy Coq's termination requirements, we use
+parser. Instead, in order to satisfy Rocq's termination requirements, we use
 the ``fuel'' technique: the parser takes an additional parameter
 \verb+log_fuel+ of type \verb+nat+ such that $2^{\verb+log_fuel+}$ is the
 maximum number of steps the parser is allowed to perform. In practice, one
@@ -4213,7 +4213,7 @@ proved, this implies that the input is invalid). It contains two pieces of infor
 the state of the parser and the token which caused the error. These are provided for
 error reporting, if desired. It is important to note that, even though they should be correct,
 the validity of these two pieces of information is not certified by either the correctness
-or the completeness theorem. For more discussion on this, see \sref{sec:coq:errmsg}.
+or the completeness theorem. For more discussion on this, see \sref{sec:rocq:errmsg}.
 The outcome \verb+Timeout_pr+ means that the fuel has been exhausted.
 Of course, this cannot happen if the parser was given an infinite amount of fuel,
 as suggested above. The outcome \verb+Parsed_pr+ means that the parser has
@@ -4265,26 +4265,28 @@ named \verb+Parser.unambiguous+.
 % actuelle, on renvoie le stream restant, et on prouve qu'il
 % correspond bien à la fin du Stream.
 
-The parsers produced by \menhir's Coq back-end must be linked with a Coq
-library. This library can be installed via the command \verb+opam install coq-menhirlib+.%
+The parsers produced by \menhir's Rocq back-end must be linked with a Rocq
+library. This library can be installed via the command
+\verb+opam install coq-menhirlib+.%
 %
 \footnote{This assumes that you have installed \texttt{opam}, the OCaml package manager,
-and that you have run the command \texttt{opam repo add coq-released
-https://coq.inria.fr/opam/released}.}
+and that you have run the command
+\texttt{opam repo add rocq-released https://rocq-prover.org/opam/released}.}
 %
-The Coq sources of this library can be found in
-the \texttt{coq-menhirlib} directory of the Menhir repository.
+The Rocq sources of this library can be found in
+the directory \texttt{coq-menhirlib}
+inside Menhir's repository.
 
-The directory \distrib{demos/coq-minicalc} contains a minimal example that
+The directory \distrib{demos/rocq-minicalc} contains a minimal example that
 shows how to set things up.
 
 The CompCert verified compiler~\cite{compcert,compcert-github} offers a
 real-world example. There, see in particular the directory
 \compcertgithubfile{cparser}.
 
-\subsection{Error messaging options for Coq mode}
-\label{sec:coq:errmsg}
-Users of the Coq mode have several options for providing error messages from the parser.
+\subsection{Error messaging options for Rocq mode}
+\label{sec:rocq:errmsg}
+Users of the Rocq mode have several options for providing error messages from the parser.
 If they wish, they can follow the pattern of CompCert and use Menhir's incremental mode for
 a \textit{non-verified} separate parser (\sref{sec:errors:example}). This may also aid in parsing
 languages (such as C) that need a lexical feedback loop for correct parsing.
@@ -4300,7 +4302,7 @@ powerful as the advanced error-handling possibilities afforded by the incrementa
 non-verified parsers, this does allow interoperability with the existing
 \messages files and tooling, described in \sref{sec:messages:format} and
 \sref{sec:messages:tools}. This allows error messaging without a second
-parser. An example is provided in \distrib{demos/coq-syntax-errors}.
+parser. An example is provided in \distrib{demos/rocq-syntax-errors}.
 
 Note that the extra information carried by the data constructor
 \verb+Fail_pr_full+ (and by the related data constructor \verb+Fail_sr_full+
@@ -4309,8 +4311,8 @@ for convenience, but there is no proof of its correctness.
 
 Users who wish to ignore this extra information can use the abbreviated
 notation \verb+Fail_pr+ and \verb+Fail_sr+. This notation is used in the
-statements of the theorems about the parser. It is available only in Coq code,
-such as in \distrib{demos/coq-minicalc}, not in extracted OCaml code.
+statements of the theorems about the parser. It is available only in Rocq code,
+such as in \distrib{demos/rocq-minicalc}, not in extracted OCaml code.
 
 % ------------------------------------------------------------------------------
 
@@ -4844,8 +4846,8 @@ The list is roughly sorted by decreasing order of importance.
   set of invalid input sentences, mapping each such sentence to a (hand-written)
   error message, and maintaining this set as the grammar evolves (\sref{sec:errors:new}).
 
-\item In \ocoq mode, \menhir produces a parser whose correctness and
-  completeness with respect to the grammar can be checked by Coq (\sref{sec:coq}).
+\item In \orocq mode, \menhir produces a parser whose correctness and
+  completeness with respect to the grammar can be checked by Rocq (\sref{sec:rocq}).
 
 \item \menhir offers an interpreter (\sref{sec:interpret}) that helps debug
       grammars interactively.
@@ -5144,10 +5146,10 @@ A generalized algebraic data type (GADT) is used to describe the
 shape of the stack and the relationship that exists between the
 shape of the stack and the current state of the automaton.
 
-The main ideas behind the Coq back-end are described in a paper by Jourdan,
+The main ideas behind the Rocq back-end are described in a paper by Jourdan,
 Pottier and Leroy~\cite{jourdan-leroy-pottier-12}. The C11 parser in the
 CompCert compiler~\cite{compcert} is constructed by Menhir and verified by
-Coq, following this technique. How to construct a correct C11 parser using
+Rocq, following this technique. How to construct a correct C11 parser using
 Menhir is described by Jourdan and Pottier~\cite{jourdan-pottier-17}.
 
 The approach to error reports presented in \sref{sec:errors:new} was

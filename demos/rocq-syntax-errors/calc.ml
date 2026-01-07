@@ -50,9 +50,8 @@ let format token =
 
 (* get an OCaml int corresponding to the error-throwing state *)
 let state_num s =
-  let coq_num = Parser.Aut.coq_N_of_state s in
-  let state = ExtrOcamlIntConv.int_of_n coq_num
-  in
+  let rocq_num = Parser.Aut.coq_N_of_state s in
+  let state = ExtrOcamlIntConv.int_of_n rocq_num in
   state
 
 let handle_syntax_error state token =

@@ -17,16 +17,16 @@ The executable file `menhir` and the libraries `MenhirLib` and `MenhirSdk` are
 installed by `dune`. `dune` usually figures out by itself where they should be
 installed. If desired, a `--prefix` option can be passed to `dune`.
 
-## Coq support
+## Rocq support
 
-If you wish to use Menhir's Coq back-end,
+If you wish to use Menhir's Rocq back-end,
 which produces verified parsers,
-then you must install the Coq library `coq-menhirlib`.
+then you must install the Rocq library `coq-menhirlib`.
 
 This is normally done via the following commands:
 
 ```
-  opam repo add coq-released https://coq.inria.fr/opam/released
+  opam repo add rocq-released https://rocq-prover.org/opam/released
   opam install coq-menhirlib
 ```
 

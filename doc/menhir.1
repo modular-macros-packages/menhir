@@ -51,21 +51,6 @@ Compare two .messages files.
 .BI \-\-compile\-errors\  file
 Compile a .messages file to OCaml code.
 .TP
-.B \-\-coq
-Generate a formally verified parser, in Coq.
-.TP
-.BI \-\-coq\-lib\-path\  path
-How to qualify references to MenhirLib.
-.TP
-.B \-\-coq\-lib\-no\-path
-Do not qualify references to MenhirLib.
-.TP
-.B \-\-coq\-no\-actions
-Ignore semantic actions in the Coq output.
-.TP
-.B \-\-coq\-no\-complete
-Do not generate a proof of completeness.
-.TP
 .B \-\-depend
 Invoke ocamldep and display dependencies.
 .TP
@@ -198,6 +183,21 @@ Invoke ocamldep and echo its raw output.
 .TP
 .B \-\-require\-aliases
 Check that every terminal symbol has a token alias.
+.TP
+.B \-\-rocq
+Generate a formally verified parser, in Rocq.
+.TP
+.BI \-\-rocq\-lib\-path\  path
+How to qualify references to MenhirLib.
+.TP
+.B \-\-rocq\-lib\-no\-path
+Do not qualify references to MenhirLib.
+.TP
+.B \-\-rocq\-no\-actions
+Ignore semantic actions in the Rocq output.
+.TP
+.B \-\-rocq\-no\-complete
+Do not generate a proof of completeness.
 .TP
 .BI \-\-strategy\  strategy
 Choose how to deal with the error token.

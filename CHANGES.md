@@ -2,6 +2,12 @@
 
 ## 2026/01/08
 
+* The command line switches `--coq*`
+  are now available also under the names `--rocq*`.
+  The names `--coq*` are deprecated
+  and may be removed at some point in the future.
+  The opam package `coq-menhirlib` is not renamed.
+
 * Menhir now requires OCaml 4.08 or later.
 
 * Major internal reorganization of the code.

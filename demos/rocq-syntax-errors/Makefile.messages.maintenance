@@ -7,7 +7,7 @@
 .PHONY: update
 update:
 	@ cp -f parserMessages.messages /tmp/parserMessages.messages.bak
-	@ dune exec menhir -- --coq parser.vy \
+	@ dune exec menhir -- --rocq parser.vy \
 	    --update-errors parserMessages.messages \
 	    > /tmp/parserMessages.updated
 	@ mv /tmp/parserMessages.updated parserMessages.messages
@@ -29,10 +29,10 @@ strip:
 
 .PHONY: complete
 complete:
-	@ dune exec menhir -- --coq parser.vy \
+	@ dune exec menhir -- --rocq parser.vy \
 	    --list-errors \
 	    > /tmp/parserMessages.auto.messages
-	@ dune exec menhir -- --coq parser.vy \
+	@ dune exec menhir -- --rocq parser.vy \
 	    --merge-errors /tmp/parserMessages.auto.messages \
 	    --merge-errors parserMessages.messages \
 	    > /tmp/parserMessages.merged

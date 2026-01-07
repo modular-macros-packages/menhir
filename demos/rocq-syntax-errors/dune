@@ -1,6 +1,6 @@
 ;; -----------------------------------------------------------------------------
 
-;; Copy all of the files created by Coq in the directory extraction/
+;; Copy all of the files created by Rocq in the directory extraction/
 ;; into the current directory.
 (copy_files# extraction/*.{ml,mli})
 
@@ -12,7 +12,7 @@
 ;; Compile the main program.
 (executable
   (name calc)
-  (flags :standard -w -A) ;; All warnings disabled. We trust Coq!
+  (flags :standard -w -A) ;; All warnings disabled. We trust Rocq!
   (libraries menhirLib)
 )
 

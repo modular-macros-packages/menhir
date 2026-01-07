@@ -1,4 +1,4 @@
-personal_ws-1.1 en 196 
+personal_ws-1.1 en 196
 APIs
 AboutToReduce
 Actuals
@@ -9,8 +9,8 @@ Bar'nt
 Bour
 CompCert
 CompCert's
-Coq
-Coq's
+Rocq
+Rocq's
 DeRemer
 Dencker
 Dürre
@@ -71,7 +71,7 @@ cma
 cmly
 cmxa
 cnum
-coq
+rocq
 cparser
 cst
 curr
