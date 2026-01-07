@@ -12,6 +12,8 @@
 ;; Warnings are enabled (and fatal) during development,
 ;; but are disabled in releases.
 
+;; Assertions are enabled during development and in releases.
+
 (env
   (dev (flags
     :standard
