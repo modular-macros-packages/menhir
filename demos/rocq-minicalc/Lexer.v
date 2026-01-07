@@ -1,7 +1,7 @@
 
 (** Hand-written lexer for natural numbers, idents, parens and + - * / *)
 
-From Stdlib Require Import BinNat Ascii String.
+From Coq Require Import BinNat Ascii String.
 From MiniCalc Require Import Parser.
 Import MenhirLibParser.Inter.
 Open Scope char_scope.

@@ -1,6 +1,6 @@
-From Stdlib Require Import ExtrOcamlIntConv.
+From Coq Require Import ExtrOcamlIntConv.
 Require MiniCalc.Parser.
-From Corelib Require Extraction.
+Require Extraction.
 Set Extraction Output Directory ".".
 
 (* Datatypes *)

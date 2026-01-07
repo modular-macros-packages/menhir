@@ -1,4 +1,4 @@
-From Stdlib Require Import List String PeanoNat.
+From Coq Require Import List String PeanoNat.
 From MiniCalc Require Import Parser Lexer.
 Import MenhirLibParser.Inter.
 Open Scope string_scope.

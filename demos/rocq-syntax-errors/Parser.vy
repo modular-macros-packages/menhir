@@ -2,7 +2,7 @@
 
 %{
 
-From Stdlib Require Import String.
+From Coq Require Import String.
 
 Module Ast.
 
