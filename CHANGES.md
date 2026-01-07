@@ -85,6 +85,11 @@
 * Fix an obscure bug where Menhir could report an end-of-stream conflict on an
   empty set of terminal symbols.
 
+* Rocq back-end: generate `From Corelib Require Extraction`
+  instead of `From Stdlib.extraction Require Extraction`.
+
+* Rocq back-end: generate `From Stdlib` instead of `From Coq`.
+
 ## 2025/09/12
 
 * In the new code back-end, fix a problem that could lead to an internal error
