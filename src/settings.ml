@@ -44,11 +44,9 @@ let is_capitalized_ascii s =
   is_uppercase_ascii s.[0]
 
 let codeonly m =
-  if not (is_capitalized_ascii m) then begin
+  if not (is_capitalized_ascii m) then
     (* Not using module [Error] to avoid a circular dependency. *)
-    fprintf stderr "Error: %s is not a valid OCaml module name.\n" m;
-    exit 1
-  end;
+    error "Error: %s is not a valid OCaml module name.\n" m;
   mode := `UseExternalTokenType m;
   token_type_only := false
 
@@ -144,10 +142,9 @@ let set_infer_mode mode2 =
   | (IMDependRaw | IMDependPostprocess), IMInfer ->
       ()
   | _, _ ->
-      fprintf stderr "Error: you cannot use both %s and %s.\n"
+      error "Error: you cannot use both %s and %s.\n"
         (show_infer_mode mode1)
-        (show_infer_mode mode2);
-      exit 1
+        (show_infer_mode mode2)
 
 let enable_infer () =
   set_infer_mode IMInfer
@@ -682,13 +679,11 @@ let base =
   if !base = "" then
     match filenames with
     | [] ->
-        fprintf stderr "%s\n" usage;
-        exit 1
+        error "%s\n" usage
     | [ filename ] ->
         Filename.remove_extension filename
     | _ ->
-        fprintf stderr "Error: you must specify --base when providing multiple input files.\n";
-        exit 1
+        error "Error: you must specify --base when providing multiple input files.\n"
   else
     !base
 
