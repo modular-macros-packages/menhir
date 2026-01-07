@@ -24,9 +24,9 @@ let () =
   | `InterpretError ->
       let module I = Interpret.Make(Lr1)(Settings) in
       I.interpret_error()
-  | `InterpretGLR _show ->
-      (* TODO implement this *)
-      assert false
+  | `InterpretGLR show ->
+      let module I = InterpretGLR.Make(Lr1) in
+      I.interpret show
   | _ ->
       ()
 
