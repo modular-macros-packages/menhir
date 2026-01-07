@@ -540,10 +540,10 @@ module Run () = struct
       List.iter (fun s -> fprintf f "%s\n\n" (value s))
         Front.grammar.PlainSyntax.preludes;
 
-    fprintf f "From Coq.extraction Require Extraction.\n";
-    fprintf f "From Coq.Lists Require List.\n";
-    fprintf f "From Coq.PArith Require Import BinPos.\n";
-    fprintf f "From Coq.NArith Require Import BinNat.\n";
+    fprintf f "From Stdlib.extraction Require Extraction.\n";
+    fprintf f "From Stdlib.Lists Require List.\n";
+    fprintf f "From Stdlib.PArith Require Import BinPos.\n";
+    fprintf f "From Stdlib.NArith Require Import BinNat.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
     if not Settings.coq_no_version_check then
       begin from_menhirlib f; fprintf f "Require Version.\n" end;
