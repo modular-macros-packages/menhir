@@ -242,6 +242,25 @@ let unparsing_api grammar () : interface =
 
 (* -------------------------------------------------------------------------- *)
 
+(* 2026/01/07 Following a request by Frédéric Bour and Thomas Refis,
+   if the table back-end has been selected, then we expose the parse
+   tables, with the signature [MenhirLib.TableFormat.TABLES]. This
+   is considered undocumented and temporary, as I wish to retain the
+   freedom of changing the format of the parse tables in the future. *)
+
+let tables () =
+  [
+    IIComment "The parse tables.";
+    IIComment "Warning: this submodule is undocumented. In the future,\n   \
+               its type could change, or it could disappear altogether.";
+    IIModule (
+      "Tables",   (* must agree with [TableBackend] *)
+      MTNamedModuleType "MenhirLib.TableFormat.TABLES"
+    );
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
 (* The complete interface of the generated parser. *)
 
 let interface grammar = [
@@ -249,6 +268,7 @@ let interface grammar = [
     monolithic_api grammar @
     provided X.incremental (incremental_api grammar) @
     provided X.unparsing (unparsing_api grammar) @
+    provided X.incremental tables @
     []
   )
 ]
