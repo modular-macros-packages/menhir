@@ -1,12 +1,14 @@
 # Changes
 
-## 2025/12/XX
+## 2026/01/08
 
 * Menhir now requires OCaml 4.08 or later.
 
 * Major internal reorganization of the code.
 
-* Table back-end: generate specialized table access code.
+* Table back-end: generate specialized table access code. This code should
+  in theory make table access slightly faster, but the difference does not
+  seem to be measurable.
 
 * In `--strict` mode, all warnings are now errors.
 
@@ -29,6 +31,12 @@
   order of state numbers, whereas (for an unknown reason) they used to
   be listed in decreasing order.
 
+* If the table back-end has been selected, then the parse tables are exposed
+  to the user, by letting the generated file `parser.mli` contain the
+  declaration `module Tables : MenhirLib.TableFormat.TABLES`. This feature is
+  considered undocumented, unstable, and temporary: in the future, the format
+  of the parse tables may change, and this feature will eventually be removed.
+
 * Some additions have been made in `MenhirSdk`:
 
   + In the signature `GRAMMAR`,
@@ -48,8 +56,6 @@
 
 * The words `effect` and `nonrec` are now reserved.
   The word `parser` is no longer reserved.
-
-* OCaml 4.04 or newer is now required.
 
 * The ancient code back-end has been removed.
   The command line switch `--code-ancient` is no longer supported.
