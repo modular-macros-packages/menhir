@@ -134,7 +134,6 @@ let sentinel = {
   date = -1;
   edges = MiniBabySet.empty;
   ddepth = 0;
-  initial = false;
 }
 
 let create n =

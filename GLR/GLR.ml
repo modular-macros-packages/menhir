@@ -186,11 +186,13 @@ let check_GSS (tops : Tops.t) =
   and discover node =
     NodeTable.add visited node node;
     while_visiting node @@ fun () ->
-    (* If this is the initial node then [node.date] should be zero and
-       [node.edges] should be empty. Conversely, if [node.edges] is
-       empty then this must be the initial node. *)
-    if node.initial then assert (node.date = 0 && node.edges = empty);
-    if node.edges = empty then assert (node.initial);
+    (* This node is the initial node if and only if it has no edges. *)
+    (* We assume that this fact is true; we cannot check it. We do not
+       have a way of testing whether [node.state] is an initial state. *)
+    let initial = (node.edges = empty) in
+    (* If this is the initial node then [node.date] must be zero. The converse
+       implication is false: there can exist several nodes at date zero. *)
+    if initial then assert (node.date = 0);
     (* If this node's deterministic depth is nonzero then it must have
        exactly one child, whose deterministic depth is smaller by one.
        If this node's deterministic depth is zero then either it is the
@@ -203,7 +205,7 @@ let check_GSS (tops : Tops.t) =
       assert (child.ddepth = node.ddepth - 1)
     end
     else
-      assert (node.initial || MiniBabySet.cardinal node.edges > 0);
+      assert (initial || MiniBabySet.cardinal node.edges > 0);
     (* Along every outgoing edge, the generation index must be preserved or
        must decrease. *)
     foreach_edge node @@ fun edge ->
@@ -449,7 +451,7 @@ let reduce input queue tops prod path =
       let date = Tops.date tops in
       let edges = singleton edge
       and ddepth = no_ddepth in
-      let right = { state; date; edges; ddepth; initial = false } in
+      let right = { state; date; edges; ddepth } in
       (* This node is a new top node. *)
       let top = right in
       Tops.register tops top;
@@ -618,7 +620,7 @@ and perform_shifts input queue tops =
         let date = date + 1
         and edges = singleton edge
         and ddepth = no_ddepth in
-        let top = { state; date; edges; ddepth; initial = false } in
+        let top = { state; date; edges; ddepth } in
         Tops.register tops top;
         if verbose then eprintf "Shifting from node %s to new node %s.\n"
           (show_node node) (show_node top);
@@ -737,7 +739,7 @@ and deterministic_mode queue tops input top =
       let date = node.date + 1
       and edges = singleton edge
       and ddepth = node.ddepth + 1 in
-      let top = { state; date; edges; ddepth; initial = false } in
+      let top = { state; date; edges; ddepth } in
       if verbose then creating_new_node_and_edge top edge;
       (* Consume the current input symbol. *)
       Input.consume input;
@@ -775,7 +777,7 @@ and deterministic_mode queue tops input top =
           let date = top.date in
           let edges = singleton edge
           and ddepth = left.ddepth + 1 in
-          let top = { state; date; edges; ddepth; initial = false } in
+          let top = { state; date; edges; ddepth } in
           if verbose then creating_new_node_and_edge top edge;
           (* Continue. *)
           deterministic_mode queue tops input top
@@ -876,7 +878,7 @@ let start state input =
   let date = 0
   and edges = MiniBabySet.empty
   and ddepth = no_ddepth in
-  let top = { state; date; edges; ddepth; initial = true } in
+  let top = { state; date; edges; ddepth } in
   let tops = Tops.create State.n in
   if debug then Tops.check tops;
   (* Create the reduction queue. *)

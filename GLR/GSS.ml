@@ -63,12 +63,6 @@ type ('s, 'v) node = {
      the number of outgoing edges that one can follow without encountering
      a join node. *)
 
-  initial: bool;
-  (**This field allows recognizing whether a node is the initial node. This
-     field is used for sanity checking only and can be removed once debugging
-     is complete. (Instead, one might conceivably use a self-loop as a way of
-     recognizing the initial node.) *)
-
 }
 
 and ('s, 'v) edge = {
