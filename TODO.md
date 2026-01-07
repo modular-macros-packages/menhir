@@ -2,23 +2,6 @@
 
 ## GLR
 
-### Before First Release
-
-* The combination --interpret --GLR should use the GLR reference interpreter.
-  Should it be documented?
-
-* The combination --cmly --GLR probably does not work. Test/document.
-
-* Should `--test-GLR` be kept? What should it do?
-  Should it require `--GLR`?
-  Set up `make test` so that the GLR algorithm is exercised on many grammars.
-  Remove `error` productions when --test-GLR is active.
-
-* ExpandNullable: improve the obscure message
-  "this transformation does not support the special token error"
-
-* Remove the fields `locked` and `initial`.
-
 ### Later
 
 * `%merge` functions could be allowed to use `$loc`, `$startofs`, `$endofs`.
@@ -27,6 +10,15 @@
   is tolerable and must therefore become silent.
 
 ### Later, Maybe
+
+* A good demo of the GLR mode is needed.
+
+* A realistic benchmark of the GLR mode is needed.
+
+* The GLR reference interpreter and the GLR back-end could obey `--trace`.
+  They currently do not.
+
+* The duplication of `Interpret` and `InterpretGLR` could be eliminated.
 
 * Allow the user to declare certain nonterminal symbols unambiguous? This
   would be equivalent to providing a merge function that raises `cannot
