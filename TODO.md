@@ -54,7 +54,14 @@
 
 * Propose an incremental API, with persistent checkpoints.
 
+* It might make sense to allow a GLR parser to start in an *undetermined*
+  state. (Journal, 7 décembre 2015.)
+
 * Propose an inspection API. Allow cooperation with LRgrep in GLR mode.
+
+* It would be desirable to share more code between the table back-end and
+  the GLR back-end (perhaps even to unify them?) and/or to have the two
+  back-ends offer more similar APIs to the end user.
 
 * It would be interesting to write code that dumps the GSS in .dot format.
   (Ideally, it would be desirable to print/show also the semantic values.)
