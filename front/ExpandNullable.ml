@@ -387,6 +387,10 @@ let () =
       "this transformation does not support the special token error."
       (* If we were more brave, we would extract the source location
          where the [error] token is used. *)
+      (* The message is a bit obscure, but this seems acceptable, as
+         this transformation is undocumented anyway. *)
+      (* When --GLR is selected, all productions that use the [error]
+         token are removed before this transformation is performed. *)
 
 (* -------------------------------------------------------------------------- *)
 

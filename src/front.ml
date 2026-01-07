@@ -191,9 +191,10 @@ let grammar =
   | `Legacy ->
       grammar
 
-(* If [--test-GLR] has been selected, silently remove the productions that use
-   the [error] token. If [--GLR] has been selected, warn about uses of the
-   [error] token. *)
+(* If [--test-GLR] or [--GLR] has been selected, remove the productions that
+   use the [error] token. If just [--GLR] has been selected, let the user know
+   that we are doing this, by emitting warnings. If both [--GLR] and
+   [--test-GLR] have been selected, do not emit warnings. *)
 
 let grammar =
   if Settings.test_GLR then
