@@ -540,7 +540,7 @@ module Run () = struct
       List.iter (fun s -> fprintf f "%s\n\n" (value s))
         Front.grammar.PlainSyntax.preludes;
 
-    fprintf f "From Stdlib.extraction Require Extraction.\n";
+    fprintf f "From Corelib Require Extraction.\n";
     fprintf f "From Stdlib.Lists Require List.\n";
     fprintf f "From Stdlib.PArith Require Import BinPos.\n";
     fprintf f "From Stdlib.NArith Require Import BinNat.\n";
