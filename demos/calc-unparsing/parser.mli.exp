@@ -173,3 +173,10 @@ module Settle : sig
   val main: DCST.main -> CST.main option
   
 end
+
+(* The parse tables. *)
+
+(* Warning: this submodule is undocumented. In the future,
+   its type could change, or it could disappear altogether. *)
+
+module Tables : MenhirLib.TableFormat.TABLES
