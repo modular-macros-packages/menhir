@@ -493,9 +493,10 @@ let compare (key1, _, _) (key2, _, _) =
   String.compare key1 key2
 
 let options =
-  options @ rocq_options "coq" @ rocq_options "rocq"
-  |> List.sort compare
-  |> Arg.align
+  Arg.align (
+    options @ rocq_options "coq" @ rocq_options "rocq"
+    |> List.sort compare
+  )
 
 let usage =
   sprintf "Usage: %s <options> <filenames>" Sys.argv.(0)
