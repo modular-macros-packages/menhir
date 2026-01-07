@@ -427,7 +427,7 @@ let reduce input queue tops prod path =
   if debug then check_path tops path;
 
   (* Lock the edges of this path. *)
-  Path.lock path;
+  if debug then Path.lock path;
 
   (* Execute the semantic action. Give it access to the path [path] so it can
      extract semantic values out of the path's edges. The semantic action can
@@ -762,7 +762,7 @@ and deterministic_mode queue tops input top =
         else
           let () = if verbose then reducing prod path in
           (* Lock the edges of this path. *)
-          Path.lock path;
+          if debug then Path.lock path;
           (* Execute the semantic action. *)
           match Production.action prod input path with
           | exception Reject -> raise (Error [top])
