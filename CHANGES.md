@@ -1,6 +1,6 @@
 # Changes
 
-## 2026/01/08
+## 2026/01/12
 
 * The command line switches `--coq*`
   are now available also under the names `--rocq*`.

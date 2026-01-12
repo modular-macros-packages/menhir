@@ -1,6 +1,6 @@
 # Changes
 
-## 2026/01/08
+## 2026/01/12
 
 * Use `app_nil_r` instead of `app_nil_end`
   to avoid a warning with Coq 8.18.
