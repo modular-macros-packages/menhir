@@ -2,6 +2,15 @@
 
 ## 2026/01/12
 
+* A new GLR back-end has been introduced.
+  It is selected by the command line switch `--GLR`.
+  GLR is a non-deterministic parsing algorithm;
+  it is useful when the grammar lies outside the class LR(1),
+  either because the grammar is unambiguous
+  but requires more than one token of lookahead,
+  or because the grammar is truly ambiguous.
+  For more information, please read the manual.
+
 * The command line switches `--coq*`
   are now available also under the names `--rocq*`.
   The names `--coq*` are deprecated
