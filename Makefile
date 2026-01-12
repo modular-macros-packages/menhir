@@ -503,11 +503,12 @@ pin:
 	opam pin --yes add menhirCST.dev . && \
 	opam pin --yes add menhirLib.dev . && \
 	opam pin --yes add menhirSdk.dev . && \
+	opam pin --yes add menhirGLR.dev . && \
 	opam pin --yes add menhir.dev .
 
 .PHONY: unpin
 unpin:
-	opam pin --yes remove menhirCST menhirLib menhirSdk menhir
+	opam pin --yes remove menhirCST menhirLib menhirSdk menhirGLR menhir
 
 # -------------------------------------------------------------------------
 
