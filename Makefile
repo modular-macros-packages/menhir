@@ -427,8 +427,8 @@ ROCQ_MENHIRLIB_PUBLISH_OPTIONS := \
 
 .PHONY: opam
 opam:
-# Publish opam descriptions for menhirCST, menhirLib, menhirSdk, menhir.
-	@ opam publish -v $(DATE) menhirCST.opam menhirLib.opam menhirSdk.opam menhir.opam $(ARCHIVE)
+# Publish our opam descriptions (except coq-menhirlib.opam).
+	@ opam publish -v $(DATE) menhirCST.opam menhirLib.opam menhirSdk.opam menhirGLR.opam menhir.opam $(ARCHIVE)
 # Patch $(ROCQLIB).opam.
 # We replace the string DATEDASH with $(DATEDASH).
 # We replace the string DATE with $(DATE).
