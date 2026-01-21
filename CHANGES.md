@@ -1,5 +1,14 @@
 # Changes
 
+## 2026/01/22
+
+* Fix a mistake: when the table back-end is selected, in the generated file
+  `parser.mli`, the declaration `module Tables : MenhirLib.TableFormat.TABLES`
+  should include the equation `with type token = token`. This feature is
+  considered undocumented, unstable, and temporary: in the future, the format
+  of the parse tables may change, and this feature will eventually be removed.
+  (Reported by Federico Dal Pio Luogo.)
+
 ## 2026/01/12
 
 * A new GLR back-end has been introduced.
