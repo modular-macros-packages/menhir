@@ -180,3 +180,4 @@ end
    its type could change, or it could disappear altogether. *)
 
 module Tables : MenhirLib.TableFormat.TABLES
+  with type token = token
