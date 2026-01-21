@@ -215,13 +215,17 @@ let inspection_api grammar () =
 let incremental_submodule_name =
   "Incremental"
 
-let incremental_engine () : module_type =
-  with_types WKNonDestructive
-    "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
+let with_type_token_eq_token (signature : string) : module_type =
+  (* [signature with type token = token] *)
+  with_types WKNonDestructive signature
     [
       [], "token", ttoken
         (* we cannot use [tctoken], which may be qualified *)
     ]
+
+let incremental_engine () : module_type =
+  with_type_token_eq_token
+    "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
 
 let incremental_entry_points grammar : interface =
   IIComment "The entry point(s) to the incremental API." ::
@@ -265,7 +269,7 @@ let tables () =
                its type could change, or it could disappear altogether.";
     IIModule (
       "Tables",   (* must agree with [TableBackend] *)
-      MTNamedModuleType "MenhirLib.TableFormat.TABLES"
+      with_type_token_eq_token "MenhirLib.TableFormat.TABLES"
     );
   ]
 
