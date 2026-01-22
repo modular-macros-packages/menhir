@@ -178,6 +178,10 @@
     * Expose a function `lookahead` of type `'a env -> token option`.
     * Expose `print_checkpoint`.
     * Define a printer for stacks.
+    * Expose the number of terminal symbols,
+      `token2terminal : token -> int`
+      and `token2value : token -> Obj.t`?
+      (Federico Dal Pio Luogo.)
 
 * Extensions to the inspection API:
     * Offer a way of mapping an initial state (number) back to its
