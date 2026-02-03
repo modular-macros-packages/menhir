@@ -483,6 +483,7 @@ and exprk k f e =
         var f v
     | ETextual frag ->
         fragment f frag
+          (* semantic actions are parenthesized by the lexer *)
     | EUnit ->
         fprintf f "()"
     | EIntConst k ->

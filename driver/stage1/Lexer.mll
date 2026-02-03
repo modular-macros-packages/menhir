@@ -588,6 +588,8 @@ and angled openingrange = parse
     { let openingpos = Range.endp openingrange
       and closingpos = lexeme_start_p lexbuf in
       let fragment = fragment openingpos closingpos in
+      (* Note: no parentheses are inserted. This could be a point-free
+         semantic action, which must consist of a single identifier. *)
       ANGLED fragment }
 | "(*"
     { ocamlcomment (Range.current lexbuf) lexbuf;
