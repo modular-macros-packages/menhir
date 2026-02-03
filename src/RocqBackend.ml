@@ -46,12 +46,15 @@ module Run () = struct
     |> String.concat "; "
     |> sprintf "[%s]%%list"
 
+  let unit_type =
+    sprintf "(unit)%%type"
+
   let print_type ty =
-    if Settings.rocq_no_actions then "unit"
+    if Settings.rocq_no_actions then unit_type
     else
       match ty with
-      | None -> "unit"
-      | Some (Declared s) -> value s
+      | None              -> unit_type
+      | Some (Declared s) -> sprintf "(%s)%%type" (value s)
       | Some (Inferred _) -> assert false (* We cannot infer Rocq types *)
 
   let is_final_state node =
@@ -129,7 +132,7 @@ module Run () = struct
   let write_tokens f =
     fprintf f "Inductive token : Type :=";
     Terminal.iter_real (fun term ->
-        fprintf f "\n| %s : %s%%type -> token"
+        fprintf f "\n| %s : %s -> token"
                 (Terminal.print term) (print_type (Terminal.ocamltype term))
     );
     fprintf f ".\n\n"
@@ -174,7 +177,7 @@ module Run () = struct
     fprintf f "Definition terminal_semantic_type (t:terminal) : Type:=\n";
     fprintf f "  match t with\n";
     Terminal.iter_real (fun terminal ->
-        fprintf f "  | %s => %s%%type\n"
+        fprintf f "  | %s => %s\n"
           (print_term terminal) (print_type (Terminal.ocamltype terminal))
     );
     fprintf f "  end.\n\n";
@@ -182,7 +185,7 @@ module Run () = struct
     fprintf f "Definition nonterminal_semantic_type (nt:nonterminal) : Type:=\n";
     fprintf f "  match nt with\n";
     Nonterminal.iterx (fun nonterminal ->
-                         fprintf f "  | %s => %s%%type\n"
+                         fprintf f "  | %s => %s\n"
                            (print_nterm nonterminal)
                            (print_type (Nonterminal.ocamltype nonterminal)));
     fprintf f "  end.\n\n";
