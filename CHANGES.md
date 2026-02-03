@@ -1,5 +1,11 @@
 # Changes
 
+## 2026/02/03
+
+* Fix a printing bug in the Rocq back-end, which was introduced in 20260112:
+  the types of (terminal and nonterminal) symbols were not properly
+  parenthesized. (Reported by Xavier Leroy.)
+
 ## 2026/01/22
 
 * Fix a mistake: when the table back-end is selected, in the generated file
