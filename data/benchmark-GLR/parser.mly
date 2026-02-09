@@ -18,7 +18,7 @@
 %merge { fun _ _ _ -> assert false }
 
 %{
-  open Aux
+  open Auxiliary
   open Expr
 %}
 

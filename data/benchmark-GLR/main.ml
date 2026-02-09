@@ -144,8 +144,8 @@ let regenerate =
 let test (n : int) =
   let input = !generator n in
   let time  = ref 0.0 in
-  let cur = Aux.current()
-  and rej = !Aux.rejects in
+  let cur = Auxiliary.current()
+  and rej = !Auxiliary.rejects in
   for _i = 1 to !repeat do
     let start = now() in
     process input;
@@ -153,8 +153,8 @@ let test (n : int) =
     time  := !time +. stop -. start
   done;
   let time = !time /. float !repeat
-  and space = (Aux.current() - cur) / !repeat
-  and rejects = (!Aux.rejects - rej) / !repeat in
+  and space = (Auxiliary.current() - cur) / !repeat
+  and rejects = (!Auxiliary.rejects - rej) / !repeat in
   (* Print one row of data: input size, number of allocated nodes, time,
      number of rejects. *)
   printf "%d,%d,%.9f,%d\n%!"

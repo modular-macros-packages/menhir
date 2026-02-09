@@ -18,7 +18,7 @@ let smart_binop e1 op e2 =
   (* The left child of an addition cannot be an addition. *)
   | EBinOp (_, Add, _), Add, _
     ->
-      Aux.reject()
+      Auxiliary.reject()
   | _, _, _ ->
       EBinOp (e1, op, e2)
 
@@ -31,6 +31,6 @@ let smart_lhs e1 op =
   (* The left child of an addition cannot be an addition. *)
   | EBinOp (_, Add, _), Add
     ->
-      Aux.reject()
+      Auxiliary.reject()
   | _, _ ->
       e1, op
