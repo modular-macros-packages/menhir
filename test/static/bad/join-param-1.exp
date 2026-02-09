@@ -1,4 +1,0 @@
-File "join-param-1.mly", line 10, characters 4-8:
-Error: The symbol quux is undefined.
-File "join-param-1.mly", line 2, characters 9-10:
-Warning: the token B is unused.

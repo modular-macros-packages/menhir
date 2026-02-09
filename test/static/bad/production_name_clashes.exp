@@ -1,5 +1,0 @@
-File "production_name_clashes.mly", line 43, characters 2-5:
-Error: This production has no @name attribute.
-Error: The production name binary is not unique.
-Error: The production name paren is not unique.
-Error: The production name unary_neg is not unique.

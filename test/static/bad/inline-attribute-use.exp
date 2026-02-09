@@ -1,3 +1,0 @@
-File "inline-attribute-use.mly", line 5, characters 6-15:
-Error: this use of the nonterminal symbol foo is inlined away.
-It should not carry an attribute, as this attribute will be lost.

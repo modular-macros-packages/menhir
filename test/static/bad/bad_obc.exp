@@ -1,8 +1,0 @@
-File "bad_obc.mly", line 107, characters 0-7:
-File "bad_obc.mly", line 110, characters 0-7:
-Error: the nonterminal symbol imports is multiply defined.
-Only %public symbols can have split definitions.
-File "bad_obc.mly", line 28, characters 9-15:
-Warning: the token BADTOK is unused.
-File "bad_obc.mly", line 31, characters 48-54:
-Warning: the token IMPORT is unused.

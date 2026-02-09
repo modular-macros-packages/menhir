@@ -1,8 +1,0 @@
-1 out of 2 nonterminal symbols are nullable.
-There are 3 productions, whose total length is 3.
-1 out of 3 productions are right nullable.
-1 out of 1 nullable nonterminal symbols occur in a nullable suffix.
-Now eliminating all nullable symbols.
-File "right_nullable_production_carries_prec.mly", line 7, characters 13-16:
-Error: because this production has a nullable suffix,
-which will be expanded away, it must not carry a %prec annotation.
