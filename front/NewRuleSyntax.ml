@@ -17,7 +17,7 @@ open Syntax
 
 (* Function composition. *)
 
-let (>>) f g x =
+let (>>>) f g x =
   g (f x)
 
 (* -------------------------------------------------------------------------- *)
@@ -109,7 +109,7 @@ let rec patterns (e : seq_expression) : pattern list =
       []
 
 let check_linearity : seq_expression -> unit =
-  patterns >> check_linearity
+  patterns >>> check_linearity
 
 (* -------------------------------------------------------------------------- *)
 
@@ -363,7 +363,7 @@ and extend (p : pattern) (e1 : symbol_expression) (context : context) : context 
       { pos        =                   context.pos;
         producers  = producer x1 e1 :: context.producers;
         uxs        = auto           :: context.uxs;
-        bindings   = binding        >> context.bindings;
+        bindings   = binding        >>> context.bindings;
         tuple      = bv context.tuple p;
         tilde_used }
 
